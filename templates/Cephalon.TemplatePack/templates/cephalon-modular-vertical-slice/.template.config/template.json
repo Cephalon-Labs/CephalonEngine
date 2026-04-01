@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Cephalon",
+  "classifications": [ "Cephalon", "ASP.NET Core", "Modular", "Vertical Slice" ],
+  "identity": "Cephalon.Templates.ModularVerticalSlice",
+  "name": "Cephalon Modular Vertical Slice",
+  "shortName": "cephalon-slice",
+  "sourceName": "CephalonTemplateApp",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "primaryOutputs": [
+    { "path": "CephalonTemplateApp.csproj" }
+  ]
+}

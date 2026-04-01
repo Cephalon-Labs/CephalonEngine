@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <PackageType>Template</PackageType>
+    <PackageId>Cephalon.TemplatePack</PackageId>
+    <PackageVersion>0.1.0-preview</PackageVersion>
+    <Title>Cephalon Template Pack</Title>
+    <Authors>Cephalon</Authors>
+    <Description>dotnet new templates for Cephalon blueprints.</Description>
+    <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
+    <PackageTags>dotnet-new;templates;cephalon;aspnetcore;modular</PackageTags>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="templates\**\*" Exclude="templates\**\bin\**;templates\**\obj\**" />
+    <None Include="PACKAGE.md" Pack="true" PackagePath="" />
+    <Compile Remove="**\*" />
+  </ItemGroup>
+</Project>

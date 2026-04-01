@@ -1,0 +1,94 @@
+<mxfile host="app.diagrams.net" modified="2026-04-01T00:00:00.000Z" agent="Codex" version="26.0.16">
+  <diagram id="cephalon-app-models" name="Cephalon App Models">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Cephalon App Model System" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=24;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="430" y="20" width="740" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Separate architecture, topology, organization, and extension concerns correctly" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="430" y="58" width="740" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="input" value="User asks for project style&#xa;&#xa;1. Modular Architecture&#xa;2. Microservice Architecture&#xa;3. Vertical Slice Architecture&#xa;4. Shared Foundation Pattern&#xa;5. Strategy Pattern" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="140" width="280" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="engine" value="Cephalon should normalize this&#xa;into an App Model,&#xa;not treat all 5 as equal peers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="430" y="175" width="290" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="composition" value="Composition Model&#xa;Modular" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="830" y="100" width="210" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="topology" value="Deployment Topology&#xa;SingleHost / Microservice" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="100" width="230" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="organization" value="Feature Organization&#xa;VerticalSlice / ModuleFirst" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cfe2f3;strokeColor=#3c78d8;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="830" y="235" width="210" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="foundation" value="Shared Foundation&#xa;always on for Cephalon apps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f9cb9c;strokeColor=#e69138;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="235" width="230" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="strategy" value="Behavioral Extension&#xa;Strategy slots inside modules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ead1dc;strokeColor=#c27ba0;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="955" y="370" width="230" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="blueprints" value="Predefined Cephalon Blueprints" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="450" y="520" width="700" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="bp1" value="ModularMonolith&#xa;- single host&#xa;- modular&#xa;- module-first" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="580" width="230" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="bp2" value="ModularVerticalSlice&#xa;- single host&#xa;- modular&#xa;- vertical slice per module" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0e0e3;strokeColor=#76a5af;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="580" width="250" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="bp3" value="Microservice&#xa;- independently deployable&#xa;- modular inside service&#xa;- Cephalon foundation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c9daf8;strokeColor=#3d85c6;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="930" y="580" width="250" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="later" value="Later&#xa;MicroserviceSuite&#xa;plugin-ready blueprints&#xa;policy-driven strategies" style="shape=cloud;whiteSpace=wrap;html=1;fillColor=#e8d5ff;strokeColor=#9673a6;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="570" width="220" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="scaffold" value="Blueprints should drive scaffolding&#xa;- solution layout&#xa;- host conventions&#xa;- module structure&#xa;- tests and docs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe599;strokeColor=#bf9000;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="630" y="790" width="320" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="normalize" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#cc0000;fontSize=11;endArrow=block;endFill=1;" edge="1" parent="1" source="input" target="engine">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#82b366;endArrow=block;endFill=1;" edge="1" parent="1" source="engine" target="composition">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6c8ebf;endArrow=block;endFill=1;" edge="1" parent="1" source="engine" target="topology">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#3c78d8;endArrow=block;endFill=1;" edge="1" parent="1" source="engine" target="organization">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#e69138;endArrow=block;endFill=1;" edge="1" parent="1" source="engine" target="foundation">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#c27ba0;endArrow=block;endFill=1;" edge="1" parent="1" source="engine" target="strategy">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6aa84f;endArrow=block;endFill=1;" edge="1" parent="1" source="composition" target="bp1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#76a5af;endArrow=block;endFill=1;" edge="1" parent="1" source="organization" target="bp2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#3d85c6;endArrow=block;endFill=1;" edge="1" parent="1" source="topology" target="bp3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9673a6;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="strategy" target="later">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" value="generate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#bf9000;fontSize=11;endArrow=block;endFill=1;" edge="1" parent="1" source="bp2" target="scaffold">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#bf9000;endArrow=block;endFill=1;" edge="1" parent="1" source="bp1" target="scaffold">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#bf9000;endArrow=block;endFill=1;" edge="1" parent="1" source="bp3" target="scaffold">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

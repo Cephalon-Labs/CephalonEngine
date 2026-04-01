@@ -1,0 +1,20 @@
+{
+  "id": "reference-operations",
+  "version": "1.0.0",
+  "assembly": "Cephalon.ReferenceModule.Operations.dll",
+  "publisher": {
+    "id": "cephalon-labs",
+    "displayName": "Cephalon Labs",
+    "website": "https://example.invalid/cephalon-labs"
+  },
+  "signature": {
+    "type": "provenance-manifest",
+    "signer": "Cephalon Labs Build",
+    "fingerprint": "sha256:cephalon-labs-reference-operations",
+    "algorithm": "SHA256"
+  },
+  "compatibility": {
+    "minimumEngineVersion": "1.0.0",
+    "supportedTargetFrameworks": [ "net10.0" ]
+  }
+}

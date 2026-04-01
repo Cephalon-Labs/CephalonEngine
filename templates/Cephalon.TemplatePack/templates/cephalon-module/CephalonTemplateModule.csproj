@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Description>Cephalon module package generated from dotnet new.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Cephalon.Abstractions" Version="0.1.0-preview" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="cephalon.package.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

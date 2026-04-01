@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Description>Blueprint sample for the Cephalon ModularMonolith app shape.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability\Cephalon.Observability.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="modular-monolith.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,85 @@
+<mxfile host="app.diagrams.net" modified="2026-04-01T00:00:00.000Z" agent="Codex" version="26.0.16">
+  <diagram id="cephalon-engine-roadmap" name="Cephalon Engine Roadmap">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Cephalon Engine Roadmap" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=24;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="20" width="660" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="From modular foundation to platform runtime" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="470" y="58" width="660" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="current" value="Current Foundation&#xa;module contracts&#xa;engine builder&#xa;runtime manifest&#xa;ASP.NET Core adapter&#xa;playground + tests" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="150" width="220" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="phase0" value="Phase 0&#xa;Foundation Hardening&#xa;&#xa;- assembly discovery&#xa;- dependency diagnostics&#xa;- manifest v2&#xa;- engine options&#xa;- API polish" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="150" width="220" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="phase1" value="Phase 1&#xa;Lifecycle and Execution&#xa;&#xa;- initialize/start/stop&#xa;- runtime context&#xa;- hosted behaviors&#xa;- internal engine events" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cfe2f3;strokeColor=#3c78d8;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="660" y="150" width="220" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="phase2" value="Phase 2&#xa;Host Adapters&#xa;&#xa;- ASP.NET conventions&#xa;- worker adapter&#xa;- transport shape&#xa;- thin hosts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f9cb9c;strokeColor=#e69138;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="930" y="150" width="220" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="phase3" value="Phase 3&#xa;SDK and Packaging&#xa;&#xa;- packages&#xa;- templates&#xa;- versioning policy&#xa;- author docs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce5cd;strokeColor=#e69138;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="150" width="220" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="phase4" value="Phase 4&#xa;Observability&#xa;&#xa;- logs&#xa;- metrics&#xa;- traces&#xa;- diagnostics + health" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="530" y="420" width="220" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="phase5" value="Phase 5&#xa;Advanced Runtime&#xa;&#xa;- plugin loading&#xa;- capability policy&#xa;- workflow graph&#xa;- AI/orchestration hooks" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5ff;strokeColor=#9673a6;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="420" width="220" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="crosscut" value="Cross-cutting in every phase&#xa;tests, docs, determinism, package boundaries, adoption ergonomics" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ead1dc;strokeColor=#c27ba0;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="430" width="280" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="sprint1" value="Recommended Sprint 1&#xa;ENG-001 discovery&#xa;ENG-002 lifecycle&#xa;ENG-004 manifest v2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="680" width="260" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="sprint2" value="Recommended Sprint 2&#xa;ENG-003 options&#xa;ENG-006 worker adapter&#xa;ENG-008 observability" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0e0e3;strokeColor=#76a5af;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="680" width="260" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="target" value="Target State&#xa;Cephalon as a reusable runtime platform&#xa;with multiple hosts and extensible capabilities" style="shape=cloud;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="660" width="320" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6c8ebf;endArrow=block;endFill=1;" edge="1" parent="1" source="current" target="phase0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#3c78d8;endArrow=block;endFill=1;" edge="1" parent="1" source="phase0" target="phase1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#e69138;endArrow=block;endFill=1;" edge="1" parent="1" source="phase1" target="phase2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#e69138;endArrow=block;endFill=1;" edge="1" parent="1" source="phase2" target="phase3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="hardening enables observability" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d6b656;fontSize=11;endArrow=block;endFill=1;" edge="1" parent="1" source="phase1" target="phase4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="engine platform growth" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9673a6;fontSize=11;endArrow=block;endFill=1;" edge="1" parent="1" source="phase4" target="phase5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#c27ba0;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="crosscut" target="phase0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#c27ba0;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="crosscut" target="phase2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#6aa84f;endArrow=block;endFill=1;" edge="1" parent="1" source="phase0" target="sprint1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#76a5af;endArrow=block;endFill=1;" edge="1" parent="1" source="phase2" target="sprint2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" value="destination" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#cc0000;fontSize=11;endArrow=block;endFill=1;" edge="1" parent="1" source="phase5" target="target">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#cc0000;endArrow=block;endFill=1;" edge="1" parent="1" source="phase3" target="target">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

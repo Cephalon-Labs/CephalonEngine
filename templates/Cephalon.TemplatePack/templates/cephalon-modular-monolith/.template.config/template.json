@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Cephalon",
+  "classifications": [ "Cephalon", "ASP.NET Core", "Modular", "Monolith" ],
+  "identity": "Cephalon.Templates.ModularMonolith",
+  "name": "Cephalon Modular Monolith",
+  "shortName": "cephalon-monolith",
+  "sourceName": "CephalonTemplateApp",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "primaryOutputs": [
+    { "path": "CephalonTemplateApp.csproj" }
+  ]
+}

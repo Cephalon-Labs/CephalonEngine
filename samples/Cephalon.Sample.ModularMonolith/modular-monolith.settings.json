@@ -1,0 +1,19 @@
+{
+  "Engine": {
+    "Blueprint": "ModularMonolith",
+    "Discovery": {
+      "Assemblies": [
+        "Cephalon.Sample.ModularMonolith"
+      ]
+    },
+    "Patterns": [
+      "StrategyPattern"
+    ],
+    "Transports": [
+      "RestApi"
+    ]
+  },
+  "OpenApi": {
+    "Title": "Cephalon Modular Monolith Sample"
+  }
+}

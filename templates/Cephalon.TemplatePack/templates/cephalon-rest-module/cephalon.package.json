@@ -1,0 +1,12 @@
+{
+  "version": "0.1.0-preview",
+  "assembly": "CephalonTemplateModule.dll",
+  "publisher": {
+    "id": "cephalontemplatemodule",
+    "displayName": "CephalonTemplateModule"
+  },
+  "compatibility": {
+    "minimumEngineVersion": "0.1.0-preview",
+    "supportedTargetFrameworks": [ "net10.0" ]
+  }
+}

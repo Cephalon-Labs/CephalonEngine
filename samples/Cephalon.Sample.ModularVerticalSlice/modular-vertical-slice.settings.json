@@ -1,0 +1,19 @@
+{
+  "Engine": {
+    "Blueprint": "ModularVerticalSlice",
+    "Discovery": {
+      "Assemblies": [
+        "Cephalon.Sample.ModularVerticalSlice"
+      ]
+    },
+    "Patterns": [
+      "PipelinePattern"
+    ],
+    "Transports": [
+      "RestApi"
+    ]
+  },
+  "OpenApi": {
+    "Title": "Cephalon Modular Vertical Slice Sample"
+  }
+}

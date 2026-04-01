@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.Net.Client" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\benchmarks\Cephalon.Benchmarks\Cephalon.Benchmarks.csproj" />
+    <ProjectReference Include="..\..\samples\Cephalon.ReferenceModule.Operations\Cephalon.ReferenceModule.Operations.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Agentics\Cephalon.Agentics.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.AspNetCore.Grpc\Cephalon.AspNetCore.Grpc.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.AspNetCore.JsonRpc\Cephalon.AspNetCore.JsonRpc.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Cli\Cephalon.Cli.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Edge\Cephalon.Edge.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Engine\Cephalon.Engine.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Eventing\Cephalon.Eventing.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability\Cephalon.Observability.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.ReferenceDocs\Cephalon.ReferenceDocs.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Retrieval\Cephalon.Retrieval.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Scaffolding\Cephalon.Scaffolding.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Worker\Cephalon.Worker.csproj" />
+    <ProjectReference Include="..\..\samples\Cephalon.Sample.Microservice\Cephalon.Sample.Microservice.csproj" />
+    <ProjectReference Include="..\..\samples\Cephalon.Sample.ModularMonolith\Cephalon.Sample.ModularMonolith.csproj" />
+    <ProjectReference Include="..\..\samples\Cephalon.Sample.ModularVerticalSlice\Cephalon.Sample.ModularVerticalSlice.csproj" />
+  </ItemGroup>
+</Project>

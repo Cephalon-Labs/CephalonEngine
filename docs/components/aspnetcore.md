@@ -1,0 +1,59 @@
+# Cephalon.AspNetCore
+
+`Cephalon.AspNetCore` is the HTTP-first host core for Cephalon.
+
+## What it owns
+
+- ASP.NET Core service registration for the engine
+- project-level split-configuration loading through `AddCephalonProjectConfigurations()` and `AddCephalon(...)`
+- runtime startup and shutdown integration through hosted services
+- `/engine/*` metadata, status, diagnostics, and policy endpoints
+- `/engine/package-policy`, `/engine/packages`, and the rest of the engine governance surface
+- `/health`, `/health/live`, and `/health/ready` surfaces
+- OpenAPI and Scalar integration for REST APIs
+- optional hosted reference-doc delivery through `ReferenceDocs` host configuration
+- built-in REST, SSE, and WebSocket transport route mapping
+
+## Main surfaces
+
+- `Hosting/EngineWebApplicationBuilderExtensions.cs`
+- `Hosting/EngineWebApplicationExtensions.cs`
+- `Hosting/EngineHostedService.cs`
+- `Hosting/ITransportRouteMapper.cs`
+- `Documentation/ReferenceDocsHostingOptions.cs`
+- `Documentation/ReferenceDocsSurface.cs`
+- `Diagnostics/DiagnosticsSurface.cs`
+- `Health/LivenessHealthCheck.cs`
+- `Health/ReadinessHealthCheck.cs`
+- `Transports/Rest/IRestModule.cs`
+- `Transports/Rest/RestEndpointConventionBuilderExtensions.cs`
+- `Transports/Rest/RestTransportRouteMapper.cs`
+- `Transformers/*`
+
+## Source structure
+
+- `Diagnostics`
+- `Documentation`
+- `Health`
+- `Hosting`
+- `Modules`
+- `Transformers`
+- `Transports/Rest`
+- `Transports/ServerSentEvents`
+- `Transports/WebSockets`
+- `wwwroot/js`
+- `wwwroot/icons`
+
+## How it fits
+
+This package keeps the HTTP host thin. Most behavior stays in the engine or modules, while the host package maps runtime state and selected transports into ASP.NET Core primitives.
+
+When teams choose to publish XML-comment-driven reference output, this host can also serve those static assets directly. That hosting surface is optional and sits beside the hand-authored `.md` guides instead of replacing them.
+
+It also owns the ASP.NET Core side of Cephalon's split-configuration convention. Hosts can keep settings in `Configurations/Add*.json` and `Configurations/{group}/{Environment}.json`, and those files are loaded automatically when `AddCephalon(...)` runs.
+
+## Related docs
+
+- [Architecture](../architecture.md)
+- [Operations](../operations.md)
+- [Reference docs publishing](../reference-docs.md)

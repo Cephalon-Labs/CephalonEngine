@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option csharp_namespace = "Cephalon.AspNetCore.Grpc.Contracts.Discovery";
+
+package cephalon.transports.grpc.discovery;
+
+service DiscoveryService {
+  rpc SayHello (HelloRequest) returns (HelloReply);
+  rpc StreamPrinciples (PrinciplesRequest) returns (stream PrincipleReply);
+  rpc ExchangeGreetings (stream HelloRequest) returns (stream HelloReply);
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloReply {
+  string message = 1;
+  string generated_at_utc = 2;
+  repeated string traits = 3;
+}
+
+message PrinciplesRequest {
+}
+
+message PrincipleReply {
+  string principle = 1;
+}

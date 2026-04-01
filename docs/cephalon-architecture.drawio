@@ -1,0 +1,130 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.0.6 Chrome/138.0.7204.100 Electron/37.2.3 Safari/537.36" version="28.0.6">
+  <diagram id="cephalon-architecture" name="Cephalon Architecture">
+    <mxGraphModel dx="3026" dy="841" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Cephalon Future Engine / Framework" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=24;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="420" y="20" width="760" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Current repository foundation, host path, and next expansion direction" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="420" y="58" width="760" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="repo" value="Current Cephalon Foundation" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;fillColor=#f5f5f5;strokeColor=#666666;fontSize=16;fontStyle=1;align=left;verticalAlign=top;spacingLeft=14;spacingTop=12;" parent="1" vertex="1">
+          <mxGeometry x="-260" y="100" width="1590" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-modules" value="Module Layer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#2e7d32;" parent="1" vertex="1">
+          <mxGeometry x="120" y="138" width="180" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-core" value="Framework Core" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#1565c0;" parent="1" vertex="1">
+          <mxGeometry x="120" y="330" width="180" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-host" value="Host and Delivery" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#ef6c00;" parent="1" vertex="1">
+          <mxGeometry x="120" y="560" width="180" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="authors" value="Module Authors&#xa;Product Features&#xa;Domain Packs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="-60" y="280" width="170" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="platform-module" value="PlatformModule&#xa;foundation services&#xa;clock, runtime posture" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="170" y="180" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="discovery-module" value="DiscoveryModule&#xa;experience endpoints&#xa;hello, principles" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="450" y="180" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="future-module" value="Future Modules&#xa;plugins, AI skills,&#xa;domain capabilities" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5e0;strokeColor=#82b366;fontSize=13;fontStyle=1;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="730" y="180" width="250" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="abstractions" value="Cephalon.Abstractions&#xa;- ICephalonModule&#xa;- ModuleDescriptor&#xa;- Capability contracts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="100" y="380" width="290" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="engine" value="Cephalon.Engine&#xa;- validate registrations&#xa;- resolve dependency order&#xa;- configure services&#xa;- collect capabilities&#xa;- build runtime manifest" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cfe2f3;strokeColor=#3c78d8;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="540" y="360" width="380" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="manifest" value="Runtime Manifest&#xa;- modules&#xa;- capabilities&#xa;- generatedAtUtc" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe599;strokeColor=#bf9000;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="990" y="380" width="240" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="aspnet" value="Cephalon.AspNetCore&#xa;- AddCephalon(builder)&#xa;- MapCephalon(app)&#xa;- /engine, /health, /api/*" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f9cb9c;strokeColor=#e69138;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="180" y="610" width="280" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="playground" value="Cephalon.Playground&#xa;Program.cs&#xa;runnable reference host" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce5cd;strokeColor=#e69138;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="520" y="610" width="260" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="future-hosts" value="Future Hosts&#xa;worker, gRPC, desktop,&#xa;orchestration runtimes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fde9d9;strokeColor=#e69138;fontSize=13;fontStyle=1;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="840" y="610" width="280" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="tests-docs" value="Docs and Tests&#xa;README, architecture.md,&#xa;builder + HTTP tests" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ead1dc;strokeColor=#c27ba0;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1160" y="610" width="140" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="future" value="Next Expansion&#xa;- module auto-discovery&#xa;- lifecycle hooks&#xa;- workflow runtime&#xa;- observability&#xa;- packageable SDK" style="shape=cloud;whiteSpace=wrap;html=1;fillColor=#e8d5ff;strokeColor=#9673a6;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1360" y="320" width="210" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="builds features as modules" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#999999;fontSize=11;endArrow=block;endFill=1;" parent="1" source="authors" target="platform-module" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#999999;endArrow=block;endFill=1;" parent="1" source="authors" target="discovery-module" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#999999;endArrow=block;endFill=1;" parent="1" source="authors" target="future-module" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="implements contracts" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2e7d32;fontSize=11;endArrow=block;endFill=1;" parent="1" source="platform-module" target="abstractions" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2e7d32;endArrow=block;endFill=1;" parent="1" source="discovery-module" target="abstractions" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2e7d32;endArrow=block;endFill=1;" parent="1" source="future-module" target="abstractions" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="register services + capabilities" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#3c78d8;fontSize=11;endArrow=block;endFill=1;" parent="1" source="platform-module" target="engine" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="depends on platform" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#3c78d8;fontSize=11;endArrow=block;endFill=1;" parent="1" source="discovery-module" target="engine" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="foundation contracts" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;fontSize=11;endArrow=block;endFill=1;" parent="1" source="abstractions" target="engine" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" value="produces" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#bf9000;fontSize=11;endArrow=block;endFill=1;" parent="1" source="engine" target="manifest" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" value="runtime consumed by host" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ef6c00;fontSize=11;endArrow=block;endFill=1;" parent="1" source="engine" target="aspnet" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="640" y="570" />
+              <mxPoint x="320" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e12" value="uses adapter" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ef6c00;fontSize=11;endArrow=block;endFill=1;" parent="1" source="playground" target="aspnet" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" value="same runtime shape" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ef6c00;fontSize=11;endArrow=block;endFill=1;" parent="1" source="engine" target="future-hosts" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" value="documents and verifies" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#c27ba0;fontSize=11;endArrow=block;endFill=1;" parent="1" source="tests-docs" target="engine" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#c27ba0;endArrow=block;endFill=1;" parent="1" source="tests-docs" target="aspnet" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" value="next" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9673a6;fontSize=11;dashed=1;endArrow=block;endFill=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" parent="1" source="engine" target="future" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="825" y="290" />
+              <mxPoint x="1465" y="290" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e17" value="introspection endpoints" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#bf9000;fontSize=11;endArrow=block;endFill=1;" parent="1" source="manifest" target="aspnet" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1110" y="540" />
+              <mxPoint x="320" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

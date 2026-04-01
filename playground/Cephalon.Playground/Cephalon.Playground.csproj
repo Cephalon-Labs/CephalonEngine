@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Description>Runnable playground for the Cephalon engine foundation.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Cephalon.Agentics\Cephalon.Agentics.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.AspNetCore.Grpc\Cephalon.AspNetCore.Grpc.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.AspNetCore.JsonRpc\Cephalon.AspNetCore.JsonRpc.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Edge\Cephalon.Edge.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Eventing\Cephalon.Eventing.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability\Cephalon.Observability.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Retrieval\Cephalon.Retrieval.csproj" />
+  </ItemGroup>
+</Project>

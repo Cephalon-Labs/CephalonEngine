@@ -1,0 +1,213 @@
+# Type Index
+
+Browse the published API surface by public type.
+
+[Back to reference index](README.md)
+
+## A
+
+- [AgenticEngineBuilderExtensions](cephalon-agentics.md#type-cephalon-agentics-registration-agenticenginebuilderextensions): `Cephalon.Agentics.Registration` in `Cephalon.Agentics` [Browse](browse.html?q=AgenticEngineBuilderExtensions&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Registration)
+- [AgenticRuntimeOptions](cephalon-agentics.md#type-cephalon-agentics-configuration-agenticruntimeoptions): `Cephalon.Agentics.Configuration` in `Cephalon.Agentics` [Browse](browse.html?q=AgenticRuntimeOptions&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Configuration)
+- [AgentToolDescriptor](cephalon-agentics.md#type-cephalon-agentics-services-agenttooldescriptor): `Cephalon.Agentics.Services` in `Cephalon.Agentics` [Browse](browse.html?q=AgentToolDescriptor&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services)
+- [AppBlueprint](cephalon-abstractions.md#type-cephalon-abstractions-appmodel-appblueprint): `Cephalon.Abstractions.AppModel` in `Cephalon.Abstractions` [Browse](browse.html?q=AppBlueprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel)
+- [AppProfile](cephalon-abstractions.md#type-cephalon-abstractions-appmodel-appprofile): `Cephalon.Abstractions.AppModel` in `Cephalon.Abstractions` [Browse](browse.html?q=AppProfile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel)
+- [AppProfileFactory](cephalon-engine.md#type-cephalon-engine-appmodel-appprofilefactory): `Cephalon.Engine.AppModel` in `Cephalon.Engine` [Browse](browse.html?q=AppProfileFactory&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel)
+
+## B
+
+- [BuiltInBlueprints](cephalon-engine.md#type-cephalon-engine-appmodel-builtinblueprints): `Cephalon.Engine.AppModel` in `Cephalon.Engine` [Browse](browse.html?q=BuiltInBlueprints&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel)
+- [BuiltInPatterns](cephalon-engine.md#type-cephalon-engine-patterns-builtinpatterns): `Cephalon.Engine.Patterns` in `Cephalon.Engine` [Browse](browse.html?q=BuiltInPatterns&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns)
+- [BuiltInScaffolds](cephalon-engine.md#type-cephalon-engine-appmodel-scaffolding-builtinscaffolds): `Cephalon.Engine.AppModel.Scaffolding` in `Cephalon.Engine` [Browse](browse.html?q=BuiltInScaffolds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel.Scaffolding)
+- [BuiltInTechnologies](cephalon-engine.md#type-cephalon-engine-technologies-builtintechnologies): `Cephalon.Engine.Technologies` in `Cephalon.Engine` [Browse](browse.html?q=BuiltInTechnologies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies)
+- [BuiltInTransports](cephalon-engine.md#type-cephalon-engine-transports-builtintransports): `Cephalon.Engine.Transports` in `Cephalon.Engine` [Browse](browse.html?q=BuiltInTransports&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports)
+
+## C
+
+- [Capability](cephalon-abstractions.md#type-cephalon-abstractions-capabilities-capability): `Cephalon.Abstractions.Capabilities` in `Cephalon.Abstractions` [Browse](browse.html?q=Capability&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities)
+- [CapabilityAccess](cephalon-abstractions.md#type-cephalon-abstractions-capabilities-capabilityaccess): `Cephalon.Abstractions.Capabilities` in `Cephalon.Abstractions` [Browse](browse.html?q=CapabilityAccess&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities)
+- [CapabilityManifest](cephalon-engine.md#type-cephalon-engine-manifest-capabilitymanifest): `Cephalon.Engine.Manifest` in `Cephalon.Engine` [Browse](browse.html?q=CapabilityManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest)
+- [CapabilityPolicyDecision](cephalon-engine.md#type-cephalon-engine-trust-capabilitypolicydecision): `Cephalon.Engine.Trust` in `Cephalon.Engine` [Browse](browse.html?q=CapabilityPolicyDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust)
+- [CapabilityPolicyEvaluator](cephalon-engine.md#type-cephalon-engine-trust-capabilitypolicyevaluator): `Cephalon.Engine.Trust` in `Cephalon.Engine` [Browse](browse.html?q=CapabilityPolicyEvaluator&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust)
+- [CliApplication](cephalon-cli.md#type-cephalon-cli-cliapplication): `Cephalon.Cli` in `Cephalon.Cli` [Browse](browse.html?q=CliApplication&assembly=Cephalon.Cli&namespace=Cephalon.Cli)
+
+## D
+
+- [DependencyHealthReport](cephalon-abstractions.md#type-cephalon-abstractions-health-dependencyhealthreport): `Cephalon.Abstractions.Health` in `Cephalon.Abstractions` [Browse](browse.html?q=DependencyHealthReport&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health)
+- [DiagnosticsSurface](cephalon-aspnetcore.md#type-cephalon-aspnetcore-diagnostics-diagnosticssurface): `Cephalon.AspNetCore.Diagnostics` in `Cephalon.AspNetCore` [Browse](browse.html?q=DiagnosticsSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics)
+- [DiscoveryReflection](cephalon-aspnetcore-grpc.md#type-cephalon-aspnetcore-grpc-contracts-discovery-discoveryreflection): `Cephalon.AspNetCore.Grpc.Contracts.Discovery` in `Cephalon.AspNetCore.Grpc` [Browse](browse.html?q=DiscoveryReflection&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery)
+- [DiscoveryService](cephalon-aspnetcore-grpc.md#type-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice): `Cephalon.AspNetCore.Grpc.Contracts.Discovery` in `Cephalon.AspNetCore.Grpc` [Browse](browse.html?q=DiscoveryService&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery)
+- [DiscoveryServiceBase](cephalon-aspnetcore-grpc.md#type-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservicebase): `Cephalon.AspNetCore.Grpc.Contracts.Discovery` in `Cephalon.AspNetCore.Grpc` [Browse](browse.html?q=DiscoveryServiceBase&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery)
+- [DiscoveryServiceClient](cephalon-aspnetcore-grpc.md#type-cephalon-aspnetcore-grpc-contracts-discovery-discoveryserviceclient): `Cephalon.AspNetCore.Grpc.Contracts.Discovery` in `Cephalon.AspNetCore.Grpc` [Browse](browse.html?q=DiscoveryServiceClient&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery)
+
+## E
+
+- [EdgeEngineBuilderExtensions](cephalon-edge.md#type-cephalon-edge-registration-edgeenginebuilderextensions): `Cephalon.Edge.Registration` in `Cephalon.Edge` [Browse](browse.html?q=EdgeEngineBuilderExtensions&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Registration)
+- [EdgeNodeDescriptor](cephalon-edge.md#type-cephalon-edge-services-edgenodedescriptor): `Cephalon.Edge.Services` in `Cephalon.Edge` [Browse](browse.html?q=EdgeNodeDescriptor&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services)
+- [EdgeRuntimeOptions](cephalon-edge.md#type-cephalon-edge-configuration-edgeruntimeoptions): `Cephalon.Edge.Configuration` in `Cephalon.Edge` [Browse](browse.html?q=EdgeRuntimeOptions&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Configuration)
+- [EngineBuilder](cephalon-engine.md#type-cephalon-engine-composition-enginebuilder): `Cephalon.Engine.Composition` in `Cephalon.Engine` [Browse](browse.html?q=EngineBuilder&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition)
+- [EngineDiagnostics](cephalon-engine.md#type-cephalon-engine-diagnostics-enginediagnostics): `Cephalon.Engine.Diagnostics` in `Cephalon.Engine` [Browse](browse.html?q=EngineDiagnostics&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics)
+- [EngineOptions](cephalon-engine.md#type-cephalon-engine-configuration-engineoptions): `Cephalon.Engine.Configuration` in `Cephalon.Engine` [Browse](browse.html?q=EngineOptions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+- [EngineRuntime](cephalon-engine.md#type-cephalon-engine-runtime-engineruntime): `Cephalon.Engine.Runtime` in `Cephalon.Engine` [Browse](browse.html?q=EngineRuntime&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime)
+- [EngineServiceCollectionExtensions](cephalon-engine.md#type-cephalon-engine-composition-engineservicecollectionextensions): `Cephalon.Engine.Composition` in `Cephalon.Engine` [Browse](browse.html?q=EngineServiceCollectionExtensions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition)
+- [EngineSettings](cephalon-engine.md#type-cephalon-engine-configuration-enginesettings): `Cephalon.Engine.Configuration` in `Cephalon.Engine` [Browse](browse.html?q=EngineSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+- [EngineWebApplicationBuilderExtensions](cephalon-aspnetcore.md#type-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions): `Cephalon.AspNetCore.Hosting` in `Cephalon.AspNetCore` [Browse](browse.html?q=EngineWebApplicationBuilderExtensions&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting)
+- [EngineWebApplicationExtensions](cephalon-aspnetcore.md#type-cephalon-aspnetcore-hosting-enginewebapplicationextensions): `Cephalon.AspNetCore.Hosting` in `Cephalon.AspNetCore` [Browse](browse.html?q=EngineWebApplicationExtensions&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting)
+- [EventChannelDescriptor](cephalon-eventing.md#type-cephalon-eventing-services-eventchanneldescriptor): `Cephalon.Eventing.Services` in `Cephalon.Eventing` [Browse](browse.html?q=EventChannelDescriptor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
+- [EventingEngineBuilderExtensions](cephalon-eventing.md#type-cephalon-eventing-registration-eventingenginebuilderextensions): `Cephalon.Eventing.Registration` in `Cephalon.Eventing` [Browse](browse.html?q=EventingEngineBuilderExtensions&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Registration)
+- [EventingOptions](cephalon-eventing.md#type-cephalon-eventing-configuration-eventingoptions): `Cephalon.Eventing.Configuration` in `Cephalon.Eventing` [Browse](browse.html?q=EventingOptions&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration)
+
+## F
+
+- [FailurePolicy](cephalon-engine.md#type-cephalon-engine-configuration-failurepolicy): `Cephalon.Engine.Configuration` in `Cephalon.Engine` [Browse](browse.html?q=FailurePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+- [FileSystemScaffoldWriter](cephalon-scaffolding.md#type-cephalon-scaffolding-io-filesystemscaffoldwriter): `Cephalon.Scaffolding.IO` in `Cephalon.Scaffolding` [Browse](browse.html?q=FileSystemScaffoldWriter&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.IO)
+
+## G
+
+- [GrpcTransportServiceCollectionExtensions](cephalon-aspnetcore-grpc.md#type-cephalon-aspnetcore-grpc-hosting-grpctransportservicecollectionextensions): `Cephalon.AspNetCore.Grpc.Hosting` in `Cephalon.AspNetCore.Grpc` [Browse](browse.html?q=GrpcTransportServiceCollectionExtensions&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Hosting)
+
+## H
+
+- [HealthState](cephalon-abstractions.md#type-cephalon-abstractions-health-healthstate): `Cephalon.Abstractions.Health` in `Cephalon.Abstractions` [Browse](browse.html?q=HealthState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health)
+- [HelloReply](cephalon-aspnetcore-grpc.md#type-cephalon-aspnetcore-grpc-contracts-discovery-helloreply): `Cephalon.AspNetCore.Grpc.Contracts.Discovery` in `Cephalon.AspNetCore.Grpc` [Browse](browse.html?q=HelloReply&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery)
+- [HelloRequest](cephalon-aspnetcore-grpc.md#type-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest): `Cephalon.AspNetCore.Grpc.Contracts.Discovery` in `Cephalon.AspNetCore.Grpc` [Browse](browse.html?q=HelloRequest&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery)
+
+## I
+
+- [IAgentToolCatalog](cephalon-agentics.md#type-cephalon-agentics-services-iagenttoolcatalog): `Cephalon.Agentics.Services` in `Cephalon.Agentics` [Browse](browse.html?q=IAgentToolCatalog&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services)
+- [IAgentToolContributor](cephalon-agentics.md#type-cephalon-agentics-services-iagenttoolcontributor): `Cephalon.Agentics.Services` in `Cephalon.Agentics` [Browse](browse.html?q=IAgentToolContributor&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services)
+- [IAgentToolRegistry](cephalon-agentics.md#type-cephalon-agentics-services-iagenttoolregistry): `Cephalon.Agentics.Services` in `Cephalon.Agentics` [Browse](browse.html?q=IAgentToolRegistry&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services)
+- [ICapabilityRegistry](cephalon-abstractions.md#type-cephalon-abstractions-capabilities-icapabilityregistry): `Cephalon.Abstractions.Capabilities` in `Cephalon.Abstractions` [Browse](browse.html?q=ICapabilityRegistry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities)
+- [IDependencyHealthContributor](cephalon-abstractions.md#type-cephalon-abstractions-health-idependencyhealthcontributor): `Cephalon.Abstractions.Health` in `Cephalon.Abstractions` [Browse](browse.html?q=IDependencyHealthContributor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health)
+- [IEdgeNodeCatalog](cephalon-edge.md#type-cephalon-edge-services-iedgenodecatalog): `Cephalon.Edge.Services` in `Cephalon.Edge` [Browse](browse.html?q=IEdgeNodeCatalog&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services)
+- [IEdgeNodeContributor](cephalon-edge.md#type-cephalon-edge-services-iedgenodecontributor): `Cephalon.Edge.Services` in `Cephalon.Edge` [Browse](browse.html?q=IEdgeNodeContributor&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services)
+- [IEdgeNodeRegistry](cephalon-edge.md#type-cephalon-edge-services-iedgenoderegistry): `Cephalon.Edge.Services` in `Cephalon.Edge` [Browse](browse.html?q=IEdgeNodeRegistry&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services)
+- [IEndpointModule](cephalon-aspnetcore.md#type-cephalon-aspnetcore-modules-iendpointmodule): `Cephalon.AspNetCore.Modules` in `Cephalon.AspNetCore` [Browse](browse.html?q=IEndpointModule&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Modules)
+- [IEventChannelCatalog](cephalon-eventing.md#type-cephalon-eventing-services-ieventchannelcatalog): `Cephalon.Eventing.Services` in `Cephalon.Eventing` [Browse](browse.html?q=IEventChannelCatalog&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
+- [IEventChannelContributor](cephalon-eventing.md#type-cephalon-eventing-services-ieventchannelcontributor): `Cephalon.Eventing.Services` in `Cephalon.Eventing` [Browse](browse.html?q=IEventChannelContributor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
+- [IEventChannelRegistry](cephalon-eventing.md#type-cephalon-eventing-services-ieventchannelregistry): `Cephalon.Eventing.Services` in `Cephalon.Eventing` [Browse](browse.html?q=IEventChannelRegistry&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
+- [IGrpcModule](cephalon-aspnetcore-grpc.md#type-cephalon-aspnetcore-grpc-modules-igrpcmodule): `Cephalon.AspNetCore.Grpc.Modules` in `Cephalon.AspNetCore.Grpc` [Browse](browse.html?q=IGrpcModule&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Modules)
+- [IJsonRpcModule](cephalon-aspnetcore-jsonrpc.md#type-cephalon-aspnetcore-jsonrpc-modules-ijsonrpcmodule): `Cephalon.AspNetCore.JsonRpc.Modules` in `Cephalon.AspNetCore.JsonRpc` [Browse](browse.html?q=IJsonRpcModule&assembly=Cephalon.AspNetCore.JsonRpc&namespace=Cephalon.AspNetCore.JsonRpc.Modules)
+- [IKnowledgeCatalog](cephalon-retrieval.md#type-cephalon-retrieval-services-iknowledgecatalog): `Cephalon.Retrieval.Services` in `Cephalon.Retrieval` [Browse](browse.html?q=IKnowledgeCatalog&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services)
+- [IKnowledgeCollectionContributor](cephalon-retrieval.md#type-cephalon-retrieval-services-iknowledgecollectioncontributor): `Cephalon.Retrieval.Services` in `Cephalon.Retrieval` [Browse](browse.html?q=IKnowledgeCollectionContributor&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services)
+- [IKnowledgeCollectionRegistry](cephalon-retrieval.md#type-cephalon-retrieval-services-iknowledgecollectionregistry): `Cephalon.Retrieval.Services` in `Cephalon.Retrieval` [Browse](browse.html?q=IKnowledgeCollectionRegistry&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services)
+- [ILocalizedResourceContributor](cephalon-abstractions.md#type-cephalon-abstractions-localization-ilocalizedresourcecontributor): `Cephalon.Abstractions.Localization` in `Cephalon.Abstractions` [Browse](browse.html?q=ILocalizedResourceContributor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization)
+- [ILocalizedResourceRegistry](cephalon-abstractions.md#type-cephalon-abstractions-localization-ilocalizedresourceregistry): `Cephalon.Abstractions.Localization` in `Cephalon.Abstractions` [Browse](browse.html?q=ILocalizedResourceRegistry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization)
+- [ILocalizedTextCatalog](cephalon-abstractions.md#type-cephalon-abstractions-localization-ilocalizedtextcatalog): `Cephalon.Abstractions.Localization` in `Cephalon.Abstractions` [Browse](browse.html?q=ILocalizedTextCatalog&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization)
+- [IModule](cephalon-abstractions.md#type-cephalon-abstractions-modules-imodule): `Cephalon.Abstractions.Modules` in `Cephalon.Abstractions` [Browse](browse.html?q=IModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules)
+- [IModuleLifecycle](cephalon-abstractions.md#type-cephalon-abstractions-modules-imodulelifecycle): `Cephalon.Abstractions.Modules` in `Cephalon.Abstractions` [Browse](browse.html?q=IModuleLifecycle&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules)
+- [IRestModule](cephalon-aspnetcore.md#type-cephalon-aspnetcore-transports-rest-irestmodule): `Cephalon.AspNetCore.Transports.Rest` in `Cephalon.AspNetCore` [Browse](browse.html?q=IRestModule&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest)
+- [IRuntime](cephalon-engine.md#type-cephalon-engine-runtime-iruntime): `Cephalon.Engine.Runtime` in `Cephalon.Engine` [Browse](browse.html?q=IRuntime&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime)
+- [IRuntimeIntrospectionSnapshotProvider](cephalon-engine.md#type-cephalon-engine-runtime-iruntimeintrospectionsnapshotprovider): `Cephalon.Engine.Runtime` in `Cephalon.Engine` [Browse](browse.html?q=IRuntimeIntrospectionSnapshotProvider&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime)
+- [IServerSentEventsModule](cephalon-aspnetcore.md#type-cephalon-aspnetcore-transports-serversentevents-iserversenteventsmodule): `Cephalon.AspNetCore.Transports.ServerSentEvents` in `Cephalon.AspNetCore` [Browse](browse.html?q=IServerSentEventsModule&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.ServerSentEvents)
+- [ITechnologyCapabilityContributor](cephalon-abstractions.md#type-cephalon-abstractions-technologies-itechnologycapabilitycontributor): `Cephalon.Abstractions.Technologies` in `Cephalon.Abstractions` [Browse](browse.html?q=ITechnologyCapabilityContributor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies)
+- [ITechnologyContributor](cephalon-abstractions.md#type-cephalon-abstractions-technologies-itechnologycontributor): `Cephalon.Abstractions.Technologies` in `Cephalon.Abstractions` [Browse](browse.html?q=ITechnologyContributor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies)
+- [ITechnologyRegistry](cephalon-abstractions.md#type-cephalon-abstractions-technologies-itechnologyregistry): `Cephalon.Abstractions.Technologies` in `Cephalon.Abstractions` [Browse](browse.html?q=ITechnologyRegistry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies)
+- [ITechnologyRuntimeCatalog](cephalon-abstractions.md#type-cephalon-abstractions-technologies-itechnologyruntimecatalog): `Cephalon.Abstractions.Technologies` in `Cephalon.Abstractions` [Browse](browse.html?q=ITechnologyRuntimeCatalog&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies)
+- [ITechnologyRuntimeContributor](cephalon-abstractions.md#type-cephalon-abstractions-technologies-itechnologyruntimecontributor): `Cephalon.Abstractions.Technologies` in `Cephalon.Abstractions` [Browse](browse.html?q=ITechnologyRuntimeContributor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies)
+- [ITechnologyServiceContributor](cephalon-abstractions.md#type-cephalon-abstractions-technologies-itechnologyservicecontributor): `Cephalon.Abstractions.Technologies` in `Cephalon.Abstractions` [Browse](browse.html?q=ITechnologyServiceContributor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies)
+- [ITransportRouteMapper](cephalon-aspnetcore.md#type-cephalon-aspnetcore-hosting-itransportroutemapper): `Cephalon.AspNetCore.Hosting` in `Cephalon.AspNetCore` [Browse](browse.html?q=ITransportRouteMapper&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting)
+- [IWebSocketModule](cephalon-aspnetcore.md#type-cephalon-aspnetcore-transports-websockets-iwebsocketmodule): `Cephalon.AspNetCore.Transports.WebSockets` in `Cephalon.AspNetCore` [Browse](browse.html?q=IWebSocketModule&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.WebSockets)
+
+## J
+
+- [JsonRpcTransportServiceCollectionExtensions](cephalon-aspnetcore-jsonrpc.md#type-cephalon-aspnetcore-jsonrpc-hosting-jsonrpctransportservicecollectionextensions): `Cephalon.AspNetCore.JsonRpc.Hosting` in `Cephalon.AspNetCore.JsonRpc` [Browse](browse.html?q=JsonRpcTransportServiceCollectionExtensions&assembly=Cephalon.AspNetCore.JsonRpc&namespace=Cephalon.AspNetCore.JsonRpc.Hosting)
+
+## K
+
+- [KnowledgeCollectionDescriptor](cephalon-retrieval.md#type-cephalon-retrieval-services-knowledgecollectiondescriptor): `Cephalon.Retrieval.Services` in `Cephalon.Retrieval` [Browse](browse.html?q=KnowledgeCollectionDescriptor&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services)
+
+## L
+
+- [LocalizationSettings](cephalon-engine.md#type-cephalon-engine-configuration-localizationsettings): `Cephalon.Engine.Configuration` in `Cephalon.Engine` [Browse](browse.html?q=LocalizationSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+- [LocalizedResourcesSnapshot](cephalon-abstractions.md#type-cephalon-abstractions-localization-localizedresourcessnapshot): `Cephalon.Abstractions.Localization` in `Cephalon.Abstractions` [Browse](browse.html?q=LocalizedResourcesSnapshot&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization)
+- [LocalizedTextCatalog](cephalon-engine.md#type-cephalon-engine-localization-localizedtextcatalog): `Cephalon.Engine.Localization` in `Cephalon.Engine` [Browse](browse.html?q=LocalizedTextCatalog&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization)
+
+## M
+
+- [ModuleBase](cephalon-abstractions.md#type-cephalon-abstractions-modules-modulebase): `Cephalon.Abstractions.Modules` in `Cephalon.Abstractions` [Browse](browse.html?q=ModuleBase&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules)
+- [ModuleContext](cephalon-abstractions.md#type-cephalon-abstractions-modules-modulecontext): `Cephalon.Abstractions.Modules` in `Cephalon.Abstractions` [Browse](browse.html?q=ModuleContext&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules)
+- [ModuleDescriptor](cephalon-abstractions.md#type-cephalon-abstractions-modules-moduledescriptor): `Cephalon.Abstractions.Modules` in `Cephalon.Abstractions` [Browse](browse.html?q=ModuleDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules)
+- [ModuleDiscoverySettings](cephalon-engine.md#type-cephalon-engine-configuration-modulediscoverysettings): `Cephalon.Engine.Configuration` in `Cephalon.Engine` [Browse](browse.html?q=ModuleDiscoverySettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+- [ModuleManifest](cephalon-engine.md#type-cephalon-engine-manifest-modulemanifest): `Cephalon.Engine.Manifest` in `Cephalon.Engine` [Browse](browse.html?q=ModuleManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest)
+- [ModulePackageDirectory](cephalon-engine.md#type-cephalon-engine-configuration-modulepackagedirectory): `Cephalon.Engine.Configuration` in `Cephalon.Engine` [Browse](browse.html?q=ModulePackageDirectory&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+- [ModulePackageReference](cephalon-engine.md#type-cephalon-engine-configuration-modulepackagereference): `Cephalon.Engine.Configuration` in `Cephalon.Engine` [Browse](browse.html?q=ModulePackageReference&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+
+## O
+
+- [ObservabilityOptions](cephalon-observability.md#type-cephalon-observability-configuration-observabilityoptions): `Cephalon.Observability.Configuration` in `Cephalon.Observability` [Browse](browse.html?q=ObservabilityOptions&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration)
+- [ObservabilityServiceCollectionExtensions](cephalon-observability.md#type-cephalon-observability-hosting-observabilityservicecollectionextensions): `Cephalon.Observability.Hosting` in `Cephalon.Observability` [Browse](browse.html?q=ObservabilityServiceCollectionExtensions&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Hosting)
+
+## P
+
+- [PackageManifest](cephalon-engine.md#type-cephalon-engine-manifest-packagemanifest): `Cephalon.Engine.Manifest` in `Cephalon.Engine` [Browse](browse.html?q=PackageManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest)
+- [PackagePolicy](cephalon-engine.md#type-cephalon-engine-configuration-packagepolicy): `Cephalon.Engine.Configuration` in `Cephalon.Engine` [Browse](browse.html?q=PackagePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+- [PackageSignatureManifest](cephalon-engine.md#type-cephalon-engine-manifest-packagesignaturemanifest): `Cephalon.Engine.Manifest` in `Cephalon.Engine` [Browse](browse.html?q=PackageSignatureManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest)
+- [PackageSignatureTrustDecision](cephalon-engine.md#type-cephalon-engine-trust-packagesignaturetrustdecision): `Cephalon.Engine.Trust` in `Cephalon.Engine` [Browse](browse.html?q=PackageSignatureTrustDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust)
+- [PackageTrustDecision](cephalon-engine.md#type-cephalon-engine-trust-packagetrustdecision): `Cephalon.Engine.Trust` in `Cephalon.Engine` [Browse](browse.html?q=PackageTrustDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust)
+- [PatternDescriptor](cephalon-abstractions.md#type-cephalon-abstractions-patterns-patterndescriptor): `Cephalon.Abstractions.Patterns` in `Cephalon.Abstractions` [Browse](browse.html?q=PatternDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns)
+- [PatternKind](cephalon-abstractions.md#type-cephalon-abstractions-patterns-patternkind): `Cephalon.Abstractions.Patterns` in `Cephalon.Abstractions` [Browse](browse.html?q=PatternKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns)
+- [PrincipleReply](cephalon-aspnetcore-grpc.md#type-cephalon-aspnetcore-grpc-contracts-discovery-principlereply): `Cephalon.AspNetCore.Grpc.Contracts.Discovery` in `Cephalon.AspNetCore.Grpc` [Browse](browse.html?q=PrincipleReply&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery)
+- [PrinciplesRequest](cephalon-aspnetcore-grpc.md#type-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest): `Cephalon.AspNetCore.Grpc.Contracts.Discovery` in `Cephalon.AspNetCore.Grpc` [Browse](browse.html?q=PrinciplesRequest&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery)
+- [ProjectConfigurationBuilderExtensions](cephalon-engine.md#type-cephalon-engine-configuration-projectconfigurationbuilderextensions): `Cephalon.Engine.Configuration` in `Cephalon.Engine` [Browse](browse.html?q=ProjectConfigurationBuilderExtensions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+- [ProjectRoles](cephalon-abstractions.md#type-cephalon-abstractions-appmodel-scaffolding-projectroles): `Cephalon.Abstractions.AppModel.Scaffolding` in `Cephalon.Abstractions` [Browse](browse.html?q=ProjectRoles&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding)
+
+## R
+
+- [ReferenceDocFile](cephalon-referencedocs.md#type-cephalon-referencedocs-generation-referencedocfile): `Cephalon.ReferenceDocs.Generation` in `Cephalon.ReferenceDocs` [Browse](browse.html?q=ReferenceDocFile&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation)
+- [ReferenceDocsApplication](cephalon-referencedocs.md#type-cephalon-referencedocs-referencedocsapplication): `Cephalon.ReferenceDocs` in `Cephalon.ReferenceDocs` [Browse](browse.html?q=ReferenceDocsApplication&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs)
+- [ReferenceDocsGenerator](cephalon-referencedocs.md#type-cephalon-referencedocs-generation-referencedocsgenerator): `Cephalon.ReferenceDocs.Generation` in `Cephalon.ReferenceDocs` [Browse](browse.html?q=ReferenceDocsGenerator&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation)
+- [ReferenceDocsHostingOptions](cephalon-aspnetcore.md#type-cephalon-aspnetcore-documentation-referencedocshostingoptions): `Cephalon.AspNetCore.Documentation` in `Cephalon.AspNetCore` [Browse](browse.html?q=ReferenceDocsHostingOptions&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation)
+- [ReferenceDocsRequest](cephalon-referencedocs.md#type-cephalon-referencedocs-generation-referencedocsrequest): `Cephalon.ReferenceDocs.Generation` in `Cephalon.ReferenceDocs` [Browse](browse.html?q=ReferenceDocsRequest&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation)
+- [ReferenceDocsSurface](cephalon-aspnetcore.md#type-cephalon-aspnetcore-documentation-referencedocssurface): `Cephalon.AspNetCore.Documentation` in `Cephalon.AspNetCore` [Browse](browse.html?q=ReferenceDocsSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation)
+- [ReferenceDocsWriter](cephalon-referencedocs.md#type-cephalon-referencedocs-io-referencedocswriter): `Cephalon.ReferenceDocs.IO` in `Cephalon.ReferenceDocs` [Browse](browse.html?q=ReferenceDocsWriter&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.IO)
+- [RenderedFile](cephalon-scaffolding.md#type-cephalon-scaffolding-generation-renderedfile): `Cephalon.Scaffolding.Generation` in `Cephalon.Scaffolding` [Browse](browse.html?q=RenderedFile&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation)
+- [RenderedFolder](cephalon-scaffolding.md#type-cephalon-scaffolding-generation-renderedfolder): `Cephalon.Scaffolding.Generation` in `Cephalon.Scaffolding` [Browse](browse.html?q=RenderedFolder&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation)
+- [RenderedProject](cephalon-scaffolding.md#type-cephalon-scaffolding-generation-renderedproject): `Cephalon.Scaffolding.Generation` in `Cephalon.Scaffolding` [Browse](browse.html?q=RenderedProject&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation)
+- [RenderedReferenceDocs](cephalon-referencedocs.md#type-cephalon-referencedocs-generation-renderedreferencedocs): `Cephalon.ReferenceDocs.Generation` in `Cephalon.ReferenceDocs` [Browse](browse.html?q=RenderedReferenceDocs&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation)
+- [RenderedScaffold](cephalon-scaffolding.md#type-cephalon-scaffolding-generation-renderedscaffold): `Cephalon.Scaffolding.Generation` in `Cephalon.Scaffolding` [Browse](browse.html?q=RenderedScaffold&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation)
+- [RestEndpointConventionBuilderExtensions](cephalon-aspnetcore.md#type-cephalon-aspnetcore-transports-rest-restendpointconventionbuilderextensions): `Cephalon.AspNetCore.Transports.Rest` in `Cephalon.AspNetCore` [Browse](browse.html?q=RestEndpointConventionBuilderExtensions&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest)
+- [RetrievalEngineBuilderExtensions](cephalon-retrieval.md#type-cephalon-retrieval-registration-retrievalenginebuilderextensions): `Cephalon.Retrieval.Registration` in `Cephalon.Retrieval` [Browse](browse.html?q=RetrievalEngineBuilderExtensions&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Registration)
+- [RetrievalOptions](cephalon-retrieval.md#type-cephalon-retrieval-configuration-retrievaloptions): `Cephalon.Retrieval.Configuration` in `Cephalon.Retrieval` [Browse](browse.html?q=RetrievalOptions&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration)
+- [RuntimeFailureInfo](cephalon-engine.md#type-cephalon-engine-runtime-runtimefailureinfo): `Cephalon.Engine.Runtime` in `Cephalon.Engine` [Browse](browse.html?q=RuntimeFailureInfo&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime)
+- [RuntimeHealthEvaluator](cephalon-engine.md#type-cephalon-engine-runtime-runtimehealthevaluator): `Cephalon.Engine.Runtime` in `Cephalon.Engine` [Browse](browse.html?q=RuntimeHealthEvaluator&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime)
+- [RuntimeHealthReport](cephalon-engine.md#type-cephalon-engine-runtime-runtimehealthreport): `Cephalon.Engine.Runtime` in `Cephalon.Engine` [Browse](browse.html?q=RuntimeHealthReport&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime)
+- [RuntimeHealthState](cephalon-engine.md#type-cephalon-engine-runtime-runtimehealthstate): `Cephalon.Engine.Runtime` in `Cephalon.Engine` [Browse](browse.html?q=RuntimeHealthState&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime)
+- [RuntimeIntrospectionSnapshot](cephalon-engine.md#type-cephalon-engine-runtime-runtimeintrospectionsnapshot): `Cephalon.Engine.Runtime` in `Cephalon.Engine` [Browse](browse.html?q=RuntimeIntrospectionSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime)
+- [RuntimeManifest](cephalon-engine.md#type-cephalon-engine-manifest-runtimemanifest): `Cephalon.Engine.Manifest` in `Cephalon.Engine` [Browse](browse.html?q=RuntimeManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest)
+- [RuntimeStatus](cephalon-engine.md#type-cephalon-engine-runtime-runtimestatus): `Cephalon.Engine.Runtime` in `Cephalon.Engine` [Browse](browse.html?q=RuntimeStatus&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime)
+- [RuntimeStatusSnapshot](cephalon-engine.md#type-cephalon-engine-runtime-runtimestatussnapshot): `Cephalon.Engine.Runtime` in `Cephalon.Engine` [Browse](browse.html?q=RuntimeStatusSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime)
+
+## S
+
+- [ScaffoldFolder](cephalon-abstractions.md#type-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder): `Cephalon.Abstractions.AppModel.Scaffolding` in `Cephalon.Abstractions` [Browse](browse.html?q=ScaffoldFolder&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding)
+- [ScaffoldGenerator](cephalon-scaffolding.md#type-cephalon-scaffolding-generation-scaffoldgenerator): `Cephalon.Scaffolding.Generation` in `Cephalon.Scaffolding` [Browse](browse.html?q=ScaffoldGenerator&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation)
+- [ScaffoldPlan](cephalon-abstractions.md#type-cephalon-abstractions-appmodel-scaffolding-scaffoldplan): `Cephalon.Abstractions.AppModel.Scaffolding` in `Cephalon.Abstractions` [Browse](browse.html?q=ScaffoldPlan&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding)
+- [ScaffoldProject](cephalon-abstractions.md#type-cephalon-abstractions-appmodel-scaffolding-scaffoldproject): `Cephalon.Abstractions.AppModel.Scaffolding` in `Cephalon.Abstractions` [Browse](browse.html?q=ScaffoldProject&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding)
+- [ScaffoldRequest](cephalon-scaffolding.md#type-cephalon-scaffolding-generation-scaffoldrequest): `Cephalon.Scaffolding.Generation` in `Cephalon.Scaffolding` [Browse](browse.html?q=ScaffoldRequest&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation)
+- [ScaffoldScopes](cephalon-abstractions.md#type-cephalon-abstractions-appmodel-scaffolding-scaffoldscopes): `Cephalon.Abstractions.AppModel.Scaffolding` in `Cephalon.Abstractions` [Browse](browse.html?q=ScaffoldScopes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding)
+- [StartupFailureBehavior](cephalon-engine.md#type-cephalon-engine-configuration-startupfailurebehavior): `Cephalon.Engine.Configuration` in `Cephalon.Engine` [Browse](browse.html?q=StartupFailureBehavior&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+- [StopFailureBehavior](cephalon-engine.md#type-cephalon-engine-configuration-stopfailurebehavior): `Cephalon.Engine.Configuration` in `Cephalon.Engine` [Browse](browse.html?q=StopFailureBehavior&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+
+## T
+
+- [TechnologyCatalogSnapshot](cephalon-engine.md#type-cephalon-engine-technologies-technologycatalogsnapshot): `Cephalon.Engine.Technologies` in `Cephalon.Engine` [Browse](browse.html?q=TechnologyCatalogSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies)
+- [TechnologyDescriptor](cephalon-abstractions.md#type-cephalon-abstractions-technologies-technologydescriptor): `Cephalon.Abstractions.Technologies` in `Cephalon.Abstractions` [Browse](browse.html?q=TechnologyDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies)
+- [TechnologyKind](cephalon-abstractions.md#type-cephalon-abstractions-technologies-technologykind): `Cephalon.Abstractions.Technologies` in `Cephalon.Abstractions` [Browse](browse.html?q=TechnologyKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies)
+- [TechnologyRuntimeCatalogSnapshot](cephalon-engine.md#type-cephalon-engine-technologies-technologyruntimecatalogsnapshot): `Cephalon.Engine.Technologies` in `Cephalon.Engine` [Browse](browse.html?q=TechnologyRuntimeCatalogSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies)
+- [TechnologyRuntimeEntry](cephalon-abstractions.md#type-cephalon-abstractions-technologies-technologyruntimeentry): `Cephalon.Abstractions.Technologies` in `Cephalon.Abstractions` [Browse](browse.html?q=TechnologyRuntimeEntry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies)
+- [TechnologyRuntimeSurface](cephalon-abstractions.md#type-cephalon-abstractions-technologies-technologyruntimesurface): `Cephalon.Abstractions.Technologies` in `Cephalon.Abstractions` [Browse](browse.html?q=TechnologyRuntimeSurface&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies)
+- [TechnologySelection](cephalon-abstractions.md#type-cephalon-abstractions-technologies-technologyselection): `Cephalon.Abstractions.Technologies` in `Cephalon.Abstractions` [Browse](browse.html?q=TechnologySelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies)
+- [TelemetryExportOptions](cephalon-observability.md#type-cephalon-observability-configuration-telemetryexportoptions): `Cephalon.Observability.Configuration` in `Cephalon.Observability` [Browse](browse.html?q=TelemetryExportOptions&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration)
+- [TransportDescriptor](cephalon-abstractions.md#type-cephalon-abstractions-transports-transportdescriptor): `Cephalon.Abstractions.Transports` in `Cephalon.Abstractions` [Browse](browse.html?q=TransportDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports)
+- [TransportFeatures](cephalon-abstractions.md#type-cephalon-abstractions-transports-transportfeatures): `Cephalon.Abstractions.Transports` in `Cephalon.Abstractions` [Browse](browse.html?q=TransportFeatures&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports)
+- [TrustPolicy](cephalon-engine.md#type-cephalon-engine-configuration-trustpolicy): `Cephalon.Engine.Configuration` in `Cephalon.Engine` [Browse](browse.html?q=TrustPolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+- [TrustSnapshot](cephalon-engine.md#type-cephalon-engine-trust-trustsnapshot): `Cephalon.Engine.Trust` in `Cephalon.Engine` [Browse](browse.html?q=TrustSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust)
+
+## W
+
+- [WorkerHostApplicationBuilderExtensions](cephalon-worker.md#type-cephalon-worker-hosting-workerhostapplicationbuilderextensions): `Cephalon.Worker.Hosting` in `Cephalon.Worker` [Browse](browse.html?q=WorkerHostApplicationBuilderExtensions&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting)
+- [WorkerServiceCollectionExtensions](cephalon-worker.md#type-cephalon-worker-hosting-workerservicecollectionextensions): `Cephalon.Worker.Hosting` in `Cephalon.Worker` [Browse](browse.html?q=WorkerServiceCollectionExtensions&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting)
+
+## X
+
+- [XmlCommentsDocumentTransformer](cephalon-aspnetcore.md#type-cephalon-aspnetcore-transformers-xmlcommentsdocumenttransformer): `Cephalon.AspNetCore.Transformers` in `Cephalon.AspNetCore` [Browse](browse.html?q=XmlCommentsDocumentTransformer&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transformers)

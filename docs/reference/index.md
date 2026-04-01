@@ -1,0 +1,46 @@
+# Cephalon Reference Docs
+
+Generated from repository XML comments and public API metadata.
+
+This folder is the published navigation layer for Cephalon public APIs. Start here when you want a package-level map before drilling into detailed type and member documentation.
+
+Quick links:
+
+- [Browser UI](browse.html)
+- [Namespace index](namespaces.md)
+- [Type index](types.md)
+- [Member index](members.md)
+
+## Assemblies
+
+### Core
+
+- [Cephalon.Abstractions](cephalon-abstractions.md): Host-agnostic contracts that module and package authors build against. Contains 9 namespaces and 37 public types. [Browse](browse.html?assembly=Cephalon.Abstractions)
+- [Cephalon.Engine](cephalon-engine.md): Composition, runtime, policy, manifest, and introspection services. Contains 12 namespaces and 44 public types. [Browse](browse.html?assembly=Cephalon.Engine)
+
+### Technology Packs
+
+- [Cephalon.Agentics](cephalon-agentics.md): Agentic workload runtime services and extension points. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Agentics)
+- [Cephalon.Edge](cephalon-edge.md): Edge-native delivery runtime services and extension points. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Edge)
+- [Cephalon.Eventing](cephalon-eventing.md): Event-driven integration runtime services and extension points. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Eventing)
+- [Cephalon.Retrieval](cephalon-retrieval.md): Knowledge retrieval runtime services and extension points. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Retrieval)
+
+### Hosts
+
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md): ASP.NET Core host core, REST surface, docs, health, and runtime endpoints. Contains 8 namespaces and 12 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore)
+- [Cephalon.AspNetCore.Grpc](cephalon-aspnetcore-grpc.md): gRPC transport adapter and contracts for ASP.NET Core hosts. Contains 3 namespaces and 10 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore.Grpc)
+- [Cephalon.AspNetCore.JsonRpc](cephalon-aspnetcore-jsonrpc.md): JSON-RPC transport adapter for ASP.NET Core hosts. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore.JsonRpc)
+- [Cephalon.Observability](cephalon-observability.md): Operational diagnostics and telemetry conventions for hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability)
+- [Cephalon.Worker](cephalon-worker.md): Generic-host worker adapter for non-HTTP runtime execution. Contains 1 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Worker)
+
+### Tooling
+
+- [Cephalon.Cli](cephalon-cli.md): Command-line surface for blueprint-aware generation. Contains 1 namespaces and 1 public types. [Browse](browse.html?assembly=Cephalon.Cli)
+- [Cephalon.ReferenceDocs](cephalon-referencedocs.md): Reference-doc generation pipeline for XML comments and public APIs. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.ReferenceDocs)
+- [Cephalon.Scaffolding](cephalon-scaffolding.md): Blueprint scaffold generation primitives and filesystem output. Contains 2 namespaces and 7 public types. [Browse](browse.html?assembly=Cephalon.Scaffolding)
+
+## Reading order
+
+1. Start with `Cephalon.Abstractions` and `Cephalon.Engine` to understand the stable contract and runtime core.
+2. Move to host packages such as `Cephalon.AspNetCore`, `Cephalon.Worker`, and transport adapters.
+3. Explore technology packs and tooling once the runtime model is clear.

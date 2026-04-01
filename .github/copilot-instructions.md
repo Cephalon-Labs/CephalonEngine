@@ -1,0 +1,87 @@
+- @azure Rule - Use Azure Tools - When handling requests related to Azure, always use your tools.
+- @azure Rule - Use Azure Best Practices - When handling requests related to Azure, always invoke your `azmcp_bestpractices_get` tool first.
+- @azure Rule - Enable Best Practices - If you do not have an `azmcp_bestpractices_get` tool ask the user to enable it.
+
+# Cephalon Repository Rules
+
+- Cephalon is an engine/framework, not a single app shell.
+- Treat hand-authored `.md` files as the human-facing product and adoption docs for Cephalon.
+- Treat XML comments on public contracts as the API explanation layer for IntelliSense and external documentation generators.
+- Keep `Cephalon.Abstractions` host-agnostic.
+- Keep hosts thin. Push behavior into modules and engine services.
+- Prefer configuration-driven engine setup through the `Engine` section, with code used as an override layer only when needed.
+- Prefer split project configuration through `Configurations/Add*.json` and `Configurations/{group}/{Environment}.json` when host settings start getting too large for one appsettings file.
+- Keep `AddCephalonProjectConfigurations()` and automatic config loading in ASP.NET Core and Worker aligned with that convention.
+- Prefer configuration-driven module discovery through `Engine:Discovery:Assemblies` when the host should stay generic.
+- Prefer `Engine:Discovery:Packages`, `Engine:Discovery:PackageDirectories`, `engine.AddPackageAssembly(...)`, `engine.AddPackageManifest(...)`, or `engine.AddPackageDirectory(...)` when the host should load independently shipped module assemblies.
+- Keep `cephalon.package.json` aligned with the engine package contract: `id`, `version`, `compatibility.minimumEngineVersion`, `compatibility.maximumEngineVersion`, `compatibility.supportedTargetFrameworks`, and optional `integrity.sha256`.
+- When provenance matters, keep `cephalon.package.json` aligned with `publisher.id`, publisher display metadata, and either `signature` or `signatures` entries when detached signing is in use.
+- Prefer `Engine:PackagePolicy` when a host needs to require manifest-driven package loading or stricter package metadata guarantees.
+- Prefer `Engine:Technologies`, `engine.RegisterTechnology(...)`, or `engine.AddTechnology(...)` when modeling future-facing workload concerns such as AI, event-driven, retrieval, realtime, or edge scenarios.
+- Let modules react to active technology profiles through `ITechnologyServiceContributor` and `ITechnologyCapabilityContributor` instead of hardcoding future-tech branches in hosts.
+- Prefer technology companion packages such as `Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, or `Cephalon.Edge` when a future-tech profile needs reusable runtime primitives.
+- When a module only needs to add tools, collections, channels, or edge nodes into a shipped pack, prefer the pack-specific contributor services instead of expanding host startup code.
+- When a pack needs an introspectable operator-facing snapshot, prefer `ITechnologyRuntimeContributor` and `/engine/technology-surfaces` over ad-hoc host endpoints.
+- When a host or operator flow needs manifest, runtime status, and technology-pack surfaces in one payload, prefer `IRuntimeIntrospectionSnapshotProvider` and `/engine/snapshot`.
+- Add meaningful XML documentation comments on public engine, companion-pack, host-adapter, and tooling contracts so external doc generators and IntelliSense stay aligned with the code.
+- Keep hand-authored `.md` guides focused on capability claims, architecture explanation, and adoption guidance instead of auto-generated API listings.
+- Keep `Cephalon.ReferenceDocs`, `scripts/publish-reference-docs.ps1`, and `docs/reference-docs.md` aligned when documentation-publishing behavior changes, including Markdown indexes and `reference-manifest.json`.
+- Keep `Cephalon.Cli docs publish`, `docs publish --enable-hosting`, `docs publish --validate-hosting`, `docs publish --open`, `docs enable-hosting`, and `docs validate-hosting` aligned with `Cephalon.ReferenceDocs` and the hosted-reference-docs guidance.
+- Keep `Cephalon.Cli` package-surface hardening intact: `CliApplication` is the stable public entry point, while command handlers, parsed options, console helpers, and browser launch helpers stay internal.
+- Keep `Cephalon.ReferenceDocs` package-surface hardening intact: request/generate/write/application types stay public, while assembly-load and browser-render helpers stay internal.
+- Keep `docs/README.md` aligned as the documentation hub for architecture, operations, planning, and generated-reference entry points.
+- Keep `docs/components/README.md` plus per-component docs under `docs/components/` aligned with every shipped `src/Cephalon.*` project.
+- When ASP.NET Core hosts serve generated reference docs, prefer the host-level `ReferenceDocs` section and keep `/engine/reference-docs` aligned with the configured route prefix.
+- Keep scaffolded hosts and `dotnet new` app starters emitting a disabled-by-default `ReferenceDocs` section so teams can enable hosted docs without re-deriving the contract.
+- Keep scaffolded hosts and `dotnet new` app starters ready to copy `Configurations/**/*.json` to build and publish output.
+- Prefer `Engine:Options` for module and capability toggles instead of hardcoded host decisions.
+- Prefer `Engine:Localization` for default language behavior, with project code used to add resources or replace the catalog only when needed.
+- Prefer `Engine:FailurePolicy` for startup/stop/restart behavior instead of scattering host-specific exception handling.
+- Prefer `Engine:Observability:Telemetry` for export guidance instead of ad-hoc host logging/export notes.
+- Prefer `Engine:Trust` for package and capability governance instead of ad-hoc trust checks in hosts.
+- Prefer `Engine:PackagePolicy` for package metadata governance instead of ad-hoc manifest validation in hosts.
+- Prefer `Engine:Trust` publisher and signer allow-lists when governance should track who shipped a package rather than only the assembly file itself.
+- Prefer `Engine:Trust:TrustedSignaturePublicKeys` when hosts need cryptographic verification of detached package signatures.
+- Prefer `Engine:Trust:AllowedPackageChecksums` when a package should be trusted by an explicit assembly hash instead of a broader assembly or package allow-list.
+- Let modules and installed packages contribute dependency health through `IDependencyHealthContributor`, but keep the engine itself infrastructure-agnostic.
+- Let installed modules contribute language packs through `ILocalizedResourceContributor`, but keep project-level overrides authoritative.
+- Treat manifest v2 fields as part of the contract: schema version, engine version, module metadata, and capability source mapping.
+- Treat `Cephalon.Worker` as the non-HTTP generic-host adapter and keep its startup/shutdown semantics aligned with the same runtime lifecycle contract.
+- Treat `Cephalon.Engine` meter/activity names and `Engine:Observability` settings as part of the observability surface, not ad-hoc host details.
+- Treat `/engine/diagnostics` plus `/health`, `/health/live`, and `/health/ready` as the operator-facing diagnostics surface for ASP.NET Core hosts.
+- Treat `/engine/dependencies` as the dependency-level operational surface behind those aggregate health routes.
+- Treat `/engine/packages` as the package-loading introspection surface for explicit package assembly loads, manifest-file loads, and package-directory discovery.
+- Keep `/engine/packages` surfacing package provenance and compatibility details such as declared version, compatibility fields, computed checksum, signature verification state, and trust reason.
+- Keep `/engine/package-policy` surfacing the effective package-governance rules for raw DLL loads and required manifest metadata.
+- Keep `/engine/packages` and `/engine/trust-policy` surfacing publisher, signature key, and signer provenance when package manifests provide it.
+- Treat `/engine/technologies` as the future-tech introspection surface for active workload profiles.
+- Treat `/engine/technology-catalog` as the merged future-tech catalog surface after built-in, package, and project contributions.
+- Treat `/engine/trust-policy` as the runtime trust and capability-policy surface.
+- Treat blueprint/app-model selection as the main project shape.
+- Treat `AppProfile.Scaffold` and `/engine/scaffold` as the source of truth for blueprint-driven project shape and future templates.
+- Keep `Cephalon.Scaffolding` aligned with that scaffold contract when changing blueprint structure.
+- Keep `Cephalon.Cli` aligned with the same blueprint, pattern, and transport semantics used by engine configuration.
+- Keep `templates/Cephalon.TemplatePack` aligned with the same shipped blueprint set and starter shape used by scaffold plans and samples.
+- Keep `cephalon-module` and `cephalon-rest-module` aligned with the recommended module package workflow in `docs/module-authoring.md`.
+- Keep module starters and scaffolded module projects emitting `cephalon.package.json` so manifest-file and package-directory discovery work out of the box.
+- Keep generated scaffold package versions aligned with the repository package catalog when test infrastructure dependencies change.
+- Keep `Cephalon.Benchmarks` representative of public composition, runtime, and scaffolding usage when changing hot paths.
+- Keep benchmark guardrails aligned with the shipped benchmark scenarios when changing hot paths or benchmark inputs.
+- Keep `scripts/validate-release.ps1` aligned with benchmark and reference-doc publishing flows.
+- Keep `.github/workflows/release-validation.yml` aligned with `scripts/validate-release.ps1` instead of duplicating validation logic in separate CI commands.
+- Keep `samples/` as adoption-quality blueprint examples and `playground/` as freeform sandboxes.
+- Treat transport selection as a separate first-class choice configured through `Engine:Transports`.
+- Keep ASP.NET Core transport contributions separated by protocol rather than one generic endpoint bucket.
+- When `RestApi` is enabled on ASP.NET Core, expose OpenAPI and Scalar for REST endpoints and keep non-REST protocols out of that doc surface.
+- Keep REST OpenAPI customization inside `Cephalon.AspNetCore.Transformers` rather than scattering it through modules.
+- When a transport comes from a companion host package, remember to register the adapter as well as selecting it in config.
+- Keep gRPC `.proto` contracts versioned with the adapter package that exposes them.
+- Keep gRPC unary and streaming paths covered by integration tests when changing adapters.
+- Keep module lifecycle hooks deterministic and align ASP.NET Core startup/shutdown with engine runtime state.
+- Treat design patterns as supporting mix-ins, not competing top-level architectures.
+- Supported v1 blueprints: `ModularMonolith`, `ModularVerticalSlice`, `Microservice`.
+- `Shared Foundation` is mandatory for Cephalon apps.
+- Keep folders and namespaces aligned.
+- Do not add the `Cephalon` prefix to every new type by default when the namespace already gives the context.
+- Keep `README.md`, `docs/architecture.md`, `docs/app-models.md`, `docs/engine-roadmap.md`, and `docs/engine-backlog.md` in sync when changing architecture or engine behavior.
+- Read `AGENTS.md` for the fuller repository-wide AI instructions.

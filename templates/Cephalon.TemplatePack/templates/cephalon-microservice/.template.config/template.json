@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Cephalon",
+  "classifications": [ "Cephalon", "ASP.NET Core", "Microservice", "Service" ],
+  "identity": "Cephalon.Templates.Microservice",
+  "name": "Cephalon Microservice",
+  "shortName": "cephalon-microservice",
+  "sourceName": "CephalonTemplateApp",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "primaryOutputs": [
+    { "path": "CephalonTemplateApp.csproj" }
+  ]
+}
