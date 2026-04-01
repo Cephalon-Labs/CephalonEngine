@@ -5,8 +5,16 @@ using Cephalon.Engine.Transports;
 
 namespace Cephalon.Engine.AppModel;
 
+/// <summary>
+/// Builds app profiles from <see cref="EngineSettings" /> values.
+/// </summary>
 public static class AppProfileFactory
 {
+    /// <summary>
+    /// Creates an app profile from the configured engine settings.
+    /// </summary>
+    /// <param name="settings">The engine settings that describe the blueprint, patterns, transports, and technologies.</param>
+    /// <returns>The built app profile.</returns>
     public static Abstractions.AppModel.AppProfile Create(EngineSettings settings)
     {
         ArgumentNullException.ThrowIfNull(settings);

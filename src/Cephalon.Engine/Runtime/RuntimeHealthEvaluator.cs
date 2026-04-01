@@ -2,11 +2,19 @@ using Cephalon.Abstractions.Health;
 
 namespace Cephalon.Engine.Runtime;
 
+/// <summary>
+/// Evaluates runtime liveness, readiness, and dependency health.
+/// </summary>
 public sealed class RuntimeHealthEvaluator
 {
     private readonly IRuntime runtime;
     private readonly IDependencyHealthContributor[] dependencyHealthContributors;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RuntimeHealthEvaluator" /> class.
+    /// </summary>
+    /// <param name="runtime">The runtime to evaluate.</param>
+    /// <param name="dependencyHealthContributors">The dependency contributors that provide health data.</param>
     public RuntimeHealthEvaluator(
         IRuntime runtime,
         IEnumerable<IDependencyHealthContributor> dependencyHealthContributors)
@@ -16,6 +24,10 @@ public sealed class RuntimeHealthEvaluator
             ?? throw new ArgumentNullException(nameof(dependencyHealthContributors));
     }
 
+    /// <summary>
+    /// Evaluates whether the runtime process is live.
+    /// </summary>
+    /// <returns>The liveness report.</returns>
     public RuntimeHealthReport EvaluateLiveness()
     {
         var dependencies = CollectDependencies();
@@ -55,6 +67,10 @@ public sealed class RuntimeHealthEvaluator
         };
     }
 
+    /// <summary>
+    /// Evaluates whether the runtime is ready to serve traffic.
+    /// </summary>
+    /// <returns>The readiness report.</returns>
     public RuntimeHealthReport EvaluateReadiness()
     {
         var dependencies = CollectDependencies();
@@ -99,6 +115,10 @@ public sealed class RuntimeHealthEvaluator
         };
     }
 
+    /// <summary>
+    /// Evaluates dependency-level health reports without applying probe semantics.
+    /// </summary>
+    /// <returns>The dependency-health reports visible to the evaluator.</returns>
     public DependencyHealthReport[] EvaluateDependencies()
     {
         return CollectDependencies();

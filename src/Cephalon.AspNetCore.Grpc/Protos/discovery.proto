@@ -4,25 +4,43 @@ option csharp_namespace = "Cephalon.AspNetCore.Grpc.Contracts.Discovery";
 
 package cephalon.transports.grpc.discovery;
 
+// Demonstrates the baseline unary and streaming discovery endpoints exposed by the
+// Cephalon ASP.NET Core gRPC adapter.
 service DiscoveryService {
+  // Returns a single greeting for the requested caller.
   rpc SayHello (HelloRequest) returns (HelloReply);
+
+  // Streams the host principles that describe the Cephalon runtime shape.
   rpc StreamPrinciples (PrinciplesRequest) returns (stream PrincipleReply);
+
+  // Exchanges greeting messages bidirectionally to validate duplex streaming support.
   rpc ExchangeGreetings (stream HelloRequest) returns (stream HelloReply);
 }
 
+// Describes the caller that is requesting a greeting.
 message HelloRequest {
+  // The display name to greet.
   string name = 1;
 }
 
+// Returns the generated greeting and related metadata.
 message HelloReply {
+  // The message rendered for the caller.
   string message = 1;
+
+  // The UTC timestamp when the reply was generated.
   string generated_at_utc = 2;
+
+  // Additional traits or descriptors associated with the generated greeting.
   repeated string traits = 3;
 }
 
+// Requests the baseline Cephalon principles stream.
 message PrinciplesRequest {
 }
 
+// Returns one principle from the streamed discovery sequence.
 message PrincipleReply {
+  // The principle text being streamed to the caller.
   string principle = 1;
 }

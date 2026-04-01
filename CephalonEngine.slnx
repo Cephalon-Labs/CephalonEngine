@@ -18,6 +18,7 @@
     <Project Path="src/Cephalon.Cli/Cephalon.Cli.csproj" />
     <Project Path="src/Cephalon.Edge/Cephalon.Edge.csproj" />
     <Project Path="src/Cephalon.Eventing/Cephalon.Eventing.csproj" />
+    <Project Path="src/Cephalon.AspNetCore.GraphQL/Cephalon.AspNetCore.GraphQL.csproj" />
     <Project Path="src/Cephalon.AspNetCore.Grpc/Cephalon.AspNetCore.Grpc.csproj" />
     <Project Path="src/Cephalon.AspNetCore.JsonRpc/Cephalon.AspNetCore.JsonRpc.csproj" />
     <Project Path="src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj" />

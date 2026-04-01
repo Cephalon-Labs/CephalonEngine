@@ -430,6 +430,12 @@ Generated from the Cephalon `{appProfile.BlueprintDisplayName}` blueprint.
             registrationLines.Add("builder.AddGrpcTransport();");
         }
 
+        if (appProfile.Transports.Any(transport => string.Equals(transport.Id, "graphql", StringComparison.OrdinalIgnoreCase)))
+        {
+            usingLines.Add("using Cephalon.AspNetCore.GraphQL.Hosting;");
+            registrationLines.Add("builder.AddGraphQLTransport();");
+        }
+
         var registrations = registrationLines.Count == 0
             ? string.Empty
             : string.Join(Environment.NewLine, registrationLines) + Environment.NewLine;

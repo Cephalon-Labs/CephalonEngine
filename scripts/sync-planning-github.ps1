@@ -183,6 +183,7 @@ function Get-BacklogPhaseMap {
         "ENG-015" = 0
         "ENG-025" = 0
         "ENG-005" = 1
+        "ENG-026" = 1
         "ENG-016" = 1
         "ENG-017" = 1
         "ENG-018" = 1
@@ -2050,10 +2051,7 @@ function Set-ProjectStatus {
         [Parameter(Mandatory = $true)][string]$DesiredStatus
     )
 
-    $currentStatus = ""
-    if ($null -ne $ProjectItem.status) {
-        $currentStatus = [string]$ProjectItem.status
-    }
+    $currentStatus = Get-ProjectItemStatusValue -ProjectItem $ProjectItem
 
     $shouldUpdate = $false
     if ($DesiredStatus -eq "Done") {

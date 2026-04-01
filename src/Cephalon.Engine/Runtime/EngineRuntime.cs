@@ -9,6 +9,9 @@ using System.Diagnostics.Metrics;
 
 namespace Cephalon.Engine.Runtime;
 
+/// <summary>
+/// Executes module lifecycle transitions and exposes runtime status, manifest, and failure information.
+/// </summary>
 public sealed class EngineRuntime : IRuntime, IDisposable
 {
     private static readonly Action<ILogger, string, string, string, int, Exception?> LogRuntimeTransitionMessage =
@@ -44,6 +47,12 @@ public sealed class EngineRuntime : IRuntime, IDisposable
     private RuntimeFailureInfo? lastFailure;
     private int restartCount;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EngineRuntime" /> class.
+    /// </summary>
+    /// <param name="modules">The modules that participate in runtime lifecycle transitions.</param>
+    /// <param name="manifest">The runtime manifest that describes the built runtime shape.</param>
+    /// <param name="failurePolicy">The failure policy that governs startup, stop, and restart behavior.</param>
     public EngineRuntime(
         IReadOnlyList<IModule> modules,
         RuntimeManifest manifest,
@@ -54,21 +63,48 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         FailurePolicy = failurePolicy ?? throw new ArgumentNullException(nameof(failurePolicy));
     }
 
+    /// <summary>
+    /// Gets the modules that participate in runtime lifecycle transitions.
+    /// </summary>
     public IReadOnlyList<IModule> Modules { get; }
 
+    /// <summary>
+    /// Gets the runtime manifest that describes the built runtime shape.
+    /// </summary>
     public RuntimeManifest Manifest { get; }
 
+    /// <summary>
+    /// Gets the failure policy that governs startup, stop, and restart behavior.
+    /// </summary>
     public FailurePolicy FailurePolicy { get; }
 
+    /// <summary>
+    /// Gets the current lifecycle status.
+    /// </summary>
     public RuntimeStatus Status => status;
 
+    /// <summary>
+    /// Gets a serialization-friendly snapshot of the current runtime status.
+    /// </summary>
     public RuntimeStatusSnapshot StatusSnapshot =>
         new(status, initializedAtUtc, startedAtUtc, stoppedAtUtc, restartCount, lastFailure);
 
+    /// <summary>
+    /// Gets the last captured lifecycle failure when one is available.
+    /// </summary>
     public RuntimeFailureInfo? LastFailure => lastFailure;
 
+    /// <summary>
+    /// Gets the number of completed manual restarts.
+    /// </summary>
     public int RestartCount => restartCount;
 
+    /// <summary>
+    /// Initializes the runtime and its modules.
+    /// </summary>
+    /// <param name="services">The service provider bound to the runtime lifecycle.</param>
+    /// <param name="cancellationToken">The cancellation token for the initialization operation.</param>
+    /// <returns>A task that completes when initialization finishes.</returns>
     public async Task InitializeAsync(IServiceProvider services, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -92,6 +128,12 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         }
     }
 
+    /// <summary>
+    /// Starts the runtime and its modules.
+    /// </summary>
+    /// <param name="services">The service provider bound to the runtime lifecycle.</param>
+    /// <param name="cancellationToken">The cancellation token for the startup operation.</param>
+    /// <returns>A task that completes when startup finishes.</returns>
     public async Task StartAsync(IServiceProvider services, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -124,6 +166,12 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         }
     }
 
+    /// <summary>
+    /// Restarts the runtime when the current failure policy allows it.
+    /// </summary>
+    /// <param name="services">The service provider bound to the runtime lifecycle.</param>
+    /// <param name="cancellationToken">The cancellation token for the restart operation.</param>
+    /// <returns>A task that completes when the restart finishes.</returns>
     public async Task RestartAsync(IServiceProvider services, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -187,6 +235,11 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         }
     }
 
+    /// <summary>
+    /// Stops started modules and transitions the runtime to a stopped state.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token for the stop operation.</param>
+    /// <returns>A task that completes when shutdown finishes.</returns>
     public async Task StopAsync(CancellationToken cancellationToken = default)
     {
         await lifecycleLock.WaitAsync(cancellationToken);
@@ -623,6 +676,9 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         LogModuleFailureMessage(logger, moduleId, phase, exception);
     }
 
+    /// <summary>
+    /// Releases runtime resources.
+    /// </summary>
     public void Dispose()
     {
         lifecycleLock.Dispose();

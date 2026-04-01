@@ -2,7 +2,7 @@
 
 Editable roadmap diagram: `docs/cephalon-engine-roadmap.drawio`
 
-Planning baseline in this document reflects the repository state as of `April 1, 2026`.
+Planning baseline in this document reflects the repository state as of `April 2, 2026`.
 
 ## Target outcome
 
@@ -26,7 +26,7 @@ The foundation is no longer hypothetical. The repository already ships:
 - module and capability policy toggles through `Engine:Options`
 - manifest v2 with engine version, module metadata, and capability source mapping
 - host adapters for ASP.NET Core and generic worker hosts
-- transport support for `RestApi`, `JsonRpc`, `Grpc`, `ServerSentEvents`, and `WebSocket`
+- transport support for `RestApi`, `JsonRpc`, `Grpc`, `GraphQL`, `ServerSentEvents`, and `WebSocket`
 - OpenAPI + Scalar for REST-facing ASP.NET Core hosts
 - scaffold plans, scaffold generation, and a working CLI
 - a `dotnet new` template-pack baseline for the shipped blueprints
@@ -56,7 +56,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Adoption Sprint 0`: `ENG-016`, `ENG-017`, `ENG-018`
 - `Operational Sprint 0`: `ENG-019`, `ENG-020`, `ENG-021`, `ENG-024`, `ENG-023`
 - `Platform Sprint 0`: `ENG-012`
-- `Sprint 1`: `ENG-005` plus phase 2 operational hardening follow-through
+- `Sprint 1`: `ENG-005`, `ENG-026`, plus phase 2 operational hardening follow-through
 - `Sprint 2`: `ENG-011` plus exporter and dependency-health follow-through
 - `Sprint 3`: `ENG-013` plus package distribution and trust follow-through
 - `Later / not scheduled yet`: `ENG-022` and future solution-level expansion work
@@ -105,6 +105,7 @@ Deliverables:
 - package/version compatibility guidance
 - CLI polish for real developer workflows
 - generated output that stays aligned across `Cephalon.Scaffolding`, `Cephalon.Cli`, `Cephalon.TemplatePack`, and the repository package catalog
+- GraphQL transport delivery that keeps the runtime catalog, scaffold output, tests, and component docs aligned with the adapter split
 - technology profiles that stay aligned across runtime introspection, scaffolding, CLI, and template defaults
 - companion packages that turn selected technology profiles into reusable runtime primitives without bloating the engine core
 - module-authoring starters and reference packages that stay aligned with runtime contracts
@@ -209,14 +210,15 @@ Exit criteria:
 
 ## Recommended implementation order
 
-Updated priority order as of `April 1, 2026`:
+Updated priority order as of `April 2, 2026`:
 
-1. operational hardening follow-through: richer dependency health and exporter packaging
-2. package/plugin loading
-3. capability permissions and trust policy
-4. workflow and orchestration primitives
-5. multi-service suite blueprints
-6. broader release automation and package-publishing polish
+1. SDK hardening follow-through: public surface cleanup, XML docs, and GraphQL transport completion
+2. operational hardening follow-through: richer dependency health and exporter packaging
+3. package/plugin loading
+4. capability permissions and trust policy
+5. workflow and orchestration primitives
+6. multi-service suite blueprints
+7. broader release automation and package-publishing polish
 
 ## Decision guardrails
 

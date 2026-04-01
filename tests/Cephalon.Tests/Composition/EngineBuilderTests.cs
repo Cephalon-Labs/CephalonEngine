@@ -1228,7 +1228,7 @@ public sealed class EngineBuilderTests
         var builder = new EngineBuilder(new ServiceCollection());
         builder.UseSettings(new EngineSettings(
             blueprint: "ModularVerticalSlice",
-            transports: ["JsonRpc", "Grpc"]));
+            transports: ["JsonRpc", "Grpc", "GraphQL"]));
         builder.AddModule(new PlatformTestModule());
         builder.AddModule(new DiscoveryTestModule());
 
@@ -1243,11 +1243,14 @@ public sealed class EngineBuilderTests
             convention.Contains("AddJsonRpcTransport()", StringComparison.Ordinal));
         Assert.Contains(scaffold.Conventions, convention =>
             convention.Contains("AddGrpcTransport()", StringComparison.Ordinal));
+        Assert.Contains(scaffold.Conventions, convention =>
+            convention.Contains("AddGraphQLTransport()", StringComparison.Ordinal));
         Assert.Contains(scaffold.Projects, project =>
             project.Id == "host" &&
             project.Role == ProjectRoles.Host &&
             project.Packages.Contains("Cephalon.AspNetCore", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.Observability", StringComparer.OrdinalIgnoreCase) &&
+            project.Packages.Contains("Cephalon.AspNetCore.GraphQL", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.AspNetCore.JsonRpc", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.AspNetCore.Grpc", StringComparer.OrdinalIgnoreCase));
     }

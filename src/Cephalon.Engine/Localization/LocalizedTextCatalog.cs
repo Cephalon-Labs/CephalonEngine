@@ -4,10 +4,17 @@ using System.Globalization;
 
 namespace Cephalon.Engine.Localization;
 
+/// <summary>
+/// Resolves localized resources from built-in and configuration-supplied resource catalogs.
+/// </summary>
 public sealed class LocalizedTextCatalog : ILocalizedTextCatalog
 {
     private readonly Dictionary<string, IReadOnlyDictionary<string, string>> resources;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LocalizedTextCatalog" /> class.
+    /// </summary>
+    /// <param name="settings">The localization settings that supply culture and resource overrides.</param>
     public LocalizedTextCatalog(LocalizationSettings settings)
     {
         ArgumentNullException.ThrowIfNull(settings);
@@ -22,10 +29,23 @@ public sealed class LocalizedTextCatalog : ILocalizedTextCatalog
             .ToArray();
     }
 
+    /// <summary>
+    /// Gets the default culture used when no explicit culture is requested.
+    /// </summary>
     public string DefaultCulture { get; }
 
+    /// <summary>
+    /// Gets the supported cultures available from the merged resource catalog.
+    /// </summary>
     public IReadOnlyList<string> SupportedCultures { get; }
 
+    /// <summary>
+    /// Attempts to resolve a localized value for the specified key and culture.
+    /// </summary>
+    /// <param name="key">The resource key to resolve.</param>
+    /// <param name="culture">The preferred culture to resolve from.</param>
+    /// <param name="value">The resolved localized value when found.</param>
+    /// <returns><see langword="true" /> when a value was resolved; otherwise, <see langword="false" />.</returns>
     public bool TryGet(string key, string? culture, out string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
@@ -43,6 +63,13 @@ public sealed class LocalizedTextCatalog : ILocalizedTextCatalog
         return false;
     }
 
+    /// <summary>
+    /// Resolves a localized value or returns the provided fallback.
+    /// </summary>
+    /// <param name="key">The resource key to resolve.</param>
+    /// <param name="culture">The preferred culture to resolve from.</param>
+    /// <param name="fallback">The fallback value to return when the resource cannot be resolved.</param>
+    /// <returns>The resolved localized value or the fallback.</returns>
     public string ResolveText(string key, string? culture = null, string? fallback = null)
     {
         return TryGet(key, culture, out var value)
@@ -50,6 +77,11 @@ public sealed class LocalizedTextCatalog : ILocalizedTextCatalog
             : fallback ?? key;
     }
 
+    /// <summary>
+    /// Gets the merged resources visible for the specified culture.
+    /// </summary>
+    /// <param name="culture">The preferred culture to resolve from.</param>
+    /// <returns>The merged resource dictionary for the resolved culture chain.</returns>
     public IReadOnlyDictionary<string, string> GetResources(string? culture = null)
     {
         var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -70,6 +102,11 @@ public sealed class LocalizedTextCatalog : ILocalizedTextCatalog
         return result;
     }
 
+    /// <summary>
+    /// Creates a serialization-friendly snapshot of the merged localized resources.
+    /// </summary>
+    /// <param name="culture">The preferred culture to resolve from.</param>
+    /// <returns>A snapshot of the resolved localization view.</returns>
     public LocalizedResourcesSnapshot CreateSnapshot(string? culture = null)
     {
         return new LocalizedResourcesSnapshot(

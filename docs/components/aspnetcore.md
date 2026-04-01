@@ -13,6 +13,7 @@
 - OpenAPI and Scalar integration for REST APIs
 - optional hosted reference-doc delivery through `ReferenceDocs` host configuration
 - built-in REST, SSE, and WebSocket transport route mapping
+- companion adapter hooks for GraphQL, JSON-RPC, and gRPC transport packages
 
 ## Main surfaces
 

@@ -4,22 +4,43 @@ using Cephalon.Engine.Manifest;
 
 namespace Cephalon.Engine.Trust;
 
+/// <summary>
+/// Evaluates capability and package trust decisions against the current trust policy snapshot.
+/// </summary>
 public sealed class CapabilityPolicyEvaluator
 {
     private readonly TrustSnapshot snapshot;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CapabilityPolicyEvaluator" /> class.
+    /// </summary>
+    /// <param name="snapshot">The trust snapshot to evaluate against.</param>
     public CapabilityPolicyEvaluator(TrustSnapshot snapshot)
     {
         this.snapshot = snapshot ?? throw new ArgumentNullException(nameof(snapshot));
     }
 
+    /// <summary>
+    /// Gets the trust snapshot being evaluated.
+    /// </summary>
     public TrustSnapshot Snapshot => snapshot;
 
+    /// <summary>
+    /// Determines whether a capability is allowed under the current trust policy.
+    /// </summary>
+    /// <param name="capabilityKey">The capability key to evaluate.</param>
+    /// <returns><see langword="true" /> when the capability is allowed; otherwise, <see langword="false" />.</returns>
     public bool IsAllowed(string capabilityKey)
     {
         return TryGetDecision(capabilityKey, out var decision) && decision.IsAllowed;
     }
 
+    /// <summary>
+    /// Attempts to resolve the trust decision for a capability.
+    /// </summary>
+    /// <param name="capabilityKey">The capability key to evaluate.</param>
+    /// <param name="decision">The resolved trust decision.</param>
+    /// <returns><see langword="true" /> when a decision was produced.</returns>
     public bool TryGetDecision(string capabilityKey, out CapabilityPolicyDecision decision)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(capabilityKey);
@@ -31,6 +52,14 @@ public sealed class CapabilityPolicyEvaluator
         return decision is not null;
     }
 
+    /// <summary>
+    /// Creates a trust snapshot from the supplied policy, packages, modules, and capabilities.
+    /// </summary>
+    /// <param name="policy">The trust policy to apply.</param>
+    /// <param name="packages">The package manifests visible to the runtime.</param>
+    /// <param name="modules">The module manifests visible to the runtime.</param>
+    /// <param name="capabilities">The capability manifests visible to the runtime.</param>
+    /// <returns>A computed trust snapshot.</returns>
     public static TrustSnapshot CreateSnapshot(
         TrustPolicy policy,
         IReadOnlyList<PackageManifest> packages,

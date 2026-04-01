@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `April 1, 2026`.
+Backlog status in this document reflects the repository state as of `April 2, 2026`.
 
 ## Completed foundation work
 
@@ -100,7 +100,7 @@ Delivered:
 - host mapping conventions for engine endpoints
 - protocol-separated transport contribution model
 - OpenAPI + Scalar for REST surfaces
-- adapter split for `JsonRpc` and `Grpc`
+- adapter split for companion transport packages such as `JsonRpc` and `Grpc`
 
 ### ENG-008 Observability baseline
 
@@ -191,6 +191,18 @@ Acceptance:
 - reduce incidental public API where possible
 - improve XML docs and package-facing guidance
 - make compatibility expectations explicit
+
+### ENG-026 GraphQL transport adapter
+
+Status: done
+Estimate: 5
+
+Delivered:
+
+- dedicated `Cephalon.AspNetCore.GraphQL` adapter package built on Hot Chocolate
+- GraphQL transport selection aligned across runtime introspection, scaffolding, and host registration
+- working `/graphql` endpoint with module-driven schema contributions on ASP.NET Core
+- integration coverage and component docs for GraphQL hosting guidance
 
 ### ENG-016 Blueprint sample suite
 
@@ -455,6 +467,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 ### Sprint 1
 
 - ENG-005 Engine API and package surface hardening
+- ENG-026 GraphQL transport adapter
 - operational hardening follow-through after the shipped health, telemetry, and CI baselines
 
 ### Sprint 2

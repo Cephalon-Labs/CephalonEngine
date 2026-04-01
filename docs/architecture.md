@@ -96,7 +96,7 @@ Source structure:
 - optional hosted reference-doc surfaces for generated API documentation
 - built-in transport-aware module surfaces such as `/api`, `/events`, and `/ws`
 
-Companion adapter packages can extend that host with additional transport surfaces such as `/rpc` for JSON-RPC or gRPC bindings with unary and streaming contracts.
+Companion adapter packages can extend that host with additional transport surfaces such as `/graphql` for GraphQL, `/rpc` for JSON-RPC, or gRPC bindings with unary and streaming contracts.
 
 `Cephalon.Worker` is the non-HTTP generic-host adapter. It starts and stops the same runtime inside worker processes and keeps module/background behavior aligned with standard hosted-service lifecycles.
 
@@ -141,6 +141,9 @@ Companion adapter packages:
 - `src/Cephalon.AspNetCore.JsonRpc/Hosting` -> `Cephalon.AspNetCore.JsonRpc.Hosting`
 - `src/Cephalon.AspNetCore.JsonRpc/Modules` -> `Cephalon.AspNetCore.JsonRpc.Modules`
 - `src/Cephalon.AspNetCore.JsonRpc/Routing` -> `Cephalon.AspNetCore.JsonRpc.Routing`
+- `src/Cephalon.AspNetCore.GraphQL/Hosting` -> `Cephalon.AspNetCore.GraphQL.Hosting`
+- `src/Cephalon.AspNetCore.GraphQL/Modules` -> `Cephalon.AspNetCore.GraphQL.Modules`
+- `src/Cephalon.AspNetCore.GraphQL/Routing` -> `Cephalon.AspNetCore.GraphQL.Routing`
 - `src/Cephalon.AspNetCore.Grpc/Hosting` -> `Cephalon.AspNetCore.Grpc.Hosting`
 - `src/Cephalon.AspNetCore.Grpc/Modules` -> `Cephalon.AspNetCore.Grpc.Modules`
 - `src/Cephalon.AspNetCore.Grpc/Protos` -> generated `Cephalon.AspNetCore.Grpc.Contracts.*`

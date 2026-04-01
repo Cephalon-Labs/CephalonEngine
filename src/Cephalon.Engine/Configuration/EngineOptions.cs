@@ -2,10 +2,21 @@ using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.Engine.Configuration;
 
+/// <summary>
+/// Captures module and capability enablement overrides for the runtime.
+/// </summary>
 public sealed class EngineOptions
 {
+    /// <summary>
+    /// Gets an empty options instance with no explicit overrides.
+    /// </summary>
     public static EngineOptions Empty { get; } = new();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EngineOptions" /> class.
+    /// </summary>
+    /// <param name="modules">Module enablement overrides keyed by module identifier.</param>
+    /// <param name="capabilities">Capability enablement overrides keyed by capability key.</param>
     public EngineOptions(
         IReadOnlyDictionary<string, bool>? modules = null,
         IReadOnlyDictionary<string, bool>? capabilities = null)
@@ -14,12 +25,26 @@ public sealed class EngineOptions
         Capabilities = Normalize(capabilities);
     }
 
+    /// <summary>
+    /// Gets module enablement overrides keyed by module identifier.
+    /// </summary>
     public IReadOnlyDictionary<string, bool> Modules { get; }
 
+    /// <summary>
+    /// Gets capability enablement overrides keyed by capability key.
+    /// </summary>
     public IReadOnlyDictionary<string, bool> Capabilities { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether any explicit option overrides are present.
+    /// </summary>
     public bool HasValues => Modules.Count > 0 || Capabilities.Count > 0;
 
+    /// <summary>
+    /// Determines whether a module is enabled under the current option set.
+    /// </summary>
+    /// <param name="moduleId">The module identifier to evaluate.</param>
+    /// <returns><see langword="true" /> when the module is enabled; otherwise, <see langword="false" />.</returns>
     public bool IsModuleEnabled(string moduleId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(moduleId);
@@ -27,6 +52,11 @@ public sealed class EngineOptions
         return !Modules.TryGetValue(moduleId.Trim(), out var enabled) || enabled;
     }
 
+    /// <summary>
+    /// Determines whether a capability is enabled under the current option set.
+    /// </summary>
+    /// <param name="capabilityKey">The capability key to evaluate.</param>
+    /// <returns><see langword="true" /> when the capability is enabled; otherwise, <see langword="false" />.</returns>
     public bool IsCapabilityEnabled(string capabilityKey)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(capabilityKey);
@@ -34,6 +64,11 @@ public sealed class EngineOptions
         return !Capabilities.TryGetValue(capabilityKey.Trim(), out var enabled) || enabled;
     }
 
+    /// <summary>
+    /// Merges another option set into the current instance.
+    /// </summary>
+    /// <param name="other">The option set to overlay on top of the current values.</param>
+    /// <returns>A merged option set.</returns>
     public EngineOptions Merge(EngineOptions? other)
     {
         if (other is null || !other.HasValues)
@@ -61,6 +96,12 @@ public sealed class EngineOptions
         return new EngineOptions(modules, capabilities);
     }
 
+    /// <summary>
+    /// Reads engine options from configuration.
+    /// </summary>
+    /// <param name="configuration">The configuration source that contains the engine section.</param>
+    /// <param name="sectionPath">The root configuration section path to read from.</param>
+    /// <returns>The parsed engine options.</returns>
     public static EngineOptions FromConfiguration(
         IConfiguration configuration,
         string sectionPath = EngineSettings.SectionName)

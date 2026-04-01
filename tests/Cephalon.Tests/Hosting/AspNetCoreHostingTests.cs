@@ -14,6 +14,7 @@ using Cephalon.Agentics.Registration;
 using Cephalon.Agentics.Services;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Documentation;
+using Cephalon.AspNetCore.GraphQL.Hosting;
 using Cephalon.AspNetCore.Grpc.Contracts.Discovery;
 using Cephalon.AspNetCore.Grpc.Hosting;
 using Cephalon.AspNetCore.JsonRpc.Hosting;
@@ -193,8 +194,9 @@ public sealed class AspNetCoreHostingTests
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:1"] = "JsonRpc";
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:2"] = "Grpc";
-        builder.Configuration[$"{EngineSettings.SectionName}:Transports:3"] = "ServerSentEvents";
-        builder.Configuration[$"{EngineSettings.SectionName}:Transports:4"] = "WebSocket";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:3"] = "GraphQL";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:4"] = "ServerSentEvents";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:5"] = "WebSocket";
         builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "AgenticWorkloads";
         builder.Configuration[$"{EngineSettings.SectionName}:Technologies:1"] = "EventDrivenIntegration";
         builder.Configuration[$"{EngineSettings.SectionName}:Technologies:2"] = "RealtimeExperience";
@@ -207,6 +209,7 @@ public sealed class AspNetCoreHostingTests
         builder.Configuration["OpenApi:SecuritySchemes:0:BearerFormat"] = "JWT";
         builder.Configuration["OpenApi:SecuritySchemes:0:In"] = "Header";
         builder.Configuration["OpenApi:SecuritySchemes:0:Description"] = "Bearer token authentication.";
+        builder.AddGraphQLTransport();
         builder.AddGrpcTransport();
         builder.AddJsonRpcTransport();
         builder.AddCephalon(cephalon =>
@@ -267,6 +270,17 @@ public sealed class AspNetCoreHostingTests
         var scalarPayload = await scalarResponse.Content.ReadAsStringAsync();
         var greeting = await client.GetFromJsonAsync<GreetingEnvelope>("/api/discovery/hello/Codex");
         var time = await client.GetFromJsonAsync<PlatformTimeEnvelope>("/api/platform/time");
+        var graphQlResponse = await client.PostAsJsonAsync("/graphql", new
+        {
+            query = "query ($name: String) { hello(name: $name) { message generatedAtUtc traits } }",
+            variables = new
+            {
+                name = "Codex"
+            }
+        });
+        var graphQlPayload = await graphQlResponse.Content.ReadAsStringAsync();
+        var graphQlSdlResponse = await client.GetAsync("/graphql?sdl");
+        var graphQlSdlPayload = await graphQlSdlResponse.Content.ReadAsStringAsync();
         var rpcResponse = await client.PostAsJsonAsync("/rpc/discovery", new
         {
             jsonRpc = "2.0",
@@ -329,6 +343,7 @@ public sealed class AspNetCoreHostingTests
             project.Packages.Contains("Cephalon.Agentics", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.Eventing", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.Edge", StringComparer.OrdinalIgnoreCase) &&
+            project.Packages.Contains("Cephalon.AspNetCore.GraphQL", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.AspNetCore.JsonRpc", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.AspNetCore.Grpc", StringComparer.OrdinalIgnoreCase));
         Assert.Contains(scaffold.Folders, folder =>
@@ -368,6 +383,7 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains(transports, transport => transport.Id == "rest-api");
         Assert.Contains(transports, transport => transport.Id == "json-rpc");
         Assert.Contains(transports, transport => transport.Id == "grpc");
+        Assert.Contains(transports, transport => transport.Id == "graphql");
         Assert.Contains(transports, transport => transport.Id == "server-sent-events");
         Assert.Contains(transports, transport => transport.Id == "websocket");
 
@@ -463,6 +479,18 @@ public sealed class AspNetCoreHostingTests
 
         Assert.NotNull(time);
         Assert.Equal(new DateTimeOffset(2030, 1, 1, 0, 0, 0, TimeSpan.Zero), time.UtcNow);
+
+        Assert.True(graphQlResponse.IsSuccessStatusCode, graphQlPayload);
+        using var graphQlDocument = JsonDocument.Parse(graphQlPayload);
+        Assert.Equal(
+            "Hello, Codex from the Cephalon future stack.",
+            graphQlDocument.RootElement.GetProperty("data").GetProperty("hello").GetProperty("message").GetString());
+        Assert.Equal(
+            3,
+            graphQlDocument.RootElement.GetProperty("data").GetProperty("hello").GetProperty("traits").GetArrayLength());
+        Assert.True(graphQlSdlResponse.IsSuccessStatusCode, graphQlSdlPayload);
+        Assert.Contains("type Query", graphQlSdlPayload, StringComparison.Ordinal);
+        Assert.Contains("hello(name: String)", graphQlSdlPayload, StringComparison.Ordinal);
 
         Assert.True(rpcResponse.IsSuccessStatusCode);
         var rpcDocument = JsonDocument.Parse(rpcPayload);
@@ -934,6 +962,26 @@ public sealed class AspNetCoreHostingTests
         var exception = Assert.Throws<InvalidOperationException>(() => app.MapCephalon());
 
         Assert.Contains("json-rpc", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task MapCephalonFailsFastWhenGraphQLTransportAdapterIsMissing()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "GraphQL";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+
+        var exception = Assert.Throws<InvalidOperationException>(() => app.MapCephalon());
+
+        Assert.Contains("graphql", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]

@@ -1,3 +1,4 @@
+using System.CodeDom.Compiler;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -169,22 +170,26 @@ public static class ReferenceDocsGenerator
             .Where(static constructor => !constructor.IsDefined(typeof(CompilerGeneratedAttribute), inherit: false))
             .OrderBy(static constructor => constructor.GetParameters().Length)
             .Select(constructor => CreateMemberPage(constructor, comments, "Constructors"))
+            .OfType<MemberPage>()
             .ToArray();
         var fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
             .Where(static field => !field.IsSpecialName)
             .Where(static field => !field.IsDefined(typeof(CompilerGeneratedAttribute), inherit: false))
             .OrderBy(static field => field.Name, StringComparer.OrdinalIgnoreCase)
             .Select(field => CreateMemberPage(field, comments, "Fields"))
+            .OfType<MemberPage>()
             .ToArray();
         var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
             .OrderBy(static property => property.Name, StringComparer.OrdinalIgnoreCase)
             .Select(property => CreateMemberPage(property, comments, "Properties"))
+            .OfType<MemberPage>()
             .ToArray();
         var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
             .Where(static method => IsDocumentableMethod(method))
             .OrderBy(static method => method.Name, StringComparer.OrdinalIgnoreCase)
             .ThenBy(static method => method.GetParameters().Length)
             .Select(method => CreateMemberPage(method, comments, "Methods"))
+            .OfType<MemberPage>()
             .ToArray();
 
         return new TypePage(
@@ -219,20 +224,26 @@ public static class ReferenceDocsGenerator
             and not "op_Inequality";
     }
 
-    private static MemberPage CreateMemberPage(
+    private static MemberPage? CreateMemberPage(
         MemberInfo member,
         Dictionary<string, XElement> comments,
         string category)
     {
         var memberDocId = GetMemberDocId(member);
         var comment = comments.TryGetValue(memberDocId, out var memberComment) ? memberComment : null;
+        var summary = RenderElement(comment?.Element("summary"));
+
+        if (ShouldSkipGeneratedMember(member, summary))
+        {
+            return null;
+        }
 
         return new MemberPage(
             AnchorId: GetMemberAnchorId(memberDocId),
             Category: category,
             DisplayName: GetMemberDisplayName(member),
             Signature: BuildMemberSignature(member),
-            Summary: RenderElement(comment?.Element("summary")),
+            Summary: summary,
             Remarks: RenderElement(comment?.Element("remarks")),
             Returns: RenderElement(comment?.Element("returns")),
             Parameters: comment is null
@@ -247,6 +258,12 @@ public static class ReferenceDocsGenerator
                     .Select(static typeParam => CreateNamedDocumentation(typeParam))
                     .OfType<NamedDocumentation>()
                     .ToArray());
+    }
+
+    private static bool ShouldSkipGeneratedMember(MemberInfo member, string? summary)
+    {
+        return member.IsDefined(typeof(GeneratedCodeAttribute), inherit: false) &&
+               string.IsNullOrWhiteSpace(summary);
     }
 
     private static string BuildIndex(IReadOnlyList<AssemblyPage> pages)

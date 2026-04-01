@@ -2,8 +2,14 @@ using Cephalon.Abstractions.Technologies;
 
 namespace Cephalon.Engine.Technologies;
 
+/// <summary>
+/// Provides the built-in technology descriptors used by Cephalon app profiles.
+/// </summary>
 public static class BuiltInTechnologies
 {
+    /// <summary>
+    /// Gets the built-in agentic-workloads technology profile.
+    /// </summary>
     public static TechnologyDescriptor AgenticWorkloads { get; } = new(
         id: "agentic-workloads",
         displayName: "Agentic Workloads",
@@ -18,6 +24,9 @@ public static class BuiltInTechnologies
             "Use worker-host or background-runtime paths for long-running agent loops, retries, and scheduled tasks."
         ]);
 
+    /// <summary>
+    /// Gets the built-in event-driven-integration technology profile.
+    /// </summary>
     public static TechnologyDescriptor EventDrivenIntegration { get; } = new(
         id: "event-driven-integration",
         displayName: "Event-Driven Integration",
@@ -32,6 +41,9 @@ public static class BuiltInTechnologies
             "Isolate broker or queue SDKs behind adapters so infrastructure choices can evolve later."
         ]);
 
+    /// <summary>
+    /// Gets the built-in knowledge-retrieval technology profile.
+    /// </summary>
     public static TechnologyDescriptor KnowledgeRetrieval { get; } = new(
         id: "knowledge-retrieval",
         displayName: "Knowledge Retrieval",
@@ -46,6 +58,9 @@ public static class BuiltInTechnologies
             "Treat retrieval components as supporting services under modules instead of leaking storage details into transports."
         ]);
 
+    /// <summary>
+    /// Gets the built-in realtime-experience technology profile.
+    /// </summary>
     public static TechnologyDescriptor RealtimeExperience { get; } = new(
         id: "realtime-experience",
         displayName: "Realtime Experience",
@@ -59,6 +74,9 @@ public static class BuiltInTechnologies
             "Model live updates as explicit contracts so clients can move between transports without rewriting domain behavior."
         ]);
 
+    /// <summary>
+    /// Gets the built-in edge-native-delivery technology profile.
+    /// </summary>
     public static TechnologyDescriptor EdgeNativeDelivery { get; } = new(
         id: "edge-native-delivery",
         displayName: "Edge-Native Delivery",
@@ -84,8 +102,17 @@ public static class BuiltInTechnologies
 
     private static readonly Dictionary<string, TechnologyDescriptor> Index = CreateIndex();
 
+    /// <summary>
+    /// Gets all built-in technology descriptors.
+    /// </summary>
     public static IReadOnlyList<TechnologyDescriptor> All => Items;
 
+    /// <summary>
+    /// Attempts to resolve a technology identifier, display name, or alias.
+    /// </summary>
+    /// <param name="value">The technology identifier, display name, or alias to resolve.</param>
+    /// <param name="technology">The resolved technology descriptor when the lookup succeeds.</param>
+    /// <returns><see langword="true" /> when the technology was resolved; otherwise, <see langword="false" />.</returns>
     public static bool TryResolve(string value, out TechnologyDescriptor technology)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
@@ -93,6 +120,11 @@ public static class BuiltInTechnologies
         return Index.TryGetValue(NormalizeKey(value), out technology!);
     }
 
+    /// <summary>
+    /// Resolves a technology identifier, display name, or alias.
+    /// </summary>
+    /// <param name="value">The technology identifier, display name, or alias to resolve.</param>
+    /// <returns>The resolved technology descriptor.</returns>
     public static TechnologyDescriptor Resolve(string value)
     {
         if (TryResolve(value, out var technology))

@@ -13,7 +13,7 @@ The original candidate list mixes different kinds of decisions:
 - `Vertical Slice Architecture`: feature organization style
 - `Shared Foundation Pattern`: shared platform/base layer
 - `Strategy Pattern`: internal behavior extension pattern
-- `REST API`, `JsonRpc`, `Grpc`, `SSE`, `WebSocket`: transport surface choices
+- `REST API`, `JsonRpc`, `Grpc`, `GraphQL`, `SSE`, `WebSocket`: transport surface choices
 
 Cephalon should not treat all of these as equal top-level architecture choices. Instead, it should define an `App Model` made from multiple dimensions.
 
@@ -64,6 +64,7 @@ Supported direction:
 - `RestApi`
 - `JsonRpc`
 - `Grpc`
+- `GraphQL`
 - `ServerSentEvents`
 - `WebSocket`
 
@@ -107,7 +108,7 @@ They may also be supplied by packages or project code when a team needs to model
 | Shared Foundation Pattern | Mandatory engine foundation |
 | Strategy Pattern | Internal extension mechanism |
 | Agentic / Event-Driven / Knowledge / Realtime / Edge profiles | Technology profile |
-| REST API / JsonRpc / Grpc / SSE / WebSocket | Transport surface |
+| REST API / JsonRpc / Grpc / GraphQL / SSE / WebSocket | Transport surface |
 
 ## Predefined Cephalon blueprints
 
@@ -269,7 +270,7 @@ Current placeholder tokens in scaffold templates:
 - `{ModuleName}`
 - `{FeatureName}`
 
-Transport selection can enrich the scaffold plan further. For example, selecting `JsonRpc` or `Grpc` adds adapter package hints and host registration conventions to the host project plan. Technology selection can enrich it too by appending workload guidance and future-ready conventions without forcing a whole new blueprint.
+Transport selection can enrich the scaffold plan further. For example, selecting `JsonRpc`, `Grpc`, or `GraphQL` adds adapter package hints and host registration conventions to the host project plan. Technology selection can enrich it too by appending workload guidance and future-ready conventions without forcing a whole new blueprint.
 
 The same scaffold plan is visible:
 

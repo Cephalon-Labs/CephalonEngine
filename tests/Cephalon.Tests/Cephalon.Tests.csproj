@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Cephalon.AspNetCore.GraphQL\Cephalon.AspNetCore.GraphQL.csproj" />
     <ProjectReference Include="..\..\benchmarks\Cephalon.Benchmarks\Cephalon.Benchmarks.csproj" />
     <ProjectReference Include="..\..\samples\Cephalon.ReferenceModule.Operations\Cephalon.ReferenceModule.Operations.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Agentics\Cephalon.Agentics.csproj" />

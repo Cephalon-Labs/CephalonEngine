@@ -12,6 +12,7 @@ When working in this repository:
 - prefer reusable engine primitives over product-specific shortcuts
 - treat hand-authored `.md` files as the human-facing product and adoption docs for Cephalon
 - treat XML comments on public contracts as the API explanation layer for IntelliSense and external documentation generators
+- when scope changes, hidden work appears, or historical planning no longer matches the code, update backlog, roadmap, sprint, phase, estimate, task/sub-task placement, labels, and commit references so tracking stays truthful
 
 ## Architecture rules
 
@@ -245,6 +246,14 @@ When changing architecture or engine behavior, keep these files in sync if relev
 - `docs/engine-backlog.md`
 - `templates/Cephalon.TemplatePack/PACKAGE.md`
 - `docs/benchmarking.md`
+
+When work is added, cut, or re-scoped during implementation:
+
+- update the relevant backlog and roadmap entries instead of leaving scope drift undocumented
+- move work between phase, sprint, epic, task, or sub-task when the code reality says it belongs elsewhere
+- add or revise estimates when the implementation reveals materially different cost
+- correct historical planning claims when repository state shows a capability was not actually shipped yet
+- keep issue, project, and commit references aligned with the revised plan
 
 ## Key references
 

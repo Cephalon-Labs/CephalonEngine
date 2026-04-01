@@ -2,10 +2,23 @@ using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.Engine.Configuration;
 
+/// <summary>
+/// Describes how the runtime reacts to startup, stop, and restart failures.
+/// </summary>
 public sealed class FailurePolicy
 {
+    /// <summary>
+    /// Gets the default failure policy used when no explicit configuration is supplied.
+    /// </summary>
     public static FailurePolicy Default { get; } = new();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FailurePolicy" /> class.
+    /// </summary>
+    /// <param name="startupFailureBehavior">How startup failures are handled.</param>
+    /// <param name="stopFailureBehavior">How stop failures are handled.</param>
+    /// <param name="allowManualRestart">Whether operators can manually restart the runtime after supported failures.</param>
+    /// <param name="maxRestartAttempts">The maximum number of manual restarts, where <c>-1</c> allows unlimited restarts.</param>
     public FailurePolicy(
         StartupFailureBehavior startupFailureBehavior = StartupFailureBehavior.FailFast,
         StopFailureBehavior stopFailureBehavior = StopFailureBehavior.BestEffortContinue,
@@ -25,20 +38,41 @@ public sealed class FailurePolicy
         MaxRestartAttempts = maxRestartAttempts;
     }
 
+    /// <summary>
+    /// Gets how startup failures are handled.
+    /// </summary>
     public StartupFailureBehavior StartupFailureBehavior { get; }
 
+    /// <summary>
+    /// Gets how stop failures are handled.
+    /// </summary>
     public StopFailureBehavior StopFailureBehavior { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether manual restart is allowed after supported failures.
+    /// </summary>
     public bool AllowManualRestart { get; }
 
+    /// <summary>
+    /// Gets the maximum number of manual restarts.
+    /// </summary>
     public int MaxRestartAttempts { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether this policy differs from <see cref="Default" />.
+    /// </summary>
     public bool HasValues =>
         StartupFailureBehavior != Default.StartupFailureBehavior ||
         StopFailureBehavior != Default.StopFailureBehavior ||
         AllowManualRestart != Default.AllowManualRestart ||
         MaxRestartAttempts != Default.MaxRestartAttempts;
 
+    /// <summary>
+    /// Reads the failure policy from configuration.
+    /// </summary>
+    /// <param name="configuration">The configuration source that contains the engine section.</param>
+    /// <param name="sectionPath">The root configuration section path to read from.</param>
+    /// <returns>The parsed failure policy.</returns>
     public static FailurePolicy FromConfiguration(
         IConfiguration configuration,
         string sectionPath = EngineSettings.SectionName)
