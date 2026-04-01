@@ -1,7 +1,19 @@
 namespace Cephalon.Benchmarks.Validation;
 
+/// <summary>
+/// Reads BenchmarkDotNet CSV exports into normalized guardrail measurements.
+/// </summary>
 public static class CsvBenchmarkReportReader
 {
+    /// <summary>
+    /// Reads all supported CSV exports from a benchmark results directory.
+    /// </summary>
+    /// <param name="resultsDirectory">
+    /// The directory that contains BenchmarkDotNet report files.
+    /// </param>
+    /// <returns>
+    /// The parsed measurements discovered in the directory.
+    /// </returns>
     public static IReadOnlyList<BenchmarkMeasurement> ReadDirectory(string resultsDirectory)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(resultsDirectory);
@@ -21,6 +33,15 @@ public static class CsvBenchmarkReportReader
         return measurements;
     }
 
+    /// <summary>
+    /// Reads a single BenchmarkDotNet CSV report file.
+    /// </summary>
+    /// <param name="path">
+    /// The path to the CSV report file.
+    /// </param>
+    /// <returns>
+    /// The measurements parsed from the file.
+    /// </returns>
     public static IReadOnlyList<BenchmarkMeasurement> ReadFile(string path)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);

@@ -2,8 +2,20 @@ using System.Text.Json;
 
 namespace Cephalon.Benchmarks.Validation;
 
+/// <summary>
+/// Represents the persisted benchmark guardrail catalog used during validation.
+/// </summary>
 public sealed class GuardrailCatalog
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GuardrailCatalog"/> class.
+    /// </summary>
+    /// <param name="version">
+    /// The schema or content version of the guardrail catalog.
+    /// </param>
+    /// <param name="entries">
+    /// The guardrail entries that define the accepted performance envelope.
+    /// </param>
     public GuardrailCatalog(
         string version,
         IReadOnlyList<GuardrailEntry> entries)
@@ -12,10 +24,25 @@ public sealed class GuardrailCatalog
         Entries = entries ?? throw new ArgumentNullException(nameof(entries));
     }
 
+    /// <summary>
+    /// Gets the catalog version recorded in the guardrail file.
+    /// </summary>
     public string Version { get; }
 
+    /// <summary>
+    /// Gets the benchmark entries enforced by the catalog.
+    /// </summary>
     public IReadOnlyList<GuardrailEntry> Entries { get; }
 
+    /// <summary>
+    /// Loads a guardrail catalog from disk.
+    /// </summary>
+    /// <param name="path">
+    /// The path to the JSON guardrail catalog file.
+    /// </param>
+    /// <returns>
+    /// The parsed guardrail catalog.
+    /// </returns>
     public static GuardrailCatalog Load(string path)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);

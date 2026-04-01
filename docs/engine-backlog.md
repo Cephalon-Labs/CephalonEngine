@@ -206,18 +206,33 @@ Delivered:
 
 ### ENG-027 DocFX XML-comment readiness beyond shipped packages
 
-Status: next
+Status: done
 Estimate: 8
+
+Delivered:
+
+- XML comments added across benchmark, sample, and reference-module public APIs that belong in the supported published docs set
+- supported DocFX/reference-doc boundary documented explicitly for shipped packages, samples, benchmarks, and reference modules
+- `tests/Cephalon.Tests` excluded from generated docs scope so test-only fixtures do not blur supported documentation input
+
+Follow-up later:
+
+- keep repo-wide XML-comment hygiene for test harnesses as a separate explicit choice instead of silently expanding published docs scope
+
+### ENG-028 Repo-wide XML-comment hygiene for test harnesses
+
+Status: later
+Estimate: 6
 
 Why:
 
-- shipped packages are now covered for XML-doc completeness, but a repo-wide DocFX input set would still fail on public sample and benchmark code
+- a fully repo-wide CS1591-clean build would still require a separate decision on whether public test fixtures should become internal, documented, or excluded by convention
 
 Acceptance:
 
-- decide and document the supported DocFX input set explicitly
-- add missing XML comments for public sample, benchmark, and reference-module APIs that belong in the published docs scope
-- keep DocFX readiness aligned with the same XML-comment completeness rules used by reference-doc coverage tests
+- decide whether public xUnit fixtures and shared test helpers should stay public or become internal where safe
+- if repo-wide XML-comment enforcement beyond the published docs set becomes a goal, make the test-harness policy explicit and tooling-backed
+- avoid letting test-only visibility choices blur the supported DocFX/reference-doc publishing boundary
 
 ### ENG-016 Blueprint sample suite
 
@@ -499,3 +514,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 ### Later / not scheduled yet
 
 - ENG-022 `MicroserviceSuite` blueprint
+- ENG-028 repo-wide XML-comment hygiene for test harnesses

@@ -13,6 +13,7 @@ When working in this repository:
 - treat hand-authored `.md` files as the human-facing product and adoption docs for Cephalon
 - treat XML comments on public contracts as the API explanation layer for IntelliSense and external documentation generators
 - keep public XML comments complete enough for DocFX-style API publishing whenever an assembly is part of the supported documentation set
+- keep test projects out of the supported DocFX input set unless we intentionally decide to publish test-harness APIs
 - when scope changes, hidden work appears, or historical planning no longer matches the code, update backlog, roadmap, sprint, phase, estimate, task/sub-task placement, labels, and commit references so tracking stays truthful
 
 ## Architecture rules
@@ -72,6 +73,7 @@ When working in this repository:
 - keep the broader runtime introspection snapshot explicit and introspectable; surface it through `/engine/snapshot`
 - keep public engine, companion-pack, host-adapter, and tooling contracts documented with meaningful XML comments so external doc generators and IntelliSense stay useful
 - keep the supported DocFX input set limited to assemblies whose public APIs have complete XML comments
+- keep test-only projects such as `tests/Cephalon.Tests` excluded from generated reference-doc and DocFX publishing scope unless they are deliberately promoted into supported docs input
 - keep hand-authored `.md` guides focused on capability claims, architecture explanation, and adoption guidance instead of auto-generated API listings
 - keep `Cephalon.ReferenceDocs`, `scripts/publish-reference-docs.ps1`, and `docs/reference-docs.md` aligned when XML docs publishing behavior changes, including Markdown indexes and `reference-manifest.json`
 - keep `Cephalon.Cli docs publish`, `docs publish --enable-hosting`, `docs publish --validate-hosting`, `docs publish --open`, `docs enable-hosting`, and `docs validate-hosting` aligned with `Cephalon.ReferenceDocs` and the hosted-reference-docs guidance

@@ -106,7 +106,7 @@ Deliverables:
 - CLI polish for real developer workflows
 - generated output that stays aligned across `Cephalon.Scaffolding`, `Cephalon.Cli`, `Cephalon.TemplatePack`, and the repository package catalog
 - GraphQL transport delivery that keeps the runtime catalog, scaffold output, tests, and component docs aligned with the adapter split
-- DocFX-ready XML comments across the supported published assembly set
+- DocFX-ready XML comments across the supported published assembly set, with tests kept outside that publishing boundary unless promoted intentionally
 - technology profiles that stay aligned across runtime introspection, scaffolding, CLI, and template defaults
 - companion packages that turn selected technology profiles into reusable runtime primitives without bloating the engine core
 - module-authoring starters and reference packages that stay aligned with runtime contracts
