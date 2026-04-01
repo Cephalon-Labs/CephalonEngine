@@ -2219,10 +2219,26 @@ function Get-DesiredProjectStatus {
     }
 
     if ($currentStatus -eq "Validation") {
-        return "Validation"
+        if ($gatesSatisfied) {
+            return "Validation"
+        }
+
+        return "In progress"
     }
 
     if ($currentStatus -eq "In progress") {
+        if ($gatesSatisfied) {
+            return "Validation"
+        }
+
+        return "In progress"
+    }
+
+    if ($currentStatus -eq "Done") {
+        if ($gatesSatisfied) {
+            return "Validation"
+        }
+
         return "In progress"
     }
 
