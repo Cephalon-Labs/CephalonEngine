@@ -46,6 +46,21 @@ That changes the plan materially:
 - we do need an “adopt this safely outside the repo” phase
 - we should prioritize SDK hardening, templates, samples, and operational polish before advanced platform features
 
+## Sprint alignment
+
+The project board now tracks both delivered work and upcoming work through explicit sprint buckets:
+
+- `Foundation Sprint 1`: `ENG-000`, `ENG-001`, `ENG-002`, `ENG-003`, `ENG-004`
+- `Foundation Sprint 2`: `ENG-006`, `ENG-007`, `ENG-008`, `ENG-009`
+- `Foundation Sprint 3`: `ENG-014`, `ENG-015`, `ENG-025`
+- `Adoption Sprint 0`: `ENG-016`, `ENG-017`, `ENG-018`
+- `Operational Sprint 0`: `ENG-019`, `ENG-020`, `ENG-021`, `ENG-024`, `ENG-023`
+- `Platform Sprint 0`: `ENG-012`
+- `Sprint 1`: `ENG-005` plus phase 2 operational hardening follow-through
+- `Sprint 2`: `ENG-011` plus exporter and dependency-health follow-through
+- `Sprint 3`: `ENG-013` plus package distribution and trust follow-through
+- `Later / not scheduled yet`: `ENG-022` and future solution-level expansion work
+
 ## Planning principles
 
 - prefer stabilizing the shipped surface over inventing new layers too early

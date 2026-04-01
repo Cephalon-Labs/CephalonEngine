@@ -208,6 +208,8 @@ function Get-BacklogIssueSpecs {
             $body = $issueMatch.Groups["body"].Value.Trim()
             $statusMatch = [regex]::Match($body, "(?m)^Status:\s*(?<status>.+?)\s*$")
             $status = if ($statusMatch.Success) { $statusMatch.Groups["status"].Value.Trim() } else { "" }
+            $estimateMatch = [regex]::Match($body, "(?m)^Estimate:\s*(?<estimate>\d+(?:\.\d+)?)\s*$")
+            $estimate = if ($estimateMatch.Success) { [decimal]::Parse($estimateMatch.Groups["estimate"].Value, [System.Globalization.CultureInfo]::InvariantCulture) } else { $null }
             $engCode = $Matches[1].ToUpperInvariant()
             $syncId = $engCode.ToLowerInvariant()
             $syncKey = "backlog:$syncId"
@@ -226,6 +228,7 @@ function Get-BacklogIssueSpecs {
                 SyncKey = $syncKey
                 PhaseNumber = $phaseNumber
                 EngCode = $engCode
+                Estimate = $estimate
                 SectionTitle = $sectionTitle
                 SourcePath = $Path
             }
@@ -256,6 +259,7 @@ function Get-RoadmapIssueSpecs {
             SyncKey = "roadmap:phase-2"
             PhaseNumber = 2
             RoadmapPhaseTitle = $phase2.Title
+            Estimate = $null
             SourcePath = $Path
         }
     )
@@ -371,7 +375,8 @@ function Ensure-ManagedPlanningLabels {
     param(
         [Parameter(Mandatory = $true)]$RepositoryContext,
         [Parameter(Mandatory = $true)]$LabelState,
-        [Parameter(Mandatory = $true)]$DesiredIssues
+        [Parameter(Mandatory = $true)]$DesiredIssues,
+        [Parameter(Mandatory = $true)][string[]]$DesiredIterationTitles
     )
 
     $baseLabels = @(
@@ -379,11 +384,7 @@ function Ensure-ManagedPlanningLabels {
         @{ Name = "kind:epic"; Color = "5319e7"; Description = "Managed planning epic / top-level work item." },
         @{ Name = "kind:task"; Color = "1d76db"; Description = "Managed planning child task." },
         @{ Name = "source:backlog"; Color = "bfdadc"; Description = "Managed planning item sourced from docs/engine-backlog.md." },
-        @{ Name = "source:roadmap"; Color = "d4c5f9"; Description = "Managed planning item sourced from docs/engine-roadmap.md." },
-        @{ Name = "iteration:sprint-1"; Color = "c2e0c6"; Description = "Scheduled into Sprint 1." },
-        @{ Name = "iteration:sprint-2"; Color = "c5def5"; Description = "Scheduled into Sprint 2." },
-        @{ Name = "iteration:sprint-3"; Color = "fef2c0"; Description = "Scheduled into Sprint 3." },
-        @{ Name = "iteration:later"; Color = "f9d0c4"; Description = "Tracked as later / not scheduled yet." }
+        @{ Name = "source:roadmap"; Color = "d4c5f9"; Description = "Managed planning item sourced from docs/engine-roadmap.md." }
     )
 
     foreach ($label in $baseLabels) {
@@ -402,6 +403,13 @@ function Ensure-ManagedPlanningLabels {
         $trackLabel = Get-TrackLabelNameForSpec -Spec $spec
         if (-not [string]::IsNullOrWhiteSpace($trackLabel)) {
             Ensure-ManagedLabel -RepositoryContext $RepositoryContext -LabelState $LabelState -Name $trackLabel -Color (Get-TrackLabelColorForSpec -Spec $spec) -Description (Get-TrackLabelDescriptionForSpec -Spec $spec)
+        }
+    }
+
+    foreach ($iterationTitle in ($DesiredIterationTitles | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique)) {
+        $iterationLabel = Get-IterationLabelName -IterationTitle $iterationTitle -PlanningStatus $null
+        if (-not [string]::IsNullOrWhiteSpace($iterationLabel)) {
+            Ensure-ManagedLabel -RepositoryContext $RepositoryContext -LabelState $LabelState -Name $iterationLabel -Color (Get-IterationLabelColor -IterationTitle $iterationTitle -PlanningStatus $null) -Description (Get-IterationLabelDescription -IterationTitle $iterationTitle -PlanningStatus $null)
         }
     }
 }
@@ -479,7 +487,7 @@ function Get-BacklogIterationMap {
     $content = Get-Content -LiteralPath $Path -Raw -Encoding utf8
     $sectionMatch = [regex]::Match(
         $content,
-        "(?ms)^##\s+Recommended next 3 sprints\r?\n(?<body>.*?)(?=^##\s+|\z)")
+        "(?ms)^##\s+(?:Sprint history and next 3 sprints|Recommended next 3 sprints)\r?\n(?<body>.*?)(?=^##\s+|\z)")
 
     $map = @{}
     if (-not $sectionMatch.Success) {
@@ -511,6 +519,72 @@ function Get-BacklogIterationMap {
     }
 
     return $map
+}
+
+function Test-IsLaterPlanningStatus {
+    param([AllowNull()][string]$PlanningStatus)
+
+    if ([string]::IsNullOrWhiteSpace($PlanningStatus)) {
+        return $false
+    }
+
+    $normalized = $PlanningStatus.ToLowerInvariant()
+    return $normalized.Contains("later") -or $normalized.Contains("future") -or $normalized.Contains("deferred")
+}
+
+function Get-ResolvedIterationTitle {
+    param(
+        [AllowNull()][string]$IterationTitle,
+        [AllowNull()][string]$PlanningStatus
+    )
+
+    if (-not [string]::IsNullOrWhiteSpace($IterationTitle)) {
+        return $IterationTitle.Trim()
+    }
+
+    if (Test-IsLaterPlanningStatus -PlanningStatus $PlanningStatus) {
+        return "Later / not scheduled yet"
+    }
+
+    return $null
+}
+
+function ConvertTo-IterationSlug {
+    param([AllowNull()][string]$IterationTitle)
+
+    if ([string]::IsNullOrWhiteSpace($IterationTitle)) {
+        return $null
+    }
+
+    $slug = ($IterationTitle.ToLowerInvariant() -replace "[^a-z0-9]+", "-").Trim("-")
+    if ([string]::IsNullOrWhiteSpace($slug)) {
+        return $null
+    }
+
+    return $slug
+}
+
+function Get-PlanningIterationTitles {
+    param(
+        [Parameter(Mandatory = $true)]$DesiredIssues,
+        [Parameter(Mandatory = $true)]$TopLevelIterationMap
+    )
+
+    $titles = [System.Collections.Generic.List[string]]::new()
+    foreach ($value in $TopLevelIterationMap.Values) {
+        if (-not [string]::IsNullOrWhiteSpace([string]$value) -and -not $titles.Contains([string]$value)) {
+            $titles.Add([string]$value)
+        }
+    }
+
+    foreach ($issue in $DesiredIssues) {
+        $title = Get-ResolvedIterationTitle -IterationTitle $null -PlanningStatus $issue.PlanningStatus
+        if (-not [string]::IsNullOrWhiteSpace($title) -and -not $titles.Contains($title)) {
+            $titles.Add($title)
+        }
+    }
+
+    return @($titles)
 }
 
 function Parse-PlanningMetadataFromBody {
@@ -641,50 +715,68 @@ function Get-PhaseLabelColor {
 function Get-IterationLabelName {
     param([AllowNull()][string]$IterationTitle, [AllowNull()][string]$PlanningStatus)
 
-    if (-not [string]::IsNullOrWhiteSpace($IterationTitle)) {
-        switch ($IterationTitle.ToLowerInvariant()) {
-            "sprint 1" { return "iteration:sprint-1" }
-            "sprint 2" { return "iteration:sprint-2" }
-            "sprint 3" { return "iteration:sprint-3" }
-        }
-    }
-
-    if (-not [string]::IsNullOrWhiteSpace($PlanningStatus)) {
-        $normalized = $PlanningStatus.ToLowerInvariant()
-        if ($normalized.Contains("later") -or $normalized.Contains("future") -or $normalized.Contains("deferred")) {
-            return "iteration:later"
-        }
-    }
-
-    if (-not [string]::IsNullOrWhiteSpace($IterationTitle) -and $IterationTitle.ToLowerInvariant().Contains("later")) {
-        return "iteration:later"
+    $resolvedTitle = Get-ResolvedIterationTitle -IterationTitle $IterationTitle -PlanningStatus $PlanningStatus
+    $slug = ConvertTo-IterationSlug -IterationTitle $resolvedTitle
+    if (-not [string]::IsNullOrWhiteSpace($slug)) {
+        return "iteration:$slug"
     }
 
     return $null
 }
 
 function Get-IterationLabelDescription {
-    param([AllowNull()][string]$LabelName)
+    param(
+        [AllowNull()][string]$IterationTitle,
+        [AllowNull()][string]$PlanningStatus
+    )
 
-    switch ($LabelName) {
-        "iteration:sprint-1" { return "Scheduled into Sprint 1." }
-        "iteration:sprint-2" { return "Scheduled into Sprint 2." }
-        "iteration:sprint-3" { return "Scheduled into Sprint 3." }
-        "iteration:later" { return "Tracked as later / not scheduled yet." }
-        default { return "Tracked to a planning iteration." }
+    $resolvedTitle = Get-ResolvedIterationTitle -IterationTitle $IterationTitle -PlanningStatus $PlanningStatus
+    if ([string]::IsNullOrWhiteSpace($resolvedTitle)) {
+        return "Tracked to a planning iteration."
     }
+
+    if ($resolvedTitle -eq "Later / not scheduled yet") {
+        return "Tracked as later / not scheduled yet."
+    }
+
+    return "Tracked to iteration '$resolvedTitle'."
 }
 
 function Get-IterationLabelColor {
-    param([AllowNull()][string]$LabelName)
+    param(
+        [AllowNull()][string]$IterationTitle,
+        [AllowNull()][string]$PlanningStatus
+    )
 
-    switch ($LabelName) {
-        "iteration:sprint-1" { return "c2e0c6" }
-        "iteration:sprint-2" { return "c5def5" }
-        "iteration:sprint-3" { return "fef2c0" }
-        "iteration:later" { return "f9d0c4" }
-        default { return "ededed" }
+    $resolvedTitle = Get-ResolvedIterationTitle -IterationTitle $IterationTitle -PlanningStatus $PlanningStatus
+    if ([string]::IsNullOrWhiteSpace($resolvedTitle)) {
+        return "ededed"
     }
+
+    switch ($resolvedTitle.ToLowerInvariant()) {
+        "sprint 1" { return "c2e0c6" }
+        "sprint 2" { return "c5def5" }
+        "sprint 3" { return "fef2c0" }
+        "later / not scheduled yet" { return "f9d0c4" }
+    }
+
+    if ($resolvedTitle.ToLowerInvariant().Contains("foundation")) {
+        return "d4c5f9"
+    }
+
+    if ($resolvedTitle.ToLowerInvariant().Contains("adoption")) {
+        return "bfd4f2"
+    }
+
+    if ($resolvedTitle.ToLowerInvariant().Contains("operational")) {
+        return "fbca04"
+    }
+
+    if ($resolvedTitle.ToLowerInvariant().Contains("platform")) {
+        return "c2e0c6"
+    }
+
+    return "ededed"
 }
 
 function Get-TrackLabelNameForSpec {
@@ -1204,6 +1296,7 @@ function ConvertTo-IsoDateLiteral {
 
 function Get-DesiredProjectIterationTitles {
     param(
+        [Parameter(Mandatory = $true)]$DesiredIssues,
         [Parameter(Mandatory = $true)]$TopLevelIterationMap,
         [Parameter(Mandatory = $true)]$ProjectContext,
         [Parameter(Mandatory = $true)]$ExistingIssues
@@ -1214,6 +1307,13 @@ function Get-DesiredProjectIterationTitles {
     foreach ($value in $TopLevelIterationMap.Values) {
         if (-not [string]::IsNullOrWhiteSpace([string]$value) -and -not $titles.Contains([string]$value)) {
             $titles.Add([string]$value)
+        }
+    }
+
+    foreach ($issue in $DesiredIssues) {
+        $resolvedTitle = Get-ResolvedIterationTitle -IterationTitle $null -PlanningStatus $issue.PlanningStatus
+        if (-not [string]::IsNullOrWhiteSpace($resolvedTitle) -and -not $titles.Contains($resolvedTitle)) {
+            $titles.Add($resolvedTitle)
         }
     }
 
@@ -1692,6 +1792,9 @@ function Get-TopLevelPlanningContext {
     elseif ($Spec.Kind -eq "Roadmap" -and $IterationMap.ContainsKey($Spec.SyncKey)) {
         $iterationTitle = $IterationMap[$Spec.SyncKey]
     }
+    else {
+        $iterationTitle = Get-ResolvedIterationTitle -IterationTitle $null -PlanningStatus $Spec.PlanningStatus
+    }
 
     $backlogUrl = $null
     if ($Spec.Kind -eq "Backlog") {
@@ -1769,8 +1872,9 @@ $backlogIssues = Get-BacklogIssueSpecs -Path $BacklogPath
 $roadmapIssues = Get-RoadmapIssueSpecs -RoadmapPhases $roadmapPhases -Path $RoadmapPath
 $desiredIssues = @($backlogIssues + $roadmapIssues)
 $topLevelIterationMap = Get-BacklogIterationMap -Path $BacklogPath
+$desiredIterationTitles = Get-PlanningIterationTitles -DesiredIssues $desiredIssues -TopLevelIterationMap $topLevelIterationMap
 $labelState = Get-LabelState -RepositoryContext $repositoryContext
-Ensure-ManagedPlanningLabels -RepositoryContext $repositoryContext -LabelState $labelState -DesiredIssues $desiredIssues
+Ensure-ManagedPlanningLabels -RepositoryContext $repositoryContext -LabelState $labelState -DesiredIssues $desiredIssues -DesiredIterationTitles $desiredIterationTitles
 
 $projectContext = $null
 if (-not $SkipProjectSync) {
@@ -1796,7 +1900,7 @@ foreach ($phase in $roadmapPhases) {
 
 $existingIssues = Get-RepositoryIssues -RepositoryFullName $repo
 if ($null -ne $projectContext) {
-    $desiredIterationTitles = Get-DesiredProjectIterationTitles -TopLevelIterationMap $topLevelIterationMap -ProjectContext $projectContext -ExistingIssues $existingIssues
+    $desiredIterationTitles = Get-DesiredProjectIterationTitles -DesiredIssues $desiredIssues -TopLevelIterationMap $topLevelIterationMap -ProjectContext $projectContext -ExistingIssues $existingIssues
     $projectContext = Ensure-ProjectIterations -ProjectContext $projectContext -ProjectOwner $ProjectOwner -ProjectNumber $ProjectNumber -DesiredIterationTitles $desiredIterationTitles
 }
 
@@ -1924,6 +2028,9 @@ foreach ($desiredIssue in $desiredIssues) {
     $estimateText = if ($null -ne $currentProjectItem -and $currentProjectItem.PSObject.Properties["estimate"] -and $null -ne $currentProjectItem.estimate) {
         Format-EstimateText -Estimate $currentProjectItem.estimate
     }
+    elseif ($null -ne $desiredIssue.Estimate) {
+        Format-EstimateText -Estimate $desiredIssue.Estimate
+    }
     else {
         ""
     }
@@ -2021,8 +2128,13 @@ if ($null -ne $projectContext) {
             Set-ProjectIteration -ProjectContext $projectContext -ProjectItem $projectItem -IterationTitle $syncEntry.Value.IterationTitle
         }
 
-        if (($null -eq (Get-ProjectItemEstimateValue -ProjectItem $projectItem)) -and $parentEstimateRollups.ContainsKey([int]$issue.number)) {
-            Set-ProjectEstimate -ProjectContext $projectContext -ProjectItem $projectItem -Estimate $parentEstimateRollups[[int]$issue.number]
+        if ($null -eq (Get-ProjectItemEstimateValue -ProjectItem $projectItem)) {
+            if ($null -ne $desired.Estimate) {
+                Set-ProjectEstimate -ProjectContext $projectContext -ProjectItem $projectItem -Estimate $desired.Estimate
+            }
+            elseif ($parentEstimateRollups.ContainsKey([int]$issue.number)) {
+                Set-ProjectEstimate -ProjectContext $projectContext -ProjectItem $projectItem -Estimate $parentEstimateRollups[[int]$issue.number]
+            }
         }
     }
 

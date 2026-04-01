@@ -7,6 +7,7 @@ Backlog status in this document reflects the repository state as of `April 1, 20
 ### ENG-000 App model and blueprint contract
 
 Status: done
+Estimate: 5
 
 Delivered:
 
@@ -24,6 +25,7 @@ Follow-up later:
 ### ENG-001 Module discovery from assemblies
 
 Status: done
+Estimate: 8
 
 Delivered:
 
@@ -35,6 +37,7 @@ Delivered:
 ### ENG-002 Lifecycle hooks baseline
 
 Status: done
+Estimate: 5
 
 Delivered:
 
@@ -46,6 +49,7 @@ Delivered:
 ### ENG-003 Engine options and policy baseline
 
 Status: done
+Estimate: 3
 
 Delivered:
 
@@ -62,6 +66,7 @@ Follow-up later:
 ### ENG-004 Manifest v2
 
 Status: done
+Estimate: 5
 
 Delivered:
 
@@ -77,6 +82,7 @@ Follow-up later:
 ### ENG-006 Worker adapter baseline
 
 Status: done
+Estimate: 5
 
 Delivered:
 
@@ -87,6 +93,7 @@ Delivered:
 ### ENG-007 ASP.NET Core contribution model baseline
 
 Status: done
+Estimate: 8
 
 Delivered:
 
@@ -98,6 +105,7 @@ Delivered:
 ### ENG-008 Observability baseline
 
 Status: done
+Estimate: 5
 
 Delivered:
 
@@ -113,6 +121,7 @@ Follow-up later:
 ### ENG-009 Blueprint-aware scaffolding and CLI baseline
 
 Status: done
+Estimate: 8
 
 Delivered:
 
@@ -124,6 +133,7 @@ Delivered:
 ### ENG-014 Protocol adapter packages baseline
 
 Status: done
+Estimate: 8
 
 Delivered:
 
@@ -135,6 +145,7 @@ Delivered:
 ### ENG-015 Benchmark suite baseline
 
 Status: done
+Estimate: 5
 
 Delivered:
 
@@ -146,6 +157,7 @@ Delivered:
 ### ENG-025 Technology companion packages baseline
 
 Status: done
+Estimate: 13
 
 Delivered:
 
@@ -167,6 +179,7 @@ Follow-up later:
 ### ENG-005 Engine API and package surface hardening
 
 Status: next
+Estimate: 4
 
 Why:
 
@@ -182,6 +195,7 @@ Acceptance:
 ### ENG-016 Blueprint sample suite
 
 Status: done
+Estimate: 8
 
 Delivered:
 
@@ -193,6 +207,7 @@ Delivered:
 ### ENG-017 `dotnet new` / template-pack support
 
 Status: done
+Estimate: 8
 
 Delivered:
 
@@ -211,6 +226,7 @@ Follow-up later:
 ### ENG-018 Module SDK and authoring path
 
 Status: done
+Estimate: 8
 
 Delivered:
 
@@ -230,6 +246,7 @@ Follow-up later:
 ### ENG-019 Runtime failure and restart policy
 
 Status: done
+Estimate: 13
 
 Delivered:
 
@@ -248,6 +265,7 @@ Follow-up later:
 ### ENG-020 Operational health and telemetry exports
 
 Status: done
+Estimate: 13
 
 Delivered:
 
@@ -268,6 +286,7 @@ Follow-up later:
 ### ENG-021 Benchmark guardrails in validation flow
 
 Status: done
+Estimate: 5
 
 Delivered:
 
@@ -285,6 +304,7 @@ Follow-up later:
 ### ENG-024 Explicit package assembly loading baseline
 
 Status: done
+Estimate: 13
 
 Delivered:
 
@@ -308,6 +328,7 @@ Follow-up later:
 ### ENG-023 GitHub Actions release-validation baseline
 
 Status: done
+Estimate: 5
 
 Delivered:
 
@@ -326,6 +347,7 @@ Follow-up later:
 ### ENG-011 Package and plugin loading
 
 Status: later
+Estimate: 19
 
 Why:
 
@@ -341,6 +363,7 @@ Acceptance:
 ### ENG-012 Capability permissions and trust policy
 
 Status: done
+Estimate: 8
 
 Delivered:
 
@@ -359,6 +382,7 @@ Follow-up later:
 ### ENG-013 Workflow and orchestration primitives
 
 Status: later
+Estimate: 19
 
 Why:
 
@@ -373,6 +397,7 @@ Acceptance:
 ### ENG-022 `MicroserviceSuite` blueprint
 
 Status: later
+Estimate: 10
 
 Why:
 
@@ -384,7 +409,48 @@ Acceptance:
 - keep suite blueprints composed from existing app-level contracts
 - add reference samples for multi-service Cephalon solutions
 
-## Recommended next 3 sprints
+## Sprint history and next 3 sprints
+
+Historical sprint buckets below are retrospective planning groups used to backfill iteration and estimate metadata for delivered work.
+
+### Foundation Sprint 1
+
+- ENG-000 App model and blueprint contract
+- ENG-001 Module discovery from assemblies
+- ENG-002 Lifecycle hooks baseline
+- ENG-003 Engine options and policy baseline
+- ENG-004 Manifest v2
+
+### Foundation Sprint 2
+
+- ENG-006 Worker adapter baseline
+- ENG-007 ASP.NET Core contribution model baseline
+- ENG-008 Observability baseline
+- ENG-009 Blueprint-aware scaffolding and CLI baseline
+
+### Foundation Sprint 3
+
+- ENG-014 Protocol adapter packages baseline
+- ENG-015 Benchmark suite baseline
+- ENG-025 Technology companion packages baseline
+
+### Adoption Sprint 0
+
+- ENG-016 Blueprint sample suite
+- ENG-017 `dotnet new` / template-pack support
+- ENG-018 Module SDK and authoring path
+
+### Operational Sprint 0
+
+- ENG-019 Runtime failure and restart policy
+- ENG-020 Operational health and telemetry exports
+- ENG-021 Benchmark guardrails in validation flow
+- ENG-024 Explicit package assembly loading baseline
+- ENG-023 GitHub Actions release-validation baseline
+
+### Platform Sprint 0
+
+- ENG-012 Capability permissions and trust policy
 
 ### Sprint 1
 
@@ -400,3 +466,7 @@ Acceptance:
 
 - ENG-013 Workflow and orchestration primitives
 - package distribution and trust follow-through beyond the current baseline
+
+### Later / not scheduled yet
+
+- ENG-022 `MicroserviceSuite` blueprint
