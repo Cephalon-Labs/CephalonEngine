@@ -13,7 +13,7 @@ ASP.NET Core hosts that call `app.MapCephalon()` now expose three health routes:
 - `/health/ready`
 
 Health responses are JSON and include the check status, duration, and runtime-specific details such as restart count and the most recent failure context.
-When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details.
+When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.HttpDependencies` is the shipped companion package for turning external HTTP upstreams into that dependency-health surface.
 
 Current semantics:
 
@@ -34,6 +34,53 @@ This keeps dependency visibility separate from the aggregate health routes:
 - `/engine/dependencies` answers "what dependencies are currently reporting?"
 - `/health/live` answers "is the process live?"
 - `/health/ready` answers "is the runtime ready to take traffic with its current dependency state?"
+
+### HTTP dependency probes
+
+`Cephalon.Observability.HttpDependencies` reads `Engine:Observability:DependencyHealth:Http` and turns configured external HTTP endpoints into reusable `IDependencyHealthContributor` data.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "DependencyHealth": {
+        "Http": {
+          "RefreshIntervalSeconds": 30,
+          "Dependencies": [
+            {
+              "Id": "catalog-api",
+              "DisplayName": "Catalog API",
+              "Endpoint": "https://catalog.example.com/health",
+              "Method": "GET",
+              "Required": true,
+              "TimeoutSeconds": 5,
+              "ExpectedStatusCodes": [200]
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonHttpDependencyHealth(builder.Configuration);
+```
+
+Operational notes:
+
+- the HTTP dependency-health package is optional and stays outside `Cephalon.Engine`
+- the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
+- required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
+- if `ExpectedStatusCodes` is omitted, standard successful HTTP responses are treated as healthy
 
 ## Diagnostics surface
 

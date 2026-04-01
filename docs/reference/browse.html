@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-01T21:15:14.0459826+00:00",
+  "GeneratedAtUtc": "2026-04-01T21:56:56.4597773+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -182,6 +182,14 @@
       "Category": "Hosts",
       "Description": "Operational diagnostics and telemetry conventions for hosts.",
       "FileName": "cephalon-observability.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "Category": "Hosts",
+      "Description": "External HTTP dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-httpdependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
     },
@@ -547,6 +555,20 @@
       "AssemblyName": "Cephalon.Observability",
       "FileName": "cephalon-observability.md",
       "AnchorId": "namespace-cephalon-observability-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-httpdependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-httpdependencies-hosting",
       "TypeCount": 1
     },
     {
@@ -1264,6 +1286,51 @@
         "Fields": 1,
         "Properties": 1,
         "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "HttpDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "type-cephalon-observability-httpdependencies-configuration-httpdependencydefinition",
+      "Declaration": "public sealed class HttpDependencyDefinition",
+      "Summary": "Describes one external HTTP dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "HttpDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "type-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions",
+      "Declaration": "public sealed class HttpDependencyHealthOptions",
+      "Summary": "Configures HTTP and external API dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "HttpDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "type-cephalon-observability-httpdependencies-hosting-httpdependencyhealthservicecollectionextensions",
+      "Declaration": "public static class HttpDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds HTTP and external API dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
       }
     },
     {
@@ -3057,6 +3124,28 @@
       "Summary": "Adds Cephalon worker hosting and allows additional code-based engine configuration."
     },
     {
+      "DisplayName": "AddCephalonHttpDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "HttpDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-httpdependencies-hosting-httpdependencyhealthservicecollectionextensions-addcephalonhttpdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonHttpDependencyHealth(this IServiceCollection services, Action\u003CHttpDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds HTTP dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonHttpDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "HttpDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-httpdependencies-hosting-httpdependencyhealthservicecollectionextensions-addcephalonhttpdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonHttpDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CHttpDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds HTTP dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
       "DisplayName": "AddCephalonObservability",
       "Category": "Methods",
       "DeclaringTypeName": "ObservabilityServiceCollectionExtensions",
@@ -4412,6 +4501,17 @@
     {
       "DisplayName": "Dependencies",
       "Category": "Properties",
+      "DeclaringTypeName": "HttpDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003CHttpDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured HTTP dependencies that should contribute to runtime health."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeHealthReport",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -4885,6 +4985,17 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "HttpDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "KnowledgeCollectionDescriptor",
       "NamespaceName": "Cephalon.Retrieval.Services",
       "AssemblyName": "Cephalon.Retrieval",
@@ -5182,6 +5293,17 @@
     {
       "DisplayName": "Endpoint",
       "Category": "Properties",
+      "DeclaringTypeName": "HttpDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-endpoint",
+      "Signature": "string Endpoint { get; set; }",
+      "Summary": "Gets or sets the absolute endpoint that should be probed for this dependency."
+    },
+    {
+      "DisplayName": "Endpoint",
+      "Category": "Properties",
       "DeclaringTypeName": "TelemetryExportOptions",
       "NamespaceName": "Cephalon.Observability.Configuration",
       "AssemblyName": "Cephalon.Observability",
@@ -5376,6 +5498,17 @@
       "AnchorId": "member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-exchangegreetings-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken",
       "Signature": "AsyncDuplexStreamingCall\u003CHelloRequest, HelloReply\u003E ExchangeGreetings(Metadata headers, DateTime? deadline, CancellationToken cancellationToken)",
       "Summary": "Exchanges greeting messages bidirectionally to validate duplex streaming support."
+    },
+    {
+      "DisplayName": "ExpectedStatusCodes",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-expectedstatuscodes",
+      "Signature": "IReadOnlyList\u003Cint\u003E ExpectedStatusCodes { get; set; }",
+      "Summary": "Gets or sets the explicit HTTP status codes that should be treated as healthy."
     },
     {
       "DisplayName": "Experience",
@@ -5651,6 +5784,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-failurepolicy-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
       "Signature": "FailurePolicy FromConfiguration(IConfiguration configuration, string sectionPath)",
       "Summary": "Reads the failure policy from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
+      "DeclaringTypeName": "HttpDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "HttpDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds HTTP dependency-health options from configuration."
     },
     {
       "DisplayName": "FromConfiguration",
@@ -5983,6 +6127,28 @@
       "Summary": "Identifies the host project."
     },
     {
+      "DisplayName": "HttpDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "HttpDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-ctor",
+      "Signature": "HttpDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060HttpDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "HttpDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "HttpDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-ctor",
+      "Signature": "HttpDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060HttpDependencyHealthOptions\u0060 class."
+    },
+    {
       "DisplayName": "Id",
       "Category": "Properties",
       "DeclaringTypeName": "AgentToolDescriptor",
@@ -6036,6 +6202,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventchanneldescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable channel identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
     {
       "DisplayName": "Id",
@@ -7193,6 +7370,17 @@
       "Summary": "Gets the meter name emitted by the engine."
     },
     {
+      "DisplayName": "Method",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-method",
+      "Signature": "string Method { get; set; }",
+      "Summary": "Gets or sets the HTTP method used for the probe request."
+    },
+    {
       "DisplayName": "Microservice",
       "Category": "Properties",
       "DeclaringTypeName": "BuiltInBlueprints",
@@ -8293,6 +8481,17 @@
       "Summary": "Describes the operator-facing HTTP surface for hosted Cephalon reference documentation."
     },
     {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
       "DisplayName": "RegisterCapabilities",
       "Category": "Methods",
       "DeclaringTypeName": "IModule",
@@ -8511,6 +8710,17 @@
       "AnchorId": "member-p-cephalon-abstractions-health-dependencyhealthreport-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Whether the dependency is required for readiness."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
     {
       "DisplayName": "RequireIntegritySha256",
@@ -10326,6 +10536,17 @@
       "AnchorId": "member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-tests",
       "Signature": "const string Tests",
       "Summary": "Identifies a test project."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.HttpDependencies",
+      "FileName": "cephalon-observability-httpdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-request timeout in seconds."
     },
     {
       "DisplayName": "Tools",

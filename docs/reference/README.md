@@ -31,6 +31,7 @@ Quick links:
 - [Cephalon.AspNetCore.Grpc](cephalon-aspnetcore-grpc.md): gRPC transport adapter and contracts for ASP.NET Core hosts. Contains 3 namespaces and 10 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore.Grpc)
 - [Cephalon.AspNetCore.JsonRpc](cephalon-aspnetcore-jsonrpc.md): JSON-RPC transport adapter for ASP.NET Core hosts. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore.JsonRpc)
 - [Cephalon.Observability](cephalon-observability.md): Operational diagnostics and telemetry conventions for hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability)
+- [Cephalon.Observability.HttpDependencies](cephalon-observability-httpdependencies.md): External HTTP dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.HttpDependencies)
 - [Cephalon.Observability.OpenTelemetry](cephalon-observability-opentelemetry.md): OpenTelemetry OTLP exporter integration for Cephalon hosts. Contains 1 namespaces and 1 public types. [Browse](browse.html?assembly=Cephalon.Observability.OpenTelemetry)
 - [Cephalon.Worker](cephalon-worker.md): Generic-host worker adapter for non-HTTP runtime execution. Contains 1 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Worker)
 

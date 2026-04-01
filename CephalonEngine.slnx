@@ -24,6 +24,7 @@
     <Project Path="src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj" />
     <Project Path="src/Cephalon.Engine/Cephalon.Engine.csproj" />
     <Project Path="src/Cephalon.Observability/Cephalon.Observability.csproj" />
+    <Project Path="src/Cephalon.Observability.HttpDependencies/Cephalon.Observability.HttpDependencies.csproj" />
     <Project Path="src/Cephalon.Observability.OpenTelemetry/Cephalon.Observability.OpenTelemetry.csproj" />
     <Project Path="src/Cephalon.ReferenceDocs/Cephalon.ReferenceDocs.csproj" />
     <Project Path="src/Cephalon.Retrieval/Cephalon.Retrieval.csproj" />

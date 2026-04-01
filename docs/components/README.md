@@ -26,6 +26,7 @@ See also: [Docs hub](../README.md)
 ## Tooling and adoption
 
 - [Cephalon.Observability](observability.md)
+- [Cephalon.Observability.HttpDependencies](observability-http-dependencies.md)
 - [Cephalon.Observability.OpenTelemetry](observability-opentelemetry.md)
 - [Cephalon.Scaffolding](scaffolding.md)
 - [Cephalon.Cli](cli.md)

@@ -16,6 +16,7 @@ This first cut focuses on the core shape we can keep growing:
 - ASP.NET Core integration for shipping modules over HTTP
 - generic-host worker integration for non-HTTP runtime scenarios
 - observability package with runtime logs, metrics, and tracing conventions
+- optional HTTP dependency-health companion package for external API readiness reporting
 - optional OpenTelemetry exporter companion package for OTLP host wiring
 - a runnable playground and tests that prove the architecture
 
@@ -32,6 +33,7 @@ This first cut focuses on the core shape we can keep growing:
 - `src/Cephalon.Eventing`: companion package for event-driven integration runtime services
 - `src/Cephalon.Worker`: Generic Host worker adapter for non-HTTP hosts
 - `src/Cephalon.Observability`: observability package for logs, metrics, and tracing conventions
+- `src/Cephalon.Observability.HttpDependencies`: optional HTTP dependency-health companion package for external API probes
 - `src/Cephalon.Observability.OpenTelemetry`: optional OpenTelemetry OTLP exporter companion package for host integration
 - `src/Cephalon.Retrieval`: companion package for retrieval/runtime knowledge services
 - `src/Cephalon.ReferenceDocs`: optional reference-doc publishing tool that can turn XML comments into browsable API reference output
@@ -537,7 +539,7 @@ The runtime now also has a package-loading baseline for those authored modules. 
 
 For REST surfaces, Cephalon now also ships a request-time trust hook through `RequireCapability(...)` in `Cephalon.AspNetCore.Transports.Rest`. That lets modules bind an endpoint to a capability key so denied capabilities are rejected at the HTTP boundary, not only hidden from manifest introspection.
 
-The engine now emits built-in observability signals through the `Cephalon.Engine` meter and activity source. `Cephalon.Observability` adds structured manifest, module, capability, operational-health, and telemetry-export logs on host startup, driven by `Engine:Observability`, while `Cephalon.Observability.OpenTelemetry` gives hosts an optional OTLP export path without pushing exporter dependencies into the engine core.
+The engine now emits built-in observability signals through the `Cephalon.Engine` meter and activity source. `Cephalon.Observability` adds structured manifest, module, capability, operational-health, and telemetry-export logs on host startup, driven by `Engine:Observability`, while `Cephalon.Observability.HttpDependencies` turns external HTTP upstreams into reusable dependency-health contributions and `Cephalon.Observability.OpenTelemetry` gives hosts an optional OTLP export path without pushing exporter dependencies into the engine core.
 
 The transport catalog currently models `RestApi`, `GraphQL`, `JsonRpc`, `Grpc`, `ServerSentEvents`, and `WebSocket`. The sample host in this repo currently demonstrates `RestApi`, `GraphQL`, `JsonRpc`, `Grpc`, `ServerSentEvents`, and `WebSocket`.
 
@@ -568,7 +570,7 @@ Runtime failure policy is now configuration-driven through `Engine:FailurePolicy
 
 Operational health is now a first-class host surface too. ASP.NET Core hosts expose `/health`, `/health/live`, and `/health/ready` with JSON payloads backed by the runtime state machine, while `/engine/diagnostics` exposes the engine meter, activity source, counter names, and the current liveness/readiness reports in one place.
 
-Modules and installed packages can now also contribute dependency health details through `IDependencyHealthContributor`. That keeps dependency-specific health checks host-agnostic, exposes them through `/engine/dependencies`, and folds them into `/health/live`, `/health/ready`, and `/engine/diagnostics` without hardwiring database or infrastructure assumptions into the engine itself.
+Modules and installed packages can now also contribute dependency health details through `IDependencyHealthContributor`. That keeps dependency-specific health checks host-agnostic, exposes them through `/engine/dependencies`, and folds them into `/health/live`, `/health/ready`, and `/engine/diagnostics` without hardwiring database or infrastructure assumptions into the engine itself. Hosts that want a supported external API probe path can pair that contract with `Cephalon.Observability.HttpDependencies`.
 
 `Engine:Observability:Telemetry` is now the shared export contract for operators. It still keeps exporter dependencies out of the engine itself, but hosts can now pair it with `Cephalon.Observability.OpenTelemetry` to turn that same provider, protocol, endpoint, and signal-selection contract into a supported OTLP integration path.
 

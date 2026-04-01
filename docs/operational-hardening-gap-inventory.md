@@ -68,16 +68,17 @@ Current baseline:
 
 - `IDependencyHealthContributor` exists
 - `RuntimeHealthEvaluator` aggregates dependency reports cleanly
+- `Cephalon.Observability.HttpDependencies` now provides a reusable provider-specific pack for external HTTP and API upstreams
 
 Gap:
 
-- the repository does not yet ship provider-specific packs for common dependencies such as databases, brokers, caches, or external APIs
-- current dependency-health coverage is contract-first; provider integrations are still left to host or module authors
+- broader provider-specific packs for databases, brokers, and caches are still missing
+- current shipped provider coverage starts with external HTTP and API upstreams; richer infrastructure-specific packs are still left to host or module authors
 
 Why this stays separate:
 
 - the contributor contract is already good enough
-- what is missing is reusable provider packaging, not another engine abstraction
+- the follow-through now widens reusable provider packaging instead of revisiting the engine abstraction
 
 ### `#34` Structured diagnostics and event IDs across packages
 

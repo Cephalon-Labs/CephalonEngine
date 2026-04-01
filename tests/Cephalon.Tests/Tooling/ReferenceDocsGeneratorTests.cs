@@ -125,6 +125,7 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.Engine",
                 "Cephalon.Eventing",
                 "Cephalon.Observability",
+                "Cephalon.Observability.HttpDependencies",
                 "Cephalon.Observability.OpenTelemetry",
                 "Cephalon.ReferenceDocs",
                 "Cephalon.Retrieval",
