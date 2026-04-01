@@ -223,7 +223,7 @@ public sealed class TemplatePackTests
 
         while (directory is not null)
         {
-            var solutionPath = Path.Combine(directory.FullName, "Cephalon.slnx");
+        var solutionPath = Path.Combine(directory.FullName, "CephalonEngine.slnx");
             if (File.Exists(solutionPath))
             {
                 return directory.FullName;

@@ -14,7 +14,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$solutionPath = Join-Path $repoRoot "Cephalon.slnx"
+$solutionPath = Join-Path $repoRoot "CephalonEngine.slnx"
 $testsProjectPath = Join-Path $repoRoot "tests\Cephalon.Tests\Cephalon.Tests.csproj"
 $benchmarkProjectPath = Join-Path $repoRoot "benchmarks\Cephalon.Benchmarks\Cephalon.Benchmarks.csproj"
 $referenceDocsScriptPath = Join-Path $repoRoot "scripts\publish-reference-docs.ps1"

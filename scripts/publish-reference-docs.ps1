@@ -10,7 +10,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$solutionPath = Join-Path $repoRoot "Cephalon.slnx"
+$solutionPath = Join-Path $repoRoot "CephalonEngine.slnx"
 $projectPath = Join-Path $repoRoot "src\Cephalon.ReferenceDocs\Cephalon.ReferenceDocs.csproj"
 $resolvedOutputPath = if ([string]::IsNullOrWhiteSpace($OutputPath)) {
     Join-Path $repoRoot "docs\reference"
