@@ -326,6 +326,8 @@ The engine validates that metadata when loading package manifests:
 
 Current note: the shipped baseline now verifies detached signatures when a package declares `signature.keyId` + `signature.value`, or corresponding entries inside `signatures[]`, and the host configures matching trusted public keys. Packages can declare multiple signers; the runtime surfaces per-signer verification results and accepts the package when at least one required signature verifies under the active policy. Remaining work is the broader distribution story around certificate chains, richer provenance attestations, and external package feeds.
 
+Compatibility expectations across package manifests, scaffold output, CLI defaults, template-pack starters, and hosted reference-doc flows are summarized in `docs/compatibility.md`.
+
 Localization is also part of the engine contract now. `Engine:Localization` defines the default culture, supported cultures, and per-culture resource overrides for built-in engine surfaces such as OpenAPI, Scalar, and `/engine/localization`.
 
 Installed modules can also ship language packs by implementing `ILocalizedResourceContributor`. The engine merges those package-provided resources before applying project-level overrides, so package defaults stay available without taking control away from the app.
@@ -523,6 +525,8 @@ dotnet new cephalon-monolith -n Acme.Store
 ```
 
 The template pack is intentionally lighter than `Cephalon.Cli`. Use the templates for a fast blueprint starter, and use the CLI when you want richer blueprint, module, feature, pattern, and transport composition from one command.
+
+When version, target-framework, or starter-contract expectations change, keep the template pack aligned with `Cephalon.Cli`, `Cephalon.Scaffolding`, and the manifest rules documented in `docs/compatibility.md`.
 
 Cephalon now also ships a first-class module authoring baseline. `dotnet new cephalon-module` gives a host-agnostic package starter, `dotnet new cephalon-rest-module` gives a REST-ready module package starter, and `docs/module-authoring.md` documents the recommended authoring flow. Those starters now emit `cephalon.package.json` and copy it to the build output by default so package discovery works without extra manual setup. The concrete reference package lives in `samples/Cephalon.ReferenceModule.Operations`.
 

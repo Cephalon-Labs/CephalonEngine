@@ -45,6 +45,7 @@ That changes the plan materially:
 - we do not need another “start the engine” phase
 - we do need an “adopt this safely outside the repo” phase
 - we should prioritize SDK hardening, templates, samples, and operational polish before advanced platform features
+- public-surface hardening and compatibility guidance now sit inside that shipped SDK-adoption baseline rather than as vague follow-up work
 
 ## Sprint alignment
 
@@ -89,10 +90,8 @@ What is already in place:
 
 What still belongs to foundation hardening:
 
-- sharper API surface review
 - richer runtime failure and restart policies beyond the shipped baseline
 - more actionable diagnostics for module/package authors
-- stronger compatibility guidance between packages, manifests, and templates
 
 ## Phase 1: SDK hardening and external adoption
 
@@ -213,13 +212,12 @@ Exit criteria:
 
 Updated priority order as of `April 2, 2026`:
 
-1. SDK hardening follow-through: public surface cleanup, XML docs, GraphQL transport completion, and DocFX input-set hardening
-2. operational hardening follow-through: richer dependency health and exporter packaging
-3. package/plugin loading
-4. capability permissions and trust policy
-5. workflow and orchestration primitives
-6. multi-service suite blueprints
-7. broader release automation and package-publishing polish
+1. operational hardening follow-through: richer dependency health and exporter packaging now that SDK hardening, GraphQL, public-surface review, and compatibility guidance are in place
+2. package/plugin loading
+3. capability permissions and trust policy
+4. workflow and orchestration primitives
+5. multi-service suite blueprints
+6. broader release automation and package-publishing polish
 
 ## Decision guardrails
 

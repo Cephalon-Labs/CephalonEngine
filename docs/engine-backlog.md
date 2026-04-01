@@ -178,19 +178,15 @@ Follow-up later:
 
 ### ENG-005 Engine API and package surface hardening
 
-Status: next
+Status: done
 Estimate: 4
 
-Why:
+Delivered:
 
-- the public surface is becoming real product surface, not just repo-internal code
-
-Acceptance:
-
-- review extension points across abstractions, engine, adapters, scaffolding, and CLI
-- reduce incidental public API where possible
-- improve XML docs and package-facing guidance
-- make compatibility expectations explicit
+- public-surface audit across abstractions, engine, adapters, scaffolding, tooling, and companion packages
+- regression tests locking the intended exported surface for the CLI, reference-doc tooling, host adapters, worker adapter, scaffolding package, and companion packs
+- package-facing guidance tightened so compatibility expectations are explicit across package manifests, scaffold output, template starters, and CLI flows
+- the public surface now behaves like a supported product contract instead of repo-internal plumbing
 
 ### ENG-026 GraphQL transport adapter
 

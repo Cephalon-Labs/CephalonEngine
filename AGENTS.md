@@ -44,6 +44,7 @@ When working in this repository:
 - prefer configuration-driven module discovery through `Engine:Discovery:Assemblies` when a host is meant to stay generic
 - prefer `Engine:Discovery:Packages`, `Engine:Discovery:PackageDirectories`, `engine.AddPackageAssembly(...)`, `engine.AddPackageManifest(...)`, or `engine.AddPackageDirectory(...)` when a host needs to load independently shipped module assemblies
 - keep `cephalon.package.json` aligned with the engine package contract: `id`, `version`, `compatibility.minimumEngineVersion`, `compatibility.maximumEngineVersion`, `compatibility.supportedTargetFrameworks`, and optional `integrity.sha256`
+- keep Cephalon package-version and target-framework defaults aligned across `Cephalon.Cli`, `Cephalon.Scaffolding`, `Cephalon.TemplatePack`, starter manifests, samples, and docs examples
 - when provenance matters, keep `cephalon.package.json` aligned with `publisher.id`, publisher display metadata, and either `signature` or `signatures` entries when detached signing is in use
 - prefer `Engine:PackagePolicy` when a host needs to require manifest-driven package loading or stricter package metadata guarantees
 - prefer `Engine:Trust` publisher and signer allow-lists when governance should track who shipped a package rather than only the assembly file itself
@@ -80,6 +81,7 @@ When working in this repository:
 - keep `Cephalon.Cli` package-surface hardening intact: `CliApplication` is the stable public entry point, while command handlers, parsed options, console helpers, and browser launch helpers stay internal
 - keep `Cephalon.ReferenceDocs` package-surface hardening intact: request/generate/write/application types stay public, while assembly-load and browser-render helpers stay internal
 - keep `docs/README.md` aligned as the documentation hub for architecture, operations, planning, hand-authored component guides, and optional generated-reference entry points
+- keep `docs/compatibility.md` aligned as the repository-wide matrix for package, manifest, template, scaffolding, CLI, and hosted-reference-doc compatibility expectations
 - keep `docs/components/README.md` plus per-component docs under `docs/components/` aligned with every shipped `src/Cephalon.*` project
 - when ASP.NET Core hosts serve generated reference docs, prefer the host-level `ReferenceDocs` section and keep `/engine/reference-docs` aligned with the configured route prefix
 - keep scaffolded hosts and `dotnet new` app starters emitting a disabled-by-default `ReferenceDocs` section so teams can turn on hosted docs without rediscovering the contract
@@ -116,6 +118,7 @@ When working in this repository:
 - keep `cephalon-module` and `cephalon-rest-module` aligned with the recommended module package shape in `docs/module-authoring.md`
 - keep `cephalon-module`, `cephalon-rest-module`, and scaffolded module projects emitting `cephalon.package.json` so package discovery flows stay zero-setup
 - keep scaffold package-version output aligned with the repository package catalog when test infrastructure packages change
+- keep template starters, scaffold output, and CLI defaults aligned whenever blueprint, transport, version, target-framework, or docs-hosting contracts change
 - prefer configuration-driven blueprint and pattern selection over hardcoded choices in host startup
 - prefer configuration-driven transport selection over hardcoded protocol choices in host startup
 - prefer configuration-driven module discovery and policy where a sample or host is meant to demonstrate the engine itself

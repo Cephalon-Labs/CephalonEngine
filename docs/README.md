@@ -12,6 +12,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 
 - [Architecture](architecture.md)
 - [Component catalog](components/README.md)
+- [Compatibility](compatibility.md)
 - [App models](app-models.md)
 - [Module authoring](module-authoring.md)
 - [Technology packs](technology-packs.md)
