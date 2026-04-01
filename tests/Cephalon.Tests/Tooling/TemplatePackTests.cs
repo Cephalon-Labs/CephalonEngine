@@ -1,5 +1,6 @@
 using System.IO.Compression;
 using System.Text.Json;
+using Cephalon.Tests.Support;
 
 namespace Cephalon.Tests.Tooling;
 
@@ -193,46 +194,12 @@ public sealed class TemplatePackTests
 
     private static string FindRepositoryDirectory(string relativePath)
     {
-        var root = FindRepositoryRoot();
-        var fullPath = Path.Combine(root, relativePath);
-
-        if (!Directory.Exists(fullPath))
-        {
-            throw new DirectoryNotFoundException($"Could not find '{fullPath}'.");
-        }
-
-        return fullPath;
+        return RepositoryPaths.GetDirectory(relativePath);
     }
 
     private static string FindRepositoryFile(string relativePath)
     {
-        var root = FindRepositoryRoot();
-        var fullPath = Path.Combine(root, relativePath);
-
-        if (!File.Exists(fullPath))
-        {
-            throw new FileNotFoundException($"Could not find '{fullPath}'.");
-        }
-
-        return fullPath;
-    }
-
-    private static string FindRepositoryRoot()
-    {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-
-        while (directory is not null)
-        {
-        var solutionPath = Path.Combine(directory.FullName, "CephalonEngine.slnx");
-            if (File.Exists(solutionPath))
-            {
-                return directory.FullName;
-            }
-
-            directory = directory.Parent;
-        }
-
-        throw new DirectoryNotFoundException($"Could not find repository root from '{AppContext.BaseDirectory}'.");
+        return RepositoryPaths.GetFile(relativePath);
     }
 
     private static ProcessResult RunProcess(string fileName, string arguments, string workingDirectory)
