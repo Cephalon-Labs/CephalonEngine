@@ -3034,8 +3034,6 @@ if ($null -ne $projectContext) {
         $issue = $issuesByNumber[[int]$syncEntry.Key]
         $desired = $syncEntry.Value.Desired
         $projectItem = Ensure-ProjectItem -ProjectContext $projectContext -ProjectOwner $ProjectOwner -ProjectNumber $ProjectNumber -Issue $issue
-        $desiredStatus = Get-DesiredProjectStatus -ProjectContext $projectContext -ProjectItem $projectItem -Title $desired.Title -Body $desired.ContentBody -State $desired.State
-        Set-ProjectStatus -ProjectContext $projectContext -ProjectItem $projectItem -DesiredStatus $desiredStatus
 
         if (-not [string]::IsNullOrWhiteSpace($syncEntry.Value.IterationTitle)) {
             Set-ProjectIteration -ProjectContext $projectContext -ProjectItem $projectItem -IterationTitle $syncEntry.Value.IterationTitle
@@ -3051,6 +3049,8 @@ if ($null -ne $projectContext) {
         }
 
         Sync-ProjectValidationFields -ProjectContext $projectContext -ProjectItem $projectItem -Title $desired.Title -Body $desired.ContentBody -State $desired.State
+        $desiredStatus = Get-DesiredProjectStatus -ProjectContext $projectContext -ProjectItem $projectItem -Title $desired.Title -Body $desired.ContentBody -State $desired.State
+        Set-ProjectStatus -ProjectContext $projectContext -ProjectItem $projectItem -DesiredStatus $desiredStatus
     }
 
     $projectContext = Get-ProjectContext -Owner $ProjectOwner -ProjectNumber $ProjectNumber
@@ -3103,8 +3103,6 @@ foreach ($issue in $issuesByNumber.Values) {
     if ($null -ne $projectContext) {
         $projectItem = Ensure-ProjectItem -ProjectContext $projectContext -ProjectOwner $ProjectOwner -ProjectNumber $ProjectNumber -Issue $issue
         $stateText = if ($issue.state -eq "CLOSED") { "closed" } else { "open" }
-        $desiredStatus = Get-DesiredProjectStatus -ProjectContext $projectContext -ProjectItem $projectItem -Title $issue.title -Body $issue.body -State $stateText
-        Set-ProjectStatus -ProjectContext $projectContext -ProjectItem $projectItem -DesiredStatus $desiredStatus
 
         if (($null -eq (Get-ProjectItemEstimateValue -ProjectItem $projectItem)) -and $null -ne $metadata.Estimate) {
             Set-ProjectEstimate -ProjectContext $projectContext -ProjectItem $projectItem -Estimate $metadata.Estimate
@@ -3115,6 +3113,8 @@ foreach ($issue in $issuesByNumber.Values) {
         }
 
         Sync-ProjectValidationFields -ProjectContext $projectContext -ProjectItem $projectItem -Title $issue.title -Body $issue.body -State $stateText
+        $desiredStatus = Get-DesiredProjectStatus -ProjectContext $projectContext -ProjectItem $projectItem -Title $issue.title -Body $issue.body -State $stateText
+        Set-ProjectStatus -ProjectContext $projectContext -ProjectItem $projectItem -DesiredStatus $desiredStatus
     }
 }
 
