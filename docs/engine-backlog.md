@@ -174,7 +174,9 @@ Follow-up later:
 - add additional packs such as eventing, edge, or orchestration only when they need shared runtime primitives
 - define publishing/versioning guidance for technology packs outside the repository
 
-## Current priority work
+## SDK hardening follow-through
+
+Phase 1 SDK hardening is now substantially complete. Current execution focus has moved to phase 2 operational hardening follow-through on the roadmap and project board.
 
 ### ENG-005 Engine API and package surface hardening
 
@@ -229,6 +231,14 @@ Acceptance:
 - decide whether public xUnit fixtures and shared test helpers should stay public or become internal where safe
 - if repo-wide XML-comment enforcement beyond the published docs set becomes a goal, make the test-harness policy explicit and tooling-backed
 - avoid letting test-only visibility choices blur the supported DocFX/reference-doc publishing boundary
+
+## Current operational focus
+
+The active planning wave now moves to phase 2 operational hardening:
+
+- finish the gap inventory and decide the concrete readiness/liveness and restart-policy follow-through sequence
+- package exporter and dependency-health follow-through as the next implementation slice after the phase-2 inventory
+- tighten diagnostics and operator-facing runtime answers before reopening deeper platform work
 
 ### ENG-016 Blueprint sample suite
 

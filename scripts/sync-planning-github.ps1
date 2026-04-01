@@ -2262,6 +2262,17 @@ function Test-IsDocumentationOnlyWorkItem {
         $normalized.Contains("readme")
 }
 
+function Test-IsCurrentFocusWorkItem {
+    param([AllowNull()][string]$Body)
+
+    $unmanagedBody = Get-UnmanagedIssueBody -Body $Body
+    if ([string]::IsNullOrWhiteSpace($unmanagedBody)) {
+        return $false
+    }
+
+    return [regex]::IsMatch($unmanagedBody, "(?im)^Status:\s*current focus\s*$")
+}
+
 function Test-RequiresBenchmarkValidation {
     param(
         [AllowNull()][string]$Title,
@@ -2405,6 +2416,14 @@ function Get-DesiredProjectStatus {
         }
 
         return "Validation"
+    }
+
+    if (Test-IsCurrentFocusWorkItem -Body $Body) {
+        if ($gatesSatisfied) {
+            return "Validation"
+        }
+
+        return "In progress"
     }
 
     if ($currentStatus -eq "Validation") {
@@ -2669,6 +2688,16 @@ function Get-TopLevelPlanningContext {
     $backlogUrl = $null
     if ($Spec.Kind -eq "Backlog") {
         $backlogUrl = Get-RepositoryDocumentUrl -RepositoryContext $RepositoryContext -Path $Spec.SourcePath -Anchor (Get-GitHubAnchorSlug -Value $Spec.Title)
+    }
+    elseif ($Spec.Kind -eq "Roadmap" -and $null -ne $Spec.PhaseNumber) {
+        $backlogAnchorTitle = switch ([int]$Spec.PhaseNumber) {
+            2 { "Current operational focus" }
+            default { $iterationTitle }
+        }
+
+        if (-not [string]::IsNullOrWhiteSpace($backlogAnchorTitle)) {
+            $backlogUrl = Get-RepositoryDocumentUrl -RepositoryContext $RepositoryContext -Path "docs/engine-backlog.md" -Anchor (Get-GitHubAnchorSlug -Value $backlogAnchorTitle)
+        }
     }
     elseif (-not [string]::IsNullOrWhiteSpace($iterationTitle)) {
         $backlogUrl = Get-RepositoryDocumentUrl -RepositoryContext $RepositoryContext -Path "docs/engine-backlog.md" -Anchor (Get-GitHubAnchorSlug -Value $iterationTitle)

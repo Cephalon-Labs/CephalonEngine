@@ -57,9 +57,9 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Adoption Sprint 0`: `ENG-016`, `ENG-017`, `ENG-018`
 - `Operational Sprint 0`: `ENG-019`, `ENG-020`, `ENG-021`, `ENG-024`, `ENG-023`
 - `Platform Sprint 0`: `ENG-012`
-- `Sprint 1`: `ENG-005`, `ENG-026`, plus phase 2 operational hardening follow-through
-- `Sprint 2`: `ENG-011` plus exporter and dependency-health follow-through
-- `Sprint 3`: `ENG-013` plus package distribution and trust follow-through
+- `Sprint 1`: delivered `ENG-005`, `ENG-026`, and `ENG-027`, and opened the phase 2 operational gap-inventory track
+- `Sprint 2`: `ENG-011` plus exporter packaging and dependency-health follow-through
+- `Sprint 3`: structured diagnostics/runtime-answers follow-through, package distribution and trust follow-through, and `ENG-013` planning readiness
 - `Later / not scheduled yet`: `ENG-022` and future solution-level expansion work
 
 ## Planning principles
@@ -95,7 +95,7 @@ What still belongs to foundation hardening:
 
 ## Phase 1: SDK hardening and external adoption
 
-Status: current focus
+Status: substantially complete
 
 Goal: turn the current repo from “good internal foundation” into something other teams can adopt predictably.
 
@@ -117,9 +117,14 @@ Exit criteria:
 - a new module can be authored from a supported starter path
 - generated apps, docs, package references, and install surfaces stay aligned with the shipped engine conventions
 
+Current note:
+
+- the supported phase-1 adoption baseline is now shipped across public-surface hardening, GraphQL transport delivery, compatibility guidance, and DocFX-ready XML comments
+- `ENG-028` remains an intentional later hygiene item instead of a blocker for phase-1 exit
+
 ## Phase 2: Operational hardening
 
-Status: next after SDK hardening
+Status: current focus
 
 Goal: make Cephalon safe to operate in real environments.
 
@@ -212,9 +217,9 @@ Exit criteria:
 
 Updated priority order as of `April 2, 2026`:
 
-1. operational hardening follow-through: richer dependency health and exporter packaging now that SDK hardening, GraphQL, public-surface review, and compatibility guidance are in place
+1. operational hardening follow-through: readiness/liveness semantics, exporter packaging, dependency-health packs, structured diagnostics, and clearer operator answers now that SDK hardening is shipped
 2. package/plugin loading
-3. capability permissions and trust policy
+3. package distribution, provenance, and richer trust follow-through beyond the current baseline
 4. workflow and orchestration primitives
 5. multi-service suite blueprints
 6. broader release automation and package-publishing polish
