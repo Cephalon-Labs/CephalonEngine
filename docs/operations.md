@@ -92,7 +92,7 @@ Current payload highlights:
 
 This is the main operator surface for package provenance and compatibility diagnostics. When a package declares multiple signers, per-signer outcomes stay visible while the top-level fields continue to summarize the primary signature for existing consumers.
 
-## Telemetry export guidance
+## Telemetry export path
 
 `Cephalon.Engine` emits built-in diagnostics through:
 
@@ -106,7 +106,8 @@ This is the main operator surface for package provenance and compatibility diagn
   - `cephalon.module.failures`
   - `cephalon.runtime.restarts`
 
-`Cephalon.Observability` now reads `Engine:Observability:Telemetry` and logs the effective export guidance on startup.
+`Cephalon.Observability` reads `Engine:Observability:Telemetry` and logs the effective export guidance on startup.
+`Cephalon.Observability.OpenTelemetry` can then turn that same section into a supported OTLP export path for logs, metrics, and traces.
 
 Example:
 
@@ -116,8 +117,8 @@ Example:
     "Observability": {
       "Telemetry": {
         "Provider": "OpenTelemetry",
-        "Protocol": "otlp",
-        "Endpoint": "http://localhost:4317",
+        "Protocol": "otlp/http",
+        "Endpoint": "http://localhost:4318",
         "ExportLogs": true,
         "ExportMetrics": true,
         "ExportTraces": true
@@ -127,7 +128,22 @@ Example:
 }
 ```
 
-This baseline is intentionally guidance-first. Cephalon emits stable diagnostics names and export intent now, while host-specific exporter wiring can stay outside the engine until we decide to ship a dedicated OpenTelemetry companion package.
+Host registration example:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonObservability(builder.Configuration);
+builder.AddCephalonOpenTelemetry();
+```
+
+Operational notes:
+
+- the exporter package is optional and stays outside `Cephalon.Engine`
+- registration is skipped when `Engine:Observability:Telemetry:Endpoint` is not configured
+- `otlp`, `otlp/grpc`, and `otlp/http` are the supported protocol values for the shipped companion package
+- when `otlp/http` is selected, the package appends `/v1/logs`, `/v1/metrics`, and `/v1/traces` automatically from the configured base endpoint
 
 ## Worker hosts
 

@@ -16,6 +16,7 @@ The repository already ships a meaningful operational baseline:
 - runtime diagnostics names and counters through `Cephalon.Engine` meter/activity source plus `/engine/diagnostics`
 - operator-facing runtime snapshot aggregation through `/engine/snapshot`
 - startup summaries and telemetry guidance logging through `Cephalon.Observability`
+- reusable OTLP exporter wiring through `Cephalon.Observability.OpenTelemetry`
 - benchmark guardrail validation through `Cephalon.Benchmarks`, `performance-guardrails.json`, and `scripts/validate-release.ps1`
 - release-validation automation through `.github/workflows/release-validation.yml`
 
@@ -37,12 +38,14 @@ That means phase 2 is follow-through work, not greenfield operational work.
 - observability startup-summary baseline:
   - `src/Cephalon.Observability/Hosting/ManifestSummaryHostedService.cs`
   - `src/Cephalon.Observability/Configuration/TelemetryExportOptions.cs`
+- observability exporter companion baseline:
+  - `src/Cephalon.Observability.OpenTelemetry/Hosting/OpenTelemetryHostApplicationBuilderExtensions.cs`
 - release-validation and benchmark baseline:
   - `benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json`
   - `scripts/validate-release.ps1`
   - `.github/workflows/release-validation.yml`
 
-## Remaining gaps mapped to backlog tasks
+## Gap status mapped to backlog tasks
 
 ### `#32` Dedicated exporter or OpenTelemetry companion packaging
 
@@ -50,16 +53,14 @@ Current baseline:
 
 - hosts can declare telemetry export intent through `Engine:Observability:Telemetry`
 - `Cephalon.Observability` logs that guidance on startup
+- `Cephalon.Observability.OpenTelemetry` now wires OTLP logs, metrics, and traces through `AddCephalonOpenTelemetry()`
+- the shipped companion package supports `otlp`, `otlp/grpc`, and `otlp/http`, with automatic signal-path normalization for OTLP HTTP collectors
 
-Gap:
-
-- Cephalon does not yet ship a companion package that wires OpenTelemetry exporters, provider registration, or a stable “turn this on” host integration path
-- current behavior is still guidance-first rather than a supported exporter implementation
-
-Why this stays separate:
+Outcome:
 
 - exporter packaging should remain outside `Cephalon.Engine`
-- this work should produce a reusable companion package, not just sample-only host code
+- the repository now ships a reusable companion package instead of leaving exporter wiring to sample-only host code
+- remaining phase-2 work shifts to dependency-health packaging, broader diagnostics conventions, richer operator answers, and deeper health semantics
 
 ### `#33` Provider-specific dependency health packs beyond the baseline contributor model
 
@@ -154,7 +155,7 @@ Current conclusion from this inventory:
 Recommended execution sequence remains:
 
 1. `#31` inventory and sequencing
-2. `#32` exporter packaging and `#33` dependency-health packs
+2. `#33` dependency-health packs on top of the shipped exporter path
 3. `#34` structured diagnostics and `#35` clearer runtime answers
 4. `#73` deeper readiness/liveness and restart-policy follow-through
 5. `#74` release-validation guidance once the operational surface above is clearer

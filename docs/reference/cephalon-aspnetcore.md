@@ -31,13 +31,25 @@ public sealed class DiagnosticsSurface
 
 #### Constructors
 
-<a id="member-m-cephalon-aspnetcore-diagnostics-diagnosticssurface-ctor-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string-cephalon-engine-runtime-runtimehealthreport-cephalon-engine-runtime-runtimehealthreport-system-string-system-string-system-string"></a>
+<a id="member-m-cephalon-aspnetcore-diagnostics-diagnosticssurface-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-runtime-runtimehealthreport-cephalon-engine-runtime-runtimehealthreport-system-string-system-string-system-string"></a>
 
 ##### `DiagnosticsSurface`
 
 ```csharp
 DiagnosticsSurface(string MeterName, string ActivitySourceName, IReadOnlyList<string> Counters, RuntimeHealthReport Liveness, RuntimeHealthReport Readiness, string SummaryPath, string LivenessPath, string ReadinessPath)
 ```
+
+Describes the operator-facing diagnostics surface exposed by a Cephalon ASP.NET Core host.
+
+Parameters:
+- `MeterName`: The meter name used for engine metrics.
+- `ActivitySourceName`: The activity source name used for engine tracing.
+- `Counters`: The built-in counter names exposed by the engine.
+- `Liveness`: The current liveness report.
+- `Readiness`: The current readiness report.
+- `SummaryPath`: The aggregate health endpoint path.
+- `LivenessPath`: The liveness endpoint path.
+- `ReadinessPath`: The readiness endpoint path.
 
 #### Properties
 
@@ -147,6 +159,8 @@ public sealed class ReferenceDocsHostingOptions
 ```csharp
 ReferenceDocsHostingOptions()
 ```
+
+Creates reference-doc hosting options with the default hosted-doc route settings.
 
 #### Fields
 
@@ -405,13 +419,23 @@ Returns: The same builder instance for fluent composition.
 Parameters:
 - `builder`: The ASP.NET Core application builder to extend.
 
-<a id="member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addcephalon-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-1-cephalon-engine-composition-enginebuilder"></a>
+<a id="member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addcephalon-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-cephalon-engine-composition-enginebuilder"></a>
 
 ##### `AddCephalon`
 
 ```csharp
 WebApplicationBuilder AddCephalon(this WebApplicationBuilder builder, Action<EngineBuilder> configure)
 ```
+
+Adds Cephalon to the builder and allows additional code-based engine configuration.
+
+Remarks: This method wires OpenAPI, Scalar-ready document transformers, health checks, hosted runtime startup, and the built-in ASP.NET Core transport mappers before registering the engine itself.
+
+Returns: The same builder instance for fluent composition.
+
+Parameters:
+- `builder`: The ASP.NET Core application builder to extend.
+- `configure`: The callback that configures the underlying engine builder.
 
 <a id="member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addcephalonprojectconfigurations-microsoft-aspnetcore-builder-webapplicationbuilder"></a>
 
@@ -430,13 +454,23 @@ Returns: The same builder instance for fluent composition.
 Parameters:
 - `builder`: The ASP.NET Core application builder to extend.
 
-<a id="member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addreferencedocshosting-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-1-cephalon-aspnetcore-documentation-referencedocshostingoptions"></a>
+<a id="member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addreferencedocshosting-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-cephalon-aspnetcore-documentation-referencedocshostingoptions"></a>
 
 ##### `AddReferenceDocsHosting`
 
 ```csharp
 WebApplicationBuilder AddReferenceDocsHosting(this WebApplicationBuilder builder, Action<ReferenceDocsHostingOptions> configure)
 ```
+
+Adds hosted reference-doc configuration to the ASP.NET Core host.
+
+Remarks: Reference-doc hosting stays in the host layer because it serves already-generated static artifacts such as `browse.html`, `members.md`, and `reference-manifest.json`.
+
+Returns: The same builder instance for fluent composition.
+
+Parameters:
+- `builder`: The ASP.NET Core application builder to extend.
+- `configure`: An optional callback that can extend or override the configuration-driven hosting setup.
 
 <a id="type-cephalon-aspnetcore-hosting-enginewebapplicationextensions"></a>
 

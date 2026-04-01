@@ -102,6 +102,8 @@ Companion adapter packages can extend that host with additional transport surfac
 
 `Cephalon.Observability` is the diagnostics companion package. It turns the engine's built-in logs, meter, and activity source into host-friendly startup summaries and conventions that both ASP.NET Core and worker hosts can opt into.
 
+`Cephalon.Observability.OpenTelemetry` is the optional exporter companion package. It takes the shared `Engine:Observability:Telemetry` contract and turns it into OTLP registration for logs, metrics, and traces without pushing exporter dependencies back into the engine or the baseline observability package.
+
 `Cephalon.Scaffolding` is the adoption companion package. It turns `AppProfile.Scaffold` into concrete solution, project, file, and folder output so future CLIs or templates do not need to re-encode blueprint rules.
 
 `Cephalon.ReferenceDocs` is the optional reference-publishing companion package. It can turn compiled assemblies plus XML comments into publishable Markdown reference output when the repository wants a browsable API artifact, but the hand-authored `.md` guides under `README.md` and `docs/` remain the primary product and adoption documentation. The stable library surface stays centered on request/generate/write flows, while browser rendering and assembly-load plumbing remain internal implementation details.
@@ -151,6 +153,7 @@ Companion adapter packages:
 - `src/Cephalon.Worker/Hosting` -> `Cephalon.Worker.Hosting`
 - `src/Cephalon.Observability/Configuration` -> `Cephalon.Observability.Configuration`
 - `src/Cephalon.Observability/Hosting` -> `Cephalon.Observability.Hosting`
+- `src/Cephalon.Observability.OpenTelemetry/Hosting` -> `Cephalon.Observability.OpenTelemetry.Hosting`
 - `src/Cephalon.Cli/Commands` -> `Cephalon.Cli.Commands`
 - `src/Cephalon.Cli/Console` -> `Cephalon.Cli.Console`
 - `src/Cephalon.ReferenceDocs/Generation` -> `Cephalon.ReferenceDocs.Generation`
@@ -209,6 +212,7 @@ Companion adapter packages:
 - engine options can disable modules and capabilities through `Engine:Options`
 - engine observability conventions can be tuned through `Engine:Observability`
 - engine telemetry export guidance can be tuned through `Engine:Observability:Telemetry`
+- hosts can turn that telemetry contract into a supported OTLP path through `Cephalon.Observability.OpenTelemetry`
 - engine trust and capability policy can be tuned through `Engine:Trust`
 - engine trust policy can also allow-list package checksums through `Engine:Trust:AllowedPackageChecksums`
 - engine trust policy can also allow-list publishers, signer fingerprints, and trusted signature public keys
@@ -247,7 +251,7 @@ Companion adapter packages:
 - richer capability metadata and policy
 - startup hooks and lifecycle events
 - event bus / workflow runtime
-- richer observability exports and telemetry adapters
+- provider-specific dependency-health packs, richer diagnostics conventions, and deeper release-validation guidance on top of the shipped OpenTelemetry exporter companion package
 - richer parameterized templates and generators driven by scaffold plans
 - richer localization catalogs and package-provided language packs
 - sustained benchmark coverage for hot engine paths

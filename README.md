@@ -16,6 +16,7 @@ This first cut focuses on the core shape we can keep growing:
 - ASP.NET Core integration for shipping modules over HTTP
 - generic-host worker integration for non-HTTP runtime scenarios
 - observability package with runtime logs, metrics, and tracing conventions
+- optional OpenTelemetry exporter companion package for OTLP host wiring
 - a runnable playground and tests that prove the architecture
 
 ## Solution layout
@@ -25,11 +26,13 @@ This first cut focuses on the core shape we can keep growing:
 - `src/Cephalon.Edge`: companion package for edge-native delivery runtime services
 - `src/Cephalon.Engine`: composition, dependency ordering, manifest generation
 - `src/Cephalon.AspNetCore`: ASP.NET Core host core plus built-in REST, SSE, and WebSocket transport mapping
+- `src/Cephalon.AspNetCore.GraphQL`: GraphQL transport adapter for ASP.NET Core
 - `src/Cephalon.AspNetCore.JsonRpc`: JSON-RPC transport adapter for ASP.NET Core
 - `src/Cephalon.AspNetCore.Grpc`: gRPC transport adapter for ASP.NET Core
 - `src/Cephalon.Eventing`: companion package for event-driven integration runtime services
 - `src/Cephalon.Worker`: Generic Host worker adapter for non-HTTP hosts
 - `src/Cephalon.Observability`: observability package for logs, metrics, and tracing conventions
+- `src/Cephalon.Observability.OpenTelemetry`: optional OpenTelemetry OTLP exporter companion package for host integration
 - `src/Cephalon.Retrieval`: companion package for retrieval/runtime knowledge services
 - `src/Cephalon.ReferenceDocs`: optional reference-doc publishing tool that can turn XML comments into browsable API reference output
 - `src/Cephalon.Cli`: command-line surface for blueprint generation and reference-doc workflows, with `CliApplication` as the stable entry point
@@ -160,8 +163,8 @@ The engine is configuration-driven. A Cephalon app can choose its base blueprint
       "LogCapabilitySummary": true,
       "Telemetry": {
         "Provider": "OpenTelemetry",
-        "Protocol": "otlp",
-        "Endpoint": "http://localhost:4317",
+        "Protocol": "otlp/http",
+        "Endpoint": "http://localhost:4318",
         "ExportLogs": true,
         "ExportMetrics": true,
         "ExportTraces": true
@@ -534,9 +537,9 @@ The runtime now also has a package-loading baseline for those authored modules. 
 
 For REST surfaces, Cephalon now also ships a request-time trust hook through `RequireCapability(...)` in `Cephalon.AspNetCore.Transports.Rest`. That lets modules bind an endpoint to a capability key so denied capabilities are rejected at the HTTP boundary, not only hidden from manifest introspection.
 
-The engine now emits built-in observability signals through the `Cephalon.Engine` meter and activity source. `Cephalon.Observability` adds structured manifest, module, capability, operational-health, and telemetry-export logs on host startup, driven by `Engine:Observability`.
+The engine now emits built-in observability signals through the `Cephalon.Engine` meter and activity source. `Cephalon.Observability` adds structured manifest, module, capability, operational-health, and telemetry-export logs on host startup, driven by `Engine:Observability`, while `Cephalon.Observability.OpenTelemetry` gives hosts an optional OTLP export path without pushing exporter dependencies into the engine core.
 
-The transport catalog currently models `RestApi`, `JsonRpc`, `Grpc`, `ServerSentEvents`, and `WebSocket`. The sample host in this repo currently demonstrates `RestApi`, `JsonRpc`, `Grpc`, `ServerSentEvents`, and `WebSocket`.
+The transport catalog currently models `RestApi`, `GraphQL`, `JsonRpc`, `Grpc`, `ServerSentEvents`, and `WebSocket`. The sample host in this repo currently demonstrates `RestApi`, `GraphQL`, `JsonRpc`, `Grpc`, `ServerSentEvents`, and `WebSocket`.
 
 When `RestApi` is selected on ASP.NET Core, the host exposes OpenAPI at `/openapi/v1.json` and Scalar docs through `/scalar` with the document route at `/scalar/v1`. Cephalon also serves its Scalar JavaScript configuration from `/scalar/openapi-toggle.js` and its docs favicon from `/scalar/assets/favicon.svg`, both with cache-busting references and no-store headers so docs assets stay aligned after upgrades. Non-REST protocol endpoints stay out of that REST-facing API description surface.
 
@@ -567,7 +570,7 @@ Operational health is now a first-class host surface too. ASP.NET Core hosts exp
 
 Modules and installed packages can now also contribute dependency health details through `IDependencyHealthContributor`. That keeps dependency-specific health checks host-agnostic, exposes them through `/engine/dependencies`, and folds them into `/health/live`, `/health/ready`, and `/engine/diagnostics` without hardwiring database or infrastructure assumptions into the engine itself.
 
-`Engine:Observability:Telemetry` is now the export-guidance section for operators. It does not force a specific exporter package into the engine, but it gives hosts and teams one configuration contract for provider, protocol, endpoint, and which signals should be forwarded.
+`Engine:Observability:Telemetry` is now the shared export contract for operators. It still keeps exporter dependencies out of the engine itself, but hosts can now pair it with `Cephalon.Observability.OpenTelemetry` to turn that same provider, protocol, endpoint, and signal-selection contract into a supported OTLP integration path.
 
 The same runtime now also runs under the generic host through `Cephalon.Worker`. The worker playground uses configuration-driven assembly discovery, module lifecycle hooks, and a background heartbeat service to prove the engine can operate cleanly outside HTTP hosts.
 

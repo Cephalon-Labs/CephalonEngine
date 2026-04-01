@@ -74,13 +74,22 @@ public sealed class RenderedFolder
 
 #### Constructors
 
-<a id="member-m-cephalon-scaffolding-generation-renderedfolder-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string"></a>
+<a id="member-m-cephalon-scaffolding-generation-renderedfolder-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `RenderedFolder`
 
 ```csharp
 RenderedFolder(string path, string purpose, string scope, string projectKey, IReadOnlyDictionary<string, string> metadata)
 ```
+
+Creates a new rendered folder.
+
+Parameters:
+- `path`: The relative scaffold path of the folder.
+- `purpose`: The descriptive purpose of the folder.
+- `scope`: The scaffold scope that produced the folder.
+- `projectKey`: The owning rendered project key, if the folder belongs to a project.
+- `metadata`: Additional metadata associated with the folder.
 
 #### Properties
 
@@ -147,13 +156,27 @@ public sealed class RenderedProject
 
 #### Constructors
 
-<a id="member-m-cephalon-scaffolding-generation-renderedproject-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string"></a>
+<a id="member-m-cephalon-scaffolding-generation-renderedproject-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `RenderedProject`
 
 ```csharp
 RenderedProject(string key, string sourceProjectId, string name, string path, string scope, string role, string template, IReadOnlyList<string> packages, IReadOnlyList<string> projectReferences, IReadOnlyDictionary<string, string> metadata)
 ```
+
+Creates a new rendered project.
+
+Parameters:
+- `key`: The unique key of the rendered project instance.
+- `sourceProjectId`: The source scaffold project identifier that produced this instance.
+- `name`: The generated project name.
+- `path`: The relative scaffold path of the project directory.
+- `scope`: The scaffold scope that produced the project.
+- `role`: The scaffold role of the project.
+- `template`: The scaffold template used to generate the project.
+- `packages`: The package references implied by the scaffold plan.
+- `projectReferences`: The project references implied by the scaffold plan.
+- `metadata`: Additional metadata associated with the project.
 
 #### Properties
 
@@ -270,13 +293,22 @@ public sealed class RenderedScaffold
 
 #### Constructors
 
-<a id="member-m-cephalon-scaffolding-generation-renderedscaffold-ctor-cephalon-abstractions-appmodel-appprofile-cephalon-scaffolding-generation-scaffoldrequest-system-collections-generic-ireadonlylist-1-cephalon-scaffolding-generation-renderedproject-system-collections-generic-ireadonlylist-1-cephalon-scaffolding-generation-renderedfolder-system-collections-generic-ireadonlylist-1-cephalon-scaffolding-generation-renderedfile"></a>
+<a id="member-m-cephalon-scaffolding-generation-renderedscaffold-ctor-cephalon-abstractions-appmodel-appprofile-cephalon-scaffolding-generation-scaffoldrequest-system-collections-generic-ireadonlylist-cephalon-scaffolding-generation-renderedproject-system-collections-generic-ireadonlylist-cephalon-scaffolding-generation-renderedfolder-system-collections-generic-ireadonlylist-cephalon-scaffolding-generation-renderedfile"></a>
 
 ##### `RenderedScaffold`
 
 ```csharp
 RenderedScaffold(AppProfile appProfile, ScaffoldRequest request, IReadOnlyList<RenderedProject> projects, IReadOnlyList<RenderedFolder> folders, IReadOnlyList<RenderedFile> files)
 ```
+
+Creates a new rendered scaffold.
+
+Parameters:
+- `appProfile`: The application profile used to drive generation.
+- `request`: The original scaffold request.
+- `projects`: The rendered projects.
+- `folders`: The rendered folders.
+- `files`: The rendered files.
 
 #### Properties
 
@@ -338,17 +370,7 @@ Turns a Cephalon app profile and scaffold request into concrete projects, folder
 
 #### Declaration
 ```csharp
-public sealed class ScaffoldGenerator
-```
-
-#### Constructors
-
-<a id="member-m-cephalon-scaffolding-generation-scaffoldgenerator-ctor"></a>
-
-##### `ScaffoldGenerator`
-
-```csharp
-ScaffoldGenerator()
+public static class ScaffoldGenerator
 ```
 
 #### Methods
@@ -382,13 +404,22 @@ public sealed class ScaffoldRequest
 
 #### Constructors
 
-<a id="member-m-cephalon-scaffolding-generation-scaffoldrequest-ctor-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-string-system-string"></a>
+<a id="member-m-cephalon-scaffolding-generation-scaffoldrequest-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string"></a>
 
 ##### `ScaffoldRequest`
 
 ```csharp
 ScaffoldRequest(string appName, IReadOnlyList<string> modules, IReadOnlyList<string> features, string targetFramework, string cephalonPackageVersion)
 ```
+
+Creates a new scaffold request.
+
+Parameters:
+- `appName`: The application name to scaffold.
+- `modules`: The module names to materialize in the scaffold.
+- `features`: The feature or slice names to materialize in the scaffold.
+- `targetFramework`: The target framework for generated projects.
+- `cephalonPackageVersion`: The Cephalon package version to write into the scaffold.
 
 #### Properties
 
@@ -464,17 +495,7 @@ Writes a rendered scaffold to the local file system.
 
 #### Declaration
 ```csharp
-public sealed class FileSystemScaffoldWriter
-```
-
-#### Constructors
-
-<a id="member-m-cephalon-scaffolding-io-filesystemscaffoldwriter-ctor"></a>
-
-##### `FileSystemScaffoldWriter`
-
-```csharp
-FileSystemScaffoldWriter()
+public static class FileSystemScaffoldWriter
 ```
 
 #### Methods

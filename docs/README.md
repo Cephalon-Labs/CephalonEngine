@@ -25,6 +25,8 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [Benchmarking](benchmarking.md)
 - [Reference docs publishing](reference-docs.md)
 
+The component catalog now includes both the observability baseline package and the optional OpenTelemetry exporter companion package so operator-facing docs stay aligned with the shipped host integration path.
+
 ## Optional generated reference docs
 
 - [Reference landing page](reference/README.md)

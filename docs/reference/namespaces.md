@@ -188,6 +188,10 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Observability](cephalon-observability.md#namespace-cephalon-observability-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability&namespace=Cephalon.Observability.Hosting)
 
+## `Cephalon.Observability.OpenTelemetry.Hosting`
+
+- [Cephalon.Observability.OpenTelemetry](cephalon-observability-opentelemetry.md#namespace-cephalon-observability-opentelemetry-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.OpenTelemetry&namespace=Cephalon.Observability.OpenTelemetry.Hosting)
+
 ## `Cephalon.ReferenceDocs`
 
 - [Cephalon.ReferenceDocs](cephalon-referencedocs.md#namespace-cephalon-referencedocs): 1 public types [Browse](browse.html?assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs)

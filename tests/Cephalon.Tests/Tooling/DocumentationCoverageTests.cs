@@ -16,6 +16,7 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.Engine"] = "engine.md",
             ["Cephalon.Eventing"] = "eventing.md",
             ["Cephalon.Observability"] = "observability.md",
+            ["Cephalon.Observability.OpenTelemetry"] = "observability-opentelemetry.md",
             ["Cephalon.ReferenceDocs"] = "reference-docs.md",
             ["Cephalon.Retrieval"] = "retrieval.md",
             ["Cephalon.Scaffolding"] = "scaffolding.md",

@@ -23,6 +23,7 @@ When working in this repository:
 - `Cephalon.AspNetCore` is a host adapter, not the core engine
 - `Cephalon.Worker` is the generic-host worker adapter for non-HTTP runtime scenarios
 - `Cephalon.Observability` is the diagnostics companion package for logs, metrics, and tracing conventions
+- `Cephalon.Observability.OpenTelemetry` is the optional exporter companion package for OpenTelemetry OTLP host wiring
 - `Cephalon.Cli` is the user-facing shell for blueprint-driven generation
 - `Cephalon.ReferenceDocs` is the optional repo-local reference-doc publishing tool for XML-comment-driven API output
 - `Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, and `Cephalon.Edge` are the baseline technology companion packages
@@ -182,6 +183,7 @@ Current source layout:
 - `src/Cephalon.Worker/Hosting` -> `Cephalon.Worker.Hosting`
 - `src/Cephalon.Observability/Configuration` -> `Cephalon.Observability.Configuration`
 - `src/Cephalon.Observability/Hosting` -> `Cephalon.Observability.Hosting`
+- `src/Cephalon.Observability.OpenTelemetry/Hosting` -> `Cephalon.Observability.OpenTelemetry.Hosting`
 - `src/Cephalon.Cli/Commands` -> `Cephalon.Cli.Commands`
 - `src/Cephalon.Cli/Console` -> `Cephalon.Cli.Console`
 - `src/Cephalon.ReferenceDocs/Generation` -> `Cephalon.ReferenceDocs.Generation`

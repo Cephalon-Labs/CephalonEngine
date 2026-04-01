@@ -236,8 +236,8 @@ Acceptance:
 
 The active planning wave now moves to phase 2 operational hardening:
 
-- finish the gap inventory and decide the concrete readiness/liveness and restart-policy follow-through sequence
-- package exporter and dependency-health follow-through as the next implementation slice after the phase-2 inventory
+- keep the completed gap inventory and shipped OpenTelemetry companion package reflected accurately in docs and project tracking
+- package dependency-health follow-through as the next implementation slice after the shipped exporter baseline
 - tighten diagnostics and operator-facing runtime answers before reopening deeper platform work
 - keep `docs/operational-hardening-gap-inventory.md` current as the source of truth for what phase-2 gaps are still genuinely open
 
@@ -328,8 +328,7 @@ Delivered:
 
 Follow-up later:
 
-- dedicated exporter packages or OpenTelemetry companion integration
-- richer provider-specific dependency health packs beyond the baseline contributor contract
+- provider-specific dependency health packs on top of the shipped OpenTelemetry companion package
 - release-validation guidance for health and export conventions
 
 ### ENG-021 Benchmark guardrails in validation flow
@@ -511,7 +510,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 ### Sprint 2
 
 - ENG-011 Package and plugin loading
-- exporter packaging and dependency-specific health follow-through
+- shipped OpenTelemetry companion packaging plus dependency-specific health follow-through
 
 ### Sprint 3
 

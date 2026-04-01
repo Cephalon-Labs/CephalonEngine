@@ -115,6 +115,14 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void ObservabilityOpenTelemetryAssemblyExposesOnlyTheDocumentedRegistrationSurface()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Observability.OpenTelemetry.Hosting.OpenTelemetryHostApplicationBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Observability.OpenTelemetry.Hosting.OpenTelemetryHostApplicationBuilderExtensions));
+    }
+
+    [Fact]
     public void AgenticsAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(

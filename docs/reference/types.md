@@ -136,6 +136,7 @@ Browse the published API surface by public type.
 
 - [ObservabilityOptions](cephalon-observability.md#type-cephalon-observability-configuration-observabilityoptions): `Cephalon.Observability.Configuration` in `Cephalon.Observability` [Browse](browse.html?q=ObservabilityOptions&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration)
 - [ObservabilityServiceCollectionExtensions](cephalon-observability.md#type-cephalon-observability-hosting-observabilityservicecollectionextensions): `Cephalon.Observability.Hosting` in `Cephalon.Observability` [Browse](browse.html?q=ObservabilityServiceCollectionExtensions&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Hosting)
+- [OpenTelemetryHostApplicationBuilderExtensions](cephalon-observability-opentelemetry.md#type-cephalon-observability-opentelemetry-hosting-opentelemetryhostapplicationbuilderextensions): `Cephalon.Observability.OpenTelemetry.Hosting` in `Cephalon.Observability.OpenTelemetry` [Browse](browse.html?q=OpenTelemetryHostApplicationBuilderExtensions&assembly=Cephalon.Observability.OpenTelemetry&namespace=Cephalon.Observability.OpenTelemetry.Hosting)
 
 ## P
 

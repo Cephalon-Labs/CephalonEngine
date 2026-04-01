@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Description>OpenTelemetry exporter integration for Cephalon hosts.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cephalon.Engine\Cephalon.Engine.csproj" />
+    <ProjectReference Include="..\Cephalon.Observability\Cephalon.Observability.csproj" />
+  </ItemGroup>
+</Project>

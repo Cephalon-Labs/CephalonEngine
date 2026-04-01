@@ -36,6 +36,8 @@ public sealed class AgenticRuntimeOptions
 AgenticRuntimeOptions()
 ```
 
+Creates agentic runtime options with the default host-owned features enabled.
+
 #### Properties
 
 <a id="member-p-cephalon-agentics-configuration-agenticruntimeoptions-enableexecution"></a>
@@ -95,13 +97,23 @@ public static class AgenticEngineBuilderExtensions
 
 #### Methods
 
-<a id="member-m-cephalon-agentics-registration-agenticenginebuilderextensions-addagentics-cephalon-engine-composition-enginebuilder-system-action-1-cephalon-agentics-configuration-agenticruntimeoptions"></a>
+<a id="member-m-cephalon-agentics-registration-agenticenginebuilderextensions-addagentics-cephalon-engine-composition-enginebuilder-system-action-cephalon-agentics-configuration-agenticruntimeoptions"></a>
 
 ##### `AddAgentics`
 
 ```csharp
 EngineBuilder AddAgentics(this EngineBuilder builder, Action<AgenticRuntimeOptions> configure)
 ```
+
+Adds the agentic runtime pack to the engine.
+
+Remarks: The pack activates only when the matching technology profile is selected, but registering it here makes its services, capabilities, and runtime surfaces available when that selection is active.
+
+Returns: The same engine builder for fluent composition.
+
+Parameters:
+- `builder`: The engine builder to extend.
+- `configure`: An optional callback that configures the host-owned agentic runtime options.
 
 <a id="namespace-cephalon-agentics-services"></a>
 
@@ -120,13 +132,21 @@ public sealed class AgentToolDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-agentics-services-agenttooldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string"></a>
+<a id="member-m-cephalon-agentics-services-agenttooldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string"></a>
 
 ##### `AgentToolDescriptor`
 
 ```csharp
 AgentToolDescriptor(string id, string displayName, string description, IReadOnlyList<string> tags)
 ```
+
+Creates a new agent tool descriptor.
+
+Parameters:
+- `id`: The stable tool identifier.
+- `displayName`: The operator-facing tool name.
+- `description`: The human-readable description of the tool.
+- `tags`: Optional tags that classify the tool.
 
 #### Properties
 

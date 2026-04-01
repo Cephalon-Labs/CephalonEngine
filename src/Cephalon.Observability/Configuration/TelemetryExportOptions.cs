@@ -6,8 +6,10 @@ namespace Cephalon.Observability.Configuration;
 /// Describes how operators intend host telemetry to be exported.
 /// </summary>
 /// <remarks>
-/// These settings are intentionally guidance-oriented. They let Cephalon packages and hosts agree on
-/// provider, protocol, endpoint, and enabled signals without forcing a specific exporter implementation.
+/// These settings let Cephalon packages and hosts agree on provider, protocol, endpoint, and enabled
+/// signals without forcing exporter dependencies into the engine core. Companion packages such as
+/// <c>Cephalon.Observability.OpenTelemetry</c> can interpret the same contract when a host wants a
+/// supported OTLP export path.
 /// </remarks>
 public sealed class TelemetryExportOptions
 {
@@ -24,12 +26,13 @@ public sealed class TelemetryExportOptions
     public string Provider { get; set; } = "OpenTelemetry";
 
     /// <summary>
-    /// Gets or sets the telemetry transport protocol, such as <c>otlp</c>.
+    /// Gets or sets the telemetry transport protocol, such as <c>otlp</c>, <c>otlp/grpc</c>, or <c>otlp/http</c>.
     /// </summary>
     public string Protocol { get; set; } = "otlp";
 
     /// <summary>
     /// Gets or sets the target export endpoint, if one is configured.
+    /// Companion packages interpret this as the base collector endpoint for the selected export protocol.
     /// </summary>
     public string? Endpoint { get; set; }
 

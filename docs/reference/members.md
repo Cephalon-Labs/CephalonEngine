@@ -7,16 +7,19 @@ Browse the published API surface by public member.
 ## A
 
 - [Access](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-access): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Access&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - The effective access mode resolved from policy.
   - `CapabilityAccess Access { get; set; }`
 - [ActivitySourceName](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-activitysourcename): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ActivitySourceName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The activity source name used for engine tracing.
   - `string ActivitySourceName { get; set; }`
 - [ActivitySourceName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-activitysourcename): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=ActivitySourceName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Gets the activity-source name emitted by the engine.
   - `const string ActivitySourceName`
 - [Add](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttoolregistry-add-cephalon-agentics-services-agenttooldescriptor): `Methods` on `IAgentToolRegistry` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Add&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Adds a tool descriptor to the registry.
   - `void Add(AgentToolDescriptor tool)`
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-capabilities-icapabilityregistry-add-cephalon-abstractions-capabilities-capability): `Methods` on `ICapabilityRegistry` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
+  - Adds a capability to the registry.
   - `void Add(Capability capability)`
 - [Add](cephalon-edge.md#member-m-cephalon-edge-services-iedgenoderegistry-add-cephalon-edge-services-edgenodedescriptor): `Methods` on `IEdgeNodeRegistry` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=Add&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
   - Adds an edge node descriptor to the registry.
@@ -27,32 +30,45 @@ Browse the published API surface by public member.
 - [Add](cephalon-retrieval.md#member-m-cephalon-retrieval-services-iknowledgecollectionregistry-add-cephalon-retrieval-services-knowledgecollectiondescriptor): `Methods` on `IKnowledgeCollectionRegistry` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Add&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Adds a knowledge collection descriptor to the registry.
   - `void Add(KnowledgeCollectionDescriptor collection)`
-- [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-localization-ilocalizedresourceregistry-add-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Methods` on `ILocalizedResourceRegistry` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
+- [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-localization-ilocalizedresourceregistry-add-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `ILocalizedResourceRegistry` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
+  - Adds a batch of localized text values for one culture.
   - `void Add(string culture, IReadOnlyDictionary<string, string> resources)`
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-localization-ilocalizedresourceregistry-add-system-string-system-string-system-string): `Methods` on `ILocalizedResourceRegistry` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
+  - Adds one localized text value.
   - `void Add(string culture, string key, string value)`
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-itechnologyregistry-add-cephalon-abstractions-technologies-technologydescriptor): `Methods` on `ITechnologyRegistry` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Adds a technology descriptor to the registry.
   - `void Add(TechnologyDescriptor technology)`
-- [AddAgentics](cephalon-agentics.md#member-m-cephalon-agentics-registration-agenticenginebuilderextensions-addagentics-cephalon-engine-composition-enginebuilder-system-action-1-cephalon-agentics-configuration-agenticruntimeoptions): `Methods` on `AgenticEngineBuilderExtensions` in `Cephalon.Agentics.Registration` (`Cephalon.Agentics`) [Browse](browse.html?q=AddAgentics&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Registration&scope=members)
+- [AddAgentics](cephalon-agentics.md#member-m-cephalon-agentics-registration-agenticenginebuilderextensions-addagentics-cephalon-engine-composition-enginebuilder-system-action-cephalon-agentics-configuration-agenticruntimeoptions): `Methods` on `AgenticEngineBuilderExtensions` in `Cephalon.Agentics.Registration` (`Cephalon.Agentics`) [Browse](browse.html?q=AddAgentics&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Registration&scope=members)
+  - Adds the agentic runtime pack to the engine.
   - `EngineBuilder AddAgentics(this EngineBuilder builder, Action<AgenticRuntimeOptions> configure)`
-- [AddCephalon](cephalon-engine.md#member-m-cephalon-engine-composition-engineservicecollectionextensions-addcephalon-microsoft-extensions-dependencyinjection-iservicecollection-system-action-1-cephalon-engine-composition-enginebuilder): `Methods` on `EngineServiceCollectionExtensions` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddCephalon&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+- [AddCephalon](cephalon-engine.md#member-m-cephalon-engine-composition-engineservicecollectionextensions-addcephalon-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-engine-composition-enginebuilder): `Methods` on `EngineServiceCollectionExtensions` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddCephalon&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Adds Cephalon using code-first configuration.
   - `IServiceCollection AddCephalon(this IServiceCollection services, Action<EngineBuilder> configure)`
-- [AddCephalon](cephalon-engine.md#member-m-cephalon-engine-composition-engineservicecollectionextensions-addcephalon-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-1-cephalon-engine-composition-enginebuilder-system-string): `Methods` on `EngineServiceCollectionExtensions` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddCephalon&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+- [AddCephalon](cephalon-engine.md#member-m-cephalon-engine-composition-engineservicecollectionextensions-addcephalon-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-engine-composition-enginebuilder-system-string): `Methods` on `EngineServiceCollectionExtensions` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddCephalon&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Adds Cephalon using configuration as the primary source of engine settings.
   - `IServiceCollection AddCephalon(this IServiceCollection services, IConfiguration configuration, Action<EngineBuilder> configure, string sectionPath)`
 - [AddCephalon](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addcephalon-microsoft-aspnetcore-builder-webapplicationbuilder): `Methods` on `EngineWebApplicationBuilderExtensions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=AddCephalon&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Adds Cephalon to the builder using configuration-only engine setup.
   - `WebApplicationBuilder AddCephalon(this WebApplicationBuilder builder)`
-- [AddCephalon](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addcephalon-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-1-cephalon-engine-composition-enginebuilder): `Methods` on `EngineWebApplicationBuilderExtensions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=AddCephalon&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+- [AddCephalon](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addcephalon-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-cephalon-engine-composition-enginebuilder): `Methods` on `EngineWebApplicationBuilderExtensions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=AddCephalon&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Adds Cephalon to the builder and allows additional code-based engine configuration.
   - `WebApplicationBuilder AddCephalon(this WebApplicationBuilder builder, Action<EngineBuilder> configure)`
 - [AddCephalon](cephalon-worker.md#member-m-cephalon-worker-hosting-workerhostapplicationbuilderextensions-addcephalon-microsoft-extensions-hosting-hostapplicationbuilder): `Methods` on `WorkerHostApplicationBuilderExtensions` in `Cephalon.Worker.Hosting` (`Cephalon.Worker`) [Browse](browse.html?q=AddCephalon&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting&scope=members)
   - Adds Cephalon worker hosting using configuration-only engine setup.
   - `HostApplicationBuilder AddCephalon(this HostApplicationBuilder builder)`
-- [AddCephalon](cephalon-worker.md#member-m-cephalon-worker-hosting-workerhostapplicationbuilderextensions-addcephalon-microsoft-extensions-hosting-hostapplicationbuilder-system-action-1-cephalon-engine-composition-enginebuilder): `Methods` on `WorkerHostApplicationBuilderExtensions` in `Cephalon.Worker.Hosting` (`Cephalon.Worker`) [Browse](browse.html?q=AddCephalon&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting&scope=members)
+- [AddCephalon](cephalon-worker.md#member-m-cephalon-worker-hosting-workerhostapplicationbuilderextensions-addcephalon-microsoft-extensions-hosting-hostapplicationbuilder-system-action-cephalon-engine-composition-enginebuilder): `Methods` on `WorkerHostApplicationBuilderExtensions` in `Cephalon.Worker.Hosting` (`Cephalon.Worker`) [Browse](browse.html?q=AddCephalon&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting&scope=members)
+  - Adds Cephalon worker hosting and allows additional code-based engine configuration.
   - `HostApplicationBuilder AddCephalon(this HostApplicationBuilder builder, Action<EngineBuilder> configure)`
-- [AddCephalonObservability](cephalon-observability.md#member-m-cephalon-observability-hosting-observabilityservicecollectionextensions-addcephalonobservability-microsoft-extensions-dependencyinjection-iservicecollection-system-action-1-cephalon-observability-configuration-observabilityoptions): `Methods` on `ObservabilityServiceCollectionExtensions` in `Cephalon.Observability.Hosting` (`Cephalon.Observability`) [Browse](browse.html?q=AddCephalonObservability&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Hosting&scope=members)
+- [AddCephalonObservability](cephalon-observability.md#member-m-cephalon-observability-hosting-observabilityservicecollectionextensions-addcephalonobservability-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-configuration-observabilityoptions): `Methods` on `ObservabilityServiceCollectionExtensions` in `Cephalon.Observability.Hosting` (`Cephalon.Observability`) [Browse](browse.html?q=AddCephalonObservability&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Hosting&scope=members)
+  - Adds observability services using code-first configuration.
   - `IServiceCollection AddCephalonObservability(this IServiceCollection services, Action<ObservabilityOptions> configure)`
-- [AddCephalonObservability](cephalon-observability.md#member-m-cephalon-observability-hosting-observabilityservicecollectionextensions-addcephalonobservability-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-1-cephalon-observability-configuration-observabilityoptions): `Methods` on `ObservabilityServiceCollectionExtensions` in `Cephalon.Observability.Hosting` (`Cephalon.Observability`) [Browse](browse.html?q=AddCephalonObservability&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Hosting&scope=members)
+- [AddCephalonObservability](cephalon-observability.md#member-m-cephalon-observability-hosting-observabilityservicecollectionextensions-addcephalonobservability-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-configuration-observabilityoptions): `Methods` on `ObservabilityServiceCollectionExtensions` in `Cephalon.Observability.Hosting` (`Cephalon.Observability`) [Browse](browse.html?q=AddCephalonObservability&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Hosting&scope=members)
+  - Adds observability services using configuration as the primary source of observability options.
   - `IServiceCollection AddCephalonObservability(this IServiceCollection services, IConfiguration configuration, Action<ObservabilityOptions> configure)`
+- [AddCephalonOpenTelemetry](cephalon-observability-opentelemetry.md#member-m-cephalon-observability-opentelemetry-hosting-opentelemetryhostapplicationbuilderextensions-addcephalonopentelemetry-1-0-system-action-cephalon-observability-configuration-telemetryexportoptions): `Methods` on `OpenTelemetryHostApplicationBuilderExtensions` in `Cephalon.Observability.OpenTelemetry.Hosting` (`Cephalon.Observability.OpenTelemetry`) [Browse](browse.html?q=AddCephalonOpenTelemetry&assembly=Cephalon.Observability.OpenTelemetry&namespace=Cephalon.Observability.OpenTelemetry.Hosting&scope=members)
+  - Adds OpenTelemetry exporter registration for the Cephalon engine diagnostics surface.
+  - `TBuilder AddCephalonOpenTelemetry<TBuilder>(this TBuilder builder, Action<TelemetryExportOptions> configure)`
 - [AddCephalonProjectConfigurations](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addcephalonprojectconfigurations-microsoft-aspnetcore-builder-webapplicationbuilder): `Methods` on `EngineWebApplicationBuilderExtensions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=AddCephalonProjectConfigurations&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Adds Cephalon's project-configuration conventions to the ASP.NET Core builder.
   - `WebApplicationBuilder AddCephalonProjectConfigurations(this WebApplicationBuilder builder)`
@@ -62,13 +78,17 @@ Browse the published API surface by public member.
 - [AddCephalonProjectConfigurations](cephalon-worker.md#member-m-cephalon-worker-hosting-workerhostapplicationbuilderextensions-addcephalonprojectconfigurations-microsoft-extensions-hosting-hostapplicationbuilder): `Methods` on `WorkerHostApplicationBuilderExtensions` in `Cephalon.Worker.Hosting` (`Cephalon.Worker`) [Browse](browse.html?q=AddCephalonProjectConfigurations&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting&scope=members)
   - Adds Cephalon's project-configuration conventions to the generic host builder.
   - `HostApplicationBuilder AddCephalonProjectConfigurations(this HostApplicationBuilder builder)`
-- [AddCephalonWorker](cephalon-worker.md#member-m-cephalon-worker-hosting-workerservicecollectionextensions-addcephalonworker-microsoft-extensions-dependencyinjection-iservicecollection-system-action-1-cephalon-engine-composition-enginebuilder): `Methods` on `WorkerServiceCollectionExtensions` in `Cephalon.Worker.Hosting` (`Cephalon.Worker`) [Browse](browse.html?q=AddCephalonWorker&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting&scope=members)
+- [AddCephalonWorker](cephalon-worker.md#member-m-cephalon-worker-hosting-workerservicecollectionextensions-addcephalonworker-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-engine-composition-enginebuilder): `Methods` on `WorkerServiceCollectionExtensions` in `Cephalon.Worker.Hosting` (`Cephalon.Worker`) [Browse](browse.html?q=AddCephalonWorker&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting&scope=members)
+  - Adds Cephalon worker hosting using code-first engine configuration.
   - `IServiceCollection AddCephalonWorker(this IServiceCollection services, Action<EngineBuilder> configure)`
-- [AddCephalonWorker](cephalon-worker.md#member-m-cephalon-worker-hosting-workerservicecollectionextensions-addcephalonworker-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-1-cephalon-engine-composition-enginebuilder-system-string): `Methods` on `WorkerServiceCollectionExtensions` in `Cephalon.Worker.Hosting` (`Cephalon.Worker`) [Browse](browse.html?q=AddCephalonWorker&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting&scope=members)
+- [AddCephalonWorker](cephalon-worker.md#member-m-cephalon-worker-hosting-workerservicecollectionextensions-addcephalonworker-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-engine-composition-enginebuilder-system-string): `Methods` on `WorkerServiceCollectionExtensions` in `Cephalon.Worker.Hosting` (`Cephalon.Worker`) [Browse](browse.html?q=AddCephalonWorker&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting&scope=members)
+  - Adds Cephalon worker hosting using configuration as the primary source of engine settings.
   - `IServiceCollection AddCephalonWorker(this IServiceCollection services, IConfiguration configuration, Action<EngineBuilder> configure, string sectionPath)`
-- [AddEdge](cephalon-edge.md#member-m-cephalon-edge-registration-edgeenginebuilderextensions-addedge-cephalon-engine-composition-enginebuilder-system-action-1-cephalon-edge-configuration-edgeruntimeoptions): `Methods` on `EdgeEngineBuilderExtensions` in `Cephalon.Edge.Registration` (`Cephalon.Edge`) [Browse](browse.html?q=AddEdge&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Registration&scope=members)
+- [AddEdge](cephalon-edge.md#member-m-cephalon-edge-registration-edgeenginebuilderextensions-addedge-cephalon-engine-composition-enginebuilder-system-action-cephalon-edge-configuration-edgeruntimeoptions): `Methods` on `EdgeEngineBuilderExtensions` in `Cephalon.Edge.Registration` (`Cephalon.Edge`) [Browse](browse.html?q=AddEdge&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Registration&scope=members)
+  - Adds the edge runtime pack to the engine.
   - `EngineBuilder AddEdge(this EngineBuilder builder, Action<EdgeRuntimeOptions> configure)`
-- [AddEventing](cephalon-eventing.md#member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventing-cephalon-engine-composition-enginebuilder-system-action-1-cephalon-eventing-configuration-eventingoptions): `Methods` on `EventingEngineBuilderExtensions` in `Cephalon.Eventing.Registration` (`Cephalon.Eventing`) [Browse](browse.html?q=AddEventing&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Registration&scope=members)
+- [AddEventing](cephalon-eventing.md#member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventing-cephalon-engine-composition-enginebuilder-system-action-cephalon-eventing-configuration-eventingoptions): `Methods` on `EventingEngineBuilderExtensions` in `Cephalon.Eventing.Registration` (`Cephalon.Eventing`) [Browse](browse.html?q=AddEventing&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Registration&scope=members)
+  - Adds the eventing runtime pack to the engine.
   - `EngineBuilder AddEventing(this EngineBuilder builder, Action<EventingOptions> configure)`
 - [AddGrpcTransport](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-hosting-grpctransportservicecollectionextensions-addgrpctransport-microsoft-extensions-dependencyinjection-iservicecollection): `Methods` on `GrpcTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.Grpc.Hosting` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=AddGrpcTransport&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Hosting&scope=members)
   - Adds the gRPC transport mapper and ASP.NET Core gRPC services to the service collection.
@@ -82,7 +102,8 @@ Browse the published API surface by public member.
 - [AddJsonRpcTransport](cephalon-aspnetcore-jsonrpc.md#member-m-cephalon-aspnetcore-jsonrpc-hosting-jsonrpctransportservicecollectionextensions-addjsonrpctransport-microsoft-aspnetcore-builder-webapplicationbuilder): `Methods` on `JsonRpcTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.JsonRpc.Hosting` (`Cephalon.AspNetCore.JsonRpc`) [Browse](browse.html?q=AddJsonRpcTransport&assembly=Cephalon.AspNetCore.JsonRpc&namespace=Cephalon.AspNetCore.JsonRpc.Hosting&scope=members)
   - Adds the JSON-RPC transport mapper to a `WebApplicationBuilder`.
   - `WebApplicationBuilder AddJsonRpcTransport(this WebApplicationBuilder builder)`
-- [AddLanguageResources](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addlanguageresources-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddLanguageResources&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+- [AddLanguageResources](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addlanguageresources-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddLanguageResources&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Adds resource overrides for a specific culture without replacing the existing localization contract.
   - `EngineBuilder AddLanguageResources(string culture, IReadOnlyDictionary<string, string> resources)`
 - [AddModule](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addmodule-1): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddModule&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Adds a module by type using its parameterless constructor.
@@ -90,11 +111,14 @@ Browse the published API surface by public member.
 - [AddModule](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addmodule-cephalon-abstractions-modules-imodule): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddModule&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Adds a concrete module instance to the runtime composition graph.
   - `EngineBuilder AddModule(IModule module)`
-- [AddModulesFromAssemblies](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassemblies-system-collections-generic-ienumerable-1-system-reflection-assembly-system-func-2-system-type-system-boolean): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddModulesFromAssemblies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+- [AddModulesFromAssemblies](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassemblies-system-collections-generic-ienumerable-system-reflection-assembly-system-func-system-type-system-boolean): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddModulesFromAssemblies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Discovers and adds modules from a sequence of assemblies.
   - `EngineBuilder AddModulesFromAssemblies(IEnumerable<Assembly> assemblies, Func<Type, bool> filter)`
-- [AddModulesFromAssembly](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassembly-system-reflection-assembly-system-func-2-system-type-system-boolean): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddModulesFromAssembly&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+- [AddModulesFromAssembly](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassembly-system-reflection-assembly-system-func-system-type-system-boolean): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddModulesFromAssembly&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Discovers and adds modules from an assembly.
   - `EngineBuilder AddModulesFromAssembly(Assembly assembly, Func<Type, bool> filter)`
-- [AddModulesFromAssemblyContaining](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassemblycontaining-1-system-func-2-system-type-system-boolean): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddModulesFromAssemblyContaining&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+- [AddModulesFromAssemblyContaining](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassemblycontaining-1-system-func-system-type-system-boolean): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddModulesFromAssemblyContaining&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Discovers and adds modules from the assembly that contains `TMarker`.
   - `EngineBuilder AddModulesFromAssemblyContaining<TMarker>(Func<Type, bool> filter)`
 - [AddPackage](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addpackage-cephalon-engine-configuration-modulepackagereference): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddPackage&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Adds an explicit package reference to the builder.
@@ -102,7 +126,8 @@ Browse the published API surface by public member.
 - [AddPackageAssembly](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addpackageassembly-system-string-system-string): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddPackageAssembly&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Adds a package reference that points directly to a module assembly.
   - `EngineBuilder AddPackageAssembly(string path, string id)`
-- [AddPackageDirectories](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addpackagedirectories-system-collections-generic-ienumerable-1-cephalon-engine-configuration-modulepackagedirectory): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddPackageDirectories&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+- [AddPackageDirectories](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addpackagedirectories-system-collections-generic-ienumerable-cephalon-engine-configuration-modulepackagedirectory): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddPackageDirectories&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Adds multiple package-directory discovery rules.
   - `EngineBuilder AddPackageDirectories(IEnumerable<ModulePackageDirectory> directories)`
 - [AddPackageDirectory](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addpackagedirectory-cephalon-engine-configuration-modulepackagedirectory): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddPackageDirectory&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Adds a package-directory discovery rule to the builder.
@@ -113,14 +138,17 @@ Browse the published API surface by public member.
 - [AddPackageManifest](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addpackagemanifest-system-string-system-string): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddPackageManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Adds a package by its `cephalon.package.json` manifest file.
   - `EngineBuilder AddPackageManifest(string manifestPath, string id)`
-- [AddPackages](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addpackages-system-collections-generic-ienumerable-1-cephalon-engine-configuration-modulepackagereference): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddPackages&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+- [AddPackages](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addpackages-system-collections-generic-ienumerable-cephalon-engine-configuration-modulepackagereference): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddPackages&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Adds multiple explicit package references.
   - `EngineBuilder AddPackages(IEnumerable<ModulePackageReference> packages)`
 - [AddPattern](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addpattern-cephalon-abstractions-patterns-patterndescriptor): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddPattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Adds an application or design pattern to the current app profile.
   - `EngineBuilder AddPattern(PatternDescriptor pattern)`
-- [AddReferenceDocsHosting](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addreferencedocshosting-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-1-cephalon-aspnetcore-documentation-referencedocshostingoptions): `Methods` on `EngineWebApplicationBuilderExtensions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=AddReferenceDocsHosting&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+- [AddReferenceDocsHosting](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addreferencedocshosting-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-cephalon-aspnetcore-documentation-referencedocshostingoptions): `Methods` on `EngineWebApplicationBuilderExtensions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=AddReferenceDocsHosting&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Adds hosted reference-doc configuration to the ASP.NET Core host.
   - `WebApplicationBuilder AddReferenceDocsHosting(this WebApplicationBuilder builder, Action<ReferenceDocsHostingOptions> configure)`
-- [AddRetrieval](cephalon-retrieval.md#member-m-cephalon-retrieval-registration-retrievalenginebuilderextensions-addretrieval-cephalon-engine-composition-enginebuilder-system-action-1-cephalon-retrieval-configuration-retrievaloptions): `Methods` on `RetrievalEngineBuilderExtensions` in `Cephalon.Retrieval.Registration` (`Cephalon.Retrieval`) [Browse](browse.html?q=AddRetrieval&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Registration&scope=members)
+- [AddRetrieval](cephalon-retrieval.md#member-m-cephalon-retrieval-registration-retrievalenginebuilderextensions-addretrieval-cephalon-engine-composition-enginebuilder-system-action-cephalon-retrieval-configuration-retrievaloptions): `Methods` on `RetrievalEngineBuilderExtensions` in `Cephalon.Retrieval.Registration` (`Cephalon.Retrieval`) [Browse](browse.html?q=AddRetrieval&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Registration&scope=members)
+  - Adds the retrieval runtime pack to the engine.
   - `EngineBuilder AddRetrieval(this EngineBuilder builder, Action<RetrievalOptions> configure)`
 - [AddTechnology](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addtechnology-cephalon-abstractions-technologies-technologydescriptor): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddTechnology&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Selects a technology profile for the current app profile.
@@ -129,42 +157,55 @@ Browse the published API surface by public member.
   - Adds a transport to the current app profile selection.
   - `EngineBuilder AddTransport(TransportDescriptor transport)`
 - [AgenticRuntimeOptions](cephalon-agentics.md#member-m-cephalon-agentics-configuration-agenticruntimeoptions-ctor): `Constructors` on `AgenticRuntimeOptions` in `Cephalon.Agentics.Configuration` (`Cephalon.Agentics`) [Browse](browse.html?q=AgenticRuntimeOptions&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Configuration&scope=members)
+  - Creates agentic runtime options with the default host-owned features enabled.
   - `AgenticRuntimeOptions()`
 - [AgenticWorkloads](cephalon-engine.md#member-p-cephalon-engine-technologies-builtintechnologies-agenticworkloads): `Properties` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=AgenticWorkloads&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
+  - Gets the built-in agentic-workloads technology profile.
   - `TechnologyDescriptor AgenticWorkloads { get; }`
-- [AgentToolDescriptor](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttooldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string): `Constructors` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolDescriptor&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [AgentToolDescriptor](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttooldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolDescriptor&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Creates a new agent tool descriptor.
   - `AgentToolDescriptor(string id, string displayName, string description, IReadOnlyList<string> tags)`
 - [Algorithm](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-algorithm): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Algorithm&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared signature algorithm.
   - `string Algorithm { get; }`
 - [All](cephalon-engine.md#member-p-cephalon-engine-appmodel-builtinblueprints-all): `Properties` on `BuiltInBlueprints` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=All&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Gets all built-in blueprints.
   - `IReadOnlyList<AppBlueprint> All { get; }`
 - [All](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-all): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=All&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
+  - Gets all built-in pattern descriptors.
   - `IReadOnlyList<PatternDescriptor> All { get; }`
 - [All](cephalon-engine.md#member-p-cephalon-engine-technologies-builtintechnologies-all): `Properties` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=All&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
+  - Gets all built-in technology descriptors.
   - `IReadOnlyList<TechnologyDescriptor> All { get; }`
 - [All](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-all): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=All&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
+  - Gets all built-in transport descriptors.
   - `IReadOnlyList<TransportDescriptor> All { get; }`
 - [AllowAssemblyPathPackages](cephalon-engine.md#member-p-cephalon-engine-configuration-packagepolicy-allowassemblypathpackages): `Properties` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=AllowAssemblyPathPackages&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether raw assembly-path packages are allowed.
   - `bool AllowAssemblyPathPackages { get; }`
 - [Allowed](cephalon-abstractions.md#member-f-cephalon-abstractions-capabilities-capabilityaccess-allowed): `Fields` on `CapabilityAccess` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=Allowed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
+  - Indicates the capability can be used without additional trust requirements.
   - `const CapabilityAccess Allowed`
 - [AllowedPackageChecksums](cephalon-engine.md#member-p-cephalon-engine-configuration-trustpolicy-allowedpackagechecksums): `Properties` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=AllowedPackageChecksums&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the package checksum allow-lists keyed by package identifier.
   - `IReadOnlyDictionary<string, IReadOnlyList<string>> AllowedPackageChecksums { get; }`
 - [AllowManualRestart](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-allowmanualrestart): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=AllowManualRestart&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether manual restart is allowed after supported failures.
   - `bool AllowManualRestart { get; }`
-- [AppBlueprint](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appblueprint-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-cephalon-abstractions-patterns-patterndescriptor-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Constructors` on `AppBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppBlueprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+- [AppBlueprint](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appblueprint-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AppBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppBlueprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Creates a blueprint without scaffold metadata.
   - `AppBlueprint(string id, string displayName, string description, IReadOnlyList<PatternDescriptor> patterns, IReadOnlyDictionary<string, string> metadata)`
-- [AppBlueprint](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appblueprint-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-cephalon-abstractions-patterns-patterndescriptor-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Constructors` on `AppBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppBlueprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+- [AppBlueprint](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appblueprint-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AppBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppBlueprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Creates a blueprint with optional scaffold metadata.
   - `AppBlueprint(string id, string displayName, string description, IReadOnlyList<PatternDescriptor> patterns, ScaffoldPlan scaffold, IReadOnlyDictionary<string, string> metadata)`
 - [AppName](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-scaffoldrequest-appname): `Properties` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=AppName&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the application name to scaffold.
   - `string AppName { get; }`
-- [AppProfile](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-cephalon-abstractions-patterns-patterndescriptor-system-collections-generic-ireadonlylist-1-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-1-cephalon-abstractions-transports-transportdescriptor): `Constructors` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppProfile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+- [AppProfile](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor): `Constructors` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppProfile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Creates an app profile without scaffold metadata.
   - `AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports)`
-- [AppProfile](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-cephalon-abstractions-patterns-patterndescriptor-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-system-collections-generic-ireadonlylist-1-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-1-cephalon-abstractions-transports-transportdescriptor): `Constructors` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppProfile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+- [AppProfile](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor): `Constructors` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppProfile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Creates an app profile with optional scaffold metadata.
   - `AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, ScaffoldPlan scaffold, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports)`
 - [AppProfile](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedscaffold-appprofile): `Properties` on `RenderedScaffold` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=AppProfile&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the application profile used to drive generation.
@@ -173,6 +214,7 @@ Browse the published API surface by public member.
   - Gets the resolved application profile, including blueprint, patterns, transports, technologies, and any scaffold guidance.
   - `AppProfile AppProfile { get; }`
 - [Assemblies](cephalon-engine.md#member-p-cephalon-engine-configuration-modulediscoverysettings-assemblies): `Properties` on `ModuleDiscoverySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Assemblies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets assembly names or paths to scan for modules.
   - `IReadOnlyList<string> Assemblies { get; }`
 - [Assemblies](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-assemblies): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Assemblies&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the assemblies to document. When empty, the generator uses its curated defaults.
@@ -187,6 +229,7 @@ Browse the published API surface by public member.
   - The resolved assembly name for the package.
   - `string AssemblyName { get; set; }`
 - [AssemblyPathKind](cephalon-engine.md#member-f-cephalon-engine-configuration-modulepackagereference-assemblypathkind): `Fields` on `ModulePackageReference` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=AssemblyPathKind&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Identifies a package input that points directly to an assembly path.
   - `const string AssemblyPathKind`
 - [Available](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-available): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Available&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Whether the configured documentation directory and default document were found and mapped.
@@ -195,6 +238,7 @@ Browse the published API surface by public member.
 ## B
 
 - [BestEffortContinue](cephalon-engine.md#member-f-cephalon-engine-configuration-stopfailurebehavior-besteffortcontinue): `Fields` on `StopFailureBehavior` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BestEffortContinue&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Continue stopping remaining modules and report failures afterward.
   - `const StopFailureBehavior BestEffortContinue`
 - [BindService](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-bindservice-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryservicebase): `Methods` on `DiscoveryService` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=BindService&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Creates service definition that can be registered with a server
@@ -203,12 +247,16 @@ Browse the published API surface by public member.
   - Register service method with a service binder with or without implementation. Useful when customizing the service binding logic. Note: this method is part of an experimental API that can change or be removed without any prior notice.
   - `void BindService(ServiceBinderBase serviceBinder, DiscoveryServiceBase serviceImpl)`
 - [Blueprint](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-blueprint): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Blueprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the selected blueprint identifier.
   - `string Blueprint { get; }`
 - [BlueprintDescription](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-blueprintdescription): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=BlueprintDescription&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the selected blueprint description.
   - `string BlueprintDescription { get; }`
 - [BlueprintDisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-blueprintdisplayname): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=BlueprintDisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the selected blueprint display name.
   - `string BlueprintDisplayName { get; }`
 - [BlueprintId](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-blueprintid): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=BlueprintId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the selected blueprint identifier.
   - `string BlueprintId { get; }`
 - [BrowserPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-browserpath): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=BrowserPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The hosted path to the interactive browser UI.
@@ -217,22 +265,16 @@ Browse the published API surface by public member.
   - Materializes the configured engine into a runnable `EngineRuntime`.
   - `EngineRuntime Build()`
 - [BuildActivityName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-buildactivityname): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=BuildActivityName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Gets the activity name used while building the runtime.
   - `const string BuildActivityName`
 
 ## C
 
-- [CalculateSize](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-calculatesize): `Methods` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=CalculateSize&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `int CalculateSize()`
-- [CalculateSize](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-calculatesize): `Methods` on `HelloRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=CalculateSize&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `int CalculateSize()`
-- [CalculateSize](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-calculatesize): `Methods` on `PrincipleReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=CalculateSize&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `int CalculateSize()`
-- [CalculateSize](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-calculatesize): `Methods` on `PrinciplesRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=CalculateSize&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `int CalculateSize()`
 - [CanRestart](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-canrestart): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=CanRestart&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Whether the current policy allows a manual restart after this failure.
   - `bool CanRestart { get; set; }`
 - [Capabilities](cephalon-engine.md#member-p-cephalon-engine-configuration-engineoptions-capabilities): `Properties` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Capabilities&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets capability enablement overrides keyed by capability key.
   - `IReadOnlyDictionary<string, bool> Capabilities { get; }`
 - [Capabilities](cephalon-engine.md#member-p-cephalon-engine-manifest-runtimemanifest-capabilities): `Properties` on `RuntimeManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Capabilities&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the effective capability set after capability and trust policy filtering.
@@ -241,20 +283,28 @@ Browse the published API surface by public member.
   - Gets the explicit per-capability access rules.
   - `IReadOnlyDictionary<string, CapabilityAccess> Capabilities { get; }`
 - [Capabilities](cephalon-engine.md#member-p-cephalon-engine-trust-trustsnapshot-capabilities): `Properties` on `TrustSnapshot` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Capabilities&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - The evaluated capability trust decisions.
   - `IReadOnlyList<CapabilityPolicyDecision> Capabilities { get; set; }`
-- [Capability](cephalon-abstractions.md#member-m-cephalon-abstractions-capabilities-capability-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Constructors` on `Capability` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=Capability&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
+- [Capability](cephalon-abstractions.md#member-m-cephalon-abstractions-capabilities-capability-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `Capability` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=Capability&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
+  - Creates a capability descriptor.
   - `Capability(string key, string displayName, string description, IReadOnlyDictionary<string, string> metadata)`
 - [CapabilityKey](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-capabilitykey): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=CapabilityKey&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - The capability key that was evaluated.
   - `string CapabilityKey { get; set; }`
-- [CapabilityManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-capabilitymanifest-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Constructors` on `CapabilityManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=CapabilityManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+- [CapabilityManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-capabilitymanifest-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CapabilityManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=CapabilityManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Initializes a new instance of the `CapabilityManifest` class.
   - `CapabilityManifest(string key, string displayName, string description, string sourceModuleId, IReadOnlyDictionary<string, string> metadata)`
 - [CapabilityPolicyDecision](cephalon-engine.md#member-m-cephalon-engine-trust-capabilitypolicydecision-ctor-system-string-system-string-system-string-cephalon-abstractions-capabilities-capabilityaccess-system-boolean-system-boolean-system-string): `Constructors` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=CapabilityPolicyDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - Describes the evaluated trust decision for a single capability.
   - `CapabilityPolicyDecision(string CapabilityKey, string SourceModuleId, string SourcePackageId, CapabilityAccess Access, bool SourceTrusted, bool IsAllowed, string Reason)`
 - [CapabilityPolicyEvaluator](cephalon-engine.md#member-m-cephalon-engine-trust-capabilitypolicyevaluator-ctor-cephalon-engine-trust-trustsnapshot): `Constructors` on `CapabilityPolicyEvaluator` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=CapabilityPolicyEvaluator&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - Initializes a new instance of the `CapabilityPolicyEvaluator` class.
   - `CapabilityPolicyEvaluator(TrustSnapshot snapshot)`
 - [CaptureOnly](cephalon-engine.md#member-f-cephalon-engine-configuration-startupfailurebehavior-captureonly): `Fields` on `StartupFailureBehavior` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=CaptureOnly&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Capture the failure in runtime status without rethrowing it to the host.
   - `const StartupFailureBehavior CaptureOnly`
 - [Catalog](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologyselection-catalog): `Properties` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Catalog&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the technology profiles available to the runtime.
   - `IReadOnlyList<TechnologyDescriptor> Catalog { get; }`
 - [CephalonPackageVersion](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-scaffoldrequest-cephalonpackageversion): `Properties` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=CephalonPackageVersion&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the Cephalon package version written into the scaffold.
@@ -269,15 +319,8 @@ Browse the published API surface by public member.
   - Gets the computed SHA-256 checksum of the resolved package assembly.
   - `string ChecksumSha256 { get; }`
 - [ClientStreaming](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-transportfeatures-clientstreaming): `Fields` on `TransportFeatures` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=ClientStreaming&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Indicates client-streaming interactions are supported.
   - `const TransportFeatures ClientStreaming`
-- [Clone](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-clone): `Methods` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Clone&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `HelloReply Clone()`
-- [Clone](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-clone): `Methods` on `HelloRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Clone&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `HelloRequest Clone()`
-- [Clone](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-clone): `Methods` on `PrincipleReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Clone&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `PrincipleReply Clone()`
-- [Clone](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-clone): `Methods` on `PrinciplesRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Clone&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `PrinciplesRequest Clone()`
 - [Collections](cephalon-retrieval.md#member-p-cephalon-retrieval-services-iknowledgecatalog-collections): `Properties` on `IKnowledgeCatalog` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Collections&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets the effective collection set after host options and module contributors have both been applied.
   - `IReadOnlyList<KnowledgeCollectionDescriptor> Collections { get; }`
@@ -285,19 +328,25 @@ Browse the published API surface by public member.
   - Gets the host-defined knowledge collections that should be available to the retrieval runtime.
   - `IList<KnowledgeCollectionDescriptor> Collections { get; }`
 - [Composition](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-patternkind-composition): `Fields` on `PatternKind` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Composition&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Identifies a composition pattern.
   - `const PatternKind Composition`
 - [Configuration](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-configuration): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Configuration&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the build configuration to read from.
   - `string Configuration { get; }`
 - [ConfigureServices](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-imodule-configureservices-microsoft-extensions-dependencyinjection-iservicecollection): `Methods` on `IModule` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConfigureServices&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Configures services required by the module.
   - `void ConfigureServices(IServiceCollection services)`
 - [ConfigureServices](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-modulebase-configureservices-microsoft-extensions-dependencyinjection-iservicecollection): `Methods` on `ModuleBase` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConfigureServices&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Configures services required by the module.
   - `void ConfigureServices(IServiceCollection services)`
 - [ConfigureTechnologyServices](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-itechnologyservicecontributor-configuretechnologyservices-microsoft-extensions-dependencyinjection-iservicecollection-cephalon-abstractions-technologies-technologyselection): `Methods` on `ITechnologyServiceContributor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConfigureTechnologyServices&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Configures services for the active technology selection.
   - `void ConfigureTechnologyServices(IServiceCollection services, TechnologySelection technologies)`
 - [ConflictsWith](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-conflictswith): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConflictsWith&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the pattern identifiers that conflict with this pattern.
   - `IReadOnlyList<string> ConflictsWith { get; }`
 - [ConflictsWith](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-conflictswith): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConflictsWith&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the technology identifiers that conflict with the technology.
   - `IReadOnlyList<string> ConflictsWith { get; }`
 - [Contents](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocfile-contents): `Properties` on `ReferenceDocFile` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Contents&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the markdown contents of the file.
@@ -306,24 +355,31 @@ Browse the published API surface by public member.
   - Gets the contents that should be written to the file.
   - `string Contents { get; }`
 - [Contracts](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-contracts): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Contracts&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Identifies the contracts project.
   - `const string Contracts`
 - [Conventions](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-conventions): `Properties` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Conventions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the conventions implied by the scaffold.
   - `IReadOnlyList<string> Conventions { get; }`
 - [Counters](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-counters): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Counters&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The built-in counter names exposed by the engine.
   - `IReadOnlyList<string> Counters { get; set; }`
 - [Create](cephalon-engine.md#member-m-cephalon-engine-appmodel-appprofilefactory-create-cephalon-engine-configuration-enginesettings): `Methods` on `AppProfileFactory` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=Create&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Creates an app profile from the configured engine settings.
   - `AppProfile Create(EngineSettings settings)`
 - [Created](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-created): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Created&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The runtime has been created but not initialized.
   - `const RuntimeStatus Created`
-- [CreateSnapshot](cephalon-engine.md#member-m-cephalon-engine-trust-capabilitypolicyevaluator-createsnapshot-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-1-cephalon-engine-manifest-packagemanifest-system-collections-generic-ireadonlylist-1-cephalon-engine-manifest-modulemanifest-system-collections-generic-ireadonlylist-1-cephalon-engine-manifest-capabilitymanifest): `Methods` on `CapabilityPolicyEvaluator` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=CreateSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+- [CreateSnapshot](cephalon-engine.md#member-m-cephalon-engine-trust-capabilitypolicyevaluator-createsnapshot-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-modulemanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-capabilitymanifest): `Methods` on `CapabilityPolicyEvaluator` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=CreateSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - Creates a trust snapshot from the supplied policy, packages, modules, and capabilities.
   - `TrustSnapshot CreateSnapshot(TrustPolicy policy, IReadOnlyList<PackageManifest> packages, IReadOnlyList<ModuleManifest> modules, IReadOnlyList<CapabilityManifest> capabilities)`
 - [CreateSnapshot](cephalon-abstractions.md#member-m-cephalon-abstractions-localization-ilocalizedtextcatalog-createsnapshot-system-string): `Methods` on `ILocalizedTextCatalog` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=CreateSnapshot&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
+  - Creates an introspectable snapshot of the currently resolved localized resources.
   - `LocalizedResourcesSnapshot CreateSnapshot(string culture)`
 - [CreateSnapshot](cephalon-engine.md#member-m-cephalon-engine-runtime-iruntimeintrospectionsnapshotprovider-createsnapshot): `Methods` on `IRuntimeIntrospectionSnapshotProvider` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=CreateSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Creates a new runtime introspection snapshot from the current engine state.
   - `RuntimeIntrospectionSnapshot CreateSnapshot()`
 - [CreateSnapshot](cephalon-engine.md#member-m-cephalon-engine-localization-localizedtextcatalog-createsnapshot-system-string): `Methods` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=CreateSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
+  - Creates a serialization-friendly snapshot of the merged localized resources.
   - `LocalizedResourcesSnapshot CreateSnapshot(string culture)`
 - [CurrentVersion](cephalon-engine.md#member-f-cephalon-engine-manifest-runtimemanifest-currentversion): `Fields` on `RuntimeManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=CurrentVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the current manifest schema version emitted by the engine.
@@ -332,8 +388,10 @@ Browse the published API surface by public member.
 ## D
 
 - [Data](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-data): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Data&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Identifies a data-oriented technology.
   - `const TechnologyKind Data`
 - [Default](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-default): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Default&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the default failure policy used when no explicit configuration is supplied.
   - `FailurePolicy Default { get; }`
 - [Default](cephalon-engine.md#member-p-cephalon-engine-configuration-packagepolicy-default): `Properties` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Default&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the default package policy.
@@ -345,12 +403,16 @@ Browse the published API surface by public member.
   - Gets the default access applied to capability keys without an explicit override.
   - `CapabilityAccess DefaultCapabilityAccess { get; }`
 - [DefaultCulture](cephalon-abstractions.md#member-p-cephalon-abstractions-localization-ilocalizedtextcatalog-defaultculture): `Properties` on `ILocalizedTextCatalog` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=DefaultCulture&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
+  - Gets the default culture used by the catalog.
   - `string DefaultCulture { get; }`
 - [DefaultCulture](cephalon-engine.md#member-p-cephalon-engine-configuration-localizationsettings-defaultculture): `Properties` on `LocalizationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultCulture&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the default culture to use when no explicit culture is requested.
   - `string DefaultCulture { get; }`
 - [DefaultCulture](cephalon-abstractions.md#member-p-cephalon-abstractions-localization-localizedresourcessnapshot-defaultculture): `Properties` on `LocalizedResourcesSnapshot` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=DefaultCulture&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
+  - Gets the default catalog culture.
   - `string DefaultCulture { get; }`
 - [DefaultCulture](cephalon-engine.md#member-p-cephalon-engine-localization-localizedtextcatalog-defaultculture): `Properties` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultCulture&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
+  - Gets the default culture used when no explicit culture is requested.
   - `string DefaultCulture { get; }`
 - [DefaultDocument](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocshostingoptions-defaultdocument): `Properties` on `ReferenceDocsHostingOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=DefaultDocument&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Gets or sets the document that should open when a user requests the route prefix itself.
@@ -362,43 +424,58 @@ Browse the published API surface by public member.
   - The hosted path to the configured default document.
   - `string DefaultDocumentPath { get; set; }`
 - [DefaultManifestFileName](cephalon-engine.md#member-f-cephalon-engine-configuration-modulepackagedirectory-defaultmanifestfilename): `Fields` on `ModulePackageDirectory` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultManifestFileName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the default manifest file name expected inside package directories.
   - `const string DefaultManifestFileName`
 - [DefaultRootFolderName](cephalon-engine.md#member-f-cephalon-engine-configuration-projectconfigurationbuilderextensions-defaultrootfoldername): `Fields` on `ProjectConfigurationBuilderExtensions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultRootFolderName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the default root folder name used for split project configuration files.
   - `const string DefaultRootFolderName`
 - [Degraded](cephalon-abstractions.md#member-f-cephalon-abstractions-health-healthstate-degraded): `Fields` on `HealthState` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Degraded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
+  - Indicates the dependency is degraded but still available.
   - `const HealthState Degraded`
 - [Degraded](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimehealthstate-degraded): `Fields` on `RuntimeHealthState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Degraded&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The runtime is available, but one or more dependencies need attention.
   - `const RuntimeHealthState Degraded`
 - [Denied](cephalon-abstractions.md#member-f-cephalon-abstractions-capabilities-capabilityaccess-denied): `Fields` on `CapabilityAccess` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=Denied&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
+  - Indicates the capability is denied.
   - `const CapabilityAccess Denied`
 - [Dependencies](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-dependencies): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The dependency-health reports visible during evaluation.
   - `IReadOnlyList<DependencyHealthReport> Dependencies { get; set; }`
 - [DependencyHealthReport](cephalon-abstractions.md#member-m-cephalon-abstractions-health-dependencyhealthreport-ctor-system-string-system-string-cephalon-abstractions-health-healthstate-system-string-system-boolean-system-string): `Constructors` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=DependencyHealthReport&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
+  - Describes the health state of one dependency surfaced by the runtime.
   - `DependencyHealthReport(string Id, string DisplayName, HealthState State, string Description, bool Required, string Source)`
 - [DependsOn](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-dependson): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=DependsOn&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Gets the module types this module depends on.
   - `IReadOnlyList<Type> DependsOn { get; }`
 - [DependsOn](cephalon-engine.md#member-p-cephalon-engine-manifest-modulemanifest-dependson): `Properties` on `ModuleManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=DependsOn&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the identifiers of modules this module depends on.
   - `IReadOnlyList<string> DependsOn { get; }`
 - [DependsOn](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-dependson): `Properties` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=DependsOn&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the project identifiers this project depends on.
   - `IReadOnlyList<string> DependsOn { get; }`
 - [Deployment](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-patternkind-deployment): `Fields` on `PatternKind` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Deployment&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Identifies a deployment-topology pattern.
   - `const PatternKind Deployment`
 - [Deployment](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-deployment): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Deployment&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Identifies a deployment-oriented technology.
   - `const TechnologyKind Deployment`
 - [DescribeRuntimeSurface](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-itechnologyruntimecontributor-describeruntimesurface): `Methods` on `ITechnologyRuntimeContributor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=DescribeRuntimeSurface&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Describes the runtime surface projected by the contributor.
   - `TechnologyRuntimeSurface DescribeRuntimeSurface()`
 - [Description](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttooldescriptor-description): `Properties` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Description&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the human-readable description of the tool.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appblueprint-description): `Properties` on `AppBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the blueprint description.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-capabilities-capability-description): `Properties` on `Capability` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
+  - Gets the capability description.
   - `string Description { get; }`
 - [Description](cephalon-engine.md#member-p-cephalon-engine-manifest-capabilitymanifest-description): `Properties` on `CapabilityManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the capability description.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-description): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
+  - The operator-facing health description.
   - `string Description { get; set; }`
 - [Description](cephalon-edge.md#member-p-cephalon-edge-services-edgenodedescriptor-description): `Properties` on `EdgeNodeDescriptor` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=Description&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
   - Gets the human-readable description of the node.
@@ -410,17 +487,22 @@ Browse the published API surface by public member.
   - Gets the human-readable description of the collection.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-description): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Gets the module description.
   - `string Description { get; }`
 - [Description](cephalon-engine.md#member-p-cephalon-engine-manifest-modulemanifest-description): `Properties` on `ModuleManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the human-readable description of the module.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-description): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the pattern description.
   - `string Description { get; }`
 - [Description](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-description): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - A human-readable description of the evaluated state.
   - `string Description { get; set; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-description): `Properties` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the scaffold-plan description.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-description): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the technology description.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologyruntimeentry-description): `Properties` on `TechnologyRuntimeEntry` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the human-readable description of the entry.
@@ -429,6 +511,7 @@ Browse the published API surface by public member.
   - Gets the human-readable description of the surface.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-transportdescriptor-description): `Properties` on `TransportDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the transport description.
   - `string Description { get; }`
 - [Descriptor](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-discoveryreflection-descriptor): `Properties` on `DiscoveryReflection` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Descriptor&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - File descriptor for Protos/discovery.proto
@@ -436,28 +519,26 @@ Browse the published API surface by public member.
 - [Descriptor](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-descriptor): `Properties` on `DiscoveryService` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Descriptor&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Service descriptor
   - `ServiceDescriptor Descriptor { get; }`
-- [Descriptor](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-descriptor): `Properties` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Descriptor&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `MessageDescriptor Descriptor { get; }`
-- [Descriptor](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-descriptor): `Properties` on `HelloRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Descriptor&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `MessageDescriptor Descriptor { get; }`
 - [Descriptor](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-imodule-descriptor): `Properties` on `IModule` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Descriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Gets the module descriptor used for discovery, ordering, and manifest output.
   - `ModuleDescriptor Descriptor { get; }`
 - [Descriptor](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-modulebase-descriptor): `Properties` on `ModuleBase` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Descriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Gets the module descriptor used for discovery, ordering, and manifest output.
   - `ModuleDescriptor Descriptor { get; }`
-- [Descriptor](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-descriptor): `Properties` on `PrincipleReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Descriptor&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `MessageDescriptor Descriptor { get; }`
-- [Descriptor](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-descriptor): `Properties` on `PrinciplesRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Descriptor&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `MessageDescriptor Descriptor { get; }`
 - [Design](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-patternkind-design): `Fields` on `PatternKind` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Design&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Identifies a design pattern.
   - `const PatternKind Design`
-- [DiagnosticsSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-diagnostics-diagnosticssurface-ctor-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string-cephalon-engine-runtime-runtimehealthreport-cephalon-engine-runtime-runtimehealthreport-system-string-system-string-system-string): `Constructors` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=DiagnosticsSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
+- [DiagnosticsSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-diagnostics-diagnosticssurface-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-runtime-runtimehealthreport-cephalon-engine-runtime-runtimehealthreport-system-string-system-string-system-string): `Constructors` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=DiagnosticsSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
+  - Describes the operator-facing diagnostics surface exposed by a Cephalon ASP.NET Core host.
   - `DiagnosticsSurface(string MeterName, string ActivitySourceName, IReadOnlyList<string> Counters, RuntimeHealthReport Liveness, RuntimeHealthReport Readiness, string SummaryPath, string LivenessPath, string ReadinessPath)`
 - [DirectoryManifestKind](cephalon-engine.md#member-f-cephalon-engine-configuration-modulepackagereference-directorymanifestkind): `Fields` on `ModulePackageReference` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DirectoryManifestKind&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Identifies a package input that was discovered from a directory manifest scan.
   - `const string DirectoryManifestKind`
 - [DirectoryPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocshostingoptions-directorypath): `Properties` on `ReferenceDocsHostingOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=DirectoryPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Gets or sets the directory that contains the generated reference-doc output.
   - `string DirectoryPath { get; set; }`
 - [Discovery](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-discovery): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Discovery&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets module discovery inputs.
   - `ModuleDiscoverySettings Discovery { get; }`
 - [DiscoveryServiceClient](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-ctor-grpc-core-channelbase): `Constructors` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=DiscoveryServiceClient&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Creates a new client for DiscoveryService
@@ -469,12 +550,16 @@ Browse the published API surface by public member.
   - Gets the operator-facing display name for the tool.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appblueprint-displayname): `Properties` on `AppBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the human-readable blueprint name.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-capabilities-capability-displayname): `Properties` on `Capability` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
+  - Gets the human-readable capability name.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-engine.md#member-p-cephalon-engine-manifest-capabilitymanifest-displayname): `Properties` on `CapabilityManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the operator-facing capability name.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-displayname): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
+  - The human-readable dependency name.
   - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-edge.md#member-p-cephalon-edge-services-edgenodedescriptor-displayname): `Properties` on `EdgeNodeDescriptor` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
   - Gets the operator-facing display name for the node.
@@ -486,15 +571,19 @@ Browse the published API surface by public member.
   - Gets the operator-facing display name for the collection.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-displayname): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Gets the human-readable module name.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-engine.md#member-p-cephalon-engine-manifest-modulemanifest-displayname): `Properties` on `ModuleManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the operator-facing display name for the module.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-displayname): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the human-readable pattern name.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-displayname): `Properties` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the human-readable scaffold-plan name.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-displayname): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the human-readable technology name.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologyruntimeentry-displayname): `Properties` on `TechnologyRuntimeEntry` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the operator-facing display name for the entry.
@@ -503,25 +592,34 @@ Browse the published API surface by public member.
   - Gets the operator-facing display name for the surface.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-transportdescriptor-displayname): `Properties` on `TransportDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the human-readable transport name.
   - `string DisplayName { get; }`
 - [Dispose](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-dispose): `Methods` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Dispose&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Releases runtime resources.
   - `void Dispose()`
 - [DuplexStreaming](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-transportfeatures-duplexstreaming): `Fields` on `TransportFeatures` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplexStreaming&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Indicates duplex-streaming interactions are supported.
   - `const TransportFeatures DuplexStreaming`
 
 ## E
 
 - [EdgeNativeDelivery](cephalon-engine.md#member-p-cephalon-engine-technologies-builtintechnologies-edgenativedelivery): `Properties` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=EdgeNativeDelivery&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
+  - Gets the built-in edge-native-delivery technology profile.
   - `TechnologyDescriptor EdgeNativeDelivery { get; }`
-- [EdgeNodeDescriptor](cephalon-edge.md#member-m-cephalon-edge-services-edgenodedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string): `Constructors` on `EdgeNodeDescriptor` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=EdgeNodeDescriptor&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
+- [EdgeNodeDescriptor](cephalon-edge.md#member-m-cephalon-edge-services-edgenodedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `EdgeNodeDescriptor` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=EdgeNodeDescriptor&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
+  - Creates a new edge node descriptor.
   - `EdgeNodeDescriptor(string id, string displayName, string description, IReadOnlyList<string> tags)`
 - [EdgeRuntimeOptions](cephalon-edge.md#member-m-cephalon-edge-configuration-edgeruntimeoptions-ctor): `Constructors` on `EdgeRuntimeOptions` in `Cephalon.Edge.Configuration` (`Cephalon.Edge`) [Browse](browse.html?q=EdgeRuntimeOptions&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Configuration&scope=members)
+  - Creates edge runtime options with the default host-owned features enabled.
   - `EdgeRuntimeOptions()`
 - [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-engineoptions-empty): `Properties` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty options instance with no explicit overrides.
   - `EngineOptions Empty { get; }`
 - [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-localizationsettings-empty): `Properties` on `LocalizationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty localization configuration instance.
   - `LocalizationSettings Empty { get; }`
 - [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-modulediscoverysettings-empty): `Properties` on `ModuleDiscoverySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty module discovery settings instance.
   - `ModuleDiscoverySettings Empty { get; }`
 - [Enabled](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocshostingoptions-enabled): `Properties` on `ReferenceDocsHostingOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Enabled&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Gets or sets a value indicating whether hosted reference docs should be exposed.
@@ -554,18 +652,22 @@ Browse the published API surface by public member.
   - Gets or sets a value indicating whether synchronization features are enabled.
   - `bool EnableSynchronization { get; set; }`
 - [Endpoint](cephalon-observability.md#member-p-cephalon-observability-configuration-telemetryexportoptions-endpoint): `Properties` on `TelemetryExportOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=Endpoint&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
-  - Gets or sets the target export endpoint, if one is configured.
+  - Gets or sets the target export endpoint, if one is configured. Companion packages interpret this as the base collector endpoint for the selected export protocol.
   - `string Endpoint { get; set; }`
 - [EngineBuildCounterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-enginebuildcountername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=EngineBuildCounterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Gets the counter name for completed engine builds.
   - `const string EngineBuildCounterName`
 - [EngineBuilder](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-ctor-microsoft-extensions-dependencyinjection-iservicecollection): `Constructors` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=EngineBuilder&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Creates a new builder over the supplied service collection.
   - `EngineBuilder(IServiceCollection services)`
-- [EngineOptions](cephalon-engine.md#member-m-cephalon-engine-configuration-engineoptions-ctor-system-collections-generic-ireadonlydictionary-2-system-string-system-boolean-system-collections-generic-ireadonlydictionary-2-system-string-system-boolean): `Constructors` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EngineOptions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+- [EngineOptions](cephalon-engine.md#member-m-cephalon-engine-configuration-engineoptions-ctor-system-collections-generic-ireadonlydictionary-system-string-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-boolean): `Constructors` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EngineOptions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `EngineOptions` class.
   - `EngineOptions(IReadOnlyDictionary<string, bool> modules, IReadOnlyDictionary<string, bool> capabilities)`
-- [EngineRuntime](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-1-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy): `Constructors` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EngineRuntime&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+- [EngineRuntime](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy): `Constructors` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EngineRuntime&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Initializes a new instance of the `EngineRuntime` class.
   - `EngineRuntime(IReadOnlyList<IModule> modules, RuntimeManifest manifest, FailurePolicy failurePolicy)`
-- [EngineSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy): `Constructors` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EngineSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+- [EngineSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy): `Constructors` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EngineSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `EngineSettings` class.
   - `EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy)`
 - [EngineVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-runtimemanifest-engineversion): `Properties` on `RuntimeManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=EngineVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the engine version that produced the manifest.
@@ -574,27 +676,37 @@ Browse the published API surface by public member.
   - Gets the entries currently projected by this surface.
   - `IReadOnlyList<TechnologyRuntimeEntry> Entries { get; }`
 - [EvaluateDependencies](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimehealthevaluator-evaluatedependencies): `Methods` on `RuntimeHealthEvaluator` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EvaluateDependencies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Evaluates dependency-level health reports without applying probe semantics.
   - `DependencyHealthReport[] EvaluateDependencies()`
 - [EvaluateLiveness](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimehealthevaluator-evaluateliveness): `Methods` on `RuntimeHealthEvaluator` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EvaluateLiveness&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Evaluates whether the runtime process is live.
   - `RuntimeHealthReport EvaluateLiveness()`
 - [EvaluateReadiness](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimehealthevaluator-evaluatereadiness): `Methods` on `RuntimeHealthEvaluator` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EvaluateReadiness&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Evaluates whether the runtime is ready to serve traffic.
   - `RuntimeHealthReport EvaluateReadiness()`
-- [EventChannelDescriptor](cephalon-eventing.md#member-m-cephalon-eventing-services-eventchanneldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string): `Constructors` on `EventChannelDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventChannelDescriptor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [EventChannelDescriptor](cephalon-eventing.md#member-m-cephalon-eventing-services-eventchanneldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `EventChannelDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventChannelDescriptor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a new event channel descriptor.
   - `EventChannelDescriptor(string id, string displayName, string description, IReadOnlyList<string> tags)`
 - [EventDrivenIntegration](cephalon-engine.md#member-p-cephalon-engine-technologies-builtintechnologies-eventdrivenintegration): `Properties` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=EventDrivenIntegration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
+  - Gets the built-in event-driven-integration technology profile.
   - `TechnologyDescriptor EventDrivenIntegration { get; }`
 - [EventingOptions](cephalon-eventing.md#member-m-cephalon-eventing-configuration-eventingoptions-ctor): `Constructors` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=EventingOptions&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Creates eventing options with the default host-owned features enabled.
   - `EventingOptions()`
 - [ExceptionType](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-exceptiontype): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ExceptionType&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The fully qualified exception type that caused the failure.
   - `string ExceptionType { get; set; }`
-- [ExchangeGreetings](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryservicebase-exchangegreetings-grpc-core-iasyncstreamreader-1-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-iserverstreamwriter-1-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-grpc-core-servercallcontext): `Methods` on `DiscoveryServiceBase` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=ExchangeGreetings&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+- [ExchangeGreetings](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryservicebase-exchangegreetings-grpc-core-iasyncstreamreader-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-iserverstreamwriter-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-grpc-core-servercallcontext): `Methods` on `DiscoveryServiceBase` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=ExchangeGreetings&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+  - Exchanges greeting messages bidirectionally to validate duplex streaming support.
   - `Task ExchangeGreetings(IAsyncStreamReader<HelloRequest> requestStream, IServerStreamWriter<HelloReply> responseStream, ServerCallContext context)`
 - [ExchangeGreetings](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-exchangegreetings-grpc-core-calloptions): `Methods` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=ExchangeGreetings&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+  - Exchanges greeting messages bidirectionally to validate duplex streaming support.
   - `AsyncDuplexStreamingCall<HelloRequest, HelloReply> ExchangeGreetings(CallOptions options)`
-- [ExchangeGreetings](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-exchangegreetings-grpc-core-metadata-system-nullable-1-system-datetime-system-threading-cancellationtoken): `Methods` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=ExchangeGreetings&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+- [ExchangeGreetings](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-exchangegreetings-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken): `Methods` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=ExchangeGreetings&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+  - Exchanges greeting messages bidirectionally to validate duplex streaming support.
   - `AsyncDuplexStreamingCall<HelloRequest, HelloReply> ExchangeGreetings(Metadata headers, DateTime? deadline, CancellationToken cancellationToken)`
 - [Experience](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-experience): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Experience&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Identifies an experience-oriented technology.
   - `const TechnologyKind Experience`
 - [ExportLogs](cephalon-observability.md#member-p-cephalon-observability-configuration-telemetryexportoptions-exportlogs): `Properties` on `TelemetryExportOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=ExportLogs&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Gets or sets a value indicating whether logs should be exported.
@@ -609,26 +721,34 @@ Browse the published API surface by public member.
 ## F
 
 - [Failed](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-failed): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Failed&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The runtime captured a lifecycle failure.
   - `const RuntimeStatus Failed`
 - [FailFast](cephalon-engine.md#member-f-cephalon-engine-configuration-startupfailurebehavior-failfast): `Fields` on `StartupFailureBehavior` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FailFast&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Stop startup immediately and rethrow the failure.
   - `const StartupFailureBehavior FailFast`
 - [FailFast](cephalon-engine.md#member-f-cephalon-engine-configuration-stopfailurebehavior-failfast): `Fields` on `StopFailureBehavior` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FailFast&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Stop shutdown immediately and rethrow the failure.
   - `const StopFailureBehavior FailFast`
 - [FailurePolicy](cephalon-engine.md#member-p-cephalon-engine-runtime-engineruntime-failurepolicy): `Properties` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=FailurePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the failure policy that governs startup, stop, and restart behavior.
   - `FailurePolicy FailurePolicy { get; }`
 - [FailurePolicy](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-failurepolicy): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FailurePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets runtime failure policy values.
   - `FailurePolicy FailurePolicy { get; }`
 - [FailurePolicy](cephalon-engine.md#member-m-cephalon-engine-configuration-failurepolicy-ctor-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior-system-boolean-system-int32): `Constructors` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FailurePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `FailurePolicy` class.
   - `FailurePolicy(StartupFailureBehavior startupFailureBehavior, StopFailureBehavior stopFailureBehavior, bool allowManualRestart, int maxRestartAttempts)`
 - [FailurePolicy](cephalon-engine.md#member-p-cephalon-engine-runtime-iruntime-failurepolicy): `Properties` on `IRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=FailurePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the failure policy that governs startup, stop, and restart behavior.
   - `FailurePolicy FailurePolicy { get; }`
 - [Feature](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-scaffoldscopes-feature): `Fields` on `ScaffoldScopes` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Feature&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Identifies a feature-level scaffold scope.
   - `const string Feature`
 - [Features](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-scaffoldrequest-features): `Properties` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Features&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the feature or slice names to materialize in the scaffold.
   - `IReadOnlyList<string> Features { get; }`
 - [Features](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-transportdescriptor-features): `Properties` on `TransportDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Features&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the features supported by the transport.
   - `TransportFeatures Features { get; }`
 - [Files](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-renderedreferencedocs-files): `Properties` on `RenderedReferenceDocs` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Files&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the generated markdown files.
@@ -636,8 +756,6 @@ Browse the published API surface by public member.
 - [Files](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedscaffold-files): `Properties` on `RenderedScaffold` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Files&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the rendered files.
   - `IReadOnlyList<RenderedFile> Files { get; }`
-- [FileSystemScaffoldWriter](cephalon-scaffolding.md#member-m-cephalon-scaffolding-io-filesystemscaffoldwriter-ctor): `Constructors` on `FileSystemScaffoldWriter` in `Cephalon.Scaffolding.IO` (`Cephalon.Scaffolding`) [Browse](browse.html?q=FileSystemScaffoldWriter&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.IO&scope=members)
-  - `FileSystemScaffoldWriter()`
 - [Fingerprint](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-fingerprint): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Fingerprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared signer fingerprint.
   - `string Fingerprint { get; }`
@@ -648,20 +766,28 @@ Browse the published API surface by public member.
   - Gets the rendered folders.
   - `IReadOnlyList<RenderedFolder> Folders { get; }`
 - [Folders](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-folders): `Properties` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Folders&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the folders emitted by the scaffold.
   - `IReadOnlyList<ScaffoldFolder> Folders { get; }`
 - [Foundation](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-patternkind-foundation): `Fields` on `PatternKind` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Foundation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Identifies a foundation pattern.
   - `const PatternKind Foundation`
 - [Foundation](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-foundation): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Foundation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Identifies the shared foundation project.
   - `const string Foundation`
 - [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-engineoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads engine options from configuration.
   - `EngineOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-enginesettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads engine settings from configuration.
   - `EngineSettings FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-failurepolicy-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads the failure policy from configuration.
   - `FailurePolicy FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-localizationsettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `LocalizationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads localization settings from configuration.
   - `LocalizationSettings FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-modulediscoverysettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `ModuleDiscoverySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads module discovery settings from configuration.
   - `ModuleDiscoverySettings FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability.md#member-m-cephalon-observability-configuration-observabilityoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `ObservabilityOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Binds observability options from configuration.
@@ -676,6 +802,7 @@ Browse the published API surface by public member.
   - Reads a trust policy from configuration.
   - `TrustPolicy FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromManifest](cephalon-engine.md#member-m-cephalon-engine-configuration-modulepackagereference-frommanifest-system-string-system-string): `Methods` on `ModulePackageReference` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Creates a manifest-backed package reference.
   - `ModulePackageReference FromManifest(string manifestPath, string id)`
 
 ## G
@@ -687,6 +814,7 @@ Browse the published API surface by public member.
   - Generates a rendered scaffold from the supplied application profile and request.
   - `RenderedScaffold Generate(AppProfile appProfile, ScaffoldRequest request)`
 - [GeneratedAtUtc](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-generatedatutc): `Properties` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=GeneratedAtUtc&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+  - The UTC timestamp when the reply was generated.
   - `string GeneratedAtUtc { get; set; }`
 - [GeneratedAtUtc](cephalon-engine.md#member-p-cephalon-engine-manifest-runtimemanifest-generatedatutc): `Properties` on `RuntimeManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=GeneratedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the UTC timestamp when the manifest was generated.
@@ -698,29 +826,43 @@ Browse the published API surface by public member.
   - Gets the runtime surfaces associated with a specific technology identifier.
   - `IReadOnlyList<TechnologyRuntimeSurface> GetByTechnology(string technologyId)`
 - [GetByTechnology](cephalon-engine.md#member-m-cephalon-engine-technologies-technologyruntimecatalogsnapshot-getbytechnology-system-string): `Methods` on `TechnologyRuntimeCatalogSnapshot` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=GetByTechnology&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
+  - Gets the runtime surfaces for a specific technology.
   - `IReadOnlyList<TechnologyRuntimeSurface> GetByTechnology(string technologyId)`
 - [GetDependencyHealth](cephalon-abstractions.md#member-m-cephalon-abstractions-health-idependencyhealthcontributor-getdependencyhealth): `Methods` on `IDependencyHealthContributor` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetDependencyHealth&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
+  - Returns the dependency-health reports currently known to the contributor.
   - `IReadOnlyList<DependencyHealthReport> GetDependencyHealth()`
 - [GetResources](cephalon-abstractions.md#member-m-cephalon-abstractions-localization-ilocalizedtextcatalog-getresources-system-string): `Methods` on `ILocalizedTextCatalog` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetResources&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
+  - Returns the localized resources visible for one culture.
   - `IReadOnlyDictionary<string, string> GetResources(string culture)`
 - [GetResources](cephalon-engine.md#member-m-cephalon-engine-localization-localizedtextcatalog-getresources-system-string): `Methods` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=GetResources&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
+  - Gets the merged resources visible for the specified culture.
   - `IReadOnlyDictionary<string, string> GetResources(string culture)`
+- [GraphQL](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-graphql): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=GraphQL&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
+  - Gets the built-in GraphQL transport descriptor.
+  - `TransportDescriptor GraphQL { get; }`
 - [Grpc](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-grpc): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=Grpc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
+  - Gets the built-in gRPC transport descriptor.
   - `TransportDescriptor Grpc { get; }`
 - [Guidance](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-guidance): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Guidance&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the guidance entries associated with the technology.
   - `IReadOnlyList<string> Guidance { get; }`
 
 ## H
 
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-engineoptions-hasvalues): `Properties` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any explicit option overrides are present.
   - `bool HasValues { get; }`
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-hasvalues): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any engine settings were explicitly supplied.
   - `bool HasValues { get; }`
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-hasvalues): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether this policy differs from `Default`.
   - `bool HasValues { get; }`
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-localizationsettings-hasvalues): `Properties` on `LocalizationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any localization settings were explicitly supplied.
   - `bool HasValues { get; }`
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-modulediscoverysettings-hasvalues): `Properties` on `ModuleDiscoverySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any discovery inputs were explicitly supplied.
   - `bool HasValues { get; }`
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-packagepolicy-hasvalues): `Properties` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether the policy differs from the default baseline.
@@ -729,18 +871,13 @@ Browse the published API surface by public member.
   - Gets a value indicating whether the policy differs from the default baseline.
   - `bool HasValues { get; }`
 - [Healthy](cephalon-abstractions.md#member-f-cephalon-abstractions-health-healthstate-healthy): `Fields` on `HealthState` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Healthy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
+  - Indicates the dependency is healthy.
   - `const HealthState Healthy`
 - [Healthy](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimehealthstate-healthy): `Fields` on `RuntimeHealthState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Healthy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The runtime and its dependencies are healthy.
   - `const RuntimeHealthState Healthy`
-- [HelloReply](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-ctor): `Constructors` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=HelloReply&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `HelloReply()`
-- [HelloReply](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-ctor-cephalon-aspnetcore-grpc-contracts-discovery-helloreply): `Constructors` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=HelloReply&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `HelloReply(HelloReply other)`
-- [HelloRequest](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-ctor): `Constructors` on `HelloRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=HelloRequest&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `HelloRequest()`
-- [HelloRequest](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-ctor-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest): `Constructors` on `HelloRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=HelloRequest&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `HelloRequest(HelloRequest other)`
 - [Host](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-host): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Host&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Identifies the host project.
   - `const string Host`
 
 ## I
@@ -749,8 +886,10 @@ Browse the published API surface by public member.
   - Gets the stable tool identifier.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appblueprint-id): `Properties` on `AppBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the stable blueprint identifier.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-id): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
+  - The stable dependency identifier.
   - `string Id { get; set; }`
 - [Id](cephalon-edge.md#member-p-cephalon-edge-services-edgenodedescriptor-id): `Properties` on `EdgeNodeDescriptor` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=Id&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
   - Gets the stable node identifier.
@@ -762,65 +901,88 @@ Browse the published API surface by public member.
   - Gets the stable collection identifier.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-id): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Gets the stable module identifier.
   - `string Id { get; }`
 - [Id](cephalon-engine.md#member-p-cephalon-engine-manifest-modulemanifest-id): `Properties` on `ModuleManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the stable module identifier.
   - `string Id { get; }`
 - [Id](cephalon-engine.md#member-p-cephalon-engine-configuration-modulepackagereference-id): `Properties` on `ModulePackageReference` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the optional package identifier override.
   - `string Id { get; }`
 - [Id](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-id): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the stable package identifier.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-id): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the stable pattern identifier.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-id): `Properties` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the stable scaffold-plan identifier.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-id): `Properties` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the stable project identifier.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-id): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the stable technology identifier.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologyruntimeentry-id): `Properties` on `TechnologyRuntimeEntry` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the stable identifier for the entry.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-transportdescriptor-id): `Properties` on `TransportDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the stable transport identifier.
   - `string Id { get; }`
 - [IncludeSubdirectories](cephalon-engine.md#member-p-cephalon-engine-configuration-modulepackagedirectory-includesubdirectories): `Properties` on `ModulePackageDirectory` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IncludeSubdirectories&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether nested directories should also be scanned.
   - `bool IncludeSubdirectories { get; }`
 - [InitializeAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-initializeasync-system-iserviceprovider-system-threading-cancellationtoken): `Methods` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=InitializeAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Initializes the runtime and its modules.
   - `Task InitializeAsync(IServiceProvider services, CancellationToken cancellationToken)`
 - [InitializeAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-imodulelifecycle-initializeasync-cephalon-abstractions-modules-modulecontext-system-threading-cancellationtoken): `Methods` on `IModuleLifecycle` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=InitializeAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Initializes the module before the runtime starts serving work.
   - `Task InitializeAsync(ModuleContext context, CancellationToken cancellationToken)`
 - [InitializeAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-iruntime-initializeasync-system-iserviceprovider-system-threading-cancellationtoken): `Methods` on `IRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=InitializeAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Initializes the runtime and all lifecycle-aware modules.
   - `Task InitializeAsync(IServiceProvider services, CancellationToken cancellationToken)`
 - [InitializeAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-modulebase-initializeasync-cephalon-abstractions-modules-modulecontext-system-threading-cancellationtoken): `Methods` on `ModuleBase` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=InitializeAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Initializes the module before the runtime starts serving work.
   - `Task InitializeAsync(ModuleContext context, CancellationToken cancellationToken)`
 - [Initialized](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-initialized): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Initialized&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The runtime finished initialization but has not started.
   - `const RuntimeStatus Initialized`
 - [InitializedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-initializedatutc): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=InitializedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when initialization completed, if it has completed.
   - `DateTimeOffset? InitializedAtUtc { get; set; }`
 - [Initializing](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-initializing): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Initializing&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The runtime is initializing modules.
   - `const RuntimeStatus Initializing`
 - [Intelligence](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-intelligence): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Intelligence&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Identifies an intelligence-oriented technology.
   - `const TechnologyKind Intelligence`
 - [IsAllowed](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-isallowed): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=IsAllowed&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - Whether the capability is allowed under the resolved policy.
   - `bool IsAllowed { get; set; }`
 - [IsAllowed](cephalon-engine.md#member-m-cephalon-engine-trust-capabilitypolicyevaluator-isallowed-system-string): `Methods` on `CapabilityPolicyEvaluator` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=IsAllowed&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - Determines whether a capability is allowed under the current trust policy.
   - `bool IsAllowed(string capabilityKey)`
 - [IsAssemblyPath](cephalon-engine.md#member-p-cephalon-engine-configuration-modulepackagereference-isassemblypath): `Properties` on `ModulePackageReference` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IsAssemblyPath&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether this reference points directly to an assembly path.
   - `bool IsAssemblyPath { get; }`
 - [IsAvailable](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyselection-isavailable-system-string): `Methods` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsAvailable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Determines whether a technology is available in the runtime catalog.
   - `bool IsAvailable(string value)`
 - [IsCapabilityEnabled](cephalon-engine.md#member-m-cephalon-engine-configuration-engineoptions-iscapabilityenabled-system-string): `Methods` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IsCapabilityEnabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Determines whether a capability is enabled under the current option set.
   - `bool IsCapabilityEnabled(string capabilityKey)`
 - [IsHealthy](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-ishealthy): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=IsHealthy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets a value indicating whether the report represents a healthy state.
   - `bool IsHealthy { get; }`
 - [IsManifestFile](cephalon-engine.md#member-p-cephalon-engine-configuration-modulepackagereference-ismanifestfile): `Properties` on `ModulePackageReference` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IsManifestFile&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether this reference points to a manifest-backed package input.
   - `bool IsManifestFile { get; }`
 - [IsModuleEnabled](cephalon-engine.md#member-m-cephalon-engine-configuration-engineoptions-ismoduleenabled-system-string): `Methods` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IsModuleEnabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Determines whether a module is enabled under the current option set.
   - `bool IsModuleEnabled(string moduleId)`
 - [IsSelected](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyselection-isselected-system-string): `Methods` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsSelected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Determines whether a technology is selected.
   - `bool IsSelected(string value)`
 - [IsSignatureVerified](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-issignatureverified): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=IsSignatureVerified&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets a value indicating whether the package signature was cryptographically verified.
@@ -847,13 +1009,16 @@ Browse the published API surface by public member.
 ## J
 
 - [JsonRpc](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-jsonrpc): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=JsonRpc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
+  - Gets the built-in JSON-RPC transport descriptor.
   - `TransportDescriptor JsonRpc { get; }`
 
 ## K
 
 - [Key](cephalon-abstractions.md#member-p-cephalon-abstractions-capabilities-capability-key): `Properties` on `Capability` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=Key&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
+  - Gets the stable capability key.
   - `string Key { get; }`
 - [Key](cephalon-engine.md#member-p-cephalon-engine-manifest-capabilitymanifest-key): `Properties` on `CapabilityManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Key&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the stable capability key.
   - `string Key { get; }`
 - [Key](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedproject-key): `Properties` on `RenderedProject` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Key&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the unique key of the rendered project instance.
@@ -865,27 +1030,34 @@ Browse the published API surface by public member.
   - The declared signing-key identifier, when available.
   - `string KeyId { get; set; }`
 - [Kind](cephalon-engine.md#member-p-cephalon-engine-configuration-modulepackagereference-kind): `Properties` on `ModulePackageReference` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Kind&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the normalized package input kind.
   - `string Kind { get; }`
 - [Kind](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-kind): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Kind&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the package discovery kind, such as assembly path or manifest-file loading.
   - `string Kind { get; }`
 - [Kind](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-kind): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Kind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the category of the pattern.
   - `PatternKind Kind { get; }`
 - [Kind](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-kind): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Kind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the category of the technology.
   - `TechnologyKind Kind { get; }`
-- [KnowledgeCollectionDescriptor](cephalon-retrieval.md#member-m-cephalon-retrieval-services-knowledgecollectiondescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string): `Constructors` on `KnowledgeCollectionDescriptor` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=KnowledgeCollectionDescriptor&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+- [KnowledgeCollectionDescriptor](cephalon-retrieval.md#member-m-cephalon-retrieval-services-knowledgecollectiondescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `KnowledgeCollectionDescriptor` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=KnowledgeCollectionDescriptor&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Creates a new knowledge collection descriptor.
   - `KnowledgeCollectionDescriptor(string id, string displayName, string description, IReadOnlyList<string> tags)`
 - [KnowledgeRetrieval](cephalon-engine.md#member-p-cephalon-engine-technologies-builtintechnologies-knowledgeretrieval): `Properties` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=KnowledgeRetrieval&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
+  - Gets the built-in knowledge-retrieval technology profile.
   - `TechnologyDescriptor KnowledgeRetrieval { get; }`
 
 ## L
 
 - [LastFailure](cephalon-engine.md#member-p-cephalon-engine-runtime-engineruntime-lastfailure): `Properties` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastFailure&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the last captured lifecycle failure when one is available.
   - `RuntimeFailureInfo LastFailure { get; }`
 - [LastFailure](cephalon-engine.md#member-p-cephalon-engine-runtime-iruntime-lastfailure): `Properties` on `IRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastFailure&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the most recent failure captured by the lifecycle state machine, if any.
   - `RuntimeFailureInfo LastFailure { get; }`
 - [LastFailure](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-lastfailure): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastFailure&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The last runtime failure when one is available.
   - `RuntimeFailureInfo LastFailure { get; set; }`
 - [LastFailure](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-lastfailure): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastFailure&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The last captured failure, if the runtime has faulted.
@@ -900,12 +1072,16 @@ Browse the published API surface by public member.
   - Gets the assembly load context name used for the package.
   - `string LoadContext { get; }`
 - [Localization](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-localization): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Localization&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets localization configuration values.
   - `LocalizationSettings Localization { get; }`
-- [LocalizationSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-localizationsettings-ctor-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Constructors` on `LocalizationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=LocalizationSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+- [LocalizationSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-localizationsettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `LocalizationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=LocalizationSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `LocalizationSettings` class.
   - `LocalizationSettings(string defaultCulture, IReadOnlyList<string> supportedCultures, IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> resources)`
-- [LocalizedResourcesSnapshot](cephalon-abstractions.md#member-m-cephalon-abstractions-localization-localizedresourcessnapshot-ctor-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Constructors` on `LocalizedResourcesSnapshot` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=LocalizedResourcesSnapshot&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
+- [LocalizedResourcesSnapshot](cephalon-abstractions.md#member-m-cephalon-abstractions-localization-localizedresourcessnapshot-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `LocalizedResourcesSnapshot` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=LocalizedResourcesSnapshot&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
+  - Creates a localization snapshot.
   - `LocalizedResourcesSnapshot(string defaultCulture, string resolvedCulture, IReadOnlyList<string> supportedCultures, IReadOnlyDictionary<string, string> resources)`
 - [LocalizedTextCatalog](cephalon-engine.md#member-m-cephalon-engine-localization-localizedtextcatalog-ctor-cephalon-engine-configuration-localizationsettings): `Constructors` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=LocalizedTextCatalog&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
+  - Initializes a new instance of the `LocalizedTextCatalog` class.
   - `LocalizedTextCatalog(LocalizationSettings settings)`
 - [LogCapabilitySummary](cephalon-observability.md#member-p-cephalon-observability-configuration-observabilityoptions-logcapabilitysummary): `Properties` on `ObservabilityOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=LogCapabilitySummary&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Gets or sets a value indicating whether a capability summary should be written at host startup.
@@ -920,6 +1096,7 @@ Browse the published API surface by public member.
 ## M
 
 - [Manifest](cephalon-engine.md#member-p-cephalon-engine-runtime-engineruntime-manifest): `Properties` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Manifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the runtime manifest that describes the built runtime shape.
   - `RuntimeManifest Manifest { get; }`
 - [Manifest](cephalon-engine.md#member-p-cephalon-engine-runtime-iruntime-manifest): `Properties` on `IRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Manifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the immutable manifest that was produced when the runtime was built.
@@ -928,8 +1105,10 @@ Browse the published API surface by public member.
   - The immutable manifest that describes the built runtime shape.
   - `RuntimeManifest Manifest { get; set; }`
 - [ManifestFileKind](cephalon-engine.md#member-f-cephalon-engine-configuration-modulepackagereference-manifestfilekind): `Fields` on `ModulePackageReference` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ManifestFileKind&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Identifies a package input that points directly to a manifest file.
   - `const string ManifestFileKind`
 - [ManifestFileName](cephalon-engine.md#member-p-cephalon-engine-configuration-modulepackagedirectory-manifestfilename): `Properties` on `ModulePackageDirectory` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ManifestFileName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the manifest file name to look for inside the directory.
   - `string ManifestFileName { get; }`
 - [ManifestPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-manifestpath): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ManifestPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The hosted path to the machine-readable manifest.
@@ -965,36 +1144,25 @@ Browse the published API surface by public member.
   - Gets the maximum engine version supported by the package manifest, when available.
   - `string MaximumEngineVersion { get; }`
 - [MaxRestartAttempts](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-maxrestartattempts): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxRestartAttempts&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the maximum number of manual restarts.
   - `int MaxRestartAttempts { get; }`
 - [MediatorPattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-mediatorpattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=MediatorPattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
+  - Gets the mediator design pattern.
   - `PatternDescriptor MediatorPattern { get; }`
 - [MemberIndexPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-memberindexpath): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=MemberIndexPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The hosted path to the member index.
   - `string MemberIndexPath { get; set; }`
 - [Merge](cephalon-engine.md#member-m-cephalon-engine-configuration-engineoptions-merge-cephalon-engine-configuration-engineoptions): `Methods` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Merge&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Merges another option set into the current instance.
   - `EngineOptions Merge(EngineOptions other)`
 - [Merge](cephalon-engine.md#member-m-cephalon-engine-configuration-localizationsettings-merge-cephalon-engine-configuration-localizationsettings): `Methods` on `LocalizationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Merge&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Merges another localization settings instance into the current instance.
   - `LocalizationSettings Merge(LocalizationSettings other)`
 - [Merge](cephalon-engine.md#member-m-cephalon-engine-configuration-trustpolicy-merge-cephalon-engine-configuration-trustpolicy): `Methods` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Merge&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Merges another trust policy into the current policy.
   - `TrustPolicy Merge(TrustPolicy other)`
-- [MergeFrom](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-mergefrom-cephalon-aspnetcore-grpc-contracts-discovery-helloreply): `Methods` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=MergeFrom&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `void MergeFrom(HelloReply other)`
-- [MergeFrom](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-mergefrom-google-protobuf-codedinputstream): `Methods` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=MergeFrom&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `void MergeFrom(CodedInputStream input)`
-- [MergeFrom](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-mergefrom-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest): `Methods` on `HelloRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=MergeFrom&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `void MergeFrom(HelloRequest other)`
-- [MergeFrom](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-mergefrom-google-protobuf-codedinputstream): `Methods` on `HelloRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=MergeFrom&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `void MergeFrom(CodedInputStream input)`
-- [MergeFrom](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-mergefrom-cephalon-aspnetcore-grpc-contracts-discovery-principlereply): `Methods` on `PrincipleReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=MergeFrom&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `void MergeFrom(PrincipleReply other)`
-- [MergeFrom](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-mergefrom-google-protobuf-codedinputstream): `Methods` on `PrincipleReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=MergeFrom&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `void MergeFrom(CodedInputStream input)`
-- [MergeFrom](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-mergefrom-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest): `Methods` on `PrinciplesRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=MergeFrom&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `void MergeFrom(PrinciplesRequest other)`
-- [MergeFrom](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-mergefrom-google-protobuf-codedinputstream): `Methods` on `PrinciplesRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=MergeFrom&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `void MergeFrom(CodedInputStream input)`
 - [Message](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-message): `Properties` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Message&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+  - The message rendered for the caller.
   - `string Message { get; set; }`
 - [Message](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-message): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Message&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The failure message surfaced to operators.
@@ -1003,22 +1171,28 @@ Browse the published API surface by public member.
   - Field number for the "message" field.
   - `const int MessageFieldNumber`
 - [Messaging](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-messaging): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Messaging&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Identifies a messaging-oriented technology.
   - `const TechnologyKind Messaging`
 - [Metadata](cephalon-agentics.md#member-p-cephalon-agentics-configuration-agenticruntimeoptions-metadata): `Properties` on `AgenticRuntimeOptions` in `Cephalon.Agentics.Configuration` (`Cephalon.Agentics`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Configuration&scope=members)
   - Gets arbitrary metadata that can be attached to the agentic runtime configuration.
   - `IDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appblueprint-metadata): `Properties` on `AppBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets additional blueprint metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-capabilities-capability-metadata): `Properties` on `Capability` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
+  - Gets optional capability metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-engine.md#member-p-cephalon-engine-manifest-capabilitymanifest-metadata): `Properties` on `CapabilityManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets additional capability metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-metadata): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Gets optional module metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-engine.md#member-p-cephalon-engine-manifest-modulemanifest-metadata): `Properties` on `ModuleManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets arbitrary descriptor metadata published by the module.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-metadata): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets optional pattern metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedfolder-metadata): `Properties` on `RenderedFolder` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets additional metadata associated with the folder.
@@ -1027,68 +1201,94 @@ Browse the published API surface by public member.
   - Gets additional metadata associated with the project.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder-metadata): `Properties` on `ScaffoldFolder` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets optional folder metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-metadata): `Properties` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets optional scaffold metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-metadata): `Properties` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets optional project metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-metadata): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets optional technology metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologyruntimeentry-metadata): `Properties` on `TechnologyRuntimeEntry` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets additional metadata projected for the entry.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-transportdescriptor-metadata): `Properties` on `TransportDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets optional transport metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [MeterName](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-metername): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=MeterName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The meter name used for engine metrics.
   - `string MeterName { get; set; }`
 - [MeterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-metername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=MeterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Gets the meter name emitted by the engine.
   - `const string MeterName`
 - [Microservice](cephalon-engine.md#member-p-cephalon-engine-appmodel-builtinblueprints-microservice): `Properties` on `BuiltInBlueprints` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=Microservice&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Gets the built-in microservice blueprint.
   - `AppBlueprint Microservice { get; }`
 - [Microservice](cephalon-engine.md#member-p-cephalon-engine-appmodel-scaffolding-builtinscaffolds-microservice): `Properties` on `BuiltInScaffolds` in `Cephalon.Engine.AppModel.Scaffolding` (`Cephalon.Engine`) [Browse](browse.html?q=Microservice&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel.Scaffolding&scope=members)
+  - Gets the scaffold plan for the microservice blueprint.
   - `ScaffoldPlan Microservice { get; }`
 - [MicroserviceTopology](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-microservicetopology): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=MicroserviceTopology&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
+  - Gets the microservice deployment topology pattern.
   - `PatternDescriptor MicroserviceTopology { get; }`
 - [MinimumEngineVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-minimumengineversion): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=MinimumEngineVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the minimum engine version required by the package manifest, when available.
   - `string MinimumEngineVersion { get; }`
 - [ModularArchitecture](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-modulararchitecture): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=ModularArchitecture&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
+  - Gets the modular-architecture composition pattern.
   - `PatternDescriptor ModularArchitecture { get; }`
 - [ModularMonolith](cephalon-engine.md#member-p-cephalon-engine-appmodel-builtinblueprints-modularmonolith): `Properties` on `BuiltInBlueprints` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=ModularMonolith&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Gets the built-in modular-monolith blueprint.
   - `AppBlueprint ModularMonolith { get; }`
 - [ModularMonolith](cephalon-engine.md#member-p-cephalon-engine-appmodel-scaffolding-builtinscaffolds-modularmonolith): `Properties` on `BuiltInScaffolds` in `Cephalon.Engine.AppModel.Scaffolding` (`Cephalon.Engine`) [Browse](browse.html?q=ModularMonolith&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel.Scaffolding&scope=members)
+  - Gets the scaffold plan for the modular-monolith blueprint.
   - `ScaffoldPlan ModularMonolith { get; }`
 - [ModularVerticalSlice](cephalon-engine.md#member-p-cephalon-engine-appmodel-builtinblueprints-modularverticalslice): `Properties` on `BuiltInBlueprints` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=ModularVerticalSlice&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Gets the built-in modular-vertical-slice blueprint.
   - `AppBlueprint ModularVerticalSlice { get; }`
 - [ModularVerticalSlice](cephalon-engine.md#member-p-cephalon-engine-appmodel-scaffolding-builtinscaffolds-modularverticalslice): `Properties` on `BuiltInScaffolds` in `Cephalon.Engine.AppModel.Scaffolding` (`Cephalon.Engine`) [Browse](browse.html?q=ModularVerticalSlice&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel.Scaffolding&scope=members)
+  - Gets the scaffold plan for the modular-vertical-slice blueprint.
   - `ScaffoldPlan ModularVerticalSlice { get; }`
 - [Module](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-module): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Module&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Identifies a module project.
   - `const string Module`
 - [Module](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-scaffoldscopes-module): `Fields` on `ScaffoldScopes` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Module&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Identifies a module-level scaffold scope.
   - `const string Module`
 - [ModuleContext](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-modulecontext-ctor-system-iserviceprovider): `Constructors` on `ModuleContext` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=ModuleContext&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Creates a module runtime context.
   - `ModuleContext(IServiceProvider services)`
-- [ModuleDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-moduledescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ienumerable-1-system-type-system-collections-generic-ienumerable-1-system-string-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Constructors` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=ModuleDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+- [ModuleDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-moduledescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ienumerable-system-type-system-collections-generic-ienumerable-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=ModuleDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Creates a module descriptor.
   - `ModuleDescriptor(string id, string displayName, string description, IEnumerable<Type> dependsOn, IEnumerable<string> tags, string version, IReadOnlyDictionary<string, string> metadata)`
-- [ModuleDiscoverySettings](cephalon-engine.md#member-m-cephalon-engine-configuration-modulediscoverysettings-ctor-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-cephalon-engine-configuration-modulepackagereference-system-collections-generic-ireadonlylist-1-cephalon-engine-configuration-modulepackagedirectory): `Constructors` on `ModuleDiscoverySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ModuleDiscoverySettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+- [ModuleDiscoverySettings](cephalon-engine.md#member-m-cephalon-engine-configuration-modulediscoverysettings-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-engine-configuration-modulepackagereference-system-collections-generic-ireadonlylist-cephalon-engine-configuration-modulepackagedirectory): `Constructors` on `ModuleDiscoverySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ModuleDiscoverySettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `ModuleDiscoverySettings` class.
   - `ModuleDiscoverySettings(IReadOnlyList<string> assemblies, IReadOnlyList<ModulePackageReference> packages, IReadOnlyList<ModulePackageDirectory> packageDirectories)`
 - [ModuleFailureCounterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-modulefailurecountername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=ModuleFailureCounterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Gets the counter name for module lifecycle failures.
   - `const string ModuleFailureCounterName`
 - [ModuleFirstOrganization](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-modulefirstorganization): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=ModuleFirstOrganization&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
+  - Gets the module-first organization pattern.
   - `PatternDescriptor ModuleFirstOrganization { get; }`
 - [ModuleId](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-moduleid): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ModuleId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The module identifier that triggered the failure when available.
   - `string ModuleId { get; set; }`
-- [ModuleManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-modulemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string-system-string-system-boolean): `Constructors` on `ModuleManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=ModuleManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+- [ModuleManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-modulemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-boolean): `Constructors` on `ModuleManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=ModuleManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Creates a new module manifest entry.
   - `ModuleManifest(string id, string displayName, string description, string version, string assemblyName, string typeName, IReadOnlyList<string> dependsOn, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata, string packageId, bool isTrusted)`
 - [ModulePackageDirectory](cephalon-engine.md#member-m-cephalon-engine-configuration-modulepackagedirectory-ctor-system-string-system-string-system-boolean): `Constructors` on `ModulePackageDirectory` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ModulePackageDirectory&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `ModulePackageDirectory` class.
   - `ModulePackageDirectory(string path, string manifestFileName, bool includeSubdirectories)`
 - [ModulePackageReference](cephalon-engine.md#member-m-cephalon-engine-configuration-modulepackagereference-ctor-system-string-system-string-system-string): `Constructors` on `ModulePackageReference` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ModulePackageReference&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `ModulePackageReference` class.
   - `ModulePackageReference(string path, string id, string kind)`
 - [Modules](cephalon-engine.md#member-p-cephalon-engine-configuration-engineoptions-modules): `Properties` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Modules&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets module enablement overrides keyed by module identifier.
   - `IReadOnlyDictionary<string, bool> Modules { get; }`
 - [Modules](cephalon-engine.md#member-p-cephalon-engine-runtime-engineruntime-modules): `Properties` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Modules&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the modules that participate in runtime lifecycle transitions.
   - `IReadOnlyList<IModule> Modules { get; }`
 - [Modules](cephalon-engine.md#member-p-cephalon-engine-runtime-iruntime-modules): `Properties` on `IRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Modules&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the ordered module set that participates in runtime lifecycle execution.
@@ -1103,6 +1303,7 @@ Browse the published API surface by public member.
   - Gets the module names to materialize in the scaffold.
   - `IReadOnlyList<string> Modules { get; }`
 - [ModuleTransitionCounterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-moduletransitioncountername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=ModuleTransitionCounterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Gets the counter name for module lifecycle transitions.
   - `const string ModuleTransitionCounterName`
 - [ModuleVersion](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-moduleversion): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ModuleVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The module version that was active when the failure occurred, if known.
@@ -1111,6 +1312,7 @@ Browse the published API surface by public member.
 ## N
 
 - [Name](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-name): `Properties` on `HelloRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Name&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+  - The display name to greet.
   - `string Name { get; set; }`
 - [Name](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedproject-name): `Properties` on `RenderedProject` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Name&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the generated project name.
@@ -1122,6 +1324,7 @@ Browse the published API surface by public member.
   - The hosted path to the namespace index.
   - `string NamespaceIndexPath { get; set; }`
 - [NameTemplate](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-nametemplate): `Properties` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=NameTemplate&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the project-name template.
   - `string NameTemplate { get; }`
 - [Nodes](cephalon-edge.md#member-p-cephalon-edge-configuration-edgeruntimeoptions-nodes): `Properties` on `EdgeRuntimeOptions` in `Cephalon.Edge.Configuration` (`Cephalon.Edge`) [Browse](browse.html?q=Nodes&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Configuration&scope=members)
   - Gets the host-defined edge nodes that should be available to the edge runtime.
@@ -1130,18 +1333,22 @@ Browse the published API surface by public member.
   - Gets the effective node set after host options and module contributors have both been applied.
   - `IReadOnlyList<EdgeNodeDescriptor> Nodes { get; }`
 - [None](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-transportfeatures-none): `Fields` on `TransportFeatures` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=None&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Indicates no transport features.
   - `const TransportFeatures None`
 
 ## O
 
 - [ObservabilityOptions](cephalon-observability.md#member-m-cephalon-observability-configuration-observabilityoptions-ctor): `Constructors` on `ObservabilityOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=ObservabilityOptions&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
+  - Creates observability options with the default startup diagnostics behavior.
   - `ObservabilityOptions()`
 - [OccurredAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-occurredatutc): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when the failure was captured.
   - `DateTimeOffset OccurredAtUtc { get; set; }`
 - [Options](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-options): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Options&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets module and capability option overrides.
   - `EngineOptions Options { get; }`
 - [Organization](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-patternkind-organization): `Fields` on `PatternKind` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Organization&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Identifies an organization pattern.
   - `const PatternKind Organization`
 - [OutputPath](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-outputpath): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=OutputPath&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the output directory where reference docs should be written.
@@ -1150,8 +1357,10 @@ Browse the published API surface by public member.
 ## P
 
 - [PackageDirectories](cephalon-engine.md#member-p-cephalon-engine-configuration-modulediscoverysettings-packagedirectories): `Properties` on `ModuleDiscoverySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=PackageDirectories&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets package directories to scan for manifests.
   - `IReadOnlyList<ModulePackageDirectory> PackageDirectories { get; }`
 - [PackageHints](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-packagehints): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=PackageHints&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the companion-package hints associated with the technology.
   - `IReadOnlyList<string> PackageHints { get; }`
 - [PackageId](cephalon-engine.md#member-p-cephalon-engine-manifest-modulemanifest-packageid): `Properties` on `ModuleManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=PackageId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the supplying package identifier when the module came from a package load.
@@ -1159,14 +1368,17 @@ Browse the published API surface by public member.
 - [PackageId](cephalon-engine.md#member-p-cephalon-engine-trust-packagetrustdecision-packageid): `Properties` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=PackageId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The stable package identifier.
   - `string PackageId { get; set; }`
-- [PackageManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-packagemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-cephalon-engine-manifest-packagesignaturemanifest-system-boolean-system-string-system-string-system-boolean-system-string): `Constructors` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=PackageManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+- [PackageManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-packagemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagesignaturemanifest-system-boolean-system-string-system-string-system-boolean-system-string): `Constructors` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=PackageManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Creates a new package manifest entry.
   - `PackageManifest(string id, string kind, string assemblyName, string path, string sourcePath, string loadContext, IReadOnlyList<string> modules, string version, string minimumEngineVersion, string maximumEngineVersion, IReadOnlyList<string> supportedTargetFrameworks, string publisherId, string publisherDisplayName, string publisherWebsite, string signatureType, string signatureSigner, string signatureKeyId, string signatureFingerprint, string signatureAlgorithm, IReadOnlyList<PackageSignatureManifest> signatures, bool isSignatureVerified, string signatureVerificationReason, string checksumSha256, bool isTrusted, string trustReason)`
 - [PackagePolicy](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-packagepolicy): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=PackagePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets package metadata and integrity policy values.
   - `PackagePolicy PackagePolicy { get; }`
 - [PackagePolicy](cephalon-engine.md#member-m-cephalon-engine-configuration-packagepolicy-ctor-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean): `Constructors` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=PackagePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Creates a package policy.
   - `PackagePolicy(bool allowAssemblyPathPackages, bool requireVersion, bool requireMinimumEngineVersion, bool requireMaximumEngineVersion, bool requireSupportedTargetFrameworks, bool requirePublisherId, bool requireSignatureFingerprint, bool requireSignatureKeyId, bool requireSignatureValue, bool requireSignatureVerification, bool requireIntegritySha256)`
 - [Packages](cephalon-engine.md#member-p-cephalon-engine-configuration-modulediscoverysettings-packages): `Properties` on `ModuleDiscoverySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Packages&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets explicit package references to load.
   - `IReadOnlyList<ModulePackageReference> Packages { get; }`
 - [Packages](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedproject-packages): `Properties` on `RenderedProject` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Packages&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the package references implied by the scaffold plan.
@@ -1175,8 +1387,10 @@ Browse the published API surface by public member.
   - Gets the packages that contributed modules to the runtime, if any were loaded from packages.
   - `IReadOnlyList<PackageManifest> Packages { get; }`
 - [Packages](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-packages): `Properties` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Packages&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the package hints associated with the project.
   - `IReadOnlyList<string> Packages { get; }`
 - [Packages](cephalon-engine.md#member-p-cephalon-engine-trust-trustsnapshot-packages): `Properties` on `TrustSnapshot` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Packages&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - The evaluated package trust decisions.
   - `IReadOnlyList<PackageTrustDecision> Packages { get; set; }`
 - [PackageSignatureManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-packagesignaturemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-boolean-system-string): `Constructors` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=PackageSignatureManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Creates a package signature manifest entry.
@@ -1184,19 +1398,14 @@ Browse the published API surface by public member.
 - [PackageSignatureTrustDecision](cephalon-engine.md#member-m-cephalon-engine-trust-packagesignaturetrustdecision-ctor-system-string-system-string-system-string-system-boolean-system-string): `Constructors` on `PackageSignatureTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=PackageSignatureTrustDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Describes the trust and verification outcome for a single package signature.
   - `PackageSignatureTrustDecision(string Signer, string KeyId, string Fingerprint, bool IsVerified, string Reason)`
-- [PackageTrustDecision](cephalon-engine.md#member-m-cephalon-engine-trust-packagetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-cephalon-engine-trust-packagesignaturetrustdecision-system-boolean-system-string-system-boolean-system-string): `Constructors` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=PackageTrustDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+- [PackageTrustDecision](cephalon-engine.md#member-m-cephalon-engine-trust-packagetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagesignaturetrustdecision-system-boolean-system-string-system-boolean-system-string): `Constructors` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=PackageTrustDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - Describes the trust outcome for a package after package metadata, signature verification, and host trust rules have been evaluated.
   - `PackageTrustDecision(string PackageId, string AssemblyName, string Path, string PublisherId, string SignatureKeyId, string SignatureFingerprint, IReadOnlyList<PackageSignatureTrustDecision> Signatures, bool IsSignatureVerified, string SignatureVerificationReason, bool IsTrusted, string Reason)`
-- [Parser](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-parser): `Properties` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Parser&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `MessageParser<HelloReply> Parser { get; }`
-- [Parser](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-parser): `Properties` on `HelloRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Parser&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `MessageParser<HelloRequest> Parser { get; }`
-- [Parser](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-parser): `Properties` on `PrincipleReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Parser&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `MessageParser<PrincipleReply> Parser { get; }`
-- [Parser](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-parser): `Properties` on `PrinciplesRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Parser&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `MessageParser<PrinciplesRequest> Parser { get; }`
 - [Path](cephalon-engine.md#member-p-cephalon-engine-configuration-modulepackagedirectory-path): `Properties` on `ModulePackageDirectory` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Path&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the directory path to scan.
   - `string Path { get; }`
 - [Path](cephalon-engine.md#member-p-cephalon-engine-configuration-modulepackagereference-path): `Properties` on `ModulePackageReference` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Path&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the assembly or manifest path.
   - `string Path { get; }`
 - [Path](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-path): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Path&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the resolved assembly path that the engine loaded.
@@ -1217,40 +1426,43 @@ Browse the published API surface by public member.
   - Gets the relative scaffold path of the project directory.
   - `string Path { get; }`
 - [PathTemplate](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder-pathtemplate): `Properties` on `ScaffoldFolder` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=PathTemplate&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the folder path template.
   - `string PathTemplate { get; }`
 - [PathTemplate](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-pathtemplate): `Properties` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=PathTemplate&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the project-path template.
   - `string PathTemplate { get; }`
-- [PatternDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-patterndescriptor-ctor-system-string-system-string-system-string-cephalon-abstractions-patterns-patternkind-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Constructors` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=PatternDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+- [PatternDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-patterndescriptor-ctor-system-string-system-string-system-string-cephalon-abstractions-patterns-patternkind-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=PatternDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Creates a pattern descriptor.
   - `PatternDescriptor(string id, string displayName, string description, PatternKind kind, IReadOnlyList<string> tags, IReadOnlyList<string> requires, IReadOnlyList<string> conflictsWith, IReadOnlyDictionary<string, string> metadata)`
 - [Patterns](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appblueprint-patterns): `Properties` on `AppBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Patterns&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the baseline patterns implied by the blueprint.
   - `IReadOnlyList<PatternDescriptor> Patterns { get; }`
 - [Patterns](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-patterns): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Patterns&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the active patterns for the app.
   - `IReadOnlyList<PatternDescriptor> Patterns { get; }`
 - [Patterns](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-patterns): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Patterns&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the selected pattern identifiers.
   - `IReadOnlyList<string> Patterns { get; }`
 - [Phase](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-phase): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Phase&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The lifecycle phase that failed, such as `initialize`, `start`, or `stop`.
   - `string Phase { get; set; }`
 - [PipelinePattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-pipelinepattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=PipelinePattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
+  - Gets the pipeline design pattern.
   - `PatternDescriptor PipelinePattern { get; }`
 - [Policy](cephalon-engine.md#member-p-cephalon-engine-trust-trustsnapshot-policy): `Properties` on `TrustSnapshot` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Policy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - The policy that produced the trust decisions.
   - `TrustPolicy Policy { get; set; }`
 - [Principle](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-principle): `Properties` on `PrincipleReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Principle&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+  - The principle text being streamed to the caller.
   - `string Principle { get; set; }`
 - [PrincipleFieldNumber](cephalon-aspnetcore-grpc.md#member-f-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-principlefieldnumber): `Fields` on `PrincipleReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=PrincipleFieldNumber&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Field number for the "principle" field.
   - `const int PrincipleFieldNumber`
-- [PrincipleReply](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-ctor): `Constructors` on `PrincipleReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=PrincipleReply&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `PrincipleReply()`
-- [PrincipleReply](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-ctor-cephalon-aspnetcore-grpc-contracts-discovery-principlereply): `Constructors` on `PrincipleReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=PrincipleReply&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `PrincipleReply(PrincipleReply other)`
-- [PrinciplesRequest](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-ctor): `Constructors` on `PrinciplesRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=PrinciplesRequest&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `PrinciplesRequest()`
-- [PrinciplesRequest](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-ctor-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest): `Constructors` on `PrinciplesRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=PrinciplesRequest&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `PrinciplesRequest(PrinciplesRequest other)`
 - [Probe](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-probe): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Probe&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The probe name that produced the report.
   - `string Probe { get; set; }`
 - [ProjectId](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder-projectid): `Properties` on `ScaffoldFolder` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProjectId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the owning project identifier when the folder belongs to a project.
   - `string ProjectId { get; }`
 - [ProjectKey](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedfolder-projectkey): `Properties` on `RenderedFolder` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=ProjectKey&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the owning rendered project key when the folder belongs to a rendered project.
@@ -1262,9 +1474,10 @@ Browse the published API surface by public member.
   - Gets the rendered projects.
   - `IReadOnlyList<RenderedProject> Projects { get; }`
 - [Projects](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-projects): `Properties` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Projects&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the projects emitted by the scaffold.
   - `IReadOnlyList<ScaffoldProject> Projects { get; }`
 - [Protocol](cephalon-observability.md#member-p-cephalon-observability-configuration-telemetryexportoptions-protocol): `Properties` on `TelemetryExportOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=Protocol&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
-  - Gets or sets the telemetry transport protocol, such as `otlp`.
+  - Gets or sets the telemetry transport protocol, such as `otlp`, `otlp/grpc`, or `otlp/http`.
   - `string Protocol { get; set; }`
 - [Provider](cephalon-observability.md#member-p-cephalon-observability-configuration-telemetryexportoptions-provider): `Properties` on `TelemetryExportOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=Provider&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Gets or sets the telemetry provider name, such as `OpenTelemetry`.
@@ -1285,6 +1498,7 @@ Browse the published API surface by public member.
   - Gets the descriptive purpose of the folder.
   - `string Purpose { get; }`
 - [Purpose](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder-purpose): `Properties` on `ScaffoldFolder` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Purpose&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the human-readable purpose of the folder.
   - `string Purpose { get; }`
 
 ## R
@@ -1299,8 +1513,10 @@ Browse the published API surface by public member.
   - The hosted path to the reference-doc landing page.
   - `string ReadmePath { get; set; }`
 - [RealtimeExperience](cephalon-engine.md#member-p-cephalon-engine-technologies-builtintechnologies-realtimeexperience): `Properties` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=RealtimeExperience&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
+  - Gets the built-in realtime-experience technology profile.
   - `TechnologyDescriptor RealtimeExperience { get; }`
 - [Reason](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-reason): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Reason&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - The human-readable reason for the decision.
   - `string Reason { get; set; }`
 - [Reason](cephalon-engine.md#member-p-cephalon-engine-trust-packagesignaturetrustdecision-reason): `Properties` on `PackageSignatureTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Reason&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The verification outcome or failure reason for this signature.
@@ -1312,15 +1528,19 @@ Browse the published API surface by public member.
   - Creates a new generated reference documentation file.
   - `ReferenceDocFile(string path, string contents)`
 - [ReferenceDocsHostingOptions](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-documentation-referencedocshostingoptions-ctor): `Constructors` on `ReferenceDocsHostingOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ReferenceDocsHostingOptions&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
+  - Creates reference-doc hosting options with the default hosted-doc route settings.
   - `ReferenceDocsHostingOptions()`
-- [ReferenceDocsRequest](cephalon-referencedocs.md#member-m-cephalon-referencedocs-generation-referencedocsrequest-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string): `Constructors` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=ReferenceDocsRequest&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
+- [ReferenceDocsRequest](cephalon-referencedocs.md#member-m-cephalon-referencedocs-generation-referencedocsrequest-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=ReferenceDocsRequest&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
+  - Creates a new reference docs request.
   - `ReferenceDocsRequest(string rootPath, string outputPath, string configuration, string targetFramework, IReadOnlyList<string> assemblies)`
 - [ReferenceDocsSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-documentation-referencedocssurface-ctor-system-boolean-system-boolean-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Constructors` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ReferenceDocsSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Describes the operator-facing HTTP surface for hosted Cephalon reference documentation.
   - `ReferenceDocsSurface(bool Enabled, bool Available, string RoutePrefix, string DefaultDocument, string DefaultDocumentPath, string ReadmePath, string BrowserPath, string NamespaceIndexPath, string TypeIndexPath, string MemberIndexPath, string ManifestPath)`
 - [RegisterCapabilities](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-imodule-registercapabilities-cephalon-abstractions-capabilities-icapabilityregistry): `Methods` on `IModule` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterCapabilities&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Registers capabilities exposed by the module.
   - `void RegisterCapabilities(ICapabilityRegistry capabilities)`
 - [RegisterCapabilities](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-modulebase-registercapabilities-cephalon-abstractions-capabilities-icapabilityregistry): `Methods` on `ModuleBase` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterCapabilities&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Registers capabilities exposed by the module.
   - `void RegisterCapabilities(ICapabilityRegistry capabilities)`
 - [RegisterChannels](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventchannelcontributor-registerchannels-cephalon-eventing-services-ieventchannelregistry): `Methods` on `IEventChannelContributor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RegisterChannels&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Registers one or more event channel descriptors with the supplied registry.
@@ -1332,13 +1552,16 @@ Browse the published API surface by public member.
   - Registers one or more edge node descriptors with the supplied registry.
   - `void RegisterNodes(IEdgeNodeRegistry nodes)`
 - [RegisterResources](cephalon-abstractions.md#member-m-cephalon-abstractions-localization-ilocalizedresourcecontributor-registerresources-cephalon-abstractions-localization-ilocalizedresourceregistry): `Methods` on `ILocalizedResourceContributor` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterResources&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
+  - Registers the contributor's localized resources.
   - `void RegisterResources(ILocalizedResourceRegistry resources)`
 - [RegisterTechnologies](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-itechnologycontributor-registertechnologies-cephalon-abstractions-technologies-itechnologyregistry): `Methods` on `ITechnologyContributor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterTechnologies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Registers one or more technology descriptors.
   - `void RegisterTechnologies(ITechnologyRegistry technologies)`
 - [RegisterTechnology](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-registertechnology-cephalon-abstractions-technologies-technologydescriptor): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=RegisterTechnology&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Registers a technology descriptor in the available catalog without implicitly selecting it.
   - `EngineBuilder RegisterTechnology(TechnologyDescriptor technology)`
 - [RegisterTechnologyCapabilities](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-itechnologycapabilitycontributor-registertechnologycapabilities-cephalon-abstractions-capabilities-icapabilityregistry-cephalon-abstractions-technologies-technologyselection): `Methods` on `ITechnologyCapabilityContributor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterTechnologyCapabilities&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Registers capabilities for the active technology selection.
   - `void RegisterTechnologyCapabilities(ICapabilityRegistry capabilities, TechnologySelection technologies)`
 - [RegisterTools](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttoolcontributor-registertools-cephalon-agentics-services-iagenttoolregistry): `Methods` on `IAgentToolContributor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=RegisterTools&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Registers one or more tool descriptors with the supplied registry.
@@ -1346,13 +1569,17 @@ Browse the published API surface by public member.
 - [RenderedFile](cephalon-scaffolding.md#member-m-cephalon-scaffolding-generation-renderedfile-ctor-system-string-system-string): `Constructors` on `RenderedFile` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=RenderedFile&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Creates a new rendered file.
   - `RenderedFile(string path, string contents)`
-- [RenderedFolder](cephalon-scaffolding.md#member-m-cephalon-scaffolding-generation-renderedfolder-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Constructors` on `RenderedFolder` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=RenderedFolder&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
+- [RenderedFolder](cephalon-scaffolding.md#member-m-cephalon-scaffolding-generation-renderedfolder-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `RenderedFolder` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=RenderedFolder&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
+  - Creates a new rendered folder.
   - `RenderedFolder(string path, string purpose, string scope, string projectKey, IReadOnlyDictionary<string, string> metadata)`
-- [RenderedProject](cephalon-scaffolding.md#member-m-cephalon-scaffolding-generation-renderedproject-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Constructors` on `RenderedProject` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=RenderedProject&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
+- [RenderedProject](cephalon-scaffolding.md#member-m-cephalon-scaffolding-generation-renderedproject-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `RenderedProject` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=RenderedProject&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
+  - Creates a new rendered project.
   - `RenderedProject(string key, string sourceProjectId, string name, string path, string scope, string role, string template, IReadOnlyList<string> packages, IReadOnlyList<string> projectReferences, IReadOnlyDictionary<string, string> metadata)`
-- [RenderedReferenceDocs](cephalon-referencedocs.md#member-m-cephalon-referencedocs-generation-renderedreferencedocs-ctor-cephalon-referencedocs-generation-referencedocsrequest-system-collections-generic-ireadonlylist-1-cephalon-referencedocs-generation-referencedocfile): `Constructors` on `RenderedReferenceDocs` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=RenderedReferenceDocs&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
+- [RenderedReferenceDocs](cephalon-referencedocs.md#member-m-cephalon-referencedocs-generation-renderedreferencedocs-ctor-cephalon-referencedocs-generation-referencedocsrequest-system-collections-generic-ireadonlylist-cephalon-referencedocs-generation-referencedocfile): `Constructors` on `RenderedReferenceDocs` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=RenderedReferenceDocs&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
+  - Creates a new rendered reference docs result.
   - `RenderedReferenceDocs(ReferenceDocsRequest request, IReadOnlyList<ReferenceDocFile> files)`
-- [RenderedScaffold](cephalon-scaffolding.md#member-m-cephalon-scaffolding-generation-renderedscaffold-ctor-cephalon-abstractions-appmodel-appprofile-cephalon-scaffolding-generation-scaffoldrequest-system-collections-generic-ireadonlylist-1-cephalon-scaffolding-generation-renderedproject-system-collections-generic-ireadonlylist-1-cephalon-scaffolding-generation-renderedfolder-system-collections-generic-ireadonlylist-1-cephalon-scaffolding-generation-renderedfile): `Constructors` on `RenderedScaffold` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=RenderedScaffold&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
+- [RenderedScaffold](cephalon-scaffolding.md#member-m-cephalon-scaffolding-generation-renderedscaffold-ctor-cephalon-abstractions-appmodel-appprofile-cephalon-scaffolding-generation-scaffoldrequest-system-collections-generic-ireadonlylist-cephalon-scaffolding-generation-renderedproject-system-collections-generic-ireadonlylist-cephalon-scaffolding-generation-renderedfolder-system-collections-generic-ireadonlylist-cephalon-scaffolding-generation-renderedfile): `Constructors` on `RenderedScaffold` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=RenderedScaffold&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
+  - Creates a new rendered scaffold.
   - `RenderedScaffold(AppProfile appProfile, ScaffoldRequest request, IReadOnlyList<RenderedProject> projects, IReadOnlyList<RenderedFolder> folders, IReadOnlyList<RenderedFile> files)`
 - [Request](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-renderedreferencedocs-request): `Properties` on `RenderedReferenceDocs` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Request&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the original generation request.
@@ -1361,11 +1588,13 @@ Browse the published API surface by public member.
   - Gets the original scaffold request.
   - `ScaffoldRequest Request { get; }`
 - [RequestResponse](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-transportfeatures-requestresponse): `Fields` on `TransportFeatures` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequestResponse&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Indicates request-response interactions are supported.
   - `const TransportFeatures RequestResponse`
 - [RequireCapability](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-transports-rest-restendpointconventionbuilderextensions-requirecapability-microsoft-aspnetcore-builder-routehandlerbuilder-system-string): `Methods` on `RestEndpointConventionBuilderExtensions` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RequireCapability&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
   - Requires a Cephalon capability decision before a REST endpoint can execute.
   - `RouteHandlerBuilder RequireCapability(this RouteHandlerBuilder builder, string capabilityKey)`
 - [Required](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-required): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Required&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
+  - Whether the dependency is required for readiness.
   - `bool Required { get; set; }`
 - [RequireIntegritySha256](cephalon-engine.md#member-p-cephalon-engine-configuration-packagepolicy-requireintegritysha256): `Properties` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RequireIntegritySha256&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether package manifests must declare an integrity SHA-256 value.
@@ -1380,6 +1609,7 @@ Browse the published API surface by public member.
   - Gets a value indicating whether package manifests must declare a stable publisher identifier.
   - `bool RequirePublisherId { get; }`
 - [Requires](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-requires): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Requires&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the pattern identifiers required by this pattern.
   - `IReadOnlyList<string> Requires { get; }`
 - [RequireSignatureFingerprint](cephalon-engine.md#member-p-cephalon-engine-configuration-packagepolicy-requiresignaturefingerprint): `Properties` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RequireSignatureFingerprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether package manifests must declare a signer fingerprint on at least one signature entry.
@@ -1394,10 +1624,13 @@ Browse the published API surface by public member.
   - Gets a value indicating whether package signatures must verify against a trusted public key.
   - `bool RequireSignatureVerification { get; }`
 - [RequiresPatterns](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-requirespatterns): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresPatterns&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the pattern identifiers required by the technology.
   - `IReadOnlyList<string> RequiresPatterns { get; }`
 - [RequiresTechnologies](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-requirestechnologies): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresTechnologies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the technology identifiers required by the technology.
   - `IReadOnlyList<string> RequiresTechnologies { get; }`
 - [RequiresTransports](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-requirestransports): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresTransports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the transport identifiers required by the technology.
   - `IReadOnlyList<string> RequiresTransports { get; }`
 - [RequireSupportedTargetFrameworks](cephalon-engine.md#member-p-cephalon-engine-configuration-packagepolicy-requiresupportedtargetframeworks): `Properties` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RequireSupportedTargetFrameworks&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether package manifests must declare supported target frameworks.
@@ -1409,49 +1642,64 @@ Browse the published API surface by public member.
   - Gets a value indicating whether package manifests must declare a version.
   - `bool RequireVersion { get; }`
 - [Resolve](cephalon-engine.md#member-m-cephalon-engine-appmodel-builtinblueprints-resolve-system-string): `Methods` on `BuiltInBlueprints` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=Resolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Resolves a blueprint identifier, display name, or alias.
   - `AppBlueprint Resolve(string value)`
 - [Resolve](cephalon-engine.md#member-m-cephalon-engine-patterns-builtinpatterns-resolve-system-string): `Methods` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=Resolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
+  - Resolves a pattern identifier, display name, or alias.
   - `PatternDescriptor Resolve(string value)`
 - [Resolve](cephalon-engine.md#member-m-cephalon-engine-technologies-builtintechnologies-resolve-system-string): `Methods` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=Resolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
+  - Resolves a technology identifier, display name, or alias.
   - `TechnologyDescriptor Resolve(string value)`
 - [Resolve](cephalon-engine.md#member-m-cephalon-engine-transports-builtintransports-resolve-system-string): `Methods` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=Resolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
+  - Resolves a transport identifier, display name, or alias.
   - `TransportDescriptor Resolve(string value)`
 - [ResolveCapabilityAccess](cephalon-engine.md#member-m-cephalon-engine-configuration-trustpolicy-resolvecapabilityaccess-system-string): `Methods` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ResolveCapabilityAccess&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Resolves the effective access for a capability key.
   - `CapabilityAccess ResolveCapabilityAccess(string capabilityKey)`
 - [ResolvedCulture](cephalon-abstractions.md#member-p-cephalon-abstractions-localization-localizedresourcessnapshot-resolvedculture): `Properties` on `LocalizedResourcesSnapshot` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResolvedCulture&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
+  - Gets the culture actually resolved for the snapshot.
   - `string ResolvedCulture { get; }`
 - [ResolveText](cephalon-abstractions.md#member-m-cephalon-abstractions-localization-ilocalizedtextcatalog-resolvetext-system-string-system-string-system-string): `Methods` on `ILocalizedTextCatalog` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResolveText&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
+  - Resolves one localized text value with an optional fallback.
   - `string ResolveText(string key, string culture, string fallback)`
 - [ResolveText](cephalon-engine.md#member-m-cephalon-engine-localization-localizedtextcatalog-resolvetext-system-string-system-string-system-string): `Methods` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=ResolveText&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
+  - Resolves a localized value or returns the provided fallback.
   - `string ResolveText(string key, string culture, string fallback)`
 - [Resources](cephalon-engine.md#member-p-cephalon-engine-configuration-localizationsettings-resources): `Properties` on `LocalizationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Resources&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets localized resource entries keyed by culture and resource key.
   - `IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Resources { get; }`
 - [Resources](cephalon-abstractions.md#member-p-cephalon-abstractions-localization-localizedresourcessnapshot-resources): `Properties` on `LocalizedResourcesSnapshot` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Resources&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
+  - Gets the localized resources visible to the snapshot.
   - `IReadOnlyDictionary<string, string> Resources { get; }`
 - [RestApi](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-restapi): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=RestApi&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
+  - Gets the built-in REST transport descriptor.
   - `TransportDescriptor RestApi { get; }`
 - [RestartAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-restartasync-system-iserviceprovider-system-threading-cancellationtoken): `Methods` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RestartAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Restarts the runtime when the current failure policy allows it.
   - `Task RestartAsync(IServiceProvider services, CancellationToken cancellationToken)`
 - [RestartAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-iruntime-restartasync-system-iserviceprovider-system-threading-cancellationtoken): `Methods` on `IRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RestartAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Restarts the runtime when the configured failure policy allows it.
   - `Task RestartAsync(IServiceProvider services, CancellationToken cancellationToken)`
 - [RestartCount](cephalon-engine.md#member-p-cephalon-engine-runtime-engineruntime-restartcount): `Properties` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RestartCount&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the number of completed manual restarts.
   - `int RestartCount { get; }`
 - [RestartCount](cephalon-engine.md#member-p-cephalon-engine-runtime-iruntime-restartcount): `Properties` on `IRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RestartCount&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the number of successful manual restart attempts completed by the runtime.
   - `int RestartCount { get; }`
 - [RestartCount](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-restartcount): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RestartCount&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The number of completed manual restarts.
   - `int RestartCount { get; set; }`
 - [RestartCount](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-restartcount): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RestartCount&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The number of completed manual restarts.
   - `int RestartCount { get; set; }`
 - [RetrievalOptions](cephalon-retrieval.md#member-m-cephalon-retrieval-configuration-retrievaloptions-ctor): `Constructors` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=RetrievalOptions&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
+  - Creates retrieval options with the default host-owned features enabled.
   - `RetrievalOptions()`
 - [Role](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedproject-role): `Properties` on `RenderedProject` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Role&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the scaffold role of the project.
   - `string Role { get; }`
 - [Role](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-role): `Properties` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Role&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the canonical project role.
   - `string Role { get; }`
 - [RootNamespace](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-scaffoldrequest-rootnamespace): `Properties` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=RootNamespace&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the root namespace derived from `AppName`.
@@ -1472,52 +1720,70 @@ Browse the published API surface by public member.
   - Runs the reference docs generator for the supplied arguments and writers.
   - `Task<int> RunAsync(string[] args, TextWriter output, TextWriter error, CancellationToken cancellationToken)`
 - [RuntimeFailureCounterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-runtimefailurecountername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeFailureCounterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Gets the counter name for runtime lifecycle failures.
   - `const string RuntimeFailureCounterName`
 - [RuntimeFailureInfo](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimefailureinfo-ctor-system-string-system-string-system-string-cephalon-engine-runtime-runtimestatus-system-string-system-string-system-datetimeoffset-system-boolean-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior): `Constructors` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeFailureInfo&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Describes a runtime lifecycle failure in a way that can be surfaced through diagnostics, status endpoints, and operator tooling.
   - `RuntimeFailureInfo(string Phase, string ModuleId, string ModuleVersion, RuntimeStatus StatusBeforeFailure, string ExceptionType, string Message, DateTimeOffset OccurredAtUtc, bool CanRestart, StartupFailureBehavior StartupFailureBehavior, StopFailureBehavior StopFailureBehavior)`
-- [RuntimeHealthEvaluator](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimehealthevaluator-ctor-cephalon-engine-runtime-iruntime-system-collections-generic-ienumerable-1-cephalon-abstractions-health-idependencyhealthcontributor): `Constructors` on `RuntimeHealthEvaluator` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeHealthEvaluator&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+- [RuntimeHealthEvaluator](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimehealthevaluator-ctor-cephalon-engine-runtime-iruntime-system-collections-generic-ienumerable-cephalon-abstractions-health-idependencyhealthcontributor): `Constructors` on `RuntimeHealthEvaluator` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeHealthEvaluator&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Initializes a new instance of the `RuntimeHealthEvaluator` class.
   - `RuntimeHealthEvaluator(IRuntime runtime, IEnumerable<IDependencyHealthContributor> dependencyHealthContributors)`
-- [RuntimeHealthReport](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimehealthreport-ctor-system-string-cephalon-engine-runtime-runtimehealthstate-system-string-cephalon-engine-runtime-runtimestatus-system-int32-cephalon-engine-runtime-runtimefailureinfo-system-collections-generic-ireadonlylist-1-cephalon-abstractions-health-dependencyhealthreport): `Constructors` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeHealthReport&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+- [RuntimeHealthReport](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimehealthreport-ctor-system-string-cephalon-engine-runtime-runtimehealthstate-system-string-cephalon-engine-runtime-runtimestatus-system-int32-cephalon-engine-runtime-runtimefailureinfo-system-collections-generic-ireadonlylist-cephalon-abstractions-health-dependencyhealthreport): `Constructors` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeHealthReport&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Captures the health result for a runtime liveness or readiness probe.
   - `RuntimeHealthReport(string Probe, RuntimeHealthState State, string Description, RuntimeStatus RuntimeStatus, int RestartCount, RuntimeFailureInfo LastFailure, IReadOnlyList<DependencyHealthReport> Dependencies)`
-- [RuntimeIntrospectionSnapshot](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-1-cephalon-abstractions-technologies-technologyruntimesurface): `Constructors` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeIntrospectionSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+- [RuntimeIntrospectionSnapshot](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface): `Constructors` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeIntrospectionSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Combines the main operator-facing runtime views into a single payload.
   - `RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces)`
-- [RuntimeManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-runtimemanifest-ctor-system-string-system-string-system-datetimeoffset-cephalon-abstractions-appmodel-appprofile-system-collections-generic-ireadonlylist-1-cephalon-engine-manifest-modulemanifest-system-collections-generic-ireadonlylist-1-cephalon-engine-manifest-capabilitymanifest-system-collections-generic-ireadonlylist-1-cephalon-engine-manifest-packagemanifest): `Constructors` on `RuntimeManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+- [RuntimeManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-runtimemanifest-ctor-system-string-system-string-system-datetimeoffset-cephalon-abstractions-appmodel-appprofile-system-collections-generic-ireadonlylist-cephalon-engine-manifest-modulemanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-capabilitymanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest): `Constructors` on `RuntimeManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Creates a new runtime manifest.
   - `RuntimeManifest(string manifestVersion, string engineVersion, DateTimeOffset generatedAtUtc, AppProfile appProfile, IReadOnlyList<ModuleManifest> modules, IReadOnlyList<CapabilityManifest> capabilities, IReadOnlyList<PackageManifest> packages)`
 - [RuntimeRestartCounterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-runtimerestartcountername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeRestartCounterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Gets the counter name for runtime restart attempts.
   - `const string RuntimeRestartCounterName`
 - [RuntimeStatus](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-runtimestatus): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeStatus&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The runtime lifecycle status at the time of evaluation.
   - `RuntimeStatus RuntimeStatus { get; set; }`
-- [RuntimeStatusSnapshot](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimestatussnapshot-ctor-cephalon-engine-runtime-runtimestatus-system-nullable-1-system-datetimeoffset-system-nullable-1-system-datetimeoffset-system-nullable-1-system-datetimeoffset-system-int32-cephalon-engine-runtime-runtimefailureinfo): `Constructors` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeStatusSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+- [RuntimeStatusSnapshot](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimestatussnapshot-ctor-cephalon-engine-runtime-runtimestatus-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-cephalon-engine-runtime-runtimefailureinfo): `Constructors` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeStatusSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Captures the current runtime lifecycle state in a serialization-friendly form.
   - `RuntimeStatusSnapshot(RuntimeStatus Status, DateTimeOffset? InitializedAtUtc, DateTimeOffset? StartedAtUtc, DateTimeOffset? StoppedAtUtc, int RestartCount, RuntimeFailureInfo LastFailure)`
 - [RuntimeTransitionCounterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-runtimetransitioncountername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeTransitionCounterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Gets the counter name for runtime lifecycle transitions.
   - `const string RuntimeTransitionCounterName`
 
 ## S
 
 - [SayHello](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryservicebase-sayhello-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-servercallcontext): `Methods` on `DiscoveryServiceBase` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=SayHello&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+  - Returns a single greeting for the requested caller.
   - `Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)`
 - [SayHello](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-sayhello-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-calloptions): `Methods` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=SayHello&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+  - Returns a single greeting for the requested caller.
   - `HelloReply SayHello(HelloRequest request, CallOptions options)`
-- [SayHello](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-sayhello-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-metadata-system-nullable-1-system-datetime-system-threading-cancellationtoken): `Methods` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=SayHello&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+- [SayHello](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-sayhello-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken): `Methods` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=SayHello&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+  - Returns a single greeting for the requested caller.
   - `HelloReply SayHello(HelloRequest request, Metadata headers, DateTime? deadline, CancellationToken cancellationToken)`
 - [SayHelloAsync](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-sayhelloasync-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-calloptions): `Methods` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=SayHelloAsync&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+  - Returns a single greeting for the requested caller.
   - `AsyncUnaryCall<HelloReply> SayHelloAsync(HelloRequest request, CallOptions options)`
-- [SayHelloAsync](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-sayhelloasync-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-metadata-system-nullable-1-system-datetime-system-threading-cancellationtoken): `Methods` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=SayHelloAsync&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+- [SayHelloAsync](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-sayhelloasync-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken): `Methods` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=SayHelloAsync&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+  - Returns a single greeting for the requested caller.
   - `AsyncUnaryCall<HelloReply> SayHelloAsync(HelloRequest request, Metadata headers, DateTime? deadline, CancellationToken cancellationToken)`
 - [Scaffold](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appblueprint-scaffold): `Properties` on `AppBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Scaffold&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the scaffold plan associated with the blueprint, when one is defined.
   - `ScaffoldPlan Scaffold { get; }`
 - [Scaffold](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-scaffold): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Scaffold&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the scaffold plan associated with the app shape, when one is defined.
   - `ScaffoldPlan Scaffold { get; }`
-- [ScaffoldFolder](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Constructors` on `ScaffoldFolder` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=ScaffoldFolder&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+- [ScaffoldFolder](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `ScaffoldFolder` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=ScaffoldFolder&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Creates a scaffold-folder description.
   - `ScaffoldFolder(string pathTemplate, string purpose, string scope, string projectId, IReadOnlyDictionary<string, string> metadata)`
-- [ScaffoldGenerator](cephalon-scaffolding.md#member-m-cephalon-scaffolding-generation-scaffoldgenerator-ctor): `Constructors` on `ScaffoldGenerator` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=ScaffoldGenerator&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
-  - `ScaffoldGenerator()`
-- [ScaffoldPlan](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-system-collections-generic-ireadonlylist-1-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Constructors` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=ScaffoldPlan&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+- [ScaffoldPlan](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=ScaffoldPlan&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Creates a scaffold plan.
   - `ScaffoldPlan(string id, string displayName, string description, IReadOnlyList<ScaffoldProject> projects, IReadOnlyList<ScaffoldFolder> folders, IReadOnlyList<string> conventions, IReadOnlyDictionary<string, string> metadata)`
-- [ScaffoldProject](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Constructors` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=ScaffoldProject&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+- [ScaffoldProject](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=ScaffoldProject&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Creates a scaffold-project description.
   - `ScaffoldProject(string id, string nameTemplate, string pathTemplate, string scope, string role, string template, IReadOnlyList<string> dependsOn, IReadOnlyList<string> packages, IReadOnlyDictionary<string, string> metadata)`
-- [ScaffoldRequest](cephalon-scaffolding.md#member-m-cephalon-scaffolding-generation-scaffoldrequest-ctor-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-string-system-string): `Constructors` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=ScaffoldRequest&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
+- [ScaffoldRequest](cephalon-scaffolding.md#member-m-cephalon-scaffolding-generation-scaffoldrequest-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string): `Constructors` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=ScaffoldRequest&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
+  - Creates a new scaffold request.
   - `ScaffoldRequest(string appName, IReadOnlyList<string> modules, IReadOnlyList<string> features, string targetFramework, string cephalonPackageVersion)`
 - [Scope](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedfolder-scope): `Properties` on `RenderedFolder` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Scope&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the scaffold scope that produced the folder.
@@ -1526,26 +1792,34 @@ Browse the published API surface by public member.
   - Gets the scaffold scope that produced the project.
   - `string Scope { get; }`
 - [Scope](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder-scope): `Properties` on `ScaffoldFolder` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Scope&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the scaffold scope that owns the folder.
   - `string Scope { get; }`
 - [Scope](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-scope): `Properties` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Scope&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the scaffold scope that owns the project.
   - `string Scope { get; }`
 - [SectionName](cephalon-engine.md#member-f-cephalon-engine-configuration-enginesettings-sectionname): `Fields` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=SectionName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the default root configuration section name for engine settings.
   - `const string SectionName`
 - [SectionName](cephalon-aspnetcore.md#member-f-cephalon-aspnetcore-documentation-referencedocshostingoptions-sectionname): `Fields` on `ReferenceDocsHostingOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=SectionName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Gets the default configuration section used for reference-doc hosting.
   - `const string SectionName`
 - [Selected](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologyselection-selected): `Properties` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Selected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the technology profiles currently selected for the app.
   - `IReadOnlyList<TechnologyDescriptor> Selected { get; }`
 - [ServerSentEvents](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-serversentevents): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=ServerSentEvents&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
+  - Gets the built-in server-sent-events transport descriptor.
   - `TransportDescriptor ServerSentEvents { get; }`
 - [ServerStreaming](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-transportfeatures-serverstreaming): `Fields` on `TransportFeatures` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=ServerStreaming&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Indicates server-streaming interactions are supported.
   - `const TransportFeatures ServerStreaming`
 - [Services](cephalon-engine.md#member-p-cephalon-engine-composition-enginebuilder-services): `Properties` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=Services&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Gets the service collection that the builder mutates while composing the engine.
   - `IServiceCollection Services { get; }`
 - [Services](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-modulecontext-services): `Properties` on `ModuleContext` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Services&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Gets the root service provider for the runtime.
   - `IServiceProvider Services { get; }`
 - [SharedFoundationPattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-sharedfoundationpattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=SharedFoundationPattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
+  - Gets the shared-foundation pattern.
   - `PatternDescriptor SharedFoundationPattern { get; }`
 - [SignatureAlgorithm](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-signaturealgorithm): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=SignatureAlgorithm&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the signature algorithm declared by the package manifest, when available.
@@ -1587,18 +1861,25 @@ Browse the published API surface by public member.
   - The declared signer identity, when available.
   - `string Signer { get; set; }`
 - [SingleHostTopology](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-singlehosttopology): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=SingleHostTopology&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
+  - Gets the single-host deployment topology pattern.
   - `PatternDescriptor SingleHostTopology { get; }`
 - [Snapshot](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicyevaluator-snapshot): `Properties` on `CapabilityPolicyEvaluator` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Snapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - Gets the trust snapshot being evaluated.
   - `TrustSnapshot Snapshot { get; }`
 - [Solution](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-scaffoldscopes-solution): `Fields` on `ScaffoldScopes` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Solution&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Identifies a solution-level scaffold scope.
   - `const string Solution`
 - [Source](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-source): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Source&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
+  - The contributor or subsystem that reported the dependency.
   - `string Source { get; set; }`
 - [SourceModuleId](cephalon-engine.md#member-p-cephalon-engine-manifest-capabilitymanifest-sourcemoduleid): `Properties` on `CapabilityManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the identifier of the module that contributed the capability.
   - `string SourceModuleId { get; }`
 - [SourceModuleId](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-sourcemoduleid): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - The module that contributed the capability.
   - `string SourceModuleId { get; set; }`
 - [SourcePackageId](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-sourcepackageid): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=SourcePackageId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - The package that contributed the capability when one is known.
   - `string SourcePackageId { get; set; }`
 - [SourcePath](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-sourcepath): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=SourcePath&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the original source path used to discover the package.
@@ -1607,35 +1888,46 @@ Browse the published API surface by public member.
   - Gets the source scaffold project identifier that produced this instance.
   - `string SourceProjectId { get; }`
 - [SourceTrusted](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-sourcetrusted): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=SourceTrusted&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - Whether the contributing source is trusted.
   - `bool SourceTrusted { get; set; }`
 - [SpecificationPattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-specificationpattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=SpecificationPattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
+  - Gets the specification design pattern.
   - `PatternDescriptor SpecificationPattern { get; }`
 - [StartAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-startasync-system-iserviceprovider-system-threading-cancellationtoken): `Methods` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StartAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Starts the runtime and its modules.
   - `Task StartAsync(IServiceProvider services, CancellationToken cancellationToken)`
 - [StartAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-imodulelifecycle-startasync-cephalon-abstractions-modules-modulecontext-system-threading-cancellationtoken): `Methods` on `IModuleLifecycle` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Starts the module after initialization has completed.
   - `Task StartAsync(ModuleContext context, CancellationToken cancellationToken)`
 - [StartAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-iruntime-startasync-system-iserviceprovider-system-threading-cancellationtoken): `Methods` on `IRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StartAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Starts the runtime and all lifecycle-aware modules.
   - `Task StartAsync(IServiceProvider services, CancellationToken cancellationToken)`
 - [StartAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-modulebase-startasync-cephalon-abstractions-modules-modulecontext-system-threading-cancellationtoken): `Methods` on `ModuleBase` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Starts the module after initialization has completed.
   - `Task StartAsync(ModuleContext context, CancellationToken cancellationToken)`
 - [Started](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-started): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Started&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The runtime is fully started.
   - `const RuntimeStatus Started`
 - [StartedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-startedatutc): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StartedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when startup completed, if it has completed.
   - `DateTimeOffset? StartedAtUtc { get; set; }`
 - [Starting](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-starting): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Starting&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The runtime is starting modules.
   - `const RuntimeStatus Starting`
 - [StartupFailureBehavior](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-startupfailurebehavior): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=StartupFailureBehavior&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets how startup failures are handled.
   - `StartupFailureBehavior StartupFailureBehavior { get; }`
 - [StartupFailureBehavior](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-startupfailurebehavior): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StartupFailureBehavior&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The startup failure behavior in effect when the failure occurred.
   - `StartupFailureBehavior StartupFailureBehavior { get; set; }`
 - [State](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-state): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
+  - The current health state.
   - `HealthState State { get; set; }`
 - [State](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-state): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=State&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The evaluated runtime health state.
   - `RuntimeHealthState State { get; set; }`
 - [Status](cephalon-engine.md#member-p-cephalon-engine-runtime-engineruntime-status): `Properties` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Status&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the current lifecycle status.
   - `RuntimeStatus Status { get; }`
 - [Status](cephalon-engine.md#member-p-cephalon-engine-runtime-iruntime-status): `Properties` on `IRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Status&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the current lifecycle status of the runtime.
@@ -1650,49 +1942,64 @@ Browse the published API surface by public member.
   - The runtime status immediately before the failure was captured.
   - `RuntimeStatus StatusBeforeFailure { get; set; }`
 - [StatusSnapshot](cephalon-engine.md#member-p-cephalon-engine-runtime-engineruntime-statussnapshot): `Properties` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StatusSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets a serialization-friendly snapshot of the current runtime status.
   - `RuntimeStatusSnapshot StatusSnapshot { get; }`
 - [StatusSnapshot](cephalon-engine.md#member-p-cephalon-engine-runtime-iruntime-statussnapshot): `Properties` on `IRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StatusSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the current status as a serializable snapshot.
   - `RuntimeStatusSnapshot StatusSnapshot { get; }`
 - [StopAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-stopasync-system-threading-cancellationtoken): `Methods` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StopAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Stops started modules and transitions the runtime to a stopped state.
   - `Task StopAsync(CancellationToken cancellationToken)`
 - [StopAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-imodulelifecycle-stopasync-cephalon-abstractions-modules-modulecontext-system-threading-cancellationtoken): `Methods` on `IModuleLifecycle` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=StopAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Stops the module during runtime shutdown.
   - `Task StopAsync(ModuleContext context, CancellationToken cancellationToken)`
 - [StopAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-iruntime-stopasync-system-threading-cancellationtoken): `Methods` on `IRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StopAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Stops the runtime and all started lifecycle-aware modules.
   - `Task StopAsync(CancellationToken cancellationToken)`
 - [StopAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-modulebase-stopasync-cephalon-abstractions-modules-modulecontext-system-threading-cancellationtoken): `Methods` on `ModuleBase` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=StopAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Stops the module during runtime shutdown.
   - `Task StopAsync(ModuleContext context, CancellationToken cancellationToken)`
 - [StopFailureBehavior](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-stopfailurebehavior): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=StopFailureBehavior&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets how stop failures are handled.
   - `StopFailureBehavior StopFailureBehavior { get; }`
 - [StopFailureBehavior](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-stopfailurebehavior): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StopFailureBehavior&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The stop failure behavior in effect when the failure occurred.
   - `StopFailureBehavior StopFailureBehavior { get; set; }`
 - [Stopped](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-stopped): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Stopped&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The runtime is stopped.
   - `const RuntimeStatus Stopped`
 - [StoppedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-stoppedatutc): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StoppedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when the runtime last transitioned to a stopped state, if any.
   - `DateTimeOffset? StoppedAtUtc { get; set; }`
 - [Stopping](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-stopping): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Stopping&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The runtime is stopping started modules.
   - `const RuntimeStatus Stopping`
 - [StrategyPattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-strategypattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=StrategyPattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
+  - Gets the strategy design pattern.
   - `PatternDescriptor StrategyPattern { get; }`
-- [StreamPrinciples](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryservicebase-streamprinciples-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-grpc-core-iserverstreamwriter-1-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-grpc-core-servercallcontext): `Methods` on `DiscoveryServiceBase` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=StreamPrinciples&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+- [StreamPrinciples](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryservicebase-streamprinciples-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-grpc-core-iserverstreamwriter-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-grpc-core-servercallcontext): `Methods` on `DiscoveryServiceBase` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=StreamPrinciples&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+  - Streams the host principles that describe the Cephalon runtime shape.
   - `Task StreamPrinciples(PrinciplesRequest request, IServerStreamWriter<PrincipleReply> responseStream, ServerCallContext context)`
 - [StreamPrinciples](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-streamprinciples-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-grpc-core-calloptions): `Methods` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=StreamPrinciples&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+  - Streams the host principles that describe the Cephalon runtime shape.
   - `AsyncServerStreamingCall<PrincipleReply> StreamPrinciples(PrinciplesRequest request, CallOptions options)`
-- [StreamPrinciples](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-streamprinciples-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-grpc-core-metadata-system-nullable-1-system-datetime-system-threading-cancellationtoken): `Methods` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=StreamPrinciples&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+- [StreamPrinciples](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-streamprinciples-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken): `Methods` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=StreamPrinciples&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+  - Streams the host principles that describe the Cephalon runtime shape.
   - `AsyncServerStreamingCall<PrincipleReply> StreamPrinciples(PrinciplesRequest request, Metadata headers, DateTime? deadline, CancellationToken cancellationToken)`
 - [SummaryPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-summarypath): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=SummaryPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The aggregate health endpoint path.
   - `string SummaryPath { get; set; }`
 - [SupportedCultures](cephalon-abstractions.md#member-p-cephalon-abstractions-localization-ilocalizedtextcatalog-supportedcultures): `Properties` on `ILocalizedTextCatalog` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=SupportedCultures&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
+  - Gets the cultures currently available in the catalog.
   - `IReadOnlyList<string> SupportedCultures { get; }`
 - [SupportedCultures](cephalon-engine.md#member-p-cephalon-engine-configuration-localizationsettings-supportedcultures): `Properties` on `LocalizationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=SupportedCultures&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the supported culture identifiers.
   - `IReadOnlyList<string> SupportedCultures { get; }`
 - [SupportedCultures](cephalon-abstractions.md#member-p-cephalon-abstractions-localization-localizedresourcessnapshot-supportedcultures): `Properties` on `LocalizedResourcesSnapshot` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=SupportedCultures&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
+  - Gets the cultures currently supported by the catalog.
   - `IReadOnlyList<string> SupportedCultures { get; }`
 - [SupportedCultures](cephalon-engine.md#member-p-cephalon-engine-localization-localizedtextcatalog-supportedcultures): `Properties` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=SupportedCultures&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
+  - Gets the supported cultures available from the merged resource catalog.
   - `IReadOnlyList<string> SupportedCultures { get; }`
 - [SupportedTargetFrameworks](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-supportedtargetframeworks): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=SupportedTargetFrameworks&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the target frameworks declared as compatible by the package manifest.
@@ -1704,6 +2011,7 @@ Browse the published API surface by public member.
   - Gets all active technology runtime surfaces visible to the current runtime.
   - `IReadOnlyList<TechnologyRuntimeSurface> Surfaces { get; }`
 - [Surfaces](cephalon-engine.md#member-p-cephalon-engine-technologies-technologyruntimecatalogsnapshot-surfaces): `Properties` on `TechnologyRuntimeCatalogSnapshot` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=Surfaces&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
+  - Gets the active technology runtime surfaces.
   - `IReadOnlyList<TechnologyRuntimeSurface> Surfaces { get; }`
 
 ## T
@@ -1721,15 +2029,19 @@ Browse the published API surface by public member.
   - Gets the normalized tag set associated with the collection.
   - `IReadOnlyList<string> Tags { get; }`
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-tags): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Gets the tags associated with the module.
   - `IReadOnlyList<string> Tags { get; }`
 - [Tags](cephalon-engine.md#member-p-cephalon-engine-manifest-modulemanifest-tags): `Properties` on `ModuleManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Tags&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the descriptor tags published by the module.
   - `IReadOnlyList<string> Tags { get; }`
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-tags): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the tags associated with the pattern.
   - `IReadOnlyList<string> Tags { get; }`
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-tags): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the tags associated with the technology.
   - `IReadOnlyList<string> Tags { get; }`
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-transportdescriptor-tags): `Properties` on `TransportDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the tags associated with the transport.
   - `IReadOnlyList<string> Tags { get; }`
 - [TargetFramework](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-targetframework): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=TargetFramework&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the target framework to read from.
@@ -1738,25 +2050,34 @@ Browse the published API surface by public member.
   - Gets the target framework for generated projects.
   - `string TargetFramework { get; }`
 - [Technologies](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-technologies): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Technologies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the selected technology profiles.
   - `IReadOnlyList<TechnologyDescriptor> Technologies { get; }`
 - [Technologies](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-technologies): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Technologies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the selected technology identifiers.
   - `IReadOnlyList<string> Technologies { get; }`
 - [Technologies](cephalon-engine.md#member-p-cephalon-engine-technologies-technologycatalogsnapshot-technologies): `Properties` on `TechnologyCatalogSnapshot` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=Technologies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
+  - Gets the technologies visible in the catalog.
   - `IReadOnlyList<TechnologyDescriptor> Technologies { get; }`
-- [TechnologyCatalogSnapshot](cephalon-engine.md#member-m-cephalon-engine-technologies-technologycatalogsnapshot-ctor-system-collections-generic-ireadonlylist-1-cephalon-abstractions-technologies-technologydescriptor): `Constructors` on `TechnologyCatalogSnapshot` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=TechnologyCatalogSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
+- [TechnologyCatalogSnapshot](cephalon-engine.md#member-m-cephalon-engine-technologies-technologycatalogsnapshot-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor): `Constructors` on `TechnologyCatalogSnapshot` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=TechnologyCatalogSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
+  - Initializes a new instance of the `TechnologyCatalogSnapshot` class.
   - `TechnologyCatalogSnapshot(IReadOnlyList<TechnologyDescriptor> technologies)`
-- [TechnologyDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologydescriptor-ctor-system-string-system-string-system-string-cephalon-abstractions-technologies-technologykind-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Constructors` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TechnologyDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+- [TechnologyDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologydescriptor-ctor-system-string-system-string-system-string-cephalon-abstractions-technologies-technologykind-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TechnologyDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Creates a technology descriptor.
   - `TechnologyDescriptor(string id, string displayName, string description, TechnologyKind kind, IReadOnlyList<string> tags, IReadOnlyList<string> requiresPatterns, IReadOnlyList<string> requiresTransports, IReadOnlyList<string> requiresTechnologies, IReadOnlyList<string> conflictsWith, IReadOnlyList<string> packageHints, IReadOnlyList<string> guidance, IReadOnlyDictionary<string, string> metadata)`
 - [TechnologyId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologyruntimesurface-technologyid): `Properties` on `TechnologyRuntimeSurface` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TechnologyId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the identifier of the technology profile that owns this surface.
   - `string TechnologyId { get; }`
-- [TechnologyRuntimeCatalogSnapshot](cephalon-engine.md#member-m-cephalon-engine-technologies-technologyruntimecatalogsnapshot-ctor-system-collections-generic-ireadonlylist-1-cephalon-abstractions-technologies-technologyruntimesurface): `Constructors` on `TechnologyRuntimeCatalogSnapshot` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=TechnologyRuntimeCatalogSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
+- [TechnologyRuntimeCatalogSnapshot](cephalon-engine.md#member-m-cephalon-engine-technologies-technologyruntimecatalogsnapshot-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface): `Constructors` on `TechnologyRuntimeCatalogSnapshot` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=TechnologyRuntimeCatalogSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
+  - Initializes a new instance of the `TechnologyRuntimeCatalogSnapshot` class.
   - `TechnologyRuntimeCatalogSnapshot(IReadOnlyList<TechnologyRuntimeSurface> surfaces)`
-- [TechnologyRuntimeEntry](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyruntimeentry-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Constructors` on `TechnologyRuntimeEntry` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TechnologyRuntimeEntry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+- [TechnologyRuntimeEntry](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyruntimeentry-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TechnologyRuntimeEntry` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TechnologyRuntimeEntry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Creates a new technology runtime entry.
   - `TechnologyRuntimeEntry(string id, string displayName, string description, IReadOnlyDictionary<string, string> metadata)`
-- [TechnologyRuntimeSurface](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyruntimesurface-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-cephalon-abstractions-technologies-technologyruntimeentry): `Constructors` on `TechnologyRuntimeSurface` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TechnologyRuntimeSurface&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+- [TechnologyRuntimeSurface](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyruntimesurface-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimeentry): `Constructors` on `TechnologyRuntimeSurface` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TechnologyRuntimeSurface&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Creates a new technology runtime surface.
   - `TechnologyRuntimeSurface(string technologyId, string surfaceId, string displayName, string description, IReadOnlyList<TechnologyRuntimeEntry> entries)`
-- [TechnologySelection](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyselection-ctor-system-collections-generic-ireadonlylist-1-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-1-cephalon-abstractions-technologies-technologydescriptor): `Constructors` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TechnologySelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+- [TechnologySelection](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyselection-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor): `Constructors` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TechnologySelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Creates a technology-selection view.
   - `TechnologySelection(IReadOnlyList<TechnologyDescriptor> selected, IReadOnlyList<TechnologyDescriptor> catalog)`
 - [TechnologySurfaces](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-technologysurfaces): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=TechnologySurfaces&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The active technology-pack runtime surfaces visible to the runtime at the time the snapshot was created.
@@ -1765,13 +2086,16 @@ Browse the published API surface by public member.
   - Gets or sets the telemetry export guidance associated with the host.
   - `TelemetryExportOptions Telemetry { get; set; }`
 - [TelemetryExportOptions](cephalon-observability.md#member-m-cephalon-observability-configuration-telemetryexportoptions-ctor): `Constructors` on `TelemetryExportOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=TelemetryExportOptions&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
+  - Creates telemetry export options with the default guidance values.
   - `TelemetryExportOptions()`
 - [Template](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedproject-template): `Properties` on `RenderedProject` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Template&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the scaffold template that was used to generate the project.
   - `string Template { get; }`
 - [Template](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-template): `Properties` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Template&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Gets the template used to create the project.
   - `string Template { get; }`
 - [Tests](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-tests): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tests&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
+  - Identifies a test project.
   - `const string Tests`
 - [Tools](cephalon-agentics.md#member-p-cephalon-agentics-configuration-agenticruntimeoptions-tools): `Properties` on `AgenticRuntimeOptions` in `Cephalon.Agentics.Configuration` (`Cephalon.Agentics`) [Browse](browse.html?q=Tools&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Configuration&scope=members)
   - Gets the host-defined tool descriptors that should be available to the agentic runtime.
@@ -1780,6 +2104,7 @@ Browse the published API surface by public member.
   - Gets the effective tool set after host options and module contributors have both been applied.
   - `IReadOnlyList<AgentToolDescriptor> Tools { get; }`
 - [Traits](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-traits): `Properties` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Traits&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
+  - Additional traits or descriptors associated with the generated greeting.
   - `RepeatedField<string> Traits { get; }`
 - [TraitsFieldNumber](cephalon-aspnetcore-grpc.md#member-f-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-traitsfieldnumber): `Fields` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=TraitsFieldNumber&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Field number for the "traits" field.
@@ -1787,19 +2112,23 @@ Browse the published API surface by public member.
 - [TransformAsync](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-transformers-xmlcommentsdocumenttransformer-transformasync-microsoft-openapi-openapidocument-microsoft-aspnetcore-openapi-openapidocumenttransformercontext-system-threading-cancellationtoken): `Methods` on `XmlCommentsDocumentTransformer` in `Cephalon.AspNetCore.Transformers` (`Cephalon.AspNetCore`) [Browse](browse.html?q=TransformAsync&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transformers&scope=members)
   - Applies XML comment data to the OpenAPI document schemas produced for the current request.
   - `Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)`
-- [TransportDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-transportdescriptor-ctor-system-string-system-string-system-string-cephalon-abstractions-transports-transportfeatures-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string): `Constructors` on `TransportDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+- [TransportDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-transportdescriptor-ctor-system-string-system-string-system-string-cephalon-abstractions-transports-transportfeatures-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TransportDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Creates a transport descriptor.
   - `TransportDescriptor(string id, string displayName, string description, TransportFeatures features, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
 - [TransportId](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-itransportroutemapper-transportid): `Properties` on `ITransportRouteMapper` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=TransportId&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets the transport identifier that this mapper handles.
   - `string TransportId { get; }`
 - [Transports](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-transports): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Transports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the selected transports.
   - `IReadOnlyList<TransportDescriptor> Transports { get; }`
 - [Transports](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-transports): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Transports&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the selected transport identifiers.
   - `IReadOnlyList<string> Transports { get; }`
 - [TrustedAssemblies](cephalon-engine.md#member-p-cephalon-engine-configuration-trustpolicy-trustedassemblies): `Properties` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TrustedAssemblies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the trusted assembly-name allow-list.
   - `IReadOnlyList<string> TrustedAssemblies { get; }`
 - [TrustedOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-capabilities-capabilityaccess-trustedonly): `Fields` on `CapabilityAccess` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=TrustedOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
+  - Indicates the capability can be used only by trusted modules or packages.
   - `const CapabilityAccess TrustedOnly`
 - [TrustedPackages](cephalon-engine.md#member-p-cephalon-engine-configuration-trustpolicy-trustedpackages): `Properties` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TrustedPackages&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the trusted package identifier allow-list.
@@ -1814,13 +2143,16 @@ Browse the published API surface by public member.
   - Gets the trusted signer fingerprint allow-list.
   - `IReadOnlyList<string> TrustedSignerFingerprints { get; }`
 - [TrustPolicy](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-trustpolicy): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TrustPolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets capability and package trust policy values.
   - `TrustPolicy TrustPolicy { get; }`
-- [TrustPolicy](cephalon-engine.md#member-m-cephalon-engine-configuration-trustpolicy-ctor-system-boolean-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string-system-collections-generic-ireadonlydictionary-2-system-string-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlydictionary-2-system-string-system-collections-generic-ireadonlylist-1-system-string): `Constructors` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TrustPolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+- [TrustPolicy](cephalon-engine.md#member-m-cephalon-engine-configuration-trustpolicy-ctor-system-boolean-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlydictionary-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TrustPolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Creates a trust policy.
   - `TrustPolicy(bool requireTrustedPackages, CapabilityAccess defaultCapabilityAccess, IReadOnlyList<string> trustedPackages, IReadOnlyList<string> trustedAssemblies, IReadOnlyList<string> trustedPublishers, IReadOnlyList<string> trustedSignerFingerprints, IReadOnlyDictionary<string, string> trustedSignaturePublicKeys, IReadOnlyDictionary<string, CapabilityAccess> capabilities, IReadOnlyDictionary<string, IReadOnlyList<string>> allowedPackageChecksums)`
 - [TrustReason](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-trustreason): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=TrustReason&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the reason the package is trusted or not trusted by the current trust policy.
   - `string TrustReason { get; }`
-- [TrustSnapshot](cephalon-engine.md#member-m-cephalon-engine-trust-trustsnapshot-ctor-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-1-cephalon-engine-trust-packagetrustdecision-system-collections-generic-ireadonlylist-1-cephalon-engine-trust-capabilitypolicydecision): `Constructors` on `TrustSnapshot` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=TrustSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+- [TrustSnapshot](cephalon-engine.md#member-m-cephalon-engine-trust-trustsnapshot-ctor-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagetrustdecision-system-collections-generic-ireadonlylist-cephalon-engine-trust-capabilitypolicydecision): `Constructors` on `TrustSnapshot` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=TrustSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - Captures the effective trust policy together with evaluated package and capability decisions.
   - `TrustSnapshot(TrustPolicy Policy, IReadOnlyList<PackageTrustDecision> Packages, IReadOnlyList<CapabilityPolicyDecision> Capabilities)`
 - [TryGet](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttoolcatalog-tryget-system-string-cephalon-agentics-services-agenttooldescriptor): `Methods` on `IAgentToolCatalog` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Attempts to resolve a tool descriptor by identifier.
@@ -1835,22 +2167,31 @@ Browse the published API surface by public member.
   - Attempts to resolve a knowledge collection descriptor by identifier.
   - `bool TryGet(string collectionId, out KnowledgeCollectionDescriptor collection)`
 - [TryGet](cephalon-abstractions.md#member-m-cephalon-abstractions-localization-ilocalizedtextcatalog-tryget-system-string-system-string-system-string): `Methods` on `ILocalizedTextCatalog` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
+  - Attempts to resolve one localized text value.
   - `bool TryGet(string key, string culture, out string value)`
 - [TryGet](cephalon-engine.md#member-m-cephalon-engine-localization-localizedtextcatalog-tryget-system-string-system-string-system-string): `Methods` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
+  - Attempts to resolve a localized value for the specified key and culture.
   - `bool TryGet(string key, string culture, out string value)`
 - [TryGetAvailable](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyselection-trygetavailable-system-string-cephalon-abstractions-technologies-technologydescriptor): `Methods` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TryGetAvailable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Attempts to resolve one available technology from the runtime catalog.
   - `bool TryGetAvailable(string value, out TechnologyDescriptor technology)`
 - [TryGetDecision](cephalon-engine.md#member-m-cephalon-engine-trust-capabilitypolicyevaluator-trygetdecision-system-string-cephalon-engine-trust-capabilitypolicydecision): `Methods` on `CapabilityPolicyEvaluator` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=TryGetDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - Attempts to resolve the trust decision for a capability.
   - `bool TryGetDecision(string capabilityKey, out CapabilityPolicyDecision decision)`
 - [TryGetSelected](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyselection-trygetselected-system-string-cephalon-abstractions-technologies-technologydescriptor): `Methods` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TryGetSelected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Attempts to resolve one selected technology.
   - `bool TryGetSelected(string value, out TechnologyDescriptor technology)`
 - [TryResolve](cephalon-engine.md#member-m-cephalon-engine-appmodel-builtinblueprints-tryresolve-system-string-cephalon-abstractions-appmodel-appblueprint): `Methods` on `BuiltInBlueprints` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=TryResolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Attempts to resolve a blueprint identifier, display name, or alias.
   - `bool TryResolve(string value, out AppBlueprint blueprint)`
 - [TryResolve](cephalon-engine.md#member-m-cephalon-engine-patterns-builtinpatterns-tryresolve-system-string-cephalon-abstractions-patterns-patterndescriptor): `Methods` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=TryResolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
+  - Attempts to resolve a pattern identifier, display name, or alias.
   - `bool TryResolve(string value, out PatternDescriptor pattern)`
 - [TryResolve](cephalon-engine.md#member-m-cephalon-engine-technologies-builtintechnologies-tryresolve-system-string-cephalon-abstractions-technologies-technologydescriptor): `Methods` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=TryResolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
+  - Attempts to resolve a technology identifier, display name, or alias.
   - `bool TryResolve(string value, out TechnologyDescriptor technology)`
 - [TryResolve](cephalon-engine.md#member-m-cephalon-engine-transports-builtintransports-tryresolve-system-string-cephalon-abstractions-transports-transportdescriptor): `Methods` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=TryResolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
+  - Attempts to resolve a transport identifier, display name, or alias.
   - `bool TryResolve(string value, out TransportDescriptor transport)`
 - [Type](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-type): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Type&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared signature type.
@@ -1865,8 +2206,10 @@ Browse the published API surface by public member.
 ## U
 
 - [Unhealthy](cephalon-abstractions.md#member-f-cephalon-abstractions-health-healthstate-unhealthy): `Fields` on `HealthState` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unhealthy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
+  - Indicates the dependency is unhealthy.
   - `const HealthState Unhealthy`
 - [Unhealthy](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimehealthstate-unhealthy): `Fields` on `RuntimeHealthState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Unhealthy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The runtime is not healthy enough to serve traffic.
   - `const RuntimeHealthState Unhealthy`
 - [UseBlueprint](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-useblueprint-cephalon-abstractions-appmodel-appblueprint): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseBlueprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Selects the base application blueprint that should shape the runtime.
@@ -1899,6 +2242,7 @@ Browse the published API surface by public member.
   - Gets the verification outcome summary for this signature.
   - `string VerificationReason { get; }`
 - [Version](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-version): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Version&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Gets the declared module version, when one is available.
   - `string Version { get; }`
 - [Version](cephalon-engine.md#member-p-cephalon-engine-manifest-modulemanifest-version): `Properties` on `ModuleManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Version&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the effective version reported for the module.
@@ -1907,11 +2251,13 @@ Browse the published API surface by public member.
   - Gets the package version declared by the package manifest, when available.
   - `string Version { get; }`
 - [VerticalSliceOrganization](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-verticalsliceorganization): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=VerticalSliceOrganization&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
+  - Gets the vertical-slice organization pattern.
   - `PatternDescriptor VerticalSliceOrganization { get; }`
 
 ## W
 
 - [WebSocket](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-websocket): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=WebSocket&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
+  - Gets the built-in WebSocket transport descriptor.
   - `TransportDescriptor WebSocket { get; }`
 - [WriteAsync](cephalon-scaffolding.md#member-m-cephalon-scaffolding-io-filesystemscaffoldwriter-writeasync-system-string-cephalon-scaffolding-generation-renderedscaffold-system-boolean-system-threading-cancellationtoken): `Methods` on `FileSystemScaffoldWriter` in `Cephalon.Scaffolding.IO` (`Cephalon.Scaffolding`) [Browse](browse.html?q=WriteAsync&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.IO&scope=members)
   - Writes the supplied scaffold to disk.
@@ -1919,14 +2265,6 @@ Browse the published API surface by public member.
 - [WriteAsync](cephalon-referencedocs.md#member-m-cephalon-referencedocs-io-referencedocswriter-writeasync-cephalon-referencedocs-generation-renderedreferencedocs-system-boolean-system-threading-cancellationtoken): `Methods` on `ReferenceDocsWriter` in `Cephalon.ReferenceDocs.IO` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=WriteAsync&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.IO&scope=members)
   - Writes the supplied reference docs output to disk.
   - `Task WriteAsync(RenderedReferenceDocs rendered, bool overwrite, CancellationToken cancellationToken)`
-- [WriteTo](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-writeto-google-protobuf-codedoutputstream): `Methods` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=WriteTo&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `void WriteTo(CodedOutputStream output)`
-- [WriteTo](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-writeto-google-protobuf-codedoutputstream): `Methods` on `HelloRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=WriteTo&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `void WriteTo(CodedOutputStream output)`
-- [WriteTo](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-writeto-google-protobuf-codedoutputstream): `Methods` on `PrincipleReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=WriteTo&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `void WriteTo(CodedOutputStream output)`
-- [WriteTo](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-writeto-google-protobuf-codedoutputstream): `Methods` on `PrinciplesRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=WriteTo&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
-  - `void WriteTo(CodedOutputStream output)`
 
 ## X
 
