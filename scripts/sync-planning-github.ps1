@@ -1211,6 +1211,26 @@ function Normalize-ChildIssueBody {
     return [regex]::Replace($normalizedBody, '(?m)^Item type:\s+\*\*Draft item\*\*$', 'Item type: **Issue**')
 }
 
+function Get-UnmanagedIssueBody {
+    param([AllowNull()][string]$Body)
+
+    $normalizedBody = Normalize-Text -Value $Body
+    if ([string]::IsNullOrWhiteSpace($normalizedBody)) {
+        return $normalizedBody
+    }
+
+    $strippedBody = $normalizedBody
+    foreach ($key in @("planning-links", "child-tasks")) {
+        $startMarker = "<!-- planning-sync:section=${Key}:start -->"
+        $endMarker = "<!-- planning-sync:section=${Key}:end -->"
+        $pattern = "(?ms)$([regex]::Escape($startMarker)).*?$([regex]::Escape($endMarker))"
+        $strippedBody = [regex]::Replace($strippedBody, $pattern, "")
+    }
+
+    $strippedBody = [regex]::Replace($strippedBody, "<!-- planning-sync:key=[^>]+ -->", "")
+    return $strippedBody.Trim()
+}
+
 function Render-MilestoneDescription {
     param(
         [Parameter(Mandatory = $true)]$Phase,
@@ -2248,7 +2268,7 @@ function Test-RequiresBenchmarkValidation {
         [AllowNull()][string]$Body
     )
 
-    $normalized = ((Normalize-Text -Value $Title) + "`n" + (Normalize-Text -Value $Body)).ToLowerInvariant()
+    $normalized = ((Normalize-Text -Value $Title) + "`n" + (Get-UnmanagedIssueBody -Body $Body)).ToLowerInvariant()
     foreach ($keyword in @("benchmark", "guardrail", "performance", "hot path", "cephalon.benchmarks")) {
         if ($normalized.Contains($keyword)) {
             return $true
@@ -2306,26 +2326,26 @@ function Sync-ProjectValidationFields {
     $desiredTest = Get-DesiredTestFieldValue -Title $Title -Body $Body -State $State
     switch ($desiredTest) {
         "Passed" {
-            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Test" -DesiredValue $desiredTest -MutableCurrentValues @("Needed", "Running")
+            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Test" -DesiredValue $desiredTest -MutableCurrentValues @("Needed", "Running", "Failed")
         }
         "Needed" {
-            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Test" -DesiredValue $desiredTest -MutableCurrentValues @("N/A")
+            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Test" -DesiredValue $desiredTest -MutableCurrentValues @("N/A", "Passed", "Failed")
         }
         "N/A" {
-            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Test" -DesiredValue $desiredTest -MutableCurrentValues @("Needed")
+            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Test" -DesiredValue $desiredTest -MutableCurrentValues @("Needed", "Running", "Passed", "Failed")
         }
     }
 
     $desiredBenchmark = Get-DesiredBenchmarkFieldValue -Title $Title -Body $Body -State $State
     switch ($desiredBenchmark) {
         "Passed" {
-            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Benchmark" -DesiredValue $desiredBenchmark -MutableCurrentValues @("Needed", "Running")
+            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Benchmark" -DesiredValue $desiredBenchmark -MutableCurrentValues @("Needed", "Running", "Regressed")
         }
         "Needed" {
-            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Benchmark" -DesiredValue $desiredBenchmark -MutableCurrentValues @("N/A")
+            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Benchmark" -DesiredValue $desiredBenchmark -MutableCurrentValues @("N/A", "Passed", "Regressed")
         }
         "N/A" {
-            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Benchmark" -DesiredValue $desiredBenchmark -MutableCurrentValues @("Needed")
+            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Benchmark" -DesiredValue $desiredBenchmark -MutableCurrentValues @("Needed", "Running", "Passed", "Regressed")
         }
     }
 }
