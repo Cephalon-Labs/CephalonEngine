@@ -895,6 +895,8 @@ function Render-PlanningLinksSection {
         [string]$IssueTypeName,
         [string]$Assignee,
         [string]$EstimateText,
+        [string]$TestStatus,
+        [string]$BenchmarkStatus,
         [string]$ParentTitle,
         [string]$ParentUrl
     )
@@ -943,6 +945,14 @@ function Render-PlanningLinksSection {
 
     if (-not [string]::IsNullOrWhiteSpace($EstimateText)) {
         $lines += "- Time / estimate recorded on board: $EstimateText"
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($TestStatus)) {
+        $lines += "- Test gate: $TestStatus"
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($BenchmarkStatus)) {
+        $lines += "- Benchmark gate: $BenchmarkStatus"
     }
 
     $lines += "<!-- planning-sync:section=planning-links:end -->"
@@ -1054,7 +1064,9 @@ function Render-SyncedIssueBody {
         [string]$Status,
         [string]$IssueTypeName,
         [string]$Assignee,
-        [string]$EstimateText
+        [string]$EstimateText,
+        [string]$TestStatus,
+        [string]$BenchmarkStatus
     )
 
     $lines = @((Get-SyncMarker -Key $Spec.SyncKey))
@@ -1073,7 +1085,7 @@ function Render-SyncedIssueBody {
     $lines += ""
     $lines += $Spec.ContentBody
     $lines += ""
-    $lines += (Render-PlanningLinksSection -BacklogUrl $BacklogUrl -RoadmapUrl $RoadmapUrl -BoardUrl $BoardUrl -MilestoneTitle $MilestoneTitle -MilestoneUrl $MilestoneUrl -IterationTitle $IterationTitle -Status $Status -IssueTypeName $IssueTypeName -Assignee $Assignee -EstimateText $EstimateText)
+    $lines += (Render-PlanningLinksSection -BacklogUrl $BacklogUrl -RoadmapUrl $RoadmapUrl -BoardUrl $BoardUrl -MilestoneTitle $MilestoneTitle -MilestoneUrl $MilestoneUrl -IterationTitle $IterationTitle -Status $Status -IssueTypeName $IssueTypeName -Assignee $Assignee -EstimateText $EstimateText -TestStatus $TestStatus -BenchmarkStatus $BenchmarkStatus)
 
     return ($lines -join "`n").Trim()
 }
@@ -1097,10 +1109,73 @@ function Get-IssueWebUrl {
     return [string]$Issue.url
 }
 
+function Get-ManagedProjectSingleSelectFields {
+    return @(
+        [pscustomobject]@{
+            Name = "Test"
+            PropertyName = "test"
+            Options = @(
+                [pscustomobject]@{ Name = "N/A"; Description = "No explicit automated test gate is required for this planning item." }
+                [pscustomobject]@{ Name = "Needed"; Description = "Relevant automated tests should be added or validated before completion." }
+                [pscustomobject]@{ Name = "Running"; Description = "Automated test validation is actively in progress." }
+                [pscustomobject]@{ Name = "Passed"; Description = "Relevant automated tests passed for this work item." }
+                [pscustomobject]@{ Name = "Failed"; Description = "Relevant automated tests failed and need follow-up." }
+            )
+        }
+        [pscustomobject]@{
+            Name = "Benchmark"
+            PropertyName = "benchmark"
+            Options = @(
+                [pscustomobject]@{ Name = "N/A"; Description = "No benchmark or guardrail validation is required for this planning item." }
+                [pscustomobject]@{ Name = "Needed"; Description = "Benchmark or guardrail validation should happen before completion." }
+                [pscustomobject]@{ Name = "Running"; Description = "Benchmark or performance validation is actively in progress." }
+                [pscustomobject]@{ Name = "Passed"; Description = "Benchmark or guardrail validation passed for this work item." }
+                [pscustomobject]@{ Name = "Regressed"; Description = "Benchmark validation found a regression that needs follow-up." }
+            )
+        }
+    )
+}
+
+function Ensure-ManagedProjectSingleSelectFields {
+    param(
+        [Parameter(Mandatory = $true)]$ProjectView,
+        [Parameter(Mandatory = $true)][string]$Owner,
+        [Parameter(Mandatory = $true)][int]$ProjectNumber
+    )
+
+    $createdAny = $false
+    foreach ($spec in Get-ManagedProjectSingleSelectFields) {
+        $existingField = $ProjectView.fields.nodes | Where-Object { $_.name -eq $spec.Name } | Select-Object -First 1
+        if ($null -eq $existingField) {
+            Write-Host "Creating project field '$($spec.Name)'..."
+            Invoke-GhNoJson -Arguments @(
+                "project", "field-create", $ProjectNumber.ToString(),
+                "--owner", $Owner,
+                "--name", $spec.Name,
+                "--data-type", "SINGLE_SELECT",
+                "--single-select-options", (($spec.Options | ForEach-Object { $_.Name }) -join ",")
+            )
+            $createdAny = $true
+            continue
+        }
+
+        if ($existingField.PSObject.Properties["options"] -and $null -ne $existingField.options) {
+            $existingOptionNames = @($existingField.options | ForEach-Object { [string]$_.name })
+            $desiredOptionNames = @($spec.Options | ForEach-Object { [string]$_.Name })
+            if (([string]::Join("|", $existingOptionNames)) -ne ([string]::Join("|", $desiredOptionNames))) {
+                Write-Warning "Project field '$($spec.Name)' already exists with a different option set. The sync script will preserve the current field but may not be able to apply every default value."
+            }
+        }
+    }
+
+    return $createdAny
+}
+
 function Get-ProjectContext {
     param(
         [Parameter(Mandatory = $true)][string]$Owner,
-        [Parameter(Mandatory = $true)][int]$ProjectNumber
+        [Parameter(Mandatory = $true)][int]$ProjectNumber,
+        [switch]$SkipManagedFieldInitialization
     )
 
     $orgProjectQuery = @'
@@ -1218,6 +1293,13 @@ query($owner: String!, $number: Int!) {
         throw "Unable to load project $Owner/$ProjectNumber."
     }
 
+    if (-not $SkipManagedFieldInitialization) {
+        $createdManagedFields = Ensure-ManagedProjectSingleSelectFields -ProjectView $projectView -Owner $Owner -ProjectNumber $ProjectNumber
+        if ($createdManagedFields) {
+            return Get-ProjectContext -Owner $Owner -ProjectNumber $ProjectNumber -SkipManagedFieldInitialization
+        }
+    }
+
     $items = Invoke-GhJson -Arguments @("project", "item-list", $ProjectNumber.ToString(), "--owner", $Owner, "-L", "200", "--format", "json")
 
     $statusField = $projectView.fields.nodes | Where-Object { $_.name -eq "Status" } | Select-Object -First 1
@@ -1227,6 +1309,27 @@ query($owner: String!, $number: Int!) {
 
     $estimateField = $projectView.fields.nodes | Where-Object { $_.name -eq "Estimate" } | Select-Object -First 1
     $iterationField = $projectView.fields.nodes | Where-Object { $_.name -eq "Iteration" } | Select-Object -First 1
+    $managedFieldContexts = @{}
+    foreach ($managedField in Get-ManagedProjectSingleSelectFields) {
+        $existingField = $projectView.fields.nodes | Where-Object { $_.name -eq $managedField.Name } | Select-Object -First 1
+        if ($null -eq $existingField) {
+            continue
+        }
+
+        $optionIds = @{}
+        if ($existingField.PSObject.Properties["options"] -and $null -ne $existingField.options) {
+            foreach ($option in $existingField.options) {
+                $optionIds[[string]$option.name] = $option.id
+            }
+        }
+
+        $managedFieldContexts[$managedField.Name] = [pscustomobject]@{
+            Name = $managedField.Name
+            PropertyName = $managedField.PropertyName
+            FieldId = $existingField.id
+            OptionIds = $optionIds
+        }
+    }
 
     $statusOptions = @{}
     foreach ($option in $statusField.options) {
@@ -1265,6 +1368,7 @@ query($owner: String!, $number: Int!) {
         IterationFieldName = if ($null -ne $iterationField) { $iterationField.name } else { $null }
         IterationIdsByTitle = $iterationIdsByTitle
         IterationConfigurations = if ($null -ne $iterationField -and $null -ne $iterationField.configuration) { @($iterationField.configuration.iterations) } else { @() }
+        ManagedSingleSelectFields = $managedFieldContexts
     }
 }
 
@@ -1562,6 +1666,211 @@ function Set-ProjectIteration {
         "--field-id", $ProjectContext.IterationFieldId,
         "--iteration-id", $ProjectContext.IterationIdsByTitle[$IterationTitle]
     )
+}
+
+function Get-ProjectManagedSingleSelectValue {
+    param(
+        $ProjectItem,
+        [AllowNull()][string]$PropertyName
+    )
+
+    if ($null -eq $ProjectItem -or [string]::IsNullOrWhiteSpace($PropertyName)) {
+        return $null
+    }
+
+    $property = $ProjectItem.PSObject.Properties[$PropertyName]
+    if ($null -eq $property -or $null -eq $property.Value) {
+        return $null
+    }
+
+    if ($property.Value -is [string]) {
+        return [string]$property.Value
+    }
+
+    if ($property.Value.PSObject.Properties["name"] -and $null -ne $property.Value.name) {
+        return [string]$property.Value.name
+    }
+
+    return [string]$property.Value
+}
+
+function Set-ProjectManagedSingleSelectValue {
+    param(
+        [Parameter(Mandatory = $true)]$ProjectContext,
+        [Parameter(Mandatory = $true)]$ProjectItem,
+        [Parameter(Mandatory = $true)][string]$FieldName,
+        [AllowNull()][string]$DesiredValue,
+        [string[]]$MutableCurrentValues = @()
+    )
+
+    if ([string]::IsNullOrWhiteSpace($DesiredValue)) {
+        return
+    }
+
+    if (-not $ProjectContext.ManagedSingleSelectFields.ContainsKey($FieldName)) {
+        return
+    }
+
+    $fieldContext = $ProjectContext.ManagedSingleSelectFields[$FieldName]
+    if ($null -eq $fieldContext -or [string]::IsNullOrWhiteSpace([string]$fieldContext.FieldId)) {
+        return
+    }
+
+    if (-not $fieldContext.OptionIds.ContainsKey($DesiredValue)) {
+        Write-Warning "Project field '$FieldName' does not contain option '$DesiredValue'."
+        return
+    }
+
+    $currentValue = Get-ProjectManagedSingleSelectValue -ProjectItem $ProjectItem -PropertyName $fieldContext.PropertyName
+    if ($currentValue -eq $DesiredValue) {
+        return
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($currentValue) -and $MutableCurrentValues.Count -gt 0 -and ($MutableCurrentValues -notcontains $currentValue)) {
+        return
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($currentValue) -and $MutableCurrentValues.Count -eq 0) {
+        return
+    }
+
+    Invoke-GhNoJson -Arguments @(
+        "project", "item-edit",
+        "--id", $ProjectItem.id,
+        "--project-id", $ProjectContext.ProjectId,
+        "--field-id", $fieldContext.FieldId,
+        "--single-select-option-id", $fieldContext.OptionIds[$DesiredValue]
+    )
+
+    $ProjectItem | Add-Member -NotePropertyName $fieldContext.PropertyName -NotePropertyValue $DesiredValue -Force
+}
+
+function Test-IsDocumentationOnlyWorkItem {
+    param([AllowNull()][string]$Title)
+
+    if ([string]::IsNullOrWhiteSpace($Title)) {
+        return $false
+    }
+
+    $normalized = $Title.ToLowerInvariant()
+    return $normalized.StartsWith("document ") -or
+        $normalized.Contains("documentation") -or
+        $normalized.Contains(" guide") -or
+        $normalized.Contains("guidance") -or
+        $normalized.Contains("readme")
+}
+
+function Test-RequiresBenchmarkValidation {
+    param(
+        [AllowNull()][string]$Title,
+        [AllowNull()][string]$Body
+    )
+
+    $normalized = ((Normalize-Text -Value $Title) + "`n" + (Normalize-Text -Value $Body)).ToLowerInvariant()
+    foreach ($keyword in @("benchmark", "guardrail", "performance", "hot path", "cephalon.benchmarks")) {
+        if ($normalized.Contains($keyword)) {
+            return $true
+        }
+    }
+
+    return $false
+}
+
+function Get-DesiredTestFieldValue {
+    param(
+        [AllowNull()][string]$Title,
+        [AllowNull()][string]$Body,
+        [AllowNull()][string]$State
+    )
+
+    if (Test-IsDocumentationOnlyWorkItem -Title $Title) {
+        return "N/A"
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($State) -and $State.ToLowerInvariant() -eq "closed") {
+        return "Passed"
+    }
+
+    return "Needed"
+}
+
+function Get-DesiredBenchmarkFieldValue {
+    param(
+        [AllowNull()][string]$Title,
+        [AllowNull()][string]$Body,
+        [AllowNull()][string]$State
+    )
+
+    if (-not (Test-RequiresBenchmarkValidation -Title $Title -Body $Body)) {
+        return "N/A"
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($State) -and $State.ToLowerInvariant() -eq "closed") {
+        return "Passed"
+    }
+
+    return "Needed"
+}
+
+function Sync-ProjectValidationFields {
+    param(
+        [Parameter(Mandatory = $true)]$ProjectContext,
+        [Parameter(Mandatory = $true)]$ProjectItem,
+        [AllowNull()][string]$Title,
+        [AllowNull()][string]$Body,
+        [AllowNull()][string]$State
+    )
+
+    $desiredTest = Get-DesiredTestFieldValue -Title $Title -Body $Body -State $State
+    switch ($desiredTest) {
+        "Passed" {
+            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Test" -DesiredValue $desiredTest -MutableCurrentValues @("Needed", "Running")
+        }
+        "Needed" {
+            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Test" -DesiredValue $desiredTest -MutableCurrentValues @("N/A")
+        }
+        "N/A" {
+            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Test" -DesiredValue $desiredTest -MutableCurrentValues @("Needed")
+        }
+    }
+
+    $desiredBenchmark = Get-DesiredBenchmarkFieldValue -Title $Title -Body $Body -State $State
+    switch ($desiredBenchmark) {
+        "Passed" {
+            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Benchmark" -DesiredValue $desiredBenchmark -MutableCurrentValues @("Needed", "Running")
+        }
+        "Needed" {
+            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Benchmark" -DesiredValue $desiredBenchmark -MutableCurrentValues @("N/A")
+        }
+        "N/A" {
+            Set-ProjectManagedSingleSelectValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Benchmark" -DesiredValue $desiredBenchmark -MutableCurrentValues @("Needed")
+        }
+    }
+}
+
+function Get-EffectiveValidationFieldValue {
+    param(
+        $ProjectContext,
+        $ProjectItem,
+        [Parameter(Mandatory = $true)][string]$FieldName,
+        [AllowNull()][string]$Title,
+        [AllowNull()][string]$Body,
+        [AllowNull()][string]$State
+    )
+
+    if ($null -ne $ProjectContext -and $ProjectContext.ManagedSingleSelectFields.ContainsKey($FieldName)) {
+        $propertyName = [string]$ProjectContext.ManagedSingleSelectFields[$FieldName].PropertyName
+        $currentValue = Get-ProjectManagedSingleSelectValue -ProjectItem $ProjectItem -PropertyName $propertyName
+        if (-not [string]::IsNullOrWhiteSpace($currentValue)) {
+            return $currentValue
+        }
+    }
+
+    switch ($FieldName) {
+        "Test" { return Get-DesiredTestFieldValue -Title $Title -Body $Body -State $State }
+        "Benchmark" { return Get-DesiredBenchmarkFieldValue -Title $Title -Body $Body -State $State }
+        default { return $null }
+    }
 }
 
 function Get-ProjectItemEstimateValue {
@@ -2035,7 +2344,10 @@ foreach ($desiredIssue in $desiredIssues) {
         ""
     }
 
-    $renderedBody = Render-SyncedIssueBody -Spec $desiredIssue -RepositoryContext $repositoryContext -BacklogUrl $topLevelContext.BacklogUrl -RoadmapUrl $topLevelContext.RoadmapUrl -BoardUrl $topLevelContext.BoardUrl -MilestoneTitle $topLevelContext.MilestoneTitle -MilestoneUrl $topLevelContext.MilestoneUrl -IterationTitle $topLevelContext.IterationTitle -Status $statusText -IssueTypeName (Get-TopLevelIssueTypeName) -Assignee $DefaultAssignee -EstimateText $estimateText
+    $testStatus = Get-EffectiveValidationFieldValue -ProjectContext $projectContext -ProjectItem $currentProjectItem -FieldName "Test" -Title $desiredIssue.Title -Body $desiredIssue.ContentBody -State $desiredIssue.State
+    $benchmarkStatus = Get-EffectiveValidationFieldValue -ProjectContext $projectContext -ProjectItem $currentProjectItem -FieldName "Benchmark" -Title $desiredIssue.Title -Body $desiredIssue.ContentBody -State $desiredIssue.State
+
+    $renderedBody = Render-SyncedIssueBody -Spec $desiredIssue -RepositoryContext $repositoryContext -BacklogUrl $topLevelContext.BacklogUrl -RoadmapUrl $topLevelContext.RoadmapUrl -BoardUrl $topLevelContext.BoardUrl -MilestoneTitle $topLevelContext.MilestoneTitle -MilestoneUrl $topLevelContext.MilestoneUrl -IterationTitle $topLevelContext.IterationTitle -Status $statusText -IssueTypeName (Get-TopLevelIssueTypeName) -Assignee $DefaultAssignee -EstimateText $estimateText -TestStatus $testStatus -BenchmarkStatus $benchmarkStatus
 
     if ($null -eq $existingIssue) {
         Write-Host "Creating issue '$($desiredIssue.Title)'..."
@@ -2136,6 +2448,8 @@ if ($null -ne $projectContext) {
                 Set-ProjectEstimate -ProjectContext $projectContext -ProjectItem $projectItem -Estimate $parentEstimateRollups[[int]$issue.number]
             }
         }
+
+        Sync-ProjectValidationFields -ProjectContext $projectContext -ProjectItem $projectItem -Title $desired.Title -Body $desired.ContentBody -State $desired.State
     }
 
     $projectContext = Get-ProjectContext -Owner $ProjectOwner -ProjectNumber $ProjectNumber
@@ -2197,6 +2511,8 @@ foreach ($issue in $issuesByNumber.Values) {
         if (-not [string]::IsNullOrWhiteSpace($metadata.IterationTitle)) {
             Set-ProjectIteration -ProjectContext $projectContext -ProjectItem $projectItem -IterationTitle $metadata.IterationTitle
         }
+
+        Sync-ProjectValidationFields -ProjectContext $projectContext -ProjectItem $projectItem -Title $issue.title -Body $issue.body -State $(if ($issue.state -eq "CLOSED") { "closed" } else { "open" })
     }
 }
 
@@ -2222,7 +2538,9 @@ foreach ($syncEntry in $syncedIssues.GetEnumerator()) {
 
     $statusText = if (-not [string]::IsNullOrWhiteSpace((Get-ProjectItemStatusValue -ProjectItem $projectItem))) { Get-ProjectItemStatusValue -ProjectItem $projectItem } elseif ($issue.state -eq "CLOSED") { "Done" } else { "Todo" }
     $estimateText = if ($null -ne (Get-ProjectItemEstimateValue -ProjectItem $projectItem)) { Format-EstimateText -Estimate (Get-ProjectItemEstimateValue -ProjectItem $projectItem) } else { "" }
-    $renderedBody = Render-SyncedIssueBody -Spec $desired -RepositoryContext $repositoryContext -BacklogUrl $topLevelContext.BacklogUrl -RoadmapUrl $topLevelContext.RoadmapUrl -BoardUrl $topLevelContext.BoardUrl -MilestoneTitle $topLevelContext.MilestoneTitle -MilestoneUrl $topLevelContext.MilestoneUrl -IterationTitle $(if (-not [string]::IsNullOrWhiteSpace((Get-ProjectItemIterationTitle -ProjectItem $projectItem))) { Get-ProjectItemIterationTitle -ProjectItem $projectItem } else { $topLevelContext.IterationTitle }) -Status $statusText -IssueTypeName (Get-TopLevelIssueTypeName) -Assignee $DefaultAssignee -EstimateText $estimateText
+    $testStatus = Get-EffectiveValidationFieldValue -ProjectContext $projectContext -ProjectItem $projectItem -FieldName "Test" -Title $desired.Title -Body $desired.ContentBody -State $desired.State
+    $benchmarkStatus = Get-EffectiveValidationFieldValue -ProjectContext $projectContext -ProjectItem $projectItem -FieldName "Benchmark" -Title $desired.Title -Body $desired.ContentBody -State $desired.State
+    $renderedBody = Render-SyncedIssueBody -Spec $desired -RepositoryContext $repositoryContext -BacklogUrl $topLevelContext.BacklogUrl -RoadmapUrl $topLevelContext.RoadmapUrl -BoardUrl $topLevelContext.BoardUrl -MilestoneTitle $topLevelContext.MilestoneTitle -MilestoneUrl $topLevelContext.MilestoneUrl -IterationTitle $(if (-not [string]::IsNullOrWhiteSpace((Get-ProjectItemIterationTitle -ProjectItem $projectItem))) { Get-ProjectItemIterationTitle -ProjectItem $projectItem } else { $topLevelContext.IterationTitle }) -Status $statusText -IssueTypeName (Get-TopLevelIssueTypeName) -Assignee $DefaultAssignee -EstimateText $estimateText -TestStatus $testStatus -BenchmarkStatus $benchmarkStatus
 
     if ((Normalize-Text -Value $liveIssue.body) -ne (Normalize-Text -Value $renderedBody)) {
         Write-Host "Refreshing planning links for issue #$($issue.number) '$($issue.title)'..."
@@ -2255,7 +2573,7 @@ foreach ($issue in $issuesByNumber.Values) {
     }
 
     $childContext = Get-ChildPlanningContext -ParentIssue $parentIssue -ParentDesired $parentDesired -RepositoryContext $repositoryContext -PhaseMilestones $phaseMilestones -BoardUrl $boardUrl
-    $planningSection = Render-PlanningLinksSection -BacklogUrl $childContext.BacklogUrl -RoadmapUrl $childContext.RoadmapUrl -BoardUrl $childContext.BoardUrl -MilestoneTitle $childContext.MilestoneTitle -MilestoneUrl $childContext.MilestoneUrl -IterationTitle $(if (-not [string]::IsNullOrWhiteSpace((Get-ProjectItemIterationTitle -ProjectItem $projectItem))) { Get-ProjectItemIterationTitle -ProjectItem $projectItem } else { $metadata.IterationTitle }) -Status $(if (-not [string]::IsNullOrWhiteSpace((Get-ProjectItemStatusValue -ProjectItem $projectItem))) { Get-ProjectItemStatusValue -ProjectItem $projectItem } elseif ($issue.state -eq "CLOSED") { "Done" } else { "Todo" }) -IssueTypeName (Get-ChildIssueTypeName) -Assignee $DefaultAssignee -EstimateText $(if ($null -ne (Get-ProjectItemEstimateValue -ProjectItem $projectItem)) { Format-EstimateText -Estimate (Get-ProjectItemEstimateValue -ProjectItem $projectItem) } elseif ($null -ne $metadata.Estimate) { Format-EstimateText -Estimate $metadata.Estimate } else { "" }) -ParentTitle $childContext.ParentTitle -ParentUrl $childContext.ParentUrl
+    $planningSection = Render-PlanningLinksSection -BacklogUrl $childContext.BacklogUrl -RoadmapUrl $childContext.RoadmapUrl -BoardUrl $childContext.BoardUrl -MilestoneTitle $childContext.MilestoneTitle -MilestoneUrl $childContext.MilestoneUrl -IterationTitle $(if (-not [string]::IsNullOrWhiteSpace((Get-ProjectItemIterationTitle -ProjectItem $projectItem))) { Get-ProjectItemIterationTitle -ProjectItem $projectItem } else { $metadata.IterationTitle }) -Status $(if (-not [string]::IsNullOrWhiteSpace((Get-ProjectItemStatusValue -ProjectItem $projectItem))) { Get-ProjectItemStatusValue -ProjectItem $projectItem } elseif ($issue.state -eq "CLOSED") { "Done" } else { "Todo" }) -IssueTypeName (Get-ChildIssueTypeName) -Assignee $DefaultAssignee -EstimateText $(if ($null -ne (Get-ProjectItemEstimateValue -ProjectItem $projectItem)) { Format-EstimateText -Estimate (Get-ProjectItemEstimateValue -ProjectItem $projectItem) } elseif ($null -ne $metadata.Estimate) { Format-EstimateText -Estimate $metadata.Estimate } else { "" }) -TestStatus (Get-EffectiveValidationFieldValue -ProjectContext $projectContext -ProjectItem $projectItem -FieldName "Test" -Title $issue.title -Body $issue.body -State $(if ($issue.state -eq "CLOSED") { "closed" } else { "open" })) -BenchmarkStatus (Get-EffectiveValidationFieldValue -ProjectContext $projectContext -ProjectItem $projectItem -FieldName "Benchmark" -Title $issue.title -Body $issue.body -State $(if ($issue.state -eq "CLOSED") { "closed" } else { "open" })) -ParentTitle $childContext.ParentTitle -ParentUrl $childContext.ParentUrl
     $baseBody = Normalize-ChildIssueBody -Body $liveIssue.body
     $renderedBody = Upsert-ManagedSection -Body $baseBody -Key "planning-links" -RenderedSection $planningSection
     if ((Normalize-Text -Value $liveIssue.body) -ne (Normalize-Text -Value $renderedBody)) {
