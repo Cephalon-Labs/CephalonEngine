@@ -126,6 +126,7 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.Eventing",
                 "Cephalon.Observability",
                 "Cephalon.Observability.HttpDependencies",
+                "Cephalon.Observability.RedisDependencies",
                 "Cephalon.Observability.OpenTelemetry",
                 "Cephalon.ReferenceDocs",
                 "Cephalon.Retrieval",
@@ -161,6 +162,32 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.True(
             missingMemberSummaries.Length == 0,
             CreateMissingSummaryMessage("public members", missingMemberSummaries));
+    }
+
+    [Fact]
+    public void GenerateDefaultCatalogIncludesCurrentShippedHostCompanions()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-default-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration());
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-aspnetcore-graphql.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-redisdependencies.md");
+
+        var manifest = Assert.Single(rendered.Files, file => file.Path == "reference-manifest.json");
+        using var manifestDocument = JsonDocument.Parse(manifest.Contents);
+        var assemblies = manifestDocument.RootElement.GetProperty("Assemblies").EnumerateArray().ToArray();
+
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.AspNetCore.GraphQL", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.RedisDependencies", StringComparison.Ordinal));
     }
 
     [Fact]

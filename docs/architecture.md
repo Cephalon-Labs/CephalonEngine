@@ -104,6 +104,8 @@ Companion adapter packages can extend that host with additional transport surfac
 
 `Cephalon.Observability.HttpDependencies` is the optional external API dependency-health companion package. It turns configured HTTP upstream probes into `IDependencyHealthContributor` data without pushing provider-specific network checks into `Cephalon.Engine`.
 
+`Cephalon.Observability.RedisDependencies` is the optional Redis and cache dependency-health companion package. It turns configured Redis `PING` probes, optional authentication, and logical database selection into `IDependencyHealthContributor` data without pushing Redis-specific socket logic into `Cephalon.Engine`.
+
 `Cephalon.Observability.OpenTelemetry` is the optional exporter companion package. It takes the shared `Engine:Observability:Telemetry` contract and turns it into OTLP registration for logs, metrics, and traces without pushing exporter dependencies back into the engine or the baseline observability package.
 
 `Cephalon.Scaffolding` is the adoption companion package. It turns `AppProfile.Scaffold` into concrete solution, project, file, and folder output so future CLIs or templates do not need to re-encode blueprint rules.
@@ -158,6 +160,9 @@ Companion adapter packages:
 - `src/Cephalon.Observability.HttpDependencies/Configuration` -> `Cephalon.Observability.HttpDependencies.Configuration`
 - `src/Cephalon.Observability.HttpDependencies/Hosting` -> `Cephalon.Observability.HttpDependencies.Hosting`
 - `src/Cephalon.Observability.HttpDependencies/Services` -> `Cephalon.Observability.HttpDependencies.Services`
+- `src/Cephalon.Observability.RedisDependencies/Configuration` -> `Cephalon.Observability.RedisDependencies.Configuration`
+- `src/Cephalon.Observability.RedisDependencies/Hosting` -> `Cephalon.Observability.RedisDependencies.Hosting`
+- `src/Cephalon.Observability.RedisDependencies/Services` -> `Cephalon.Observability.RedisDependencies.Services`
 - `src/Cephalon.Observability.OpenTelemetry/Hosting` -> `Cephalon.Observability.OpenTelemetry.Hosting`
 - `src/Cephalon.Cli/Commands` -> `Cephalon.Cli.Commands`
 - `src/Cephalon.Cli/Console` -> `Cephalon.Cli.Console`
@@ -218,6 +223,7 @@ Companion adapter packages:
 - engine observability conventions can be tuned through `Engine:Observability`
 - engine telemetry export guidance can be tuned through `Engine:Observability:Telemetry`
 - hosts can turn external HTTP upstreams into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Http` and `Cephalon.Observability.HttpDependencies`
+- hosts can turn Redis and cache endpoints into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Redis` and `Cephalon.Observability.RedisDependencies`
 - hosts can turn that telemetry contract into a supported OTLP path through `Cephalon.Observability.OpenTelemetry`
 - engine trust and capability policy can be tuned through `Engine:Trust`
 - engine trust policy can also allow-list package checksums through `Engine:Trust:AllowedPackageChecksums`
@@ -257,7 +263,7 @@ Companion adapter packages:
 - richer capability metadata and policy
 - startup hooks and lifecycle events
 - event bus / workflow runtime
-- broader provider-specific dependency-health packs, richer diagnostics conventions, and deeper release-validation guidance on top of the shipped HTTP and OpenTelemetry observability companions
+- broader provider-specific dependency-health packs, richer diagnostics conventions, and deeper release-validation guidance on top of the shipped HTTP, Redis, and OpenTelemetry observability companions
 - richer parameterized templates and generators driven by scaffold plans
 - richer localization catalogs and package-provided language packs
 - sustained benchmark coverage for hot engine paths

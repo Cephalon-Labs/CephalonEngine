@@ -133,6 +133,16 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void ObservabilityRedisDependenciesAssemblyExposesOnlyTheDocumentedConfigurationAndRegistrationSurface()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Observability.RedisDependencies.Hosting.RedisDependencyHealthServiceCollectionExtensions).Assembly,
+            typeof(global::Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyDefinition),
+            typeof(global::Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyHealthOptions),
+            typeof(global::Cephalon.Observability.RedisDependencies.Hosting.RedisDependencyHealthServiceCollectionExtensions));
+    }
+
+    [Fact]
     public void AgenticsAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(

@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-01T21:56:56.4597773+00:00",
+  "GeneratedAtUtc": "2026-04-01T22:17:36.9492008+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -25,6 +25,14 @@
       "FileName": "cephalon-aspnetcore.md",
       "NamespaceCount": 8,
       "TypeCount": 12
+    },
+    {
+      "AssemblyName": "Cephalon.AspNetCore.GraphQL",
+      "Category": "Hosts",
+      "Description": "GraphQL transport adapter for ASP.NET Core hosts.",
+      "FileName": "cephalon-aspnetcore-graphql.md",
+      "NamespaceCount": 2,
+      "TypeCount": 2
     },
     {
       "AssemblyName": "Cephalon.AspNetCore.Grpc",
@@ -97,6 +105,14 @@
       "FileName": "cephalon-observability-opentelemetry.md",
       "NamespaceCount": 1,
       "TypeCount": 1
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "Category": "Hosts",
+      "Description": "Redis and cache dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
     },
     {
       "AssemblyName": "Cephalon.ReferenceDocs",
@@ -229,6 +245,20 @@
       "FileName": "cephalon-aspnetcore.md",
       "AnchorId": "namespace-cephalon-aspnetcore-documentation",
       "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.AspNetCore.GraphQL.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore.GraphQL",
+      "FileName": "cephalon-aspnetcore-graphql.md",
+      "AnchorId": "namespace-cephalon-aspnetcore-graphql-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.AspNetCore.GraphQL.Modules",
+      "AssemblyName": "Cephalon.AspNetCore.GraphQL",
+      "FileName": "cephalon-aspnetcore-graphql.md",
+      "AnchorId": "namespace-cephalon-aspnetcore-graphql-modules",
+      "TypeCount": 1
     },
     {
       "NamespaceName": "Cephalon.AspNetCore.Grpc.Contracts.Discovery",
@@ -473,6 +503,20 @@
       "AssemblyName": "Cephalon.Observability.OpenTelemetry",
       "FileName": "cephalon-observability-opentelemetry.md",
       "AnchorId": "namespace-cephalon-observability-opentelemetry-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-redisdependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-redisdependencies-hosting",
       "TypeCount": 1
     },
     {
@@ -1126,6 +1170,21 @@
       }
     },
     {
+      "DisplayName": "GraphQLTransportServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.GraphQL.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore.GraphQL",
+      "FileName": "cephalon-aspnetcore-graphql.md",
+      "AnchorId": "type-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions",
+      "Declaration": "public static class GraphQLTransportServiceCollectionExtensions",
+      "Summary": "Registers the GraphQL ASP.NET Core transport adapter for Cephalon.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 6
+      }
+    },
+    {
       "DisplayName": "GrpcTransportServiceCollectionExtensions",
       "NamespaceName": "Cephalon.AspNetCore.Grpc.Hosting",
       "AssemblyName": "Cephalon.AspNetCore.Grpc",
@@ -1408,6 +1467,21 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IGraphQLModule",
+      "NamespaceName": "Cephalon.AspNetCore.GraphQL.Modules",
+      "AssemblyName": "Cephalon.AspNetCore.GraphQL",
+      "FileName": "cephalon-aspnetcore-graphql.md",
+      "AnchorId": "type-cephalon-aspnetcore-graphql-modules-igraphqlmodule",
+      "Declaration": "public interface IGraphQLModule",
+      "Summary": "Marks a Cephalon module as contributing GraphQL schema or resolver behavior on ASP.NET Core.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 0
       }
     },
     {
@@ -2128,6 +2202,51 @@
         "Fields": 5,
         "Properties": 0,
         "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "RedisDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "type-cephalon-observability-redisdependencies-configuration-redisdependencydefinition",
+      "Declaration": "public sealed class RedisDependencyDefinition",
+      "Summary": "Describes one Redis dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 9,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "RedisDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "type-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions",
+      "Declaration": "public sealed class RedisDependencyHealthOptions",
+      "Summary": "Configures Redis dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "RedisDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "type-cephalon-observability-redisdependencies-hosting-redisdependencyhealthservicecollectionextensions",
+      "Declaration": "public static class RedisDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds Redis dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
       }
     },
     {
@@ -3109,6 +3228,28 @@
       "Summary": "Adds Cephalon\u0027s project-configuration conventions to the generic host builder."
     },
     {
+      "DisplayName": "AddCephalonRedisDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "RedisDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-redisdependencies-hosting-redisdependencyhealthservicecollectionextensions-addcephalonredisdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonRedisDependencyHealth(this IServiceCollection services, Action\u003CRedisDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Redis dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonRedisDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "RedisDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-redisdependencies-hosting-redisdependencyhealthservicecollectionextensions-addcephalonredisdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonRedisDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CRedisDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Redis dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
       "DisplayName": "AddCephalonWorker",
       "Category": "Methods",
       "DeclaringTypeName": "WorkerServiceCollectionExtensions",
@@ -3151,6 +3292,28 @@
       "AnchorId": "member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventing-cephalon-engine-composition-enginebuilder-system-action-cephalon-eventing-configuration-eventingoptions",
       "Signature": "EngineBuilder AddEventing(this EngineBuilder builder, Action\u003CEventingOptions\u003E configure)",
       "Summary": "Adds the eventing runtime pack to the engine."
+    },
+    {
+      "DisplayName": "AddGraphQLTransport",
+      "Category": "Methods",
+      "DeclaringTypeName": "GraphQLTransportServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.GraphQL.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore.GraphQL",
+      "FileName": "cephalon-aspnetcore-graphql.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-addgraphqltransport-microsoft-extensions-dependencyinjection-iservicecollection",
+      "Signature": "IServiceCollection AddGraphQLTransport(this IServiceCollection services)",
+      "Summary": "Adds the GraphQL transport mapper and GraphQL server services to the service collection."
+    },
+    {
+      "DisplayName": "AddGraphQLTransport",
+      "Category": "Methods",
+      "DeclaringTypeName": "GraphQLTransportServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.GraphQL.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore.GraphQL",
+      "FileName": "cephalon-aspnetcore-graphql.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-addgraphqltransport-microsoft-aspnetcore-builder-webapplicationbuilder",
+      "Signature": "WebApplicationBuilder AddGraphQLTransport(this WebApplicationBuilder builder)",
+      "Summary": "Adds the GraphQL transport mapper and GraphQL server services to a \u0060WebApplicationBuilder\u0060."
     },
     {
       "DisplayName": "AddGrpcTransport",
@@ -4022,6 +4185,50 @@
       "Summary": "Gets the build configuration to read from."
     },
     {
+      "DisplayName": "ConfigureGraphQLQuery",
+      "Category": "Methods",
+      "DeclaringTypeName": "GraphQLTransportServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.GraphQL.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore.GraphQL",
+      "FileName": "cephalon-aspnetcore-graphql.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlquery-microsoft-extensions-dependencyinjection-iservicecollection-system-action-hotchocolate-types-iobjecttypedescriptor",
+      "Signature": "IServiceCollection ConfigureGraphQLQuery(this IServiceCollection services, Action\u003CIObjectTypeDescriptor\u003E configure)",
+      "Summary": "Adds fields to the shared GraphQL query root used by Cephalon modules."
+    },
+    {
+      "DisplayName": "ConfigureGraphQLQuery",
+      "Category": "Methods",
+      "DeclaringTypeName": "GraphQLTransportServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.GraphQL.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore.GraphQL",
+      "FileName": "cephalon-aspnetcore-graphql.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlquery-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-hotchocolate-types-iobjecttypedescriptor",
+      "Signature": "WebApplicationBuilder ConfigureGraphQLQuery(this WebApplicationBuilder builder, Action\u003CIObjectTypeDescriptor\u003E configure)",
+      "Summary": "Adds fields to the shared GraphQL query root on a \u0060WebApplicationBuilder\u0060."
+    },
+    {
+      "DisplayName": "ConfigureGraphQLTransport",
+      "Category": "Methods",
+      "DeclaringTypeName": "GraphQLTransportServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.GraphQL.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore.GraphQL",
+      "FileName": "cephalon-aspnetcore-graphql.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqltransport-microsoft-extensions-dependencyinjection-iservicecollection-system-action-hotchocolate-execution-configuration-irequestexecutorbuilder",
+      "Signature": "IServiceCollection ConfigureGraphQLTransport(this IServiceCollection services, Action\u003CIRequestExecutorBuilder\u003E configure)",
+      "Summary": "Applies GraphQL schema configuration for Cephalon modules and hosts."
+    },
+    {
+      "DisplayName": "ConfigureGraphQLTransport",
+      "Category": "Methods",
+      "DeclaringTypeName": "GraphQLTransportServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.GraphQL.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore.GraphQL",
+      "FileName": "cephalon-aspnetcore-graphql.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqltransport-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-hotchocolate-execution-configuration-irequestexecutorbuilder",
+      "Signature": "WebApplicationBuilder ConfigureGraphQLTransport(this WebApplicationBuilder builder, Action\u003CIRequestExecutorBuilder\u003E configure)",
+      "Summary": "Applies GraphQL schema configuration on a \u0060WebApplicationBuilder\u0060."
+    },
+    {
       "DisplayName": "ConfigureServices",
       "Category": "Methods",
       "DeclaringTypeName": "IModule",
@@ -4220,6 +4427,17 @@
       "Summary": "Identifies a data-oriented technology."
     },
     {
+      "DisplayName": "Database",
+      "Category": "Properties",
+      "DeclaringTypeName": "RedisDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-database",
+      "Signature": "int? Database { get; set; }",
+      "Summary": "Gets or sets the optional Redis logical database index to select before pinging."
+    },
+    {
       "DisplayName": "Default",
       "Category": "Properties",
       "DeclaringTypeName": "FailurePolicy",
@@ -4405,6 +4623,17 @@
       "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-dependencies",
       "Signature": "IReadOnlyList\u003CHttpDependencyDefinition\u003E Dependencies { get; set; }",
       "Summary": "Gets or sets the configured HTTP dependencies that should contribute to runtime health."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
+      "DeclaringTypeName": "RedisDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003CRedisDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured Redis dependencies that should contribute to runtime health."
     },
     {
       "DisplayName": "Dependencies",
@@ -4933,6 +5162,17 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-patterndescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the human-readable pattern name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "RedisDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
     },
     {
       "DisplayName": "DisplayName",
@@ -5740,6 +5980,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "RedisDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "RedisDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Redis dependency-health options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "ReferenceDocsHostingOptions",
       "NamespaceName": "Cephalon.AspNetCore.Documentation",
       "AssemblyName": "Cephalon.AspNetCore",
@@ -6024,6 +6275,17 @@
       "Summary": "Identifies the host project."
     },
     {
+      "DisplayName": "Host",
+      "Category": "Properties",
+      "DeclaringTypeName": "RedisDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-host",
+      "Signature": "string Host { get; set; }",
+      "Summary": "Gets or sets the Redis host name or IP address to probe."
+    },
+    {
       "DisplayName": "HttpDependencyDefinition",
       "Category": "Constructors",
       "DeclaringTypeName": "HttpDependencyDefinition",
@@ -6176,6 +6438,17 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-patterndescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable pattern identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "RedisDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
     {
       "DisplayName": "Id",
@@ -7894,6 +8167,17 @@
       "Summary": "Describes the trust outcome for a package after package metadata, signature verification, and host trust rules have been evaluated."
     },
     {
+      "DisplayName": "Password",
+      "Category": "Properties",
+      "DeclaringTypeName": "RedisDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-password",
+      "Signature": "string Password { get; set; }",
+      "Summary": "Gets or sets the optional Redis password used for authentication."
+    },
+    {
       "DisplayName": "Path",
       "Category": "Properties",
       "DeclaringTypeName": "ModulePackageDirectory",
@@ -8079,6 +8363,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-trustsnapshot-policy",
       "Signature": "TrustPolicy Policy { get; set; }",
       "Summary": "The policy that produced the trust decisions."
+    },
+    {
+      "DisplayName": "Port",
+      "Category": "Properties",
+      "DeclaringTypeName": "RedisDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-port",
+      "Signature": "int Port { get; set; }",
+      "Summary": "Gets or sets the Redis TCP port."
     },
     {
       "DisplayName": "Principle",
@@ -8334,6 +8629,28 @@
       "Summary": "The reason the package was trusted or rejected."
     },
     {
+      "DisplayName": "RedisDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RedisDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-ctor",
+      "Signature": "RedisDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060RedisDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "RedisDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RedisDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions-ctor",
+      "Signature": "RedisDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060RedisDependencyHealthOptions\u0060 class."
+    },
+    {
       "DisplayName": "ReferenceDocFile",
       "Category": "Constructors",
       "DeclaringTypeName": "ReferenceDocFile",
@@ -8385,6 +8702,17 @@
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
       "FileName": "cephalon-observability-httpdependencies.md",
       "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RedisDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions-refreshintervalseconds",
       "Signature": "int RefreshIntervalSeconds { get; set; }",
       "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
     },
@@ -8616,6 +8944,17 @@
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
       "FileName": "cephalon-observability-httpdependencies.md",
       "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "RedisDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
@@ -10446,6 +10785,17 @@
       "Summary": "Gets or sets the per-request timeout in seconds."
     },
     {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RedisDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-probe timeout in seconds."
+    },
+    {
       "DisplayName": "Tools",
       "Category": "Properties",
       "DeclaringTypeName": "AgenticRuntimeOptions",
@@ -10917,6 +11267,17 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-usepackagepolicy-cephalon-engine-configuration-packagepolicy",
       "Signature": "EngineBuilder UsePackagePolicy(PackagePolicy policy)",
       "Summary": "Replaces the package-governance policy used when loading independently shipped module packages."
+    },
+    {
+      "DisplayName": "Username",
+      "Category": "Properties",
+      "DeclaringTypeName": "RedisDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RedisDependencies",
+      "FileName": "cephalon-observability-redisdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-username",
+      "Signature": "string Username { get; set; }",
+      "Summary": "Gets or sets the optional Redis ACL user name used for authentication."
     },
     {
       "DisplayName": "UseSettings",

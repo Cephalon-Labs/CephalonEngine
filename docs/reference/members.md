@@ -84,6 +84,12 @@ Browse the published API surface by public member.
 - [AddCephalonProjectConfigurations](cephalon-worker.md#member-m-cephalon-worker-hosting-workerhostapplicationbuilderextensions-addcephalonprojectconfigurations-microsoft-extensions-hosting-hostapplicationbuilder): `Methods` on `WorkerHostApplicationBuilderExtensions` in `Cephalon.Worker.Hosting` (`Cephalon.Worker`) [Browse](browse.html?q=AddCephalonProjectConfigurations&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting&scope=members)
   - Adds Cephalon's project-configuration conventions to the generic host builder.
   - `HostApplicationBuilder AddCephalonProjectConfigurations(this HostApplicationBuilder builder)`
+- [AddCephalonRedisDependencyHealth](cephalon-observability-redisdependencies.md#member-m-cephalon-observability-redisdependencies-hosting-redisdependencyhealthservicecollectionextensions-addcephalonredisdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions): `Methods` on `RedisDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.RedisDependencies.Hosting` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=AddCephalonRedisDependencyHealth&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Hosting&scope=members)
+  - Adds Redis dependency-health services using code-first configuration.
+  - `IServiceCollection AddCephalonRedisDependencyHealth(this IServiceCollection services, Action<RedisDependencyHealthOptions> configure)`
+- [AddCephalonRedisDependencyHealth](cephalon-observability-redisdependencies.md#member-m-cephalon-observability-redisdependencies-hosting-redisdependencyhealthservicecollectionextensions-addcephalonredisdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions): `Methods` on `RedisDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.RedisDependencies.Hosting` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=AddCephalonRedisDependencyHealth&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Hosting&scope=members)
+  - Adds Redis dependency-health services using configuration as the primary source of probe settings.
+  - `IServiceCollection AddCephalonRedisDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<RedisDependencyHealthOptions> configure)`
 - [AddCephalonWorker](cephalon-worker.md#member-m-cephalon-worker-hosting-workerservicecollectionextensions-addcephalonworker-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-engine-composition-enginebuilder): `Methods` on `WorkerServiceCollectionExtensions` in `Cephalon.Worker.Hosting` (`Cephalon.Worker`) [Browse](browse.html?q=AddCephalonWorker&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting&scope=members)
   - Adds Cephalon worker hosting using code-first engine configuration.
   - `IServiceCollection AddCephalonWorker(this IServiceCollection services, Action<EngineBuilder> configure)`
@@ -96,6 +102,12 @@ Browse the published API surface by public member.
 - [AddEventing](cephalon-eventing.md#member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventing-cephalon-engine-composition-enginebuilder-system-action-cephalon-eventing-configuration-eventingoptions): `Methods` on `EventingEngineBuilderExtensions` in `Cephalon.Eventing.Registration` (`Cephalon.Eventing`) [Browse](browse.html?q=AddEventing&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Registration&scope=members)
   - Adds the eventing runtime pack to the engine.
   - `EngineBuilder AddEventing(this EngineBuilder builder, Action<EventingOptions> configure)`
+- [AddGraphQLTransport](cephalon-aspnetcore-graphql.md#member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-addgraphqltransport-microsoft-extensions-dependencyinjection-iservicecollection): `Methods` on `GraphQLTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.GraphQL.Hosting` (`Cephalon.AspNetCore.GraphQL`) [Browse](browse.html?q=AddGraphQLTransport&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting&scope=members)
+  - Adds the GraphQL transport mapper and GraphQL server services to the service collection.
+  - `IServiceCollection AddGraphQLTransport(this IServiceCollection services)`
+- [AddGraphQLTransport](cephalon-aspnetcore-graphql.md#member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-addgraphqltransport-microsoft-aspnetcore-builder-webapplicationbuilder): `Methods` on `GraphQLTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.GraphQL.Hosting` (`Cephalon.AspNetCore.GraphQL`) [Browse](browse.html?q=AddGraphQLTransport&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting&scope=members)
+  - Adds the GraphQL transport mapper and GraphQL server services to a `WebApplicationBuilder`.
+  - `WebApplicationBuilder AddGraphQLTransport(this WebApplicationBuilder builder)`
 - [AddGrpcTransport](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-hosting-grpctransportservicecollectionextensions-addgrpctransport-microsoft-extensions-dependencyinjection-iservicecollection): `Methods` on `GrpcTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.Grpc.Hosting` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=AddGrpcTransport&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Hosting&scope=members)
   - Adds the gRPC transport mapper and ASP.NET Core gRPC services to the service collection.
   - `IServiceCollection AddGrpcTransport(this IServiceCollection services)`
@@ -339,6 +351,18 @@ Browse the published API surface by public member.
 - [Configuration](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-configuration): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Configuration&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the build configuration to read from.
   - `string Configuration { get; }`
+- [ConfigureGraphQLQuery](cephalon-aspnetcore-graphql.md#member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlquery-microsoft-extensions-dependencyinjection-iservicecollection-system-action-hotchocolate-types-iobjecttypedescriptor): `Methods` on `GraphQLTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.GraphQL.Hosting` (`Cephalon.AspNetCore.GraphQL`) [Browse](browse.html?q=ConfigureGraphQLQuery&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting&scope=members)
+  - Adds fields to the shared GraphQL query root used by Cephalon modules.
+  - `IServiceCollection ConfigureGraphQLQuery(this IServiceCollection services, Action<IObjectTypeDescriptor> configure)`
+- [ConfigureGraphQLQuery](cephalon-aspnetcore-graphql.md#member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlquery-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-hotchocolate-types-iobjecttypedescriptor): `Methods` on `GraphQLTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.GraphQL.Hosting` (`Cephalon.AspNetCore.GraphQL`) [Browse](browse.html?q=ConfigureGraphQLQuery&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting&scope=members)
+  - Adds fields to the shared GraphQL query root on a `WebApplicationBuilder`.
+  - `WebApplicationBuilder ConfigureGraphQLQuery(this WebApplicationBuilder builder, Action<IObjectTypeDescriptor> configure)`
+- [ConfigureGraphQLTransport](cephalon-aspnetcore-graphql.md#member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqltransport-microsoft-extensions-dependencyinjection-iservicecollection-system-action-hotchocolate-execution-configuration-irequestexecutorbuilder): `Methods` on `GraphQLTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.GraphQL.Hosting` (`Cephalon.AspNetCore.GraphQL`) [Browse](browse.html?q=ConfigureGraphQLTransport&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting&scope=members)
+  - Applies GraphQL schema configuration for Cephalon modules and hosts.
+  - `IServiceCollection ConfigureGraphQLTransport(this IServiceCollection services, Action<IRequestExecutorBuilder> configure)`
+- [ConfigureGraphQLTransport](cephalon-aspnetcore-graphql.md#member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqltransport-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-hotchocolate-execution-configuration-irequestexecutorbuilder): `Methods` on `GraphQLTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.GraphQL.Hosting` (`Cephalon.AspNetCore.GraphQL`) [Browse](browse.html?q=ConfigureGraphQLTransport&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting&scope=members)
+  - Applies GraphQL schema configuration on a `WebApplicationBuilder`.
+  - `WebApplicationBuilder ConfigureGraphQLTransport(this WebApplicationBuilder builder, Action<IRequestExecutorBuilder> configure)`
 - [ConfigureServices](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-imodule-configureservices-microsoft-extensions-dependencyinjection-iservicecollection): `Methods` on `IModule` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConfigureServices&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Configures services required by the module.
   - `void ConfigureServices(IServiceCollection services)`
@@ -396,6 +420,9 @@ Browse the published API surface by public member.
 - [Data](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-data): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Data&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Identifies a data-oriented technology.
   - `const TechnologyKind Data`
+- [Database](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-database): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Database&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
+  - Gets or sets the optional Redis logical database index to select before pinging.
+  - `int? Database { get; set; }`
 - [Default](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-default): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Default&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the default failure policy used when no explicit configuration is supplied.
   - `FailurePolicy Default { get; }`
@@ -447,6 +474,9 @@ Browse the published API surface by public member.
 - [Dependencies](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-dependencies): `Properties` on `HttpDependencyHealthOptions` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the configured HTTP dependencies that should contribute to runtime health.
   - `IReadOnlyList<HttpDependencyDefinition> Dependencies { get; set; }`
+- [Dependencies](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions-dependencies): `Properties` on `RedisDependencyHealthOptions` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
+  - Gets or sets the configured Redis dependencies that should contribute to runtime health.
+  - `IReadOnlyList<RedisDependencyDefinition> Dependencies { get; set; }`
 - [Dependencies](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-dependencies): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The dependency-health reports visible during evaluation.
   - `IReadOnlyList<DependencyHealthReport> Dependencies { get; set; }`
@@ -591,6 +621,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-displayname): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the human-readable pattern name.
   - `string DisplayName { get; }`
+- [DisplayName](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-displayname): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
+  - Gets or sets the human-readable dependency name shown to operators.
+  - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-displayname): `Properties` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the human-readable scaffold-plan name.
   - `string DisplayName { get; }`
@@ -816,6 +849,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-packagepolicy-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads package policy from configuration.
   - `PackagePolicy FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-observability-redisdependencies.md#member-m-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `RedisDependencyHealthOptions` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
+  - Binds Redis dependency-health options from configuration.
+  - `RedisDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-documentation-referencedocshostingoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string-system-string): `Methods` on `ReferenceDocsHostingOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Binds reference-doc hosting options from configuration.
   - `ReferenceDocsHostingOptions FromConfiguration(IConfiguration configuration, string sectionPath, string contentRootPath)`
@@ -900,6 +936,9 @@ Browse the published API surface by public member.
 - [Host](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-host): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Host&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies the host project.
   - `const string Host`
+- [Host](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-host): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
+  - Gets or sets the Redis host name or IP address to probe.
+  - `string Host { get; set; }`
 - [HttpDependencyDefinition](cephalon-observability-httpdependencies.md#member-m-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-ctor): `Constructors` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=HttpDependencyDefinition&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Initializes a new instance of the `HttpDependencyDefinition` class.
   - `HttpDependencyDefinition()`
@@ -945,6 +984,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-id): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the stable pattern identifier.
   - `string Id { get; }`
+- [Id](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-id): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
+  - Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
+  - `string Id { get; set; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-id): `Properties` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the stable scaffold-plan identifier.
   - `string Id { get; }`
@@ -1434,6 +1476,9 @@ Browse the published API surface by public member.
 - [PackageTrustDecision](cephalon-engine.md#member-m-cephalon-engine-trust-packagetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagesignaturetrustdecision-system-boolean-system-string-system-boolean-system-string): `Constructors` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=PackageTrustDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Describes the trust outcome for a package after package metadata, signature verification, and host trust rules have been evaluated.
   - `PackageTrustDecision(string PackageId, string AssemblyName, string Path, string PublisherId, string SignatureKeyId, string SignatureFingerprint, IReadOnlyList<PackageSignatureTrustDecision> Signatures, bool IsSignatureVerified, string SignatureVerificationReason, bool IsTrusted, string Reason)`
+- [Password](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-password): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
+  - Gets or sets the optional Redis password used for authentication.
+  - `string Password { get; set; }`
 - [Path](cephalon-engine.md#member-p-cephalon-engine-configuration-modulepackagedirectory-path): `Properties` on `ModulePackageDirectory` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Path&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the directory path to scan.
   - `string Path { get; }`
@@ -1485,6 +1530,9 @@ Browse the published API surface by public member.
 - [Policy](cephalon-engine.md#member-p-cephalon-engine-trust-trustsnapshot-policy): `Properties` on `TrustSnapshot` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Policy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The policy that produced the trust decisions.
   - `TrustPolicy Policy { get; set; }`
+- [Port](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-port): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
+  - Gets or sets the Redis TCP port.
+  - `int Port { get; set; }`
 - [Principle](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-principle): `Properties` on `PrincipleReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Principle&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - The principle text being streamed to the caller.
   - `string Principle { get; set; }`
@@ -1557,6 +1605,12 @@ Browse the published API surface by public member.
 - [Reason](cephalon-engine.md#member-p-cephalon-engine-trust-packagetrustdecision-reason): `Properties` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Reason&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The reason the package was trusted or rejected.
   - `string Reason { get; set; }`
+- [RedisDependencyDefinition](cephalon-observability-redisdependencies.md#member-m-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-ctor): `Constructors` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=RedisDependencyDefinition&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
+  - Initializes a new instance of the `RedisDependencyDefinition` class.
+  - `RedisDependencyDefinition()`
+- [RedisDependencyHealthOptions](cephalon-observability-redisdependencies.md#member-m-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions-ctor): `Constructors` on `RedisDependencyHealthOptions` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=RedisDependencyHealthOptions&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
+  - Initializes a new instance of the `RedisDependencyHealthOptions` class.
+  - `RedisDependencyHealthOptions()`
 - [ReferenceDocFile](cephalon-referencedocs.md#member-m-cephalon-referencedocs-generation-referencedocfile-ctor-system-string-system-string): `Constructors` on `ReferenceDocFile` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=ReferenceDocFile&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Creates a new generated reference documentation file.
   - `ReferenceDocFile(string path, string contents)`
@@ -1570,6 +1624,9 @@ Browse the published API surface by public member.
   - Describes the operator-facing HTTP surface for hosted Cephalon reference documentation.
   - `ReferenceDocsSurface(bool Enabled, bool Available, string RoutePrefix, string DefaultDocument, string DefaultDocumentPath, string ReadmePath, string BrowserPath, string NamespaceIndexPath, string TypeIndexPath, string MemberIndexPath, string ManifestPath)`
 - [RefreshIntervalSeconds](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-refreshintervalseconds): `Properties` on `HttpDependencyHealthOptions` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
+  - Gets or sets the interval, in seconds, between background refresh attempts.
+  - `int RefreshIntervalSeconds { get; set; }`
+- [RefreshIntervalSeconds](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions-refreshintervalseconds): `Properties` on `RedisDependencyHealthOptions` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
   - Gets or sets the interval, in seconds, between background refresh attempts.
   - `int RefreshIntervalSeconds { get; set; }`
 - [RegisterCapabilities](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-imodule-registercapabilities-cephalon-abstractions-capabilities-icapabilityregistry): `Methods` on `IModule` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterCapabilities&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
@@ -1633,6 +1690,9 @@ Browse the published API surface by public member.
   - Whether the dependency is required for readiness.
   - `bool Required { get; set; }`
 - [Required](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-required): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
+  - Gets or sets a value indicating whether this dependency is required for readiness.
+  - `bool Required { get; set; }`
+- [Required](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-required): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
   - Gets or sets a value indicating whether this dependency is required for readiness.
   - `bool Required { get; set; }`
 - [RequireIntegritySha256](cephalon-engine.md#member-p-cephalon-engine-configuration-packagepolicy-requireintegritysha256): `Properties` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RequireIntegritySha256&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
@@ -2139,6 +2199,9 @@ Browse the published API surface by public member.
 - [TimeoutSeconds](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-timeoutseconds): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the per-request timeout in seconds.
   - `int TimeoutSeconds { get; set; }`
+- [TimeoutSeconds](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-timeoutseconds): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
+  - Gets or sets the per-probe timeout in seconds.
+  - `int TimeoutSeconds { get; set; }`
 - [Tools](cephalon-agentics.md#member-p-cephalon-agentics-configuration-agenticruntimeoptions-tools): `Properties` on `AgenticRuntimeOptions` in `Cephalon.Agentics.Configuration` (`Cephalon.Agentics`) [Browse](browse.html?q=Tools&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Configuration&scope=members)
   - Gets the host-defined tool descriptors that should be available to the agentic runtime.
   - `IList<AgentToolDescriptor> Tools { get; }`
@@ -2271,6 +2334,9 @@ Browse the published API surface by public member.
 - [UsePackagePolicy](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-usepackagepolicy-cephalon-engine-configuration-packagepolicy): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UsePackagePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Replaces the package-governance policy used when loading independently shipped module packages.
   - `EngineBuilder UsePackagePolicy(PackagePolicy policy)`
+- [Username](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-username): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
+  - Gets or sets the optional Redis ACL user name used for authentication.
+  - `string Username { get; set; }`
 - [UseSettings](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-usesettings-cephalon-engine-configuration-enginesettings): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Applies a preconstructed `EngineSettings` instance to the builder.
   - `EngineBuilder UseSettings(EngineSettings settings)`

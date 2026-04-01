@@ -237,7 +237,7 @@ Acceptance:
 The active planning wave now moves to phase 2 operational hardening:
 
 - keep the completed gap inventory and shipped OpenTelemetry companion package reflected accurately in docs and project tracking
-- ship the first provider-specific dependency-health companion for external HTTP upstreams and keep broader provider coverage explicit
+- keep the shipped HTTP and Redis dependency-health companions reflected accurately in docs and project tracking while broader provider coverage stays explicit
 - tighten diagnostics and operator-facing runtime answers before reopening deeper platform work
 - keep `docs/operational-hardening-gap-inventory.md` current as the source of truth for what phase-2 gaps are still genuinely open
 
@@ -505,12 +505,12 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-005 Engine API and package surface hardening
 - ENG-026 GraphQL transport adapter
 - ENG-027 DocFX XML-comment readiness beyond shipped packages
-- operational hardening follow-through after the shipped health, telemetry, and CI baselines
 
 ### Sprint 2
 
 - ENG-011 Package and plugin loading
-- shipped OpenTelemetry companion packaging and the first HTTP external API dependency-health companion, with broader provider coverage still open
+- operational hardening follow-through after the shipped health, telemetry, and CI baselines
+- shipped OpenTelemetry companion packaging plus HTTP external API and Redis/cache dependency-health companions, with broader provider coverage still open
 
 ### Sprint 3
 

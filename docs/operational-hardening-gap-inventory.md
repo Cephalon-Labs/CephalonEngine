@@ -69,11 +69,12 @@ Current baseline:
 - `IDependencyHealthContributor` exists
 - `RuntimeHealthEvaluator` aggregates dependency reports cleanly
 - `Cephalon.Observability.HttpDependencies` now provides a reusable provider-specific pack for external HTTP and API upstreams
+- `Cephalon.Observability.RedisDependencies` now provides a reusable provider-specific pack for Redis and cache endpoints, including auth and logical database selection
 
 Gap:
 
-- broader provider-specific packs for databases, brokers, and caches are still missing
-- current shipped provider coverage starts with external HTTP and API upstreams; richer infrastructure-specific packs are still left to host or module authors
+- broader provider-specific packs for databases and brokers are still missing
+- current shipped provider coverage now includes external HTTP/API upstreams plus Redis/cache endpoints; richer infrastructure-specific packs are still left to host or module authors
 
 Why this stays separate:
 

@@ -63,6 +63,7 @@ Browse the published API surface by public type.
 
 ## G
 
+- [GraphQLTransportServiceCollectionExtensions](cephalon-aspnetcore-graphql.md#type-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions): `Cephalon.AspNetCore.GraphQL.Hosting` in `Cephalon.AspNetCore.GraphQL` [Browse](browse.html?q=GraphQLTransportServiceCollectionExtensions&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting)
 - [GrpcTransportServiceCollectionExtensions](cephalon-aspnetcore-grpc.md#type-cephalon-aspnetcore-grpc-hosting-grpctransportservicecollectionextensions): `Cephalon.AspNetCore.Grpc.Hosting` in `Cephalon.AspNetCore.Grpc` [Browse](browse.html?q=GrpcTransportServiceCollectionExtensions&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Hosting)
 
 ## H
@@ -88,6 +89,7 @@ Browse the published API surface by public type.
 - [IEventChannelCatalog](cephalon-eventing.md#type-cephalon-eventing-services-ieventchannelcatalog): `Cephalon.Eventing.Services` in `Cephalon.Eventing` [Browse](browse.html?q=IEventChannelCatalog&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
 - [IEventChannelContributor](cephalon-eventing.md#type-cephalon-eventing-services-ieventchannelcontributor): `Cephalon.Eventing.Services` in `Cephalon.Eventing` [Browse](browse.html?q=IEventChannelContributor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
 - [IEventChannelRegistry](cephalon-eventing.md#type-cephalon-eventing-services-ieventchannelregistry): `Cephalon.Eventing.Services` in `Cephalon.Eventing` [Browse](browse.html?q=IEventChannelRegistry&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
+- [IGraphQLModule](cephalon-aspnetcore-graphql.md#type-cephalon-aspnetcore-graphql-modules-igraphqlmodule): `Cephalon.AspNetCore.GraphQL.Modules` in `Cephalon.AspNetCore.GraphQL` [Browse](browse.html?q=IGraphQLModule&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Modules)
 - [IGrpcModule](cephalon-aspnetcore-grpc.md#type-cephalon-aspnetcore-grpc-modules-igrpcmodule): `Cephalon.AspNetCore.Grpc.Modules` in `Cephalon.AspNetCore.Grpc` [Browse](browse.html?q=IGrpcModule&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Modules)
 - [IJsonRpcModule](cephalon-aspnetcore-jsonrpc.md#type-cephalon-aspnetcore-jsonrpc-modules-ijsonrpcmodule): `Cephalon.AspNetCore.JsonRpc.Modules` in `Cephalon.AspNetCore.JsonRpc` [Browse](browse.html?q=IJsonRpcModule&assembly=Cephalon.AspNetCore.JsonRpc&namespace=Cephalon.AspNetCore.JsonRpc.Modules)
 - [IKnowledgeCatalog](cephalon-retrieval.md#type-cephalon-retrieval-services-iknowledgecatalog): `Cephalon.Retrieval.Services` in `Cephalon.Retrieval` [Browse](browse.html?q=IKnowledgeCatalog&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services)
@@ -157,6 +159,9 @@ Browse the published API surface by public type.
 
 ## R
 
+- [RedisDependencyDefinition](cephalon-observability-redisdependencies.md#type-cephalon-observability-redisdependencies-configuration-redisdependencydefinition): `Cephalon.Observability.RedisDependencies.Configuration` in `Cephalon.Observability.RedisDependencies` [Browse](browse.html?q=RedisDependencyDefinition&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration)
+- [RedisDependencyHealthOptions](cephalon-observability-redisdependencies.md#type-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions): `Cephalon.Observability.RedisDependencies.Configuration` in `Cephalon.Observability.RedisDependencies` [Browse](browse.html?q=RedisDependencyHealthOptions&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration)
+- [RedisDependencyHealthServiceCollectionExtensions](cephalon-observability-redisdependencies.md#type-cephalon-observability-redisdependencies-hosting-redisdependencyhealthservicecollectionextensions): `Cephalon.Observability.RedisDependencies.Hosting` in `Cephalon.Observability.RedisDependencies` [Browse](browse.html?q=RedisDependencyHealthServiceCollectionExtensions&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Hosting)
 - [ReferenceDocFile](cephalon-referencedocs.md#type-cephalon-referencedocs-generation-referencedocfile): `Cephalon.ReferenceDocs.Generation` in `Cephalon.ReferenceDocs` [Browse](browse.html?q=ReferenceDocFile&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation)
 - [ReferenceDocsApplication](cephalon-referencedocs.md#type-cephalon-referencedocs-referencedocsapplication): `Cephalon.ReferenceDocs` in `Cephalon.ReferenceDocs` [Browse](browse.html?q=ReferenceDocsApplication&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs)
 - [ReferenceDocsGenerator](cephalon-referencedocs.md#type-cephalon-referencedocs-generation-referencedocsgenerator): `Cephalon.ReferenceDocs.Generation` in `Cephalon.ReferenceDocs` [Browse](browse.html?q=ReferenceDocsGenerator&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation)

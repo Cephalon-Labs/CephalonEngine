@@ -60,6 +60,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-documentation): 2 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation)
 
+## `Cephalon.AspNetCore.GraphQL.Hosting`
+
+- [Cephalon.AspNetCore.GraphQL](cephalon-aspnetcore-graphql.md#namespace-cephalon-aspnetcore-graphql-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting)
+
+## `Cephalon.AspNetCore.GraphQL.Modules`
+
+- [Cephalon.AspNetCore.GraphQL](cephalon-aspnetcore-graphql.md#namespace-cephalon-aspnetcore-graphql-modules): 1 public types [Browse](browse.html?assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Modules)
+
 ## `Cephalon.AspNetCore.Grpc.Contracts.Discovery`
 
 - [Cephalon.AspNetCore.Grpc](cephalon-aspnetcore-grpc.md#namespace-cephalon-aspnetcore-grpc-contracts-discovery): 8 public types [Browse](browse.html?assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery)
@@ -199,6 +207,14 @@ Browse the published API surface by namespace.
 ## `Cephalon.Observability.OpenTelemetry.Hosting`
 
 - [Cephalon.Observability.OpenTelemetry](cephalon-observability-opentelemetry.md#namespace-cephalon-observability-opentelemetry-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.OpenTelemetry&namespace=Cephalon.Observability.OpenTelemetry.Hosting)
+
+## `Cephalon.Observability.RedisDependencies.Configuration`
+
+- [Cephalon.Observability.RedisDependencies](cephalon-observability-redisdependencies.md#namespace-cephalon-observability-redisdependencies-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration)
+
+## `Cephalon.Observability.RedisDependencies.Hosting`
+
+- [Cephalon.Observability.RedisDependencies](cephalon-observability-redisdependencies.md#namespace-cephalon-observability-redisdependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Hosting)
 
 ## `Cephalon.ReferenceDocs`
 

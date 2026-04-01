@@ -13,7 +13,7 @@ ASP.NET Core hosts that call `app.MapCephalon()` now expose three health routes:
 - `/health/ready`
 
 Health responses are JSON and include the check status, duration, and runtime-specific details such as restart count and the most recent failure context.
-When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.HttpDependencies` is the shipped companion package for turning external HTTP upstreams into that dependency-health surface.
+When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.HttpDependencies` and `Cephalon.Observability.RedisDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
 
 Current semantics:
 
@@ -81,6 +81,55 @@ Operational notes:
 - the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
 - required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
 - if `ExpectedStatusCodes` is omitted, standard successful HTTP responses are treated as healthy
+
+### Redis dependency probes
+
+`Cephalon.Observability.RedisDependencies` reads `Engine:Observability:DependencyHealth:Redis` and turns configured Redis endpoints into reusable `IDependencyHealthContributor` data.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "DependencyHealth": {
+        "Redis": {
+          "RefreshIntervalSeconds": 30,
+          "Dependencies": [
+            {
+              "Id": "shared-cache",
+              "DisplayName": "Shared Redis Cache",
+              "Host": "redis.internal.example",
+              "Port": 6379,
+              "Required": true,
+              "TimeoutSeconds": 5,
+              "Username": "cephalon-runtime",
+              "Password": "${REDIS_PASSWORD}",
+              "Database": 2
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonRedisDependencyHealth(builder.Configuration);
+```
+
+Operational notes:
+
+- the Redis dependency-health package is optional and stays outside `Cephalon.Engine`
+- the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
+- each probe opens a TCP connection, optionally authenticates, optionally selects a logical database, and then verifies `PING` -> `PONG`
+- required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
 
 ## Diagnostics surface
 
