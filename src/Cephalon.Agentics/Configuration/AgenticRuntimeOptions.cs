@@ -12,6 +12,13 @@ namespace Cephalon.Agentics.Configuration;
 public sealed class AgenticRuntimeOptions
 {
     /// <summary>
+    /// Creates agentic runtime options with the default host-owned features enabled.
+    /// </summary>
+    public AgenticRuntimeOptions()
+    {
+    }
+
+    /// <summary>
     /// Gets the host-defined tool descriptors that should be available to the agentic runtime.
     /// </summary>
     public IList<AgentToolDescriptor> Tools { get; } = [];

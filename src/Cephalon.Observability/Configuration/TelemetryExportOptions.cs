@@ -12,6 +12,13 @@ namespace Cephalon.Observability.Configuration;
 public sealed class TelemetryExportOptions
 {
     /// <summary>
+    /// Creates telemetry export options with the default guidance values.
+    /// </summary>
+    public TelemetryExportOptions()
+    {
+    }
+
+    /// <summary>
     /// Gets or sets the telemetry provider name, such as <c>OpenTelemetry</c>.
     /// </summary>
     public string Provider { get; set; } = "OpenTelemetry";

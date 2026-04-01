@@ -12,6 +12,13 @@ namespace Cephalon.Edge.Configuration;
 public sealed class EdgeRuntimeOptions
 {
     /// <summary>
+    /// Creates edge runtime options with the default host-owned features enabled.
+    /// </summary>
+    public EdgeRuntimeOptions()
+    {
+    }
+
+    /// <summary>
     /// Gets the host-defined edge nodes that should be available to the edge runtime.
     /// </summary>
     public IList<EdgeNodeDescriptor> Nodes { get; } = [];

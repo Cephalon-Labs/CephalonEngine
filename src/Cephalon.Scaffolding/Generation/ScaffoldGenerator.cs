@@ -7,7 +7,7 @@ namespace Cephalon.Scaffolding.Generation;
 /// <summary>
 /// Turns a Cephalon app profile and scaffold request into concrete projects, folders, and files.
 /// </summary>
-public sealed class ScaffoldGenerator
+public static class ScaffoldGenerator
 {
     private const string PackageManifestFileName = "cephalon.package.json";
 

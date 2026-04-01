@@ -12,6 +12,13 @@ namespace Cephalon.Eventing.Configuration;
 public sealed class EventingOptions
 {
     /// <summary>
+    /// Creates eventing options with the default host-owned features enabled.
+    /// </summary>
+    public EventingOptions()
+    {
+    }
+
+    /// <summary>
     /// Gets the host-defined event channels that should be available to the eventing runtime.
     /// </summary>
     public IList<EventChannelDescriptor> Channels { get; } = [];

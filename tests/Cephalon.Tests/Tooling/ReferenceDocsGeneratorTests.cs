@@ -105,14 +105,28 @@ public sealed class ReferenceDocsGeneratorTests
     }
 
     [Fact]
-    public void GenerateIncludesSummariesForToolingPublicTypesAndMembers()
+    public void GenerateIncludesSummariesForCurrentDocumentedPublicAssemblies()
     {
         var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-coverage-{Guid.NewGuid():N}");
         var request = new ReferenceDocsRequest(
             rootPath: GetRepositoryRoot(),
             outputPath: outputPath,
             configuration: GetCurrentBuildConfiguration(),
-            assemblies: ["Cephalon.Cli", "Cephalon.ReferenceDocs"]);
+            assemblies:
+            [
+                "Cephalon.Abstractions",
+                "Cephalon.Agentics",
+                "Cephalon.AspNetCore",
+                "Cephalon.AspNetCore.JsonRpc",
+                "Cephalon.Cli",
+                "Cephalon.Edge",
+                "Cephalon.Eventing",
+                "Cephalon.Observability",
+                "Cephalon.ReferenceDocs",
+                "Cephalon.Retrieval",
+                "Cephalon.Scaffolding",
+                "Cephalon.Worker"
+            ]);
 
         var rendered = ReferenceDocsGenerator.Generate(request);
         var manifest = Assert.Single(rendered.Files, file => file.Path == "reference-manifest.json");
