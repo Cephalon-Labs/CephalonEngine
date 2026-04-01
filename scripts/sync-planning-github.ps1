@@ -184,6 +184,7 @@ function Get-BacklogPhaseMap {
         "ENG-025" = 0
         "ENG-005" = 1
         "ENG-026" = 1
+        "ENG-027" = 1
         "ENG-016" = 1
         "ENG-017" = 1
         "ENG-018" = 1

@@ -29,6 +29,20 @@ The documentation model for this repository is:
 
 The generator reads built assemblies plus their adjacent XML documentation files, reflects the public API surface, and writes assembly-level Markdown pages together with shared navigation assets for assemblies, namespaces, types, and members.
 
+## DocFX readiness
+
+Cephalon's XML comments should stay good enough for DocFX-style API publishing, not only for the repo-local `Cephalon.ReferenceDocs` generator.
+
+Current enforced baseline:
+
+- shipped `src/Cephalon.*` packages are expected to carry complete XML comments on public APIs
+- reference-doc coverage tests guard the current shipped assembly set so missing XML summaries are caught in CI before docs generation regresses
+
+Current follow-up boundary:
+
+- `samples/`, `benchmarks/`, and other non-shipped code paths are not yet held to the same repo-wide XML-comment standard
+- if DocFX input expands beyond shipped packages, bring those assemblies up to the same XML-comment completeness before adding them to the published docs set
+
 ## Hosted surface
 
 `Cephalon.AspNetCore` can optionally serve the generated output directly from a running host when `ReferenceDocs` hosting is enabled.
@@ -153,6 +167,7 @@ The browser UI can switch between type search and member search, while the JSON 
 ## Maintenance rules
 
 - keep XML comments meaningful on all public contracts so external doc tools and IntelliSense remain accurate
+- keep the DocFX input set aligned with the assemblies covered by XML-comment completeness checks
 - keep hand-authored guide docs in `README.md` and `docs/` focused on capability explanation and adoption guidance
 - regenerate `docs/reference/` after changing public API docs
 - keep `artifacts/reference-docs-release/` as pipeline output, not as hand-edited source content

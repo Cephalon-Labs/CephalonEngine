@@ -204,6 +204,21 @@ Delivered:
 - working `/graphql` endpoint with module-driven schema contributions on ASP.NET Core
 - integration coverage and component docs for GraphQL hosting guidance
 
+### ENG-027 DocFX XML-comment readiness beyond shipped packages
+
+Status: next
+Estimate: 8
+
+Why:
+
+- shipped packages are now covered for XML-doc completeness, but a repo-wide DocFX input set would still fail on public sample and benchmark code
+
+Acceptance:
+
+- decide and document the supported DocFX input set explicitly
+- add missing XML comments for public sample, benchmark, and reference-module APIs that belong in the published docs scope
+- keep DocFX readiness aligned with the same XML-comment completeness rules used by reference-doc coverage tests
+
 ### ENG-016 Blueprint sample suite
 
 Status: done
@@ -468,6 +483,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 - ENG-005 Engine API and package surface hardening
 - ENG-026 GraphQL transport adapter
+- ENG-027 DocFX XML-comment readiness beyond shipped packages
 - operational hardening follow-through after the shipped health, telemetry, and CI baselines
 
 ### Sprint 2

@@ -106,6 +106,7 @@ Deliverables:
 - CLI polish for real developer workflows
 - generated output that stays aligned across `Cephalon.Scaffolding`, `Cephalon.Cli`, `Cephalon.TemplatePack`, and the repository package catalog
 - GraphQL transport delivery that keeps the runtime catalog, scaffold output, tests, and component docs aligned with the adapter split
+- DocFX-ready XML comments across the supported published assembly set
 - technology profiles that stay aligned across runtime introspection, scaffolding, CLI, and template defaults
 - companion packages that turn selected technology profiles into reusable runtime primitives without bloating the engine core
 - module-authoring starters and reference packages that stay aligned with runtime contracts
@@ -212,7 +213,7 @@ Exit criteria:
 
 Updated priority order as of `April 2, 2026`:
 
-1. SDK hardening follow-through: public surface cleanup, XML docs, and GraphQL transport completion
+1. SDK hardening follow-through: public surface cleanup, XML docs, GraphQL transport completion, and DocFX input-set hardening
 2. operational hardening follow-through: richer dependency health and exporter packaging
 3. package/plugin loading
 4. capability permissions and trust policy
