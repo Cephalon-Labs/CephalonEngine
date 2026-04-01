@@ -1890,6 +1890,12 @@ function Set-ProjectStatus {
     if ($DesiredStatus -eq "Done") {
         $shouldUpdate = $currentStatus -ne "Done"
     }
+    elseif ($DesiredStatus -eq "Validation") {
+        $shouldUpdate = $currentStatus -ne "Validation"
+    }
+    elseif ($DesiredStatus -eq "In progress") {
+        $shouldUpdate = [string]::IsNullOrWhiteSpace($currentStatus) -or $currentStatus -eq "Todo" -or $currentStatus -eq "Done"
+    }
     elseif ($DesiredStatus -eq "Todo") {
         $shouldUpdate = [string]::IsNullOrWhiteSpace($currentStatus) -or $currentStatus -eq "Done"
     }
@@ -1906,6 +1912,8 @@ function Set-ProjectStatus {
         "--field-id", $ProjectContext.StatusFieldId,
         "--single-select-option-id", $optionId
     )
+
+    $ProjectItem | Add-Member -NotePropertyName status -NotePropertyValue $DesiredStatus -Force
 }
 
 function Set-ProjectEstimate {
@@ -2176,6 +2184,49 @@ function Get-EffectiveValidationFieldValue {
         "Benchmark" { return Get-DesiredBenchmarkFieldValue -Title $Title -Body $Body -State $State }
         default { return $null }
     }
+}
+
+function Test-IsValidationGateSatisfied {
+    param([AllowNull()][string]$Value)
+
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        return $false
+    }
+
+    return $Value -eq "Passed" -or $Value -eq "N/A"
+}
+
+function Get-DesiredProjectStatus {
+    param(
+        [Parameter(Mandatory = $true)]$ProjectContext,
+        $ProjectItem,
+        [AllowNull()][string]$Title,
+        [AllowNull()][string]$Body,
+        [AllowNull()][string]$State
+    )
+
+    $currentStatus = Get-ProjectItemStatusValue -ProjectItem $ProjectItem
+    $testStatus = Get-EffectiveValidationFieldValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Test" -Title $Title -Body $Body -State $State
+    $benchmarkStatus = Get-EffectiveValidationFieldValue -ProjectContext $ProjectContext -ProjectItem $ProjectItem -FieldName "Benchmark" -Title $Title -Body $Body -State $State
+    $gatesSatisfied = (Test-IsValidationGateSatisfied -Value $testStatus) -and (Test-IsValidationGateSatisfied -Value $benchmarkStatus)
+
+    if (-not [string]::IsNullOrWhiteSpace($State) -and $State.ToLowerInvariant() -eq "closed") {
+        if ($gatesSatisfied) {
+            return "Done"
+        }
+
+        return "Validation"
+    }
+
+    if ($currentStatus -eq "Validation") {
+        return "Validation"
+    }
+
+    if ($currentStatus -eq "In progress") {
+        return "In progress"
+    }
+
+    return "Todo"
 }
 
 function Get-ProjectItemEstimateValue {
@@ -2738,7 +2789,7 @@ if ($null -ne $projectContext) {
         $issue = $issuesByNumber[[int]$syncEntry.Key]
         $desired = $syncEntry.Value.Desired
         $projectItem = Ensure-ProjectItem -ProjectContext $projectContext -ProjectOwner $ProjectOwner -ProjectNumber $ProjectNumber -Issue $issue
-        $desiredStatus = if ($desired.State -eq "closed") { "Done" } else { "Todo" }
+        $desiredStatus = Get-DesiredProjectStatus -ProjectContext $projectContext -ProjectItem $projectItem -Title $desired.Title -Body $desired.ContentBody -State $desired.State
         Set-ProjectStatus -ProjectContext $projectContext -ProjectItem $projectItem -DesiredStatus $desiredStatus
 
         if (-not [string]::IsNullOrWhiteSpace($syncEntry.Value.IterationTitle)) {
@@ -2806,7 +2857,8 @@ foreach ($issue in $issuesByNumber.Values) {
 
     if ($null -ne $projectContext) {
         $projectItem = Ensure-ProjectItem -ProjectContext $projectContext -ProjectOwner $ProjectOwner -ProjectNumber $ProjectNumber -Issue $issue
-        $desiredStatus = if ($issue.state -eq "CLOSED") { "Done" } else { "Todo" }
+        $stateText = if ($issue.state -eq "CLOSED") { "closed" } else { "open" }
+        $desiredStatus = Get-DesiredProjectStatus -ProjectContext $projectContext -ProjectItem $projectItem -Title $issue.title -Body $issue.body -State $stateText
         Set-ProjectStatus -ProjectContext $projectContext -ProjectItem $projectItem -DesiredStatus $desiredStatus
 
         if (($null -eq (Get-ProjectItemEstimateValue -ProjectItem $projectItem)) -and $null -ne $metadata.Estimate) {
@@ -2817,7 +2869,7 @@ foreach ($issue in $issuesByNumber.Values) {
             Set-ProjectIteration -ProjectContext $projectContext -ProjectItem $projectItem -IterationTitle $metadata.IterationTitle
         }
 
-        Sync-ProjectValidationFields -ProjectContext $projectContext -ProjectItem $projectItem -Title $issue.title -Body $issue.body -State $(if ($issue.state -eq "CLOSED") { "closed" } else { "open" })
+        Sync-ProjectValidationFields -ProjectContext $projectContext -ProjectItem $projectItem -Title $issue.title -Body $issue.body -State $stateText
     }
 }
 
