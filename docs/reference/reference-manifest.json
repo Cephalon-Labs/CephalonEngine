@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-01T22:17:36.9492008+00:00",
+  "GeneratedAtUtc": "2026-04-01T22:50:52.1701262+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -105,6 +105,14 @@
       "FileName": "cephalon-observability-opentelemetry.md",
       "NamespaceCount": 1,
       "TypeCount": 1
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "Category": "Hosts",
+      "Description": "Postgres dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
     },
     {
       "AssemblyName": "Cephalon.Observability.RedisDependencies",
@@ -503,6 +511,20 @@
       "AssemblyName": "Cephalon.Observability.OpenTelemetry",
       "FileName": "cephalon-observability-opentelemetry.md",
       "AnchorId": "namespace-cephalon-observability-opentelemetry-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-postgresdependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-postgresdependencies-hosting",
       "TypeCount": 1
     },
     {
@@ -2145,6 +2167,51 @@
       }
     },
     {
+      "DisplayName": "PostgresDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "type-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition",
+      "Declaration": "public sealed class PostgresDependencyDefinition",
+      "Summary": "Describes one Postgres dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 12,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "PostgresDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "type-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions",
+      "Declaration": "public sealed class PostgresDependencyHealthOptions",
+      "Summary": "Configures Postgres dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "PostgresDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "type-cephalon-observability-postgresdependencies-hosting-postgresdependencyhealthservicecollectionextensions",
+      "Declaration": "public static class PostgresDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds Postgres dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
       "DisplayName": "PrincipleReply",
       "NamespaceName": "Cephalon.AspNetCore.Grpc.Contracts.Discovery",
       "AssemblyName": "Cephalon.AspNetCore.Grpc",
@@ -3193,6 +3260,28 @@
       "AnchorId": "member-m-cephalon-observability-opentelemetry-hosting-opentelemetryhostapplicationbuilderextensions-addcephalonopentelemetry-1-0-system-action-cephalon-observability-configuration-telemetryexportoptions",
       "Signature": "TBuilder AddCephalonOpenTelemetry\u003CTBuilder\u003E(this TBuilder builder, Action\u003CTelemetryExportOptions\u003E configure)",
       "Summary": "Adds OpenTelemetry exporter registration for the Cephalon engine diagnostics surface."
+    },
+    {
+      "DisplayName": "AddCephalonPostgresDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "PostgresDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-postgresdependencies-hosting-postgresdependencyhealthservicecollectionextensions-addcephalonpostgresdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonPostgresDependencyHealth(this IServiceCollection services, Action\u003CPostgresDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Postgres dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonPostgresDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "PostgresDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-postgresdependencies-hosting-postgresdependencyhealthservicecollectionextensions-addcephalonpostgresdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonPostgresDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CPostgresDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Postgres dependency-health services using configuration as the primary source of probe settings."
     },
     {
       "DisplayName": "AddCephalonProjectConfigurations",
@@ -4284,6 +4373,17 @@
       "Summary": "Gets the technology identifiers that conflict with the technology."
     },
     {
+      "DisplayName": "ConnectionString",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-connectionstring",
+      "Signature": "string ConnectionString { get; set; }",
+      "Summary": "Gets or sets the optional full Postgres connection string used for the probe."
+    },
+    {
       "DisplayName": "Contents",
       "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocFile",
@@ -4425,6 +4525,17 @@
       "AnchorId": "member-f-cephalon-abstractions-technologies-technologykind-data",
       "Signature": "const TechnologyKind Data",
       "Summary": "Identifies a data-oriented technology."
+    },
+    {
+      "DisplayName": "Database",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-database",
+      "Signature": "string Database { get; set; }",
+      "Summary": "Gets or sets the database name used for the health query."
     },
     {
       "DisplayName": "Database",
@@ -4623,6 +4734,17 @@
       "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-dependencies",
       "Signature": "IReadOnlyList\u003CHttpDependencyDefinition\u003E Dependencies { get; set; }",
       "Summary": "Gets or sets the configured HTTP dependencies that should contribute to runtime health."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003CPostgresDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured Postgres dependencies that should contribute to runtime health."
     },
     {
       "DisplayName": "Dependencies",
@@ -5162,6 +5284,17 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-patterndescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the human-readable pattern name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
     },
     {
       "DisplayName": "DisplayName",
@@ -5980,6 +6113,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "PostgresDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "PostgresDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Postgres dependency-health options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "RedisDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.RedisDependencies",
@@ -6242,6 +6386,17 @@
       "Summary": "Gets a value indicating whether the policy differs from the default baseline."
     },
     {
+      "DisplayName": "HealthQuery",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-healthquery",
+      "Signature": "string HealthQuery { get; set; }",
+      "Summary": "Gets or sets the SQL statement executed to verify the dependency."
+    },
+    {
       "DisplayName": "Healthy",
       "Category": "Fields",
       "DeclaringTypeName": "HealthState",
@@ -6262,6 +6417,17 @@
       "AnchorId": "member-f-cephalon-engine-runtime-runtimehealthstate-healthy",
       "Signature": "const RuntimeHealthState Healthy",
       "Summary": "The runtime and its dependencies are healthy."
+    },
+    {
+      "DisplayName": "Host",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-host",
+      "Signature": "string Host { get; set; }",
+      "Summary": "Gets or sets the Postgres host name or IP address to probe when no full connection string is supplied."
     },
     {
       "DisplayName": "Host",
@@ -6438,6 +6604,17 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-patterndescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable pattern identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
     {
       "DisplayName": "Id",
@@ -8169,6 +8346,17 @@
     {
       "DisplayName": "Password",
       "Category": "Properties",
+      "DeclaringTypeName": "PostgresDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-password",
+      "Signature": "string Password { get; set; }",
+      "Summary": "Gets or sets the optional password used for authentication when no full connection string is supplied."
+    },
+    {
+      "DisplayName": "Password",
+      "Category": "Properties",
       "DeclaringTypeName": "RedisDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.RedisDependencies",
@@ -8367,6 +8555,17 @@
     {
       "DisplayName": "Port",
       "Category": "Properties",
+      "DeclaringTypeName": "PostgresDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-port",
+      "Signature": "int Port { get; set; }",
+      "Summary": "Gets or sets the Postgres TCP port."
+    },
+    {
+      "DisplayName": "Port",
+      "Category": "Properties",
       "DeclaringTypeName": "RedisDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.RedisDependencies",
@@ -8374,6 +8573,28 @@
       "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-port",
       "Signature": "int Port { get; set; }",
       "Summary": "Gets or sets the Redis TCP port."
+    },
+    {
+      "DisplayName": "PostgresDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "PostgresDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-ctor",
+      "Signature": "PostgresDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060PostgresDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "PostgresDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "PostgresDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-ctor",
+      "Signature": "PostgresDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060PostgresDependencyHealthOptions\u0060 class."
     },
     {
       "DisplayName": "Principle",
@@ -8708,6 +8929,17 @@
     {
       "DisplayName": "RefreshIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "PostgresDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "RedisDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.RedisDependencies",
@@ -8944,6 +9176,17 @@
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
       "FileName": "cephalon-observability-httpdependencies.md",
       "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
@@ -10037,6 +10280,17 @@
       "Summary": "Gets the specification design pattern."
     },
     {
+      "DisplayName": "SslMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-sslmode",
+      "Signature": "string SslMode { get; set; }",
+      "Summary": "Gets or sets the optional Postgres SSL mode used when building the probe connection string."
+    },
+    {
       "DisplayName": "StartAsync",
       "Category": "Methods",
       "DeclaringTypeName": "EngineRuntime",
@@ -10787,6 +11041,17 @@
     {
       "DisplayName": "TimeoutSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "PostgresDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-probe timeout in seconds."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "RedisDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.RedisDependencies",
@@ -11267,6 +11532,17 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-usepackagepolicy-cephalon-engine-configuration-packagepolicy",
       "Signature": "EngineBuilder UsePackagePolicy(PackagePolicy policy)",
       "Summary": "Replaces the package-governance policy used when loading independently shipped module packages."
+    },
+    {
+      "DisplayName": "Username",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
+      "FileName": "cephalon-observability-postgresdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-username",
+      "Signature": "string Username { get; set; }",
+      "Summary": "Gets or sets the optional user name used for authentication when no full connection string is supplied."
     },
     {
       "DisplayName": "Username",

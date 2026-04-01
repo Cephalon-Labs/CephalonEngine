@@ -27,6 +27,7 @@ See also: [Docs hub](../README.md)
 
 - [Cephalon.Observability](observability.md)
 - [Cephalon.Observability.HttpDependencies](observability-http-dependencies.md)
+- [Cephalon.Observability.PostgresDependencies](observability-postgres-dependencies.md)
 - [Cephalon.Observability.RedisDependencies](observability-redis-dependencies.md)
 - [Cephalon.Observability.OpenTelemetry](observability-opentelemetry.md)
 - [Cephalon.Scaffolding](scaffolding.md)

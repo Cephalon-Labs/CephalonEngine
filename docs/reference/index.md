@@ -34,6 +34,7 @@ Quick links:
 - [Cephalon.Observability](cephalon-observability.md): Operational diagnostics and telemetry conventions for hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability)
 - [Cephalon.Observability.HttpDependencies](cephalon-observability-httpdependencies.md): External HTTP dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.HttpDependencies)
 - [Cephalon.Observability.OpenTelemetry](cephalon-observability-opentelemetry.md): OpenTelemetry OTLP exporter integration for Cephalon hosts. Contains 1 namespaces and 1 public types. [Browse](browse.html?assembly=Cephalon.Observability.OpenTelemetry)
+- [Cephalon.Observability.PostgresDependencies](cephalon-observability-postgresdependencies.md): Postgres dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.PostgresDependencies)
 - [Cephalon.Observability.RedisDependencies](cephalon-observability-redisdependencies.md): Redis and cache dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.RedisDependencies)
 - [Cephalon.Worker](cephalon-worker.md): Generic-host worker adapter for non-HTTP runtime execution. Contains 1 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Worker)
 

@@ -126,6 +126,7 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.Eventing",
                 "Cephalon.Observability",
                 "Cephalon.Observability.HttpDependencies",
+                "Cephalon.Observability.PostgresDependencies",
                 "Cephalon.Observability.RedisDependencies",
                 "Cephalon.Observability.OpenTelemetry",
                 "Cephalon.ReferenceDocs",
@@ -176,6 +177,7 @@ public sealed class ReferenceDocsGeneratorTests
         var rendered = ReferenceDocsGenerator.Generate(request);
 
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-aspnetcore-graphql.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-postgresdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-redisdependencies.md");
 
         var manifest = Assert.Single(rendered.Files, file => file.Path == "reference-manifest.json");
@@ -185,6 +187,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.AspNetCore.GraphQL", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.PostgresDependencies", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.RedisDependencies", StringComparison.Ordinal));

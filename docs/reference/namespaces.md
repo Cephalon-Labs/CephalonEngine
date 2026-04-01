@@ -208,6 +208,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Observability.OpenTelemetry](cephalon-observability-opentelemetry.md#namespace-cephalon-observability-opentelemetry-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.OpenTelemetry&namespace=Cephalon.Observability.OpenTelemetry.Hosting)
 
+## `Cephalon.Observability.PostgresDependencies.Configuration`
+
+- [Cephalon.Observability.PostgresDependencies](cephalon-observability-postgresdependencies.md#namespace-cephalon-observability-postgresdependencies-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration)
+
+## `Cephalon.Observability.PostgresDependencies.Hosting`
+
+- [Cephalon.Observability.PostgresDependencies](cephalon-observability-postgresdependencies.md#namespace-cephalon-observability-postgresdependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Hosting)
+
 ## `Cephalon.Observability.RedisDependencies.Configuration`
 
 - [Cephalon.Observability.RedisDependencies](cephalon-observability-redisdependencies.md#namespace-cephalon-observability-redisdependencies-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration)

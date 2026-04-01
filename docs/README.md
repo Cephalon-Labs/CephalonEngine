@@ -25,7 +25,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [Benchmarking](benchmarking.md)
 - [Reference docs publishing](reference-docs.md)
 
-The component catalog now includes the observability baseline package plus the optional HTTP dependency-health, Redis dependency-health, and OpenTelemetry exporter companions so operator-facing docs stay aligned with the shipped host integration paths.
+The component catalog now includes the observability baseline package plus the optional HTTP dependency-health, Postgres dependency-health, Redis dependency-health, and OpenTelemetry exporter companions so operator-facing docs stay aligned with the shipped host integration paths.
 
 ## Optional generated reference docs
 
