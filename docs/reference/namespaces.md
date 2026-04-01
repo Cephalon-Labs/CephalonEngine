@@ -216,6 +216,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Observability.PostgresDependencies](cephalon-observability-postgresdependencies.md#namespace-cephalon-observability-postgresdependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Hosting)
 
+## `Cephalon.Observability.RabbitMqDependencies.Configuration`
+
+- [Cephalon.Observability.RabbitMqDependencies](cephalon-observability-rabbitmqdependencies.md#namespace-cephalon-observability-rabbitmqdependencies-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration)
+
+## `Cephalon.Observability.RabbitMqDependencies.Hosting`
+
+- [Cephalon.Observability.RabbitMqDependencies](cephalon-observability-rabbitmqdependencies.md#namespace-cephalon-observability-rabbitmqdependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Hosting)
+
 ## `Cephalon.Observability.RedisDependencies.Configuration`
 
 - [Cephalon.Observability.RedisDependencies](cephalon-observability-redisdependencies.md#namespace-cephalon-observability-redisdependencies-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration)

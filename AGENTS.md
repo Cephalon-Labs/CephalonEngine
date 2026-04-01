@@ -25,6 +25,7 @@ When working in this repository:
 - `Cephalon.Observability` is the diagnostics companion package for logs, metrics, and tracing conventions
 - `Cephalon.Observability.HttpDependencies` is the optional external API dependency-health companion package for HTTP-based upstreams
 - `Cephalon.Observability.PostgresDependencies` is the optional Postgres dependency-health companion package
+- `Cephalon.Observability.RabbitMqDependencies` is the optional RabbitMQ dependency-health companion package
 - `Cephalon.Observability.RedisDependencies` is the optional Redis and cache dependency-health companion package
 - `Cephalon.Observability.OpenTelemetry` is the optional exporter companion package for OpenTelemetry OTLP host wiring
 - `Cephalon.Cli` is the user-facing shell for blueprint-driven generation
@@ -192,6 +193,9 @@ Current source layout:
 - `src/Cephalon.Observability.PostgresDependencies/Configuration` -> `Cephalon.Observability.PostgresDependencies.Configuration`
 - `src/Cephalon.Observability.PostgresDependencies/Hosting` -> `Cephalon.Observability.PostgresDependencies.Hosting`
 - `src/Cephalon.Observability.PostgresDependencies/Services` -> `Cephalon.Observability.PostgresDependencies.Services`
+- `src/Cephalon.Observability.RabbitMqDependencies/Configuration` -> `Cephalon.Observability.RabbitMqDependencies.Configuration`
+- `src/Cephalon.Observability.RabbitMqDependencies/Hosting` -> `Cephalon.Observability.RabbitMqDependencies.Hosting`
+- `src/Cephalon.Observability.RabbitMqDependencies/Services` -> `Cephalon.Observability.RabbitMqDependencies.Services`
 - `src/Cephalon.Observability.RedisDependencies/Configuration` -> `Cephalon.Observability.RedisDependencies.Configuration`
 - `src/Cephalon.Observability.RedisDependencies/Hosting` -> `Cephalon.Observability.RedisDependencies.Hosting`
 - `src/Cephalon.Observability.RedisDependencies/Services` -> `Cephalon.Observability.RedisDependencies.Services`

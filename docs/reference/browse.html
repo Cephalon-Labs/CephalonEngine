@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-01T22:50:52.1701262+00:00",
+  "GeneratedAtUtc": "2026-04-01T23:13:42.7284921+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -214,6 +214,14 @@
       "Category": "Hosts",
       "Description": "Postgres dependency-health integration for Cephalon hosts.",
       "FileName": "cephalon-observability-postgresdependencies.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "Category": "Hosts",
+      "Description": "RabbitMQ dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
     },
@@ -628,6 +636,20 @@
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
       "FileName": "cephalon-observability-postgresdependencies.md",
       "AnchorId": "namespace-cephalon-observability-postgresdependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-rabbitmqdependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-rabbitmqdependencies-hosting",
       "TypeCount": 1
     },
     {
@@ -2375,6 +2397,51 @@
       }
     },
     {
+      "DisplayName": "RabbitMqDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "type-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition",
+      "Declaration": "public sealed class RabbitMqDependencyDefinition",
+      "Summary": "Describes one RabbitMQ dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 11,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "RabbitMqDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "type-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions",
+      "Declaration": "public sealed class RabbitMqDependencyHealthOptions",
+      "Summary": "Configures RabbitMQ dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "RabbitMqDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "type-cephalon-observability-rabbitmqdependencies-hosting-rabbitmqdependencyhealthservicecollectionextensions",
+      "Declaration": "public static class RabbitMqDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds RabbitMQ dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
       "DisplayName": "RedisDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.RedisDependencies",
@@ -3418,6 +3485,28 @@
       "AnchorId": "member-m-cephalon-worker-hosting-workerhostapplicationbuilderextensions-addcephalonprojectconfigurations-microsoft-extensions-hosting-hostapplicationbuilder",
       "Signature": "HostApplicationBuilder AddCephalonProjectConfigurations(this HostApplicationBuilder builder)",
       "Summary": "Adds Cephalon\u0027s project-configuration conventions to the generic host builder."
+    },
+    {
+      "DisplayName": "AddCephalonRabbitMqDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "RabbitMqDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-rabbitmqdependencies-hosting-rabbitmqdependencyhealthservicecollectionextensions-addcephalonrabbitmqdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonRabbitMqDependencyHealth(this IServiceCollection services, Action\u003CRabbitMqDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds RabbitMQ dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonRabbitMqDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "RabbitMqDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-rabbitmqdependencies-hosting-rabbitmqdependencyhealthservicecollectionextensions-addcephalonrabbitmqdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonRabbitMqDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CRabbitMqDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds RabbitMQ dependency-health services using configuration as the primary source of probe settings."
     },
     {
       "DisplayName": "AddCephalonRedisDependencyHealth",
@@ -4487,6 +4576,17 @@
       "Summary": "Gets or sets the optional full Postgres connection string used for the probe."
     },
     {
+      "DisplayName": "ConnectionString",
+      "Category": "Properties",
+      "DeclaringTypeName": "RabbitMqDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-connectionstring",
+      "Signature": "string ConnectionString { get; set; }",
+      "Summary": "Gets or sets the optional AMQP connection string used for the probe."
+    },
+    {
       "DisplayName": "Contents",
       "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocFile",
@@ -4848,6 +4948,17 @@
       "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-dependencies",
       "Signature": "IReadOnlyList\u003CPostgresDependencyDefinition\u003E Dependencies { get; set; }",
       "Summary": "Gets or sets the configured Postgres dependencies that should contribute to runtime health."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
+      "DeclaringTypeName": "RabbitMqDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003CRabbitMqDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured RabbitMQ dependencies that should contribute to runtime health."
     },
     {
       "DisplayName": "Dependencies",
@@ -5396,6 +5507,17 @@
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
       "FileName": "cephalon-observability-postgresdependencies.md",
       "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "RabbitMqDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-displayname",
       "Signature": "string DisplayName { get; set; }",
       "Summary": "Gets or sets the human-readable dependency name shown to operators."
     },
@@ -6227,6 +6349,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "RabbitMqDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "RabbitMqDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds RabbitMQ dependency-health options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "RedisDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.RedisDependencies",
@@ -6546,6 +6679,17 @@
     {
       "DisplayName": "Host",
       "Category": "Properties",
+      "DeclaringTypeName": "RabbitMqDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-host",
+      "Signature": "string Host { get; set; }",
+      "Summary": "Gets or sets the RabbitMQ host name or IP address to probe when no full connection string is supplied."
+    },
+    {
+      "DisplayName": "Host",
+      "Category": "Properties",
       "DeclaringTypeName": "RedisDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.RedisDependencies",
@@ -6716,6 +6860,17 @@
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
       "FileName": "cephalon-observability-postgresdependencies.md",
       "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "RabbitMqDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-id",
       "Signature": "string Id { get; set; }",
       "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
@@ -8460,6 +8615,17 @@
     {
       "DisplayName": "Password",
       "Category": "Properties",
+      "DeclaringTypeName": "RabbitMqDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-password",
+      "Signature": "string Password { get; set; }",
+      "Summary": "Gets or sets the optional password used for authentication when no full connection string is supplied."
+    },
+    {
+      "DisplayName": "Password",
+      "Category": "Properties",
       "DeclaringTypeName": "RedisDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.RedisDependencies",
@@ -8665,6 +8831,17 @@
       "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-port",
       "Signature": "int Port { get; set; }",
       "Summary": "Gets or sets the Postgres TCP port."
+    },
+    {
+      "DisplayName": "Port",
+      "Category": "Properties",
+      "DeclaringTypeName": "RabbitMqDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-port",
+      "Signature": "int Port { get; set; }",
+      "Summary": "Gets or sets the RabbitMQ TCP port."
     },
     {
       "DisplayName": "Port",
@@ -8876,6 +9053,28 @@
       "Summary": "Gets the human-readable purpose of the folder."
     },
     {
+      "DisplayName": "RabbitMqDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RabbitMqDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-ctor",
+      "Signature": "RabbitMqDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060RabbitMqDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "RabbitMqDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RabbitMqDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions-ctor",
+      "Signature": "RabbitMqDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060RabbitMqDependencyHealthOptions\u0060 class."
+    },
+    {
       "DisplayName": "Readiness",
       "Category": "Properties",
       "DeclaringTypeName": "DiagnosticsSurface",
@@ -9037,6 +9236,17 @@
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
       "FileName": "cephalon-observability-postgresdependencies.md",
       "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RabbitMqDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions-refreshintervalseconds",
       "Signature": "int RefreshIntervalSeconds { get; set; }",
       "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
     },
@@ -9290,6 +9500,17 @@
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
       "FileName": "cephalon-observability-postgresdependencies.md",
       "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "RabbitMqDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
@@ -11155,6 +11376,17 @@
     {
       "DisplayName": "TimeoutSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "RabbitMqDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-probe timeout in seconds."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "RedisDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.RedisDependencies",
@@ -11650,6 +11882,17 @@
     {
       "DisplayName": "Username",
       "Category": "Properties",
+      "DeclaringTypeName": "RabbitMqDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-username",
+      "Signature": "string Username { get; set; }",
+      "Summary": "Gets or sets the optional user name used for authentication when no full connection string is supplied."
+    },
+    {
+      "DisplayName": "Username",
+      "Category": "Properties",
       "DeclaringTypeName": "RedisDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.RedisDependencies",
@@ -11668,6 +11911,17 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-usesettings-cephalon-engine-configuration-enginesettings",
       "Signature": "EngineBuilder UseSettings(EngineSettings settings)",
       "Summary": "Applies a preconstructed \u0060EngineSettings\u0060 instance to the builder."
+    },
+    {
+      "DisplayName": "UseTls",
+      "Category": "Properties",
+      "DeclaringTypeName": "RabbitMqDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-usetls",
+      "Signature": "bool UseTls { get; set; }",
+      "Summary": "Gets or sets a value indicating whether TLS should be enabled for the broker probe."
     },
     {
       "DisplayName": "UseTrustPolicy",
@@ -11734,6 +11988,17 @@
       "AnchorId": "member-p-cephalon-engine-patterns-builtinpatterns-verticalsliceorganization",
       "Signature": "PatternDescriptor VerticalSliceOrganization { get; }",
       "Summary": "Gets the vertical-slice organization pattern."
+    },
+    {
+      "DisplayName": "VirtualHost",
+      "Category": "Properties",
+      "DeclaringTypeName": "RabbitMqDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
+      "FileName": "cephalon-observability-rabbitmqdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-virtualhost",
+      "Signature": "string VirtualHost { get; set; }",
+      "Summary": "Gets or sets the RabbitMQ virtual host used for the probe connection."
     },
     {
       "DisplayName": "WebSocket",

@@ -13,7 +13,7 @@ ASP.NET Core hosts that call `app.MapCephalon()` now expose three health routes:
 - `/health/ready`
 
 Health responses are JSON and include the check status, duration, and runtime-specific details such as restart count and the most recent failure context.
-When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.PostgresDependencies`, and `Cephalon.Observability.RedisDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
+When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, and `Cephalon.Observability.RedisDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
 
 Current semantics:
 
@@ -181,6 +181,57 @@ Operational notes:
 - the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
 - probes can use either a full `ConnectionString` or discrete host/port/database settings
 - each probe opens a dedicated `Npgsql` connection with pooling disabled, runs the configured health query, and reports the result through the shared dependency-health contract
+- required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
+
+### RabbitMQ dependency probes
+
+`Cephalon.Observability.RabbitMqDependencies` reads `Engine:Observability:DependencyHealth:RabbitMq` and turns configured RabbitMQ endpoints into reusable `IDependencyHealthContributor` data.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "DependencyHealth": {
+        "RabbitMq": {
+          "RefreshIntervalSeconds": 30,
+          "Dependencies": [
+            {
+              "Id": "events-broker",
+              "DisplayName": "Events Broker",
+              "Host": "rabbitmq.internal.example",
+              "Port": 5671,
+              "VirtualHost": "/operations",
+              "Username": "cephalon-runtime",
+              "Password": "${RABBITMQ_PASSWORD}",
+              "UseTls": true,
+              "Required": true,
+              "TimeoutSeconds": 5
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonRabbitMqDependencyHealth(builder.Configuration);
+```
+
+Operational notes:
+
+- the RabbitMQ dependency-health package is optional and stays outside `Cephalon.Engine`
+- the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
+- probes can use either a full AMQP `ConnectionString` or discrete host/port/vhost settings
+- each probe opens a dedicated AMQP connection with auto-recovery disabled so the result reflects the current broker reachability and authentication state
 - required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
 
 ## Diagnostics surface

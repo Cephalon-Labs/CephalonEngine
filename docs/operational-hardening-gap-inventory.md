@@ -70,12 +70,13 @@ Current baseline:
 - `RuntimeHealthEvaluator` aggregates dependency reports cleanly
 - `Cephalon.Observability.HttpDependencies` now provides a reusable provider-specific pack for external HTTP and API upstreams
 - `Cephalon.Observability.PostgresDependencies` now provides a reusable provider-specific pack for Postgres databases, including connection-string or host/database configuration plus configurable health queries
+- `Cephalon.Observability.RabbitMqDependencies` now provides a reusable provider-specific pack for RabbitMQ brokers, including AMQP connection-string or host/virtual-host configuration plus optional TLS
 - `Cephalon.Observability.RedisDependencies` now provides a reusable provider-specific pack for Redis and cache endpoints, including auth and logical database selection
 
 Gap:
 
 - broader provider-specific packs for additional databases and brokers are still missing
-- current shipped provider coverage now includes external HTTP/API upstreams plus Postgres database endpoints plus Redis/cache endpoints; richer infrastructure-specific packs, especially for brokers, are still left to host or module authors
+- current shipped provider coverage now includes external HTTP/API upstreams plus Postgres database endpoints plus RabbitMQ broker endpoints plus Redis/cache endpoints; richer infrastructure-specific packs beyond that baseline are still left to host or module authors
 
 Why this stays separate:
 

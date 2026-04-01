@@ -90,6 +90,12 @@ Browse the published API surface by public member.
 - [AddCephalonProjectConfigurations](cephalon-worker.md#member-m-cephalon-worker-hosting-workerhostapplicationbuilderextensions-addcephalonprojectconfigurations-microsoft-extensions-hosting-hostapplicationbuilder): `Methods` on `WorkerHostApplicationBuilderExtensions` in `Cephalon.Worker.Hosting` (`Cephalon.Worker`) [Browse](browse.html?q=AddCephalonProjectConfigurations&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting&scope=members)
   - Adds Cephalon's project-configuration conventions to the generic host builder.
   - `HostApplicationBuilder AddCephalonProjectConfigurations(this HostApplicationBuilder builder)`
+- [AddCephalonRabbitMqDependencyHealth](cephalon-observability-rabbitmqdependencies.md#member-m-cephalon-observability-rabbitmqdependencies-hosting-rabbitmqdependencyhealthservicecollectionextensions-addcephalonrabbitmqdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions): `Methods` on `RabbitMqDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.RabbitMqDependencies.Hosting` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=AddCephalonRabbitMqDependencyHealth&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Hosting&scope=members)
+  - Adds RabbitMQ dependency-health services using code-first configuration.
+  - `IServiceCollection AddCephalonRabbitMqDependencyHealth(this IServiceCollection services, Action<RabbitMqDependencyHealthOptions> configure)`
+- [AddCephalonRabbitMqDependencyHealth](cephalon-observability-rabbitmqdependencies.md#member-m-cephalon-observability-rabbitmqdependencies-hosting-rabbitmqdependencyhealthservicecollectionextensions-addcephalonrabbitmqdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions): `Methods` on `RabbitMqDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.RabbitMqDependencies.Hosting` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=AddCephalonRabbitMqDependencyHealth&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Hosting&scope=members)
+  - Adds RabbitMQ dependency-health services using configuration as the primary source of probe settings.
+  - `IServiceCollection AddCephalonRabbitMqDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<RabbitMqDependencyHealthOptions> configure)`
 - [AddCephalonRedisDependencyHealth](cephalon-observability-redisdependencies.md#member-m-cephalon-observability-redisdependencies-hosting-redisdependencyhealthservicecollectionextensions-addcephalonredisdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions): `Methods` on `RedisDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.RedisDependencies.Hosting` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=AddCephalonRedisDependencyHealth&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Hosting&scope=members)
   - Adds Redis dependency-health services using code-first configuration.
   - `IServiceCollection AddCephalonRedisDependencyHealth(this IServiceCollection services, Action<RedisDependencyHealthOptions> configure)`
@@ -387,6 +393,9 @@ Browse the published API surface by public member.
 - [ConnectionString](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-connectionstring): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the optional full Postgres connection string used for the probe.
   - `string ConnectionString { get; set; }`
+- [ConnectionString](cephalon-observability-rabbitmqdependencies.md#member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-connectionstring): `Properties` on `RabbitMqDependencyDefinition` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
+  - Gets or sets the optional AMQP connection string used for the probe.
+  - `string ConnectionString { get; set; }`
 - [Contents](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocfile-contents): `Properties` on `ReferenceDocFile` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Contents&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the markdown contents of the file.
   - `string Contents { get; }`
@@ -489,6 +498,9 @@ Browse the published API surface by public member.
 - [Dependencies](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-dependencies): `Properties` on `PostgresDependencyHealthOptions` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the configured Postgres dependencies that should contribute to runtime health.
   - `IReadOnlyList<PostgresDependencyDefinition> Dependencies { get; set; }`
+- [Dependencies](cephalon-observability-rabbitmqdependencies.md#member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions-dependencies): `Properties` on `RabbitMqDependencyHealthOptions` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
+  - Gets or sets the configured RabbitMQ dependencies that should contribute to runtime health.
+  - `IReadOnlyList<RabbitMqDependencyDefinition> Dependencies { get; set; }`
 - [Dependencies](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions-dependencies): `Properties` on `RedisDependencyHealthOptions` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
   - Gets or sets the configured Redis dependencies that should contribute to runtime health.
   - `IReadOnlyList<RedisDependencyDefinition> Dependencies { get; set; }`
@@ -637,6 +649,9 @@ Browse the published API surface by public member.
   - Gets the human-readable pattern name.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-displayname): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
+  - Gets or sets the human-readable dependency name shown to operators.
+  - `string DisplayName { get; set; }`
+- [DisplayName](cephalon-observability-rabbitmqdependencies.md#member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-displayname): `Properties` on `RabbitMqDependencyDefinition` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
   - Gets or sets the human-readable dependency name shown to operators.
   - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-displayname): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
@@ -870,6 +885,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability-postgresdependencies.md#member-m-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `PostgresDependencyHealthOptions` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Binds Postgres dependency-health options from configuration.
   - `PostgresDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-observability-rabbitmqdependencies.md#member-m-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `RabbitMqDependencyHealthOptions` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
+  - Binds RabbitMQ dependency-health options from configuration.
+  - `RabbitMqDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability-redisdependencies.md#member-m-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `RedisDependencyHealthOptions` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
   - Binds Redis dependency-health options from configuration.
   - `RedisDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -963,6 +981,9 @@ Browse the published API surface by public member.
 - [Host](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-host): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Host&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies the host project.
   - `const string Host`
+- [Host](cephalon-observability-rabbitmqdependencies.md#member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-host): `Properties` on `RabbitMqDependencyDefinition` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
+  - Gets or sets the RabbitMQ host name or IP address to probe when no full connection string is supplied.
+  - `string Host { get; set; }`
 - [Host](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-host): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
   - Gets or sets the Redis host name or IP address to probe.
   - `string Host { get; set; }`
@@ -1012,6 +1033,9 @@ Browse the published API surface by public member.
   - Gets the stable pattern identifier.
   - `string Id { get; }`
 - [Id](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-id): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
+  - Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
+  - `string Id { get; set; }`
+- [Id](cephalon-observability-rabbitmqdependencies.md#member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-id): `Properties` on `RabbitMqDependencyDefinition` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
   - Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
   - `string Id { get; set; }`
 - [Id](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-id): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
@@ -1509,6 +1533,9 @@ Browse the published API surface by public member.
 - [Password](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-password): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the optional password used for authentication when no full connection string is supplied.
   - `string Password { get; set; }`
+- [Password](cephalon-observability-rabbitmqdependencies.md#member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-password): `Properties` on `RabbitMqDependencyDefinition` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
+  - Gets or sets the optional password used for authentication when no full connection string is supplied.
+  - `string Password { get; set; }`
 - [Password](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-password): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
   - Gets or sets the optional Redis password used for authentication.
   - `string Password { get; set; }`
@@ -1565,6 +1592,9 @@ Browse the published API surface by public member.
   - `TrustPolicy Policy { get; set; }`
 - [Port](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-port): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the Postgres TCP port.
+  - `int Port { get; set; }`
+- [Port](cephalon-observability-rabbitmqdependencies.md#member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-port): `Properties` on `RabbitMqDependencyDefinition` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
+  - Gets or sets the RabbitMQ TCP port.
   - `int Port { get; set; }`
 - [Port](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-port): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
   - Gets or sets the Redis TCP port.
@@ -1626,6 +1656,12 @@ Browse the published API surface by public member.
 
 ## R
 
+- [RabbitMqDependencyDefinition](cephalon-observability-rabbitmqdependencies.md#member-m-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-ctor): `Constructors` on `RabbitMqDependencyDefinition` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=RabbitMqDependencyDefinition&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
+  - Initializes a new instance of the `RabbitMqDependencyDefinition` class.
+  - `RabbitMqDependencyDefinition()`
+- [RabbitMqDependencyHealthOptions](cephalon-observability-rabbitmqdependencies.md#member-m-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions-ctor): `Constructors` on `RabbitMqDependencyHealthOptions` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=RabbitMqDependencyHealthOptions&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
+  - Initializes a new instance of the `RabbitMqDependencyHealthOptions` class.
+  - `RabbitMqDependencyHealthOptions()`
 - [Readiness](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-readiness): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Readiness&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The current readiness report.
   - `RuntimeHealthReport Readiness { get; set; }`
@@ -1669,6 +1705,9 @@ Browse the published API surface by public member.
   - Gets or sets the interval, in seconds, between background refresh attempts.
   - `int RefreshIntervalSeconds { get; set; }`
 - [RefreshIntervalSeconds](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-refreshintervalseconds): `Properties` on `PostgresDependencyHealthOptions` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
+  - Gets or sets the interval, in seconds, between background refresh attempts.
+  - `int RefreshIntervalSeconds { get; set; }`
+- [RefreshIntervalSeconds](cephalon-observability-rabbitmqdependencies.md#member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions-refreshintervalseconds): `Properties` on `RabbitMqDependencyHealthOptions` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
   - Gets or sets the interval, in seconds, between background refresh attempts.
   - `int RefreshIntervalSeconds { get; set; }`
 - [RefreshIntervalSeconds](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions-refreshintervalseconds): `Properties` on `RedisDependencyHealthOptions` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
@@ -1738,6 +1777,9 @@ Browse the published API surface by public member.
   - Gets or sets a value indicating whether this dependency is required for readiness.
   - `bool Required { get; set; }`
 - [Required](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-required): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
+  - Gets or sets a value indicating whether this dependency is required for readiness.
+  - `bool Required { get; set; }`
+- [Required](cephalon-observability-rabbitmqdependencies.md#member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-required): `Properties` on `RabbitMqDependencyDefinition` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
   - Gets or sets a value indicating whether this dependency is required for readiness.
   - `bool Required { get; set; }`
 - [Required](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-required): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
@@ -2253,6 +2295,9 @@ Browse the published API surface by public member.
 - [TimeoutSeconds](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-timeoutseconds): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the per-probe timeout in seconds.
   - `int TimeoutSeconds { get; set; }`
+- [TimeoutSeconds](cephalon-observability-rabbitmqdependencies.md#member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-timeoutseconds): `Properties` on `RabbitMqDependencyDefinition` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
+  - Gets or sets the per-probe timeout in seconds.
+  - `int TimeoutSeconds { get; set; }`
 - [TimeoutSeconds](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-timeoutseconds): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
   - Gets or sets the per-probe timeout in seconds.
   - `int TimeoutSeconds { get; set; }`
@@ -2391,12 +2436,18 @@ Browse the published API surface by public member.
 - [Username](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-username): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the optional user name used for authentication when no full connection string is supplied.
   - `string Username { get; set; }`
+- [Username](cephalon-observability-rabbitmqdependencies.md#member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-username): `Properties` on `RabbitMqDependencyDefinition` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
+  - Gets or sets the optional user name used for authentication when no full connection string is supplied.
+  - `string Username { get; set; }`
 - [Username](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-username): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
   - Gets or sets the optional Redis ACL user name used for authentication.
   - `string Username { get; set; }`
 - [UseSettings](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-usesettings-cephalon-engine-configuration-enginesettings): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Applies a preconstructed `EngineSettings` instance to the builder.
   - `EngineBuilder UseSettings(EngineSettings settings)`
+- [UseTls](cephalon-observability-rabbitmqdependencies.md#member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-usetls): `Properties` on `RabbitMqDependencyDefinition` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=UseTls&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
+  - Gets or sets a value indicating whether TLS should be enabled for the broker probe.
+  - `bool UseTls { get; set; }`
 - [UseTrustPolicy](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-usetrustpolicy-cephalon-engine-configuration-trustpolicy): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseTrustPolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Merges trust and capability-governance settings into the builder.
   - `EngineBuilder UseTrustPolicy(TrustPolicy policy)`
@@ -2418,6 +2469,9 @@ Browse the published API surface by public member.
 - [VerticalSliceOrganization](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-verticalsliceorganization): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=VerticalSliceOrganization&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the vertical-slice organization pattern.
   - `PatternDescriptor VerticalSliceOrganization { get; }`
+- [VirtualHost](cephalon-observability-rabbitmqdependencies.md#member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-virtualhost): `Properties` on `RabbitMqDependencyDefinition` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=VirtualHost&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
+  - Gets or sets the RabbitMQ virtual host used for the probe connection.
+  - `string VirtualHost { get; set; }`
 
 ## W
 
