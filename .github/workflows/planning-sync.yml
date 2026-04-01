@@ -1,0 +1,37 @@
+name: Planning Sync
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/engine-roadmap.md
+      - docs/engine-backlog.md
+      - scripts/sync-planning-github.ps1
+      - .github/workflows/planning-sync.yml
+  workflow_dispatch:
+
+concurrency:
+  group: planning-sync-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    name: Sync Planning Docs to GitHub
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      repository-projects: write
+
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+      CEPHALON_PROJECT_TOKEN: ${{ secrets.CEPHALON_PROJECT_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Sync planning issues, milestones, and project metadata
+        shell: pwsh
+        run: ./scripts/sync-planning-github.ps1 -RepoFullName ${{ github.repository }} -ProjectOwner Cephalon-Labs -ProjectNumber 2

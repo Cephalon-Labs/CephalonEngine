@@ -36,6 +36,8 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 
 - [Engine roadmap](engine-roadmap.md)
 - [Engine backlog](engine-backlog.md)
+- planning issues and phase milestones can be synchronized from those docs through `scripts/sync-planning-github.ps1` and `.github/workflows/planning-sync.yml`
+- set `CEPHALON_PROJECT_TOKEN` with `repo`, `project`, and `read:org` scopes when the workflow needs to update the organization-level GitHub Project as well as repository issues and milestones
 
 ## Visual diagrams
 
