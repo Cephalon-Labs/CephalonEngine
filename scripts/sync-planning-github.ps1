@@ -2256,6 +2256,8 @@ function Test-IsDocumentationOnlyWorkItem {
 
     $normalized = $Title.ToLowerInvariant()
     return $normalized.StartsWith("document ") -or
+        $normalized.Contains("inventory") -or
+        $normalized.Contains("planning") -or
         $normalized.Contains("documentation") -or
         $normalized.Contains(" guide") -or
         $normalized.Contains("guidance") -or

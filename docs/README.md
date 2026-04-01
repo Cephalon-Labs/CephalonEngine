@@ -20,6 +20,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 ## Runtime and operations
 
 - [Operations](operations.md)
+- [Operational hardening gap inventory](operational-hardening-gap-inventory.md)
 - [Runtime failure policy](runtime-failure-policy.md)
 - [Benchmarking](benchmarking.md)
 - [Reference docs publishing](reference-docs.md)

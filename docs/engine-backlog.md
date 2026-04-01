@@ -239,6 +239,7 @@ The active planning wave now moves to phase 2 operational hardening:
 - finish the gap inventory and decide the concrete readiness/liveness and restart-policy follow-through sequence
 - package exporter and dependency-health follow-through as the next implementation slice after the phase-2 inventory
 - tighten diagnostics and operator-facing runtime answers before reopening deeper platform work
+- keep `docs/operational-hardening-gap-inventory.md` current as the source of truth for what phase-2 gaps are still genuinely open
 
 ### ENG-016 Blueprint sample suite
 

@@ -1,6 +1,8 @@
 # Cephalon Operations
 
-This document captures the current operational surface for Cephalon as of `April 1, 2026`.
+This document captures the current operational surface for Cephalon as of `April 2, 2026`.
+
+For the active phase-2 follow-through inventory, see `docs/operational-hardening-gap-inventory.md`.
 
 ## Health surfaces
 
@@ -140,6 +142,7 @@ That keeps readiness/liveness logic shared across:
 ## Related documents
 
 - `docs/architecture.md`
+- `docs/operational-hardening-gap-inventory.md`
 - `docs/runtime-failure-policy.md`
 - `docs/engine-roadmap.md`
 - `docs/engine-backlog.md`

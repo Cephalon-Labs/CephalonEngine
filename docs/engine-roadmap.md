@@ -137,6 +137,10 @@ Deliverables:
 - clearer operational answers to “what loaded, what started, what failed, and why?”
 - benchmark-driven performance guardrails for hot engine paths
 
+Current inventory:
+
+- `docs/operational-hardening-gap-inventory.md` now records the shipped baseline versus the remaining phase-2 gaps so follow-through work stays grounded in the code that already exists
+
 Exit criteria:
 
 - operators can diagnose engine startup and module failures quickly
