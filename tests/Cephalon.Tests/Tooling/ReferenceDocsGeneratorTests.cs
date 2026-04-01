@@ -105,6 +105,46 @@ public sealed class ReferenceDocsGeneratorTests
     }
 
     [Fact]
+    public void GenerateIncludesSummariesForToolingPublicTypesAndMembers()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-coverage-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies: ["Cephalon.Cli", "Cephalon.ReferenceDocs"]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var manifest = Assert.Single(rendered.Files, file => file.Path == "reference-manifest.json");
+
+        using var manifestDocument = JsonDocument.Parse(manifest.Contents);
+
+        var typeEntries = manifestDocument.RootElement.GetProperty("Types").EnumerateArray().ToArray();
+        var memberEntries = manifestDocument.RootElement.GetProperty("Members").EnumerateArray().ToArray();
+
+        Assert.NotEmpty(typeEntries);
+        Assert.NotEmpty(memberEntries);
+
+        var missingTypeSummaries = typeEntries
+            .Where(static type => !type.TryGetProperty("Summary", out var summary) || string.IsNullOrWhiteSpace(summary.GetString()))
+            .Select(static type => $"{type.GetProperty("AssemblyName").GetString()}::{type.GetProperty("NamespaceName").GetString()}.{type.GetProperty("DisplayName").GetString()}")
+            .OrderBy(static name => name, StringComparer.Ordinal)
+            .ToArray();
+        var missingMemberSummaries = memberEntries
+            .Where(static member => !member.TryGetProperty("Summary", out var summary) || string.IsNullOrWhiteSpace(summary.GetString()))
+            .Select(static member => $"{member.GetProperty("AssemblyName").GetString()}::{member.GetProperty("DeclaringTypeName").GetString()}.{member.GetProperty("DisplayName").GetString()} [{member.GetProperty("Category").GetString()}]")
+            .OrderBy(static name => name, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.True(
+            missingTypeSummaries.Length == 0,
+            CreateMissingSummaryMessage("public types", missingTypeSummaries));
+        Assert.True(
+            missingMemberSummaries.Length == 0,
+            CreateMissingSummaryMessage("public members", missingMemberSummaries));
+    }
+
+    [Fact]
     public async Task WriteAsyncWritesRenderedReferenceDocsToDisk()
     {
         var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-write-{Guid.NewGuid():N}");
@@ -157,5 +197,19 @@ public sealed class ReferenceDocsGeneratorTests
             StringComparison.OrdinalIgnoreCase)
             ? "Release"
             : "Debug";
+    }
+
+    private static string CreateMissingSummaryMessage(string scope, string[] entries)
+    {
+        const int previewCount = 20;
+
+        var preview = entries
+            .Take(previewCount)
+            .Select(static entry => $"- {entry}");
+        var suffix = entries.Length > previewCount
+            ? $"{Environment.NewLine}... and {entries.Length - previewCount} more."
+            : string.Empty;
+
+        return $"Reference docs are missing XML summaries for {scope}:{Environment.NewLine}{string.Join(Environment.NewLine, preview)}{suffix}";
     }
 }

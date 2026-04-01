@@ -731,7 +731,7 @@ public static class ReferenceDocsGenerator
         if (type.IsGenericType)
         {
             var definition = type.GetGenericTypeDefinition();
-            var definitionName = (definition.FullName ?? definition.Name).Replace('+', '.');
+            var definitionName = StripGenericArity((definition.FullName ?? definition.Name).Replace('+', '.'));
             var arguments = string.Join(",", type.GetGenericArguments().Select(GetDocumentationTypeName));
             return $"{definitionName}{{{arguments}}}";
         }
@@ -952,6 +952,30 @@ public static class ReferenceDocsGenerator
     {
         var index = value.IndexOf('`');
         return index < 0 ? value : value[..index];
+    }
+
+    private static string StripGenericArity(string value)
+    {
+        var builder = new StringBuilder(value.Length);
+
+        for (var index = 0; index < value.Length; index++)
+        {
+            if (value[index] == '`')
+            {
+                index++;
+                while (index < value.Length && char.IsDigit(value[index]))
+                {
+                    index++;
+                }
+
+                index--;
+                continue;
+            }
+
+            builder.Append(value[index]);
+        }
+
+        return builder.ToString();
     }
 
     private static NamedDocumentation? CreateNamedDocumentation(XElement element)

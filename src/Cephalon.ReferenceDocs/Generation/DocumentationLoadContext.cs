@@ -69,13 +69,6 @@ internal sealed class DocumentationLoadContext : AssemblyLoadContext, IDisposabl
 
     protected override Assembly? Load(AssemblyName assemblyName)
     {
-        var defaultAssembly = AssemblyLoadContext.Default.Assemblies.FirstOrDefault(
-            candidate => string.Equals(candidate.GetName().Name, assemblyName.Name, StringComparison.OrdinalIgnoreCase));
-        if (defaultAssembly is not null)
-        {
-            return defaultAssembly;
-        }
-
         foreach (var resolver in _dependencyResolvers)
         {
             var resolvedPath = resolver.ResolveAssemblyToPath(assemblyName);
@@ -89,6 +82,13 @@ internal sealed class DocumentationLoadContext : AssemblyLoadContext, IDisposabl
             _assemblyPaths.TryGetValue(assemblyName.Name, out var assemblyPath))
         {
             return LoadFromAssemblyPath(assemblyPath);
+        }
+
+        var defaultAssembly = AssemblyLoadContext.Default.Assemblies.FirstOrDefault(
+            candidate => string.Equals(candidate.GetName().Name, assemblyName.Name, StringComparison.OrdinalIgnoreCase));
+        if (defaultAssembly is not null)
+        {
+            return defaultAssembly;
         }
 
         return null;
