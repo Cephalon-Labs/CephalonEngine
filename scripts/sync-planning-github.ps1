@@ -119,6 +119,18 @@ function Get-SyncMarker {
     return "<!-- planning-sync:key=$Key -->"
 }
 
+function Get-PlanningSyncKeyFromBody {
+    param([AllowNull()][string]$Body)
+
+    $normalizedBody = Normalize-Text -Value $Body
+    $match = [regex]::Match($normalizedBody, "<!-- planning-sync:key=(?<key>[^>]+) -->")
+    if ($match.Success) {
+        return $match.Groups["key"].Value.Trim()
+    }
+
+    return $null
+}
+
 function Get-PhaseTitle {
     param([Parameter(Mandatory = $true)][int]$PhaseNumber, [Parameter(Mandatory = $true)][string]$Name)
 
@@ -386,6 +398,8 @@ function Ensure-ManagedPlanningLabels {
 
     $baseLabels = @(
         @{ Name = "planning"; Color = "0e8a16"; Description = "Managed planning issue synced from roadmap or backlog." },
+        @{ Name = "planning:legacy"; Color = "cfd3d7"; Description = "Managed historical planning issue retained for traceability only." },
+        @{ Name = "planning:superseded"; Color = "8a63d2"; Description = "Managed historical planning issue replaced by a canonical synced issue." },
         @{ Name = "kind:epic"; Color = "5319e7"; Description = "Managed planning epic / top-level work item." },
         @{ Name = "kind:task"; Color = "1d76db"; Description = "Managed planning child task." },
         @{ Name = "source:backlog"; Color = "bfdadc"; Description = "Managed planning item sourced from docs/engine-backlog.md." },
@@ -647,6 +661,7 @@ function Format-EstimateText {
 function Get-ManagedLabelPrefixes {
     return @(
         "planning",
+        "planning:",
         "kind:",
         "source:",
         "phase:",
@@ -886,6 +901,160 @@ function Get-ManagedChildLabels {
     }
 
     return $labels | Select-Object -Unique
+}
+
+function Get-LegacyPlanningIterationTitle {
+    param(
+        [AllowNull()][string]$SyncKey,
+        [AllowNull()][string]$IssueTitle
+    )
+
+    if (-not [string]::IsNullOrWhiteSpace($IssueTitle) -and $IssueTitle -match "^Sprint\s+\d+$") {
+        return $IssueTitle.Trim()
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($SyncKey) -and $SyncKey -match "^backlog:sprint-(?<number>\d+)$") {
+        return "Sprint $($Matches.number)"
+    }
+
+    return $null
+}
+
+function Get-ManagedLegacyPlanningLabels {
+    param(
+        [AllowNull()][string]$SyncKey,
+        [AllowNull()]$CanonicalSpec,
+        [AllowNull()][string]$IterationTitle,
+        [switch]$IsSuperseded
+    )
+
+    $labels = @("planning", "planning:legacy")
+    if ($IsSuperseded) {
+        $labels += "planning:superseded"
+    }
+
+    if ($null -ne $CanonicalSpec) {
+        $labels += Get-ManagedTopLevelLabels -Spec $CanonicalSpec -IterationTitle $IterationTitle
+        return $labels | Select-Object -Unique
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($SyncKey)) {
+        if ($SyncKey.StartsWith("backlog:", [System.StringComparison]::OrdinalIgnoreCase)) {
+            $labels += "source:backlog"
+        }
+        elseif ($SyncKey.StartsWith("roadmap:", [System.StringComparison]::OrdinalIgnoreCase)) {
+            $labels += "source:roadmap"
+        }
+    }
+
+    $iterationLabel = Get-IterationLabelName -IterationTitle $IterationTitle -PlanningStatus $null
+    if (-not [string]::IsNullOrWhiteSpace($iterationLabel)) {
+        $labels += $iterationLabel
+    }
+
+    return $labels | Select-Object -Unique
+}
+
+function Render-LegacyPlanningStatusSection {
+    param(
+        [Parameter(Mandatory = $true)]$Issue,
+        [AllowNull()][string]$SyncKey,
+        [AllowNull()]$CanonicalIssue,
+        [AllowNull()][string]$BoardUrl,
+        [AllowNull()][string]$IterationTitle
+    )
+
+    $lines = @(
+        "<!-- planning-sync:section=legacy-status:start -->"
+        "## Legacy planning status"
+        ""
+    )
+
+    if ($null -ne $CanonicalIssue) {
+        $lines += "- Canonical issue: [#$($CanonicalIssue.number) $($CanonicalIssue.title)]($($CanonicalIssue.url))"
+        $lines += "- Tracking note: this older planning issue is retained only for historical traceability and should not be used for progress or completion reporting."
+    }
+    elseif (-not [string]::IsNullOrWhiteSpace($IterationTitle)) {
+        $lines += "- Replaced by project iteration tracking: **$IterationTitle**"
+        $lines += "- Tracking note: this planning placeholder is retained only as historical context and is no longer part of the active issue workflow."
+    }
+    else {
+        $lines += "- Tracking note: this planning issue is retained only as historical context and is no longer the canonical source of truth."
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($BoardUrl)) {
+        $lines += "- Active board: [@Cephalon-Engine]($BoardUrl)"
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($SyncKey)) {
+        $lines += "- Planning sync key: ``$SyncKey``"
+    }
+
+    $lines += "<!-- planning-sync:section=legacy-status:end -->"
+    return ($lines -join "`n").Trim()
+}
+
+function Sync-LegacyPlanningIssues {
+    param(
+        [Parameter(Mandatory = $true)]$RepositoryContext,
+        [Parameter(Mandatory = $true)][string]$RepositoryFullName,
+        [Parameter(Mandatory = $true)]$IssuesByNumber,
+        [Parameter(Mandatory = $true)]$DesiredIssuesBySyncKey,
+        [Parameter(Mandatory = $true)]$CanonicalIssueNumbersBySyncKey,
+        [Parameter(Mandatory = $true)]$CanonicalIterationTitlesBySyncKey,
+        [AllowNull()][string]$BoardUrl
+    )
+
+    foreach ($issue in ($IssuesByNumber.Values | Sort-Object number)) {
+        $syncKey = Get-PlanningSyncKeyFromBody -Body $issue.body
+        if ([string]::IsNullOrWhiteSpace($syncKey)) {
+            continue
+        }
+
+        $canonicalIssue = $null
+        $canonicalSpec = $null
+        $isLegacy = $false
+
+        if ($CanonicalIssueNumbersBySyncKey.ContainsKey($syncKey)) {
+            $canonicalIssueNumber = [int]$CanonicalIssueNumbersBySyncKey[$syncKey]
+            if ([int]$issue.number -ne $canonicalIssueNumber) {
+                $isLegacy = $true
+                if ($IssuesByNumber.ContainsKey($canonicalIssueNumber)) {
+                    $canonicalIssue = $IssuesByNumber[$canonicalIssueNumber]
+                }
+                if ($DesiredIssuesBySyncKey.ContainsKey($syncKey)) {
+                    $canonicalSpec = $DesiredIssuesBySyncKey[$syncKey]
+                }
+            }
+        }
+        elseif (-not $DesiredIssuesBySyncKey.ContainsKey($syncKey)) {
+            $isLegacy = $true
+        }
+
+        if (-not $isLegacy) {
+            continue
+        }
+
+        $iterationTitle = $null
+        if ($CanonicalIterationTitlesBySyncKey.ContainsKey($syncKey)) {
+            $iterationTitle = [string]$CanonicalIterationTitlesBySyncKey[$syncKey]
+        }
+        if ([string]::IsNullOrWhiteSpace($iterationTitle)) {
+            $iterationTitle = Get-LegacyPlanningIterationTitle -SyncKey $syncKey -IssueTitle $issue.title
+        }
+
+        $desiredLabels = Get-ManagedLegacyPlanningLabels -SyncKey $syncKey -CanonicalSpec $canonicalSpec -IterationTitle $iterationTitle -IsSuperseded:($null -ne $canonicalIssue)
+        Set-IssueManagedLabels -RepositoryContext $RepositoryContext -Issue $issue -ManagedLabels $desiredLabels
+
+        $legacySection = Render-LegacyPlanningStatusSection -Issue $issue -SyncKey $syncKey -CanonicalIssue $canonicalIssue -BoardUrl $BoardUrl -IterationTitle $iterationTitle
+        $renderedBody = Upsert-ManagedSection -Body $issue.body -Key "legacy-status" -RenderedSection $legacySection
+        if ((Normalize-Text -Value $issue.body) -ne (Normalize-Text -Value $renderedBody)) {
+            Write-Host "Marking legacy planning issue #$($issue.number) '$($issue.title)'..."
+            Invoke-GhApiJson -Route "repos/$RepositoryFullName/issues/$($issue.number)" -Method "PATCH" -Body @{
+                body = $renderedBody
+            } | Out-Null
+        }
+    }
 }
 
 function Render-PlanningLinksSection {
@@ -2587,17 +2756,22 @@ if ($null -ne $projectContext) {
 
 $issueIndexByKey = @{}
 $issueIndexByTitle = @{}
+$desiredIssuesBySyncKey = @{}
 foreach ($issue in $existingIssues) {
-    $bodyText = Normalize-Text -Value $issue.body
-    if ($bodyText -match "<!-- planning-sync:key=(?<key>[^>]+) -->") {
-        if (-not $issueIndexByKey.ContainsKey($Matches.key) -or [int]$issue.number -lt [int]$issueIndexByKey[$Matches.key].number) {
-            $issueIndexByKey[$Matches.key] = $issue
+    $syncKey = Get-PlanningSyncKeyFromBody -Body $issue.body
+    if (-not [string]::IsNullOrWhiteSpace($syncKey)) {
+        if (-not $issueIndexByKey.ContainsKey($syncKey) -or [int]$issue.number -lt [int]$issueIndexByKey[$syncKey].number) {
+            $issueIndexByKey[$syncKey] = $issue
         }
     }
 
     if (-not $issueIndexByTitle.ContainsKey($issue.title) -or [int]$issue.number -lt [int]$issueIndexByTitle[$issue.title].number) {
         $issueIndexByTitle[$issue.title] = $issue
     }
+}
+
+foreach ($desiredIssue in $desiredIssues) {
+    $desiredIssuesBySyncKey[$desiredIssue.SyncKey] = $desiredIssue
 }
 
 $existingMilestones = Invoke-GhApiJson -Route "repos/$repo/milestones?state=all&per_page=100"
@@ -2658,6 +2832,8 @@ foreach ($phaseNumber in ($phaseMilestones.Keys | Sort-Object)) {
 }
 
 $syncedIssues = @{}
+$canonicalIssueNumbersBySyncKey = @{}
+$canonicalIterationTitlesBySyncKey = @{}
 foreach ($desiredIssue in $desiredIssues) {
     $existingIssue = $null
     $keyIssue = $null
@@ -2770,6 +2946,8 @@ foreach ($desiredIssue in $desiredIssues) {
 
     $issueIndexByKey[$desiredIssue.SyncKey] = $existingIssue
     $issueIndexByTitle[$existingIssue.title] = $existingIssue
+    $canonicalIssueNumbersBySyncKey[$desiredIssue.SyncKey] = [int]$existingIssue.number
+    $canonicalIterationTitlesBySyncKey[$desiredIssue.SyncKey] = $topLevelContext.IterationTitle
     $syncedIssues[[int]$existingIssue.number] = [pscustomobject]@{
         Desired = $desiredIssue
         IterationTitle = $topLevelContext.IterationTitle
@@ -3013,5 +3191,13 @@ foreach ($syncEntry in $syncedIssues.GetEnumerator()) {
         } | Out-Null
     }
 }
+
+$allIssues = Get-RepositoryIssues -RepositoryFullName $repo
+$issuesByNumber = @{}
+foreach ($issue in $allIssues) {
+    $issuesByNumber[[int]$issue.number] = $issue
+}
+
+Sync-LegacyPlanningIssues -RepositoryContext $repositoryContext -RepositoryFullName $repo -IssuesByNumber $issuesByNumber -DesiredIssuesBySyncKey $desiredIssuesBySyncKey -CanonicalIssueNumbersBySyncKey $canonicalIssueNumbersBySyncKey -CanonicalIterationTitlesBySyncKey $canonicalIterationTitlesBySyncKey -BoardUrl $boardUrl
 
 Write-Host "Planning sync completed for $repo."
