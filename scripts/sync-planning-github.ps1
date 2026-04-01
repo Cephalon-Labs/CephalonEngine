@@ -1038,10 +1038,14 @@ query($owner: String!, $number: Int!) {
               iterations {
                 id
                 title
+                startDate
+                duration
               }
               completedIterations {
                 id
                 title
+                startDate
+                duration
               }
             }
           }
@@ -1078,10 +1082,14 @@ query($owner: String!, $number: Int!) {
               iterations {
                 id
                 title
+                startDate
+                duration
               }
               completedIterations {
                 id
                 title
+                startDate
+                duration
               }
             }
           }
@@ -1162,8 +1170,170 @@ query($owner: String!, $number: Int!) {
         StatusOptionIds = $statusOptions
         EstimateFieldId = if ($null -ne $estimateField) { $estimateField.id } else { $null }
         IterationFieldId = if ($null -ne $iterationField) { $iterationField.id } else { $null }
+        IterationFieldName = if ($null -ne $iterationField) { $iterationField.name } else { $null }
         IterationIdsByTitle = $iterationIdsByTitle
+        IterationConfigurations = if ($null -ne $iterationField -and $null -ne $iterationField.configuration) { @($iterationField.configuration.iterations) } else { @() }
     }
+}
+
+function ConvertTo-GraphQlStringLiteral {
+    param([AllowNull()][string]$Value)
+
+    return ($Value | ConvertTo-Json -Compress)
+}
+
+function ConvertTo-IsoDateLiteral {
+    param([AllowNull()][string]$Value)
+
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        return $null
+    }
+
+    $match = [regex]::Match($Value, '^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})$')
+    if ($match.Success) {
+        $year = [int]$match.Groups["year"].Value
+        if ($year -gt 2200) {
+            $year -= 543
+        }
+
+        return "{0:D4}-{1}-{2}" -f $year, $match.Groups["month"].Value, $match.Groups["day"].Value
+    }
+
+    return ([datetime]::Parse($Value, [System.Globalization.CultureInfo]::InvariantCulture)).ToString("yyyy-MM-dd", [System.Globalization.CultureInfo]::InvariantCulture)
+}
+
+function Get-DesiredProjectIterationTitles {
+    param(
+        [Parameter(Mandatory = $true)]$TopLevelIterationMap,
+        [Parameter(Mandatory = $true)]$ProjectContext,
+        [Parameter(Mandatory = $true)]$ExistingIssues
+    )
+
+    $titles = [System.Collections.Generic.List[string]]::new()
+
+    foreach ($value in $TopLevelIterationMap.Values) {
+        if (-not [string]::IsNullOrWhiteSpace([string]$value) -and -not $titles.Contains([string]$value)) {
+            $titles.Add([string]$value)
+        }
+    }
+
+    foreach ($draftItem in $ProjectContext.DraftItems) {
+        if ($null -eq $draftItem.content -or -not $draftItem.content.PSObject.Properties["body"]) {
+            continue
+        }
+
+        $metadata = Parse-PlanningMetadataFromBody -Body $draftItem.content.body
+        if (-not [string]::IsNullOrWhiteSpace($metadata.IterationTitle) -and -not $titles.Contains($metadata.IterationTitle)) {
+            $titles.Add($metadata.IterationTitle)
+        }
+    }
+
+    foreach ($issue in $ExistingIssues) {
+        $metadata = Parse-PlanningMetadataFromBody -Body $issue.body
+        if (-not [string]::IsNullOrWhiteSpace($metadata.IterationTitle) -and -not $titles.Contains($metadata.IterationTitle)) {
+            $titles.Add($metadata.IterationTitle)
+        }
+    }
+
+    return @($titles)
+}
+
+function Ensure-ProjectIterations {
+    param(
+        [Parameter(Mandatory = $true)]$ProjectContext,
+        [Parameter(Mandatory = $true)][string]$ProjectOwner,
+        [Parameter(Mandatory = $true)][int]$ProjectNumber,
+        [Parameter(Mandatory = $true)][string[]]$DesiredIterationTitles
+    )
+
+    if ($null -eq $ProjectContext.IterationFieldId -or $null -eq $DesiredIterationTitles -or $DesiredIterationTitles.Count -eq 0) {
+        return $ProjectContext
+    }
+
+    $missingTitles = @(
+        $DesiredIterationTitles |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) -and -not $ProjectContext.IterationIdsByTitle.ContainsKey($_) } |
+            Select-Object -Unique
+    )
+
+    if ($ProjectContext.IterationConfigurations.Count -eq 0) {
+        Write-Warning "Iteration field '$($ProjectContext.IterationFieldName)' has no configured iterations. Skipping automatic iteration creation."
+        return $ProjectContext
+    }
+
+    $configuredIterations = @()
+    $needsNormalization = $false
+    foreach ($iteration in $ProjectContext.IterationConfigurations | Sort-Object startDate) {
+        $normalizedStartDate = ConvertTo-IsoDateLiteral -Value ([string]$iteration.startDate)
+        if ($normalizedStartDate -ne [string]$iteration.startDate) {
+            $needsNormalization = $true
+        }
+
+        $configuredIterations += [pscustomobject]@{
+            Title = [string]$iteration.title
+            StartDate = $normalizedStartDate
+            Duration = [int]$iteration.duration
+        }
+    }
+
+    if ($missingTitles.Count -eq 0 -and -not $needsNormalization) {
+        return $ProjectContext
+    }
+
+    $defaultDuration = [int]$configuredIterations[0].Duration
+    if ($defaultDuration -le 0) {
+        $defaultDuration = 7
+    }
+
+    $lastIteration = $configuredIterations[-1]
+    $nextStartDate = ([datetime]$lastIteration.StartDate).AddDays([int]$lastIteration.Duration)
+
+    foreach ($title in $missingTitles) {
+        Write-Host "Adding iteration '$title' to project $($ProjectContext.ProjectId)..."
+        $configuredIterations += [pscustomobject]@{
+            Title = $title
+            StartDate = $nextStartDate.ToString("yyyy-MM-dd", [System.Globalization.CultureInfo]::InvariantCulture)
+            Duration = $defaultDuration
+        }
+        $nextStartDate = $nextStartDate.AddDays($defaultDuration)
+    }
+
+    $iterationInputs = @(
+        foreach ($iteration in $configuredIterations) {
+            ("{{ title: {0}, startDate: {1}, duration: {2} }}" -f
+                (ConvertTo-GraphQlStringLiteral -Value $iteration.Title),
+                (ConvertTo-GraphQlStringLiteral -Value $iteration.StartDate),
+                $iteration.Duration)
+        }
+    )
+
+    $mutation = @"
+mutation {
+  updateProjectV2Field(input: {
+    fieldId: $(ConvertTo-GraphQlStringLiteral -Value $ProjectContext.IterationFieldId),
+    iterationConfiguration: {
+      startDate: $(ConvertTo-GraphQlStringLiteral -Value $configuredIterations[0].StartDate),
+      duration: $defaultDuration,
+      iterations: [
+        $($iterationInputs -join ",`n        ")
+      ]
+    }
+  }) {
+    projectV2Field {
+      ... on ProjectV2IterationField {
+        id
+      }
+    }
+  }
+}
+"@
+
+    Invoke-GhNoJson -Arguments @(
+        "api", "graphql",
+        "-f", "query=$mutation"
+    )
+
+    return (Get-ProjectContext -Owner $ProjectOwner -ProjectNumber $ProjectNumber)
 }
 
 function Ensure-ProjectItem {
@@ -1625,6 +1795,11 @@ foreach ($phase in $roadmapPhases) {
 }
 
 $existingIssues = Get-RepositoryIssues -RepositoryFullName $repo
+if ($null -ne $projectContext) {
+    $desiredIterationTitles = Get-DesiredProjectIterationTitles -TopLevelIterationMap $topLevelIterationMap -ProjectContext $projectContext -ExistingIssues $existingIssues
+    $projectContext = Ensure-ProjectIterations -ProjectContext $projectContext -ProjectOwner $ProjectOwner -ProjectNumber $ProjectNumber -DesiredIterationTitles $desiredIterationTitles
+}
+
 $issueIndexByKey = @{}
 $issueIndexByTitle = @{}
 foreach ($issue in $existingIssues) {
