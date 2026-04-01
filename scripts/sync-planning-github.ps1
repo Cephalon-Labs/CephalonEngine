@@ -76,7 +76,12 @@ function Invoke-GhApiJson {
         $Body = $null
     )
 
-    $arguments = @("api", $Route, "--method", $Method)
+    $arguments = @(
+        "api",
+        "-H", "Accept: application/vnd.github+json",
+        "-H", "X-GitHub-Api-Version: 2026-03-10",
+        $Route,
+        "--method", $Method)
     $tempFile = $null
 
     try {
@@ -1171,6 +1176,112 @@ function Ensure-ManagedProjectSingleSelectFields {
     return $createdAny
 }
 
+function Get-ManagedProjectViews {
+    return @(
+        [pscustomobject]@{
+            Name = "Validation"
+            Layout = "table"
+            Filter = "test:Needed,Running,Failed"
+            VisibleFieldNames = @("Title", "Assignees", "Status", "Milestone", "Parent issue", "Estimate", "Iteration", "Test", "Benchmark")
+        }
+        [pscustomobject]@{
+            Name = "Benchmarks"
+            Layout = "table"
+            Filter = "benchmark:Needed,Running,Regressed"
+            VisibleFieldNames = @("Title", "Assignees", "Status", "Milestone", "Parent issue", "Estimate", "Iteration", "Test", "Benchmark")
+        }
+    )
+}
+
+function Get-ProjectViewLayoutName {
+    param([Parameter(Mandatory = $true)][string]$Layout)
+
+    switch ($Layout.ToLowerInvariant()) {
+        "table" { return "TABLE_LAYOUT" }
+        "board" { return "BOARD_LAYOUT" }
+        "roadmap" { return "ROADMAP_LAYOUT" }
+        default { return $Layout }
+    }
+}
+
+function Get-ProjectRestRouteBase {
+    param(
+        [Parameter(Mandatory = $true)][string]$OwnerKind,
+        [Parameter(Mandatory = $true)][string]$OwnerRestIdentifier,
+        [Parameter(Mandatory = $true)][int]$ProjectNumber
+    )
+
+    switch ($OwnerKind) {
+        "organization" { return "orgs/$OwnerRestIdentifier/projectsV2/$ProjectNumber" }
+        "user" { return "users/$OwnerRestIdentifier/projectsV2/$ProjectNumber" }
+        default { return $null }
+    }
+}
+
+function Get-ManagedProjectViewFieldIds {
+    param(
+        [Parameter(Mandatory = $true)]$ProjectRestFields,
+        [Parameter(Mandatory = $true)][string[]]$VisibleFieldNames,
+        [Parameter(Mandatory = $true)][string]$ViewName
+    )
+
+    $fieldIds = [System.Collections.Generic.List[int]]::new()
+    foreach ($fieldName in $VisibleFieldNames) {
+        $field = $ProjectRestFields | Where-Object { [string]$_.name -eq $fieldName } | Select-Object -First 1
+        if ($null -eq $field) {
+            Write-Warning "Managed project view '$ViewName' could not find field '$fieldName'."
+            continue
+        }
+
+        $fieldIds.Add([int]$field.id)
+    }
+
+    return @($fieldIds)
+}
+
+function Ensure-ManagedProjectViews {
+    param(
+        [Parameter(Mandatory = $true)]$ProjectView,
+        [Parameter(Mandatory = $true)][string]$RestRouteBase
+    )
+
+    if ([string]::IsNullOrWhiteSpace($RestRouteBase)) {
+        return $false
+    }
+
+    $projectRestFields = @(Invoke-GhApiJson -Route "$RestRouteBase/fields")
+    $createdAny = $false
+
+    foreach ($spec in Get-ManagedProjectViews) {
+        $existingView = $ProjectView.views.nodes | Where-Object { $_.name -eq $spec.Name } | Select-Object -First 1
+        $visibleFieldIds = Get-ManagedProjectViewFieldIds -ProjectRestFields $projectRestFields -VisibleFieldNames $spec.VisibleFieldNames -ViewName $spec.Name
+        if ($visibleFieldIds.Count -eq 0) {
+            Write-Warning "Skipping managed project view '$($spec.Name)' because no visible fields could be resolved."
+            continue
+        }
+
+        if ($null -eq $existingView) {
+            Write-Host "Creating project view '$($spec.Name)'..."
+            Invoke-GhApiJson -Route "$RestRouteBase/views" -Method "POST" -Body @{
+                name = $spec.Name
+                layout = $spec.Layout
+                filter = $spec.Filter
+                visible_fields = $visibleFieldIds
+            } | Out-Null
+            $createdAny = $true
+            continue
+        }
+
+        $expectedLayout = Get-ProjectViewLayoutName -Layout $spec.Layout
+        if ($existingView.layout -ne $expectedLayout -or
+            (Normalize-Text -Value ([string]$existingView.filter)) -ne (Normalize-Text -Value ([string]$spec.Filter))) {
+            Write-Warning "Managed project view '$($spec.Name)' already exists with a different layout or filter. The sync script will preserve the current view."
+        }
+    }
+
+    return $createdAny
+}
+
 function Get-ProjectContext {
     param(
         [Parameter(Mandatory = $true)][string]$Owner,
@@ -1184,6 +1295,26 @@ query($owner: String!, $number: Int!) {
     projectV2(number: $number) {
       id
       url
+      views(first: 50) {
+        nodes {
+          id
+          name
+          layout
+          filter
+          fields(first: 20) {
+            nodes {
+              ... on ProjectV2FieldCommon {
+                id
+                name
+              }
+              ... on ProjectV2IterationField {
+                id
+                name
+              }
+            }
+          }
+        }
+      }
       fields(first: 50) {
         nodes {
           ... on ProjectV2FieldCommon {
@@ -1225,9 +1356,30 @@ query($owner: String!, $number: Int!) {
     $userProjectQuery = @'
 query($owner: String!, $number: Int!) {
   user(login: $owner) {
+    databaseId
     projectV2(number: $number) {
       id
       url
+      views(first: 50) {
+        nodes {
+          id
+          name
+          layout
+          filter
+          fields(first: 20) {
+            nodes {
+              ... on ProjectV2FieldCommon {
+                id
+                name
+              }
+              ... on ProjectV2IterationField {
+                id
+                name
+              }
+            }
+          }
+        }
+      }
       fields(first: 50) {
         nodes {
           ... on ProjectV2FieldCommon {
@@ -1268,6 +1420,8 @@ query($owner: String!, $number: Int!) {
 '@
 
     $projectView = $null
+    $ownerKind = $null
+    $ownerRestIdentifier = $null
     try {
         $projectResponse = Invoke-GhJson -Arguments @(
             "api", "graphql",
@@ -1275,6 +1429,10 @@ query($owner: String!, $number: Int!) {
             "-F", "number=$ProjectNumber",
             "-f", "query=$orgProjectQuery")
         $projectView = $projectResponse.data.organization.projectV2
+        if ($null -ne $projectView) {
+            $ownerKind = "organization"
+            $ownerRestIdentifier = $Owner
+        }
     }
     catch {
         $projectView = $null
@@ -1287,6 +1445,10 @@ query($owner: String!, $number: Int!) {
             "-F", "number=$ProjectNumber",
             "-f", "query=$userProjectQuery")
         $projectView = $projectResponse.data.user.projectV2
+        if ($null -ne $projectView) {
+            $ownerKind = "user"
+            $ownerRestIdentifier = [string]$projectResponse.data.user.databaseId
+        }
     }
 
     if ($null -eq $projectView) {
@@ -1298,6 +1460,12 @@ query($owner: String!, $number: Int!) {
         if ($createdManagedFields) {
             return Get-ProjectContext -Owner $Owner -ProjectNumber $ProjectNumber -SkipManagedFieldInitialization
         }
+    }
+
+    $restRouteBase = Get-ProjectRestRouteBase -OwnerKind $ownerKind -OwnerRestIdentifier $ownerRestIdentifier -ProjectNumber $ProjectNumber
+    $createdManagedViews = Ensure-ManagedProjectViews -ProjectView $projectView -RestRouteBase $restRouteBase
+    if ($createdManagedViews) {
+        return Get-ProjectContext -Owner $Owner -ProjectNumber $ProjectNumber -SkipManagedFieldInitialization
     }
 
     $items = Invoke-GhJson -Arguments @("project", "item-list", $ProjectNumber.ToString(), "--owner", $Owner, "-L", "200", "--format", "json")
@@ -1369,6 +1537,8 @@ query($owner: String!, $number: Int!) {
         IterationIdsByTitle = $iterationIdsByTitle
         IterationConfigurations = if ($null -ne $iterationField -and $null -ne $iterationField.configuration) { @($iterationField.configuration.iterations) } else { @() }
         ManagedSingleSelectFields = $managedFieldContexts
+        ProjectViews = if ($projectView.PSObject.Properties["views"] -and $null -ne $projectView.views) { @($projectView.views.nodes) } else { @() }
+        ProjectRestRouteBase = $restRouteBase
     }
 }
 
