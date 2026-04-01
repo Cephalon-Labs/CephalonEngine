@@ -1176,6 +1176,134 @@ function Ensure-ManagedProjectSingleSelectFields {
     return $createdAny
 }
 
+function Get-ManagedProjectStatusOptions {
+    return @(
+        [pscustomobject]@{
+            Name = "Todo"
+            Color = "GREEN"
+            Description = "This item hasn't been started"
+        }
+        [pscustomobject]@{
+            Name = "In progress"
+            Color = "YELLOW"
+            Description = "This is actively being worked on"
+        }
+        [pscustomobject]@{
+            Name = "Validation"
+            Color = "BLUE"
+            Description = "This is ready for validation before completion"
+        }
+        [pscustomobject]@{
+            Name = "Done"
+            Color = "PURPLE"
+            Description = "This has been completed"
+        }
+    )
+}
+
+function Get-ProjectStatusSnapshot {
+    param([Parameter(Mandatory = $true)][string]$Owner, [Parameter(Mandatory = $true)][int]$ProjectNumber)
+
+    $items = Invoke-GhJson -Arguments @("project", "item-list", $ProjectNumber.ToString(), "--owner", $Owner, "-L", "200", "--format", "json")
+    $snapshots = [System.Collections.Generic.List[object]]::new()
+    foreach ($item in $items.items) {
+        $statusProperty = $item.PSObject.Properties["status"]
+        $statusValue = if ($null -ne $statusProperty -and $null -ne $statusProperty.Value) { [string]$statusProperty.Value } else { "" }
+        if ([string]::IsNullOrWhiteSpace($statusValue)) {
+            continue
+        }
+
+        $snapshots.Add([pscustomobject]@{
+            ItemId = [string]$item.id
+            Status = $statusValue
+        })
+    }
+
+    return @($snapshots)
+}
+
+function Restore-ProjectStatusSnapshot {
+    param(
+        [Parameter(Mandatory = $true)]$ProjectContext,
+        [Parameter(Mandatory = $true)][object[]]$StatusSnapshot
+    )
+
+    foreach ($entry in $StatusSnapshot) {
+        if ($null -eq $entry -or [string]::IsNullOrWhiteSpace([string]$entry.ItemId) -or [string]::IsNullOrWhiteSpace([string]$entry.Status)) {
+            continue
+        }
+
+        if (-not $ProjectContext.StatusOptionIds.ContainsKey([string]$entry.Status)) {
+            continue
+        }
+
+        Invoke-GhNoJson -Arguments @(
+            "project", "item-edit",
+            "--id", [string]$entry.ItemId,
+            "--project-id", $ProjectContext.ProjectId,
+            "--field-id", $ProjectContext.StatusFieldId,
+            "--single-select-option-id", $ProjectContext.StatusOptionIds[[string]$entry.Status]
+        )
+    }
+}
+
+function Ensure-ManagedProjectStatusFieldOptions {
+    param(
+        [Parameter(Mandatory = $true)]$ProjectView,
+        [Parameter(Mandatory = $true)][string]$Owner,
+        [Parameter(Mandatory = $true)][int]$ProjectNumber
+    )
+
+    $statusField = $ProjectView.fields.nodes | Where-Object { $_.name -eq "Status" } | Select-Object -First 1
+    if ($null -eq $statusField) {
+        throw "Unable to find the Status field for project $Owner/$ProjectNumber."
+    }
+
+    $existingOptions = @($statusField.options | ForEach-Object { [string]$_.name })
+    $desiredOptions = @((Get-ManagedProjectStatusOptions) | ForEach-Object { [string]$_.Name })
+    if (([string]::Join("|", $existingOptions)) -eq ([string]::Join("|", $desiredOptions))) {
+        return $null
+    }
+
+    Write-Host "Updating project field 'Status' to include managed validation flow..."
+    $statusSnapshot = Get-ProjectStatusSnapshot -Owner $Owner -ProjectNumber $ProjectNumber
+
+    $optionLiterals = @(
+        (Get-ManagedProjectStatusOptions | ForEach-Object {
+            ('{{name:{0}, color:{1}, description:{2}}}' -f
+                (ConvertTo-GraphQlStringLiteral -Value $_.Name),
+                $_.Color,
+                (ConvertTo-GraphQlStringLiteral -Value $_.Description))
+        })
+    ) -join ", "
+
+    $mutation = @"
+mutation(`$fieldId: ID!) {
+  updateProjectV2Field(
+    input: {
+      fieldId: `$fieldId
+      singleSelectOptions: [$optionLiterals]
+    }
+  ) {
+    projectV2Field {
+      ... on ProjectV2SingleSelectField {
+        id
+        name
+      }
+    }
+  }
+}
+"@
+
+    Invoke-GhNoJson -Arguments @(
+        "api", "graphql",
+        "-f", "fieldId=$($statusField.id)",
+        "-f", "query=$mutation"
+    )
+
+    return $statusSnapshot
+}
+
 function Get-ManagedProjectViews {
     return @(
         [pscustomobject]@{
@@ -1460,6 +1588,13 @@ query($owner: String!, $number: Int!) {
         if ($createdManagedFields) {
             return Get-ProjectContext -Owner $Owner -ProjectNumber $ProjectNumber -SkipManagedFieldInitialization
         }
+    }
+
+    $statusSnapshot = Ensure-ManagedProjectStatusFieldOptions -ProjectView $projectView -Owner $Owner -ProjectNumber $ProjectNumber
+    if ($null -ne $statusSnapshot) {
+        $refreshedContext = Get-ProjectContext -Owner $Owner -ProjectNumber $ProjectNumber -SkipManagedFieldInitialization
+        Restore-ProjectStatusSnapshot -ProjectContext $refreshedContext -StatusSnapshot $statusSnapshot
+        return Get-ProjectContext -Owner $Owner -ProjectNumber $ProjectNumber -SkipManagedFieldInitialization
     }
 
     $restRouteBase = Get-ProjectRestRouteBase -OwnerKind $ownerKind -OwnerRestIdentifier $ownerRestIdentifier -ProjectNumber $ProjectNumber
