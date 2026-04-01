@@ -222,6 +222,7 @@ function Get-BacklogIssueSpecs {
                 Title = $title
                 ContentBody = $body
                 State = $state
+                PlanningStatus = $status
                 SyncKey = $syncKey
                 PhaseNumber = $phaseNumber
                 EngCode = $engCode
@@ -251,6 +252,7 @@ function Get-RoadmapIssueSpecs {
             Title = "Phase 2 operational hardening follow-through"
             ContentBody = $phase2.Body
             State = "open"
+            PlanningStatus = $phase2.Status
             SyncKey = "roadmap:phase-2"
             PhaseNumber = 2
             RoadmapPhaseTitle = $phase2.Title
@@ -320,6 +322,121 @@ query($owner: String!, $name: String!) {
         DefaultBranch = if ($null -ne $repository.defaultBranchRef) { $repository.defaultBranchRef.name } else { "main" }
         IssueTypeIdsByName = $issueTypeIdsByName
     }
+}
+
+function Get-LabelState {
+    param([Parameter(Mandatory = $true)]$RepositoryContext)
+
+    $labels = Invoke-GhApiJson -Route "repos/$($RepositoryContext.FullName)/labels?per_page=100"
+    $labelsByName = @{}
+    foreach ($label in $labels) {
+        $labelsByName[$label.name] = $label
+    }
+
+    return [pscustomobject]@{
+        LabelsByName = $labelsByName
+    }
+}
+
+function Ensure-ManagedLabel {
+    param(
+        [Parameter(Mandatory = $true)]$RepositoryContext,
+        [Parameter(Mandatory = $true)]$LabelState,
+        [Parameter(Mandatory = $true)][string]$Name,
+        [Parameter(Mandatory = $true)][string]$Color,
+        [Parameter(Mandatory = $true)][string]$Description
+    )
+
+    if ($LabelState.LabelsByName.ContainsKey($Name)) {
+        $existing = $LabelState.LabelsByName[$Name]
+        if ($existing.color -ne $Color -or (Normalize-Text -Value $existing.description) -ne (Normalize-Text -Value $Description)) {
+            Invoke-GhApiJson -Route ("repos/{0}/labels/{1}" -f $RepositoryContext.FullName, [System.Uri]::EscapeDataString($Name)) -Method "PATCH" -Body @{
+                new_name = $Name
+                color = $Color
+                description = $Description
+            } | Out-Null
+        }
+        return
+    }
+
+    $created = Invoke-GhApiJson -Route "repos/$($RepositoryContext.FullName)/labels" -Method "POST" -Body @{
+        name = $Name
+        color = $Color
+        description = $Description
+    }
+    $LabelState.LabelsByName[$Name] = $created
+}
+
+function Ensure-ManagedPlanningLabels {
+    param(
+        [Parameter(Mandatory = $true)]$RepositoryContext,
+        [Parameter(Mandatory = $true)]$LabelState,
+        [Parameter(Mandatory = $true)]$DesiredIssues
+    )
+
+    $baseLabels = @(
+        @{ Name = "planning"; Color = "0e8a16"; Description = "Managed planning issue synced from roadmap or backlog." },
+        @{ Name = "kind:epic"; Color = "5319e7"; Description = "Managed planning epic / top-level work item." },
+        @{ Name = "kind:task"; Color = "1d76db"; Description = "Managed planning child task." },
+        @{ Name = "source:backlog"; Color = "bfdadc"; Description = "Managed planning item sourced from docs/engine-backlog.md." },
+        @{ Name = "source:roadmap"; Color = "d4c5f9"; Description = "Managed planning item sourced from docs/engine-roadmap.md." },
+        @{ Name = "iteration:sprint-1"; Color = "c2e0c6"; Description = "Scheduled into Sprint 1." },
+        @{ Name = "iteration:sprint-2"; Color = "c5def5"; Description = "Scheduled into Sprint 2." },
+        @{ Name = "iteration:sprint-3"; Color = "fef2c0"; Description = "Scheduled into Sprint 3." },
+        @{ Name = "iteration:later"; Color = "f9d0c4"; Description = "Tracked as later / not scheduled yet." }
+    )
+
+    foreach ($label in $baseLabels) {
+        Ensure-ManagedLabel -RepositoryContext $RepositoryContext -LabelState $LabelState -Name $label.Name -Color $label.Color -Description $label.Description
+    }
+
+    $phaseNumbers = $DesiredIssues | Where-Object { $null -ne $_.PhaseNumber } | Select-Object -ExpandProperty PhaseNumber -Unique
+    foreach ($phaseNumber in $phaseNumbers) {
+        $phaseLabel = Get-PhaseLabelName -PhaseNumber $phaseNumber
+        if (-not [string]::IsNullOrWhiteSpace($phaseLabel)) {
+            Ensure-ManagedLabel -RepositoryContext $RepositoryContext -LabelState $LabelState -Name $phaseLabel -Color (Get-PhaseLabelColor -PhaseNumber $phaseNumber) -Description (Get-PhaseLabelDescription -PhaseNumber $phaseNumber)
+        }
+    }
+
+    foreach ($spec in $DesiredIssues) {
+        $trackLabel = Get-TrackLabelNameForSpec -Spec $spec
+        if (-not [string]::IsNullOrWhiteSpace($trackLabel)) {
+            Ensure-ManagedLabel -RepositoryContext $RepositoryContext -LabelState $LabelState -Name $trackLabel -Color (Get-TrackLabelColorForSpec -Spec $spec) -Description (Get-TrackLabelDescriptionForSpec -Spec $spec)
+        }
+    }
+}
+
+function Set-IssueManagedLabels {
+    param(
+        [Parameter(Mandatory = $true)]$RepositoryContext,
+        [Parameter(Mandatory = $true)]$Issue,
+        [Parameter(Mandatory = $true)][string[]]$ManagedLabels
+    )
+
+    $existingLabels = @()
+    if ($Issue.PSObject.Properties["labels"] -and $null -ne $Issue.labels) {
+        foreach ($label in $Issue.labels) {
+            if ($label -is [string]) {
+                $existingLabels += $label
+            }
+            elseif ($label.PSObject.Properties["name"]) {
+                $existingLabels += [string]$label.name
+            }
+        }
+    }
+
+    $preservedLabels = @($existingLabels | Where-Object { -not (Test-IsManagedLabel -LabelName $_) })
+    $finalLabels = @($preservedLabels + $ManagedLabels | Select-Object -Unique)
+    $currentManaged = @($existingLabels | Where-Object { Test-IsManagedLabel -LabelName $_ } | Sort-Object)
+    $desiredManaged = @($ManagedLabels | Sort-Object)
+
+    if (([string]::Join("|", $currentManaged)) -eq ([string]::Join("|", $desiredManaged)) -and ([string]::Join("|", ($existingLabels | Sort-Object))) -eq ([string]::Join("|", ($finalLabels | Sort-Object)))) {
+        return
+    }
+
+    Invoke-GhApiJson -Route "repos/$($RepositoryContext.FullName)/issues/$($Issue.number)" -Method "PATCH" -Body @{
+        labels = $finalLabels
+    } | Out-Null
 }
 
 function Get-GitHubAnchorSlug {
@@ -448,6 +565,232 @@ function Format-EstimateText {
     return ("{0:0.##}h" -f [decimal]$Estimate)
 }
 
+function Get-ManagedLabelPrefixes {
+    return @(
+        "planning",
+        "kind:",
+        "source:",
+        "phase:",
+        "iteration:",
+        "track:"
+    )
+}
+
+function Test-IsManagedLabel {
+    param([AllowNull()][string]$LabelName)
+
+    if ([string]::IsNullOrWhiteSpace($LabelName)) {
+        return $false
+    }
+
+    foreach ($prefix in Get-ManagedLabelPrefixes) {
+        if ($prefix -eq "planning" -and $LabelName -eq "planning") {
+            return $true
+        }
+
+        if ($prefix -ne "planning" -and $LabelName.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+            return $true
+        }
+    }
+
+    return $false
+}
+
+function Get-PhaseLabelName {
+    param($PhaseNumber)
+
+    switch ([int]$PhaseNumber) {
+        0 { return "phase:0-foundation" }
+        1 { return "phase:1-sdk-hardening" }
+        2 { return "phase:2-operational" }
+        3 { return "phase:3-extensibility" }
+        4 { return "phase:4-orchestration" }
+        5 { return "phase:5-solution-platform" }
+        default { return $null }
+    }
+}
+
+function Get-PhaseLabelDescription {
+    param($PhaseNumber)
+
+    switch ([int]$PhaseNumber) {
+        0 { return "Planning work aligned to Phase 0 foundation hardening." }
+        1 { return "Planning work aligned to Phase 1 SDK hardening and adoption." }
+        2 { return "Planning work aligned to Phase 2 operational hardening." }
+        3 { return "Planning work aligned to Phase 3 extensibility and package loading." }
+        4 { return "Planning work aligned to Phase 4 execution and orchestration." }
+        5 { return "Planning work aligned to Phase 5 solution-level platform work." }
+        default { return "Planning work aligned to a roadmap phase." }
+    }
+}
+
+function Get-PhaseLabelColor {
+    param($PhaseNumber)
+
+    switch ([int]$PhaseNumber) {
+        0 { return "5319e7" }
+        1 { return "1d76db" }
+        2 { return "fbca04" }
+        3 { return "0e8a16" }
+        4 { return "d93f0b" }
+        5 { return "b60205" }
+        default { return "cfd3d7" }
+    }
+}
+
+function Get-IterationLabelName {
+    param([AllowNull()][string]$IterationTitle, [AllowNull()][string]$PlanningStatus)
+
+    if (-not [string]::IsNullOrWhiteSpace($IterationTitle)) {
+        switch ($IterationTitle.ToLowerInvariant()) {
+            "sprint 1" { return "iteration:sprint-1" }
+            "sprint 2" { return "iteration:sprint-2" }
+            "sprint 3" { return "iteration:sprint-3" }
+        }
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($PlanningStatus)) {
+        $normalized = $PlanningStatus.ToLowerInvariant()
+        if ($normalized.Contains("later") -or $normalized.Contains("future") -or $normalized.Contains("deferred")) {
+            return "iteration:later"
+        }
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($IterationTitle) -and $IterationTitle.ToLowerInvariant().Contains("later")) {
+        return "iteration:later"
+    }
+
+    return $null
+}
+
+function Get-IterationLabelDescription {
+    param([AllowNull()][string]$LabelName)
+
+    switch ($LabelName) {
+        "iteration:sprint-1" { return "Scheduled into Sprint 1." }
+        "iteration:sprint-2" { return "Scheduled into Sprint 2." }
+        "iteration:sprint-3" { return "Scheduled into Sprint 3." }
+        "iteration:later" { return "Tracked as later / not scheduled yet." }
+        default { return "Tracked to a planning iteration." }
+    }
+}
+
+function Get-IterationLabelColor {
+    param([AllowNull()][string]$LabelName)
+
+    switch ($LabelName) {
+        "iteration:sprint-1" { return "c2e0c6" }
+        "iteration:sprint-2" { return "c5def5" }
+        "iteration:sprint-3" { return "fef2c0" }
+        "iteration:later" { return "f9d0c4" }
+        default { return "ededed" }
+    }
+}
+
+function Get-TrackLabelNameForSpec {
+    param($Spec)
+
+    if ($null -eq $Spec) {
+        return $null
+    }
+
+    if ($Spec.Kind -eq "Backlog" -and -not [string]::IsNullOrWhiteSpace($Spec.EngCode)) {
+        return "track:$($Spec.EngCode.ToLowerInvariant())"
+    }
+
+    if ($Spec.Kind -eq "Roadmap" -and $null -ne $Spec.PhaseNumber) {
+        return "track:phase-$($Spec.PhaseNumber)"
+    }
+
+    return $null
+}
+
+function Get-TrackLabelDescriptionForSpec {
+    param($Spec)
+
+    if ($null -eq $Spec) {
+        return "Planning track label."
+    }
+
+    if ($Spec.Kind -eq "Backlog" -and -not [string]::IsNullOrWhiteSpace($Spec.EngCode)) {
+        return "Planning track for $($Spec.EngCode)."
+    }
+
+    if ($Spec.Kind -eq "Roadmap" -and $null -ne $Spec.PhaseNumber) {
+        return "Planning track for roadmap phase $($Spec.PhaseNumber)."
+    }
+
+    return "Planning track label."
+}
+
+function Get-TrackLabelColorForSpec {
+    param($Spec)
+
+    if ($null -ne $Spec -and $null -ne $Spec.PhaseNumber) {
+        return Get-PhaseLabelColor -PhaseNumber $Spec.PhaseNumber
+    }
+
+    return "bfd4f2"
+}
+
+function Get-ManagedTopLevelLabels {
+    param(
+        [Parameter(Mandatory = $true)]$Spec,
+        [AllowNull()][string]$IterationTitle
+    )
+
+    $labels = @("planning", "kind:epic")
+    if ($Spec.Kind -eq "Backlog") {
+        $labels += "source:backlog"
+    }
+    elseif ($Spec.Kind -eq "Roadmap") {
+        $labels += "source:roadmap"
+    }
+
+    $phaseLabel = Get-PhaseLabelName -PhaseNumber $Spec.PhaseNumber
+    if (-not [string]::IsNullOrWhiteSpace($phaseLabel)) {
+        $labels += $phaseLabel
+    }
+
+    $trackLabel = Get-TrackLabelNameForSpec -Spec $Spec
+    if (-not [string]::IsNullOrWhiteSpace($trackLabel)) {
+        $labels += $trackLabel
+    }
+
+    $iterationLabel = Get-IterationLabelName -IterationTitle $IterationTitle -PlanningStatus $Spec.PlanningStatus
+    if (-not [string]::IsNullOrWhiteSpace($iterationLabel)) {
+        $labels += $iterationLabel
+    }
+
+    return $labels | Select-Object -Unique
+}
+
+function Get-ManagedChildLabels {
+    param(
+        [Parameter(Mandatory = $true)]$ParentSpec,
+        [AllowNull()][string]$IterationTitle
+    )
+
+    $labels = @("planning", "kind:task")
+
+    $phaseLabel = Get-PhaseLabelName -PhaseNumber $ParentSpec.PhaseNumber
+    if (-not [string]::IsNullOrWhiteSpace($phaseLabel)) {
+        $labels += $phaseLabel
+    }
+
+    $trackLabel = Get-TrackLabelNameForSpec -Spec $ParentSpec
+    if (-not [string]::IsNullOrWhiteSpace($trackLabel)) {
+        $labels += $trackLabel
+    }
+
+    $iterationLabel = Get-IterationLabelName -IterationTitle $IterationTitle -PlanningStatus $ParentSpec.PlanningStatus
+    if (-not [string]::IsNullOrWhiteSpace($iterationLabel)) {
+        $labels += $iterationLabel
+    }
+
+    return $labels | Select-Object -Unique
+}
+
 function Render-PlanningLinksSection {
     param(
         [string]$BacklogUrl,
@@ -514,6 +857,42 @@ function Render-PlanningLinksSection {
     return ($lines -join "`n").Trim()
 }
 
+function Render-ChildTasksSection {
+    param(
+        [Parameter(Mandatory = $true)]$ChildItems
+    )
+
+    $lines = @(
+        "<!-- planning-sync:section=child-tasks:start -->"
+        "## Child tasks"
+        ""
+    )
+
+    if ($ChildItems.Count -eq 0) {
+        $lines += "- No linked child tasks yet."
+    }
+    else {
+        foreach ($child in $ChildItems) {
+            $details = @()
+            if (-not [string]::IsNullOrWhiteSpace($child.Status)) {
+                $details += "status: $($child.Status)"
+            }
+            if (-not [string]::IsNullOrWhiteSpace($child.IterationTitle)) {
+                $details += "iteration: $($child.IterationTitle)"
+            }
+            if (-not [string]::IsNullOrWhiteSpace($child.EstimateText)) {
+                $details += "estimate: $($child.EstimateText)"
+            }
+
+            $suffix = if ($details.Count -gt 0) { " - " + ($details -join "; ") } else { "" }
+            $lines += "- [#$($child.Number) $($child.Title)]($($child.Url))$suffix"
+        }
+    }
+
+    $lines += "<!-- planning-sync:section=child-tasks:end -->"
+    return ($lines -join "`n").Trim()
+}
+
 function Upsert-ManagedSection {
     param(
         [AllowNull()][string]$Body,
@@ -522,8 +901,8 @@ function Upsert-ManagedSection {
     )
 
     $normalizedBody = Normalize-Text -Value $Body
-    $startMarker = "<!-- planning-sync:section=$Key:start -->"
-    $endMarker = "<!-- planning-sync:section=$Key:end -->"
+    $startMarker = "<!-- planning-sync:section=${Key}:start -->"
+    $endMarker = "<!-- planning-sync:section=${Key}:end -->"
     $pattern = "(?ms)$([regex]::Escape($startMarker)).*?$([regex]::Escape($endMarker))"
 
     if ($normalizedBody -match $pattern) {
@@ -1123,7 +1502,7 @@ function Get-RepositoryIssues {
         "--repo", $RepositoryFullName,
         "--state", "all",
         "--limit", "200",
-        "--json", "id,number,title,state,body,url,milestone,assignees"
+        "--json", "id,number,title,state,body,url,milestone,assignees,labels"
     )
 }
 
@@ -1220,6 +1599,8 @@ $backlogIssues = Get-BacklogIssueSpecs -Path $BacklogPath
 $roadmapIssues = Get-RoadmapIssueSpecs -RoadmapPhases $roadmapPhases -Path $RoadmapPath
 $desiredIssues = @($backlogIssues + $roadmapIssues)
 $topLevelIterationMap = Get-BacklogIterationMap -Path $BacklogPath
+$labelState = Get-LabelState -RepositoryContext $repositoryContext
+Ensure-ManagedPlanningLabels -RepositoryContext $repositoryContext -LabelState $labelState -DesiredIssues $desiredIssues
 
 $projectContext = $null
 if (-not $SkipProjectSync) {
@@ -1344,6 +1725,7 @@ foreach ($desiredIssue in $desiredIssues) {
     }
 
     $topLevelContext = Get-TopLevelPlanningContext -Spec $desiredIssue -RepositoryContext $repositoryContext -PhaseMilestones $phaseMilestones -IterationMap $topLevelIterationMap -BoardUrl $boardUrl
+    $desiredLabels = Get-ManagedTopLevelLabels -Spec $desiredIssue -IterationTitle $topLevelContext.IterationTitle
     $milestoneNumber = $null
     if ($null -ne $desiredIssue.PhaseNumber -and $phaseMilestones.ContainsKey([int]$desiredIssue.PhaseNumber)) {
         $milestoneNumber = $phaseMilestones[[int]$desiredIssue.PhaseNumber].MilestoneNumber
@@ -1379,6 +1761,7 @@ foreach ($desiredIssue in $desiredIssues) {
             title = $desiredIssue.Title
             body = $renderedBody
             assignees = @($DefaultAssignee)
+            labels = $desiredLabels
         }
 
         if ($null -ne $milestoneNumber) {
@@ -1416,6 +1799,8 @@ foreach ($desiredIssue in $desiredIssues) {
             $existingIssue = Invoke-GhApiJson -Route "repos/$repo/issues/$($existingIssue.number)" -Method "PATCH" -Body $body
         }
     }
+
+    Set-IssueManagedLabels -RepositoryContext $repositoryContext -Issue $existingIssue -ManagedLabels $desiredLabels
 
     $issueIndexByKey[$desiredIssue.SyncKey] = $existingIssue
     $issueIndexByTitle[$existingIssue.title] = $existingIssue
@@ -1470,7 +1855,7 @@ if ($null -ne $projectContext) {
 }
 
 foreach ($issue in $issuesByNumber.Values) {
-    $metadata = Parse-PlanningMetadataFromBody -Body $liveIssue.body
+    $metadata = Parse-PlanningMetadataFromBody -Body $issue.body
     if ($null -eq $metadata.ParentIssueNumber) {
         continue
     }
@@ -1483,6 +1868,9 @@ foreach ($issue in $issuesByNumber.Values) {
     $parentDesired = $null
     if ($syncedIssues.ContainsKey([int]$metadata.ParentIssueNumber)) {
         $parentDesired = $syncedIssues[[int]$metadata.ParentIssueNumber].Desired
+    }
+    if ($null -eq $parentDesired) {
+        continue
     }
 
     $targetMilestoneNumber = $null
@@ -1499,8 +1887,11 @@ foreach ($issue in $issuesByNumber.Values) {
         $issuePatch.assignees = @($DefaultAssignee)
     }
 
+    $childDesiredLabels = Get-ManagedChildLabels -ParentSpec $parentDesired -IterationTitle $metadata.IterationTitle
+
     Set-IssueType -RepositoryContext $repositoryContext -Issue $issue -IssueTypeName (Get-ChildIssueTypeName)
     Ensure-SubIssueLink -RepositoryContext $repositoryContext -ParentIssue $parentIssue -ChildIssue $issue
+    Set-IssueManagedLabels -RepositoryContext $repositoryContext -Issue $issue -ManagedLabels $childDesiredLabels
 
     if ($issuePatch.Count -gt 0) {
         Write-Host "Aligning metadata for child issue #$($issue.number) '$($issue.title)'..."
@@ -1584,6 +1975,63 @@ foreach ($issue in $issuesByNumber.Values) {
         Write-Host "Refreshing planning links for child issue #$($issue.number) '$($issue.title)'..."
         Invoke-GhApiJson -Route "repos/$repo/issues/$($issue.number)" -Method "PATCH" -Body @{
             body = $renderedBody
+        } | Out-Null
+    }
+}
+
+$childNumbersByParent = @{}
+foreach ($issue in $issuesByNumber.Values) {
+    $metadata = Parse-PlanningMetadataFromBody -Body $issue.body
+    if ($null -eq $metadata.ParentIssueNumber) {
+        continue
+    }
+
+    if (-not $childNumbersByParent.ContainsKey([int]$metadata.ParentIssueNumber)) {
+        $childNumbersByParent[[int]$metadata.ParentIssueNumber] = @()
+    }
+
+    $childNumbersByParent[[int]$metadata.ParentIssueNumber] += [int]$issue.number
+}
+
+foreach ($syncEntry in $syncedIssues.GetEnumerator()) {
+    $parentNumber = [int]$syncEntry.Key
+    if (-not $issuesByNumber.ContainsKey($parentNumber)) {
+        continue
+    }
+
+    $parentIssue = $issuesByNumber[$parentNumber]
+    $childItems = @()
+    if ($childNumbersByParent.ContainsKey($parentNumber)) {
+        foreach ($childNumber in ($childNumbersByParent[$parentNumber] | Sort-Object)) {
+            if (-not $issuesByNumber.ContainsKey([int]$childNumber)) {
+                continue
+            }
+
+            $childIssue = $issuesByNumber[[int]$childNumber]
+            $childMetadata = Parse-PlanningMetadataFromBody -Body $childIssue.body
+            $childProjectItem = $null
+            if ($null -ne $projectContext -and $projectContext.ItemsByIssueNumber.ContainsKey([int]$childIssue.number)) {
+                $childProjectItem = $projectContext.ItemsByIssueNumber[[int]$childIssue.number]
+            }
+
+            $childItems += [pscustomobject]@{
+                Number = $childIssue.number
+                Title = $childIssue.title
+                Url = Get-IssueWebUrl -Issue $childIssue
+                Status = if (-not [string]::IsNullOrWhiteSpace((Get-ProjectItemStatusValue -ProjectItem $childProjectItem))) { Get-ProjectItemStatusValue -ProjectItem $childProjectItem } elseif ($childIssue.state -eq "CLOSED") { "Done" } else { "Todo" }
+                IterationTitle = if (-not [string]::IsNullOrWhiteSpace((Get-ProjectItemIterationTitle -ProjectItem $childProjectItem))) { Get-ProjectItemIterationTitle -ProjectItem $childProjectItem } else { $childMetadata.IterationTitle }
+                EstimateText = if ($null -ne (Get-ProjectItemEstimateValue -ProjectItem $childProjectItem)) { Format-EstimateText -Estimate (Get-ProjectItemEstimateValue -ProjectItem $childProjectItem) } elseif ($null -ne $childMetadata.Estimate) { Format-EstimateText -Estimate $childMetadata.Estimate } else { "" }
+            }
+        }
+    }
+
+    $childSection = Render-ChildTasksSection -ChildItems $childItems
+    $liveParentIssue = Invoke-GhApiJson -Route "repos/$repo/issues/$($parentIssue.number)"
+    $renderedParentBody = Upsert-ManagedSection -Body $liveParentIssue.body -Key "child-tasks" -RenderedSection $childSection
+    if ((Normalize-Text -Value $liveParentIssue.body) -ne (Normalize-Text -Value $renderedParentBody)) {
+        Write-Host "Refreshing child task links for issue #$($parentIssue.number) '$($parentIssue.title)'..."
+        Invoke-GhApiJson -Route "repos/$repo/issues/$($parentIssue.number)" -Method "PATCH" -Body @{
+            body = $renderedParentBody
         } | Out-Null
     }
 }
