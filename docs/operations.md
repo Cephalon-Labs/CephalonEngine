@@ -1124,6 +1124,50 @@ Operational notes:
 - when `otlp/http` is selected, the package appends `/v1/logs`, `/v1/metrics`, and `/v1/traces` automatically from the configured base endpoint
 - the self-hosted path also adds `deployment.environment.name` from the active host environment alongside the existing service-name and service-version resource defaults
 
+## Azure Monitor exporter path
+
+`Cephalon.Observability.AzureMonitor` keeps Azure Monitor / Application Insights export wiring in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "Telemetry": {
+        "Provider": "OpenTelemetry",
+        "ExportLogs": true,
+        "ExportMetrics": true,
+        "ExportTraces": true,
+        "AzureMonitor": {
+          "ConnectionString": "InstrumentationKey=00000000-0000-0000-0000-000000000000",
+          "UseDefaultAzureCredential": true,
+          "HostedPlatform": "appservice"
+        }
+      }
+    }
+  }
+}
+```
+
+Host registration example:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonObservability(builder.Configuration);
+builder.AddCephalonAzureMonitor();
+```
+
+Operational notes:
+
+- the Azure Monitor package is optional and stays outside `Cephalon.Engine`
+- registration is skipped when `Engine:Observability:Telemetry:AzureMonitor:ConnectionString` is not configured
+- `UseDefaultAzureCredential` adds Azure Active Directory authentication on top of the configured connection string endpoint
+- `HostedPlatform` can be `appservice`, `functions`, `aks`, `containerapps`, or `vm`
+- when `HostedPlatform` is configured, the package adds `cloud.provider=azure`, the corresponding `cloud.platform` value, and `deployment.environment.name` when the host environment name is set
+
 ## Serilog provider path
 
 `Cephalon.Observability.Serilog` lets hosts keep logging through injected `ILogger<T>` services while routing the resulting events through Serilog sinks, enrichers, and formatting.

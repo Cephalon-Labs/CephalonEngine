@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T15:19:57.8498286+00:00",
+  "GeneratedAtUtc": "2026-04-02T16:30:43.8939086+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -192,6 +192,14 @@
       "FileName": "cephalon-observability.md",
       "NamespaceCount": 2,
       "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.AzureMonitor",
+      "Category": "Hosts",
+      "Description": "Azure Monitor exporter integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-azuremonitor.md",
+      "NamespaceCount": 2,
+      "TypeCount": 2
     },
     {
       "AssemblyName": "Cephalon.Observability.CassandraDependencies",
@@ -710,6 +718,20 @@
       "TypeCount": 4
     },
     {
+      "NamespaceName": "Cephalon.Observability.AzureMonitor.Configuration",
+      "AssemblyName": "Cephalon.Observability.AzureMonitor",
+      "FileName": "cephalon-observability-azuremonitor.md",
+      "AnchorId": "namespace-cephalon-observability-azuremonitor-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.AzureMonitor.Hosting",
+      "AssemblyName": "Cephalon.Observability.AzureMonitor",
+      "FileName": "cephalon-observability-azuremonitor.md",
+      "AnchorId": "namespace-cephalon-observability-azuremonitor-hosting",
+      "TypeCount": 1
+    },
+    {
       "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.CassandraDependencies",
       "FileName": "cephalon-observability-cassandradependencies.md",
@@ -1137,6 +1159,36 @@
       "AnchorId": "type-cephalon-engine-appmodel-appprofilefactory",
       "Declaration": "public static class AppProfileFactory",
       "Summary": "Builds app profiles from \u0060EngineSettings\u0060 values.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "AzureMonitorExportOptions",
+      "NamespaceName": "Cephalon.Observability.AzureMonitor.Configuration",
+      "AssemblyName": "Cephalon.Observability.AzureMonitor",
+      "FileName": "cephalon-observability-azuremonitor.md",
+      "AnchorId": "type-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions",
+      "Declaration": "public sealed class AzureMonitorExportOptions",
+      "Summary": "Configures Azure Monitor exporter wiring on top of the shared Cephalon telemetry contract.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "AzureMonitorHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.AzureMonitor.Hosting",
+      "AssemblyName": "Cephalon.Observability.AzureMonitor",
+      "FileName": "cephalon-observability-azuremonitor.md",
+      "AnchorId": "type-cephalon-observability-azuremonitor-hosting-azuremonitorhostapplicationbuilderextensions",
+      "Declaration": "public static class AzureMonitorHostApplicationBuilderExtensions",
+      "Summary": "Adds Azure Monitor exporter wiring for Cephalon hosts.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -4543,6 +4595,17 @@
       "Summary": "Adds Cephalon worker hosting and allows additional code-based engine configuration."
     },
     {
+      "DisplayName": "AddCephalonAzureMonitor",
+      "Category": "Methods",
+      "DeclaringTypeName": "AzureMonitorHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.AzureMonitor.Hosting",
+      "AssemblyName": "Cephalon.Observability.AzureMonitor",
+      "FileName": "cephalon-observability-azuremonitor.md",
+      "AnchorId": "member-m-cephalon-observability-azuremonitor-hosting-azuremonitorhostapplicationbuilderextensions-addcephalonazuremonitor-1-0-system-action-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions",
+      "Signature": "TBuilder AddCephalonAzureMonitor\u003CTBuilder\u003E(this TBuilder builder, Action\u003CAzureMonitorExportOptions\u003E configure)",
+      "Summary": "Adds Azure Monitor exporter registration for the Cephalon engine diagnostics surface."
+    },
+    {
       "DisplayName": "AddCephalonCassandraDependencyHealth",
       "Category": "Methods",
       "DeclaringTypeName": "CassandraDependencyHealthServiceCollectionExtensions",
@@ -5676,6 +5739,17 @@
       "Summary": "Whether the configured documentation directory and default document were found and mapped."
     },
     {
+      "DisplayName": "AzureMonitorExportOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AzureMonitorExportOptions",
+      "NamespaceName": "Cephalon.Observability.AzureMonitor.Configuration",
+      "AssemblyName": "Cephalon.Observability.AzureMonitor",
+      "FileName": "cephalon-observability-azuremonitor.md",
+      "AnchorId": "member-m-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-ctor",
+      "Signature": "AzureMonitorExportOptions()",
+      "Summary": "Initializes a new instance of the \u0060AzureMonitorExportOptions\u0060 class."
+    },
+    {
       "DisplayName": "BearerToken",
       "Category": "Properties",
       "DeclaringTypeName": "ElasticsearchDependencyDefinition",
@@ -6224,6 +6298,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-technologydescriptor-conflictswith",
       "Signature": "IReadOnlyList\u003Cstring\u003E ConflictsWith { get; }",
       "Summary": "Gets the technology identifiers that conflict with the technology."
+    },
+    {
+      "DisplayName": "ConnectionString",
+      "Category": "Properties",
+      "DeclaringTypeName": "AzureMonitorExportOptions",
+      "NamespaceName": "Cephalon.Observability.AzureMonitor.Configuration",
+      "AssemblyName": "Cephalon.Observability.AzureMonitor",
+      "FileName": "cephalon-observability-azuremonitor.md",
+      "AnchorId": "member-p-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-connectionstring",
+      "Signature": "string ConnectionString { get; set; }",
+      "Summary": "Gets or sets the Azure Monitor / Application Insights connection string used by the exporter."
     },
     {
       "DisplayName": "ConnectionString",
@@ -8626,6 +8711,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "AzureMonitorExportOptions",
+      "NamespaceName": "Cephalon.Observability.AzureMonitor.Configuration",
+      "AssemblyName": "Cephalon.Observability.AzureMonitor",
+      "FileName": "cephalon-observability-azuremonitor.md",
+      "AnchorId": "member-m-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "AzureMonitorExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Azure Monitor export options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "CassandraDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.CassandraDependencies",
@@ -9436,6 +9532,17 @@
       "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-host",
       "Signature": "string Host { get; set; }",
       "Summary": "Gets or sets the SQL Server host name or IP address to probe when no full connection string is supplied."
+    },
+    {
+      "DisplayName": "HostedPlatform",
+      "Category": "Properties",
+      "DeclaringTypeName": "AzureMonitorExportOptions",
+      "NamespaceName": "Cephalon.Observability.AzureMonitor.Configuration",
+      "AssemblyName": "Cephalon.Observability.AzureMonitor",
+      "FileName": "cephalon-observability-azuremonitor.md",
+      "AnchorId": "member-p-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-hostedplatform",
+      "Signature": "string HostedPlatform { get; set; }",
+      "Summary": "Gets or sets the hosted Azure platform whose default resource attributes should be applied."
     },
     {
       "DisplayName": "HttpDependencyDefinition",
@@ -16443,6 +16550,17 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-useconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
       "Signature": "EngineBuilder UseConfiguration(IConfiguration configuration, string sectionPath)",
       "Summary": "Reads engine settings from configuration and merges them into the current builder state."
+    },
+    {
+      "DisplayName": "UseDefaultAzureCredential",
+      "Category": "Properties",
+      "DeclaringTypeName": "AzureMonitorExportOptions",
+      "NamespaceName": "Cephalon.Observability.AzureMonitor.Configuration",
+      "AssemblyName": "Cephalon.Observability.AzureMonitor",
+      "FileName": "cephalon-observability-azuremonitor.md",
+      "AnchorId": "member-p-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-usedefaultazurecredential",
+      "Signature": "bool UseDefaultAzureCredential { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the exporter should authenticate with \u0060DefaultAzureCredential\u0060."
     },
     {
       "DisplayName": "UseFailurePolicy",

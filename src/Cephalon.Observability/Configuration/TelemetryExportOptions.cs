@@ -8,9 +8,9 @@ namespace Cephalon.Observability.Configuration;
 /// <remarks>
 /// These settings let Cephalon packages and hosts agree on provider, protocol, endpoint, and enabled
 /// signals without forcing exporter dependencies into the engine core. Companion packages such as
-/// <c>Cephalon.Observability.OpenTelemetry</c> can interpret the same contract when a host wants a
-/// supported OTLP export path, including the explicit self-hosted collector defaults that remain
-/// outside <c>Cephalon.Engine</c>.
+/// <c>Cephalon.Observability.OpenTelemetry</c> or <c>Cephalon.Observability.AzureMonitor</c> can
+/// interpret the same contract when a host wants a supported export path, including the explicit
+/// self-hosted collector defaults that remain outside <c>Cephalon.Engine</c>.
 /// </remarks>
 public sealed class TelemetryExportOptions
 {

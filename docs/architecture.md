@@ -140,6 +140,8 @@ Companion adapter packages can extend that host with additional transport surfac
 
 `Cephalon.Observability.OpenTelemetry` is the optional exporter companion package. It takes the shared `Engine:Observability:Telemetry` contract and turns it into OTLP registration for logs, metrics, and traces without pushing exporter dependencies back into the engine or the baseline observability package.
 
+`Cephalon.Observability.AzureMonitor` is the optional Azure Monitor exporter companion package. It takes the shared `Engine:Observability:Telemetry` contract and turns it into Azure Monitor / Application Insights registration plus hosted Azure resource defaults without pushing vendor assumptions back into the engine or the baseline observability package.
+
 `Cephalon.Observability.Serilog` is the optional logger-provider companion package. It keeps Serilog-specific sink, enricher, and formatting registration outside `Cephalon.Engine` and `Cephalon.Observability` while still flowing engine and module logs through the shared `Microsoft.Extensions.Logging.ILogger` pipeline.
 
 `Cephalon.Scaffolding` is the adoption companion package. It turns `AppProfile.Scaffold` into concrete solution, project, file, and folder output so future CLIs or templates do not need to re-encode blueprint rules.
@@ -246,6 +248,8 @@ Companion adapter packages:
 - `src/Cephalon.Observability.SqlServerDependencies/Hosting` -> `Cephalon.Observability.SqlServerDependencies.Hosting`
 - `src/Cephalon.Observability.SqlServerDependencies/Services` -> `Cephalon.Observability.SqlServerDependencies.Services`
 - `src/Cephalon.Observability.OpenTelemetry/Hosting` -> `Cephalon.Observability.OpenTelemetry.Hosting`
+- `src/Cephalon.Observability.AzureMonitor/Configuration` -> `Cephalon.Observability.AzureMonitor.Configuration`
+- `src/Cephalon.Observability.AzureMonitor/Hosting` -> `Cephalon.Observability.AzureMonitor.Hosting`
 - `src/Cephalon.Observability.Serilog/Hosting` -> `Cephalon.Observability.Serilog.Hosting`
 - `src/Cephalon.Cli/Commands` -> `Cephalon.Cli.Commands`
 - `src/Cephalon.Cli/Console` -> `Cephalon.Cli.Console`
@@ -326,6 +330,7 @@ Companion adapter packages:
 - hosts can turn Redis and cache endpoints into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Redis` and `Cephalon.Observability.RedisDependencies`
 - hosts can turn SQL Server and Azure SQL dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:SqlServer` and `Cephalon.Observability.SqlServerDependencies`
 - hosts can turn that telemetry contract into a supported OTLP path through `Cephalon.Observability.OpenTelemetry`
+- hosts can turn that telemetry contract into a supported Azure Monitor path through `Cephalon.Observability.AzureMonitor`
 - hosts can turn the shared `ILogger` pipeline into a supported Serilog path through `Cephalon.Observability.Serilog`
 - engine trust and capability policy can be tuned through `Engine:Trust`
 - engine trust policy can also allow-list package checksums through `Engine:Trust:AllowedPackageChecksums`
