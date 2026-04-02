@@ -142,7 +142,7 @@ Current inventory:
 
 - `docs/operational-hardening-gap-inventory.md` now records the shipped baseline versus the remaining phase-2 gaps so follow-through work stays grounded in the code that already exists
 - that inventory now includes shipped `Cephalon.Observability.OpenTelemetry` and `Cephalon.Observability.Serilog` companion packages plus shipped `Cephalon.Observability.CassandraDependencies`, `Cephalon.Observability.ClickHouseDependencies`, `Cephalon.Observability.ConsulDependencies`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.Neo4jDependencies`, `Cephalon.Observability.OpenSearchDependencies`, `Cephalon.Observability.OracleDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` companion packages, together with a published runtime diagnostics catalog, runtime-story surface, configurable failure-policy warmup/drain/backoff semantics, opt-in ASP.NET Core request/response body logging with request/trace correlation plus default sensitive-value redaction, explicit release-validation guidance for health/export conventions, and refreshed benchmark guardrails that separate prepared composition/lifecycle hot paths plus strict trust-policy composition plus bounded, correlated, and concurrent ASP.NET Core request-logging paths from benchmark harness setup
-- the remaining cloud-vendor tracing/export follow-through has been re-scoped into phase 6 cloud and platform integrations because the expanded AWS plus Azure plus GCP plus Huawei Cloud plus Alibaba Cloud plus Red Hat OpenShift plus VMware Tanzu target list is broader than the shipped phase-2 operational baseline
+- the remaining cloud-vendor tracing/export follow-through has been re-scoped into phase 6 cloud and platform integrations because the expanded self-hosted plus AWS plus Azure plus GCP plus Huawei Cloud plus Alibaba Cloud plus Red Hat OpenShift plus VMware Tanzu target list is broader than the shipped phase-2 operational baseline
 
 Exit criteria:
 
@@ -232,9 +232,11 @@ Current baseline already in place:
 - the shared `Microsoft.Extensions.Logging.ILogger` pipeline plus `Cephalon.Observability.Serilog`
 - correlated ASP.NET Core request/response logging through `Engine:Observability:HttpLogging`
 - host-agnostic runtime, diagnostics, health, and validation surfaces that later cloud-targeted companions can build on
+- self-hosted collectors and runtimes can already consume the cloud-neutral OTLP baseline, but deployment-targeted defaults and support guidance still need explicit phase-6 follow-through
 
 Deliverables:
 
+- self-hosted observability companion follow-through for OTLP-collector-managed deployments and host-managed runtime defaults
 - cloud-targeted observability companion follow-through for explicit deployment targets such as AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu
 - exporter wiring, auth, resource-attribute conventions, and hosted-runtime defaults that stay inside companion packages instead of `Cephalon.Engine`
 - documentation, validation, and planning guidance that make the supported targets and deployment assumptions explicit
@@ -242,6 +244,7 @@ Deliverables:
 
 Exit criteria:
 
+- self-hosted collector and runtime defaults can be enabled on top of the shipped OTLP baseline without modifying `Cephalon.Engine` or `Cephalon.Abstractions`
 - supported cloud and platform integrations can be enabled without modifying `Cephalon.Engine` or `Cephalon.Abstractions`
 - the shared `ILogger` pipeline and cloud-neutral OTLP baseline remain intact
 - docs, validation flows, and planning metadata make the supported targets explicit
