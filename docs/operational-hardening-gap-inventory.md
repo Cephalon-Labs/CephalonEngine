@@ -62,6 +62,42 @@ Outcome:
 - the repository now ships a reusable companion package instead of leaving exporter wiring to sample-only host code
 - remaining phase-2 work shifts to dependency-health packaging, broader diagnostics conventions, richer operator answers, and deeper health semantics
 
+### `#87` `ILogger` provider wiring and Serilog host integration
+
+Current baseline:
+
+- `Cephalon.Engine` and `Cephalon.Observability` already emit through `Microsoft.Extensions.Logging.ILogger`
+- `Cephalon.Observability` already provides structured startup-summary, diagnostics-catalog, operational-health, and telemetry-guidance logging over the shared `ILogger` pipeline
+- there is no Cephalon-specific logging abstraction to replace `ILogger`, and there should not be one
+
+Gap:
+
+- hosts that want Serilog-specific sinks, enrichers, formatting, or provider wiring still need a deliberate integration path
+- the repository does not yet ship a first-class Serilog host-integration story over the existing `ILogger` contract
+
+Why this stays separate:
+
+- logging-provider selection is orthogonal to cloud tracing/export concerns
+- Serilog should integrate as an `ILogger` provider, not as a new Cephalon logging surface
+
+### `#86` Cloud tracing and exporter follow-through beyond the shipped OTLP baseline
+
+Current baseline:
+
+- hosts can declare telemetry export intent through `Engine:Observability:Telemetry`
+- `Cephalon.Observability.OpenTelemetry` already wires OTLP logs, metrics, and traces through `AddCephalonOpenTelemetry()`
+- the current shipped export story is cloud-neutral and works without locking Cephalon into one vendor/runtime target
+
+Gap:
+
+- cloud-vendor tracing/export integrations, managed-collector guidance, and hosted runtime defaults should wait until the target cloud/runtime context is explicit
+- later cloud work may need vendor-specific resource attributes, auth, collector topology, or exporter wiring that does not belong in the current cloud-neutral baseline
+
+Why this stays separate:
+
+- cloud tracing/export work is deployment-context-specific
+- deferring it keeps the current operational hardening track focused on reusable host/runtime primitives
+
 ### `#33` Provider-specific dependency health packs beyond the baseline contributor model
 
 Current baseline:
@@ -157,12 +193,12 @@ Why this stays separate:
 
 Current conclusion from this inventory:
 
-- the existing phase-2 child-task split remains valid
-- no additional child tasks were required from this audit
-- the main missing work is packaging breadth and operator-facing hardening on top of a shipped baseline
+- the existing phase-2 child-task split remains valid, but observability follow-through is clearer when `ILogger` provider integration is tracked separately from cloud tracing/export work
+- the main missing work is packaging breadth, `ILogger` provider integration, and operator-facing hardening on top of a shipped baseline, with cloud tracing/export deliberately deferred until the cloud target is explicit
 
 Recommended execution sequence remains:
 
 1. `#31` inventory and sequencing
 2. `#33` dependency-health packs on top of the shipped exporter path
-3. `#35` clearer runtime answers
+3. `#87` `ILogger` provider wiring and Serilog host integration
+4. `#86` cloud tracing/export follow-through when the target cloud/runtime is explicit

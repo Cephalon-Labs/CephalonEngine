@@ -109,6 +109,8 @@ When working in this repository:
 - keep `Cephalon.Observability.HttpDependencies` protocol-generic: method, headers, auth, timeout, status, body, and TLS expectations can grow there, but provider-aware HTTP semantics should stay in dedicated companion packs
 - keep HTTP-based provider packs such as `Cephalon.Observability.ElasticsearchDependencies` separate when they need endpoint shaping, payload-aware health mapping, or product-specific auth semantics beyond a generic HTTP probe
 - keep `Cephalon.Observability.NatsDependencies` focused on NATS protocol semantics such as `INFO`, `CONNECT`, `PING`/`PONG`, auth, TLS, and cluster reachability; deeper workload semantics should only join deliberately when the package contract stays clearly NATS-native
+- keep logging-provider integration concerns separate from tracing/export concerns: `ILogger` provider wiring such as Serilog can land before cloud-tracing/export work without inventing a new Cephalon logging abstraction
+- keep cloud tracing/export integrations such as OpenTelemetry collector, vendor exporters, and hosted cloud wiring as a later concern when the target cloud/runtime context is explicit
 - selected transports should gate route mapping instead of exposing every protocol by default
 - when `RestApi` is enabled on ASP.NET Core, keep OpenAPI and Scalar docs available for REST endpoints
 - keep REST OpenAPI customization inside `Cephalon.AspNetCore.Transformers`

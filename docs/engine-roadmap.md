@@ -133,14 +133,16 @@ Deliverables:
 - deeper readiness and liveness semantics beyond the shipped baseline
 - richer runtime failure, stop, and restart policies beyond the shipped baseline
 - richer structured diagnostics and event IDs across packages
-- dedicated exporter packages or OpenTelemetry integration layers beyond the shipped guidance baseline
+- `ILogger` provider integration such as Serilog when hosts need richer sinks, enrichers, or log-routing behavior without inventing a new logging abstraction
+- cloud tracing and exporter integrations beyond the shipped OTLP/OpenTelemetry baseline once the target cloud/runtime context is explicit
 - clearer operational answers to “what loaded, what started, what failed, and why?”
 - benchmark-driven performance guardrails for hot engine paths
 
 Current inventory:
 
 - `docs/operational-hardening-gap-inventory.md` now records the shipped baseline versus the remaining phase-2 gaps so follow-through work stays grounded in the code that already exists
-- that inventory now includes a shipped `Cephalon.Observability.OpenTelemetry` companion package plus shipped `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` companion packages, together with a published runtime diagnostics catalog, runtime-story surface, configurable failure-policy warmup/drain/backoff semantics, and explicit release-validation guidance for health/export conventions, which narrows the open phase-2 work to broader dependency-health coverage and operator-facing hardening
+- that inventory now includes a shipped `Cephalon.Observability.OpenTelemetry` companion package plus shipped `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` companion packages, together with a published runtime diagnostics catalog, runtime-story surface, configurable failure-policy warmup/drain/backoff semantics, and explicit release-validation guidance for health/export conventions
+- the remaining observability follow-through is now intentionally split between logging-provider integration that can move ahead in host/runtime scenarios now, and cloud tracing/export integration that should wait until the target cloud/runtime context is explicit
 
 Exit criteria:
 

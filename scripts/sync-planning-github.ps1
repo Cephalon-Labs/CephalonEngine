@@ -1182,10 +1182,18 @@ function Upsert-ManagedSection {
     $normalizedBody = Normalize-Text -Value $Body
     $startMarker = "<!-- planning-sync:section=${Key}:start -->"
     $endMarker = "<!-- planning-sync:section=${Key}:end -->"
-    $pattern = "(?ms)$([regex]::Escape($startMarker)).*?$([regex]::Escape($endMarker))"
+    $escapedStartMarker = [regex]::Escape($startMarker)
+    $escapedEndMarker = [regex]::Escape($endMarker)
+    $pattern = "(?ms)$escapedStartMarker.*?$escapedEndMarker"
 
-    if ($normalizedBody -match $pattern) {
-        $strippedBody = ([regex]::Replace($normalizedBody, $pattern, "")).Trim()
+    $strippedBody = [regex]::Replace($normalizedBody, $pattern, "")
+    $strippedBody = [regex]::Replace(
+        $strippedBody,
+        "(?m)^\s*(?:$escapedStartMarker|$escapedEndMarker)\s*$\r?\n?",
+        "")
+    $strippedBody = [regex]::Replace($strippedBody.Trim(), '(\r?\n){3,}', "`n`n")
+
+    if ($normalizedBody -match $pattern -or $strippedBody -ne $normalizedBody.Trim()) {
         if ([string]::IsNullOrWhiteSpace($strippedBody)) {
             return $RenderedSection.Trim()
         }
@@ -1208,7 +1216,13 @@ function Normalize-ChildIssueBody {
         return $normalizedBody
     }
 
-    return [regex]::Replace($normalizedBody, '(?m)^Item type:\s+\*\*Draft item\*\*$', 'Item type: **Issue**')
+    $normalizedBody = [regex]::Replace($normalizedBody, '(?m)^Item type:\s+\*\*Draft item\*\*$', 'Item type: **Issue**')
+    $normalizedBody = [regex]::Replace(
+        $normalizedBody,
+        '(?ms)^## Planning links\s*\r?\n.*?(?=(?:<!-- planning-sync:section=planning-links:start -->|\z))',
+        '')
+
+    return $normalizedBody.Trim()
 }
 
 function Set-ChildPlanningMetadataBody {
@@ -1253,11 +1267,22 @@ function Get-UnmanagedIssueBody {
     foreach ($key in @("planning-links", "child-tasks")) {
         $startMarker = "<!-- planning-sync:section=${Key}:start -->"
         $endMarker = "<!-- planning-sync:section=${Key}:end -->"
-        $pattern = "(?ms)$([regex]::Escape($startMarker)).*?$([regex]::Escape($endMarker))"
+        $escapedStartMarker = [regex]::Escape($startMarker)
+        $escapedEndMarker = [regex]::Escape($endMarker)
+        $pattern = "(?ms)$escapedStartMarker.*?$escapedEndMarker"
         $strippedBody = [regex]::Replace($strippedBody, $pattern, "")
+        $strippedBody = [regex]::Replace(
+            $strippedBody,
+            "(?m)^\s*(?:$escapedStartMarker|$escapedEndMarker)\s*$\r?\n?",
+            "")
     }
 
     $strippedBody = [regex]::Replace($strippedBody, "<!-- planning-sync:key=[^>]+ -->", "")
+    $strippedBody = [regex]::Replace(
+        $strippedBody,
+        '(?ms)^## Planning links\s*\r?\n.*?(?=(?:^##\s+|\z))',
+        '')
+
     return $strippedBody.Trim()
 }
 
@@ -3069,13 +3094,16 @@ if ($null -ne $projectContext) {
             Set-ProjectIteration -ProjectContext $projectContext -ProjectItem $projectItem -IterationTitle $syncEntry.Value.IterationTitle
         }
 
-        if ($null -eq (Get-ProjectItemEstimateValue -ProjectItem $projectItem)) {
-            if ($null -ne $desired.Estimate) {
-                Set-ProjectEstimate -ProjectContext $projectContext -ProjectItem $projectItem -Estimate $desired.Estimate
-            }
-            elseif ($parentEstimateRollups.ContainsKey([int]$issue.number)) {
-                Set-ProjectEstimate -ProjectContext $projectContext -ProjectItem $projectItem -Estimate $parentEstimateRollups[[int]$issue.number]
-            }
+        $targetEstimate = $null
+        if ($null -ne $desired.Estimate) {
+            $targetEstimate = $desired.Estimate
+        }
+        elseif ($parentEstimateRollups.ContainsKey([int]$issue.number)) {
+            $targetEstimate = $parentEstimateRollups[[int]$issue.number]
+        }
+
+        if ($null -ne $targetEstimate) {
+            Set-ProjectEstimate -ProjectContext $projectContext -ProjectItem $projectItem -Estimate $targetEstimate
         }
 
         Sync-ProjectValidationFields -ProjectContext $projectContext -ProjectItem $projectItem -Title $desired.Title -Body $desired.ContentBody -State $desired.State
