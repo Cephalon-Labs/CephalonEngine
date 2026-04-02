@@ -344,6 +344,8 @@ Delivered:
 - CLI validation command for the latest BenchmarkDotNet reports
 - test coverage for benchmark report parsing and guardrail evaluation
 - benchmark docs updated with the validation flow
+- composition and runtime benchmarks now prepare configured builders, runtimes, and service providers outside the measured loop so guardrails track `Build()` and lifecycle transition costs directly
+- composition baseline thresholds refreshed to match the prepared-scenario hot path shipped in the release-validation flow
 
 Follow-up later:
 

@@ -11,18 +11,56 @@ namespace Cephalon.Benchmarks.Composition;
 [ShortRunJob]
 public class EngineBuilderBenchmarks
 {
+    private const int BuildsPerIteration = 4096;
     private readonly Func<EngineBuilder> builderFactory = BenchmarkScenarioFactory.CreateEngineBuilder;
+    private EngineBuilder[] builders = [];
 
     /// <summary>
-    /// Builds the runtime manifest for the baseline benchmark scenario.
+    /// Prepares a fresh configured engine builder for the current benchmark iteration.
+    /// </summary>
+    [IterationSetup]
+    public void PrepareIteration()
+    {
+        builders = new EngineBuilder[BuildsPerIteration];
+        for (var index = 0; index < builders.Length; index++)
+        {
+            builders[index] = builderFactory();
+        }
+    }
+
+    /// <summary>
+    /// Clears the configured builder captured for the current benchmark iteration.
+    /// </summary>
+    [IterationCleanup]
+    public void CleanupIteration()
+    {
+        builders = [];
+    }
+
+    /// <summary>
+    /// Builds the runtime manifest for the prepared baseline benchmark scenarios.
     /// </summary>
     /// <returns>
-    /// The number of modules and capabilities surfaced by the composed runtime.
+    /// The total number of modules and capabilities surfaced across the measured runtime builds.
     /// </returns>
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = BuildsPerIteration)]
     public (int Modules, int Capabilities) BuildRuntimeManifest()
     {
-        using var runtime = builderFactory().Build();
-        return (runtime.Manifest.Modules.Count, runtime.Manifest.Capabilities.Count);
+        if (builders.Length == 0)
+        {
+            throw new InvalidOperationException("Benchmark iteration was not initialized.");
+        }
+
+        var moduleCount = 0;
+        var capabilityCount = 0;
+
+        foreach (var builder in builders)
+        {
+            using var runtime = builder.Build();
+            moduleCount += runtime.Manifest.Modules.Count;
+            capabilityCount += runtime.Manifest.Capabilities.Count;
+        }
+
+        return (moduleCount, capabilityCount);
     }
 }

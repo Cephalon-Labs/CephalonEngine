@@ -4,8 +4,8 @@
 
 It currently tracks three hot paths:
 
-- `Cephalon.Benchmarks.Composition`: engine composition and manifest construction
-- `Cephalon.Benchmarks.Runtime`: initialize/start/stop lifecycle overhead
+- `Cephalon.Benchmarks.Composition`: configured-builder engine composition and manifest construction
+- `Cephalon.Benchmarks.Runtime`: prepared-runtime initialize/start/stop lifecycle overhead
 - `Cephalon.Benchmarks.Scaffolding`: blueprint-to-files scaffold generation
 
 The benchmark suite now also ships a guardrail catalog at `benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json`.
@@ -15,6 +15,8 @@ That catalog is the repository baseline for the current hot paths:
 - `BuildRuntimeManifest`
 - `InitializeStartStopRuntime`
 - `GenerateBlueprintScaffold`
+
+The composition and runtime baselines prepare configured builders, runtimes, and service providers outside the measured loop so the guardrails track `Build()` and lifecycle transition costs rather than one-time benchmark harness setup.
 
 ## Run all benchmarks
 

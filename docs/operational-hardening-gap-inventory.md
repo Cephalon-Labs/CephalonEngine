@@ -44,6 +44,7 @@ That means phase 2 is follow-through work, not greenfield operational work.
   - `benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json`
   - `scripts/validate-release.ps1`
   - `.github/workflows/release-validation.yml`
+  - prepared composition and runtime hot paths are benchmarked separately from builder/provider setup so the guardrail catalog tracks `Build()` and lifecycle costs directly
 
 ## Gap status mapped to backlog tasks
 
