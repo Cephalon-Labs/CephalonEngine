@@ -188,6 +188,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Eventing](cephalon-eventing.md#namespace-cephalon-eventing-services): 4 public types [Browse](browse.html?assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
 
+## `Cephalon.Observability.Aws.Configuration`
+
+- [Cephalon.Observability.Aws](cephalon-observability-aws.md#namespace-cephalon-observability-aws-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Configuration)
+
+## `Cephalon.Observability.Aws.Hosting`
+
+- [Cephalon.Observability.Aws](cephalon-observability-aws.md#namespace-cephalon-observability-aws-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Hosting)
+
 ## `Cephalon.Observability.AzureMonitor.Configuration`
 
 - [Cephalon.Observability.AzureMonitor](cephalon-observability-azuremonitor.md#namespace-cephalon-observability-azuremonitor-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.AzureMonitor&namespace=Cephalon.Observability.AzureMonitor.Configuration)

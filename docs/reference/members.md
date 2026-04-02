@@ -69,6 +69,9 @@ Browse the published API surface by public member.
 - [AddCephalon](cephalon-worker.md#member-m-cephalon-worker-hosting-workerhostapplicationbuilderextensions-addcephalon-microsoft-extensions-hosting-hostapplicationbuilder-system-action-cephalon-engine-composition-enginebuilder): `Methods` on `WorkerHostApplicationBuilderExtensions` in `Cephalon.Worker.Hosting` (`Cephalon.Worker`) [Browse](browse.html?q=AddCephalon&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting&scope=members)
   - Adds Cephalon worker hosting and allows additional code-based engine configuration.
   - `HostApplicationBuilder AddCephalon(this HostApplicationBuilder builder, Action<EngineBuilder> configure)`
+- [AddCephalonAws](cephalon-observability-aws.md#member-m-cephalon-observability-aws-hosting-awshostapplicationbuilderextensions-addcephalonaws-1-0-system-action-cephalon-observability-aws-configuration-awstelemetryexportoptions): `Methods` on `AwsHostApplicationBuilderExtensions` in `Cephalon.Observability.Aws.Hosting` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=AddCephalonAws&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Hosting&scope=members)
+  - Adds AWS-aware OpenTelemetry registration for the Cephalon engine diagnostics surface.
+  - `TBuilder AddCephalonAws<TBuilder>(this TBuilder builder, Action<AwsTelemetryExportOptions> configure)`
 - [AddCephalonAzureMonitor](cephalon-observability-azuremonitor.md#member-m-cephalon-observability-azuremonitor-hosting-azuremonitorhostapplicationbuilderextensions-addcephalonazuremonitor-1-0-system-action-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions): `Methods` on `AzureMonitorHostApplicationBuilderExtensions` in `Cephalon.Observability.AzureMonitor.Hosting` (`Cephalon.Observability.AzureMonitor`) [Browse](browse.html?q=AddCephalonAzureMonitor&assembly=Cephalon.Observability.AzureMonitor&namespace=Cephalon.Observability.AzureMonitor.Hosting&scope=members)
   - Adds Azure Monitor exporter registration for the Cephalon engine diagnostics surface.
   - `TBuilder AddCephalonAzureMonitor<TBuilder>(this TBuilder builder, Action<AzureMonitorExportOptions> configure)`
@@ -381,6 +384,9 @@ Browse the published API surface by public member.
 - [Available](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-available): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Available&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Whether the configured documentation directory and default document were found and mapped.
   - `bool Available { get; set; }`
+- [AwsTelemetryExportOptions](cephalon-observability-aws.md#member-m-cephalon-observability-aws-configuration-awstelemetryexportoptions-ctor): `Constructors` on `AwsTelemetryExportOptions` in `Cephalon.Observability.Aws.Configuration` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=AwsTelemetryExportOptions&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Configuration&scope=members)
+  - Initializes a new instance of the `AwsTelemetryExportOptions` class.
+  - `AwsTelemetryExportOptions()`
 - [AzureMonitorExportOptions](cephalon-observability-azuremonitor.md#member-m-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-ctor): `Constructors` on `AzureMonitorExportOptions` in `Cephalon.Observability.AzureMonitor.Configuration` (`Cephalon.Observability.AzureMonitor`) [Browse](browse.html?q=AzureMonitorExportOptions&assembly=Cephalon.Observability.AzureMonitor&namespace=Cephalon.Observability.AzureMonitor.Configuration&scope=members)
   - Initializes a new instance of the `AzureMonitorExportOptions` class.
   - `AzureMonitorExportOptions()`
@@ -1020,6 +1026,9 @@ Browse the published API surface by public member.
 - [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-modulediscoverysettings-empty): `Properties` on `ModuleDiscoverySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets an empty module discovery settings instance.
   - `ModuleDiscoverySettings Empty { get; }`
+- [EnableAwsSdkInstrumentation](cephalon-observability-aws.md#member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-enableawssdkinstrumentation): `Properties` on `AwsTelemetryExportOptions` in `Cephalon.Observability.Aws.Configuration` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=EnableAwsSdkInstrumentation&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Configuration&scope=members)
+  - Gets or sets a value indicating whether AWS SDK client instrumentation should be enabled for traces.
+  - `bool EnableAwsSdkInstrumentation { get; set; }`
 - [Enabled](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-enabled): `Properties` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Enabled&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets or sets a value indicating whether the ASP.NET Core host should log request and response summaries.
   - `bool Enabled { get; set; }`
@@ -1035,6 +1044,9 @@ Browse the published API surface by public member.
 - [EnableIngestion](cephalon-retrieval.md#member-p-cephalon-retrieval-configuration-retrievaloptions-enableingestion): `Properties` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=EnableIngestion&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
   - Gets or sets a value indicating whether ingestion features are enabled.
   - `bool EnableIngestion { get; set; }`
+- [EnableLambdaContextExtraction](cephalon-observability-aws.md#member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-enablelambdacontextextraction): `Properties` on `AwsTelemetryExportOptions` in `Cephalon.Observability.Aws.Configuration` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=EnableLambdaContextExtraction&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Configuration&scope=members)
+  - Gets or sets a value indicating whether Lambda context extraction should be configured when the hosted platform is `lambda`.
+  - `bool EnableLambdaContextExtraction { get; set; }`
 - [EnableMemory](cephalon-agentics.md#member-p-cephalon-agentics-configuration-agenticruntimeoptions-enablememory): `Properties` on `AgenticRuntimeOptions` in `Cephalon.Agentics.Configuration` (`Cephalon.Agentics`) [Browse](browse.html?q=EnableMemory&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Configuration&scope=members)
   - Gets or sets a value indicating whether agent memory features are enabled.
   - `bool EnableMemory { get; set; }`
@@ -1206,6 +1218,9 @@ Browse the published API surface by public member.
 - [Foundation](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-foundation): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Foundation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies the shared foundation project.
   - `const string Foundation`
+- [FromConfiguration](cephalon-observability-aws.md#member-m-cephalon-observability-aws-configuration-awstelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `AwsTelemetryExportOptions` in `Cephalon.Observability.Aws.Configuration` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Configuration&scope=members)
+  - Binds AWS telemetry export options from configuration.
+  - `AwsTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability-azuremonitor.md#member-m-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `AzureMonitorExportOptions` in `Cephalon.Observability.AzureMonitor.Configuration` (`Cephalon.Observability.AzureMonitor`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.AzureMonitor&namespace=Cephalon.Observability.AzureMonitor.Configuration&scope=members)
   - Binds Azure Monitor export options from configuration.
   - `AzureMonitorExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -1437,6 +1452,9 @@ Browse the published API surface by public member.
 - [Host](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-host): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the SQL Server host name or IP address to probe when no full connection string is supplied.
   - `string Host { get; set; }`
+- [HostedPlatform](cephalon-observability-aws.md#member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-hostedplatform): `Properties` on `AwsTelemetryExportOptions` in `Cephalon.Observability.Aws.Configuration` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=HostedPlatform&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Configuration&scope=members)
+  - Gets or sets the hosted AWS platform whose default resource attributes and detectors should be applied.
+  - `string HostedPlatform { get; set; }`
 - [HostedPlatform](cephalon-observability-azuremonitor.md#member-p-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-hostedplatform): `Properties` on `AzureMonitorExportOptions` in `Cephalon.Observability.AzureMonitor.Configuration` (`Cephalon.Observability.AzureMonitor`) [Browse](browse.html?q=HostedPlatform&assembly=Cephalon.Observability.AzureMonitor&namespace=Cephalon.Observability.AzureMonitor.Configuration&scope=members)
   - Gets or sets the hosted Azure platform whose default resource attributes should be applied.
   - `string HostedPlatform { get; set; }`
@@ -3468,6 +3486,12 @@ Browse the published API surface by public member.
 - [UseTrustPolicy](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-usetrustpolicy-cephalon-engine-configuration-trustpolicy): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseTrustPolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Merges trust and capability-governance settings into the builder.
   - `EngineBuilder UseTrustPolicy(TrustPolicy policy)`
+- [UseXRayPropagator](cephalon-observability-aws.md#member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-usexraypropagator): `Properties` on `AwsTelemetryExportOptions` in `Cephalon.Observability.Aws.Configuration` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=UseXRayPropagator&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Configuration&scope=members)
+  - Gets or sets a value indicating whether the AWS X-Ray text-map propagator should become the default propagator for the host when traces are enabled.
+  - `bool UseXRayPropagator { get; set; }`
+- [UseXRayTraceIds](cephalon-observability-aws.md#member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-usexraytraceids): `Properties` on `AwsTelemetryExportOptions` in `Cephalon.Observability.Aws.Configuration` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=UseXRayTraceIds&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Configuration&scope=members)
+  - Gets or sets a value indicating whether AWS X-Ray-compatible trace identifiers should be used.
+  - `bool UseXRayTraceIds { get; set; }`
 
 ## V
 
