@@ -13,7 +13,7 @@ ASP.NET Core hosts that call `app.MapCephalon()` now expose three health routes:
 - `/health/ready`
 
 Health responses are JSON and include the check status, duration, and runtime-specific details such as restart count and the most recent failure context.
-When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.CassandraDependencies`, `Cephalon.Observability.ConsulDependencies`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.OracleDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
+When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.CassandraDependencies`, `Cephalon.Observability.ConsulDependencies`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.Neo4jDependencies`, `Cephalon.Observability.OracleDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
 
 Current semantics:
 
@@ -698,6 +698,56 @@ Operational notes:
 - probes support token-based auth or username/password auth, and TLS stays explicit through `UseTls` and `TlsServerName`
 - required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
 
+### Neo4j dependency probes
+
+`Cephalon.Observability.Neo4jDependencies` reads `Engine:Observability:DependencyHealth:Neo4j` and turns configured Neo4j graph endpoints into reusable `IDependencyHealthContributor` data.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "DependencyHealth": {
+        "Neo4j": {
+          "RefreshIntervalSeconds": 30,
+          "Dependencies": [
+            {
+              "Id": "orders-graph",
+              "DisplayName": "Orders Graph",
+              "Uri": "neo4j://graph.internal.example:7687",
+              "Database": "orders",
+              "Username": "cephalon-runtime",
+              "Password": "${NEO4J_PASSWORD}",
+              "HealthQuery": "RETURN 1 AS health",
+              "Required": true,
+              "TimeoutSeconds": 5
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonNeo4jDependencyHealth(builder.Configuration);
+```
+
+Operational notes:
+
+- the Neo4j dependency-health package is optional and stays outside `Cephalon.Engine`
+- the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
+- probes can use either a full `Uri` or discrete `Host` / `Port` / `Scheme` settings, so routing and TLS semantics stay explicit through standard Neo4j schemes such as `neo4j`, `neo4j+s`, `bolt`, or `bolt+s`
+- each probe opens a dedicated Neo4j driver session, optionally selects a database, runs the configured Cypher health query, and reports the result through the shared dependency-health contract
+- required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
+
 ### MQTT dependency probes
 
 `Cephalon.Observability.MqttDependencies` reads `Engine:Observability:DependencyHealth:Mqtt` and turns configured MQTT endpoints into reusable `IDependencyHealthContributor` data.
@@ -839,6 +889,7 @@ Current shipped event-id ranges include:
 - `Cephalon.Observability.MqttDependencies`: `3136-3137`
 - `Cephalon.Observability.MemcachedDependencies`: `3140-3141`
 - `Cephalon.Observability.OracleDependencies`: `3144-3145`
+- `Cephalon.Observability.Neo4jDependencies`: `3148-3149`
 
 This is the quickest way to discover the engine's observability contract without opening code.
 

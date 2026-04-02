@@ -132,6 +132,12 @@ Browse the published API surface by public member.
 - [AddCephalonNatsDependencyHealth](cephalon-observability-natsdependencies.md#member-m-cephalon-observability-natsdependencies-hosting-natsdependencyhealthservicecollectionextensions-addcephalonnatsdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions): `Methods` on `NatsDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.NatsDependencies.Hosting` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=AddCephalonNatsDependencyHealth&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Hosting&scope=members)
   - Adds NATS dependency-health services using configuration as the primary source of probe settings.
   - `IServiceCollection AddCephalonNatsDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<NatsDependencyHealthOptions> configure)`
+- [AddCephalonNeo4jDependencyHealth](cephalon-observability-neo4jdependencies.md#member-m-cephalon-observability-neo4jdependencies-hosting-neo4jdependencyhealthservicecollectionextensions-addcephalonneo4jdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions): `Methods` on `Neo4jDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.Neo4jDependencies.Hosting` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=AddCephalonNeo4jDependencyHealth&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Hosting&scope=members)
+  - Adds Neo4j dependency-health services using code-first configuration.
+  - `IServiceCollection AddCephalonNeo4jDependencyHealth(this IServiceCollection services, Action<Neo4jDependencyHealthOptions> configure)`
+- [AddCephalonNeo4jDependencyHealth](cephalon-observability-neo4jdependencies.md#member-m-cephalon-observability-neo4jdependencies-hosting-neo4jdependencyhealthservicecollectionextensions-addcephalonneo4jdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions): `Methods` on `Neo4jDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.Neo4jDependencies.Hosting` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=AddCephalonNeo4jDependencyHealth&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Hosting&scope=members)
+  - Adds Neo4j dependency-health services using configuration as the primary source of probe settings.
+  - `IServiceCollection AddCephalonNeo4jDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<Neo4jDependencyHealthOptions> configure)`
 - [AddCephalonObservability](cephalon-observability.md#member-m-cephalon-observability-hosting-observabilityservicecollectionextensions-addcephalonobservability-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-configuration-observabilityoptions): `Methods` on `ObservabilityServiceCollectionExtensions` in `Cephalon.Observability.Hosting` (`Cephalon.Observability`) [Browse](browse.html?q=AddCephalonObservability&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Hosting&scope=members)
   - Adds observability services using code-first configuration.
   - `IServiceCollection AddCephalonObservability(this IServiceCollection services, Action<ObservabilityOptions> configure)`
@@ -591,6 +597,9 @@ Browse the published API surface by public member.
 - [Database](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-database): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=Database&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
   - Gets or sets the database name used for the health query.
   - `string Database { get; set; }`
+- [Database](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-database): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Database&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
+  - Gets or sets the optional Neo4j database name used when opening the probe session.
+  - `string Database { get; set; }`
 - [Database](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-database): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=Database&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the database name used for the health query.
   - `string Database { get; set; }`
@@ -684,6 +693,9 @@ Browse the published API surface by public member.
 - [Dependencies](cephalon-observability-natsdependencies.md#member-p-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions-dependencies): `Properties` on `NatsDependencyHealthOptions` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
   - Gets or sets the configured NATS dependencies that should contribute to runtime health.
   - `IReadOnlyList<NatsDependencyDefinition> Dependencies { get; set; }`
+- [Dependencies](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions-dependencies): `Properties` on `Neo4jDependencyHealthOptions` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
+  - Gets or sets the configured Neo4j dependencies that should contribute to runtime health.
+  - `IReadOnlyList<Neo4jDependencyDefinition> Dependencies { get; set; }`
 - [Dependencies](cephalon-observability-oracledependencies.md#member-p-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions-dependencies): `Properties` on `OracleDependencyHealthOptions` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Gets or sets the configured Oracle dependencies that should contribute to runtime health.
   - `IReadOnlyList<OracleDependencyDefinition> Dependencies { get; set; }`
@@ -886,6 +898,9 @@ Browse the published API surface by public member.
   - Gets or sets the human-readable dependency name shown to operators.
   - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-observability-natsdependencies.md#member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-displayname): `Properties` on `NatsDependencyDefinition` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
+  - Gets or sets the human-readable dependency name shown to operators.
+  - `string DisplayName { get; set; }`
+- [DisplayName](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-displayname): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
   - Gets or sets the human-readable dependency name shown to operators.
   - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-observability-oracledependencies.md#member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-displayname): `Properties` on `OracleDependencyDefinition` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
@@ -1188,6 +1203,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability-natsdependencies.md#member-m-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `NatsDependencyHealthOptions` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
   - Binds NATS dependency-health options from configuration.
   - `NatsDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-observability-neo4jdependencies.md#member-m-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `Neo4jDependencyHealthOptions` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
+  - Binds Neo4j dependency-health options from configuration.
+  - `Neo4jDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability.md#member-m-cephalon-observability-configuration-observabilityoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `ObservabilityOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Binds observability options from configuration.
   - `ObservabilityOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -1299,6 +1317,9 @@ Browse the published API surface by public member.
 - [HealthQuery](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-healthquery): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=HealthQuery&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
   - Gets or sets the SQL statement executed to verify the dependency.
   - `string HealthQuery { get; set; }`
+- [HealthQuery](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-healthquery): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=HealthQuery&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
+  - Gets or sets the Cypher statement executed to verify the dependency.
+  - `string HealthQuery { get; set; }`
 - [HealthQuery](cephalon-observability-oracledependencies.md#member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-healthquery): `Properties` on `OracleDependencyDefinition` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=HealthQuery&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Gets or sets the SQL statement executed to verify the dependency.
   - `string HealthQuery { get; set; }`
@@ -1328,6 +1349,9 @@ Browse the published API surface by public member.
   - `string Host { get; set; }`
 - [Host](cephalon-observability-natsdependencies.md#member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-host): `Properties` on `NatsDependencyDefinition` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
   - Gets or sets the NATS host name or IP address to probe.
+  - `string Host { get; set; }`
+- [Host](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-host): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
+  - Gets or sets the Neo4j host name or IP address to probe when no full URI is supplied.
   - `string Host { get; set; }`
 - [Host](cephalon-observability-oracledependencies.md#member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-host): `Properties` on `OracleDependencyDefinition` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Gets or sets the Oracle host name or IP address to probe when no full connection string is supplied.
@@ -1417,6 +1441,9 @@ Browse the published API surface by public member.
   - Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
   - `string Id { get; set; }`
 - [Id](cephalon-observability-natsdependencies.md#member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-id): `Properties` on `NatsDependencyDefinition` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
+  - Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
+  - `string Id { get; set; }`
+- [Id](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-id): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
   - Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
   - `string Id { get; set; }`
 - [Id](cephalon-observability-oracledependencies.md#member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-id): `Properties` on `OracleDependencyDefinition` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
@@ -1965,6 +1992,12 @@ Browse the published API surface by public member.
 - [NatsDependencyHealthOptions](cephalon-observability-natsdependencies.md#member-m-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions-ctor): `Constructors` on `NatsDependencyHealthOptions` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=NatsDependencyHealthOptions&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
   - Initializes a new instance of the `NatsDependencyHealthOptions` class.
   - `NatsDependencyHealthOptions()`
+- [Neo4jDependencyDefinition](cephalon-observability-neo4jdependencies.md#member-m-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-ctor): `Constructors` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Neo4jDependencyDefinition&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
+  - Initializes a new instance of the `Neo4jDependencyDefinition` class.
+  - `Neo4jDependencyDefinition()`
+- [Neo4jDependencyHealthOptions](cephalon-observability-neo4jdependencies.md#member-m-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions-ctor): `Constructors` on `Neo4jDependencyHealthOptions` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Neo4jDependencyHealthOptions&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
+  - Initializes a new instance of the `Neo4jDependencyHealthOptions` class.
+  - `Neo4jDependencyHealthOptions()`
 - [Nodes](cephalon-edge.md#member-p-cephalon-edge-configuration-edgeruntimeoptions-nodes): `Properties` on `EdgeRuntimeOptions` in `Cephalon.Edge.Configuration` (`Cephalon.Edge`) [Browse](browse.html?q=Nodes&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Configuration&scope=members)
   - Gets the host-defined edge nodes that should be available to the edge runtime.
   - `IList<EdgeNodeDescriptor> Nodes { get; }`
@@ -2088,6 +2121,9 @@ Browse the published API surface by public member.
 - [Password](cephalon-observability-natsdependencies.md#member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-password): `Properties` on `NatsDependencyDefinition` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
   - Gets or sets the optional password used for NATS user/password authentication.
   - `string Password { get; set; }`
+- [Password](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-password): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
+  - Gets or sets the optional password used for authentication.
+  - `string Password { get; set; }`
 - [Password](cephalon-observability-oracledependencies.md#member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-password): `Properties` on `OracleDependencyDefinition` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Gets or sets the optional password used for authentication when no full connection string is supplied.
   - `string Password { get; set; }`
@@ -2174,6 +2210,9 @@ Browse the published API surface by public member.
   - `int Port { get; set; }`
 - [Port](cephalon-observability-natsdependencies.md#member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-port): `Properties` on `NatsDependencyDefinition` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
   - Gets or sets the NATS client port.
+  - `int Port { get; set; }`
+- [Port](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-port): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
+  - Gets or sets the Neo4j Bolt port used when no full URI is supplied.
   - `int Port { get; set; }`
 - [Port](cephalon-observability-oracledependencies.md#member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-port): `Properties` on `OracleDependencyDefinition` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Gets or sets the Oracle TCP port.
@@ -2322,6 +2361,9 @@ Browse the published API surface by public member.
 - [RefreshIntervalSeconds](cephalon-observability-natsdependencies.md#member-p-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions-refreshintervalseconds): `Properties` on `NatsDependencyHealthOptions` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
   - Gets or sets the interval, in seconds, between background refresh attempts.
   - `int RefreshIntervalSeconds { get; set; }`
+- [RefreshIntervalSeconds](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions-refreshintervalseconds): `Properties` on `Neo4jDependencyHealthOptions` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
+  - Gets or sets the interval, in seconds, between background refresh attempts.
+  - `int RefreshIntervalSeconds { get; set; }`
 - [RefreshIntervalSeconds](cephalon-observability-oracledependencies.md#member-p-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions-refreshintervalseconds): `Properties` on `OracleDependencyHealthOptions` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Gets or sets the interval, in seconds, between background refresh attempts.
   - `int RefreshIntervalSeconds { get; set; }`
@@ -2428,6 +2470,9 @@ Browse the published API surface by public member.
   - Gets or sets a value indicating whether this dependency is required for readiness.
   - `bool Required { get; set; }`
 - [Required](cephalon-observability-natsdependencies.md#member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-required): `Properties` on `NatsDependencyDefinition` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
+  - Gets or sets a value indicating whether this dependency is required for readiness.
+  - `bool Required { get; set; }`
+- [Required](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-required): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
   - Gets or sets a value indicating whether this dependency is required for readiness.
   - `bool Required { get; set; }`
 - [Required](cephalon-observability-oracledependencies.md#member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-required): `Properties` on `OracleDependencyDefinition` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
@@ -2658,6 +2703,9 @@ Browse the published API surface by public member.
 - [ScaffoldRequest](cephalon-scaffolding.md#member-m-cephalon-scaffolding-generation-scaffoldrequest-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string): `Constructors` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=ScaffoldRequest&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Creates a new scaffold request.
   - `ScaffoldRequest(string appName, IReadOnlyList<string> modules, IReadOnlyList<string> features, string targetFramework, string cephalonPackageVersion)`
+- [Scheme](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-scheme): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Scheme&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
+  - Gets or sets the URI scheme used when building a discrete endpoint, such as `neo4j`, `neo4j+s`, `bolt`, or `bolt+s`.
+  - `string Scheme { get; set; }`
 - [Scope](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedfolder-scope): `Properties` on `RenderedFolder` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Scope&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the scaffold scope that produced the folder.
   - `string Scope { get; }`
@@ -3057,6 +3105,9 @@ Browse the published API surface by public member.
 - [TimeoutSeconds](cephalon-observability-natsdependencies.md#member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-timeoutseconds): `Properties` on `NatsDependencyDefinition` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
   - Gets or sets the per-probe timeout in seconds.
   - `int TimeoutSeconds { get; set; }`
+- [TimeoutSeconds](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-timeoutseconds): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
+  - Gets or sets the per-probe timeout in seconds.
+  - `int TimeoutSeconds { get; set; }`
 - [TimeoutSeconds](cephalon-observability-oracledependencies.md#member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-timeoutseconds): `Properties` on `OracleDependencyDefinition` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Gets or sets the per-probe timeout in seconds.
   - `int TimeoutSeconds { get; set; }`
@@ -3204,6 +3255,9 @@ Browse the published API surface by public member.
 - [Unhealthy](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimehealthstate-unhealthy): `Fields` on `RuntimeHealthState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Unhealthy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime is not healthy enough to serve traffic.
   - `const RuntimeHealthState Unhealthy`
+- [Uri](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-uri): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Uri&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
+  - Gets or sets the optional full Neo4j endpoint URI such as `neo4j://graph.internal.example:7687` or `neo4j+s://graph.internal.example:7687`.
+  - `string Uri { get; set; }`
 - [UseBlueprint](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-useblueprint-cephalon-abstractions-appmodel-appblueprint): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseBlueprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Selects the base application blueprint that should shape the runtime.
   - `EngineBuilder UseBlueprint(AppBlueprint blueprint)`
@@ -3242,6 +3296,9 @@ Browse the published API surface by public member.
   - `string Username { get; set; }`
 - [Username](cephalon-observability-natsdependencies.md#member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-username): `Properties` on `NatsDependencyDefinition` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
   - Gets or sets the optional user name used for NATS user/password authentication.
+  - `string Username { get; set; }`
+- [Username](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-username): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
+  - Gets or sets the optional user name used for authentication.
   - `string Username { get; set; }`
 - [Username](cephalon-observability-oracledependencies.md#member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-username): `Properties` on `OracleDependencyDefinition` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Gets or sets the optional user name used for authentication when no full connection string is supplied.

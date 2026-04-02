@@ -33,6 +33,7 @@ When working in this repository:
 - `Cephalon.Observability.MqttDependencies` is the optional MQTT dependency-health companion package
 - `Cephalon.Observability.MySqlDependencies` is the optional MySQL dependency-health companion package
 - `Cephalon.Observability.NatsDependencies` is the optional NATS dependency-health companion package
+- `Cephalon.Observability.Neo4jDependencies` is the optional Neo4j dependency-health companion package
 - `Cephalon.Observability.OracleDependencies` is the optional Oracle dependency-health companion package
 - `Cephalon.Observability.PostgresDependencies` is the optional Postgres dependency-health companion package
 - `Cephalon.Observability.RabbitMqDependencies` is the optional RabbitMQ dependency-health companion package
@@ -239,6 +240,9 @@ Current source layout:
 - `src/Cephalon.Observability.NatsDependencies/Configuration` -> `Cephalon.Observability.NatsDependencies.Configuration`
 - `src/Cephalon.Observability.NatsDependencies/Hosting` -> `Cephalon.Observability.NatsDependencies.Hosting`
 - `src/Cephalon.Observability.NatsDependencies/Services` -> `Cephalon.Observability.NatsDependencies.Services`
+- `src/Cephalon.Observability.Neo4jDependencies/Configuration` -> `Cephalon.Observability.Neo4jDependencies.Configuration`
+- `src/Cephalon.Observability.Neo4jDependencies/Hosting` -> `Cephalon.Observability.Neo4jDependencies.Hosting`
+- `src/Cephalon.Observability.Neo4jDependencies/Services` -> `Cephalon.Observability.Neo4jDependencies.Services`
 - `src/Cephalon.Observability.OracleDependencies/Configuration` -> `Cephalon.Observability.OracleDependencies.Configuration`
 - `src/Cephalon.Observability.OracleDependencies/Hosting` -> `Cephalon.Observability.OracleDependencies.Hosting`
 - `src/Cephalon.Observability.OracleDependencies/Services` -> `Cephalon.Observability.OracleDependencies.Services`

@@ -276,6 +276,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Observability.NatsDependencies](cephalon-observability-natsdependencies.md#namespace-cephalon-observability-natsdependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Hosting)
 
+## `Cephalon.Observability.Neo4jDependencies.Configuration`
+
+- [Cephalon.Observability.Neo4jDependencies](cephalon-observability-neo4jdependencies.md#namespace-cephalon-observability-neo4jdependencies-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration)
+
+## `Cephalon.Observability.Neo4jDependencies.Hosting`
+
+- [Cephalon.Observability.Neo4jDependencies](cephalon-observability-neo4jdependencies.md#namespace-cephalon-observability-neo4jdependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Hosting)
+
 ## `Cephalon.Observability.OpenTelemetry.Hosting`
 
 - [Cephalon.Observability.OpenTelemetry](cephalon-observability-opentelemetry.md#namespace-cephalon-observability-opentelemetry-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.OpenTelemetry&namespace=Cephalon.Observability.OpenTelemetry.Hosting)

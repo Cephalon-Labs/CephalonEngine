@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T10:42:15.6355639+00:00",
+  "GeneratedAtUtc": "2026-04-02T11:09:29.4446957+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -167,6 +167,14 @@
       "Category": "Hosts",
       "Description": "NATS dependency-health integration for Cephalon hosts.",
       "FileName": "cephalon-observability-natsdependencies.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "Category": "Hosts",
+      "Description": "Neo4j dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
     },
@@ -734,6 +742,20 @@
       "AssemblyName": "Cephalon.Observability.NatsDependencies",
       "FileName": "cephalon-observability-natsdependencies.md",
       "AnchorId": "namespace-cephalon-observability-natsdependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-neo4jdependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-neo4jdependencies-hosting",
       "TypeCount": 1
     },
     {
@@ -2791,6 +2813,51 @@
       }
     },
     {
+      "DisplayName": "Neo4jDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "type-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition",
+      "Declaration": "public sealed class Neo4jDependencyDefinition",
+      "Summary": "Describes one Neo4j dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 12,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "Neo4jDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "type-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions",
+      "Declaration": "public sealed class Neo4jDependencyHealthOptions",
+      "Summary": "Configures Neo4j dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "Neo4jDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "type-cephalon-observability-neo4jdependencies-hosting-neo4jdependencyhealthservicecollectionextensions",
+      "Declaration": "public static class Neo4jDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds Neo4j dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
       "DisplayName": "ObservabilityOptions",
       "NamespaceName": "Cephalon.Observability.Configuration",
       "AssemblyName": "Cephalon.Observability",
@@ -4470,6 +4537,28 @@
       "Summary": "Adds NATS dependency-health services using configuration as the primary source of probe settings."
     },
     {
+      "DisplayName": "AddCephalonNeo4jDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "Neo4jDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-neo4jdependencies-hosting-neo4jdependencyhealthservicecollectionextensions-addcephalonneo4jdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonNeo4jDependencyHealth(this IServiceCollection services, Action\u003CNeo4jDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Neo4j dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonNeo4jDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "Neo4jDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-neo4jdependencies-hosting-neo4jdependencyhealthservicecollectionextensions-addcephalonneo4jdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonNeo4jDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CNeo4jDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Neo4j dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
       "DisplayName": "AddCephalonObservability",
       "Category": "Methods",
       "DeclaringTypeName": "ObservabilityServiceCollectionExtensions",
@@ -6122,6 +6211,17 @@
     {
       "DisplayName": "Database",
       "Category": "Properties",
+      "DeclaringTypeName": "Neo4jDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-database",
+      "Signature": "string Database { get; set; }",
+      "Summary": "Gets or sets the optional Neo4j database name used when opening the probe session."
+    },
+    {
+      "DisplayName": "Database",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -6459,6 +6559,17 @@
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions-dependencies",
       "Signature": "IReadOnlyList\u003CNatsDependencyDefinition\u003E Dependencies { get; set; }",
       "Summary": "Gets or sets the configured NATS dependencies that should contribute to runtime health."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
+      "DeclaringTypeName": "Neo4jDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003CNeo4jDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured Neo4j dependencies that should contribute to runtime health."
     },
     {
       "DisplayName": "Dependencies",
@@ -7205,6 +7316,17 @@
       "AssemblyName": "Cephalon.Observability.NatsDependencies",
       "FileName": "cephalon-observability-natsdependencies.md",
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "Neo4jDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-displayname",
       "Signature": "string DisplayName { get; set; }",
       "Summary": "Gets or sets the human-readable dependency name shown to operators."
     },
@@ -8289,6 +8411,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "Neo4jDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "Neo4jDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Neo4j dependency-health options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "ObservabilityOptions",
       "NamespaceName": "Cephalon.Observability.Configuration",
       "AssemblyName": "Cephalon.Observability",
@@ -8674,6 +8807,17 @@
     {
       "DisplayName": "HealthQuery",
       "Category": "Properties",
+      "DeclaringTypeName": "Neo4jDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-healthquery",
+      "Signature": "string HealthQuery { get; set; }",
+      "Summary": "Gets or sets the Cypher statement executed to verify the dependency."
+    },
+    {
+      "DisplayName": "HealthQuery",
+      "Category": "Properties",
       "DeclaringTypeName": "OracleDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.OracleDependencies",
@@ -8780,6 +8924,17 @@
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-host",
       "Signature": "string Host { get; set; }",
       "Summary": "Gets or sets the NATS host name or IP address to probe."
+    },
+    {
+      "DisplayName": "Host",
+      "Category": "Properties",
+      "DeclaringTypeName": "Neo4jDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-host",
+      "Signature": "string Host { get; set; }",
+      "Summary": "Gets or sets the Neo4j host name or IP address to probe when no full URI is supplied."
     },
     {
       "DisplayName": "Host",
@@ -9097,6 +9252,17 @@
       "AssemblyName": "Cephalon.Observability.NatsDependencies",
       "FileName": "cephalon-observability-natsdependencies.md",
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "Neo4jDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-id",
       "Signature": "string Id { get; set; }",
       "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
@@ -11048,6 +11214,28 @@
       "Summary": "Initializes a new instance of the \u0060NatsDependencyHealthOptions\u0060 class."
     },
     {
+      "DisplayName": "Neo4jDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "Neo4jDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-ctor",
+      "Signature": "Neo4jDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060Neo4jDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "Neo4jDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "Neo4jDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions-ctor",
+      "Signature": "Neo4jDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060Neo4jDependencyHealthOptions\u0060 class."
+    },
+    {
       "DisplayName": "Nodes",
       "Category": "Properties",
       "DeclaringTypeName": "EdgeRuntimeOptions",
@@ -11479,6 +11667,17 @@
     {
       "DisplayName": "Password",
       "Category": "Properties",
+      "DeclaringTypeName": "Neo4jDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-password",
+      "Signature": "string Password { get; set; }",
+      "Summary": "Gets or sets the optional password used for authentication."
+    },
+    {
+      "DisplayName": "Password",
+      "Category": "Properties",
       "DeclaringTypeName": "OracleDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.OracleDependencies",
@@ -11794,6 +11993,17 @@
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-port",
       "Signature": "int Port { get; set; }",
       "Summary": "Gets or sets the NATS client port."
+    },
+    {
+      "DisplayName": "Port",
+      "Category": "Properties",
+      "DeclaringTypeName": "Neo4jDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-port",
+      "Signature": "int Port { get; set; }",
+      "Summary": "Gets or sets the Neo4j Bolt port used when no full URI is supplied."
     },
     {
       "DisplayName": "Port",
@@ -12326,6 +12536,17 @@
     {
       "DisplayName": "RefreshIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "Neo4jDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "OracleDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.OracleDependencies",
@@ -12716,6 +12937,17 @@
       "AssemblyName": "Cephalon.Observability.NatsDependencies",
       "FileName": "cephalon-observability-natsdependencies.md",
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "Neo4jDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
@@ -13543,6 +13775,17 @@
       "AnchorId": "member-m-cephalon-scaffolding-generation-scaffoldrequest-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string",
       "Signature": "ScaffoldRequest(string appName, IReadOnlyList\u003Cstring\u003E modules, IReadOnlyList\u003Cstring\u003E features, string targetFramework, string cephalonPackageVersion)",
       "Summary": "Creates a new scaffold request."
+    },
+    {
+      "DisplayName": "Scheme",
+      "Category": "Properties",
+      "DeclaringTypeName": "Neo4jDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-scheme",
+      "Signature": "string Scheme { get; set; }",
+      "Summary": "Gets or sets the URI scheme used when building a discrete endpoint, such as \u0060neo4j\u0060, \u0060neo4j\u002Bs\u0060, \u0060bolt\u0060, or \u0060bolt\u002Bs\u0060."
     },
     {
       "DisplayName": "Scope",
@@ -14999,6 +15242,17 @@
     {
       "DisplayName": "TimeoutSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "Neo4jDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-probe timeout in seconds."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "OracleDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.OracleDependencies",
@@ -15525,6 +15779,17 @@
       "Summary": "The runtime is not healthy enough to serve traffic."
     },
     {
+      "DisplayName": "Uri",
+      "Category": "Properties",
+      "DeclaringTypeName": "Neo4jDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-uri",
+      "Signature": "string Uri { get; set; }",
+      "Summary": "Gets or sets the optional full Neo4j endpoint URI such as \u0060neo4j://graph.internal.example:7687\u0060 or \u0060neo4j\u002Bs://graph.internal.example:7687\u0060."
+    },
+    {
       "DisplayName": "UseBlueprint",
       "Category": "Methods",
       "DeclaringTypeName": "EngineBuilder",
@@ -15666,6 +15931,17 @@
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-username",
       "Signature": "string Username { get; set; }",
       "Summary": "Gets or sets the optional user name used for NATS user/password authentication."
+    },
+    {
+      "DisplayName": "Username",
+      "Category": "Properties",
+      "DeclaringTypeName": "Neo4jDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
+      "FileName": "cephalon-observability-neo4jdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-username",
+      "Signature": "string Username { get; set; }",
+      "Summary": "Gets or sets the optional user name used for authentication."
     },
     {
       "DisplayName": "Username",
