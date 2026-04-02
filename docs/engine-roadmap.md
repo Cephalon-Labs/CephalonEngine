@@ -140,7 +140,7 @@ Deliverables:
 Current inventory:
 
 - `docs/operational-hardening-gap-inventory.md` now records the shipped baseline versus the remaining phase-2 gaps so follow-through work stays grounded in the code that already exists
-- that inventory now includes a shipped `Cephalon.Observability.OpenTelemetry` companion package plus shipped `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` companion packages, together with a published runtime diagnostics catalog and runtime-story surface for the active engine and companion packages, which narrows the open phase-2 work to broader dependency-health coverage, deeper health semantics, and release-validation guidance
+- that inventory now includes a shipped `Cephalon.Observability.OpenTelemetry` companion package plus shipped `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` companion packages, together with a published runtime diagnostics catalog, runtime-story surface, and configurable failure-policy warmup/drain/backoff semantics for the active engine and companion packages, which narrows the open phase-2 work to broader dependency-health coverage and release-validation guidance
 
 Exit criteria:
 
@@ -222,7 +222,7 @@ Exit criteria:
 
 Updated priority order as of `April 2, 2026`:
 
-1. operational hardening follow-through: broader dependency-health packs, readiness/liveness semantics, and release-validation guidance now that the exporter path is shipped, HTTP plus MongoDB plus MySQL plus Postgres plus RabbitMQ plus Redis plus SQL Server coverage have landed, and both the structured diagnostics catalog and runtime-story surface are in place
+1. operational hardening follow-through: broader dependency-health packs and release-validation guidance now that the exporter path is shipped, HTTP plus MongoDB plus MySQL plus Postgres plus RabbitMQ plus Redis plus SQL Server coverage have landed, and the structured diagnostics catalog, runtime-story surface, and failure-policy warmup/drain/backoff semantics are in place
 2. package/plugin loading
 3. package distribution, provenance, and richer trust follow-through beyond the current baseline
 4. workflow and orchestration primitives

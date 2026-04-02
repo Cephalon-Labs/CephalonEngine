@@ -12,6 +12,8 @@ namespace Cephalon.Engine.Runtime;
 /// <param name="RestartCount">The number of completed manual restarts.</param>
 /// <param name="LastFailure">The last runtime failure when one is available.</param>
 /// <param name="Dependencies">The dependency-health reports visible during evaluation.</param>
+/// <param name="ActiveWindow">The active policy-driven lifecycle window, such as startup warmup, shutdown drain, or restart backoff.</param>
+/// <param name="ActiveWindowEndsAtUtc">The UTC timestamp when the active lifecycle window ends, if applicable.</param>
 public sealed record RuntimeHealthReport(
     string Probe,
     RuntimeHealthState State,
@@ -19,7 +21,9 @@ public sealed record RuntimeHealthReport(
     RuntimeStatus RuntimeStatus,
     int RestartCount,
     RuntimeFailureInfo? LastFailure,
-    IReadOnlyList<DependencyHealthReport> Dependencies)
+    IReadOnlyList<DependencyHealthReport> Dependencies,
+    string? ActiveWindow = null,
+    DateTimeOffset? ActiveWindowEndsAtUtc = null)
 {
     /// <summary>
     /// Gets a value indicating whether the report represents a healthy state.

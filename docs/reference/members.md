@@ -9,6 +9,12 @@ Browse the published API surface by public member.
 - [Access](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-access): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Access&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The effective access mode resolved from policy.
   - `CapabilityAccess Access { get; set; }`
+- [ActiveWindow](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-activewindow): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ActiveWindow&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The active policy-driven lifecycle window, such as startup warmup, shutdown drain, or restart backoff.
+  - `string ActiveWindow { get; set; }`
+- [ActiveWindowEndsAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-activewindowendsatutc): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ActiveWindowEndsAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The UTC timestamp when the active lifecycle window ends, if applicable.
+  - `DateTimeOffset? ActiveWindowEndsAtUtc { get; set; }`
 - [ActivitySourceName](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-activitysourcename): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ActivitySourceName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The activity source name used for engine tracing.
   - `string ActivitySourceName { get; set; }`
@@ -936,9 +942,9 @@ Browse the published API surface by public member.
 - [FailurePolicy](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-failurepolicy): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FailurePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets runtime failure policy values.
   - `FailurePolicy FailurePolicy { get; }`
-- [FailurePolicy](cephalon-engine.md#member-m-cephalon-engine-configuration-failurepolicy-ctor-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior-system-boolean-system-int32): `Constructors` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FailurePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+- [FailurePolicy](cephalon-engine.md#member-m-cephalon-engine-configuration-failurepolicy-ctor-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior-system-boolean-system-int32-system-timespan-system-timespan-system-timespan): `Constructors` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FailurePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `FailurePolicy` class.
-  - `FailurePolicy(StartupFailureBehavior startupFailureBehavior, StopFailureBehavior stopFailureBehavior, bool allowManualRestart, int maxRestartAttempts)`
+  - `FailurePolicy(StartupFailureBehavior startupFailureBehavior, StopFailureBehavior stopFailureBehavior, bool allowManualRestart, int maxRestartAttempts, TimeSpan startupReadinessDelay, TimeSpan shutdownLivenessGracePeriod, TimeSpan manualRestartBackoff)`
 - [FailurePolicy](cephalon-engine.md#member-p-cephalon-engine-runtime-iruntime-failurepolicy): `Properties` on `IRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=FailurePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the failure policy that governs startup, stop, and restart behavior.
   - `FailurePolicy FailurePolicy { get; }`
@@ -1440,6 +1446,9 @@ Browse the published API surface by public member.
 - [ManifestVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-runtimemanifest-manifestversion): `Properties` on `RuntimeManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=ManifestVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the manifest schema version.
   - `string ManifestVersion { get; }`
+- [ManualRestartBackoff](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-manualrestartbackoff): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ManualRestartBackoff&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the cooldown window that must elapse before a manual restart may run after a restartable failure.
+  - `TimeSpan ManualRestartBackoff { get; }`
 - [MapCephalon](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-enginewebapplicationextensions-mapcephalon-microsoft-aspnetcore-builder-webapplication): `Methods` on `EngineWebApplicationExtensions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=MapCephalon&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Maps Cephalon runtime, diagnostics, transport, and documentation endpoints onto the application.
   - `WebApplication MapCephalon(this WebApplication app)`
@@ -2163,6 +2172,9 @@ Browse the published API surface by public member.
 - [RestartAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-iruntime-restartasync-system-iserviceprovider-system-threading-cancellationtoken): `Methods` on `IRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RestartAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Restarts the runtime when the configured failure policy allows it.
   - `Task RestartAsync(IServiceProvider services, CancellationToken cancellationToken)`
+- [RestartAvailableAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-restartavailableatutc): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RestartAvailableAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The UTC timestamp when a manual restart exits its configured backoff window, if one applies.
+  - `DateTimeOffset? RestartAvailableAtUtc { get; set; }`
 - [RestartCount](cephalon-engine.md#member-p-cephalon-engine-runtime-engineruntime-restartcount): `Properties` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RestartCount&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the number of completed manual restarts.
   - `int RestartCount { get; }`
@@ -2208,15 +2220,15 @@ Browse the published API surface by public member.
 - [RuntimeFailureCounterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-runtimefailurecountername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeFailureCounterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Gets the counter name for runtime lifecycle failures.
   - `const string RuntimeFailureCounterName`
-- [RuntimeFailureInfo](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimefailureinfo-ctor-system-string-system-string-system-string-cephalon-engine-runtime-runtimestatus-system-string-system-string-system-datetimeoffset-system-boolean-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior): `Constructors` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeFailureInfo&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+- [RuntimeFailureInfo](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimefailureinfo-ctor-system-string-system-string-system-string-cephalon-engine-runtime-runtimestatus-system-string-system-string-system-datetimeoffset-system-boolean-system-nullable-system-datetimeoffset-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior): `Constructors` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeFailureInfo&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Describes a runtime lifecycle failure in a way that can be surfaced through diagnostics, status endpoints, and operator tooling.
-  - `RuntimeFailureInfo(string Phase, string ModuleId, string ModuleVersion, RuntimeStatus StatusBeforeFailure, string ExceptionType, string Message, DateTimeOffset OccurredAtUtc, bool CanRestart, StartupFailureBehavior StartupFailureBehavior, StopFailureBehavior StopFailureBehavior)`
+  - `RuntimeFailureInfo(string Phase, string ModuleId, string ModuleVersion, RuntimeStatus StatusBeforeFailure, string ExceptionType, string Message, DateTimeOffset OccurredAtUtc, bool CanRestart, DateTimeOffset? RestartAvailableAtUtc, StartupFailureBehavior StartupFailureBehavior, StopFailureBehavior StopFailureBehavior)`
 - [RuntimeHealthEvaluator](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimehealthevaluator-ctor-cephalon-engine-runtime-iruntime-system-collections-generic-ienumerable-cephalon-abstractions-health-idependencyhealthcontributor): `Constructors` on `RuntimeHealthEvaluator` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeHealthEvaluator&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Initializes a new instance of the `RuntimeHealthEvaluator` class.
   - `RuntimeHealthEvaluator(IRuntime runtime, IEnumerable<IDependencyHealthContributor> dependencyHealthContributors)`
-- [RuntimeHealthReport](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimehealthreport-ctor-system-string-cephalon-engine-runtime-runtimehealthstate-system-string-cephalon-engine-runtime-runtimestatus-system-int32-cephalon-engine-runtime-runtimefailureinfo-system-collections-generic-ireadonlylist-cephalon-abstractions-health-dependencyhealthreport): `Constructors` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeHealthReport&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+- [RuntimeHealthReport](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimehealthreport-ctor-system-string-cephalon-engine-runtime-runtimehealthstate-system-string-cephalon-engine-runtime-runtimestatus-system-int32-cephalon-engine-runtime-runtimefailureinfo-system-collections-generic-ireadonlylist-cephalon-abstractions-health-dependencyhealthreport-system-string-system-nullable-system-datetimeoffset): `Constructors` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeHealthReport&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Captures the health result for a runtime liveness or readiness probe.
-  - `RuntimeHealthReport(string Probe, RuntimeHealthState State, string Description, RuntimeStatus RuntimeStatus, int RestartCount, RuntimeFailureInfo LastFailure, IReadOnlyList<DependencyHealthReport> Dependencies)`
+  - `RuntimeHealthReport(string Probe, RuntimeHealthState State, string Description, RuntimeStatus RuntimeStatus, int RestartCount, RuntimeFailureInfo LastFailure, IReadOnlyList<DependencyHealthReport> Dependencies, string ActiveWindow, DateTimeOffset? ActiveWindowEndsAtUtc)`
 - [RuntimeIntrospectionSnapshot](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention-cephalon-engine-runtime-runtimeoperationalstory): `Constructors` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeIntrospectionSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Combines the main operator-facing runtime views into a single payload.
   - `RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces, IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions, RuntimeOperationalStory OperationalStory)`
@@ -2241,9 +2253,9 @@ Browse the published API surface by public member.
 - [RuntimeStatus](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimelifecycleevent-runtimestatus): `Properties` on `RuntimeLifecycleEvent` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeStatus&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime status visible when the event was recorded.
   - `RuntimeStatus RuntimeStatus { get; set; }`
-- [RuntimeStatusSnapshot](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimestatussnapshot-ctor-cephalon-engine-runtime-runtimestatus-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-cephalon-engine-runtime-runtimefailureinfo): `Constructors` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeStatusSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+- [RuntimeStatusSnapshot](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimestatussnapshot-ctor-cephalon-engine-runtime-runtimestatus-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-cephalon-engine-runtime-runtimefailureinfo): `Constructors` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeStatusSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Captures the current runtime lifecycle state in a serialization-friendly form.
-  - `RuntimeStatusSnapshot(RuntimeStatus Status, DateTimeOffset? InitializedAtUtc, DateTimeOffset? StartedAtUtc, DateTimeOffset? StoppedAtUtc, int RestartCount, RuntimeFailureInfo LastFailure)`
+  - `RuntimeStatusSnapshot(RuntimeStatus Status, DateTimeOffset? InitializedAtUtc, DateTimeOffset? StartedAtUtc, DateTimeOffset? StoppingAtUtc, DateTimeOffset? StoppedAtUtc, int RestartCount, RuntimeFailureInfo LastFailure)`
 - [RuntimeTransitionCounterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-runtimetransitioncountername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeTransitionCounterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Gets the counter name for runtime lifecycle transitions.
   - `const string RuntimeTransitionCounterName`
@@ -2325,6 +2337,9 @@ Browse the published API surface by public member.
 - [SharedFoundationPattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-sharedfoundationpattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=SharedFoundationPattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the shared-foundation pattern.
   - `PatternDescriptor SharedFoundationPattern { get; }`
+- [ShutdownLivenessGracePeriod](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-shutdownlivenessgraceperiod): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ShutdownLivenessGracePeriod&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the liveness grace window that applies while shutdown is still draining.
+  - `TimeSpan ShutdownLivenessGracePeriod { get; }`
 - [SignatureAlgorithm](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-signaturealgorithm): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=SignatureAlgorithm&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the signature algorithm declared by the package manifest, when available.
   - `string SignatureAlgorithm { get; }`
@@ -2442,6 +2457,9 @@ Browse the published API surface by public member.
 - [StartupFailureBehavior](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-startupfailurebehavior): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StartupFailureBehavior&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The startup failure behavior in effect when the failure occurred.
   - `StartupFailureBehavior StartupFailureBehavior { get; set; }`
+- [StartupReadinessDelay](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-startupreadinessdelay): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=StartupReadinessDelay&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the readiness warmup window that applies after startup succeeds.
+  - `TimeSpan StartupReadinessDelay { get; }`
 - [State](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-state): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The current health state.
   - `HealthState State { get; set; }`
@@ -2502,6 +2520,9 @@ Browse the published API surface by public member.
 - [Stopping](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-stopping): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Stopping&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime is stopping started modules.
   - `const RuntimeStatus Stopping`
+- [StoppingAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-stoppingatutc): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StoppingAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The UTC timestamp when shutdown most recently entered the stopping phase, if any.
+  - `DateTimeOffset? StoppingAtUtc { get; set; }`
 - [StrategyPattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-strategypattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=StrategyPattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the strategy design pattern.
   - `PatternDescriptor StrategyPattern { get; }`

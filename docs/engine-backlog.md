@@ -238,7 +238,7 @@ The active planning wave now moves to phase 2 operational hardening:
 
 - keep the completed gap inventory, shipped OpenTelemetry companion package, and published diagnostics catalog reflected accurately in docs and project tracking
 - keep the shipped HTTP, MongoDB, MySQL, Postgres, RabbitMQ, Redis, and SQL Server dependency-health companions reflected accurately in docs and project tracking while broader provider coverage stays explicit
-- keep the shipped runtime-story surface reflected accurately in docs and project tracking while richer phase-2 health semantics stay explicit
+- keep the shipped runtime-story surface plus the shipped failure-policy warmup, drain, and restart-backoff semantics reflected accurately in docs and project tracking
 - keep `docs/operational-hardening-gap-inventory.md` current as the source of truth for what phase-2 gaps are still genuinely open
 
 ### ENG-016 Blueprint sample suite

@@ -1012,12 +1012,12 @@ public sealed class FailurePolicy
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-failurepolicy-ctor-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior-system-boolean-system-int32"></a>
+<a id="member-m-cephalon-engine-configuration-failurepolicy-ctor-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior-system-boolean-system-int32-system-timespan-system-timespan-system-timespan"></a>
 
 ##### `FailurePolicy`
 
 ```csharp
-FailurePolicy(StartupFailureBehavior startupFailureBehavior, StopFailureBehavior stopFailureBehavior, bool allowManualRestart, int maxRestartAttempts)
+FailurePolicy(StartupFailureBehavior startupFailureBehavior, StopFailureBehavior stopFailureBehavior, bool allowManualRestart, int maxRestartAttempts, TimeSpan startupReadinessDelay, TimeSpan shutdownLivenessGracePeriod, TimeSpan manualRestartBackoff)
 ```
 
 Initializes a new instance of the `FailurePolicy` class.
@@ -1027,6 +1027,9 @@ Parameters:
 - `stopFailureBehavior`: How stop failures are handled.
 - `allowManualRestart`: Whether operators can manually restart the runtime after supported failures.
 - `maxRestartAttempts`: The maximum number of manual restarts, where `-1` allows unlimited restarts.
+- `startupReadinessDelay`: The optional warmup window that keeps readiness unhealthy after startup succeeds.
+- `shutdownLivenessGracePeriod`: The optional drain window that keeps liveness healthy while shutdown is in progress.
+- `manualRestartBackoff`: The optional backoff window that delays manual restarts after a restartable failure.
 
 #### Properties
 
@@ -1060,6 +1063,16 @@ bool HasValues { get; }
 
 Gets a value indicating whether this policy differs from `Default`.
 
+<a id="member-p-cephalon-engine-configuration-failurepolicy-manualrestartbackoff"></a>
+
+##### `ManualRestartBackoff`
+
+```csharp
+TimeSpan ManualRestartBackoff { get; }
+```
+
+Gets the cooldown window that must elapse before a manual restart may run after a restartable failure.
+
 <a id="member-p-cephalon-engine-configuration-failurepolicy-maxrestartattempts"></a>
 
 ##### `MaxRestartAttempts`
@@ -1070,6 +1083,16 @@ int MaxRestartAttempts { get; }
 
 Gets the maximum number of manual restarts.
 
+<a id="member-p-cephalon-engine-configuration-failurepolicy-shutdownlivenessgraceperiod"></a>
+
+##### `ShutdownLivenessGracePeriod`
+
+```csharp
+TimeSpan ShutdownLivenessGracePeriod { get; }
+```
+
+Gets the liveness grace window that applies while shutdown is still draining.
+
 <a id="member-p-cephalon-engine-configuration-failurepolicy-startupfailurebehavior"></a>
 
 ##### `StartupFailureBehavior`
@@ -1079,6 +1102,16 @@ StartupFailureBehavior StartupFailureBehavior { get; }
 ```
 
 Gets how startup failures are handled.
+
+<a id="member-p-cephalon-engine-configuration-failurepolicy-startupreadinessdelay"></a>
+
+##### `StartupReadinessDelay`
+
+```csharp
+TimeSpan StartupReadinessDelay { get; }
+```
+
+Gets the readiness warmup window that applies after startup succeeds.
 
 <a id="member-p-cephalon-engine-configuration-failurepolicy-stopfailurebehavior"></a>
 
@@ -3857,12 +3890,12 @@ public sealed class RuntimeFailureInfo
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-runtime-runtimefailureinfo-ctor-system-string-system-string-system-string-cephalon-engine-runtime-runtimestatus-system-string-system-string-system-datetimeoffset-system-boolean-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior"></a>
+<a id="member-m-cephalon-engine-runtime-runtimefailureinfo-ctor-system-string-system-string-system-string-cephalon-engine-runtime-runtimestatus-system-string-system-string-system-datetimeoffset-system-boolean-system-nullable-system-datetimeoffset-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior"></a>
 
 ##### `RuntimeFailureInfo`
 
 ```csharp
-RuntimeFailureInfo(string Phase, string ModuleId, string ModuleVersion, RuntimeStatus StatusBeforeFailure, string ExceptionType, string Message, DateTimeOffset OccurredAtUtc, bool CanRestart, StartupFailureBehavior StartupFailureBehavior, StopFailureBehavior StopFailureBehavior)
+RuntimeFailureInfo(string Phase, string ModuleId, string ModuleVersion, RuntimeStatus StatusBeforeFailure, string ExceptionType, string Message, DateTimeOffset OccurredAtUtc, bool CanRestart, DateTimeOffset? RestartAvailableAtUtc, StartupFailureBehavior StartupFailureBehavior, StopFailureBehavior StopFailureBehavior)
 ```
 
 Describes a runtime lifecycle failure in a way that can be surfaced through diagnostics, status endpoints, and operator tooling.
@@ -3876,6 +3909,7 @@ Parameters:
 - `Message`: The failure message surfaced to operators.
 - `OccurredAtUtc`: The UTC timestamp when the failure was captured.
 - `CanRestart`: Whether the current policy allows a manual restart after this failure.
+- `RestartAvailableAtUtc`: The UTC timestamp when a manual restart exits its configured backoff window, if one applies.
 - `StartupFailureBehavior`: The startup failure behavior in effect when the failure occurred.
 - `StopFailureBehavior`: The stop failure behavior in effect when the failure occurred.
 
@@ -3950,6 +3984,16 @@ string Phase { get; set; }
 ```
 
 The lifecycle phase that failed, such as `initialize`, `start`, or `stop`.
+
+<a id="member-p-cephalon-engine-runtime-runtimefailureinfo-restartavailableatutc"></a>
+
+##### `RestartAvailableAtUtc`
+
+```csharp
+DateTimeOffset? RestartAvailableAtUtc { get; set; }
+```
+
+The UTC timestamp when a manual restart exits its configured backoff window, if one applies.
 
 <a id="member-p-cephalon-engine-runtime-runtimefailureinfo-startupfailurebehavior"></a>
 
@@ -4059,12 +4103,12 @@ public sealed class RuntimeHealthReport
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-runtime-runtimehealthreport-ctor-system-string-cephalon-engine-runtime-runtimehealthstate-system-string-cephalon-engine-runtime-runtimestatus-system-int32-cephalon-engine-runtime-runtimefailureinfo-system-collections-generic-ireadonlylist-cephalon-abstractions-health-dependencyhealthreport"></a>
+<a id="member-m-cephalon-engine-runtime-runtimehealthreport-ctor-system-string-cephalon-engine-runtime-runtimehealthstate-system-string-cephalon-engine-runtime-runtimestatus-system-int32-cephalon-engine-runtime-runtimefailureinfo-system-collections-generic-ireadonlylist-cephalon-abstractions-health-dependencyhealthreport-system-string-system-nullable-system-datetimeoffset"></a>
 
 ##### `RuntimeHealthReport`
 
 ```csharp
-RuntimeHealthReport(string Probe, RuntimeHealthState State, string Description, RuntimeStatus RuntimeStatus, int RestartCount, RuntimeFailureInfo LastFailure, IReadOnlyList<DependencyHealthReport> Dependencies)
+RuntimeHealthReport(string Probe, RuntimeHealthState State, string Description, RuntimeStatus RuntimeStatus, int RestartCount, RuntimeFailureInfo LastFailure, IReadOnlyList<DependencyHealthReport> Dependencies, string ActiveWindow, DateTimeOffset? ActiveWindowEndsAtUtc)
 ```
 
 Captures the health result for a runtime liveness or readiness probe.
@@ -4077,8 +4121,30 @@ Parameters:
 - `RestartCount`: The number of completed manual restarts.
 - `LastFailure`: The last runtime failure when one is available.
 - `Dependencies`: The dependency-health reports visible during evaluation.
+- `ActiveWindow`: The active policy-driven lifecycle window, such as startup warmup, shutdown drain, or restart backoff.
+- `ActiveWindowEndsAtUtc`: The UTC timestamp when the active lifecycle window ends, if applicable.
 
 #### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimehealthreport-activewindow"></a>
+
+##### `ActiveWindow`
+
+```csharp
+string ActiveWindow { get; set; }
+```
+
+The active policy-driven lifecycle window, such as startup warmup, shutdown drain, or restart backoff.
+
+<a id="member-p-cephalon-engine-runtime-runtimehealthreport-activewindowendsatutc"></a>
+
+##### `ActiveWindowEndsAtUtc`
+
+```csharp
+DateTimeOffset? ActiveWindowEndsAtUtc { get; set; }
+```
+
+The UTC timestamp when the active lifecycle window ends, if applicable.
 
 <a id="member-p-cephalon-engine-runtime-runtimehealthreport-dependencies"></a>
 
@@ -4878,12 +4944,12 @@ public sealed class RuntimeStatusSnapshot
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-runtime-runtimestatussnapshot-ctor-cephalon-engine-runtime-runtimestatus-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-cephalon-engine-runtime-runtimefailureinfo"></a>
+<a id="member-m-cephalon-engine-runtime-runtimestatussnapshot-ctor-cephalon-engine-runtime-runtimestatus-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-cephalon-engine-runtime-runtimefailureinfo"></a>
 
 ##### `RuntimeStatusSnapshot`
 
 ```csharp
-RuntimeStatusSnapshot(RuntimeStatus Status, DateTimeOffset? InitializedAtUtc, DateTimeOffset? StartedAtUtc, DateTimeOffset? StoppedAtUtc, int RestartCount, RuntimeFailureInfo LastFailure)
+RuntimeStatusSnapshot(RuntimeStatus Status, DateTimeOffset? InitializedAtUtc, DateTimeOffset? StartedAtUtc, DateTimeOffset? StoppingAtUtc, DateTimeOffset? StoppedAtUtc, int RestartCount, RuntimeFailureInfo LastFailure)
 ```
 
 Captures the current runtime lifecycle state in a serialization-friendly form.
@@ -4892,6 +4958,7 @@ Parameters:
 - `Status`: The current lifecycle status.
 - `InitializedAtUtc`: The UTC timestamp when initialization completed, if it has completed.
 - `StartedAtUtc`: The UTC timestamp when startup completed, if it has completed.
+- `StoppingAtUtc`: The UTC timestamp when shutdown most recently entered the stopping phase, if any.
 - `StoppedAtUtc`: The UTC timestamp when the runtime last transitioned to a stopped state, if any.
 - `RestartCount`: The number of completed manual restarts.
 - `LastFailure`: The last captured failure, if the runtime has faulted.
@@ -4957,6 +5024,16 @@ DateTimeOffset? StoppedAtUtc { get; set; }
 ```
 
 The UTC timestamp when the runtime last transitioned to a stopped state, if any.
+
+<a id="member-p-cephalon-engine-runtime-runtimestatussnapshot-stoppingatutc"></a>
+
+##### `StoppingAtUtc`
+
+```csharp
+DateTimeOffset? StoppingAtUtc { get; set; }
+```
+
+The UTC timestamp when shutdown most recently entered the stopping phase, if any.
 
 <a id="namespace-cephalon-engine-technologies"></a>
 

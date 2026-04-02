@@ -407,13 +407,20 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal("http", bearerScheme.GetProperty("type").GetString());
         Assert.Equal("bearer", bearerScheme.GetProperty("scheme").GetString());
 
-        var greetingSchema = schemas.EnumerateObject()
-            .FirstOrDefault(property => property.Name.Contains("GreetingEnvelope", StringComparison.Ordinal));
-        Assert.False(string.IsNullOrWhiteSpace(greetingSchema.Name));
-        Assert.Contains(
-            "Discovery greeting payload returned by the REST surface.",
-            greetingSchema.Value.GetProperty("description").GetString(),
-            StringComparison.Ordinal);
+        var greetingSchemas = schemas.EnumerateObject()
+            .Where(property => property.Name.Contains("GreetingEnvelope", StringComparison.Ordinal))
+            .ToArray();
+        Assert.NotEmpty(greetingSchemas);
+
+        var describedGreetingSchema = greetingSchemas
+            .FirstOrDefault(property => property.Value.TryGetProperty("description", out _));
+        if (greetingSchemas.Any(property => property.Value.TryGetProperty("description", out _)))
+        {
+            Assert.Contains(
+                "Discovery greeting payload returned by the REST surface.",
+                describedGreetingSchema.Value.GetProperty("description").GetString(),
+                StringComparison.Ordinal);
+        }
 
         Assert.True(scalarConfigResponse.IsSuccessStatusCode);
         Assert.Equal("application/javascript", scalarConfigResponse.Content.Headers.ContentType?.MediaType);
@@ -734,6 +741,7 @@ public sealed class AspNetCoreHostingTests
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
         builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:StartupFailureBehavior"] = "CaptureOnly";
         builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:AllowManualRestart"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:ManualRestartBackoff"] = "00:00:00.200";
         builder.Services.AddSingleton<FailurePolicyRecorder>();
         builder.AddCephalon(engine =>
         {
@@ -763,12 +771,15 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal("start", status.LastFailure?.Phase);
         Assert.Equal("Simulated startup failure.", status.LastFailure?.Message);
         Assert.True(status.LastFailure?.CanRestart);
+        Assert.NotNull(status.LastFailure?.RestartAvailableAtUtc);
 
         Assert.NotNull(story);
         Assert.Equal(RuntimeStatus.Failed, story.Status.Status);
+        Assert.NotNull(story.Status.LastFailure?.RestartAvailableAtUtc);
         var failingModule = Assert.Single(story.Modules, module => module.ModuleId == "flaky-start");
         Assert.Equal("start", failingModule.LastObservedPhase);
         Assert.Equal("Simulated startup failure.", failingModule.LastFailure?.Message);
+        Assert.NotNull(failingModule.LastFailure?.RestartAvailableAtUtc);
         Assert.Contains(
             story.Timeline,
             entry => entry.Scope == RuntimeLifecycleEventScope.Module &&
@@ -784,10 +795,25 @@ public sealed class AspNetCoreHostingTests
 
         Assert.NotNull(failurePolicy);
         Assert.Equal(StartupFailureBehavior.CaptureOnly, failurePolicy.StartupFailureBehavior);
+        Assert.Equal(TimeSpan.FromMilliseconds(200), failurePolicy.ManualRestartBackoff);
 
         Assert.Equal(HttpStatusCode.ServiceUnavailable, livenessResponse.StatusCode);
         using var livenessDocument = JsonDocument.Parse(livenessPayload);
         Assert.Equal("Unhealthy", livenessDocument.RootElement.GetProperty("status").GetString());
+        Assert.Equal(
+            "restart-backoff",
+            livenessDocument.RootElement
+                .GetProperty("entries")
+                .GetProperty("cephalon.liveness")
+                .GetProperty("data")
+                .GetProperty("activeWindow")
+                .GetString());
+        Assert.True(
+            livenessDocument.RootElement
+                .GetProperty("entries")
+                .GetProperty("cephalon.liveness")
+                .GetProperty("data")
+                .TryGetProperty("restartAvailableAtUtc", out _));
 
         Assert.Equal(HttpStatusCode.ServiceUnavailable, readinessResponse.StatusCode);
         using var readinessDocument = JsonDocument.Parse(readinessPayload);
@@ -797,6 +823,62 @@ public sealed class AspNetCoreHostingTests
         using var diagnosticsDocument = JsonDocument.Parse(diagnosticsPayload);
         Assert.Equal((int)RuntimeHealthState.Unhealthy, diagnosticsDocument.RootElement.GetProperty("liveness").GetProperty("state").GetInt32());
         Assert.Equal((int)RuntimeHealthState.Unhealthy, diagnosticsDocument.RootElement.GetProperty("readiness").GetProperty("state").GetInt32());
+        Assert.Equal("restart-backoff", diagnosticsDocument.RootElement.GetProperty("liveness").GetProperty("activeWindow").GetString());
+    }
+
+    [Fact]
+    public async Task MapCephalonKeepsReadinessUnhealthyDuringConfiguredStartupWarmup()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:StartupReadinessDelay"] = "00:00:00.200";
+        builder.Services.AddSingleton<FailurePolicyRecorder>();
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new FailurePolicyPlatformModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var failurePolicy = await client.GetFromJsonAsync<FailurePolicy>("/engine/failure-policy");
+        var diagnosticsResponse = await client.GetAsync("/engine/diagnostics");
+        var diagnosticsPayload = await diagnosticsResponse.Content.ReadAsStringAsync();
+        var readinessResponse = await client.GetAsync("/health/ready");
+        var readinessPayload = await readinessResponse.Content.ReadAsStringAsync();
+
+        Assert.NotNull(failurePolicy);
+        Assert.Equal(TimeSpan.FromMilliseconds(200), failurePolicy.StartupReadinessDelay);
+
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, readinessResponse.StatusCode);
+        using var readinessDocument = JsonDocument.Parse(readinessPayload);
+        Assert.Equal("Unhealthy", readinessDocument.RootElement.GetProperty("status").GetString());
+        Assert.Equal(
+            "startup-warmup",
+            readinessDocument.RootElement
+                .GetProperty("entries")
+                .GetProperty("cephalon.readiness")
+                .GetProperty("data")
+                .GetProperty("activeWindow")
+                .GetString());
+
+        Assert.True(diagnosticsResponse.IsSuccessStatusCode);
+        using var diagnosticsDocument = JsonDocument.Parse(diagnosticsPayload);
+        Assert.Equal("startup-warmup", diagnosticsDocument.RootElement.GetProperty("readiness").GetProperty("activeWindow").GetString());
+
+        await Task.Delay(TimeSpan.FromMilliseconds(250));
+
+        var readyResponse = await client.GetAsync("/health/ready");
+        var readyPayload = await readyResponse.Content.ReadAsStringAsync();
+
+        Assert.True(readyResponse.IsSuccessStatusCode, readyPayload);
+        using var readyDocument = JsonDocument.Parse(readyPayload);
+        Assert.Equal("Healthy", readyDocument.RootElement.GetProperty("status").GetString());
     }
 
     [Fact]

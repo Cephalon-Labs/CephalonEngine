@@ -14,6 +14,7 @@ namespace Cephalon.Engine.Runtime;
 /// <param name="Message">The failure message surfaced to operators.</param>
 /// <param name="OccurredAtUtc">The UTC timestamp when the failure was captured.</param>
 /// <param name="CanRestart">Whether the current policy allows a manual restart after this failure.</param>
+/// <param name="RestartAvailableAtUtc">The UTC timestamp when a manual restart exits its configured backoff window, if one applies.</param>
 /// <param name="StartupFailureBehavior">The startup failure behavior in effect when the failure occurred.</param>
 /// <param name="StopFailureBehavior">The stop failure behavior in effect when the failure occurred.</param>
 public sealed record RuntimeFailureInfo(
@@ -25,5 +26,6 @@ public sealed record RuntimeFailureInfo(
     string Message,
     DateTimeOffset OccurredAtUtc,
     bool CanRestart,
+    DateTimeOffset? RestartAvailableAtUtc,
     StartupFailureBehavior StartupFailureBehavior,
     StopFailureBehavior StopFailureBehavior);

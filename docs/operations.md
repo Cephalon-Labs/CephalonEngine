@@ -25,6 +25,13 @@ Current semantics:
 - readiness becomes `Unhealthy` when a required dependency reports `Unhealthy`
 - readiness becomes `Degraded` when only optional dependencies are degraded or unhealthy, or when required dependencies are degraded without fully failing
 
+Optional tuning through `Engine:FailurePolicy`:
+
+- `StartupReadinessDelay` keeps readiness `Unhealthy` for a bounded warmup window after startup succeeds
+- `ShutdownLivenessGracePeriod` keeps liveness `Healthy` while shutdown drains, then flips to `Unhealthy` if the drain window expires before stop completes
+- `ManualRestartBackoff` delays explicit `RestartAsync(...)` calls after restartable startup failures
+- health payloads expose those lifecycle windows through `activeWindow`, `activeWindowEndsAtUtc`, and `restartAvailableAtUtc` when applicable
+
 ## Dependency surface
 
 `GET /engine/dependencies` exposes the dependency-health snapshot currently contributed to the runtime.

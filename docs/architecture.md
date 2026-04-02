@@ -262,7 +262,7 @@ Companion adapter packages:
 - engine trust policy can also allow-list publishers, signer fingerprints, and trusted signature public keys
 - engine package metadata requirements can be tuned through `Engine:PackagePolicy`
 - engine localization can be tuned through `Engine:Localization`
-- engine startup, stop, and restart behavior can be tuned through `Engine:FailurePolicy`
+- engine startup, stop, and restart behavior can be tuned through `Engine:FailurePolicy`, including startup warmup, shutdown drain, and manual restart backoff windows
 - installed modules can contribute dependency health through `IDependencyHealthContributor`
 - installed modules can contribute localization resources through `ILocalizedResourceContributor`
 - the runtime manifest is always available

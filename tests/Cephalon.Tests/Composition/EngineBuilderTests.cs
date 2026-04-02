@@ -259,6 +259,7 @@ public sealed class EngineBuilderTests
                 ["Engine:Options:Modules:flaky-start:Enabled"] = "false",
                 ["Engine:Options:Modules:failing-stop:Enabled"] = "false",
                 ["Engine:Options:Modules:stop-observer:Enabled"] = "false",
+                ["Engine:Options:Modules:slow-stop:Enabled"] = "false",
                 ["Engine:Options:Modules:dependency-health:Enabled"] = "false",
                 ["Engine:Options:Modules:throwing-dependency-health:Enabled"] = "false",
                 ["Engine:Options:Modules:restricted:Enabled"] = "false",

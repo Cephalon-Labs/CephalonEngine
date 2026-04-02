@@ -126,20 +126,15 @@ Why this stays separate:
 
 ### `#73` Deeper readiness/liveness semantics and richer restart or backoff policy
 
-Current baseline:
+Shipped follow-through:
 
-- liveness/readiness semantics already exist
-- restart is already explicit and conservative
+- `Engine:FailurePolicy` now exposes `StartupReadinessDelay`, `ShutdownLivenessGracePeriod`, and `ManualRestartBackoff`
+- `/health/live`, `/health/ready`, and `/engine/diagnostics` now surface active lifecycle windows such as startup warmup, shutdown drain, and restart backoff
+- `/engine/status` and `/engine/runtime-story` now expose shutdown timing and restart-availability timestamps for restartable failures
 
-Gap:
+What still stays later:
 
-- phase 2 still lacks richer draining, warmup, dependency grace-period, or backoff policy behavior
-- failure-policy and health semantics remain intentionally conservative rather than environment-tuned
-
-Why this is not blocking `#31`:
-
-- the inventory confirms the baseline is real
-- this is follow-through policy work, not missing foundational plumbing
+- dependency-specific grace periods or maintenance-mode policy are still optional follow-through, not part of the shipped baseline
 
 ### `#74` Release-validation guidance for health and export conventions
 
@@ -154,7 +149,7 @@ Gap:
 
 Why this stays later than the inventory task:
 
-- the guidance should be written after the phase-2 implementation shape for exporters and richer health semantics is clearer
+- the guidance should be written after the phase-2 implementation shape for exporters and the shipped health semantics settle
 
 ## Planning outcome
 
@@ -162,12 +157,11 @@ Current conclusion from this inventory:
 
 - the existing phase-2 child-task split remains valid
 - no additional child tasks were required from this audit
-- the main missing work is packaging, diagnostics broadening, and operator-facing hardening on top of a shipped baseline
+- the main missing work is packaging breadth, release-validation guidance, and operator-facing hardening on top of a shipped baseline
 
 Recommended execution sequence remains:
 
 1. `#31` inventory and sequencing
 2. `#33` dependency-health packs on top of the shipped exporter path
 3. `#35` clearer runtime answers
-4. `#73` deeper readiness/liveness and restart-policy follow-through
-5. `#74` release-validation guidance once the operational surface above is clearer
+4. `#74` release-validation guidance once the operational surface above is clearer

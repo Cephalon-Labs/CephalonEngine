@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T01:51:45.9743293+00:00",
+  "GeneratedAtUtc": "2026-04-02T02:21:14.9552405+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -1305,7 +1305,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 6,
+        "Properties": 9,
         "Methods": 1
       }
     },
@@ -2850,7 +2850,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 10,
+        "Properties": 11,
         "Methods": 0
       }
     },
@@ -2880,7 +2880,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 8,
+        "Properties": 10,
         "Methods": 0
       }
     },
@@ -3030,7 +3030,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 6,
+        "Properties": 7,
         "Methods": 0
       }
     },
@@ -3436,6 +3436,28 @@
       "AnchorId": "member-p-cephalon-engine-trust-capabilitypolicydecision-access",
       "Signature": "CapabilityAccess Access { get; set; }",
       "Summary": "The effective access mode resolved from policy."
+    },
+    {
+      "DisplayName": "ActiveWindow",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHealthReport",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehealthreport-activewindow",
+      "Signature": "string ActiveWindow { get; set; }",
+      "Summary": "The active policy-driven lifecycle window, such as startup warmup, shutdown drain, or restart backoff."
+    },
+    {
+      "DisplayName": "ActiveWindowEndsAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHealthReport",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehealthreport-activewindowendsatutc",
+      "Signature": "DateTimeOffset? ActiveWindowEndsAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the active lifecycle window ends, if applicable."
     },
     {
       "DisplayName": "ActivitySourceName",
@@ -6788,8 +6810,8 @@
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-configuration-failurepolicy-ctor-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior-system-boolean-system-int32",
-      "Signature": "FailurePolicy(StartupFailureBehavior startupFailureBehavior, StopFailureBehavior stopFailureBehavior, bool allowManualRestart, int maxRestartAttempts)",
+      "AnchorId": "member-m-cephalon-engine-configuration-failurepolicy-ctor-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior-system-boolean-system-int32-system-timespan-system-timespan-system-timespan",
+      "Signature": "FailurePolicy(StartupFailureBehavior startupFailureBehavior, StopFailureBehavior stopFailureBehavior, bool allowManualRestart, int maxRestartAttempts, TimeSpan startupReadinessDelay, TimeSpan shutdownLivenessGracePeriod, TimeSpan manualRestartBackoff)",
       "Summary": "Initializes a new instance of the \u0060FailurePolicy\u0060 class."
     },
     {
@@ -8551,6 +8573,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-runtimemanifest-manifestversion",
       "Signature": "string ManifestVersion { get; }",
       "Summary": "Gets the manifest schema version."
+    },
+    {
+      "DisplayName": "ManualRestartBackoff",
+      "Category": "Properties",
+      "DeclaringTypeName": "FailurePolicy",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-failurepolicy-manualrestartbackoff",
+      "Signature": "TimeSpan ManualRestartBackoff { get; }",
+      "Summary": "Gets the cooldown window that must elapse before a manual restart may run after a restartable failure."
     },
     {
       "DisplayName": "MapCephalon",
@@ -11160,6 +11193,17 @@
       "Summary": "Restarts the runtime when the configured failure policy allows it."
     },
     {
+      "DisplayName": "RestartAvailableAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeFailureInfo",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimefailureinfo-restartavailableatutc",
+      "Signature": "DateTimeOffset? RestartAvailableAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when a manual restart exits its configured backoff window, if one applies."
+    },
+    {
       "DisplayName": "RestartCount",
       "Category": "Properties",
       "DeclaringTypeName": "EngineRuntime",
@@ -11331,8 +11375,8 @@
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-runtime-runtimefailureinfo-ctor-system-string-system-string-system-string-cephalon-engine-runtime-runtimestatus-system-string-system-string-system-datetimeoffset-system-boolean-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior",
-      "Signature": "RuntimeFailureInfo(string Phase, string ModuleId, string ModuleVersion, RuntimeStatus StatusBeforeFailure, string ExceptionType, string Message, DateTimeOffset OccurredAtUtc, bool CanRestart, StartupFailureBehavior StartupFailureBehavior, StopFailureBehavior StopFailureBehavior)",
+      "AnchorId": "member-m-cephalon-engine-runtime-runtimefailureinfo-ctor-system-string-system-string-system-string-cephalon-engine-runtime-runtimestatus-system-string-system-string-system-datetimeoffset-system-boolean-system-nullable-system-datetimeoffset-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior",
+      "Signature": "RuntimeFailureInfo(string Phase, string ModuleId, string ModuleVersion, RuntimeStatus StatusBeforeFailure, string ExceptionType, string Message, DateTimeOffset OccurredAtUtc, bool CanRestart, DateTimeOffset? RestartAvailableAtUtc, StartupFailureBehavior StartupFailureBehavior, StopFailureBehavior StopFailureBehavior)",
       "Summary": "Describes a runtime lifecycle failure in a way that can be surfaced through diagnostics, status endpoints, and operator tooling."
     },
     {
@@ -11353,8 +11397,8 @@
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-runtime-runtimehealthreport-ctor-system-string-cephalon-engine-runtime-runtimehealthstate-system-string-cephalon-engine-runtime-runtimestatus-system-int32-cephalon-engine-runtime-runtimefailureinfo-system-collections-generic-ireadonlylist-cephalon-abstractions-health-dependencyhealthreport",
-      "Signature": "RuntimeHealthReport(string Probe, RuntimeHealthState State, string Description, RuntimeStatus RuntimeStatus, int RestartCount, RuntimeFailureInfo LastFailure, IReadOnlyList\u003CDependencyHealthReport\u003E Dependencies)",
+      "AnchorId": "member-m-cephalon-engine-runtime-runtimehealthreport-ctor-system-string-cephalon-engine-runtime-runtimehealthstate-system-string-cephalon-engine-runtime-runtimestatus-system-int32-cephalon-engine-runtime-runtimefailureinfo-system-collections-generic-ireadonlylist-cephalon-abstractions-health-dependencyhealthreport-system-string-system-nullable-system-datetimeoffset",
+      "Signature": "RuntimeHealthReport(string Probe, RuntimeHealthState State, string Description, RuntimeStatus RuntimeStatus, int RestartCount, RuntimeFailureInfo LastFailure, IReadOnlyList\u003CDependencyHealthReport\u003E Dependencies, string ActiveWindow, DateTimeOffset? ActiveWindowEndsAtUtc)",
       "Summary": "Captures the health result for a runtime liveness or readiness probe."
     },
     {
@@ -11452,8 +11496,8 @@
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-runtime-runtimestatussnapshot-ctor-cephalon-engine-runtime-runtimestatus-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-cephalon-engine-runtime-runtimefailureinfo",
-      "Signature": "RuntimeStatusSnapshot(RuntimeStatus Status, DateTimeOffset? InitializedAtUtc, DateTimeOffset? StartedAtUtc, DateTimeOffset? StoppedAtUtc, int RestartCount, RuntimeFailureInfo LastFailure)",
+      "AnchorId": "member-m-cephalon-engine-runtime-runtimestatussnapshot-ctor-cephalon-engine-runtime-runtimestatus-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-cephalon-engine-runtime-runtimefailureinfo",
+      "Signature": "RuntimeStatusSnapshot(RuntimeStatus Status, DateTimeOffset? InitializedAtUtc, DateTimeOffset? StartedAtUtc, DateTimeOffset? StoppingAtUtc, DateTimeOffset? StoppedAtUtc, int RestartCount, RuntimeFailureInfo LastFailure)",
       "Summary": "Captures the current runtime lifecycle state in a serialization-friendly form."
     },
     {
@@ -11741,6 +11785,17 @@
       "AnchorId": "member-p-cephalon-engine-patterns-builtinpatterns-sharedfoundationpattern",
       "Signature": "PatternDescriptor SharedFoundationPattern { get; }",
       "Summary": "Gets the shared-foundation pattern."
+    },
+    {
+      "DisplayName": "ShutdownLivenessGracePeriod",
+      "Category": "Properties",
+      "DeclaringTypeName": "FailurePolicy",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-failurepolicy-shutdownlivenessgraceperiod",
+      "Signature": "TimeSpan ShutdownLivenessGracePeriod { get; }",
+      "Summary": "Gets the liveness grace window that applies while shutdown is still draining."
     },
     {
       "DisplayName": "SignatureAlgorithm",
@@ -12172,6 +12227,17 @@
       "Summary": "The startup failure behavior in effect when the failure occurred."
     },
     {
+      "DisplayName": "StartupReadinessDelay",
+      "Category": "Properties",
+      "DeclaringTypeName": "FailurePolicy",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-failurepolicy-startupreadinessdelay",
+      "Signature": "TimeSpan StartupReadinessDelay { get; }",
+      "Summary": "Gets the readiness warmup window that applies after startup succeeds."
+    },
+    {
       "DisplayName": "State",
       "Category": "Properties",
       "DeclaringTypeName": "DependencyHealthReport",
@@ -12390,6 +12456,17 @@
       "AnchorId": "member-f-cephalon-engine-runtime-runtimestatus-stopping",
       "Signature": "const RuntimeStatus Stopping",
       "Summary": "The runtime is stopping started modules."
+    },
+    {
+      "DisplayName": "StoppingAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeStatusSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimestatussnapshot-stoppingatutc",
+      "Signature": "DateTimeOffset? StoppingAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when shutdown most recently entered the stopping phase, if any."
     },
     {
       "DisplayName": "StrategyPattern",

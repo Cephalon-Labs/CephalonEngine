@@ -21,6 +21,11 @@ internal static class RuntimeHealthCheckResultFactory
             data["failureModuleId"] = report.LastFailure.ModuleId ?? "runtime";
             data["failureMessage"] = report.LastFailure.Message;
             data["canRestart"] = report.LastFailure.CanRestart;
+
+            if (report.LastFailure.RestartAvailableAtUtc is DateTimeOffset restartAvailableAtUtc)
+            {
+                data["restartAvailableAtUtc"] = restartAvailableAtUtc;
+            }
         }
 
         if (report.Dependencies.Count > 0)
@@ -35,6 +40,16 @@ internal static class RuntimeHealthCheckResultFactory
                 dependency.Required,
                 dependency.Source
             }).ToArray();
+        }
+
+        if (!string.IsNullOrWhiteSpace(report.ActiveWindow))
+        {
+            data["activeWindow"] = report.ActiveWindow;
+        }
+
+        if (report.ActiveWindowEndsAtUtc is DateTimeOffset activeWindowEndsAtUtc)
+        {
+            data["activeWindowEndsAtUtc"] = activeWindowEndsAtUtc;
         }
 
         return new HealthCheckResult(

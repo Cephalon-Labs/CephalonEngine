@@ -51,6 +51,7 @@ public sealed class EngineRuntime : IRuntime, IDisposable
     private RuntimeStatus status = RuntimeStatus.Created;
     private DateTimeOffset? initializedAtUtc;
     private DateTimeOffset? startedAtUtc;
+    private DateTimeOffset? stoppingAtUtc;
     private DateTimeOffset? stoppedAtUtc;
     private RuntimeFailureInfo? lastFailure;
     private int restartCount;
@@ -337,6 +338,7 @@ public sealed class EngineRuntime : IRuntime, IDisposable
                 var stopRecordedAtUtc = DateTimeOffset.UtcNow;
                 lock (stateGate)
                 {
+                    stoppingAtUtc = stopRecordedAtUtc;
                     stoppedAtUtc = stopRecordedAtUtc;
                     status = RuntimeStatus.Stopped;
                 }
@@ -416,6 +418,13 @@ public sealed class EngineRuntime : IRuntime, IDisposable
             throw new InvalidOperationException(
                 $"Runtime cannot restart after a failure in phase '{lastFailure.Phase}'. Rebuild the runtime instead.");
         }
+
+        if (lastFailure?.RestartAvailableAtUtc is DateTimeOffset restartAvailableAtUtc &&
+            DateTimeOffset.UtcNow < restartAvailableAtUtc)
+        {
+            throw new InvalidOperationException(
+                $"Runtime restart is backed off until '{restartAvailableAtUtc:O}'.");
+        }
     }
 
     private async Task InitializeCoreAsync(CancellationToken cancellationToken)
@@ -490,6 +499,7 @@ public sealed class EngineRuntime : IRuntime, IDisposable
             lock (stateGate)
             {
                 startedAtUtc = startRecordedAtUtc;
+                stoppingAtUtc = null;
                 stoppedAtUtc = null;
                 lastFailure = null;
                 status = RuntimeStatus.Started;
@@ -528,6 +538,7 @@ public sealed class EngineRuntime : IRuntime, IDisposable
             var stopRecordedAtUtc = DateTimeOffset.UtcNow;
             lock (stateGate)
             {
+                stoppingAtUtc = stopRecordedAtUtc;
                 stoppedAtUtc = stopRecordedAtUtc;
                 lastFailure = null;
                 status = RuntimeStatus.Stopped;
@@ -547,6 +558,7 @@ public sealed class EngineRuntime : IRuntime, IDisposable
 
         lock (stateGate)
         {
+            stoppingAtUtc = DateTimeOffset.UtcNow;
             status = RuntimeStatus.Stopping;
         }
 
@@ -732,6 +744,9 @@ public sealed class EngineRuntime : IRuntime, IDisposable
             (lastFailure is null || restartCount < FailurePolicy.MaxRestartAttempts || FailurePolicy.MaxRestartAttempts < 0) &&
             string.Equals(moduleException?.Phase ?? phase, "start", StringComparison.OrdinalIgnoreCase);
         var occurredAtUtc = DateTimeOffset.UtcNow;
+        var restartAvailableAtUtc = canRestart && FailurePolicy.ManualRestartBackoff > TimeSpan.Zero
+            ? (DateTimeOffset?)(occurredAtUtc + FailurePolicy.ManualRestartBackoff)
+            : null;
 
         var failure = new RuntimeFailureInfo(
             Phase: moduleException?.Phase ?? phase,
@@ -742,6 +757,7 @@ public sealed class EngineRuntime : IRuntime, IDisposable
             Message: moduleException?.InnerException?.Message ?? exception.Message,
             OccurredAtUtc: occurredAtUtc,
             CanRestart: canRestart,
+            RestartAvailableAtUtc: restartAvailableAtUtc,
             StartupFailureBehavior: startupFailureBehavior,
             StopFailureBehavior: stopFailureBehavior);
 
@@ -795,7 +811,7 @@ public sealed class EngineRuntime : IRuntime, IDisposable
 
     private RuntimeStatusSnapshot CreateStatusSnapshotUnsafe()
     {
-        return new(status, initializedAtUtc, startedAtUtc, stoppedAtUtc, restartCount, lastFailure);
+        return new(status, initializedAtUtc, startedAtUtc, stoppingAtUtc, stoppedAtUtc, restartCount, lastFailure);
     }
 
     private RuntimeOperationalStory CreateOperationalStoryUnsafe()
