@@ -222,7 +222,7 @@ Exit criteria:
 
 ## Phase 6: Cloud and platform integrations
 
-Status: later
+Status: current focus
 
 Goal: add deployment-targeted companion integrations without pushing vendor assumptions into the engine core.
 
@@ -232,7 +232,7 @@ Current baseline already in place:
 - the shared `Microsoft.Extensions.Logging.ILogger` pipeline plus `Cephalon.Observability.Serilog`
 - correlated ASP.NET Core request/response logging through `Engine:Observability:HttpLogging`
 - host-agnostic runtime, diagnostics, health, and validation surfaces that later cloud-targeted companions can build on
-- self-hosted collector and runtime defaults plus Azure Monitor, AWS, and GCP are now shipped as the first slices on top of the cloud-neutral OTLP baseline, while broader vendor/platform expansion across Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu stays later until the next explicit child item is chosen
+- self-hosted collector and runtime defaults plus Azure Monitor, AWS, and GCP are now shipped as the first slices on top of the cloud-neutral OTLP baseline, and Huawei Cloud is now the next explicit child item while Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu stay later
 
 Deliverables:
 
@@ -240,7 +240,8 @@ Deliverables:
 - Azure Monitor companion follow-through as the first explicit cloud-specific slice on top of the shared OpenTelemetry baseline is now shipped
 - AWS companion follow-through as the second explicit cloud-specific slice on top of the shared OpenTelemetry baseline is now shipped
 - GCP companion follow-through is now shipped as the third explicit cloud-specific slice on top of the shared OpenTelemetry baseline
-- additional cloud-targeted observability companion follow-through for Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu once each target is narrowed into its own child item
+- Huawei Cloud companion follow-through is now the current next explicit child slice on top of the shared OpenTelemetry baseline
+- additional cloud-targeted observability companion follow-through for Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu once each target is narrowed into its own child item
 - exporter wiring, auth, resource-attribute conventions, and hosted-runtime defaults that stay inside companion packages instead of `Cephalon.Engine`
 - documentation, validation, and planning guidance that make the supported targets, deployment assumptions, and downstream companion-package authoring path explicit
 - a clear package split whenever different clouds or platforms need distinct companion packs instead of one overloaded abstraction
@@ -255,13 +256,13 @@ Exit criteria:
 
 ## Recommended implementation order
 
-Updated priority order as of `April 2, 2026`:
+Updated priority order as of `April 3, 2026`:
 
 1. package/plugin loading
 2. package distribution, provenance, and richer trust follow-through beyond the current baseline
 3. workflow and orchestration primitives
 4. multi-service suite blueprints
-5. cloud and platform integrations, with self-hosted plus Azure Monitor plus AWS plus GCP shipped and the later Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, OpenShift, and Tanzu matrix kept ready for the next explicit follow-up item
+5. cloud and platform integrations, with self-hosted plus Azure Monitor plus AWS plus GCP shipped, Huawei Cloud now active as the next explicit follow-up item, and Alibaba Cloud plus Cloudflare plus DigitalOcean plus OpenShift plus Tanzu kept later
 6. broader release automation and package-publishing polish
 
 ## Decision guardrails
