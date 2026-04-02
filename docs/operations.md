@@ -1166,7 +1166,10 @@ Example:
         "LogRequestBody": true,
         "LogResponseBody": true,
         "RequestBodyLimit": 4096,
-        "ResponseBodyLimit": 4096
+        "ResponseBodyLimit": 4096,
+        "RedactSensitiveValues": true,
+        "RedactedFieldNames": [ "password", "token", "secret", "apiKey" ],
+        "RedactionValue": "[REDACTED]"
       }
     }
   }
@@ -1185,6 +1188,9 @@ builder.AddCephalonHttpLogging(options =>
     options.LogResponseBody = true;
     options.RequestBodyLimit = 4096;
     options.ResponseBodyLimit = 4096;
+    options.RedactSensitiveValues = true;
+    options.RedactedFieldNames = ["password", "token", "secret", "apiKey"];
+    options.RedactionValue = "[REDACTED]";
 });
 builder.AddCephalon();
 ```
@@ -1193,6 +1199,8 @@ Operational notes:
 
 - `AddCephalon()` already registers the `Engine:Observability:HttpLogging` contract, so the extra method is only needed for code-based overrides
 - request/response body capture is opt-in and limited to textual payloads such as `text/*`, JSON, XML, GraphQL, JavaScript, and form payloads
+- sensitive query-string and payload fields such as `password`, `token`, `secret`, `apiKey`, `authorization`, and `cookie` are redacted by default before the log event is written, including JSON bodies, form payloads, and `text/plain` key/value or header-style content such as `Authorization: Bearer ...`
+- teams can override the sensitive-field list and placeholder through `RedactedFieldNames` and `RedactionValue` when a host needs stricter or domain-specific masking
 - request scopes carry `RequestId`, `TraceId`, `SpanId`, and `TraceParent`, so logs written inside the request pipeline keep the same correlation context
 - `/engine/diagnostics` publishes the ASP.NET Core event-id range for request start, request body, response completion, response body, and request failure events
 - the same correlation values flow through Serilog when `Cephalon.Observability.Serilog` is enabled

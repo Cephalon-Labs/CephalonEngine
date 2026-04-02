@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Net.Http.Headers;
 using System.Net.WebSockets;
 using System.Net;
 using System.Text;
@@ -756,6 +757,303 @@ public sealed class AspNetCoreHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonTruncatesLoggedHttpBodiesToConfiguredLimits()
+    {
+        var loggerProvider = new TestLoggerProvider();
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Logging.ClearProviders();
+        builder.Logging.AddProvider(loggerProvider);
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:LogRequestBody"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:LogResponseBody"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:RequestBodyLimit"] = "16";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:ResponseBodyLimit"] = "12";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        app.MapPost("/echo", async context =>
+        {
+            using var reader = new StreamReader(context.Request.Body, leaveOpen: true);
+            var requestBody = await reader.ReadToEndAsync();
+            context.Response.ContentType = "text/plain; charset=utf-8";
+            await context.Response.WriteAsync($"echo:{requestBody}");
+        });
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var requestBody = "secret-token-abcdefghijklmnopqrstuvwxyz";
+        var responseBody = $"echo:{requestBody}";
+        var expectedRequestPrefix = requestBody[..16];
+        var expectedResponsePrefix = responseBody[..12];
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/echo?mode=truncate")
+        {
+            Content = new StringContent(requestBody, Encoding.UTF8, "text/plain")
+        };
+
+        using var response = await client.SendAsync(request);
+        var payload = await response.Content.ReadAsStringAsync();
+
+        Assert.True(response.IsSuccessStatusCode, payload);
+        Assert.Equal(responseBody, payload);
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3201 &&
+            entry.Message.Contains("Truncated True", StringComparison.Ordinal) &&
+            entry.Message.Contains(expectedRequestPrefix, StringComparison.Ordinal) &&
+            !entry.Message.Contains(requestBody, StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3203 &&
+            entry.Message.Contains("Truncated True", StringComparison.Ordinal) &&
+            entry.Message.Contains(expectedResponsePrefix, StringComparison.Ordinal) &&
+            !entry.Message.Contains(responseBody, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task MapCephalonDoesNotLogBinaryRequestOrResponseBodies()
+    {
+        var loggerProvider = new TestLoggerProvider();
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Logging.ClearProviders();
+        builder.Logging.AddProvider(loggerProvider);
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:LogRequestBody"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:LogResponseBody"] = "true";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        app.MapPost("/binary", async context =>
+        {
+            context.Response.ContentType = "application/octet-stream";
+            await context.Request.Body.CopyToAsync(context.Response.Body);
+        });
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var requestBody = "binary-secret-token";
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/binary?mode=binary");
+        request.Content = new ByteArrayContent(Encoding.UTF8.GetBytes(requestBody));
+        request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/octet-stream");
+
+        using var response = await client.SendAsync(request);
+        var payload = Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
+
+        Assert.True(response.IsSuccessStatusCode, payload);
+        Assert.Equal(requestBody, payload);
+        Assert.DoesNotContain(loggerProvider.Entries, entry => entry.EventId.Id == 3201);
+        Assert.DoesNotContain(loggerProvider.Entries, entry => entry.EventId.Id == 3203);
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3200 &&
+            entry.Message.Contains("/binary", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3202 &&
+            entry.Message.Contains("/binary", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task MapCephalonRedactsSensitiveQueryStringAndJsonBodiesByDefault()
+    {
+        var loggerProvider = new TestLoggerProvider();
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Logging.ClearProviders();
+        builder.Logging.AddProvider(loggerProvider);
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:LogRequestBody"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:LogResponseBody"] = "true";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        app.MapPost("/echo-json", async context =>
+        {
+            using var reader = new StreamReader(context.Request.Body, leaveOpen: true);
+            var requestBody = await reader.ReadToEndAsync();
+            context.Response.ContentType = "application/json; charset=utf-8";
+            await context.Response.WriteAsync(requestBody);
+        });
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        const string requestBody = """{"username":"codex","password":"s3cr3t","profile":{"apiKey":"abc123"},"nested":{"secret":"hidden"},"items":[{"token":"item-secret"}]}""";
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/echo-json?token=query-secret&mode=inspect")
+        {
+            Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
+        };
+
+        using var response = await client.SendAsync(request);
+        var payload = await response.Content.ReadAsStringAsync();
+
+        Assert.True(response.IsSuccessStatusCode, payload);
+        Assert.Equal(requestBody, payload);
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3200 &&
+            entry.Message.Contains("token=[REDACTED]", StringComparison.Ordinal) &&
+            !entry.Message.Contains("query-secret", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3201 &&
+            entry.Message.Contains(@"""password"":""[REDACTED]""", StringComparison.Ordinal) &&
+            entry.Message.Contains(@"""apiKey"":""[REDACTED]""", StringComparison.Ordinal) &&
+            entry.Message.Contains(@"""secret"":""[REDACTED]""", StringComparison.Ordinal) &&
+            entry.Message.Contains(@"""token"":""[REDACTED]""", StringComparison.Ordinal) &&
+            !entry.Message.Contains("s3cr3t", StringComparison.Ordinal) &&
+            !entry.Message.Contains("abc123", StringComparison.Ordinal) &&
+            !entry.Message.Contains("hidden", StringComparison.Ordinal) &&
+            !entry.Message.Contains("item-secret", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3203 &&
+            entry.Message.Contains(@"""password"":""[REDACTED]""", StringComparison.Ordinal) &&
+            !entry.Message.Contains("s3cr3t", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task MapCephalonSupportsCustomRedactionKeysAndPlaceholder()
+    {
+        var loggerProvider = new TestLoggerProvider();
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Logging.ClearProviders();
+        builder.Logging.AddProvider(loggerProvider);
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:LogRequestBody"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:LogResponseBody"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:RedactedFieldNames:0"] = "tenantKey";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:RedactionValue"] = "***";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        app.MapPost("/echo-json", async context =>
+        {
+            using var reader = new StreamReader(context.Request.Body, leaveOpen: true);
+            var requestBody = await reader.ReadToEndAsync();
+            context.Response.ContentType = "application/json; charset=utf-8";
+            await context.Response.WriteAsync(requestBody);
+        });
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        const string requestBody = """{"tenantKey":"body-secret","password":"still-visible"}""";
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/echo-json?tenantKey=query-secret&mode=inspect")
+        {
+            Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
+        };
+
+        using var response = await client.SendAsync(request);
+        var payload = await response.Content.ReadAsStringAsync();
+
+        Assert.True(response.IsSuccessStatusCode, payload);
+        Assert.Equal(requestBody, payload);
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3200 &&
+            entry.Message.Contains("tenantKey=***", StringComparison.Ordinal) &&
+            !entry.Message.Contains("query-secret", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3201 &&
+            entry.Message.Contains(@"""tenantKey"":""***""", StringComparison.Ordinal) &&
+            entry.Message.Contains(@"""password"":""still-visible""", StringComparison.Ordinal) &&
+            !entry.Message.Contains("body-secret", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task MapCephalonRedactsSensitiveTextBodiesWithHeaderStyleAndAssignmentPayloads()
+    {
+        var loggerProvider = new TestLoggerProvider();
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Logging.ClearProviders();
+        builder.Logging.AddProvider(loggerProvider);
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:LogRequestBody"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:LogResponseBody"] = "true";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        app.MapPost("/echo-text", async context =>
+        {
+            using var reader = new StreamReader(context.Request.Body, leaveOpen: true);
+            await reader.ReadToEndAsync();
+
+            const string responseBody = """
+Authorization: Bearer response-secret
+Cookie: session=response-cookie; Path=/
+password=response-password
+note: visible
+""";
+            context.Response.ContentType = "text/plain; charset=utf-8";
+            await context.Response.WriteAsync(responseBody.ReplaceLineEndings("\r\n"));
+        });
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        const string requestBody = """
+Authorization: Bearer request-secret
+password=request-password
+note: visible
+""";
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/echo-text?authorization=query-secret&mode=inspect")
+        {
+            Content = new StringContent(requestBody.ReplaceLineEndings("\r\n"), Encoding.UTF8, "text/plain")
+        };
+
+        using var response = await client.SendAsync(request);
+        var payload = await response.Content.ReadAsStringAsync();
+
+        Assert.True(response.IsSuccessStatusCode, payload);
+        Assert.Contains("response-secret", payload, StringComparison.Ordinal);
+        Assert.Contains("response-password", payload, StringComparison.Ordinal);
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3200 &&
+            entry.Message.Contains("authorization=[REDACTED]", StringComparison.Ordinal) &&
+            !entry.Message.Contains("query-secret", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3201 &&
+            entry.Message.Contains("Authorization: [REDACTED]", StringComparison.Ordinal) &&
+            entry.Message.Contains("password=[REDACTED]", StringComparison.Ordinal) &&
+            entry.Message.Contains("note: visible", StringComparison.Ordinal) &&
+            !entry.Message.Contains("request-secret", StringComparison.Ordinal) &&
+            !entry.Message.Contains("request-password", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3203 &&
+            entry.Message.Contains("Authorization: [REDACTED]", StringComparison.Ordinal) &&
+            entry.Message.Contains("Cookie: [REDACTED]", StringComparison.Ordinal) &&
+            entry.Message.Contains("password=[REDACTED]", StringComparison.Ordinal) &&
+            entry.Message.Contains("note: visible", StringComparison.Ordinal) &&
+            !entry.Message.Contains("response-secret", StringComparison.Ordinal) &&
+            !entry.Message.Contains("response-cookie", StringComparison.Ordinal) &&
+            !entry.Message.Contains("response-password", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public async Task MapCephalonExposesRuntimeStoryAcrossDedicatedRouteAndSnapshot()
     {
         var builder = WebApplication.CreateSlimBuilder();
@@ -1348,6 +1646,44 @@ public sealed class AspNetCoreHostingTests
             decision.CapabilityKey == "restricted.secret" &&
             decision.Access == CapabilityAccess.Denied &&
             !decision.IsAllowed);
+    }
+
+    [Fact]
+    public async Task MapCephalonBlocksReferenceDocsPathTraversal()
+    {
+        var outputPath = await CreateHostedReferenceDocsAsync("Cephalon.Engine");
+
+        try
+        {
+            var builder = WebApplication.CreateSlimBuilder();
+            builder.WebHost.UseTestServer();
+            builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+            builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+            builder.Configuration[$"{ReferenceDocsHostingOptions.SectionName}:Enabled"] = "true";
+            builder.Configuration[$"{ReferenceDocsHostingOptions.SectionName}:DirectoryPath"] = outputPath;
+            builder.AddCephalon(engine =>
+            {
+                engine.AddModule(new PlatformTestModule());
+                engine.AddModule(new DiscoveryTestModule());
+            });
+
+            await using var app = builder.Build();
+            app.MapCephalon();
+
+            await app.StartAsync();
+            var client = app.GetTestClient();
+
+            var traversalResponse = await client.GetAsync("/reference/%2E%2E/%2E%2E/README.md");
+
+            Assert.Equal(HttpStatusCode.NotFound, traversalResponse.StatusCode);
+        }
+        finally
+        {
+            if (Directory.Exists(outputPath))
+            {
+                Directory.Delete(outputPath, recursive: true);
+            }
+        }
     }
 
     private static string GetReferenceModuleAssemblyPath()
