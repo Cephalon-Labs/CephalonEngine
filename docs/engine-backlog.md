@@ -468,19 +468,18 @@ Acceptance:
 
 ### ENG-029 Cloud-targeted observability companion integrations
 
-Status: current focus
+Status: later
 Estimate: 92
 
 Why:
 
-- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, and GCP vendor slices are now shipped, and Huawei Cloud is now the next explicit provider target under `ENG-029`
+- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, and Huawei Cloud vendor slices are now shipped, and the remaining provider matrix stays later until the next target is narrowed explicitly
 - this work should stay in companion packages, preserve the shared `ILogger` pipeline plus the cloud-neutral OTLP baseline, and leave room for downstream developer-authored provider packages
 
 Acceptance:
 
 - keep the shipped self-hosted deployment defaults explicit and reusable instead of burying them inside vendor-specific companion packs
-- keep the shipped Azure Monitor, AWS, and GCP slices explicit on top of the shared OpenTelemetry baseline
-- land the Huawei Cloud companion follow-through as the current next explicit child item instead of reopening one ambiguous multi-cloud scope
+- keep the shipped Azure Monitor, AWS, GCP, and Huawei Cloud slices explicit on top of the shared OpenTelemetry baseline
 - keep vendor/platform-specific exporter wiring, auth, resource attributes, and hosted defaults outside `Cephalon.Engine` and `Cephalon.Abstractions`
 - keep the shared `ILogger` pipeline and existing `Cephalon.Observability.OpenTelemetry` baseline intact
 - add docs, validation, and planning sync for the supported targets plus the downstream companion-package authoring path
