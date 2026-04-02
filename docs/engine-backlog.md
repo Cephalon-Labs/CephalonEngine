@@ -176,7 +176,7 @@ Follow-up later:
 
 ## SDK hardening follow-through
 
-Phase 1 SDK hardening is now substantially complete. Phase 2 operational hardening has also closed on its shipped baseline, so the next recommended execution focus is phase 3 extensibility and package loading while cloud-targeted export work stays in later phase-6 planning.
+Phase 1 SDK hardening is now substantially complete. Phase 2 operational hardening has also closed on its shipped baseline, so the next recommended execution focus is phase 3 extensibility and package loading while self-hosted plus cloud-targeted export work stays in later phase-6 planning.
 
 ### ENG-005 Engine API and package surface hardening
 
@@ -240,7 +240,7 @@ Phase 2 operational hardening is now substantially complete:
 - keep the shipped Cassandra, ClickHouse, Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Neo4j, OpenSearch, Oracle, Postgres, RabbitMQ, Redis, and SQL Server dependency-health companion baseline reflected accurately in docs and project tracking, with any additional provider packs treated as future adoption-driven expansion work
 - keep the shipped ASP.NET Core request/response logging, bounded body capture, trace/log correlation, runtime-story, and failure-policy warmup/drain/restart-backoff surfaces reflected accurately in docs and project tracking
 - keep the shipped operational release-validation guidance for health and telemetry-export conventions reflected accurately in docs and project tracking
-- keep cloud-vendor tracing/export follow-through tracked under `ENG-029` instead of leaving it as an implied phase-2 blocker
+- keep self-hosted plus cloud-vendor tracing/export follow-through tracked under `ENG-029` instead of leaving it as an implied phase-2 blocker
 - keep `docs/operational-hardening-gap-inventory.md` current as the source of truth for what phase-2 gaps were closed versus what moved into later phases
 
 ### ENG-016 Blueprint sample suite
@@ -473,12 +473,13 @@ Estimate: 34
 
 Why:
 
-- multi-cloud exporter/auth/default guidance for AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu is broader than the phase-2 operational baseline that is now shipped
+- self-hosted plus multi-cloud exporter/auth/default guidance for OTLP-collector-managed deployments, AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu is broader than the phase-2 operational baseline that is now shipped
 - this work should stay in companion packages and preserve the shared `ILogger` pipeline plus the cloud-neutral OTLP baseline
 
 Acceptance:
 
-- define the first supported target slice explicitly, whether as one cloud/platform or a deliberately split set of companion packs
+- define the first supported target slice explicitly, starting with self-hosted collector/runtime defaults unless a concrete adopter reprioritizes the target order
+- keep self-hosted deployment defaults explicit and reusable instead of burying them inside vendor-specific companion packs
 - keep vendor/platform-specific exporter wiring, auth, resource attributes, and hosted defaults outside `Cephalon.Engine` and `Cephalon.Abstractions`
 - keep the shared `ILogger` pipeline and existing `Cephalon.Observability.OpenTelemetry` baseline intact
 - add docs, validation, and planning sync for the supported targets
