@@ -1211,6 +1211,36 @@ function Normalize-ChildIssueBody {
     return [regex]::Replace($normalizedBody, '(?m)^Item type:\s+\*\*Draft item\*\*$', 'Item type: **Issue**')
 }
 
+function Set-ChildPlanningMetadataBody {
+    param(
+        [AllowNull()][string]$Body,
+        [AllowNull()][string]$IterationTitle,
+        [AllowNull()]$Estimate
+    )
+
+    $renderedBody = Normalize-ChildIssueBody -Body $Body
+    if ([string]::IsNullOrWhiteSpace($renderedBody)) {
+        return $renderedBody
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($IterationTitle)) {
+        $renderedBody = [regex]::Replace(
+            $renderedBody,
+            '(?m)^Planned iteration:\s+\*\*.+?\*\*\s*$',
+            ('Planned iteration: **{0}**' -f $IterationTitle.Trim()))
+    }
+
+    if ($null -ne $Estimate) {
+        $estimateText = [string]::Format([System.Globalization.CultureInfo]::InvariantCulture, "{0:0.##}", [decimal]$Estimate)
+        $renderedBody = [regex]::Replace(
+            $renderedBody,
+            '(?m)^Estimate:\s+\*\*.+?\*\*\s*$',
+            ('Estimate: **{0}**' -f $estimateText))
+    }
+
+    return $renderedBody
+}
+
 function Get-UnmanagedIssueBody {
     param([AllowNull()][string]$Body)
 
@@ -3089,32 +3119,55 @@ foreach ($issue in $issuesByNumber.Values) {
         $issuePatch.assignees = @($DefaultAssignee)
     }
 
-    $childDesiredLabels = Get-ManagedChildLabels -ParentSpec $parentDesired -IterationTitle $metadata.IterationTitle
-
-    Set-IssueType -RepositoryContext $repositoryContext -Issue $issue -IssueTypeName (Get-ChildIssueTypeName)
-    Ensure-SubIssueLink -RepositoryContext $repositoryContext -ParentIssue $parentIssue -ChildIssue $issue
-    Set-IssueManagedLabels -RepositoryContext $repositoryContext -Issue $issue -ManagedLabels $childDesiredLabels
-
-    if ($issuePatch.Count -gt 0) {
-        Write-Host "Aligning metadata for child issue #$($issue.number) '$($issue.title)'..."
-        Invoke-GhApiJson -Route "repos/$repo/issues/$($issue.number)" -Method "PATCH" -Body $issuePatch | Out-Null
-    }
-
+    $projectItem = $null
     if ($null -ne $projectContext) {
         $projectItem = Ensure-ProjectItem -ProjectContext $projectContext -ProjectOwner $ProjectOwner -ProjectNumber $ProjectNumber -Issue $issue
         $stateText = if ($issue.state -eq "CLOSED") { "closed" } else { "open" }
 
-        if (($null -eq (Get-ProjectItemEstimateValue -ProjectItem $projectItem)) -and $null -ne $metadata.Estimate) {
+        $projectEstimate = Get-ProjectItemEstimateValue -ProjectItem $projectItem
+        if (($null -eq $projectEstimate) -and $null -ne $metadata.Estimate) {
             Set-ProjectEstimate -ProjectContext $projectContext -ProjectItem $projectItem -Estimate $metadata.Estimate
+            $projectEstimate = $metadata.Estimate
         }
 
-        if (-not [string]::IsNullOrWhiteSpace($metadata.IterationTitle)) {
+        $projectIterationTitle = Get-ProjectItemIterationTitle -ProjectItem $projectItem
+        if ([string]::IsNullOrWhiteSpace($projectIterationTitle) -and -not [string]::IsNullOrWhiteSpace($metadata.IterationTitle)) {
             Set-ProjectIteration -ProjectContext $projectContext -ProjectItem $projectItem -IterationTitle $metadata.IterationTitle
+            $projectIterationTitle = $metadata.IterationTitle
         }
 
         Sync-ProjectValidationFields -ProjectContext $projectContext -ProjectItem $projectItem -Title $issue.title -Body $issue.body -State $stateText
         $desiredStatus = Get-DesiredProjectStatus -ProjectContext $projectContext -ProjectItem $projectItem -Title $issue.title -Body $issue.body -State $stateText
         Set-ProjectStatus -ProjectContext $projectContext -ProjectItem $projectItem -DesiredStatus $desiredStatus
+    }
+
+    $effectiveIterationTitle = if ($null -ne $projectItem -and -not [string]::IsNullOrWhiteSpace((Get-ProjectItemIterationTitle -ProjectItem $projectItem))) {
+        Get-ProjectItemIterationTitle -ProjectItem $projectItem
+    }
+    else {
+        $metadata.IterationTitle
+    }
+    $effectiveEstimate = if ($null -ne $projectItem -and $null -ne (Get-ProjectItemEstimateValue -ProjectItem $projectItem)) {
+        Get-ProjectItemEstimateValue -ProjectItem $projectItem
+    }
+    else {
+        $metadata.Estimate
+    }
+
+    $issuePatchBody = Set-ChildPlanningMetadataBody -Body $issue.body -IterationTitle $effectiveIterationTitle -Estimate $effectiveEstimate
+    $childDesiredLabels = Get-ManagedChildLabels -ParentSpec $parentDesired -IterationTitle $effectiveIterationTitle
+
+    Set-IssueType -RepositoryContext $repositoryContext -Issue $issue -IssueTypeName (Get-ChildIssueTypeName)
+    Ensure-SubIssueLink -RepositoryContext $repositoryContext -ParentIssue $parentIssue -ChildIssue $issue
+    Set-IssueManagedLabels -RepositoryContext $repositoryContext -Issue $issue -ManagedLabels $childDesiredLabels
+
+    if ($issuePatch.Count -gt 0 -or (Normalize-Text -Value $issue.body) -ne (Normalize-Text -Value $issuePatchBody)) {
+        if ((Normalize-Text -Value $issue.body) -ne (Normalize-Text -Value $issuePatchBody)) {
+            $issuePatch.body = $issuePatchBody
+        }
+
+        Write-Host "Aligning metadata for child issue #$($issue.number) '$($issue.title)'..."
+        Invoke-GhApiJson -Route "repos/$repo/issues/$($issue.number)" -Method "PATCH" -Body $issuePatch | Out-Null
     }
 }
 
@@ -3175,8 +3228,10 @@ foreach ($issue in $issuesByNumber.Values) {
     }
 
     $childContext = Get-ChildPlanningContext -ParentIssue $parentIssue -ParentDesired $parentDesired -RepositoryContext $repositoryContext -PhaseMilestones $phaseMilestones -BoardUrl $boardUrl
-    $planningSection = Render-PlanningLinksSection -BacklogUrl $childContext.BacklogUrl -RoadmapUrl $childContext.RoadmapUrl -BoardUrl $childContext.BoardUrl -MilestoneTitle $childContext.MilestoneTitle -MilestoneUrl $childContext.MilestoneUrl -IterationTitle $(if (-not [string]::IsNullOrWhiteSpace((Get-ProjectItemIterationTitle -ProjectItem $projectItem))) { Get-ProjectItemIterationTitle -ProjectItem $projectItem } else { $metadata.IterationTitle }) -Status $(if (-not [string]::IsNullOrWhiteSpace((Get-ProjectItemStatusValue -ProjectItem $projectItem))) { Get-ProjectItemStatusValue -ProjectItem $projectItem } elseif ($issue.state -eq "CLOSED") { "Done" } else { "Todo" }) -IssueTypeName (Get-ChildIssueTypeName) -Assignee $DefaultAssignee -EstimateText $(if ($null -ne (Get-ProjectItemEstimateValue -ProjectItem $projectItem)) { Format-EstimateText -Estimate (Get-ProjectItemEstimateValue -ProjectItem $projectItem) } elseif ($null -ne $metadata.Estimate) { Format-EstimateText -Estimate $metadata.Estimate } else { "" }) -TestStatus (Get-EffectiveValidationFieldValue -ProjectContext $projectContext -ProjectItem $projectItem -FieldName "Test" -Title $issue.title -Body $issue.body -State $(if ($issue.state -eq "CLOSED") { "closed" } else { "open" })) -BenchmarkStatus (Get-EffectiveValidationFieldValue -ProjectContext $projectContext -ProjectItem $projectItem -FieldName "Benchmark" -Title $issue.title -Body $issue.body -State $(if ($issue.state -eq "CLOSED") { "closed" } else { "open" })) -ParentTitle $childContext.ParentTitle -ParentUrl $childContext.ParentUrl
-    $baseBody = Normalize-ChildIssueBody -Body $liveIssue.body
+    $effectiveIterationTitle = if (-not [string]::IsNullOrWhiteSpace((Get-ProjectItemIterationTitle -ProjectItem $projectItem))) { Get-ProjectItemIterationTitle -ProjectItem $projectItem } else { $metadata.IterationTitle }
+    $effectiveEstimate = if ($null -ne (Get-ProjectItemEstimateValue -ProjectItem $projectItem)) { Get-ProjectItemEstimateValue -ProjectItem $projectItem } else { $metadata.Estimate }
+    $planningSection = Render-PlanningLinksSection -BacklogUrl $childContext.BacklogUrl -RoadmapUrl $childContext.RoadmapUrl -BoardUrl $childContext.BoardUrl -MilestoneTitle $childContext.MilestoneTitle -MilestoneUrl $childContext.MilestoneUrl -IterationTitle $effectiveIterationTitle -Status $(if (-not [string]::IsNullOrWhiteSpace((Get-ProjectItemStatusValue -ProjectItem $projectItem))) { Get-ProjectItemStatusValue -ProjectItem $projectItem } elseif ($issue.state -eq "CLOSED") { "Done" } else { "Todo" }) -IssueTypeName (Get-ChildIssueTypeName) -Assignee $DefaultAssignee -EstimateText $(if ($null -ne $effectiveEstimate) { Format-EstimateText -Estimate $effectiveEstimate } else { "" }) -TestStatus (Get-EffectiveValidationFieldValue -ProjectContext $projectContext -ProjectItem $projectItem -FieldName "Test" -Title $issue.title -Body $issue.body -State $(if ($issue.state -eq "CLOSED") { "closed" } else { "open" })) -BenchmarkStatus (Get-EffectiveValidationFieldValue -ProjectContext $projectContext -ProjectItem $projectItem -FieldName "Benchmark" -Title $issue.title -Body $issue.body -State $(if ($issue.state -eq "CLOSED") { "closed" } else { "open" })) -ParentTitle $childContext.ParentTitle -ParentUrl $childContext.ParentUrl
+    $baseBody = Set-ChildPlanningMetadataBody -Body $liveIssue.body -IterationTitle $effectiveIterationTitle -Estimate $effectiveEstimate
     $renderedBody = Upsert-ManagedSection -Body $baseBody -Key "planning-links" -RenderedSection $planningSection
     if ((Normalize-Text -Value $liveIssue.body) -ne (Normalize-Text -Value $renderedBody)) {
         Write-Host "Refreshing planning links for child issue #$($issue.number) '$($issue.title)'..."
