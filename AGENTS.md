@@ -27,6 +27,7 @@ When working in this repository:
 - `Cephalon.Observability.PostgresDependencies` is the optional Postgres dependency-health companion package
 - `Cephalon.Observability.RabbitMqDependencies` is the optional RabbitMQ dependency-health companion package
 - `Cephalon.Observability.RedisDependencies` is the optional Redis and cache dependency-health companion package
+- `Cephalon.Observability.SqlServerDependencies` is the optional SQL Server and Azure SQL dependency-health companion package
 - `Cephalon.Observability.OpenTelemetry` is the optional exporter companion package for OpenTelemetry OTLP host wiring
 - `Cephalon.Cli` is the user-facing shell for blueprint-driven generation
 - `Cephalon.ReferenceDocs` is the optional repo-local reference-doc publishing tool for XML-comment-driven API output
@@ -203,6 +204,9 @@ Current source layout:
 - `src/Cephalon.Observability.RedisDependencies/Configuration` -> `Cephalon.Observability.RedisDependencies.Configuration`
 - `src/Cephalon.Observability.RedisDependencies/Hosting` -> `Cephalon.Observability.RedisDependencies.Hosting`
 - `src/Cephalon.Observability.RedisDependencies/Services` -> `Cephalon.Observability.RedisDependencies.Services`
+- `src/Cephalon.Observability.SqlServerDependencies/Configuration` -> `Cephalon.Observability.SqlServerDependencies.Configuration`
+- `src/Cephalon.Observability.SqlServerDependencies/Hosting` -> `Cephalon.Observability.SqlServerDependencies.Hosting`
+- `src/Cephalon.Observability.SqlServerDependencies/Services` -> `Cephalon.Observability.SqlServerDependencies.Services`
 - `src/Cephalon.Observability.OpenTelemetry/Hosting` -> `Cephalon.Observability.OpenTelemetry.Hosting`
 - `src/Cephalon.Cli/Commands` -> `Cephalon.Cli.Commands`
 - `src/Cephalon.Cli/Console` -> `Cephalon.Cli.Console`

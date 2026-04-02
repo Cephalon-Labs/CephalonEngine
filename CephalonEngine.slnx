@@ -28,6 +28,7 @@
     <Project Path="src/Cephalon.Observability.PostgresDependencies/Cephalon.Observability.PostgresDependencies.csproj" />
     <Project Path="src/Cephalon.Observability.RabbitMqDependencies/Cephalon.Observability.RabbitMqDependencies.csproj" />
     <Project Path="src/Cephalon.Observability.RedisDependencies/Cephalon.Observability.RedisDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.SqlServerDependencies/Cephalon.Observability.SqlServerDependencies.csproj" />
     <Project Path="src/Cephalon.Observability.OpenTelemetry/Cephalon.Observability.OpenTelemetry.csproj" />
     <Project Path="src/Cephalon.ReferenceDocs/Cephalon.ReferenceDocs.csproj" />
     <Project Path="src/Cephalon.Retrieval/Cephalon.Retrieval.csproj" />

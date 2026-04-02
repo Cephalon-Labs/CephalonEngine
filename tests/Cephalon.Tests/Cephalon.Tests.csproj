@@ -42,6 +42,7 @@
     <ProjectReference Include="..\..\src\Cephalon.Observability.PostgresDependencies\Cephalon.Observability.PostgresDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.RabbitMqDependencies\Cephalon.Observability.RabbitMqDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.RedisDependencies\Cephalon.Observability.RedisDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.SqlServerDependencies\Cephalon.Observability.SqlServerDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.OpenTelemetry\Cephalon.Observability.OpenTelemetry.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.ReferenceDocs\Cephalon.ReferenceDocs.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Retrieval\Cephalon.Retrieval.csproj" />

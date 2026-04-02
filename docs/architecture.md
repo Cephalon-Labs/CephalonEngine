@@ -110,6 +110,8 @@ Companion adapter packages can extend that host with additional transport surfac
 
 `Cephalon.Observability.RedisDependencies` is the optional Redis and cache dependency-health companion package. It turns configured Redis `PING` probes, optional authentication, and logical database selection into `IDependencyHealthContributor` data without pushing Redis-specific socket logic into `Cephalon.Engine`.
 
+`Cephalon.Observability.SqlServerDependencies` is the optional SQL Server and Azure SQL dependency-health companion package. It turns configured SQL queries, SQL authentication, and connection-string probing into `IDependencyHealthContributor` data without pushing SQL Server-specific connection logic into `Cephalon.Engine`.
+
 `Cephalon.Observability.OpenTelemetry` is the optional exporter companion package. It takes the shared `Engine:Observability:Telemetry` contract and turns it into OTLP registration for logs, metrics, and traces without pushing exporter dependencies back into the engine or the baseline observability package.
 
 `Cephalon.Scaffolding` is the adoption companion package. It turns `AppProfile.Scaffold` into concrete solution, project, file, and folder output so future CLIs or templates do not need to re-encode blueprint rules.
@@ -173,6 +175,9 @@ Companion adapter packages:
 - `src/Cephalon.Observability.RedisDependencies/Configuration` -> `Cephalon.Observability.RedisDependencies.Configuration`
 - `src/Cephalon.Observability.RedisDependencies/Hosting` -> `Cephalon.Observability.RedisDependencies.Hosting`
 - `src/Cephalon.Observability.RedisDependencies/Services` -> `Cephalon.Observability.RedisDependencies.Services`
+- `src/Cephalon.Observability.SqlServerDependencies/Configuration` -> `Cephalon.Observability.SqlServerDependencies.Configuration`
+- `src/Cephalon.Observability.SqlServerDependencies/Hosting` -> `Cephalon.Observability.SqlServerDependencies.Hosting`
+- `src/Cephalon.Observability.SqlServerDependencies/Services` -> `Cephalon.Observability.SqlServerDependencies.Services`
 - `src/Cephalon.Observability.OpenTelemetry/Hosting` -> `Cephalon.Observability.OpenTelemetry.Hosting`
 - `src/Cephalon.Cli/Commands` -> `Cephalon.Cli.Commands`
 - `src/Cephalon.Cli/Console` -> `Cephalon.Cli.Console`
@@ -238,6 +243,7 @@ Companion adapter packages:
 - hosts can turn Postgres dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Postgres` and `Cephalon.Observability.PostgresDependencies`
 - hosts can turn RabbitMQ dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:RabbitMq` and `Cephalon.Observability.RabbitMqDependencies`
 - hosts can turn Redis and cache endpoints into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Redis` and `Cephalon.Observability.RedisDependencies`
+- hosts can turn SQL Server and Azure SQL dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:SqlServer` and `Cephalon.Observability.SqlServerDependencies`
 - hosts can turn that telemetry contract into a supported OTLP path through `Cephalon.Observability.OpenTelemetry`
 - engine trust and capability policy can be tuned through `Engine:Trust`
 - engine trust policy can also allow-list package checksums through `Engine:Trust:AllowedPackageChecksums`

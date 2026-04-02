@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T00:28:37.675219+00:00",
+  "GeneratedAtUtc": "2026-04-02T00:59:26.4036307+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -127,6 +127,14 @@
       "Category": "Hosts",
       "Description": "Redis and cache dependency-health integration for Cephalon hosts.",
       "FileName": "cephalon-observability-redisdependencies.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "Category": "Hosts",
+      "Description": "SQL Server and Azure SQL dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
     },
@@ -561,6 +569,20 @@
       "AssemblyName": "Cephalon.Observability.RedisDependencies",
       "FileName": "cephalon-observability-redisdependencies.md",
       "AnchorId": "namespace-cephalon-observability-redisdependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-sqlserverdependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-sqlserverdependencies-hosting",
       "TypeCount": 1
     },
     {
@@ -2969,6 +2991,51 @@
       }
     },
     {
+      "DisplayName": "SqlServerDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "type-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition",
+      "Declaration": "public sealed class SqlServerDependencyDefinition",
+      "Summary": "Describes one SQL Server dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 13,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "SqlServerDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "type-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions",
+      "Declaration": "public sealed class SqlServerDependencyHealthOptions",
+      "Summary": "Configures SQL Server dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "SqlServerDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "type-cephalon-observability-sqlserverdependencies-hosting-sqlserverdependencyhealthservicecollectionextensions",
+      "Declaration": "public static class SqlServerDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds SQL Server dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
       "DisplayName": "StartupFailureBehavior",
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
@@ -3576,6 +3643,28 @@
       "AnchorId": "member-m-cephalon-observability-redisdependencies-hosting-redisdependencyhealthservicecollectionextensions-addcephalonredisdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions",
       "Signature": "IServiceCollection AddCephalonRedisDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CRedisDependencyHealthOptions\u003E configure)",
       "Summary": "Adds Redis dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
+      "DisplayName": "AddCephalonSqlServerDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "SqlServerDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-sqlserverdependencies-hosting-sqlserverdependencyhealthservicecollectionextensions-addcephalonsqlserverdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonSqlServerDependencyHealth(this IServiceCollection services, Action\u003CSqlServerDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds SQL Server dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonSqlServerDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "SqlServerDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-sqlserverdependencies-hosting-sqlserverdependencyhealthservicecollectionextensions-addcephalonsqlserverdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonSqlServerDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CSqlServerDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds SQL Server dependency-health services using configuration as the primary source of probe settings."
     },
     {
       "DisplayName": "AddCephalonWorker",
@@ -4645,6 +4734,17 @@
       "Summary": "Gets or sets the optional AMQP connection string used for the probe."
     },
     {
+      "DisplayName": "ConnectionString",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-connectionstring",
+      "Signature": "string ConnectionString { get; set; }",
+      "Summary": "Gets or sets the optional full SQL Server connection string used for the probe."
+    },
+    {
       "DisplayName": "Contents",
       "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocFile",
@@ -4841,6 +4941,17 @@
       "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-database",
       "Signature": "int? Database { get; set; }",
       "Summary": "Gets or sets the optional Redis logical database index to select before pinging."
+    },
+    {
+      "DisplayName": "Database",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-database",
+      "Signature": "string Database { get; set; }",
+      "Summary": "Gets or sets the database name used for the health query."
     },
     {
       "DisplayName": "Debug",
@@ -5083,6 +5194,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimehealthreport-dependencies",
       "Signature": "IReadOnlyList\u003CDependencyHealthReport\u003E Dependencies { get; set; }",
       "Summary": "The dependency-health reports visible during evaluation."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003CSqlServerDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured SQL Server dependencies that should contribute to runtime health."
     },
     {
       "DisplayName": "DependencyHealthReport",
@@ -5725,6 +5847,17 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "TechnologyDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -5963,6 +6096,17 @@
       "AnchorId": "member-p-cephalon-edge-configuration-edgeruntimeoptions-enablesynchronization",
       "Signature": "bool EnableSynchronization { get; set; }",
       "Summary": "Gets or sets a value indicating whether synchronization features are enabled."
+    },
+    {
+      "DisplayName": "Encrypt",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-encrypt",
+      "Signature": "string Encrypt { get; set; }",
+      "Summary": "Gets or sets the optional SQL Server encryption mode such as \u0060Optional\u0060, \u0060Mandatory\u0060, or \u0060Strict\u0060."
     },
     {
       "DisplayName": "Endpoint",
@@ -6605,6 +6749,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "SqlServerDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "SqlServerDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds SQL Server dependency-health options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "TrustPolicy",
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
@@ -6878,6 +7033,17 @@
       "Summary": "Gets or sets the SQL statement executed to verify the dependency."
     },
     {
+      "DisplayName": "HealthQuery",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-healthquery",
+      "Signature": "string HealthQuery { get; set; }",
+      "Summary": "Gets or sets the SQL statement executed to verify the dependency."
+    },
+    {
       "DisplayName": "Healthy",
       "Category": "Fields",
       "DeclaringTypeName": "HealthState",
@@ -6942,6 +7108,17 @@
       "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-host",
       "Signature": "string Host { get; set; }",
       "Summary": "Gets or sets the Redis host name or IP address to probe."
+    },
+    {
+      "DisplayName": "Host",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-host",
+      "Signature": "string Host { get; set; }",
+      "Summary": "Gets or sets the SQL Server host name or IP address to probe when no full connection string is supplied."
     },
     {
       "DisplayName": "HttpDependencyDefinition",
@@ -7162,6 +7339,17 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable project identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
     {
       "DisplayName": "Id",
@@ -9188,6 +9376,17 @@
       "Summary": "Gets or sets the optional Redis password used for authentication."
     },
     {
+      "DisplayName": "Password",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-password",
+      "Signature": "string Password { get; set; }",
+      "Summary": "Gets or sets the optional password used for authentication when no full connection string is supplied."
+    },
+    {
       "DisplayName": "Path",
       "Category": "Properties",
       "DeclaringTypeName": "ModulePackageDirectory",
@@ -9417,6 +9616,17 @@
       "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-port",
       "Signature": "int Port { get; set; }",
       "Summary": "Gets or sets the Redis TCP port."
+    },
+    {
+      "DisplayName": "Port",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-port",
+      "Signature": "int Port { get; set; }",
+      "Summary": "Gets or sets the SQL Server TCP port."
     },
     {
       "DisplayName": "PostgresDependencyDefinition",
@@ -9826,6 +10036,17 @@
       "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
     },
     {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
       "DisplayName": "RegisterCapabilities",
       "Category": "Methods",
       "DeclaringTypeName": "IModule",
@@ -10086,6 +10307,17 @@
       "AssemblyName": "Cephalon.Observability.RedisDependencies",
       "FileName": "cephalon-observability-redisdependencies.md",
       "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
@@ -11256,6 +11488,28 @@
       "Summary": "Gets the specification design pattern."
     },
     {
+      "DisplayName": "SqlServerDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SqlServerDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-ctor",
+      "Signature": "SqlServerDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060SqlServerDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "SqlServerDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SqlServerDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions-ctor",
+      "Signature": "SqlServerDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060SqlServerDependencyHealthOptions\u0060 class."
+    },
+    {
       "DisplayName": "SslMode",
       "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyDefinition",
@@ -12125,6 +12379,17 @@
       "Summary": "Gets or sets the per-probe timeout in seconds."
     },
     {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-probe timeout in seconds."
+    },
+    {
       "DisplayName": "Tools",
       "Category": "Properties",
       "DeclaringTypeName": "AgenticRuntimeOptions",
@@ -12332,6 +12597,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-packagemanifest-trustreason",
       "Signature": "string TrustReason { get; }",
       "Summary": "Gets the reason the package is trusted or not trusted by the current trust policy."
+    },
+    {
+      "DisplayName": "TrustServerCertificate",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-trustservercertificate",
+      "Signature": "bool? TrustServerCertificate { get; set; }",
+      "Summary": "Gets or sets the optional value that controls whether server certificate validation should be bypassed."
     },
     {
       "DisplayName": "TrustSnapshot",
@@ -12640,6 +12916,17 @@
       "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-username",
       "Signature": "string Username { get; set; }",
       "Summary": "Gets or sets the optional Redis ACL user name used for authentication."
+    },
+    {
+      "DisplayName": "Username",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
+      "FileName": "cephalon-observability-sqlserverdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-username",
+      "Signature": "string Username { get; set; }",
+      "Summary": "Gets or sets the optional user name used for authentication when no full connection string is supplied."
     },
     {
       "DisplayName": "UseSettings",

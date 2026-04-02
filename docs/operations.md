@@ -13,7 +13,7 @@ ASP.NET Core hosts that call `app.MapCephalon()` now expose three health routes:
 - `/health/ready`
 
 Health responses are JSON and include the check status, duration, and runtime-specific details such as restart count and the most recent failure context.
-When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, and `Cephalon.Observability.RedisDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
+When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
 
 Current semantics:
 
@@ -234,6 +234,60 @@ Operational notes:
 - each probe opens a dedicated AMQP connection with auto-recovery disabled so the result reflects the current broker reachability and authentication state
 - required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
 
+### SQL Server dependency probes
+
+`Cephalon.Observability.SqlServerDependencies` reads `Engine:Observability:DependencyHealth:SqlServer` and turns configured SQL Server endpoints into reusable `IDependencyHealthContributor` data.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "DependencyHealth": {
+        "SqlServer": {
+          "RefreshIntervalSeconds": 30,
+          "Dependencies": [
+            {
+              "Id": "orders-sql",
+              "DisplayName": "Orders SQL",
+              "Host": "sql.internal.example",
+              "Port": 1433,
+              "Database": "orders",
+              "Username": "cephalon-runtime",
+              "Password": "${SQL_PASSWORD}",
+              "Encrypt": "Mandatory",
+              "TrustServerCertificate": false,
+              "HealthQuery": "SELECT 1;",
+              "Required": true,
+              "TimeoutSeconds": 5
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonSqlServerDependencyHealth(builder.Configuration);
+```
+
+Operational notes:
+
+- the SQL Server dependency-health package is optional and stays outside `Cephalon.Engine`
+- the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
+- probes can use either a full `ConnectionString` or discrete host/port/database settings
+- each probe opens a dedicated `SqlConnection` with pooling disabled, runs the configured health query, and reports the result through the shared dependency-health contract
+- optional `Encrypt` and `TrustServerCertificate` settings let hosts keep SQL Server or Azure SQL transport expectations explicit instead of hidden in host-specific code
+- required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
+
 ## Diagnostics surface
 
 `GET /engine/diagnostics` exposes the engine's operational conventions in one place:
@@ -255,6 +309,7 @@ Current shipped event-id ranges include:
 - `Cephalon.Observability.RedisDependencies`: `3120-3121`
 - `Cephalon.Observability.PostgresDependencies`: `3122-3123`
 - `Cephalon.Observability.RabbitMqDependencies`: `3124-3125`
+- `Cephalon.Observability.SqlServerDependencies`: `3126-3127`
 
 This is the quickest way to discover the engine's observability contract without opening code.
 

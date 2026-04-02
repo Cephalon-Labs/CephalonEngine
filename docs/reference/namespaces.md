@@ -232,6 +232,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Observability.RedisDependencies](cephalon-observability-redisdependencies.md#namespace-cephalon-observability-redisdependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Hosting)
 
+## `Cephalon.Observability.SqlServerDependencies.Configuration`
+
+- [Cephalon.Observability.SqlServerDependencies](cephalon-observability-sqlserverdependencies.md#namespace-cephalon-observability-sqlserverdependencies-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration)
+
+## `Cephalon.Observability.SqlServerDependencies.Hosting`
+
+- [Cephalon.Observability.SqlServerDependencies](cephalon-observability-sqlserverdependencies.md#namespace-cephalon-observability-sqlserverdependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Hosting)
+
 ## `Cephalon.ReferenceDocs`
 
 - [Cephalon.ReferenceDocs](cephalon-referencedocs.md#namespace-cephalon-referencedocs): 1 public types [Browse](browse.html?assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs)

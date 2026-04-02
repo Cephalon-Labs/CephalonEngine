@@ -13,6 +13,8 @@ using Cephalon.Observability.RabbitMqDependencies.Configuration;
 using Cephalon.Observability.RabbitMqDependencies.Hosting;
 using Cephalon.Observability.RedisDependencies.Configuration;
 using Cephalon.Observability.RedisDependencies.Hosting;
+using Cephalon.Observability.SqlServerDependencies.Configuration;
+using Cephalon.Observability.SqlServerDependencies.Hosting;
 using Cephalon.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -205,6 +207,18 @@ public sealed class EngineDiagnosticsTests
                 }
             ];
         });
+        services.AddCephalonSqlServerDependencyHealth(options =>
+        {
+            options.Dependencies =
+            [
+                new SqlServerDependencyDefinition
+                {
+                    Id = "orders-sql",
+                    Host = "sql.internal.example",
+                    Database = "orders"
+                }
+            ];
+        });
 
         using var provider = services.BuildServiceProvider();
         var catalog = provider.GetRequiredService<IRuntimeDiagnosticsCatalog>();
@@ -216,6 +230,7 @@ public sealed class EngineDiagnosticsTests
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.PostgresDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.RabbitMqDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.RedisDependencies");
+        Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.SqlServerDependencies");
 
         Assert.Contains(
             catalog.GetBySource("Cephalon.Engine").Single().Events,
@@ -235,6 +250,9 @@ public sealed class EngineDiagnosticsTests
         Assert.Contains(
             catalog.GetBySource("Cephalon.Observability.RedisDependencies").Single().Events,
             static entry => entry.Id == 3120);
+        Assert.Contains(
+            catalog.GetBySource("Cephalon.Observability.SqlServerDependencies").Single().Events,
+            static entry => entry.Id == 3126);
 
         var eventIds = catalog.Conventions
             .SelectMany(static convention => convention.Events)
@@ -244,5 +262,6 @@ public sealed class EngineDiagnosticsTests
         Assert.Equal(eventIds.Length, eventIds.Distinct().Count());
         Assert.Equal(catalog.Conventions.Count, snapshot.DiagnosticsConventions.Count);
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.RabbitMqDependencies");
+        Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.SqlServerDependencies");
     }
 }

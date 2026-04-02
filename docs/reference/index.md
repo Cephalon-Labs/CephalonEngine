@@ -37,6 +37,7 @@ Quick links:
 - [Cephalon.Observability.PostgresDependencies](cephalon-observability-postgresdependencies.md): Postgres dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.PostgresDependencies)
 - [Cephalon.Observability.RabbitMqDependencies](cephalon-observability-rabbitmqdependencies.md): RabbitMQ dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.RabbitMqDependencies)
 - [Cephalon.Observability.RedisDependencies](cephalon-observability-redisdependencies.md): Redis and cache dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.RedisDependencies)
+- [Cephalon.Observability.SqlServerDependencies](cephalon-observability-sqlserverdependencies.md): SQL Server and Azure SQL dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.SqlServerDependencies)
 - [Cephalon.Worker](cephalon-worker.md): Generic-host worker adapter for non-HTTP runtime execution. Contains 1 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Worker)
 
 ### Tooling

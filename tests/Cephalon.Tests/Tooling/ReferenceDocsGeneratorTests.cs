@@ -129,6 +129,7 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.Observability.PostgresDependencies",
                 "Cephalon.Observability.RabbitMqDependencies",
                 "Cephalon.Observability.RedisDependencies",
+                "Cephalon.Observability.SqlServerDependencies",
                 "Cephalon.Observability.OpenTelemetry",
                 "Cephalon.ReferenceDocs",
                 "Cephalon.Retrieval",
@@ -181,6 +182,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-postgresdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-rabbitmqdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-redisdependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-sqlserverdependencies.md");
 
         var manifest = Assert.Single(rendered.Files, file => file.Path == "reference-manifest.json");
         using var manifestDocument = JsonDocument.Parse(manifest.Contents);
@@ -198,6 +200,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.RedisDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.SqlServerDependencies", StringComparison.Ordinal));
     }
 
     [Fact]

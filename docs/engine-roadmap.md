@@ -58,7 +58,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Operational Sprint 0`: `ENG-019`, `ENG-020`, `ENG-021`, `ENG-024`, `ENG-023`
 - `Platform Sprint 0`: `ENG-012`
 - `Sprint 1`: delivered `ENG-005`, `ENG-026`, and `ENG-027`, and opened the phase 2 operational gap-inventory track
-- `Sprint 2`: exporter packaging is now part of the shipped phase-2 baseline, HTTP external API plus Postgres, RabbitMQ, and Redis/cache dependency-health packaging anchor the provider-specific follow-through, and the shared diagnostics/event-id catalog now anchors the structured diagnostics baseline
+- `Sprint 2`: exporter packaging is now part of the shipped phase-2 baseline, HTTP external API plus Postgres, RabbitMQ, Redis/cache, and SQL Server dependency-health packaging anchor the provider-specific follow-through, and the shared diagnostics/event-id catalog now anchors the structured diagnostics baseline
 - `Sprint 3`: runtime-answers follow-through, package distribution and trust follow-through, and `ENG-013` planning readiness
 - `Later / not scheduled yet`: `ENG-022` and future solution-level expansion work
 
@@ -140,7 +140,7 @@ Deliverables:
 Current inventory:
 
 - `docs/operational-hardening-gap-inventory.md` now records the shipped baseline versus the remaining phase-2 gaps so follow-through work stays grounded in the code that already exists
-- that inventory now includes a shipped `Cephalon.Observability.OpenTelemetry` companion package plus shipped `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, and `Cephalon.Observability.RedisDependencies` companion packages, together with a published runtime diagnostics catalog and runtime-story surface for the active engine and companion packages, which narrows the open phase-2 work to broader dependency-health coverage, deeper health semantics, and release-validation guidance
+- that inventory now includes a shipped `Cephalon.Observability.OpenTelemetry` companion package plus shipped `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` companion packages, together with a published runtime diagnostics catalog and runtime-story surface for the active engine and companion packages, which narrows the open phase-2 work to broader dependency-health coverage, deeper health semantics, and release-validation guidance
 
 Exit criteria:
 
