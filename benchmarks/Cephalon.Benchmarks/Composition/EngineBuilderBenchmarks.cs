@@ -13,7 +13,9 @@ public class EngineBuilderBenchmarks
 {
     private const int BuildsPerIteration = 4096;
     private readonly Func<EngineBuilder> builderFactory = BenchmarkScenarioFactory.CreateEngineBuilder;
+    private readonly Func<EngineBuilder> strictTrustBuilderFactory = BenchmarkScenarioFactory.CreateStrictTrustEngineBuilder;
     private EngineBuilder[] builders = [];
+    private EngineBuilder[] strictTrustBuilders = [];
 
     /// <summary>
     /// Prepares a fresh configured engine builder for the current benchmark iteration.
@@ -22,9 +24,11 @@ public class EngineBuilderBenchmarks
     public void PrepareIteration()
     {
         builders = new EngineBuilder[BuildsPerIteration];
+        strictTrustBuilders = new EngineBuilder[BuildsPerIteration];
         for (var index = 0; index < builders.Length; index++)
         {
             builders[index] = builderFactory();
+            strictTrustBuilders[index] = strictTrustBuilderFactory();
         }
     }
 
@@ -35,6 +39,7 @@ public class EngineBuilderBenchmarks
     public void CleanupIteration()
     {
         builders = [];
+        strictTrustBuilders = [];
     }
 
     /// <summary>
@@ -55,6 +60,33 @@ public class EngineBuilderBenchmarks
         var capabilityCount = 0;
 
         foreach (var builder in builders)
+        {
+            using var runtime = builder.Build();
+            moduleCount += runtime.Manifest.Modules.Count;
+            capabilityCount += runtime.Manifest.Capabilities.Count;
+        }
+
+        return (moduleCount, capabilityCount);
+    }
+
+    /// <summary>
+    /// Builds the runtime manifest while applying strict capability trust filtering to the prepared composition.
+    /// </summary>
+    /// <returns>
+    /// The total number of modules and surviving capabilities surfaced across the measured runtime builds.
+    /// </returns>
+    [Benchmark(OperationsPerInvoke = BuildsPerIteration)]
+    public (int Modules, int Capabilities) BuildRuntimeManifestWithStrictTrustPolicy()
+    {
+        if (strictTrustBuilders.Length == 0)
+        {
+            throw new InvalidOperationException("Benchmark iteration was not initialized.");
+        }
+
+        var moduleCount = 0;
+        var capabilityCount = 0;
+
+        foreach (var builder in strictTrustBuilders)
         {
             using var runtime = builder.Build();
             moduleCount += runtime.Manifest.Modules.Count;
