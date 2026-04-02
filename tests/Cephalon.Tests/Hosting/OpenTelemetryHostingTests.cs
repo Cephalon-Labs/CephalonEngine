@@ -56,6 +56,49 @@ public sealed class OpenTelemetryHostingTests
     }
 
     [Fact]
+    public void AddCephalonOpenTelemetrySkipsRegistrationWhenEndpointIsMissingAndSelfHostedDefaultsAreDisabled()
+    {
+        var builder = Host.CreateApplicationBuilder();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:Telemetry:Provider"] = "OpenTelemetry";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:Telemetry:Protocol"] = "otlp/http";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new DiscoveryTestModule());
+        });
+        builder.Services.AddCephalonObservability(builder.Configuration);
+        builder.AddCephalonOpenTelemetry();
+
+        using var host = builder.Build();
+
+        Assert.Null(host.Services.GetService<TracerProvider>());
+        Assert.Null(host.Services.GetService<MeterProvider>());
+    }
+
+    [Fact]
+    public void AddCephalonOpenTelemetryRegistersSelfHostedDefaultsWhenEndpointIsMissing()
+    {
+        var builder = Host.CreateApplicationBuilder();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:Telemetry:Provider"] = "OpenTelemetry";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:Telemetry:Protocol"] = "otlp/http";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:Telemetry:UseSelfHostedDefaults"] = "true";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new DiscoveryTestModule());
+        });
+        builder.Services.AddCephalonObservability(builder.Configuration);
+        builder.AddCephalonOpenTelemetry();
+
+        using var host = builder.Build();
+
+        Assert.NotNull(host.Services.GetService<TracerProvider>());
+        Assert.NotNull(host.Services.GetService<MeterProvider>());
+    }
+
+    [Fact]
     public void AddCephalonOpenTelemetryRejectsUnsupportedProviders()
     {
         var builder = Host.CreateApplicationBuilder();

@@ -49,7 +49,7 @@ internal static class ObservabilityDiagnosticsConventions
         Name: "TelemetryExport",
         Severity: DiagnosticSeverity.Information,
         MessageTemplate: "Telemetry export guidance uses provider {Provider}, protocol {Protocol}, endpoint {Endpoint}, logs {ExportLogs}, metrics {ExportMetrics}, traces {ExportTraces}.",
-        Description: "Emitted on host startup to summarize the configured telemetry export guidance.");
+        Description: "Emitted on host startup to summarize the configured telemetry export guidance, including explicit self-hosted defaults when they are enabled.");
 
     public static readonly DiagnosticEventDefinition DiagnosticsCatalogEntry = new(
         Id: 3006,

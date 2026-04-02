@@ -9,7 +9,8 @@ namespace Cephalon.Observability.Configuration;
 /// These settings let Cephalon packages and hosts agree on provider, protocol, endpoint, and enabled
 /// signals without forcing exporter dependencies into the engine core. Companion packages such as
 /// <c>Cephalon.Observability.OpenTelemetry</c> can interpret the same contract when a host wants a
-/// supported OTLP export path.
+/// supported OTLP export path, including the explicit self-hosted collector defaults that remain
+/// outside <c>Cephalon.Engine</c>.
 /// </remarks>
 public sealed class TelemetryExportOptions
 {
@@ -35,6 +36,17 @@ public sealed class TelemetryExportOptions
     /// Companion packages interpret this as the base collector endpoint for the selected export protocol.
     /// </summary>
     public string? Endpoint { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether companion packages should apply the supported
+    /// self-hosted collector and runtime defaults when the export endpoint is omitted.
+    /// </summary>
+    /// <remarks>
+    /// The shipped OpenTelemetry companion interprets this flag as an explicit self-hosted path on
+    /// top of the shared OTLP baseline, using the standard local collector ports and host-managed
+    /// runtime resource defaults instead of vendor-specific wiring.
+    /// </remarks>
+    public bool UseSelfHostedDefaults { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether logs should be exported.
@@ -66,6 +78,7 @@ public sealed class TelemetryExportOptions
             Endpoint = string.IsNullOrWhiteSpace(section["Endpoint"])
                 ? null
                 : section["Endpoint"]!.Trim(),
+            UseSelfHostedDefaults = GetBoolean(section["UseSelfHostedDefaults"], defaultValue: false),
             ExportLogs = GetBoolean(section["ExportLogs"], defaultValue: true),
             ExportMetrics = GetBoolean(section["ExportMetrics"], defaultValue: true),
             ExportTraces = GetBoolean(section["ExportTraces"], defaultValue: true)

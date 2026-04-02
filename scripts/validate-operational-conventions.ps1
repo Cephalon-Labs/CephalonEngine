@@ -7,8 +7,10 @@ param(
         "FullyQualifiedName~Cephalon.Tests.Hosting.AspNetCoreHostingTests.MapCephalonKeepsReadinessUnhealthyDuringConfiguredStartupWarmup",
         "FullyQualifiedName~Cephalon.Tests.Hosting.WorkerHostingTests.AddCephalonSurfacesDependencyHealthWithinGenericHost",
         "FullyQualifiedName~Cephalon.Tests.Hosting.ObservabilityHostingTests.AddCephalonObservabilityLogsManifestSummaryAndRuntimeSurface",
+        "FullyQualifiedName~Cephalon.Tests.Hosting.ObservabilityHostingTests.AddCephalonObservabilityLogsSelfHostedTelemetryDefaultEndpointWhenEnabled",
         "FullyQualifiedName~Cephalon.Tests.Hosting.SerilogHostingTests.AddCephalonSerilogReadsTheStandardSerilogConfigurationSection",
-        "FullyQualifiedName~Cephalon.Tests.Hosting.OpenTelemetryHostingTests.AddCephalonOpenTelemetryExportsConfiguredSignalsOverHttpProtobuf"
+        "FullyQualifiedName~Cephalon.Tests.Hosting.OpenTelemetryHostingTests.AddCephalonOpenTelemetryExportsConfiguredSignalsOverHttpProtobuf",
+        "FullyQualifiedName~Cephalon.Tests.Hosting.OpenTelemetryHostingTests.AddCephalonOpenTelemetryRegistersSelfHostedDefaultsWhenEndpointIsMissing"
     )
 )
 
