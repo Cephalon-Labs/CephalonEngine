@@ -13,7 +13,7 @@ ASP.NET Core hosts that call `app.MapCephalon()` now expose three health routes:
 - `/health/ready`
 
 Health responses are JSON and include the check status, duration, and runtime-specific details such as restart count and the most recent failure context.
-When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
+When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
 
 Current semantics:
 
@@ -241,6 +241,58 @@ Operational notes:
 - each probe opens a dedicated AMQP connection with auto-recovery disabled so the result reflects the current broker reachability and authentication state
 - required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
 
+### Kafka dependency probes
+
+`Cephalon.Observability.KafkaDependencies` reads `Engine:Observability:DependencyHealth:Kafka` and turns configured Kafka clusters into reusable `IDependencyHealthContributor` data.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "DependencyHealth": {
+        "Kafka": {
+          "RefreshIntervalSeconds": 30,
+          "Dependencies": [
+            {
+              "Id": "events-kafka",
+              "DisplayName": "Events Kafka",
+              "BootstrapServers": "kafka-1.internal.example:9093,kafka-2.internal.example:9093",
+              "ClientId": "cephalon-runtime",
+              "Topic": "cephalon.events",
+              "SecurityProtocol": "SaslSsl",
+              "SaslMechanism": "ScramSha512",
+              "Username": "cephalon-runtime",
+              "Password": "${KAFKA_PASSWORD}",
+              "Required": true,
+              "TimeoutSeconds": 5
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonKafkaDependencyHealth(builder.Configuration);
+```
+
+Operational notes:
+
+- the Kafka dependency-health package is optional and stays outside `Cephalon.Engine`
+- the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
+- each probe requests broker metadata from the configured `BootstrapServers` list and can optionally verify that a specific `Topic` is present in returned metadata
+- `SecurityProtocol` and `SaslMechanism` stay explicit in configuration so hosts can declare plaintext, TLS, or SASL broker expectations without hiding them in host code
+- required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
+
 ### SQL Server dependency probes
 
 `Cephalon.Observability.SqlServerDependencies` reads `Engine:Observability:DependencyHealth:SqlServer` and turns configured SQL Server endpoints into reusable `IDependencyHealthContributor` data.
@@ -429,6 +481,7 @@ Current shipped event-id ranges include:
 - `Cephalon.Observability.SqlServerDependencies`: `3126-3127`
 - `Cephalon.Observability.MySqlDependencies`: `3128-3129`
 - `Cephalon.Observability.MongoDbDependencies`: `3130-3131`
+- `Cephalon.Observability.KafkaDependencies`: `3132-3133`
 
 This is the quickest way to discover the engine's observability contract without opening code.
 

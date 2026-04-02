@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T02:21:14.9552405+00:00",
+  "GeneratedAtUtc": "2026-04-02T03:28:19.624375+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -95,6 +95,14 @@
       "Category": "Hosts",
       "Description": "External HTTP dependency-health integration for Cephalon hosts.",
       "FileName": "cephalon-observability-httpdependencies.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "Category": "Hosts",
+      "Description": "Kafka dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-kafkadependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
     },
@@ -536,6 +544,20 @@
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
       "FileName": "cephalon-observability-httpdependencies.md",
       "AnchorId": "namespace-cephalon-observability-httpdependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "namespace-cephalon-observability-kafkadependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "namespace-cephalon-observability-kafkadependencies-hosting",
       "TypeCount": 1
     },
     {
@@ -2007,6 +2029,51 @@
       "AnchorId": "type-cephalon-aspnetcore-jsonrpc-hosting-jsonrpctransportservicecollectionextensions",
       "Declaration": "public static class JsonRpcTransportServiceCollectionExtensions",
       "Summary": "Registers the JSON-RPC ASP.NET Core transport adapter for Cephalon.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "KafkaDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "type-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition",
+      "Declaration": "public sealed class KafkaDependencyDefinition",
+      "Summary": "Describes one Kafka dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 11,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "KafkaDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "type-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions",
+      "Declaration": "public sealed class KafkaDependencyHealthOptions",
+      "Summary": "Configures Kafka dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "KafkaDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "type-cephalon-observability-kafkadependencies-hosting-kafkadependencyhealthservicecollectionextensions",
+      "Declaration": "public static class KafkaDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds Kafka dependency-health services to a Cephalon host.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -3669,6 +3736,28 @@
       "Summary": "Adds HTTP dependency-health services using configuration as the primary source of probe settings."
     },
     {
+      "DisplayName": "AddCephalonKafkaDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "KafkaDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-m-cephalon-observability-kafkadependencies-hosting-kafkadependencyhealthservicecollectionextensions-addcephalonkafkadependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonKafkaDependencyHealth(this IServiceCollection services, Action\u003CKafkaDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Kafka dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonKafkaDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "KafkaDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-m-cephalon-observability-kafkadependencies-hosting-kafkadependencyhealthservicecollectionextensions-addcephalonkafkadependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonKafkaDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CKafkaDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Kafka dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
       "DisplayName": "AddCephalonMongoDbDependencyHealth",
       "Category": "Methods",
       "DeclaringTypeName": "MongoDbDependencyHealthServiceCollectionExtensions",
@@ -4582,6 +4671,17 @@
       "Summary": "Gets the selected blueprint identifier."
     },
     {
+      "DisplayName": "BootstrapServers",
+      "Category": "Properties",
+      "DeclaringTypeName": "KafkaDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-bootstrapservers",
+      "Signature": "string BootstrapServers { get; set; }",
+      "Summary": "Gets or sets the Kafka bootstrap server list, such as \u0060broker-1:9092,broker-2:9092\u0060."
+    },
+    {
       "DisplayName": "BrowserPath",
       "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocsSurface",
@@ -4789,6 +4889,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-packagemanifest-checksumsha256",
       "Signature": "string ChecksumSha256 { get; }",
       "Summary": "Gets the computed SHA-256 checksum of the resolved package assembly."
+    },
+    {
+      "DisplayName": "ClientId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KafkaDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-clientid",
+      "Signature": "string ClientId { get; set; }",
+      "Summary": "Gets or sets the optional client identifier sent to the Kafka cluster."
     },
     {
       "DisplayName": "ClientStreaming",
@@ -5431,6 +5542,17 @@
     {
       "DisplayName": "Dependencies",
       "Category": "Properties",
+      "DeclaringTypeName": "KafkaDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003CKafkaDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured Kafka dependencies that should contribute to runtime health."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
       "DeclaringTypeName": "MongoDbDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
@@ -6052,6 +6174,17 @@
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
       "FileName": "cephalon-observability-httpdependencies.md",
       "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "KafkaDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-displayname",
       "Signature": "string DisplayName { get; set; }",
       "Summary": "Gets or sets the human-readable dependency name shown to operators."
     },
@@ -6993,6 +7126,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "KafkaDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-m-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "KafkaDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Kafka dependency-health options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "LocalizationSettings",
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
@@ -7620,6 +7764,17 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "KafkaDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "KnowledgeCollectionDescriptor",
       "NamespaceName": "Cephalon.Retrieval.Services",
       "AssemblyName": "Cephalon.Retrieval",
@@ -8155,6 +8310,28 @@
       "AnchorId": "member-p-cephalon-engine-transports-builtintransports-jsonrpc",
       "Signature": "TransportDescriptor JsonRpc { get; }",
       "Summary": "Gets the built-in JSON-RPC transport descriptor."
+    },
+    {
+      "DisplayName": "KafkaDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "KafkaDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-m-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-ctor",
+      "Signature": "KafkaDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060KafkaDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "KafkaDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "KafkaDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-m-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-ctor",
+      "Signature": "KafkaDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060KafkaDependencyHealthOptions\u0060 class."
     },
     {
       "DisplayName": "Key",
@@ -9820,6 +9997,17 @@
     {
       "DisplayName": "Password",
       "Category": "Properties",
+      "DeclaringTypeName": "KafkaDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-password",
+      "Signature": "string Password { get; set; }",
+      "Summary": "Gets or sets the optional SASL password used when authenticated broker access is required."
+    },
+    {
+      "DisplayName": "Password",
+      "Category": "Properties",
       "DeclaringTypeName": "MongoDbDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
@@ -10524,6 +10712,17 @@
     {
       "DisplayName": "RefreshIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "KafkaDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "MongoDbDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
@@ -10815,6 +11014,17 @@
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
       "FileName": "cephalon-observability-httpdependencies.md",
       "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "KafkaDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
@@ -11512,6 +11722,17 @@
       "Summary": "Gets the counter name for runtime lifecycle transitions."
     },
     {
+      "DisplayName": "SaslMechanism",
+      "Category": "Properties",
+      "DeclaringTypeName": "KafkaDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-saslmechanism",
+      "Signature": "string SaslMechanism { get; set; }",
+      "Summary": "Gets or sets the optional SASL mechanism, such as \u0060Plain\u0060, \u0060ScramSha256\u0060, or \u0060ScramSha512\u0060."
+    },
+    {
       "DisplayName": "SayHello",
       "Category": "Methods",
       "DeclaringTypeName": "DiscoveryServiceBase",
@@ -11708,6 +11929,17 @@
       "AnchorId": "member-f-cephalon-aspnetcore-documentation-referencedocshostingoptions-sectionname",
       "Signature": "const string SectionName",
       "Summary": "Gets the default configuration section used for reference-doc hosting."
+    },
+    {
+      "DisplayName": "SecurityProtocol",
+      "Category": "Properties",
+      "DeclaringTypeName": "KafkaDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-securityprotocol",
+      "Signature": "string SecurityProtocol { get; set; }",
+      "Summary": "Gets or sets the optional Kafka security protocol, such as \u0060Plaintext\u0060, \u0060Ssl\u0060, \u0060SaslPlaintext\u0060, or \u0060SaslSsl\u0060."
     },
     {
       "DisplayName": "Selected",
@@ -12966,6 +13198,17 @@
     {
       "DisplayName": "TimeoutSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "KafkaDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-probe timeout in seconds."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "MongoDbDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
@@ -13050,6 +13293,17 @@
       "AnchorId": "member-p-cephalon-agentics-services-iagenttoolcatalog-tools",
       "Signature": "IReadOnlyList\u003CAgentToolDescriptor\u003E Tools { get; }",
       "Summary": "Gets the effective tool set after host options and module contributors have both been applied."
+    },
+    {
+      "DisplayName": "Topic",
+      "Category": "Properties",
+      "DeclaringTypeName": "KafkaDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-topic",
+      "Signature": "string Topic { get; set; }",
+      "Summary": "Gets or sets the optional topic name that should be present in returned cluster metadata."
     },
     {
       "DisplayName": "Trace",
@@ -13523,6 +13777,17 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-usepackagepolicy-cephalon-engine-configuration-packagepolicy",
       "Signature": "EngineBuilder UsePackagePolicy(PackagePolicy policy)",
       "Summary": "Replaces the package-governance policy used when loading independently shipped module packages."
+    },
+    {
+      "DisplayName": "Username",
+      "Category": "Properties",
+      "DeclaringTypeName": "KafkaDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
+      "FileName": "cephalon-observability-kafkadependencies.md",
+      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-username",
+      "Signature": "string Username { get; set; }",
+      "Summary": "Gets or sets the optional SASL user name used when authenticated broker access is required."
     },
     {
       "DisplayName": "Username",

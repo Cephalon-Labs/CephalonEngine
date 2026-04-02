@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
+    <PackageVersion Include="Confluent.Kafka" Version="2.11.0" />
     <PackageVersion Include="coverlet.collector" Version="8.0.1" />
     <PackageVersion Include="Google.Protobuf" Version="3.34.1" />
     <PackageVersion Include="Grpc.AspNetCore" Version="2.76.0" />

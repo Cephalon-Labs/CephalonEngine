@@ -24,6 +24,7 @@ When working in this repository:
 - `Cephalon.Worker` is the generic-host worker adapter for non-HTTP runtime scenarios
 - `Cephalon.Observability` is the diagnostics companion package for logs, metrics, and tracing conventions
 - `Cephalon.Observability.HttpDependencies` is the optional external API dependency-health companion package for HTTP-based upstreams
+- `Cephalon.Observability.KafkaDependencies` is the optional Kafka dependency-health companion package
 - `Cephalon.Observability.MongoDbDependencies` is the optional MongoDB dependency-health companion package
 - `Cephalon.Observability.MySqlDependencies` is the optional MySQL dependency-health companion package
 - `Cephalon.Observability.PostgresDependencies` is the optional Postgres dependency-health companion package
@@ -198,6 +199,9 @@ Current source layout:
 - `src/Cephalon.Observability.HttpDependencies/Configuration` -> `Cephalon.Observability.HttpDependencies.Configuration`
 - `src/Cephalon.Observability.HttpDependencies/Hosting` -> `Cephalon.Observability.HttpDependencies.Hosting`
 - `src/Cephalon.Observability.HttpDependencies/Services` -> `Cephalon.Observability.HttpDependencies.Services`
+- `src/Cephalon.Observability.KafkaDependencies/Configuration` -> `Cephalon.Observability.KafkaDependencies.Configuration`
+- `src/Cephalon.Observability.KafkaDependencies/Hosting` -> `Cephalon.Observability.KafkaDependencies.Hosting`
+- `src/Cephalon.Observability.KafkaDependencies/Services` -> `Cephalon.Observability.KafkaDependencies.Services`
 - `src/Cephalon.Observability.MongoDbDependencies/Configuration` -> `Cephalon.Observability.MongoDbDependencies.Configuration`
 - `src/Cephalon.Observability.MongoDbDependencies/Hosting` -> `Cephalon.Observability.MongoDbDependencies.Hosting`
 - `src/Cephalon.Observability.MongoDbDependencies/Services` -> `Cephalon.Observability.MongoDbDependencies.Services`

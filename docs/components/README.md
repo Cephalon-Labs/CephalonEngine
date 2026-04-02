@@ -27,6 +27,7 @@ See also: [Docs hub](../README.md)
 
 - [Cephalon.Observability](observability.md)
 - [Cephalon.Observability.HttpDependencies](observability-http-dependencies.md)
+- [Cephalon.Observability.KafkaDependencies](observability-kafka-dependencies.md)
 - [Cephalon.Observability.MongoDbDependencies](observability-mongodb-dependencies.md)
 - [Cephalon.Observability.MySqlDependencies](observability-mysql-dependencies.md)
 - [Cephalon.Observability.PostgresDependencies](observability-postgres-dependencies.md)

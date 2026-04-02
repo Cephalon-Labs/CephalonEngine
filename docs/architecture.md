@@ -104,6 +104,8 @@ Companion adapter packages can extend that host with additional transport surfac
 
 `Cephalon.Observability.HttpDependencies` is the optional external API dependency-health companion package. It turns configured HTTP upstream probes into `IDependencyHealthContributor` data without pushing provider-specific network checks into `Cephalon.Engine`.
 
+`Cephalon.Observability.KafkaDependencies` is the optional Kafka dependency-health companion package. It turns configured broker metadata and optional topic probes into `IDependencyHealthContributor` data without pushing Kafka client configuration into `Cephalon.Engine`.
+
 `Cephalon.Observability.MongoDbDependencies` is the optional MongoDB dependency-health companion package. It turns configured database commands, TLS policy, and connection-string probing into `IDependencyHealthContributor` data without pushing MongoDB-specific connection logic into `Cephalon.Engine`.
 
 `Cephalon.Observability.MySqlDependencies` is the optional MySQL dependency-health companion package. It turns configured SQL queries, SSL/public-key retrieval policy, and MySQL connection probing into `IDependencyHealthContributor` data without pushing MySQL-specific connection logic into `Cephalon.Engine`.
@@ -170,6 +172,9 @@ Companion adapter packages:
 - `src/Cephalon.Observability.HttpDependencies/Configuration` -> `Cephalon.Observability.HttpDependencies.Configuration`
 - `src/Cephalon.Observability.HttpDependencies/Hosting` -> `Cephalon.Observability.HttpDependencies.Hosting`
 - `src/Cephalon.Observability.HttpDependencies/Services` -> `Cephalon.Observability.HttpDependencies.Services`
+- `src/Cephalon.Observability.KafkaDependencies/Configuration` -> `Cephalon.Observability.KafkaDependencies.Configuration`
+- `src/Cephalon.Observability.KafkaDependencies/Hosting` -> `Cephalon.Observability.KafkaDependencies.Hosting`
+- `src/Cephalon.Observability.KafkaDependencies/Services` -> `Cephalon.Observability.KafkaDependencies.Services`
 - `src/Cephalon.Observability.MongoDbDependencies/Configuration` -> `Cephalon.Observability.MongoDbDependencies.Configuration`
 - `src/Cephalon.Observability.MongoDbDependencies/Hosting` -> `Cephalon.Observability.MongoDbDependencies.Hosting`
 - `src/Cephalon.Observability.MongoDbDependencies/Services` -> `Cephalon.Observability.MongoDbDependencies.Services`
@@ -250,6 +255,7 @@ Companion adapter packages:
 - runtime diagnostics conventions should flow through `IRuntimeDiagnosticsCatalog`, `/engine/diagnostics`, and `/engine/snapshot`
 - runtime lifecycle answers should flow through `IRuntime.OperationalStory`, `/engine/runtime-story`, and `/engine/snapshot`
 - hosts can turn external HTTP upstreams into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Http` and `Cephalon.Observability.HttpDependencies`
+- hosts can turn Kafka cluster metadata checks into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Kafka` and `Cephalon.Observability.KafkaDependencies`
 - hosts can turn MongoDB dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:MongoDb` and `Cephalon.Observability.MongoDbDependencies`
 - hosts can turn MySQL and MariaDB dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:MySql` and `Cephalon.Observability.MySqlDependencies`
 - hosts can turn Postgres dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Postgres` and `Cephalon.Observability.PostgresDependencies`

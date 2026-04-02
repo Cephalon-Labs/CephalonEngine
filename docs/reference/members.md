@@ -72,6 +72,12 @@ Browse the published API surface by public member.
 - [AddCephalonHttpDependencyHealth](cephalon-observability-httpdependencies.md#member-m-cephalon-observability-httpdependencies-hosting-httpdependencyhealthservicecollectionextensions-addcephalonhttpdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions): `Methods` on `HttpDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.HttpDependencies.Hosting` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=AddCephalonHttpDependencyHealth&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Hosting&scope=members)
   - Adds HTTP dependency-health services using configuration as the primary source of probe settings.
   - `IServiceCollection AddCephalonHttpDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<HttpDependencyHealthOptions> configure)`
+- [AddCephalonKafkaDependencyHealth](cephalon-observability-kafkadependencies.md#member-m-cephalon-observability-kafkadependencies-hosting-kafkadependencyhealthservicecollectionextensions-addcephalonkafkadependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions): `Methods` on `KafkaDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.KafkaDependencies.Hosting` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=AddCephalonKafkaDependencyHealth&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Hosting&scope=members)
+  - Adds Kafka dependency-health services using code-first configuration.
+  - `IServiceCollection AddCephalonKafkaDependencyHealth(this IServiceCollection services, Action<KafkaDependencyHealthOptions> configure)`
+- [AddCephalonKafkaDependencyHealth](cephalon-observability-kafkadependencies.md#member-m-cephalon-observability-kafkadependencies-hosting-kafkadependencyhealthservicecollectionextensions-addcephalonkafkadependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions): `Methods` on `KafkaDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.KafkaDependencies.Hosting` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=AddCephalonKafkaDependencyHealth&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Hosting&scope=members)
+  - Adds Kafka dependency-health services using configuration as the primary source of probe settings.
+  - `IServiceCollection AddCephalonKafkaDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<KafkaDependencyHealthOptions> configure)`
 - [AddCephalonMongoDbDependencyHealth](cephalon-observability-mongodbdependencies.md#member-m-cephalon-observability-mongodbdependencies-hosting-mongodbdependencyhealthservicecollectionextensions-addcephalonmongodbdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions): `Methods` on `MongoDbDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.MongoDbDependencies.Hosting` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=AddCephalonMongoDbDependencyHealth&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Hosting&scope=members)
   - Adds MongoDB dependency-health services using code-first configuration.
   - `IServiceCollection AddCephalonMongoDbDependencyHealth(this IServiceCollection services, Action<MongoDbDependencyHealthOptions> configure)`
@@ -324,6 +330,9 @@ Browse the published API surface by public member.
 - [BlueprintId](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-blueprintid): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=BlueprintId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the selected blueprint identifier.
   - `string BlueprintId { get; }`
+- [BootstrapServers](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-bootstrapservers): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=BootstrapServers&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
+  - Gets or sets the Kafka bootstrap server list, such as `broker-1:9092,broker-2:9092`.
+  - `string BootstrapServers { get; set; }`
 - [BrowserPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-browserpath): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=BrowserPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The hosted path to the interactive browser UI.
   - `string BrowserPath { get; set; }`
@@ -384,6 +393,9 @@ Browse the published API surface by public member.
 - [ChecksumSha256](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-checksumsha256): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=ChecksumSha256&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the computed SHA-256 checksum of the resolved package assembly.
   - `string ChecksumSha256 { get; }`
+- [ClientId](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-clientid): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=ClientId&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
+  - Gets or sets the optional client identifier sent to the Kafka cluster.
+  - `string ClientId { get; set; }`
 - [ClientStreaming](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-transportfeatures-clientstreaming): `Fields` on `TransportFeatures` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=ClientStreaming&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Indicates client-streaming interactions are supported.
   - `const TransportFeatures ClientStreaming`
@@ -561,6 +573,9 @@ Browse the published API surface by public member.
 - [Dependencies](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-dependencies): `Properties` on `HttpDependencyHealthOptions` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the configured HTTP dependencies that should contribute to runtime health.
   - `IReadOnlyList<HttpDependencyDefinition> Dependencies { get; set; }`
+- [Dependencies](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-dependencies): `Properties` on `KafkaDependencyHealthOptions` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
+  - Gets or sets the configured Kafka dependencies that should contribute to runtime health.
+  - `IReadOnlyList<KafkaDependencyDefinition> Dependencies { get; set; }`
 - [Dependencies](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-dependencies): `Properties` on `MongoDbDependencyHealthOptions` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the configured MongoDB dependencies that should contribute to runtime health.
   - `IReadOnlyList<MongoDbDependencyDefinition> Dependencies { get; set; }`
@@ -730,6 +745,9 @@ Browse the published API surface by public member.
   - Gets the operator-facing display name for the channel.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-displayname): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
+  - Gets or sets the human-readable dependency name shown to operators.
+  - `string DisplayName { get; set; }`
+- [DisplayName](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-displayname): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
   - Gets or sets the human-readable dependency name shown to operators.
   - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgecollectiondescriptor-displayname): `Properties` on `KnowledgeCollectionDescriptor` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
@@ -993,6 +1011,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability-httpdependencies.md#member-m-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `HttpDependencyHealthOptions` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Binds HTTP dependency-health options from configuration.
   - `HttpDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-observability-kafkadependencies.md#member-m-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `KafkaDependencyHealthOptions` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
+  - Binds Kafka dependency-health options from configuration.
+  - `KafkaDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-localizationsettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `LocalizationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads localization settings from configuration.
   - `LocalizationSettings FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -1173,6 +1194,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-id): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
   - `string Id { get; set; }`
+- [Id](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-id): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
+  - Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
+  - `string Id { get; set; }`
 - [Id](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgecollectiondescriptor-id): `Properties` on `KnowledgeCollectionDescriptor` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Id&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets the stable collection identifier.
   - `string Id { get; }`
@@ -1326,6 +1350,12 @@ Browse the published API surface by public member.
 
 ## K
 
+- [KafkaDependencyDefinition](cephalon-observability-kafkadependencies.md#member-m-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-ctor): `Constructors` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=KafkaDependencyDefinition&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
+  - Initializes a new instance of the `KafkaDependencyDefinition` class.
+  - `KafkaDependencyDefinition()`
+- [KafkaDependencyHealthOptions](cephalon-observability-kafkadependencies.md#member-m-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-ctor): `Constructors` on `KafkaDependencyHealthOptions` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=KafkaDependencyHealthOptions&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
+  - Initializes a new instance of the `KafkaDependencyHealthOptions` class.
+  - `KafkaDependencyHealthOptions()`
 - [Key](cephalon-abstractions.md#member-p-cephalon-abstractions-capabilities-capability-key): `Properties` on `Capability` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=Key&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
   - Gets the stable capability key.
   - `string Key { get; }`
@@ -1794,6 +1824,9 @@ Browse the published API surface by public member.
 - [PackageTrustDecision](cephalon-engine.md#member-m-cephalon-engine-trust-packagetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagesignaturetrustdecision-system-boolean-system-string-system-boolean-system-string): `Constructors` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=PackageTrustDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Describes the trust outcome for a package after package metadata, signature verification, and host trust rules have been evaluated.
   - `PackageTrustDecision(string PackageId, string AssemblyName, string Path, string PublisherId, string SignatureKeyId, string SignatureFingerprint, IReadOnlyList<PackageSignatureTrustDecision> Signatures, bool IsSignatureVerified, string SignatureVerificationReason, bool IsTrusted, string Reason)`
+- [Password](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-password): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
+  - Gets or sets the optional SASL password used when authenticated broker access is required.
+  - `string Password { get; set; }`
 - [Password](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-password): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the optional password used for authentication when no full connection string is supplied.
   - `string Password { get; set; }`
@@ -1989,6 +2022,9 @@ Browse the published API surface by public member.
 - [RefreshIntervalSeconds](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-refreshintervalseconds): `Properties` on `HttpDependencyHealthOptions` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the interval, in seconds, between background refresh attempts.
   - `int RefreshIntervalSeconds { get; set; }`
+- [RefreshIntervalSeconds](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-refreshintervalseconds): `Properties` on `KafkaDependencyHealthOptions` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
+  - Gets or sets the interval, in seconds, between background refresh attempts.
+  - `int RefreshIntervalSeconds { get; set; }`
 - [RefreshIntervalSeconds](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-refreshintervalseconds): `Properties` on `MongoDbDependencyHealthOptions` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the interval, in seconds, between background refresh attempts.
   - `int RefreshIntervalSeconds { get; set; }`
@@ -2068,6 +2104,9 @@ Browse the published API surface by public member.
   - Whether the dependency is required for readiness.
   - `bool Required { get; set; }`
 - [Required](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-required): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
+  - Gets or sets a value indicating whether this dependency is required for readiness.
+  - `bool Required { get; set; }`
+- [Required](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-required): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
   - Gets or sets a value indicating whether this dependency is required for readiness.
   - `bool Required { get; set; }`
 - [Required](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-required): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
@@ -2262,6 +2301,9 @@ Browse the published API surface by public member.
 
 ## S
 
+- [SaslMechanism](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-saslmechanism): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=SaslMechanism&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
+  - Gets or sets the optional SASL mechanism, such as `Plain`, `ScramSha256`, or `ScramSha512`.
+  - `string SaslMechanism { get; set; }`
 - [SayHello](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryservicebase-sayhello-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-servercallcontext): `Methods` on `DiscoveryServiceBase` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=SayHello&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Returns a single greeting for the requested caller.
   - `Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)`
@@ -2316,6 +2358,9 @@ Browse the published API surface by public member.
 - [SectionName](cephalon-aspnetcore.md#member-f-cephalon-aspnetcore-documentation-referencedocshostingoptions-sectionname): `Fields` on `ReferenceDocsHostingOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=SectionName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Gets the default configuration section used for reference-doc hosting.
   - `const string SectionName`
+- [SecurityProtocol](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-securityprotocol): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=SecurityProtocol&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
+  - Gets or sets the optional Kafka security protocol, such as `Plaintext`, `Ssl`, `SaslPlaintext`, or `SaslSsl`.
+  - `string SecurityProtocol { get; set; }`
 - [Selected](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologyselection-selected): `Properties` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Selected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the technology profiles currently selected for the app.
   - `IReadOnlyList<TechnologyDescriptor> Selected { get; }`
@@ -2661,6 +2706,9 @@ Browse the published API surface by public member.
 - [TimeoutSeconds](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-timeoutseconds): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the per-request timeout in seconds.
   - `int TimeoutSeconds { get; set; }`
+- [TimeoutSeconds](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-timeoutseconds): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
+  - Gets or sets the per-probe timeout in seconds.
+  - `int TimeoutSeconds { get; set; }`
 - [TimeoutSeconds](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-timeoutseconds): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the per-probe timeout in seconds.
   - `int TimeoutSeconds { get; set; }`
@@ -2685,6 +2733,9 @@ Browse the published API surface by public member.
 - [Tools](cephalon-agentics.md#member-p-cephalon-agentics-services-iagenttoolcatalog-tools): `Properties` on `IAgentToolCatalog` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Tools&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the effective tool set after host options and module contributors have both been applied.
   - `IReadOnlyList<AgentToolDescriptor> Tools { get; }`
+- [Topic](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-topic): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=Topic&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
+  - Gets or sets the optional topic name that should be present in returned cluster metadata.
+  - `string Topic { get; set; }`
 - [Trace](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-trace): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Trace&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The event is useful only for highly detailed trace output.
   - `const DiagnosticSeverity Trace`
@@ -2817,6 +2868,9 @@ Browse the published API surface by public member.
 - [UsePackagePolicy](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-usepackagepolicy-cephalon-engine-configuration-packagepolicy): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UsePackagePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Replaces the package-governance policy used when loading independently shipped module packages.
   - `EngineBuilder UsePackagePolicy(PackagePolicy policy)`
+- [Username](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-username): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
+  - Gets or sets the optional SASL user name used when authenticated broker access is required.
+  - `string Username { get; set; }`
 - [Username](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-username): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the optional user name used for authentication when no full connection string is supplied.
   - `string Username { get; set; }`

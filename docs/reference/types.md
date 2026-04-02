@@ -124,6 +124,9 @@ Browse the published API surface by public type.
 
 ## K
 
+- [KafkaDependencyDefinition](cephalon-observability-kafkadependencies.md#type-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition): `Cephalon.Observability.KafkaDependencies.Configuration` in `Cephalon.Observability.KafkaDependencies` [Browse](browse.html?q=KafkaDependencyDefinition&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration)
+- [KafkaDependencyHealthOptions](cephalon-observability-kafkadependencies.md#type-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions): `Cephalon.Observability.KafkaDependencies.Configuration` in `Cephalon.Observability.KafkaDependencies` [Browse](browse.html?q=KafkaDependencyHealthOptions&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration)
+- [KafkaDependencyHealthServiceCollectionExtensions](cephalon-observability-kafkadependencies.md#type-cephalon-observability-kafkadependencies-hosting-kafkadependencyhealthservicecollectionextensions): `Cephalon.Observability.KafkaDependencies.Hosting` in `Cephalon.Observability.KafkaDependencies` [Browse](browse.html?q=KafkaDependencyHealthServiceCollectionExtensions&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Hosting)
 - [KnowledgeCollectionDescriptor](cephalon-retrieval.md#type-cephalon-retrieval-services-knowledgecollectiondescriptor): `Cephalon.Retrieval.Services` in `Cephalon.Retrieval` [Browse](browse.html?q=KnowledgeCollectionDescriptor&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services)
 
 ## L
