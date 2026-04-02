@@ -24,6 +24,7 @@ When working in this repository:
 - `Cephalon.Worker` is the generic-host worker adapter for non-HTTP runtime scenarios
 - `Cephalon.Observability` is the diagnostics companion package for logs, metrics, and tracing conventions
 - `Cephalon.Observability.CassandraDependencies` is the optional Cassandra dependency-health companion package
+- `Cephalon.Observability.ClickHouseDependencies` is the optional ClickHouse dependency-health companion package
 - `Cephalon.Observability.ConsulDependencies` is the optional Consul dependency-health companion package
 - `Cephalon.Observability.ElasticsearchDependencies` is the optional Elasticsearch dependency-health companion package
 - `Cephalon.Observability.HttpDependencies` is the optional external API dependency-health companion package for HTTP-based upstreams
@@ -229,6 +230,9 @@ Current source layout:
 - `src/Cephalon.Observability.MemcachedDependencies/Configuration` -> `Cephalon.Observability.MemcachedDependencies.Configuration`
 - `src/Cephalon.Observability.MemcachedDependencies/Hosting` -> `Cephalon.Observability.MemcachedDependencies.Hosting`
 - `src/Cephalon.Observability.MemcachedDependencies/Services` -> `Cephalon.Observability.MemcachedDependencies.Services`
+- `src/Cephalon.Observability.ClickHouseDependencies/Configuration` -> `Cephalon.Observability.ClickHouseDependencies.Configuration`
+- `src/Cephalon.Observability.ClickHouseDependencies/Hosting` -> `Cephalon.Observability.ClickHouseDependencies.Hosting`
+- `src/Cephalon.Observability.ClickHouseDependencies/Services` -> `Cephalon.Observability.ClickHouseDependencies.Services`
 - `src/Cephalon.Observability.MongoDbDependencies/Configuration` -> `Cephalon.Observability.MongoDbDependencies.Configuration`
 - `src/Cephalon.Observability.MongoDbDependencies/Hosting` -> `Cephalon.Observability.MongoDbDependencies.Hosting`
 - `src/Cephalon.Observability.MongoDbDependencies/Services` -> `Cephalon.Observability.MongoDbDependencies.Services`

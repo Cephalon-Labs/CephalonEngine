@@ -196,6 +196,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Observability.CassandraDependencies](cephalon-observability-cassandradependencies.md#namespace-cephalon-observability-cassandradependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Hosting)
 
+## `Cephalon.Observability.ClickHouseDependencies.Configuration`
+
+- [Cephalon.Observability.ClickHouseDependencies](cephalon-observability-clickhousedependencies.md#namespace-cephalon-observability-clickhousedependencies-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability.ClickHouseDependencies&namespace=Cephalon.Observability.ClickHouseDependencies.Configuration)
+
+## `Cephalon.Observability.ClickHouseDependencies.Hosting`
+
+- [Cephalon.Observability.ClickHouseDependencies](cephalon-observability-clickhousedependencies.md#namespace-cephalon-observability-clickhousedependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.ClickHouseDependencies&namespace=Cephalon.Observability.ClickHouseDependencies.Hosting)
+
 ## `Cephalon.Observability.Configuration`
 
 - [Cephalon.Observability](cephalon-observability.md#namespace-cephalon-observability-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration)

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T11:32:40.4990802+00:00",
+  "GeneratedAtUtc": "2026-04-02T11:53:41.7787216+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -198,6 +198,14 @@
       "Category": "Hosts",
       "Description": "Cassandra dependency-health integration for Cephalon hosts.",
       "FileName": "cephalon-observability-cassandradependencies.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "Category": "Hosts",
+      "Description": "ClickHouse dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
     },
@@ -713,6 +721,20 @@
       "AssemblyName": "Cephalon.Observability.CassandraDependencies",
       "FileName": "cephalon-observability-cassandradependencies.md",
       "AnchorId": "namespace-cephalon-observability-cassandradependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "namespace-cephalon-observability-clickhousedependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "namespace-cephalon-observability-clickhousedependencies-hosting",
       "TypeCount": 1
     },
     {
@@ -1330,6 +1352,51 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ClickHouseDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "type-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition",
+      "Declaration": "public sealed class ClickHouseDependencyDefinition",
+      "Summary": "Describes one ClickHouse dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 12,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ClickHouseDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "type-cephalon-observability-clickhousedependencies-configuration-clickhousedependencyhealthoptions",
+      "Declaration": "public sealed class ClickHouseDependencyHealthOptions",
+      "Summary": "Configures ClickHouse dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ClickHouseDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "type-cephalon-observability-clickhousedependencies-hosting-clickhousedependencyhealthservicecollectionextensions",
+      "Declaration": "public static class ClickHouseDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds ClickHouse dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
       }
     },
     {
@@ -4498,6 +4565,28 @@
       "Summary": "Adds Cassandra dependency-health services using configuration as the primary source of probe settings."
     },
     {
+      "DisplayName": "AddCephalonClickHouseDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "ClickHouseDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-m-cephalon-observability-clickhousedependencies-hosting-clickhousedependencyhealthservicecollectionextensions-addcephalonclickhousedependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-clickhousedependencies-configuration-clickhousedependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonClickHouseDependencyHealth(this IServiceCollection services, Action\u003CClickHouseDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds ClickHouse dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonClickHouseDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "ClickHouseDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-m-cephalon-observability-clickhousedependencies-hosting-clickhousedependencyhealthservicecollectionextensions-addcephalonclickhousedependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-clickhousedependencies-configuration-clickhousedependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonClickHouseDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CClickHouseDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds ClickHouse dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
       "DisplayName": "AddCephalonConsulDependencyHealth",
       "Category": "Methods",
       "DeclaringTypeName": "ConsulDependencyHealthServiceCollectionExtensions",
@@ -5928,6 +6017,28 @@
       "Summary": "Gets the computed SHA-256 checksum of the resolved package assembly."
     },
     {
+      "DisplayName": "ClickHouseDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ClickHouseDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-m-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-ctor",
+      "Signature": "ClickHouseDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060ClickHouseDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "ClickHouseDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ClickHouseDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-m-cephalon-observability-clickhousedependencies-configuration-clickhousedependencyhealthoptions-ctor",
+      "Signature": "ClickHouseDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060ClickHouseDependencyHealthOptions\u0060 class."
+    },
+    {
       "DisplayName": "ClientId",
       "Category": "Properties",
       "DeclaringTypeName": "KafkaDependencyDefinition",
@@ -6113,6 +6224,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-technologydescriptor-conflictswith",
       "Signature": "IReadOnlyList\u003Cstring\u003E ConflictsWith { get; }",
       "Summary": "Gets the technology identifiers that conflict with the technology."
+    },
+    {
+      "DisplayName": "ConnectionString",
+      "Category": "Properties",
+      "DeclaringTypeName": "ClickHouseDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-connectionstring",
+      "Signature": "string ConnectionString { get; set; }",
+      "Summary": "Gets or sets the optional full ClickHouse connection string used for the probe."
     },
     {
       "DisplayName": "ConnectionString",
@@ -6392,6 +6514,17 @@
     {
       "DisplayName": "Database",
       "Category": "Properties",
+      "DeclaringTypeName": "ClickHouseDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-database",
+      "Signature": "string Database { get; set; }",
+      "Summary": "Gets or sets the optional ClickHouse database to select for the probe session."
+    },
+    {
+      "DisplayName": "Database",
+      "Category": "Properties",
       "DeclaringTypeName": "MongoDbDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
@@ -6663,6 +6796,17 @@
       "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencyhealthoptions-dependencies",
       "Signature": "IReadOnlyList\u003CCassandraDependencyDefinition\u003E Dependencies { get; set; }",
       "Summary": "Gets or sets the configured Cassandra dependencies that should contribute to runtime health."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
+      "DeclaringTypeName": "ClickHouseDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003CClickHouseDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured ClickHouse dependencies that should contribute to runtime health."
     },
     {
       "DisplayName": "Dependencies",
@@ -7365,6 +7509,17 @@
       "AssemblyName": "Cephalon.Observability.CassandraDependencies",
       "FileName": "cephalon-observability-cassandradependencies.md",
       "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "ClickHouseDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-displayname",
       "Signature": "string DisplayName { get; set; }",
       "Summary": "Gets or sets the human-readable dependency name shown to operators."
     },
@@ -8482,6 +8637,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "ClickHouseDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-m-cephalon-observability-clickhousedependencies-configuration-clickhousedependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "ClickHouseDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds ClickHouse dependency-health options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "ConsulDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.ConsulDependencies",
@@ -9043,6 +9209,17 @@
     {
       "DisplayName": "HealthQuery",
       "Category": "Properties",
+      "DeclaringTypeName": "ClickHouseDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-healthquery",
+      "Signature": "string HealthQuery { get; set; }",
+      "Summary": "Gets or sets the SQL statement executed to verify the dependency."
+    },
+    {
+      "DisplayName": "HealthQuery",
+      "Category": "Properties",
       "DeclaringTypeName": "MySqlDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -9116,6 +9293,17 @@
       "AnchorId": "member-f-cephalon-engine-runtime-runtimehealthstate-healthy",
       "Signature": "const RuntimeHealthState Healthy",
       "Summary": "The runtime and its dependencies are healthy."
+    },
+    {
+      "DisplayName": "Host",
+      "Category": "Properties",
+      "DeclaringTypeName": "ClickHouseDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-host",
+      "Signature": "string Host { get; set; }",
+      "Summary": "Gets or sets the ClickHouse host name or IP address to probe when no full connection string is supplied."
     },
     {
       "DisplayName": "Host",
@@ -9312,6 +9500,17 @@
       "AssemblyName": "Cephalon.Observability.CassandraDependencies",
       "FileName": "cephalon-observability-cassandradependencies.md",
       "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "ClickHouseDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-id",
       "Signature": "string Id { get; set; }",
       "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
@@ -11892,6 +12091,17 @@
     {
       "DisplayName": "Password",
       "Category": "Properties",
+      "DeclaringTypeName": "ClickHouseDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-password",
+      "Signature": "string Password { get; set; }",
+      "Summary": "Gets or sets the optional password used for authentication when no full connection string is supplied."
+    },
+    {
+      "DisplayName": "Password",
+      "Category": "Properties",
       "DeclaringTypeName": "ElasticsearchDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
@@ -12244,6 +12454,17 @@
     {
       "DisplayName": "Port",
       "Category": "Properties",
+      "DeclaringTypeName": "ClickHouseDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-port",
+      "Signature": "int Port { get; set; }",
+      "Summary": "Gets or sets the ClickHouse TCP port used by the selected protocol."
+    },
+    {
+      "DisplayName": "Port",
+      "Category": "Properties",
       "DeclaringTypeName": "MemcachedDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
@@ -12471,6 +12692,17 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-projects",
       "Signature": "IReadOnlyList\u003CScaffoldProject\u003E Projects { get; }",
       "Summary": "Gets the projects emitted by the scaffold."
+    },
+    {
+      "DisplayName": "Protocol",
+      "Category": "Properties",
+      "DeclaringTypeName": "ClickHouseDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-protocol",
+      "Signature": "string Protocol { get; set; }",
+      "Summary": "Gets or sets the ClickHouse protocol used for the probe, such as \u0060http\u0060 or \u0060https\u0060."
     },
     {
       "DisplayName": "Protocol",
@@ -12733,6 +12965,17 @@
       "AssemblyName": "Cephalon.Observability.CassandraDependencies",
       "FileName": "cephalon-observability-cassandradependencies.md",
       "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "ClickHouseDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencyhealthoptions-refreshintervalseconds",
       "Signature": "int RefreshIntervalSeconds { get; set; }",
       "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
     },
@@ -13140,6 +13383,17 @@
       "AssemblyName": "Cephalon.Observability.CassandraDependencies",
       "FileName": "cephalon-observability-cassandradependencies.md",
       "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "ClickHouseDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
@@ -15467,6 +15721,17 @@
     {
       "DisplayName": "TimeoutSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "ClickHouseDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-probe timeout in seconds."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "ConsulDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.ConsulDependencies",
@@ -16200,6 +16465,17 @@
       "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-username",
       "Signature": "string Username { get; set; }",
       "Summary": "Gets or sets the optional user name used for authentication."
+    },
+    {
+      "DisplayName": "Username",
+      "Category": "Properties",
+      "DeclaringTypeName": "ClickHouseDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
+      "FileName": "cephalon-observability-clickhousedependencies.md",
+      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-username",
+      "Signature": "string Username { get; set; }",
+      "Summary": "Gets or sets the optional user name used for authentication when no full connection string is supplied."
     },
     {
       "DisplayName": "Username",

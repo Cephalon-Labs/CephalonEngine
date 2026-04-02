@@ -39,6 +39,7 @@
     <ProjectReference Include="..\..\src\Cephalon.Eventing\Cephalon.Eventing.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability\Cephalon.Observability.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.CassandraDependencies\Cephalon.Observability.CassandraDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.ClickHouseDependencies\Cephalon.Observability.ClickHouseDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.HttpDependencies\Cephalon.Observability.HttpDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.KafkaDependencies\Cephalon.Observability.KafkaDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.ConsulDependencies\Cephalon.Observability.ConsulDependencies.csproj" />

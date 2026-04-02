@@ -126,6 +126,7 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.Eventing",
                 "Cephalon.Observability",
                 "Cephalon.Observability.CassandraDependencies",
+                "Cephalon.Observability.ClickHouseDependencies",
                 "Cephalon.Observability.ConsulDependencies",
                 "Cephalon.Observability.ElasticsearchDependencies",
                 "Cephalon.Observability.HttpDependencies",
@@ -193,6 +194,7 @@ public sealed class ReferenceDocsGeneratorTests
 
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-aspnetcore-graphql.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-cassandradependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-clickhousedependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-consuldependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-elasticsearchdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-kafkadependencies.md");
@@ -220,6 +222,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.CassandraDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.ClickHouseDependencies", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.ConsulDependencies", StringComparison.Ordinal));

@@ -104,6 +104,8 @@ Companion adapter packages can extend that host with additional transport surfac
 
 `Cephalon.Observability.CassandraDependencies` is the optional Cassandra dependency-health companion package. It turns configured contact-point lists, optional keyspace selection, credentials, and CQL health queries into `IDependencyHealthContributor` data without pushing Cassandra-driver specifics into `Cephalon.Engine`.
 
+`Cephalon.Observability.ClickHouseDependencies` is the optional ClickHouse dependency-health companion package. It turns configured ClickHouse connection strings or discrete host/protocol/database settings and health queries into `IDependencyHealthContributor` data without pushing ClickHouse-driver specifics into `Cephalon.Engine`.
+
 `Cephalon.Observability.ConsulDependencies` is the optional Consul dependency-health companion package. It turns configured Consul leader checks, ACL tokens, and datacenter selection into `IDependencyHealthContributor` data without pushing Consul-specific control-plane behavior into `Cephalon.Engine`.
 
 `Cephalon.Observability.ElasticsearchDependencies` is the optional Elasticsearch dependency-health companion package. It turns configured cluster-health requests, auth policies, and Elasticsearch `green`/`yellow`/`red` status mapping into `IDependencyHealthContributor` data without pushing Elasticsearch-specific HTTP behavior into `Cephalon.Engine`.
@@ -192,6 +194,9 @@ Companion adapter packages:
 - `src/Cephalon.Observability.CassandraDependencies/Configuration` -> `Cephalon.Observability.CassandraDependencies.Configuration`
 - `src/Cephalon.Observability.CassandraDependencies/Hosting` -> `Cephalon.Observability.CassandraDependencies.Hosting`
 - `src/Cephalon.Observability.CassandraDependencies/Services` -> `Cephalon.Observability.CassandraDependencies.Services`
+- `src/Cephalon.Observability.ClickHouseDependencies/Configuration` -> `Cephalon.Observability.ClickHouseDependencies.Configuration`
+- `src/Cephalon.Observability.ClickHouseDependencies/Hosting` -> `Cephalon.Observability.ClickHouseDependencies.Hosting`
+- `src/Cephalon.Observability.ClickHouseDependencies/Services` -> `Cephalon.Observability.ClickHouseDependencies.Services`
 - `src/Cephalon.Observability.ConsulDependencies/Configuration` -> `Cephalon.Observability.ConsulDependencies.Configuration`
 - `src/Cephalon.Observability.ConsulDependencies/Hosting` -> `Cephalon.Observability.ConsulDependencies.Hosting`
 - `src/Cephalon.Observability.ConsulDependencies/Services` -> `Cephalon.Observability.ConsulDependencies.Services`
@@ -313,6 +318,7 @@ Companion adapter packages:
 - hosts can turn NATS broker dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Nats` and `Cephalon.Observability.NatsDependencies`, with the package free to grow across NATS-native auth, TLS, and broker reachability semantics without becoming a catch-all for unrelated workload logic
 - hosts can turn Neo4j graph dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Neo4j` and `Cephalon.Observability.Neo4jDependencies`
 - hosts can turn OpenSearch cluster dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:OpenSearch` and `Cephalon.Observability.OpenSearchDependencies`
+- hosts can turn ClickHouse analytics dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:ClickHouse` and `Cephalon.Observability.ClickHouseDependencies`
 - hosts can turn Cassandra dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Cassandra` and `Cephalon.Observability.CassandraDependencies`
 - hosts can turn Oracle dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Oracle` and `Cephalon.Observability.OracleDependencies`
 - hosts can turn Postgres dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Postgres` and `Cephalon.Observability.PostgresDependencies`
@@ -360,7 +366,7 @@ Companion adapter packages:
 - richer capability metadata and policy
 - startup hooks and lifecycle events
 - event bus / workflow runtime
-- broader provider-specific dependency-health packs, richer operator-runtime answers, and deeper release-validation guidance on top of the shipped Cassandra, Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Neo4j, OpenSearch, Oracle, Postgres, RabbitMQ, Redis, SQL Server, and OpenTelemetry observability companions
+- broader provider-specific dependency-health packs, richer operator-runtime answers, and deeper release-validation guidance on top of the shipped Cassandra, ClickHouse, Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Neo4j, OpenSearch, Oracle, Postgres, RabbitMQ, Redis, SQL Server, and OpenTelemetry observability companions
 - richer parameterized templates and generators driven by scaffold plans
 - richer localization catalogs and package-provided language packs
 - sustained benchmark coverage for hot engine paths

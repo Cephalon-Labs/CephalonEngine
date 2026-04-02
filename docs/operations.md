@@ -13,7 +13,7 @@ ASP.NET Core hosts that call `app.MapCephalon()` now expose three health routes:
 - `/health/ready`
 
 Health responses are JSON and include the check status, duration, and runtime-specific details such as restart count and the most recent failure context.
-When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.CassandraDependencies`, `Cephalon.Observability.ConsulDependencies`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.Neo4jDependencies`, `Cephalon.Observability.OpenSearchDependencies`, `Cephalon.Observability.OracleDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
+When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.CassandraDependencies`, `Cephalon.Observability.ClickHouseDependencies`, `Cephalon.Observability.ConsulDependencies`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.Neo4jDependencies`, `Cephalon.Observability.OpenSearchDependencies`, `Cephalon.Observability.OracleDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
 
 Current semantics:
 
@@ -184,6 +184,58 @@ Operational notes:
 - if the configured endpoint is just the cluster base URL, the probe automatically resolves `GET /_cluster/health`
 - probes support API-key auth, bearer-token auth, or basic auth without hiding those choices in host code
 - cluster `green` maps to `Healthy`, `yellow` maps to `Degraded`, `red` maps to `Unhealthy`, and Elasticsearch-side `timed_out` responses are treated as `Unhealthy`
+- required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
+
+### ClickHouse dependency probes
+
+`Cephalon.Observability.ClickHouseDependencies` reads `Engine:Observability:DependencyHealth:ClickHouse` and turns configured ClickHouse endpoints into reusable `IDependencyHealthContributor` data.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "DependencyHealth": {
+        "ClickHouse": {
+          "RefreshIntervalSeconds": 30,
+          "Dependencies": [
+            {
+              "Id": "analytics-clickhouse",
+              "DisplayName": "Analytics ClickHouse",
+              "Host": "analytics.internal.example",
+              "Protocol": "https",
+              "Port": 8443,
+              "Database": "analytics",
+              "Username": "cephalon-runtime",
+              "Password": "${CLICKHOUSE_PASSWORD}",
+              "HealthQuery": "SELECT 1",
+              "Required": true,
+              "TimeoutSeconds": 5
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonClickHouseDependencyHealth(builder.Configuration);
+```
+
+Operational notes:
+
+- the ClickHouse dependency-health package is optional and stays outside `Cephalon.Engine`
+- the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
+- probes can use either a full connection string or discrete `Host` / `Protocol` / `Port` / `Database` settings so HTTP transport choices stay explicit
+- each probe opens a dedicated ClickHouse connection, runs the configured SQL health query, and reports the result through the shared dependency-health contract
 - required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
 
 ### OpenSearch dependency probes
@@ -940,6 +992,7 @@ Current shipped event-id ranges include:
 - `Cephalon.Observability.OracleDependencies`: `3144-3145`
 - `Cephalon.Observability.Neo4jDependencies`: `3148-3149`
 - `Cephalon.Observability.OpenSearchDependencies`: `3150-3151`
+- `Cephalon.Observability.ClickHouseDependencies`: `3152-3153`
 
 This is the quickest way to discover the engine's observability contract without opening code.
 

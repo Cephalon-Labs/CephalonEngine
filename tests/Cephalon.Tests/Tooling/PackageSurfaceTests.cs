@@ -136,6 +136,16 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void ObservabilityClickHouseDependenciesAssemblyExposesOnlyTheDocumentedConfigurationAndRegistrationSurface()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Observability.ClickHouseDependencies.Hosting.ClickHouseDependencyHealthServiceCollectionExtensions).Assembly,
+            typeof(global::Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition),
+            typeof(global::Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyHealthOptions),
+            typeof(global::Cephalon.Observability.ClickHouseDependencies.Hosting.ClickHouseDependencyHealthServiceCollectionExtensions));
+    }
+
+    [Fact]
     public void ObservabilityNeo4jDependenciesAssemblyExposesOnlyTheDocumentedConfigurationAndRegistrationSurface()
     {
         AssertExportedTypes(
