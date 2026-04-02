@@ -539,7 +539,7 @@ Parameters:
 
 Configures opt-in HTTP request and response logging for Cephalon ASP.NET Core hosts.
 
-Remarks: These settings are read from `Engine:Observability:HttpLogging` by default. Request and response bodies are captured only for textual content types such as JSON, XML, GraphQL, form payloads, and `text/*` responses, and body capture is truncated to the configured limits.
+Remarks: These settings are read from `Engine:Observability:HttpLogging` by default. Request and response bodies are captured only for textual content types such as JSON, XML, GraphQL, form payloads, and `text/*` responses, and body capture is truncated to the configured limits. Sensitive query-string and payload fields can also be redacted before the log event is written, including JSON, form, and header-style plain-text key/value content.
 
 #### Declaration
 ```csharp
@@ -589,6 +589,36 @@ bool LogResponseBody { get; set; }
 ```
 
 Gets or sets a value indicating whether textual response bodies should be logged.
+
+<a id="member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-redactedfieldnames"></a>
+
+##### `RedactedFieldNames`
+
+```csharp
+IReadOnlyList<string> RedactedFieldNames { get; set; }
+```
+
+Gets or sets the field names that should be treated as sensitive when request and response content is logged.
+
+<a id="member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-redactionvalue"></a>
+
+##### `RedactionValue`
+
+```csharp
+string RedactionValue { get; set; }
+```
+
+Gets or sets the placeholder written to logs when a sensitive value is redacted.
+
+<a id="member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-redactsensitivevalues"></a>
+
+##### `RedactSensitiveValues`
+
+```csharp
+bool RedactSensitiveValues { get; set; }
+```
+
+Gets or sets a value indicating whether known-sensitive query-string and payload fields should be redacted before logging.
 
 <a id="member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-requestbodylimit"></a>
 

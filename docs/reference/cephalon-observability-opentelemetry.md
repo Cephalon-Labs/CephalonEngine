@@ -36,7 +36,7 @@ Adds OpenTelemetry exporter registration for the Cephalon engine diagnostics sur
 
 Remarks: This package keeps exporter wiring outside `Cephalon.Engine` and `Cephalon.Observability`. Hosts opt in explicitly when they want a supported OpenTelemetry path instead of guidance-only settings.
 
-Registration is skipped when no export endpoint is configured or when every signal is disabled. The endpoint is interpreted as a base collector endpoint for HTTP/protobuf and the signal-specific OTLP paths are appended automatically.
+Registration is skipped when every signal is disabled or when no export endpoint is configured and explicit self-hosted defaults are not enabled. When `UseSelfHostedDefaults` is enabled, the package falls back to the standard local OTLP collector ports and adds a `deployment.environment.name` resource attribute from the current host environment. The endpoint is interpreted as a base collector endpoint for HTTP/protobuf and the signal-specific OTLP paths are appended automatically.
 
 Returns: The same builder instance for fluent host composition.
 

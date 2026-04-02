@@ -65,4 +65,32 @@ public sealed class ObservabilityHostingTests
             entry.EventId.Id == 2000 &&
             entry.Message.Contains("Runtime phase 'start' completed", StringComparison.Ordinal));
     }
+
+    [Fact]
+    public async Task AddCephalonObservabilityLogsSelfHostedTelemetryDefaultEndpointWhenEnabled()
+    {
+        var loggerProvider = new TestLoggerProvider();
+        var builder = Host.CreateApplicationBuilder();
+        builder.Logging.ClearProviders();
+        builder.Logging.AddProvider(loggerProvider);
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:Telemetry:Provider"] = "OpenTelemetry";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:Telemetry:Protocol"] = "otlp/http";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:Telemetry:UseSelfHostedDefaults"] = "true";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new DiscoveryTestModule());
+        });
+        builder.Services.AddCephalonObservability(builder.Configuration);
+
+        using var host = builder.Build();
+
+        await host.StartAsync();
+        await host.StopAsync();
+
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3005 &&
+            entry.Message.Contains("http://localhost:4318 (self-hosted default)", StringComparison.Ordinal));
+    }
 }
