@@ -188,6 +188,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Eventing](cephalon-eventing.md#namespace-cephalon-eventing-services): 4 public types [Browse](browse.html?assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
 
+## `Cephalon.Observability.AlibabaCloud.Configuration`
+
+- [Cephalon.Observability.AlibabaCloud](cephalon-observability-alibabacloud.md#namespace-cephalon-observability-alibabacloud-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Configuration)
+
+## `Cephalon.Observability.AlibabaCloud.Hosting`
+
+- [Cephalon.Observability.AlibabaCloud](cephalon-observability-alibabacloud.md#namespace-cephalon-observability-alibabacloud-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Hosting)
+
 ## `Cephalon.Observability.Aws.Configuration`
 
 - [Cephalon.Observability.Aws](cephalon-observability-aws.md#namespace-cephalon-observability-aws-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Configuration)
