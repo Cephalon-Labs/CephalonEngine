@@ -72,6 +72,7 @@ Current baseline:
 - `Cephalon.Observability.KafkaDependencies` now provides a reusable provider-specific pack for Kafka brokers, including bootstrap-server metadata checks plus optional topic verification and SASL/security protocol selection
 - `Cephalon.Observability.MongoDbDependencies` now provides a reusable provider-specific pack for MongoDB databases, including connection-string or host/database configuration plus TLS and direct-connection controls
 - `Cephalon.Observability.MySqlDependencies` now provides a reusable provider-specific pack for MySQL and MariaDB databases, including connection-string or host/database configuration plus SSL-mode and public-key retrieval settings
+- `Cephalon.Observability.NatsDependencies` now provides a reusable provider-specific pack for NATS brokers, including protocol-level `INFO`, `CONNECT`, and `PING`/`PONG` verification plus explicit token or username/password auth settings
 - `Cephalon.Observability.PostgresDependencies` now provides a reusable provider-specific pack for Postgres databases, including connection-string or host/database configuration plus configurable health queries
 - `Cephalon.Observability.RabbitMqDependencies` now provides a reusable provider-specific pack for RabbitMQ brokers, including AMQP connection-string or host/virtual-host configuration plus optional TLS
 - `Cephalon.Observability.RedisDependencies` now provides a reusable provider-specific pack for Redis and cache endpoints, including auth and logical database selection
@@ -80,7 +81,7 @@ Current baseline:
 Gap:
 
 - broader provider-specific packs for additional databases and brokers are still missing
-- current shipped provider coverage now includes external HTTP/API upstreams plus Kafka broker metadata endpoints plus MongoDB document-database endpoints plus MySQL/MariaDB database endpoints plus Postgres database endpoints plus RabbitMQ broker endpoints plus Redis/cache endpoints plus SQL Server and Azure SQL endpoints; richer infrastructure-specific packs beyond that baseline are still left to host or module authors
+- current shipped provider coverage now includes external HTTP/API upstreams plus Kafka broker metadata endpoints plus MongoDB document-database endpoints plus MySQL/MariaDB database endpoints plus NATS broker endpoints plus Postgres database endpoints plus RabbitMQ broker endpoints plus Redis/cache endpoints plus SQL Server and Azure SQL endpoints; richer infrastructure-specific packs beyond that baseline are still left to host or module authors
 
 Why this stays separate:
 

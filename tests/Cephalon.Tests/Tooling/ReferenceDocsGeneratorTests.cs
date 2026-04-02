@@ -129,6 +129,7 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.Observability.KafkaDependencies",
                 "Cephalon.Observability.MongoDbDependencies",
                 "Cephalon.Observability.MySqlDependencies",
+                "Cephalon.Observability.NatsDependencies",
                 "Cephalon.Observability.PostgresDependencies",
                 "Cephalon.Observability.RabbitMqDependencies",
                 "Cephalon.Observability.RedisDependencies",
@@ -185,6 +186,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-kafkadependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-mongodbdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-mysqldependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-natsdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-postgresdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-rabbitmqdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-redisdependencies.md");
@@ -206,6 +208,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.MySqlDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.NatsDependencies", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.PostgresDependencies", StringComparison.Ordinal));

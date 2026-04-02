@@ -27,6 +27,7 @@ When working in this repository:
 - `Cephalon.Observability.KafkaDependencies` is the optional Kafka dependency-health companion package
 - `Cephalon.Observability.MongoDbDependencies` is the optional MongoDB dependency-health companion package
 - `Cephalon.Observability.MySqlDependencies` is the optional MySQL dependency-health companion package
+- `Cephalon.Observability.NatsDependencies` is the optional NATS dependency-health companion package
 - `Cephalon.Observability.PostgresDependencies` is the optional Postgres dependency-health companion package
 - `Cephalon.Observability.RabbitMqDependencies` is the optional RabbitMQ dependency-health companion package
 - `Cephalon.Observability.RedisDependencies` is the optional Redis and cache dependency-health companion package
@@ -208,6 +209,9 @@ Current source layout:
 - `src/Cephalon.Observability.MySqlDependencies/Configuration` -> `Cephalon.Observability.MySqlDependencies.Configuration`
 - `src/Cephalon.Observability.MySqlDependencies/Hosting` -> `Cephalon.Observability.MySqlDependencies.Hosting`
 - `src/Cephalon.Observability.MySqlDependencies/Services` -> `Cephalon.Observability.MySqlDependencies.Services`
+- `src/Cephalon.Observability.NatsDependencies/Configuration` -> `Cephalon.Observability.NatsDependencies.Configuration`
+- `src/Cephalon.Observability.NatsDependencies/Hosting` -> `Cephalon.Observability.NatsDependencies.Hosting`
+- `src/Cephalon.Observability.NatsDependencies/Services` -> `Cephalon.Observability.NatsDependencies.Services`
 - `src/Cephalon.Observability.PostgresDependencies/Configuration` -> `Cephalon.Observability.PostgresDependencies.Configuration`
 - `src/Cephalon.Observability.PostgresDependencies/Hosting` -> `Cephalon.Observability.PostgresDependencies.Hosting`
 - `src/Cephalon.Observability.PostgresDependencies/Services` -> `Cephalon.Observability.PostgresDependencies.Services`

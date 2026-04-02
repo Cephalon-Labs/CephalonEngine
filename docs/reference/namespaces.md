@@ -228,6 +228,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Observability.MySqlDependencies](cephalon-observability-mysqldependencies.md#namespace-cephalon-observability-mysqldependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Hosting)
 
+## `Cephalon.Observability.NatsDependencies.Configuration`
+
+- [Cephalon.Observability.NatsDependencies](cephalon-observability-natsdependencies.md#namespace-cephalon-observability-natsdependencies-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration)
+
+## `Cephalon.Observability.NatsDependencies.Hosting`
+
+- [Cephalon.Observability.NatsDependencies](cephalon-observability-natsdependencies.md#namespace-cephalon-observability-natsdependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Hosting)
+
 ## `Cephalon.Observability.OpenTelemetry.Hosting`
 
 - [Cephalon.Observability.OpenTelemetry](cephalon-observability-opentelemetry.md#namespace-cephalon-observability-opentelemetry-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.OpenTelemetry&namespace=Cephalon.Observability.OpenTelemetry.Hosting)

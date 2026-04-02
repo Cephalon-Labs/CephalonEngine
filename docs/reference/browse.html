@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T03:28:19.624375+00:00",
+  "GeneratedAtUtc": "2026-04-02T04:05:08.4472263+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -222,6 +222,14 @@
       "Category": "Hosts",
       "Description": "MySQL dependency-health integration for Cephalon hosts.",
       "FileName": "cephalon-observability-mysqldependencies.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "Category": "Hosts",
+      "Description": "NATS dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-natsdependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
     },
@@ -689,6 +697,20 @@
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
       "FileName": "cephalon-observability-mysqldependencies.md",
       "AnchorId": "namespace-cephalon-observability-mysqldependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-natsdependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-natsdependencies-hosting",
       "TypeCount": 1
     },
     {
@@ -2440,6 +2462,51 @@
       }
     },
     {
+      "DisplayName": "NatsDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "type-cephalon-observability-natsdependencies-configuration-natsdependencydefinition",
+      "Declaration": "public sealed class NatsDependencyDefinition",
+      "Summary": "Describes one NATS dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 12,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "NatsDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "type-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions",
+      "Declaration": "public sealed class NatsDependencyHealthOptions",
+      "Summary": "Configures NATS dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "NatsDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "type-cephalon-observability-natsdependencies-hosting-natsdependencyhealthservicecollectionextensions",
+      "Declaration": "public static class NatsDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds NATS dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
       "DisplayName": "ObservabilityOptions",
       "NamespaceName": "Cephalon.Observability.Configuration",
       "AssemblyName": "Cephalon.Observability",
@@ -3905,6 +3972,28 @@
       "Summary": "Adds MySQL dependency-health services using configuration as the primary source of probe settings."
     },
     {
+      "DisplayName": "AddCephalonNatsDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "NatsDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-natsdependencies-hosting-natsdependencyhealthservicecollectionextensions-addcephalonnatsdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonNatsDependencyHealth(this IServiceCollection services, Action\u003CNatsDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds NATS dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonNatsDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "NatsDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-natsdependencies-hosting-natsdependencyhealthservicecollectionextensions-addcephalonnatsdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonNatsDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CNatsDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds NATS dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
       "DisplayName": "AddCephalonObservability",
       "Category": "Methods",
       "DeclaringTypeName": "ObservabilityServiceCollectionExtensions",
@@ -5005,6 +5094,17 @@
       "Summary": "Gets or sets the optional client identifier sent to the Kafka cluster."
     },
     {
+      "DisplayName": "ClientName",
+      "Category": "Properties",
+      "DeclaringTypeName": "NatsDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-clientname",
+      "Signature": "string ClientName { get; set; }",
+      "Summary": "Gets or sets the optional client name sent in the NATS \u0060CONNECT\u0060 payload."
+    },
+    {
       "DisplayName": "ClientStreaming",
       "Category": "Fields",
       "DeclaringTypeName": "TransportFeatures",
@@ -5678,6 +5778,17 @@
     {
       "DisplayName": "Dependencies",
       "Category": "Properties",
+      "DeclaringTypeName": "NatsDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003CNatsDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured NATS dependencies that should contribute to runtime health."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -6343,6 +6454,17 @@
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
       "FileName": "cephalon-observability-mysqldependencies.md",
       "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "NatsDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-displayname",
       "Signature": "string DisplayName { get; set; }",
       "Summary": "Gets or sets the human-readable dependency name shown to operators."
     },
@@ -7284,6 +7406,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "NatsDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "NatsDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds NATS dependency-health options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "ObservabilityOptions",
       "NamespaceName": "Cephalon.Observability.Configuration",
       "AssemblyName": "Cephalon.Observability",
@@ -7713,6 +7846,17 @@
     {
       "DisplayName": "Host",
       "Category": "Properties",
+      "DeclaringTypeName": "NatsDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-host",
+      "Signature": "string Host { get; set; }",
+      "Summary": "Gets or sets the NATS host name or IP address to probe."
+    },
+    {
+      "DisplayName": "Host",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -7938,6 +8082,17 @@
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
       "FileName": "cephalon-observability-mysqldependencies.md",
       "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "NatsDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-id",
       "Signature": "string Id { get; set; }",
       "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
@@ -9768,6 +9923,28 @@
       "Summary": "Gets the project-name template."
     },
     {
+      "DisplayName": "NatsDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "NatsDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-ctor",
+      "Signature": "NatsDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060NatsDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "NatsDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "NatsDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions-ctor",
+      "Signature": "NatsDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060NatsDependencyHealthOptions\u0060 class."
+    },
+    {
       "DisplayName": "Nodes",
       "Category": "Properties",
       "DeclaringTypeName": "EdgeRuntimeOptions",
@@ -10133,6 +10310,17 @@
     {
       "DisplayName": "Password",
       "Category": "Properties",
+      "DeclaringTypeName": "NatsDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-password",
+      "Signature": "string Password { get; set; }",
+      "Summary": "Gets or sets the optional password used for NATS user/password authentication."
+    },
+    {
+      "DisplayName": "Password",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -10393,6 +10581,17 @@
       "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-port",
       "Signature": "int Port { get; set; }",
       "Summary": "Gets or sets the MySQL TCP port."
+    },
+    {
+      "DisplayName": "Port",
+      "Category": "Properties",
+      "DeclaringTypeName": "NatsDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-port",
+      "Signature": "int Port { get; set; }",
+      "Summary": "Gets or sets the NATS client port."
     },
     {
       "DisplayName": "Port",
@@ -10848,6 +11047,17 @@
     {
       "DisplayName": "RefreshIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "NatsDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -11150,6 +11360,17 @@
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
       "FileName": "cephalon-observability-mysqldependencies.md",
       "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "NatsDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
@@ -13334,6 +13555,17 @@
     {
       "DisplayName": "TimeoutSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "NatsDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-probe timeout in seconds."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -13374,6 +13606,28 @@
       "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-timeoutseconds",
       "Signature": "int TimeoutSeconds { get; set; }",
       "Summary": "Gets or sets the per-probe timeout in seconds."
+    },
+    {
+      "DisplayName": "TlsServerName",
+      "Category": "Properties",
+      "DeclaringTypeName": "NatsDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-tlsservername",
+      "Signature": "string TlsServerName { get; set; }",
+      "Summary": "Gets or sets the TLS server name used for certificate validation when \u0060UseTls\u0060 is enabled."
+    },
+    {
+      "DisplayName": "Token",
+      "Category": "Properties",
+      "DeclaringTypeName": "NatsDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-token",
+      "Signature": "string Token { get; set; }",
+      "Summary": "Gets or sets the optional auth token used for token-based NATS authentication."
     },
     {
       "DisplayName": "Tools",
@@ -13917,6 +14171,17 @@
     {
       "DisplayName": "Username",
       "Category": "Properties",
+      "DeclaringTypeName": "NatsDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-username",
+      "Signature": "string Username { get; set; }",
+      "Summary": "Gets or sets the optional user name used for NATS user/password authentication."
+    },
+    {
+      "DisplayName": "Username",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -13979,6 +14244,17 @@
       "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-usetls",
       "Signature": "bool? UseTls { get; set; }",
       "Summary": "Gets or sets the optional value that controls whether TLS should be used for the probe."
+    },
+    {
+      "DisplayName": "UseTls",
+      "Category": "Properties",
+      "DeclaringTypeName": "NatsDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.NatsDependencies",
+      "FileName": "cephalon-observability-natsdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-usetls",
+      "Signature": "bool UseTls { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the probe should upgrade the connection to TLS after reading the initial server info line."
     },
     {
       "DisplayName": "UseTls",

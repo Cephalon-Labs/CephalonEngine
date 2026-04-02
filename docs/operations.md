@@ -13,7 +13,7 @@ ASP.NET Core hosts that call `app.MapCephalon()` now expose three health routes:
 - `/health/ready`
 
 Health responses are JSON and include the check status, duration, and runtime-specific details such as restart count and the most recent failure context.
-When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
+When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
 
 Current semantics:
 
@@ -401,6 +401,55 @@ Operational notes:
 - optional `SslMode` and `AllowPublicKeyRetrieval` settings let hosts keep MySQL transport and authentication expectations explicit instead of hidden in host-specific code
 - required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
 
+### NATS dependency probes
+
+`Cephalon.Observability.NatsDependencies` reads `Engine:Observability:DependencyHealth:Nats` and turns configured NATS endpoints into reusable `IDependencyHealthContributor` data.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "DependencyHealth": {
+        "Nats": {
+          "RefreshIntervalSeconds": 30,
+          "Dependencies": [
+            {
+              "Id": "events-nats",
+              "DisplayName": "Events NATS",
+              "Host": "nats.internal.example",
+              "Port": 4222,
+              "Token": "${NATS_TOKEN}",
+              "ClientName": "cephalon-runtime",
+              "Required": true,
+              "TimeoutSeconds": 5
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonNatsDependencyHealth(builder.Configuration);
+```
+
+Operational notes:
+
+- the NATS dependency-health package is optional and stays outside `Cephalon.Engine`
+- the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
+- each probe opens a TCP connection, reads the initial server `INFO` line, sends a NATS `CONNECT` payload, and verifies a `PING` -> `PONG` round-trip
+- probes support token-based auth or username/password auth, and TLS stays explicit through `UseTls` and `TlsServerName`
+- required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
+
 ### MongoDB dependency probes
 
 `Cephalon.Observability.MongoDbDependencies` reads `Engine:Observability:DependencyHealth:MongoDb` and turns configured MongoDB endpoints into reusable `IDependencyHealthContributor` data.
@@ -482,6 +531,7 @@ Current shipped event-id ranges include:
 - `Cephalon.Observability.MySqlDependencies`: `3128-3129`
 - `Cephalon.Observability.MongoDbDependencies`: `3130-3131`
 - `Cephalon.Observability.KafkaDependencies`: `3132-3133`
+- `Cephalon.Observability.NatsDependencies`: `3134-3135`
 
 This is the quickest way to discover the engine's observability contract without opening code.
 

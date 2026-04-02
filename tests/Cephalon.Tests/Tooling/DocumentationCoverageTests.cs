@@ -20,6 +20,7 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.Observability.KafkaDependencies"] = "observability-kafka-dependencies.md",
             ["Cephalon.Observability.MongoDbDependencies"] = "observability-mongodb-dependencies.md",
             ["Cephalon.Observability.MySqlDependencies"] = "observability-mysql-dependencies.md",
+            ["Cephalon.Observability.NatsDependencies"] = "observability-nats-dependencies.md",
             ["Cephalon.Observability.PostgresDependencies"] = "observability-postgres-dependencies.md",
             ["Cephalon.Observability.RabbitMqDependencies"] = "observability-rabbitmq-dependencies.md",
             ["Cephalon.Observability.RedisDependencies"] = "observability-redis-dependencies.md",

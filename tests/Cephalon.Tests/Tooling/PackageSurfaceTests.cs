@@ -173,6 +173,16 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void ObservabilityNatsDependenciesAssemblyExposesOnlyTheDocumentedConfigurationAndRegistrationSurface()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Observability.NatsDependencies.Hosting.NatsDependencyHealthServiceCollectionExtensions).Assembly,
+            typeof(global::Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition),
+            typeof(global::Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyHealthOptions),
+            typeof(global::Cephalon.Observability.NatsDependencies.Hosting.NatsDependencyHealthServiceCollectionExtensions));
+    }
+
+    [Fact]
     public void ObservabilityMongoDbDependenciesAssemblyExposesOnlyTheDocumentedConfigurationAndRegistrationSurface()
     {
         AssertExportedTypes(
