@@ -7,6 +7,7 @@ param(
     [string[]]$BenchmarkFilters = @(
         "*EngineBuilderBenchmarks*",
         "*EngineRuntimeBenchmarks*",
+        "*AspNetCoreRequestLoggingBenchmarks*",
         "*ScaffoldGeneratorBenchmarks*"
     )
 )

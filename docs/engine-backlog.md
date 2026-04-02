@@ -348,6 +348,7 @@ Delivered:
 - benchmark docs updated with the validation flow
 - composition and runtime benchmarks now prepare configured builders, runtimes, and service providers outside the measured loop so guardrails track `Build()` and lifecycle transition costs directly
 - composition baseline thresholds refreshed to match the prepared-scenario hot path shipped in the release-validation flow
+- ASP.NET Core request logging now has a shipped guardrail scenario that covers correlated request/response body capture over the public host surface
 
 Follow-up later:
 

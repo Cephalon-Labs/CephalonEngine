@@ -45,6 +45,7 @@ That means phase 2 is follow-through work, not greenfield operational work.
   - `scripts/validate-release.ps1`
   - `.github/workflows/release-validation.yml`
   - prepared composition and runtime hot paths are benchmarked separately from builder/provider setup so the guardrail catalog tracks `Build()` and lifecycle costs directly
+  - the guardrail catalog now also covers the correlated ASP.NET Core request-logging path with request/response body capture enabled
 
 ## Gap status mapped to backlog tasks
 

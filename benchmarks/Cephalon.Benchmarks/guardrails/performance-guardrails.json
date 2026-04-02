@@ -16,6 +16,13 @@
       "notes": "Prepared runtime initialize/start/stop lifecycle overhead should stay below 25 us for the benchmark scenario."
     },
     {
+      "reportFileName": "Cephalon.Benchmarks.Runtime.AspNetCoreRequestLoggingBenchmarks-report.csv",
+      "benchmark": "HandleLoggedJsonRequest",
+      "maxMeanNanoseconds": 50000,
+      "maxAllocatedBytes": 50000,
+      "notes": "Correlated ASP.NET Core request logging with request/response body capture should stay below 50 us and under roughly 50 KB allocated per request in the shipped benchmark scenario."
+    },
+    {
       "reportFileName": "Cephalon.Benchmarks.Scaffolding.ScaffoldGeneratorBenchmarks-report.csv",
       "benchmark": "GenerateBlueprintScaffold",
       "maxMeanNanoseconds": 220000,

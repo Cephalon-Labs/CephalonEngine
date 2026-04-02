@@ -2,10 +2,11 @@
 
 `Cephalon.Benchmarks` is the repository performance suite built on BenchmarkDotNet.
 
-It currently tracks three hot paths:
+It currently tracks four hot paths:
 
 - `Cephalon.Benchmarks.Composition`: configured-builder engine composition and manifest construction
 - `Cephalon.Benchmarks.Runtime`: prepared-runtime initialize/start/stop lifecycle overhead
+- `Cephalon.Benchmarks.Runtime`: ASP.NET Core request logging with bounded request/response body capture and trace correlation
 - `Cephalon.Benchmarks.Scaffolding`: blueprint-to-files scaffold generation
 
 The benchmark suite now also ships a guardrail catalog at `benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json`.
@@ -14,6 +15,7 @@ That catalog is the repository baseline for the current hot paths:
 
 - `BuildRuntimeManifest`
 - `InitializeStartStopRuntime`
+- `HandleLoggedJsonRequest`
 - `GenerateBlueprintScaffold`
 
 The composition and runtime baselines prepare configured builders, runtimes, and service providers outside the measured loop so the guardrails track `Build()` and lifecycle transition costs rather than one-time benchmark harness setup.
@@ -29,6 +31,7 @@ dotnet run -c Release --project benchmarks/Cephalon.Benchmarks
 ```powershell
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*EngineBuilderBenchmarks*"
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*EngineRuntimeBenchmarks*"
+dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*AspNetCoreRequestLoggingBenchmarks*"
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*ScaffoldGeneratorBenchmarks*"
 ```
 
@@ -61,7 +64,7 @@ Useful switches:
 .\scripts\validate-release.ps1 -SkipTests
 .\scripts\validate-release.ps1 -SkipOperationalConventions
 .\scripts\validate-release.ps1 -SkipReferenceDocs
-.\scripts\validate-release.ps1 -BenchmarkFilters "*EngineBuilderBenchmarks*" "*EngineRuntimeBenchmarks*"
+.\scripts\validate-release.ps1 -BenchmarkFilters "*EngineBuilderBenchmarks*" "*EngineRuntimeBenchmarks*" "*AspNetCoreRequestLoggingBenchmarks*"
 ```
 
 Run only the focused health/export convention suite:
@@ -92,3 +95,4 @@ Treat `scripts/validate-release.ps1` as the source of truth. If the local releas
 - prefer adding a focused benchmark before large composition/runtime/scaffolding refactors
 - update the guardrail catalog deliberately when benchmark scenarios change materially
 - use the guardrails to catch regressions, not to chase machine-specific micro-noise
+- keep HTTP-host hot paths covered when request logging, body capture, or trace-correlation behavior changes materially

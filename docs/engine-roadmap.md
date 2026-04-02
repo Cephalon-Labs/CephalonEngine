@@ -37,7 +37,7 @@ The foundation is no longer hypothetical. The repository already ships:
 - runtime failure policy baseline with fail-fast, capture-only, best-effort stop, and restart guards
 - operational health endpoints, diagnostics surface, and dependency-health contributor baseline for ASP.NET Core hosts
 - observability conventions for logs, metrics, tracing, and telemetry export guidance
-- a benchmark suite plus baseline guardrail validation for composition, runtime lifecycle, and scaffolding hot paths
+- a benchmark suite plus baseline guardrail validation for composition, runtime lifecycle, ASP.NET Core request logging, and scaffolding hot paths
 - a GitHub Actions release-validation workflow that runs the repo-native build, test, benchmark, and guardrail flow
 
 That changes the plan materially:
@@ -142,7 +142,7 @@ Deliverables:
 Current inventory:
 
 - `docs/operational-hardening-gap-inventory.md` now records the shipped baseline versus the remaining phase-2 gaps so follow-through work stays grounded in the code that already exists
-- that inventory now includes shipped `Cephalon.Observability.OpenTelemetry` and `Cephalon.Observability.Serilog` companion packages plus shipped `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` companion packages, together with a published runtime diagnostics catalog, runtime-story surface, configurable failure-policy warmup/drain/backoff semantics, opt-in ASP.NET Core request/response body logging with request/trace correlation, explicit release-validation guidance for health/export conventions, and refreshed benchmark guardrails that separate prepared composition/lifecycle hot paths from benchmark harness setup
+- that inventory now includes shipped `Cephalon.Observability.OpenTelemetry` and `Cephalon.Observability.Serilog` companion packages plus shipped `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` companion packages, together with a published runtime diagnostics catalog, runtime-story surface, configurable failure-policy warmup/drain/backoff semantics, opt-in ASP.NET Core request/response body logging with request/trace correlation, explicit release-validation guidance for health/export conventions, and refreshed benchmark guardrails that separate prepared composition/lifecycle hot paths plus the correlated ASP.NET Core request-logging path from benchmark harness setup
 - the remaining observability follow-through now sits primarily in cloud tracing/export integration once the target cloud/runtime context is explicit, while the shared `ILogger` pipeline already has shipped Serilog provider wiring plus correlated ASP.NET Core request logging
 
 Exit criteria:
