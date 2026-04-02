@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T16:30:43.8939086+00:00",
+  "GeneratedAtUtc": "2026-04-02T17:16:37.0164229+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -89,6 +89,14 @@
       "FileName": "cephalon-observability.md",
       "NamespaceCount": 2,
       "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.Aws",
+      "Category": "Hosts",
+      "Description": "AWS OTLP defaults, X-Ray propagation, and hosted resource integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-aws.md",
+      "NamespaceCount": 2,
+      "TypeCount": 2
     },
     {
       "AssemblyName": "Cephalon.Observability.AzureMonitor",
@@ -615,6 +623,20 @@
       "TypeCount": 4
     },
     {
+      "NamespaceName": "Cephalon.Observability.Aws.Configuration",
+      "AssemblyName": "Cephalon.Observability.Aws",
+      "FileName": "cephalon-observability-aws.md",
+      "AnchorId": "namespace-cephalon-observability-aws-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.Aws.Hosting",
+      "AssemblyName": "Cephalon.Observability.Aws",
+      "FileName": "cephalon-observability-aws.md",
+      "AnchorId": "namespace-cephalon-observability-aws-hosting",
+      "TypeCount": 1
+    },
+    {
       "NamespaceName": "Cephalon.Observability.AzureMonitor.Configuration",
       "AssemblyName": "Cephalon.Observability.AzureMonitor",
       "FileName": "cephalon-observability-azuremonitor.md",
@@ -1060,6 +1082,36 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "AwsHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.Aws.Hosting",
+      "AssemblyName": "Cephalon.Observability.Aws",
+      "FileName": "cephalon-observability-aws.md",
+      "AnchorId": "type-cephalon-observability-aws-hosting-awshostapplicationbuilderextensions",
+      "Declaration": "public static class AwsHostApplicationBuilderExtensions",
+      "Summary": "Adds AWS-hosted observability defaults and OTLP exporter wiring for Cephalon hosts.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "AwsTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Aws.Configuration",
+      "AssemblyName": "Cephalon.Observability.Aws",
+      "FileName": "cephalon-observability-aws.md",
+      "AnchorId": "type-cephalon-observability-aws-configuration-awstelemetryexportoptions",
+      "Declaration": "public sealed class AwsTelemetryExportOptions",
+      "Summary": "Configures AWS-hosted observability defaults on top of the shared Cephalon telemetry contract.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
         "Methods": 1
       }
     },
@@ -4492,6 +4544,17 @@
       "Summary": "Adds Cephalon worker hosting and allows additional code-based engine configuration."
     },
     {
+      "DisplayName": "AddCephalonAws",
+      "Category": "Methods",
+      "DeclaringTypeName": "AwsHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.Aws.Hosting",
+      "AssemblyName": "Cephalon.Observability.Aws",
+      "FileName": "cephalon-observability-aws.md",
+      "AnchorId": "member-m-cephalon-observability-aws-hosting-awshostapplicationbuilderextensions-addcephalonaws-1-0-system-action-cephalon-observability-aws-configuration-awstelemetryexportoptions",
+      "Signature": "TBuilder AddCephalonAws\u003CTBuilder\u003E(this TBuilder builder, Action\u003CAwsTelemetryExportOptions\u003E configure)",
+      "Summary": "Adds AWS-aware OpenTelemetry registration for the Cephalon engine diagnostics surface."
+    },
+    {
       "DisplayName": "AddCephalonAzureMonitor",
       "Category": "Methods",
       "DeclaringTypeName": "AzureMonitorHostApplicationBuilderExtensions",
@@ -5634,6 +5697,17 @@
       "AnchorId": "member-p-cephalon-aspnetcore-documentation-referencedocssurface-available",
       "Signature": "bool Available { get; set; }",
       "Summary": "Whether the configured documentation directory and default document were found and mapped."
+    },
+    {
+      "DisplayName": "AwsTelemetryExportOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AwsTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Aws.Configuration",
+      "AssemblyName": "Cephalon.Observability.Aws",
+      "FileName": "cephalon-observability-aws.md",
+      "AnchorId": "member-m-cephalon-observability-aws-configuration-awstelemetryexportoptions-ctor",
+      "Signature": "AwsTelemetryExportOptions()",
+      "Summary": "Initializes a new instance of the \u0060AwsTelemetryExportOptions\u0060 class."
     },
     {
       "DisplayName": "AzureMonitorExportOptions",
@@ -7935,6 +8009,17 @@
       "Summary": "Gets an empty module discovery settings instance."
     },
     {
+      "DisplayName": "EnableAwsSdkInstrumentation",
+      "Category": "Properties",
+      "DeclaringTypeName": "AwsTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Aws.Configuration",
+      "AssemblyName": "Cephalon.Observability.Aws",
+      "FileName": "cephalon-observability-aws.md",
+      "AnchorId": "member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-enableawssdkinstrumentation",
+      "Signature": "bool EnableAwsSdkInstrumentation { get; set; }",
+      "Summary": "Gets or sets a value indicating whether AWS SDK client instrumentation should be enabled for traces."
+    },
+    {
       "DisplayName": "Enabled",
       "Category": "Properties",
       "DeclaringTypeName": "HttpRequestResponseLoggingOptions",
@@ -7988,6 +8073,17 @@
       "AnchorId": "member-p-cephalon-retrieval-configuration-retrievaloptions-enableingestion",
       "Signature": "bool EnableIngestion { get; set; }",
       "Summary": "Gets or sets a value indicating whether ingestion features are enabled."
+    },
+    {
+      "DisplayName": "EnableLambdaContextExtraction",
+      "Category": "Properties",
+      "DeclaringTypeName": "AwsTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Aws.Configuration",
+      "AssemblyName": "Cephalon.Observability.Aws",
+      "FileName": "cephalon-observability-aws.md",
+      "AnchorId": "member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-enablelambdacontextextraction",
+      "Signature": "bool EnableLambdaContextExtraction { get; set; }",
+      "Summary": "Gets or sets a value indicating whether Lambda context extraction should be configured when the hosted platform is \u0060lambda\u0060."
     },
     {
       "DisplayName": "EnableMemory",
@@ -8604,6 +8700,17 @@
       "AnchorId": "member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-foundation",
       "Signature": "const string Foundation",
       "Summary": "Identifies the shared foundation project."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
+      "DeclaringTypeName": "AwsTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Aws.Configuration",
+      "AssemblyName": "Cephalon.Observability.Aws",
+      "FileName": "cephalon-observability-aws.md",
+      "AnchorId": "member-m-cephalon-observability-aws-configuration-awstelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "AwsTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds AWS telemetry export options from configuration."
     },
     {
       "DisplayName": "FromConfiguration",
@@ -9429,6 +9536,17 @@
       "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-host",
       "Signature": "string Host { get; set; }",
       "Summary": "Gets or sets the SQL Server host name or IP address to probe when no full connection string is supplied."
+    },
+    {
+      "DisplayName": "HostedPlatform",
+      "Category": "Properties",
+      "DeclaringTypeName": "AwsTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Aws.Configuration",
+      "AssemblyName": "Cephalon.Observability.Aws",
+      "FileName": "cephalon-observability-aws.md",
+      "AnchorId": "member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-hostedplatform",
+      "Signature": "string HostedPlatform { get; set; }",
+      "Summary": "Gets or sets the hosted AWS platform whose default resource attributes and detectors should be applied."
     },
     {
       "DisplayName": "HostedPlatform",
@@ -16744,6 +16862,28 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-usetrustpolicy-cephalon-engine-configuration-trustpolicy",
       "Signature": "EngineBuilder UseTrustPolicy(TrustPolicy policy)",
       "Summary": "Merges trust and capability-governance settings into the builder."
+    },
+    {
+      "DisplayName": "UseXRayPropagator",
+      "Category": "Properties",
+      "DeclaringTypeName": "AwsTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Aws.Configuration",
+      "AssemblyName": "Cephalon.Observability.Aws",
+      "FileName": "cephalon-observability-aws.md",
+      "AnchorId": "member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-usexraypropagator",
+      "Signature": "bool UseXRayPropagator { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the AWS X-Ray text-map propagator should become the default propagator for the host when traces are enabled."
+    },
+    {
+      "DisplayName": "UseXRayTraceIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "AwsTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Aws.Configuration",
+      "AssemblyName": "Cephalon.Observability.Aws",
+      "FileName": "cephalon-observability-aws.md",
+      "AnchorId": "member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-usexraytraceids",
+      "Signature": "bool UseXRayTraceIds { get; set; }",
+      "Summary": "Gets or sets a value indicating whether AWS X-Ray-compatible trace identifiers should be used."
     },
     {
       "DisplayName": "VerificationReason",
