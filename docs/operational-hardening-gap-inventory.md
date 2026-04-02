@@ -64,7 +64,7 @@ Outcome:
 
 - exporter packaging should remain outside `Cephalon.Engine`
 - the repository now ships a reusable companion package instead of leaving exporter wiring to sample-only host code
-- remaining phase-2 work now sits primarily in phase-6 cloud tracing/export follow-through, with the self-hosted, Azure Monitor, and AWS slices shipped and GCP now the next explicit vendor-specific target; any extra provider packs, downstream provider companions, or operator refinements stay adoption-driven expansion work
+- remaining phase-2 work now sits primarily in phase-6 cloud tracing/export follow-through, with the self-hosted, Azure Monitor, AWS, and GCP slices shipped; any extra provider packs, downstream provider companions, or operator refinements stay adoption-driven expansion work until the next explicit target is chosen
 
 ### `#87` `ILogger` provider wiring and Serilog host integration
 
@@ -93,8 +93,8 @@ Current baseline:
 Shipped result:
 
 - the original later follow-through expanded into a broader cloud/platform companion track spanning self-hosted collectors and runtimes plus AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu
-- the self-hosted slice is now shipped, `#86` has now shipped Azure Monitor exporter wiring plus hosted Azure defaults as the first explicit vendor-specific child under `ENG-029`, and `#95` has now shipped the AWS follow-through as the second explicit vendor-specific child
-- GCP is now the next explicit follow-up child item under `ENG-029`, while Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu remain later follow-up targets to split into child items instead of staying folded into one ambiguous task
+- the self-hosted slice is now shipped, `#86` has now shipped Azure Monitor exporter wiring plus hosted Azure defaults as the first explicit vendor-specific child under `ENG-029`, `#95` has now shipped the AWS follow-through as the second explicit vendor-specific child, and `#98` has now shipped the GCP follow-through as the third explicit vendor-specific child
+- Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu remain later follow-up targets to split into child items instead of staying folded into one ambiguous task
 
 Why this target stays in phase 6:
 
@@ -108,7 +108,7 @@ Shipped result:
 
 - `Cephalon.Observability.Aws` now ships AWS-specific companion wiring on top of the shared OpenTelemetry baseline, including X-Ray-compatible trace IDs and propagation, AWS SDK instrumentation, and hosted defaults for the supported AWS runtimes
 - the AWS slice keeps cloud-specific behavior in companion packages instead of moving it back into `Cephalon.Engine`
-- GCP is now the next explicit vendor-specific child under `ENG-029`, while Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu remain later follow-up targets under the same epic
+- the GCP slice has now shipped alongside the Azure and AWS slices, while Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu remain later follow-up targets under the same epic
 
 Why this target stays in phase 6:
 
@@ -118,24 +118,20 @@ Why this target stays in phase 6:
 
 ### `#98` GCP observability exporter wiring and hosted GCP defaults on top of the OTLP baseline
 
-Current baseline:
+Shipped result:
 
 - hosts can declare telemetry export intent through `Engine:Observability:Telemetry`
 - `Cephalon.Observability.OpenTelemetry` already wires OTLP logs, metrics, and traces through `AddCephalonOpenTelemetry()`
 - the shipped OTLP baseline now includes ASP.NET Core server instrumentation so exported traces can correlate with Cephalon request logging
-- the shipped self-hosted, Azure Monitor, and AWS slices keep cloud-specific behavior in companion packages instead of moving it back into `Cephalon.Engine`
-
-Next-target decision:
-
-- GCP is now the next explicit vendor-specific child under `ENG-029`
-- GCP narrows the next follow-through to one concrete deployment family instead of reopening a broader cloud/platform matrix
+- `Cephalon.Observability.Gcp` now ships GCP-specific companion wiring on top of the shared OpenTelemetry baseline, including hosted GCP defaults plus an optional Google-managed traces/metrics path
+- the shipped self-hosted, Azure Monitor, AWS, and GCP slices keep cloud-specific behavior in companion packages instead of moving it back into `Cephalon.Engine`
 - Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu remain later follow-up targets under `ENG-029`
 
 Why this target stays in phase 6:
 
 - cloud tracing/export work is deployment-context-specific
 - GCP-specific exporter wiring, auth, resource attributes, and hosted defaults still belong in companion packages rather than the reusable host/runtime primitives shipped in phase 2
-- GCP is the next clean vendor-specific slice after the shipped self-hosted plus Azure plus AWS path because it keeps GKE, GCE, Cloud Run, and related hosted defaults explicit without pretending the broader provider matrix is one task
+- GCP was the clean next vendor-specific slice after the shipped self-hosted plus Azure plus AWS path because it keeps GKE, GCE, Cloud Run, and related hosted defaults explicit without pretending the broader provider matrix is one task
 
 ### `#33` Baseline provider-specific dependency health companion packages
 
@@ -239,11 +235,11 @@ Why this stays separate:
 
 Current conclusion from this inventory:
 
-- the phase-2 child-task split served its purpose for the shipped baseline; with the self-hosted, Azure, and AWS slices complete, `#98` should now carry the next explicit GCP follow-through under `ENG-029`
+- the phase-2 child-task split served its purpose for the shipped baseline; with the self-hosted, Azure, AWS, and GCP slices complete, the remaining `ENG-029` work can stay as a later provider matrix until the next explicit target is chosen
 - phase 2 can now be treated as substantially complete on top of a shipped provider/logging/runtime-surface baseline, with any extra provider packs still treated as future adoption-driven expansion
 
 Recommended execution sequence now is:
 
 1. treat phase 2 as complete for the shipped operational baseline
-2. track `#98` under `ENG-029` in phase 6 cloud and platform integrations as the GCP vendor slice, with Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu narrowed into later explicit child items only when implementation actually starts
+2. keep `ENG-029` open in phase 6 cloud and platform integrations for Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu, and narrow the next explicit child item only when implementation actually starts
 3. keep adoption-driven provider-pack additions separate unless a concrete infrastructure gap appears, and keep the downstream companion-package story explicit for teams that need to implement their own provider path
