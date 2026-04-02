@@ -1586,7 +1586,7 @@ function Get-ManagedProjectViewFieldIds {
         $fieldIds.Add([int]$field.id)
     }
 
-    return @($fieldIds)
+    return ,([int[]]$fieldIds.ToArray())
 }
 
 function Ensure-ManagedProjectViews {
