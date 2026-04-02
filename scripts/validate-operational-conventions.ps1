@@ -15,6 +15,8 @@ param(
         "FullyQualifiedName~Cephalon.Tests.Hosting.AzureMonitorHostingTests.AddCephalonAzureMonitorLogsHostedPlatformSummaryWhenConfigured",
         "FullyQualifiedName~Cephalon.Tests.Hosting.GcpHostingTests.AddCephalonGcpRegistersWhenGoogleManagedIngestionIsEnabled",
         "FullyQualifiedName~Cephalon.Tests.Hosting.GcpHostingTests.AddCephalonGcpLogsHostedPlatformSummaryWhenConfigured",
+        "FullyQualifiedName~Cephalon.Tests.Hosting.HuaweiCloudHostingTests.AddCephalonHuaweiCloudRegistersWhenManagedTraceIngestionIsEnabled",
+        "FullyQualifiedName~Cephalon.Tests.Hosting.HuaweiCloudHostingTests.AddCephalonHuaweiCloudLogsHostedPlatformSummaryWhenConfigured",
         "FullyQualifiedName~Cephalon.Tests.Hosting.OpenTelemetryHostingTests.AddCephalonOpenTelemetryExportsConfiguredSignalsOverHttpProtobuf",
         "FullyQualifiedName~Cephalon.Tests.Hosting.OpenTelemetryHostingTests.AddCephalonOpenTelemetryRegistersSelfHostedDefaultsWhenEndpointIsMissing"
     )
@@ -41,7 +43,7 @@ function Invoke-DotNet {
 $filterExpression = $TestFilters -join "|"
 
 Write-Host "Validating Cephalon operational health and telemetry-export conventions..." -ForegroundColor Cyan
-Write-Host "Focused suite covers ASP.NET Core health routes, worker-host health parity, observability startup guidance, Serilog provider wiring, AWS hosted defaults, GCP managed-ingestion defaults, Azure Monitor exporter wiring, and OTLP exporter wiring." -ForegroundColor DarkCyan
+Write-Host "Focused suite covers ASP.NET Core health routes, worker-host health parity, observability startup guidance, Serilog provider wiring, AWS hosted defaults, GCP managed-ingestion defaults, Huawei Cloud managed traces, Azure Monitor exporter wiring, and OTLP exporter wiring." -ForegroundColor DarkCyan
 
 Push-Location $repoRoot
 try {
