@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T04:05:08.4472263+00:00",
+  "GeneratedAtUtc": "2026-04-02T04:37:53.3927063+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,6 +111,14 @@
       "Category": "Hosts",
       "Description": "MongoDB dependency-health integration for Cephalon hosts.",
       "FileName": "cephalon-observability-mongodbdependencies.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "Category": "Hosts",
+      "Description": "MQTT dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-mqttdependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
     },
@@ -580,6 +588,20 @@
       "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
       "FileName": "cephalon-observability-mongodbdependencies.md",
       "AnchorId": "namespace-cephalon-observability-mongodbdependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-mqttdependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-mqttdependencies-hosting",
       "TypeCount": 1
     },
     {
@@ -2314,6 +2336,51 @@
       }
     },
     {
+      "DisplayName": "MqttDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "type-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition",
+      "Declaration": "public sealed class MqttDependencyDefinition",
+      "Summary": "Describes one MQTT dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 12,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "MqttDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "type-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions",
+      "Declaration": "public sealed class MqttDependencyHealthOptions",
+      "Summary": "Configures MQTT dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "MqttDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "type-cephalon-observability-mqttdependencies-hosting-mqttdependencyhealthservicecollectionextensions",
+      "Declaration": "public static class MqttDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds MQTT dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
       "DisplayName": "MySqlDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -3847,6 +3914,28 @@
       "Summary": "Adds MongoDB dependency-health services using configuration as the primary source of probe settings."
     },
     {
+      "DisplayName": "AddCephalonMqttDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "MqttDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-mqttdependencies-hosting-mqttdependencyhealthservicecollectionextensions-addcephalonmqttdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonMqttDependencyHealth(this IServiceCollection services, Action\u003CMqttDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds MQTT dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonMqttDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "MqttDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-mqttdependencies-hosting-mqttdependencyhealthservicecollectionextensions-addcephalonmqttdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonMqttDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CMqttDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds MQTT dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
       "DisplayName": "AddCephalonMySqlDependencyHealth",
       "Category": "Methods",
       "DeclaringTypeName": "MySqlDependencyHealthServiceCollectionExtensions",
@@ -4991,6 +5080,17 @@
       "Summary": "Gets or sets the optional client identifier sent to the Kafka cluster."
     },
     {
+      "DisplayName": "ClientId",
+      "Category": "Properties",
+      "DeclaringTypeName": "MqttDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-clientid",
+      "Signature": "string ClientId { get; set; }",
+      "Summary": "Gets or sets the MQTT client identifier sent in the \u0060CONNECT\u0060 packet."
+    },
+    {
       "DisplayName": "ClientName",
       "Category": "Properties",
       "DeclaringTypeName": "NatsDependencyDefinition",
@@ -5660,6 +5760,17 @@
       "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-dependencies",
       "Signature": "IReadOnlyList\u003CMongoDbDependencyDefinition\u003E Dependencies { get; set; }",
       "Summary": "Gets or sets the configured MongoDB dependencies that should contribute to runtime health."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
+      "DeclaringTypeName": "MqttDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003CMqttDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured MQTT dependencies that should contribute to runtime health."
     },
     {
       "DisplayName": "Dependencies",
@@ -6340,6 +6451,17 @@
       "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
       "FileName": "cephalon-observability-mongodbdependencies.md",
       "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "MqttDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-displayname",
       "Signature": "string DisplayName { get; set; }",
       "Summary": "Gets or sets the human-readable dependency name shown to operators."
     },
@@ -7292,6 +7414,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "MqttDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "MqttDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds MQTT dependency-health options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "MySqlDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -7732,6 +7865,17 @@
     {
       "DisplayName": "Host",
       "Category": "Properties",
+      "DeclaringTypeName": "MqttDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-host",
+      "Signature": "string Host { get; set; }",
+      "Summary": "Gets or sets the MQTT host name or IP address to probe."
+    },
+    {
+      "DisplayName": "Host",
+      "Category": "Properties",
       "DeclaringTypeName": "MySqlDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -7968,6 +8112,17 @@
       "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
       "FileName": "cephalon-observability-mongodbdependencies.md",
       "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "MqttDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-id",
       "Signature": "string Id { get; set; }",
       "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
@@ -8487,6 +8642,17 @@
       "AnchorId": "member-m-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-ctor",
       "Signature": "KafkaDependencyHealthOptions()",
       "Summary": "Initializes a new instance of the \u0060KafkaDependencyHealthOptions\u0060 class."
+    },
+    {
+      "DisplayName": "KeepAliveSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "MqttDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-keepaliveseconds",
+      "Signature": "int KeepAliveSeconds { get; set; }",
+      "Summary": "Gets or sets the MQTT keep-alive interval, in seconds, advertised through the \u0060CONNECT\u0060 packet."
     },
     {
       "DisplayName": "Key",
@@ -9732,6 +9898,28 @@
       "Summary": "Initializes a new instance of the \u0060MongoDbDependencyHealthOptions\u0060 class."
     },
     {
+      "DisplayName": "MqttDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MqttDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-ctor",
+      "Signature": "MqttDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060MqttDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "MqttDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MqttDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions-ctor",
+      "Signature": "MqttDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060MqttDependencyHealthOptions\u0060 class."
+    },
+    {
       "DisplayName": "MySqlDependencyDefinition",
       "Category": "Constructors",
       "DeclaringTypeName": "MySqlDependencyDefinition",
@@ -10196,6 +10384,17 @@
     {
       "DisplayName": "Password",
       "Category": "Properties",
+      "DeclaringTypeName": "MqttDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-password",
+      "Signature": "string Password { get; set; }",
+      "Summary": "Gets or sets the optional password used for MQTT username/password authentication."
+    },
+    {
+      "DisplayName": "Password",
+      "Category": "Properties",
       "DeclaringTypeName": "MySqlDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -10467,6 +10666,17 @@
       "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-port",
       "Signature": "int Port { get; set; }",
       "Summary": "Gets or sets the MongoDB TCP port."
+    },
+    {
+      "DisplayName": "Port",
+      "Category": "Properties",
+      "DeclaringTypeName": "MqttDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-port",
+      "Signature": "int Port { get; set; }",
+      "Summary": "Gets or sets the MQTT broker port."
     },
     {
       "DisplayName": "Port",
@@ -10933,6 +11143,17 @@
     {
       "DisplayName": "RefreshIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "MqttDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "MySqlDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -11246,6 +11467,17 @@
       "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
       "FileName": "cephalon-observability-mongodbdependencies.md",
       "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "MqttDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
@@ -13441,6 +13673,17 @@
     {
       "DisplayName": "TimeoutSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "MqttDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-probe timeout in seconds."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "MySqlDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -13503,6 +13746,17 @@
       "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-timeoutseconds",
       "Signature": "int TimeoutSeconds { get; set; }",
       "Summary": "Gets or sets the per-probe timeout in seconds."
+    },
+    {
+      "DisplayName": "TlsServerName",
+      "Category": "Properties",
+      "DeclaringTypeName": "MqttDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-tlsservername",
+      "Signature": "string TlsServerName { get; set; }",
+      "Summary": "Gets or sets the TLS server name used for certificate validation when \u0060UseTls\u0060 is enabled."
     },
     {
       "DisplayName": "TlsServerName",
@@ -14057,6 +14311,17 @@
     {
       "DisplayName": "Username",
       "Category": "Properties",
+      "DeclaringTypeName": "MqttDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-username",
+      "Signature": "string Username { get; set; }",
+      "Summary": "Gets or sets the optional user name used for MQTT username/password authentication."
+    },
+    {
+      "DisplayName": "Username",
+      "Category": "Properties",
       "DeclaringTypeName": "MySqlDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -14141,6 +14406,17 @@
       "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-usetls",
       "Signature": "bool? UseTls { get; set; }",
       "Summary": "Gets or sets the optional value that controls whether TLS should be used for the probe."
+    },
+    {
+      "DisplayName": "UseTls",
+      "Category": "Properties",
+      "DeclaringTypeName": "MqttDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MqttDependencies",
+      "FileName": "cephalon-observability-mqttdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-usetls",
+      "Signature": "bool UseTls { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the probe should use TLS immediately after opening the TCP connection."
     },
     {
       "DisplayName": "UseTls",

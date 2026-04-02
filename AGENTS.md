@@ -26,6 +26,7 @@ When working in this repository:
 - `Cephalon.Observability.HttpDependencies` is the optional external API dependency-health companion package for HTTP-based upstreams
 - `Cephalon.Observability.KafkaDependencies` is the optional Kafka dependency-health companion package
 - `Cephalon.Observability.MongoDbDependencies` is the optional MongoDB dependency-health companion package
+- `Cephalon.Observability.MqttDependencies` is the optional MQTT dependency-health companion package
 - `Cephalon.Observability.MySqlDependencies` is the optional MySQL dependency-health companion package
 - `Cephalon.Observability.NatsDependencies` is the optional NATS dependency-health companion package
 - `Cephalon.Observability.PostgresDependencies` is the optional Postgres dependency-health companion package
@@ -206,6 +207,9 @@ Current source layout:
 - `src/Cephalon.Observability.MongoDbDependencies/Configuration` -> `Cephalon.Observability.MongoDbDependencies.Configuration`
 - `src/Cephalon.Observability.MongoDbDependencies/Hosting` -> `Cephalon.Observability.MongoDbDependencies.Hosting`
 - `src/Cephalon.Observability.MongoDbDependencies/Services` -> `Cephalon.Observability.MongoDbDependencies.Services`
+- `src/Cephalon.Observability.MqttDependencies/Configuration` -> `Cephalon.Observability.MqttDependencies.Configuration`
+- `src/Cephalon.Observability.MqttDependencies/Hosting` -> `Cephalon.Observability.MqttDependencies.Hosting`
+- `src/Cephalon.Observability.MqttDependencies/Services` -> `Cephalon.Observability.MqttDependencies.Services`
 - `src/Cephalon.Observability.MySqlDependencies/Configuration` -> `Cephalon.Observability.MySqlDependencies.Configuration`
 - `src/Cephalon.Observability.MySqlDependencies/Hosting` -> `Cephalon.Observability.MySqlDependencies.Hosting`
 - `src/Cephalon.Observability.MySqlDependencies/Services` -> `Cephalon.Observability.MySqlDependencies.Services`

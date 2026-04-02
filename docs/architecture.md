@@ -108,6 +108,8 @@ Companion adapter packages can extend that host with additional transport surfac
 
 `Cephalon.Observability.MongoDbDependencies` is the optional MongoDB dependency-health companion package. It turns configured database commands, TLS policy, and connection-string probing into `IDependencyHealthContributor` data without pushing MongoDB-specific connection logic into `Cephalon.Engine`.
 
+`Cephalon.Observability.MqttDependencies` is the optional MQTT dependency-health companion package. It turns configured broker `CONNECT`, `CONNACK`, and `PINGREQ`/`PINGRESP` probes into `IDependencyHealthContributor` data without pushing MQTT protocol handling into `Cephalon.Engine`.
+
 `Cephalon.Observability.MySqlDependencies` is the optional MySQL dependency-health companion package. It turns configured SQL queries, SSL/public-key retrieval policy, and MySQL connection probing into `IDependencyHealthContributor` data without pushing MySQL-specific connection logic into `Cephalon.Engine`.
 
 `Cephalon.Observability.NatsDependencies` is the optional NATS dependency-health companion package. It turns configured broker `INFO`, `CONNECT`, and `PING`/`PONG` probes into `IDependencyHealthContributor` data without pushing NATS protocol handling into `Cephalon.Engine`.
@@ -180,6 +182,9 @@ Companion adapter packages:
 - `src/Cephalon.Observability.MongoDbDependencies/Configuration` -> `Cephalon.Observability.MongoDbDependencies.Configuration`
 - `src/Cephalon.Observability.MongoDbDependencies/Hosting` -> `Cephalon.Observability.MongoDbDependencies.Hosting`
 - `src/Cephalon.Observability.MongoDbDependencies/Services` -> `Cephalon.Observability.MongoDbDependencies.Services`
+- `src/Cephalon.Observability.MqttDependencies/Configuration` -> `Cephalon.Observability.MqttDependencies.Configuration`
+- `src/Cephalon.Observability.MqttDependencies/Hosting` -> `Cephalon.Observability.MqttDependencies.Hosting`
+- `src/Cephalon.Observability.MqttDependencies/Services` -> `Cephalon.Observability.MqttDependencies.Services`
 - `src/Cephalon.Observability.MySqlDependencies/Configuration` -> `Cephalon.Observability.MySqlDependencies.Configuration`
 - `src/Cephalon.Observability.MySqlDependencies/Hosting` -> `Cephalon.Observability.MySqlDependencies.Hosting`
 - `src/Cephalon.Observability.MySqlDependencies/Services` -> `Cephalon.Observability.MySqlDependencies.Services`
@@ -262,6 +267,7 @@ Companion adapter packages:
 - hosts can turn external HTTP upstreams into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Http` and `Cephalon.Observability.HttpDependencies`
 - hosts can turn Kafka cluster metadata checks into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Kafka` and `Cephalon.Observability.KafkaDependencies`
 - hosts can turn MongoDB dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:MongoDb` and `Cephalon.Observability.MongoDbDependencies`
+- hosts can turn MQTT broker dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Mqtt` and `Cephalon.Observability.MqttDependencies`
 - hosts can turn MySQL and MariaDB dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:MySql` and `Cephalon.Observability.MySqlDependencies`
 - hosts can turn NATS broker dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Nats` and `Cephalon.Observability.NatsDependencies`
 - hosts can turn Postgres dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Postgres` and `Cephalon.Observability.PostgresDependencies`
@@ -308,7 +314,7 @@ Companion adapter packages:
 - richer capability metadata and policy
 - startup hooks and lifecycle events
 - event bus / workflow runtime
-- broader provider-specific dependency-health packs, richer operator-runtime answers, and deeper release-validation guidance on top of the shipped HTTP, MongoDB, MySQL, NATS, Postgres, RabbitMQ, Redis, SQL Server, and OpenTelemetry observability companions
+- broader provider-specific dependency-health packs, richer operator-runtime answers, and deeper release-validation guidance on top of the shipped HTTP, Kafka, MongoDB, MQTT, MySQL, NATS, Postgres, RabbitMQ, Redis, SQL Server, and OpenTelemetry observability companions
 - richer parameterized templates and generators driven by scaffold plans
 - richer localization catalogs and package-provided language packs
 - sustained benchmark coverage for hot engine paths

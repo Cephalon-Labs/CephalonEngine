@@ -11,6 +11,8 @@ using Cephalon.Observability.KafkaDependencies.Configuration;
 using Cephalon.Observability.KafkaDependencies.Hosting;
 using Cephalon.Observability.MongoDbDependencies.Configuration;
 using Cephalon.Observability.MongoDbDependencies.Hosting;
+using Cephalon.Observability.MqttDependencies.Configuration;
+using Cephalon.Observability.MqttDependencies.Hosting;
 using Cephalon.Observability.MySqlDependencies.Configuration;
 using Cephalon.Observability.MySqlDependencies.Hosting;
 using Cephalon.Observability.NatsDependencies.Configuration;
@@ -240,6 +242,17 @@ public sealed class EngineDiagnosticsTests
                 }
             ];
         });
+        services.AddCephalonMqttDependencyHealth(options =>
+        {
+            options.Dependencies =
+            [
+                new MqttDependencyDefinition
+                {
+                    Id = "edge-mqtt",
+                    Host = "mqtt.internal.example"
+                }
+            ];
+        });
         services.AddCephalonRabbitMqDependencyHealth(options =>
         {
             options.Dependencies =
@@ -284,6 +297,7 @@ public sealed class EngineDiagnosticsTests
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.HttpDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.KafkaDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.MongoDbDependencies");
+        Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.MqttDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.MySqlDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.NatsDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.PostgresDependencies");
@@ -306,6 +320,9 @@ public sealed class EngineDiagnosticsTests
         Assert.Contains(
             catalog.GetBySource("Cephalon.Observability.MongoDbDependencies").Single().Events,
             static entry => entry.Id == 3130);
+        Assert.Contains(
+            catalog.GetBySource("Cephalon.Observability.MqttDependencies").Single().Events,
+            static entry => entry.Id == 3136);
         Assert.Contains(
             catalog.GetBySource("Cephalon.Observability.MySqlDependencies").Single().Events,
             static entry => entry.Id == 3128);
@@ -334,6 +351,7 @@ public sealed class EngineDiagnosticsTests
         Assert.Equal(catalog.Conventions.Count, snapshot.DiagnosticsConventions.Count);
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.KafkaDependencies");
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.MongoDbDependencies");
+        Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.MqttDependencies");
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.MySqlDependencies");
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.NatsDependencies");
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.RabbitMqDependencies");

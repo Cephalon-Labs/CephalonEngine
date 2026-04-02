@@ -84,6 +84,12 @@ Browse the published API surface by public member.
 - [AddCephalonMongoDbDependencyHealth](cephalon-observability-mongodbdependencies.md#member-m-cephalon-observability-mongodbdependencies-hosting-mongodbdependencyhealthservicecollectionextensions-addcephalonmongodbdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions): `Methods` on `MongoDbDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.MongoDbDependencies.Hosting` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=AddCephalonMongoDbDependencyHealth&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Hosting&scope=members)
   - Adds MongoDB dependency-health services using configuration as the primary source of probe settings.
   - `IServiceCollection AddCephalonMongoDbDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<MongoDbDependencyHealthOptions> configure)`
+- [AddCephalonMqttDependencyHealth](cephalon-observability-mqttdependencies.md#member-m-cephalon-observability-mqttdependencies-hosting-mqttdependencyhealthservicecollectionextensions-addcephalonmqttdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions): `Methods` on `MqttDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.MqttDependencies.Hosting` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=AddCephalonMqttDependencyHealth&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Hosting&scope=members)
+  - Adds MQTT dependency-health services using code-first configuration.
+  - `IServiceCollection AddCephalonMqttDependencyHealth(this IServiceCollection services, Action<MqttDependencyHealthOptions> configure)`
+- [AddCephalonMqttDependencyHealth](cephalon-observability-mqttdependencies.md#member-m-cephalon-observability-mqttdependencies-hosting-mqttdependencyhealthservicecollectionextensions-addcephalonmqttdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions): `Methods` on `MqttDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.MqttDependencies.Hosting` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=AddCephalonMqttDependencyHealth&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Hosting&scope=members)
+  - Adds MQTT dependency-health services using configuration as the primary source of probe settings.
+  - `IServiceCollection AddCephalonMqttDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<MqttDependencyHealthOptions> configure)`
 - [AddCephalonMySqlDependencyHealth](cephalon-observability-mysqldependencies.md#member-m-cephalon-observability-mysqldependencies-hosting-mysqldependencyhealthservicecollectionextensions-addcephalonmysqldependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions): `Methods` on `MySqlDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.MySqlDependencies.Hosting` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=AddCephalonMySqlDependencyHealth&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Hosting&scope=members)
   - Adds MySQL dependency-health services using code-first configuration.
   - `IServiceCollection AddCephalonMySqlDependencyHealth(this IServiceCollection services, Action<MySqlDependencyHealthOptions> configure)`
@@ -402,6 +408,9 @@ Browse the published API surface by public member.
 - [ClientId](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-clientid): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=ClientId&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
   - Gets or sets the optional client identifier sent to the Kafka cluster.
   - `string ClientId { get; set; }`
+- [ClientId](cephalon-observability-mqttdependencies.md#member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-clientid): `Properties` on `MqttDependencyDefinition` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=ClientId&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
+  - Gets or sets the MQTT client identifier sent in the `CONNECT` packet.
+  - `string ClientId { get; set; }`
 - [ClientName](cephalon-observability-natsdependencies.md#member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-clientname): `Properties` on `NatsDependencyDefinition` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=ClientName&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
   - Gets or sets the optional client name sent in the NATS `CONNECT` payload.
   - `string ClientName { get; set; }`
@@ -588,6 +597,9 @@ Browse the published API surface by public member.
 - [Dependencies](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-dependencies): `Properties` on `MongoDbDependencyHealthOptions` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the configured MongoDB dependencies that should contribute to runtime health.
   - `IReadOnlyList<MongoDbDependencyDefinition> Dependencies { get; set; }`
+- [Dependencies](cephalon-observability-mqttdependencies.md#member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions-dependencies): `Properties` on `MqttDependencyHealthOptions` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
+  - Gets or sets the configured MQTT dependencies that should contribute to runtime health.
+  - `IReadOnlyList<MqttDependencyDefinition> Dependencies { get; set; }`
 - [Dependencies](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions-dependencies): `Properties` on `MySqlDependencyHealthOptions` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
   - Gets or sets the configured MySQL dependencies that should contribute to runtime health.
   - `IReadOnlyList<MySqlDependencyDefinition> Dependencies { get; set; }`
@@ -772,6 +784,9 @@ Browse the published API surface by public member.
   - Gets the operator-facing display name for the module.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-displayname): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
+  - Gets or sets the human-readable dependency name shown to operators.
+  - `string DisplayName { get; set; }`
+- [DisplayName](cephalon-observability-mqttdependencies.md#member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-displayname): `Properties` on `MqttDependencyDefinition` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
   - Gets or sets the human-readable dependency name shown to operators.
   - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-displayname): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
@@ -1038,6 +1053,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability-mongodbdependencies.md#member-m-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `MongoDbDependencyHealthOptions` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Binds MongoDB dependency-health options from configuration.
   - `MongoDbDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-observability-mqttdependencies.md#member-m-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `MqttDependencyHealthOptions` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
+  - Binds MQTT dependency-health options from configuration.
+  - `MqttDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability-mysqldependencies.md#member-m-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `MySqlDependencyHealthOptions` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
   - Binds MySQL dependency-health options from configuration.
   - `MySqlDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -1164,6 +1182,9 @@ Browse the published API surface by public member.
 - [Host](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-host): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the MongoDB host name or IP address to probe when no full connection string is supplied.
   - `string Host { get; set; }`
+- [Host](cephalon-observability-mqttdependencies.md#member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-host): `Properties` on `MqttDependencyDefinition` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
+  - Gets or sets the MQTT host name or IP address to probe.
+  - `string Host { get; set; }`
 - [Host](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-host): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
   - Gets or sets the MySQL host name or IP address to probe when no full connection string is supplied.
   - `string Host { get; set; }`
@@ -1231,6 +1252,9 @@ Browse the published API surface by public member.
   - Gets the optional package identifier override.
   - `string Id { get; }`
 - [Id](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-id): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
+  - Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
+  - `string Id { get; set; }`
+- [Id](cephalon-observability-mqttdependencies.md#member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-id): `Properties` on `MqttDependencyDefinition` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
   - Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
   - `string Id { get; set; }`
 - [Id](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-id): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
@@ -1380,6 +1404,9 @@ Browse the published API surface by public member.
 - [KafkaDependencyHealthOptions](cephalon-observability-kafkadependencies.md#member-m-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-ctor): `Constructors` on `KafkaDependencyHealthOptions` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=KafkaDependencyHealthOptions&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
   - Initializes a new instance of the `KafkaDependencyHealthOptions` class.
   - `KafkaDependencyHealthOptions()`
+- [KeepAliveSeconds](cephalon-observability-mqttdependencies.md#member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-keepaliveseconds): `Properties` on `MqttDependencyDefinition` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=KeepAliveSeconds&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
+  - Gets or sets the MQTT keep-alive interval, in seconds, advertised through the `CONNECT` packet.
+  - `int KeepAliveSeconds { get; set; }`
 - [Key](cephalon-abstractions.md#member-p-cephalon-abstractions-capabilities-capability-key): `Properties` on `Capability` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=Key&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
   - Gets the stable capability key.
   - `string Key { get; }`
@@ -1725,6 +1752,12 @@ Browse the published API surface by public member.
 - [MongoDbDependencyHealthOptions](cephalon-observability-mongodbdependencies.md#member-m-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-ctor): `Constructors` on `MongoDbDependencyHealthOptions` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=MongoDbDependencyHealthOptions&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Initializes a new instance of the `MongoDbDependencyHealthOptions` class.
   - `MongoDbDependencyHealthOptions()`
+- [MqttDependencyDefinition](cephalon-observability-mqttdependencies.md#member-m-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-ctor): `Constructors` on `MqttDependencyDefinition` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=MqttDependencyDefinition&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
+  - Initializes a new instance of the `MqttDependencyDefinition` class.
+  - `MqttDependencyDefinition()`
+- [MqttDependencyHealthOptions](cephalon-observability-mqttdependencies.md#member-m-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions-ctor): `Constructors` on `MqttDependencyHealthOptions` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=MqttDependencyHealthOptions&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
+  - Initializes a new instance of the `MqttDependencyHealthOptions` class.
+  - `MqttDependencyHealthOptions()`
 - [MySqlDependencyDefinition](cephalon-observability-mysqldependencies.md#member-m-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-ctor): `Constructors` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=MySqlDependencyDefinition&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
   - Initializes a new instance of the `MySqlDependencyDefinition` class.
   - `MySqlDependencyDefinition()`
@@ -1860,6 +1893,9 @@ Browse the published API surface by public member.
 - [Password](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-password): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the optional password used for authentication when no full connection string is supplied.
   - `string Password { get; set; }`
+- [Password](cephalon-observability-mqttdependencies.md#member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-password): `Properties` on `MqttDependencyDefinition` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
+  - Gets or sets the optional password used for MQTT username/password authentication.
+  - `string Password { get; set; }`
 - [Password](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-password): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
   - Gets or sets the optional password used for authentication when no full connection string is supplied.
   - `string Password { get; set; }`
@@ -1934,6 +1970,9 @@ Browse the published API surface by public member.
   - `TrustPolicy Policy { get; set; }`
 - [Port](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-port): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the MongoDB TCP port.
+  - `int Port { get; set; }`
+- [Port](cephalon-observability-mqttdependencies.md#member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-port): `Properties` on `MqttDependencyDefinition` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
+  - Gets or sets the MQTT broker port.
   - `int Port { get; set; }`
 - [Port](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-port): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
   - Gets or sets the MySQL TCP port.
@@ -2064,6 +2103,9 @@ Browse the published API surface by public member.
 - [RefreshIntervalSeconds](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-refreshintervalseconds): `Properties` on `MongoDbDependencyHealthOptions` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the interval, in seconds, between background refresh attempts.
   - `int RefreshIntervalSeconds { get; set; }`
+- [RefreshIntervalSeconds](cephalon-observability-mqttdependencies.md#member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions-refreshintervalseconds): `Properties` on `MqttDependencyHealthOptions` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
+  - Gets or sets the interval, in seconds, between background refresh attempts.
+  - `int RefreshIntervalSeconds { get; set; }`
 - [RefreshIntervalSeconds](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions-refreshintervalseconds): `Properties` on `MySqlDependencyHealthOptions` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
   - Gets or sets the interval, in seconds, between background refresh attempts.
   - `int RefreshIntervalSeconds { get; set; }`
@@ -2149,6 +2191,9 @@ Browse the published API surface by public member.
   - Gets or sets a value indicating whether this dependency is required for readiness.
   - `bool Required { get; set; }`
 - [Required](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-required): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
+  - Gets or sets a value indicating whether this dependency is required for readiness.
+  - `bool Required { get; set; }`
+- [Required](cephalon-observability-mqttdependencies.md#member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-required): `Properties` on `MqttDependencyDefinition` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
   - Gets or sets a value indicating whether this dependency is required for readiness.
   - `bool Required { get; set; }`
 - [Required](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-required): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
@@ -2754,6 +2799,9 @@ Browse the published API surface by public member.
 - [TimeoutSeconds](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-timeoutseconds): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the per-probe timeout in seconds.
   - `int TimeoutSeconds { get; set; }`
+- [TimeoutSeconds](cephalon-observability-mqttdependencies.md#member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-timeoutseconds): `Properties` on `MqttDependencyDefinition` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
+  - Gets or sets the per-probe timeout in seconds.
+  - `int TimeoutSeconds { get; set; }`
 - [TimeoutSeconds](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-timeoutseconds): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
   - Gets or sets the per-probe timeout in seconds.
   - `int TimeoutSeconds { get; set; }`
@@ -2772,6 +2820,9 @@ Browse the published API surface by public member.
 - [TimeoutSeconds](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-timeoutseconds): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the per-probe timeout in seconds.
   - `int TimeoutSeconds { get; set; }`
+- [TlsServerName](cephalon-observability-mqttdependencies.md#member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-tlsservername): `Properties` on `MqttDependencyDefinition` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=TlsServerName&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
+  - Gets or sets the TLS server name used for certificate validation when `UseTls` is enabled.
+  - `string TlsServerName { get; set; }`
 - [TlsServerName](cephalon-observability-natsdependencies.md#member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-tlsservername): `Properties` on `NatsDependencyDefinition` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=TlsServerName&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
   - Gets or sets the TLS server name used for certificate validation when `UseTls` is enabled.
   - `string TlsServerName { get; set; }`
@@ -2925,6 +2976,9 @@ Browse the published API surface by public member.
 - [Username](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-username): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the optional user name used for authentication when no full connection string is supplied.
   - `string Username { get; set; }`
+- [Username](cephalon-observability-mqttdependencies.md#member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-username): `Properties` on `MqttDependencyDefinition` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
+  - Gets or sets the optional user name used for MQTT username/password authentication.
+  - `string Username { get; set; }`
 - [Username](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-username): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
   - Gets or sets the optional user name used for authentication when no full connection string is supplied.
   - `string Username { get; set; }`
@@ -2949,6 +3003,9 @@ Browse the published API surface by public member.
 - [UseTls](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-usetls): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=UseTls&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the optional value that controls whether TLS should be used for the probe.
   - `bool? UseTls { get; set; }`
+- [UseTls](cephalon-observability-mqttdependencies.md#member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-usetls): `Properties` on `MqttDependencyDefinition` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=UseTls&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
+  - Gets or sets a value indicating whether the probe should use TLS immediately after opening the TCP connection.
+  - `bool UseTls { get; set; }`
 - [UseTls](cephalon-observability-natsdependencies.md#member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-usetls): `Properties` on `NatsDependencyDefinition` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=UseTls&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
   - Gets or sets a value indicating whether the probe should upgrade the connection to TLS after reading the initial server info line.
   - `bool UseTls { get; set; }`
