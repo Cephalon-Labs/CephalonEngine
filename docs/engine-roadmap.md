@@ -37,7 +37,7 @@ The foundation is no longer hypothetical. The repository already ships:
 - runtime failure policy baseline with fail-fast, capture-only, best-effort stop, and restart guards
 - operational health endpoints, diagnostics surface, and dependency-health contributor baseline for ASP.NET Core hosts
 - observability conventions for logs, metrics, tracing, and telemetry export guidance
-- a benchmark suite plus baseline guardrail validation for composition, runtime lifecycle, ASP.NET Core request logging, and scaffolding hot paths
+- a benchmark suite plus baseline guardrail validation for composition, strict trust-policy composition, runtime lifecycle, ASP.NET Core request logging, and scaffolding hot paths
 - a GitHub Actions release-validation workflow that runs the repo-native build, test, benchmark, and guardrail flow
 
 That changes the plan materially:
@@ -60,7 +60,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 1`: delivered `ENG-005`, `ENG-026`, and `ENG-027`, and opened the phase 2 operational gap-inventory track
 - `Sprint 2`: exporter packaging is now part of the shipped phase-2 baseline, Cassandra contact-point health plus ClickHouse analytics health plus Consul control-plane health plus Elasticsearch cluster health plus HTTP external API plus Kafka broker metadata plus Memcached cache plus MongoDB plus MQTT plus MySQL plus NATS plus Neo4j plus OpenSearch plus Oracle plus Postgres plus RabbitMQ plus Redis/cache plus SQL Server dependency-health packaging anchor the provider-specific follow-through, the shared diagnostics/event-id catalog now anchors the structured diagnostics baseline, and release validation now calls out the health/export convention suite explicitly
 - `Sprint 3`: runtime-answers follow-through, package distribution and trust follow-through, and `ENG-013` planning readiness
-- `Later / not scheduled yet`: `ENG-022` and future solution-level expansion work
+- `Later / not scheduled yet`: `ENG-022`, `ENG-029`, and future solution-level expansion work
 
 ## Planning principles
 
@@ -124,7 +124,7 @@ Current note:
 
 ## Phase 2: Operational hardening
 
-Status: current focus
+Status: substantially complete
 
 Goal: make Cephalon safe to operate in real environments.
 
@@ -135,15 +135,14 @@ Deliverables:
 - richer structured diagnostics and event IDs across packages
 - `ILogger` provider integration such as Serilog when hosts need richer sinks, enrichers, or log-routing behavior without inventing a new logging abstraction
 - ASP.NET Core request/response logging with bounded body capture and trace/log correlation over the shared `ILogger` pipeline
-- cloud tracing and exporter integrations beyond the shipped OTLP/OpenTelemetry baseline once the target cloud/runtime context is explicit
 - clearer operational answers to “what loaded, what started, what failed, and why?”
 - benchmark-driven performance guardrails for hot engine paths
 
 Current inventory:
 
 - `docs/operational-hardening-gap-inventory.md` now records the shipped baseline versus the remaining phase-2 gaps so follow-through work stays grounded in the code that already exists
-- that inventory now includes shipped `Cephalon.Observability.OpenTelemetry` and `Cephalon.Observability.Serilog` companion packages plus shipped `Cephalon.Observability.CassandraDependencies`, `Cephalon.Observability.ClickHouseDependencies`, `Cephalon.Observability.ConsulDependencies`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.Neo4jDependencies`, `Cephalon.Observability.OpenSearchDependencies`, `Cephalon.Observability.OracleDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` companion packages, together with a published runtime diagnostics catalog, runtime-story surface, configurable failure-policy warmup/drain/backoff semantics, opt-in ASP.NET Core request/response body logging with request/trace correlation, explicit release-validation guidance for health/export conventions, and refreshed benchmark guardrails that separate prepared composition/lifecycle hot paths plus the correlated ASP.NET Core request-logging path from benchmark harness setup
-- the remaining observability follow-through now sits primarily in cloud tracing/export integration once the target cloud/runtime context is explicit, while the shared `ILogger` pipeline already has shipped Serilog provider wiring plus correlated ASP.NET Core request logging
+- that inventory now includes shipped `Cephalon.Observability.OpenTelemetry` and `Cephalon.Observability.Serilog` companion packages plus shipped `Cephalon.Observability.CassandraDependencies`, `Cephalon.Observability.ClickHouseDependencies`, `Cephalon.Observability.ConsulDependencies`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.Neo4jDependencies`, `Cephalon.Observability.OpenSearchDependencies`, `Cephalon.Observability.OracleDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` companion packages, together with a published runtime diagnostics catalog, runtime-story surface, configurable failure-policy warmup/drain/backoff semantics, opt-in ASP.NET Core request/response body logging with request/trace correlation plus default sensitive-value redaction, explicit release-validation guidance for health/export conventions, and refreshed benchmark guardrails that separate prepared composition/lifecycle hot paths plus strict trust-policy composition plus bounded, correlated, and concurrent ASP.NET Core request-logging paths from benchmark harness setup
+- the remaining cloud-vendor tracing/export follow-through has been re-scoped into phase 6 cloud and platform integrations because the expanded AWS plus Azure plus GCP plus Huawei Cloud plus Alibaba Cloud plus Red Hat OpenShift plus VMware Tanzu target list is broader than the shipped phase-2 operational baseline
 
 Exit criteria:
 
@@ -221,15 +220,41 @@ Exit criteria:
 - Cephalon can describe and scaffold not only one service, but an intentional suite of services
 - the suite model still reuses the same engine, blueprint, and package contracts
 
+## Phase 6: Cloud and platform integrations
+
+Status: later
+
+Goal: add deployment-targeted companion integrations without pushing vendor assumptions into the engine core.
+
+Current baseline already in place:
+
+- cloud-neutral OTLP exporter wiring through `Cephalon.Observability.OpenTelemetry`
+- the shared `Microsoft.Extensions.Logging.ILogger` pipeline plus `Cephalon.Observability.Serilog`
+- correlated ASP.NET Core request/response logging through `Engine:Observability:HttpLogging`
+- host-agnostic runtime, diagnostics, health, and validation surfaces that later cloud-targeted companions can build on
+
+Deliverables:
+
+- cloud-targeted observability companion follow-through for explicit deployment targets such as AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu
+- exporter wiring, auth, resource-attribute conventions, and hosted-runtime defaults that stay inside companion packages instead of `Cephalon.Engine`
+- documentation, validation, and planning guidance that make the supported targets and deployment assumptions explicit
+- a clear package split whenever different clouds or platforms need distinct companion packs instead of one overloaded abstraction
+
+Exit criteria:
+
+- supported cloud and platform integrations can be enabled without modifying `Cephalon.Engine` or `Cephalon.Abstractions`
+- the shared `ILogger` pipeline and cloud-neutral OTLP baseline remain intact
+- docs, validation flows, and planning metadata make the supported targets explicit
+
 ## Recommended implementation order
 
 Updated priority order as of `April 2, 2026`:
 
-1. operational hardening follow-through: operator-facing hardening and later cloud-targeted tracing/export decisions now that the baseline dependency-health companion set is shipped, Cassandra plus ClickHouse plus Consul plus Elasticsearch plus HTTP plus Kafka plus Memcached plus MongoDB plus MQTT plus MySQL plus NATS plus Neo4j plus OpenSearch plus Oracle plus Postgres plus RabbitMQ plus Redis plus SQL Server coverage have landed, the structured diagnostics catalog, runtime-story surface, and failure-policy warmup/drain/backoff semantics are in place, and release validation now calls out the health/export convention suite directly
-2. package/plugin loading
-3. package distribution, provenance, and richer trust follow-through beyond the current baseline
-4. workflow and orchestration primitives
-5. multi-service suite blueprints
+1. package/plugin loading
+2. package distribution, provenance, and richer trust follow-through beyond the current baseline
+3. workflow and orchestration primitives
+4. multi-service suite blueprints
+5. cloud and platform integrations once the target companion-pack split and first deployment target are explicit
 6. broader release automation and package-publishing polish
 
 ## Decision guardrails

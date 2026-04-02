@@ -10,9 +10,27 @@ namespace Cephalon.AspNetCore.Hosting;
 /// These settings are read from <c>Engine:Observability:HttpLogging</c> by default. Request and
 /// response bodies are captured only for textual content types such as JSON, XML, GraphQL, form
 /// payloads, and <c>text/*</c> responses, and body capture is truncated to the configured limits.
+/// Sensitive query-string and payload fields can also be redacted before the log event is written,
+/// including JSON, form, and header-style plain-text key/value content.
 /// </remarks>
 public sealed class HttpRequestResponseLoggingOptions
 {
+    private static readonly string[] DefaultRedactedFieldNames =
+    [
+        "access_token",
+        "apiKey",
+        "api_key",
+        "authorization",
+        "client_secret",
+        "cookie",
+        "password",
+        "pin",
+        "refresh_token",
+        "secret",
+        "set-cookie",
+        "token"
+    ];
+
     /// <summary>
     /// Creates request and response logging options with body capture disabled by default.
     /// </summary>
@@ -46,6 +64,21 @@ public sealed class HttpRequestResponseLoggingOptions
     public int ResponseBodyLimit { get; set; } = 4096;
 
     /// <summary>
+    /// Gets or sets a value indicating whether known-sensitive query-string and payload fields should be redacted before logging.
+    /// </summary>
+    public bool RedactSensitiveValues { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the field names that should be treated as sensitive when request and response content is logged.
+    /// </summary>
+    public IReadOnlyList<string> RedactedFieldNames { get; set; } = DefaultRedactedFieldNames;
+
+    /// <summary>
+    /// Gets or sets the placeholder written to logs when a sensitive value is redacted.
+    /// </summary>
+    public string RedactionValue { get; set; } = "[REDACTED]";
+
+    /// <summary>
     /// Binds request and response logging options from configuration.
     /// </summary>
     /// <param name="configuration">The application configuration root.</param>
@@ -70,7 +103,10 @@ public sealed class HttpRequestResponseLoggingOptions
             LogRequestBody = GetBoolean(section["LogRequestBody"], defaultValue: false),
             LogResponseBody = GetBoolean(section["LogResponseBody"], defaultValue: false),
             RequestBodyLimit = GetInt32(section["RequestBodyLimit"], defaultValue: 4096),
-            ResponseBodyLimit = GetInt32(section["ResponseBodyLimit"], defaultValue: 4096)
+            ResponseBodyLimit = GetInt32(section["ResponseBodyLimit"], defaultValue: 4096),
+            RedactSensitiveValues = GetBoolean(section["RedactSensitiveValues"], defaultValue: true),
+            RedactedFieldNames = GetStringArray(section, "RedactedFieldNames", DefaultRedactedFieldNames),
+            RedactionValue = GetString(section["RedactionValue"], "[REDACTED]")
         };
     }
 
@@ -79,4 +115,24 @@ public sealed class HttpRequestResponseLoggingOptions
 
     private static int GetInt32(string? value, int defaultValue) =>
         int.TryParse(value, out var parsed) ? Math.Max(0, parsed) : defaultValue;
+
+    private static string GetString(string? value, string defaultValue) =>
+        string.IsNullOrWhiteSpace(value) ? defaultValue : value.Trim();
+
+    private static IReadOnlyList<string> GetStringArray(
+        IConfigurationSection section,
+        string key,
+        IReadOnlyList<string> defaultValue)
+    {
+        var values = section
+            .GetSection(key)
+            .GetChildren()
+            .Select(static child => child.Value)
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Select(static value => value!.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        return values.Length > 0 ? values : defaultValue;
+    }
 }

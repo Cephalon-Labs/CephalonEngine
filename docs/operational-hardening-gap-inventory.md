@@ -5,7 +5,7 @@ This document records the current phase-2 operational hardening gap inventory fo
 It is meant to answer two questions clearly:
 
 1. What operational baseline is already shipped?
-2. What still remains before phase 2 can be considered complete?
+2. What still remained before phase 2 could be considered complete, and what moved into later phases?
 
 ## Shipped baseline
 
@@ -42,10 +42,10 @@ That means phase 2 is follow-through work, not greenfield operational work.
   - `src/Cephalon.Observability.OpenTelemetry/Hosting/OpenTelemetryHostApplicationBuilderExtensions.cs`
 - release-validation and benchmark baseline:
   - `benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json`
-  - `scripts/validate-release.ps1`
-  - `.github/workflows/release-validation.yml`
-  - prepared composition and runtime hot paths are benchmarked separately from builder/provider setup so the guardrail catalog tracks `Build()` and lifecycle costs directly
-  - the guardrail catalog now also covers the correlated ASP.NET Core request-logging path with request/response body capture enabled
+- `scripts/validate-release.ps1`
+- `.github/workflows/release-validation.yml`
+- prepared composition and runtime hot paths are benchmarked separately from builder/provider setup so the guardrail catalog tracks `Build()` and lifecycle costs directly
+- the guardrail catalog now also covers strict trust-policy composition plus correlated, bounded-truncation, and concurrent ASP.NET Core request-logging paths with request/response body capture enabled
 
 ## Gap status mapped to backlog tasks
 
@@ -73,7 +73,7 @@ Shipped follow-through:
 - `Cephalon.Engine` and `Cephalon.Observability` continue to emit through `Microsoft.Extensions.Logging.ILogger`
 - `Cephalon.Observability.Serilog` now provides `AddCephalonSerilog()` for host-neutral Serilog registration on `IHostApplicationBuilder`
 - the companion package reads the standard top-level `Serilog` section, supports code-based sink and enricher extension, and keeps registration additive to the shared `ILogger` pipeline
-- `Cephalon.AspNetCore` now ships `Engine:Observability:HttpLogging` plus `AddCephalonHttpLogging()` for opt-in request/response summaries, bounded body capture, and request-scope correlation over the same shared `ILogger` pipeline
+- `Cephalon.AspNetCore` now ships `Engine:Observability:HttpLogging` plus `AddCephalonHttpLogging()` for opt-in request/response summaries, bounded body capture, request-scope correlation, and default sensitive-value redaction across query-string, JSON, form, and header-style plain-text payloads over the same shared `ILogger` pipeline
 - when ASP.NET Core request logging is enabled, Serilog receives `RequestId`, `TraceId`, `SpanId`, and `TraceParent` through the same MEL scope flow, so request diagnostics and trace exports stay linkable without a new Cephalon logger API
 
 Why this stays separate:
@@ -90,15 +90,16 @@ Current baseline:
 - the shipped OTLP baseline now includes ASP.NET Core server instrumentation so exported traces can correlate with Cephalon request logging
 - the current shipped export story is cloud-neutral and works without locking Cephalon into one vendor/runtime target
 
-Gap:
+Re-scope decision:
 
-- cloud-vendor tracing/export integrations, managed-collector guidance, and hosted runtime defaults should wait until the target cloud/runtime context is explicit
-- later cloud work may need vendor-specific resource attributes, auth, collector topology, or exporter wiring that does not belong in the current cloud-neutral baseline
+- the original later follow-through has now expanded into a broader cloud/platform companion track spanning AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu
+- that broader scope now belongs to `ENG-029` in phase 6 cloud and platform integrations instead of remaining a phase-2 child task
 
-Why this stays separate:
+Why it moved out of phase 2:
 
 - cloud tracing/export work is deployment-context-specific
-- deferring it keeps the current operational hardening track focused on reusable host/runtime primitives
+- multi-cloud exporter wiring, auth, resource attributes, and hosted defaults are broader than the reusable host/runtime primitives shipped in phase 2
+- moving it out lets phase 2 close on the cloud-neutral operational baseline that is already shipped
 
 ### `#33` Baseline provider-specific dependency health companion packages
 
@@ -202,11 +203,11 @@ Why this stays separate:
 
 Current conclusion from this inventory:
 
-- the existing phase-2 child-task split remains valid, but observability follow-through is clearer when `ILogger` provider integration is tracked separately from cloud tracing/export work
-- the main missing work is later cloud tracing/export follow-through on top of a shipped provider/logging baseline, with any extra provider packs now treated as future adoption-driven expansion instead of a current phase-2 blocker
+- the phase-2 child-task split served its purpose for the shipped baseline, but `#86` no longer belongs inside that phase because its scope is now a later multi-cloud companion-integration program
+- phase 2 can now be treated as substantially complete on top of a shipped provider/logging/runtime-surface baseline, with any extra provider packs still treated as future adoption-driven expansion
 
-Recommended execution sequence remains:
+Recommended execution sequence now is:
 
-1. `#31` inventory and sequencing
-2. `#86` cloud tracing/export follow-through when the target cloud/runtime is explicit
-3. adoption-driven provider-pack additions only when a concrete infrastructure gap appears
+1. treat phase 2 as complete for the shipped operational baseline
+2. track `#86` under `ENG-029` in phase 6 cloud and platform integrations, only after the first supported target slice is explicit
+3. keep adoption-driven provider-pack additions separate unless a concrete infrastructure gap appears

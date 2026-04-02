@@ -1,5 +1,8 @@
+using System.Buffers;
 using System.Diagnostics;
 using System.Text;
+using System.Text.Json;
+using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -19,12 +22,13 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
     {
         var correlation = RequestCorrelation.Create(context);
         var activity = Activity.Current;
+        var redactedQueryString = RedactQueryString(context.Request.QueryString.Value, options);
 
         ApplyCorrelationToActivity(activity, correlation);
 
         using var scope = logger.BeginScope(correlation.CreateScope());
 
-        LogRequestStarted(context, correlation);
+        LogRequestStarted(context, correlation, redactedQueryString);
         AddLogReferenceEvent(
             activity,
             "cephalon.http.request.started",
@@ -39,10 +43,11 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
         var requestBody = options.LogRequestBody
             ? await TryReadRequestBodyAsync(context.Request, options.RequestBodyLimit, context.RequestAborted).ConfigureAwait(false)
             : BodyCaptureResult.None;
+        requestBody = RedactBodyCaptureResult(requestBody, options);
 
         if (requestBody.ShouldLog)
         {
-            LogRequestBody(context, correlation, requestBody);
+            LogRequestBody(context, correlation, redactedQueryString, requestBody);
             AddLogReferenceEvent(
                 activity,
                 "cephalon.http.request.body.logged",
@@ -70,7 +75,7 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
             await next(context).ConfigureAwait(false);
 
             var elapsedMilliseconds = Stopwatch.GetElapsedTime(started).TotalMilliseconds;
-            LogResponseCompleted(context, correlation, elapsedMilliseconds, responseCapture);
+            LogResponseCompleted(context, correlation, redactedQueryString, elapsedMilliseconds, responseCapture);
             AddLogReferenceEvent(
                 activity,
                 "cephalon.http.response.completed",
@@ -82,10 +87,12 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
                     tags["cephalon.http.elapsed_ms"] = elapsedMilliseconds;
                 });
 
-            var responseBody = responseCapture?.CreateResult(context.Response.ContentType);
+            var responseBody = RedactBodyCaptureResult(
+                responseCapture?.CreateResult(context.Response.ContentType) ?? BodyCaptureResult.None,
+                options);
             if (responseBody is { ShouldLog: true })
             {
-                LogResponseBody(context, correlation, responseBody.Value);
+                LogResponseBody(context, correlation, redactedQueryString, responseBody);
                 AddLogReferenceEvent(
                     activity,
                     "cephalon.http.response.body.logged",
@@ -93,15 +100,15 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
                     correlation,
                     tags =>
                     {
-                        tags["cephalon.http.body.truncated"] = responseBody.Value.IsTruncated;
-                        tags["http.response.body.content_type"] = responseBody.Value.ContentType;
+                        tags["cephalon.http.body.truncated"] = responseBody.IsTruncated;
+                        tags["http.response.body.content_type"] = responseBody.ContentType;
                     });
             }
         }
         catch (Exception exception)
         {
             var elapsedMilliseconds = Stopwatch.GetElapsedTime(started).TotalMilliseconds;
-            LogRequestFailed(context, correlation, elapsedMilliseconds, exception);
+            LogRequestFailed(context, correlation, redactedQueryString, elapsedMilliseconds, exception);
             AddLogReferenceEvent(
                 activity,
                 "cephalon.http.request.failed",
@@ -125,13 +132,13 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
         }
     }
 
-    private void LogRequestStarted(HttpContext context, RequestCorrelation correlation)
+    private void LogRequestStarted(HttpContext context, RequestCorrelation correlation, string? queryString)
     {
         HttpRequestResponseLoggingLogs.RequestStarted(
             logger,
             context.Request.Method,
             context.Request.Path.Value ?? "/",
-            context.Request.QueryString.Value,
+            queryString,
             correlation.RequestId,
             correlation.TraceId,
             correlation.SpanId,
@@ -140,13 +147,17 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
             context.Request.ContentLength);
     }
 
-    private void LogRequestBody(HttpContext context, RequestCorrelation correlation, BodyCaptureResult requestBody)
+    private void LogRequestBody(
+        HttpContext context,
+        RequestCorrelation correlation,
+        string? queryString,
+        BodyCaptureResult requestBody)
     {
         HttpRequestResponseLoggingLogs.RequestBodyCaptured(
             logger,
             context.Request.Method,
             context.Request.Path.Value ?? "/",
-            context.Request.QueryString.Value,
+            queryString,
             correlation.RequestId,
             correlation.TraceId,
             correlation.SpanId,
@@ -158,6 +169,7 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
     private void LogResponseCompleted(
         HttpContext context,
         RequestCorrelation correlation,
+        string? queryString,
         double elapsedMilliseconds,
         LimitedBodyCaptureStream? responseCapture)
     {
@@ -165,7 +177,7 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
             logger,
             context.Request.Method,
             context.Request.Path.Value ?? "/",
-            context.Request.QueryString.Value,
+            queryString,
             context.Response.StatusCode,
             elapsedMilliseconds,
             correlation.RequestId,
@@ -175,13 +187,17 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
             context.Response.ContentLength ?? responseCapture?.TotalBytesWritten);
     }
 
-    private void LogResponseBody(HttpContext context, RequestCorrelation correlation, BodyCaptureResult responseBody)
+    private void LogResponseBody(
+        HttpContext context,
+        RequestCorrelation correlation,
+        string? queryString,
+        BodyCaptureResult responseBody)
     {
         HttpRequestResponseLoggingLogs.ResponseBodyCaptured(
             logger,
             context.Request.Method,
             context.Request.Path.Value ?? "/",
-            context.Request.QueryString.Value,
+            queryString,
             correlation.RequestId,
             correlation.TraceId,
             correlation.SpanId,
@@ -193,6 +209,7 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
     private void LogRequestFailed(
         HttpContext context,
         RequestCorrelation correlation,
+        string? queryString,
         double elapsedMilliseconds,
         Exception exception)
     {
@@ -201,7 +218,7 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
             exception,
             context.Request.Method,
             context.Request.Path.Value ?? "/",
-            context.Request.QueryString.Value,
+            queryString,
             elapsedMilliseconds,
             correlation.RequestId,
             correlation.TraceId,
@@ -276,31 +293,51 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
         CancellationToken cancellationToken)
     {
         var byteLimit = Math.Max(0, bodyLimit);
-        var buffer = new byte[Math.Max(1, Math.Min(byteLimit + 1, 4096))];
-        using var capture = new MemoryStream(Math.Max(1, byteLimit + 1));
+        var captureLength = Math.Max(1, byteLimit + 1);
+        var captureBuffer = ArrayPool<byte>.Shared.Rent(captureLength);
+        var capturedBytes = 0;
 
-        while (capture.Length < byteLimit + 1)
+        try
         {
-            var remaining = (int)Math.Min(buffer.Length, (byteLimit + 1) - capture.Length);
-            var read = await stream.ReadAsync(buffer.AsMemory(0, remaining), cancellationToken).ConfigureAwait(false);
-            if (read == 0)
+            while (capturedBytes < captureLength)
             {
-                break;
+                var read = await stream.ReadAsync(
+                    captureBuffer.AsMemory(capturedBytes, captureLength - capturedBytes),
+                    cancellationToken).ConfigureAwait(false);
+                if (read == 0)
+                {
+                    break;
+                }
+
+                capturedBytes += read;
             }
 
-            await capture.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
-        }
+            if (capturedBytes == 0)
+            {
+                return BodyCaptureResult.Empty(contentType);
+            }
 
-        if (capture.Length == 0)
+            return CreateBodyCaptureResult(captureBuffer, capturedBytes, contentType, byteLimit);
+        }
+        finally
         {
-            return BodyCaptureResult.Empty(contentType);
+            Array.Clear(captureBuffer, 0, capturedBytes);
+            ArrayPool<byte>.Shared.Return(captureBuffer);
         }
+    }
 
-        var payload = capture.ToArray();
-        var truncated = payload.Length > byteLimit;
-        var effectiveLength = truncated ? byteLimit : payload.Length;
+    private static BodyCaptureResult CreateBodyCaptureResult(
+        byte[] buffer,
+        int capturedBytes,
+        string? contentType,
+        int bodyLimit)
+    {
+        var truncated = capturedBytes > bodyLimit;
+        var effectiveLength = truncated ? bodyLimit : capturedBytes;
         var encoding = ResolveEncoding(contentType);
-        var text = encoding.GetString(payload, 0, effectiveLength);
+        var text = effectiveLength == 0
+            ? string.Empty
+            : encoding.GetString(buffer, 0, effectiveLength);
 
         return new BodyCaptureResult(text, contentType, truncated);
     }
@@ -325,6 +362,364 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
             mediaTypeText.Contains("graphql", StringComparison.OrdinalIgnoreCase) ||
             mediaTypeText.Contains("javascript", StringComparison.OrdinalIgnoreCase) ||
             mediaTypeText.Contains("x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static BodyCaptureResult RedactBodyCaptureResult(
+        BodyCaptureResult captureResult,
+        HttpRequestResponseLoggingOptions options)
+    {
+        if (!captureResult.ShouldLog)
+        {
+            return captureResult;
+        }
+
+        var redactedBody = RedactText(captureResult.Body, captureResult.ContentType, options);
+        return string.Equals(redactedBody, captureResult.Body, StringComparison.Ordinal)
+            ? captureResult
+            : new BodyCaptureResult(redactedBody, captureResult.ContentType, captureResult.IsTruncated);
+    }
+
+    private static string? RedactQueryString(string? queryString, HttpRequestResponseLoggingOptions options)
+    {
+        if (string.IsNullOrWhiteSpace(queryString) || !options.RedactSensitiveValues)
+        {
+            return queryString;
+        }
+
+        return RedactDelimitedKeyValuePairs(queryString, separator: '&', hasLeadingQuestionMark: true, options);
+    }
+
+    private static string RedactText(
+        string body,
+        string? contentType,
+        HttpRequestResponseLoggingOptions options)
+    {
+        if (string.IsNullOrEmpty(body) || !options.RedactSensitiveValues)
+        {
+            return body;
+        }
+
+        if (LooksLikeJson(contentType, body))
+        {
+            return ContainsSensitiveJsonPropertyName(body, options)
+                ? TryRedactJson(body, options) ?? body
+                : body;
+        }
+
+        if (LooksLikeFormUrlEncoded(contentType, body))
+        {
+            return RedactDelimitedKeyValuePairs(body, separator: '&', hasLeadingQuestionMark: false, options);
+        }
+
+        return TryRedactPlainTextKeyValuePairs(body, options) ?? body;
+    }
+
+    private static bool LooksLikeJson(string? contentType, string body)
+    {
+        if (!string.IsNullOrWhiteSpace(contentType) &&
+            contentType.Contains("json", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        foreach (var character in body)
+        {
+            if (!char.IsWhiteSpace(character))
+            {
+                return character is '{' or '[';
+            }
+        }
+
+        return false;
+    }
+
+    private static bool ContainsSensitiveJsonPropertyName(string body, HttpRequestResponseLoggingOptions options)
+    {
+        for (var index = 0; index < body.Length; index++)
+        {
+            if (body[index] != '"')
+            {
+                continue;
+            }
+
+            var propertyStart = index + 1;
+            var cursor = propertyStart;
+
+            while (cursor < body.Length)
+            {
+                if (body[cursor] == '\\')
+                {
+                    cursor += 2;
+                    continue;
+                }
+
+                if (body[cursor] == '"')
+                {
+                    break;
+                }
+
+                cursor++;
+            }
+
+            if (cursor >= body.Length)
+            {
+                return false;
+            }
+
+            var lookAhead = cursor + 1;
+            while (lookAhead < body.Length && char.IsWhiteSpace(body[lookAhead]))
+            {
+                lookAhead++;
+            }
+
+            if (lookAhead < body.Length &&
+                body[lookAhead] == ':' &&
+                IsSensitiveFieldName(body[propertyStart..cursor], options))
+            {
+                return true;
+            }
+
+            index = cursor;
+        }
+
+        return false;
+    }
+
+    private static bool LooksLikeFormUrlEncoded(string? contentType, string body)
+    {
+        return (!string.IsNullOrWhiteSpace(contentType) &&
+                contentType.Contains("x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase)) ||
+            (body.Contains('=') && body.Contains('&'));
+    }
+
+    private static string? TryRedactPlainTextKeyValuePairs(string text, HttpRequestResponseLoggingOptions options)
+    {
+        if (text.IndexOfAny(':', '=') < 0)
+        {
+            return null;
+        }
+
+        StringBuilder? builder = null;
+        var copiedUntil = 0;
+        var position = 0;
+
+        while (position < text.Length)
+        {
+            var lineStart = position;
+            while (position < text.Length && text[position] is not '\r' and not '\n')
+            {
+                position++;
+            }
+
+            var redactedLine = TryRedactPlainTextLine(text.AsSpan(lineStart, position - lineStart), options);
+            if (redactedLine is not null)
+            {
+                builder ??= new StringBuilder(text.Length + Math.Max(options.RedactionValue.Length, 16));
+                builder.Append(text.AsSpan(copiedUntil, lineStart - copiedUntil));
+                builder.Append(redactedLine);
+                copiedUntil = position;
+            }
+
+            if (position < text.Length)
+            {
+                position++;
+                if (position < text.Length && text[position - 1] == '\r' && text[position] == '\n')
+                {
+                    position++;
+                }
+            }
+        }
+
+        if (builder is null)
+        {
+            return null;
+        }
+
+        builder.Append(text.AsSpan(copiedUntil));
+        return builder.ToString();
+    }
+
+    private static string? TryRedactPlainTextLine(ReadOnlySpan<char> line, HttpRequestResponseLoggingOptions options)
+    {
+        if (line.IsEmpty)
+        {
+            return null;
+        }
+
+        var colonIndex = line.IndexOf(':');
+        var equalsIndex = line.IndexOf('=');
+        var delimiterIndex = colonIndex switch
+        {
+            < 0 => equalsIndex,
+            _ when equalsIndex < 0 => colonIndex,
+            _ => Math.Min(colonIndex, equalsIndex)
+        };
+
+        if (delimiterIndex <= 0)
+        {
+            return null;
+        }
+
+        var keyStart = 0;
+        while (keyStart < delimiterIndex && char.IsWhiteSpace(line[keyStart]))
+        {
+            keyStart++;
+        }
+
+        var keyEnd = delimiterIndex;
+        while (keyEnd > keyStart && char.IsWhiteSpace(line[keyEnd - 1]))
+        {
+            keyEnd--;
+        }
+
+        if (keyEnd <= keyStart || !IsSensitiveFieldName(line[keyStart..keyEnd], options))
+        {
+            return null;
+        }
+
+        var valueStart = delimiterIndex + 1;
+        while (valueStart < line.Length && char.IsWhiteSpace(line[valueStart]))
+        {
+            valueStart++;
+        }
+
+        if (valueStart >= line.Length)
+        {
+            return null;
+        }
+
+        var valueEnd = line.Length;
+        while (valueEnd > valueStart && char.IsWhiteSpace(line[valueEnd - 1]))
+        {
+            valueEnd--;
+        }
+
+        return string.Concat(line[..valueStart], options.RedactionValue.AsSpan(), line[valueEnd..]);
+    }
+
+    private static string? TryRedactJson(string body, HttpRequestResponseLoggingOptions options)
+    {
+        try
+        {
+            using var document = JsonDocument.Parse(body);
+            var buffer = new ArrayBufferWriter<byte>(Encoding.UTF8.GetByteCount(body));
+            using var writer = new Utf8JsonWriter(buffer);
+            WriteRedactedJsonElement(writer, document.RootElement, options);
+            writer.Flush();
+            return Encoding.UTF8.GetString(buffer.WrittenSpan);
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+    }
+
+    private static void WriteRedactedJsonElement(
+        Utf8JsonWriter writer,
+        JsonElement element,
+        HttpRequestResponseLoggingOptions options)
+    {
+        switch (element.ValueKind)
+        {
+            case JsonValueKind.Object:
+                writer.WriteStartObject();
+                foreach (var property in element.EnumerateObject())
+                {
+                    writer.WritePropertyName(property.Name);
+                    if (IsSensitiveFieldName(property.Name, options))
+                    {
+                        writer.WriteStringValue(options.RedactionValue);
+                    }
+                    else
+                    {
+                        WriteRedactedJsonElement(writer, property.Value, options);
+                    }
+                }
+
+                writer.WriteEndObject();
+                break;
+
+            case JsonValueKind.Array:
+                writer.WriteStartArray();
+                foreach (var item in element.EnumerateArray())
+                {
+                    WriteRedactedJsonElement(writer, item, options);
+                }
+
+                writer.WriteEndArray();
+                break;
+
+            default:
+                element.WriteTo(writer);
+                break;
+        }
+    }
+
+    private static string RedactDelimitedKeyValuePairs(
+        string text,
+        char separator,
+        bool hasLeadingQuestionMark,
+        HttpRequestResponseLoggingOptions options)
+    {
+        var offset = hasLeadingQuestionMark && text.Length > 0 && text[0] == '?' ? 1 : 0;
+        var prefix = offset == 1 ? "?" : string.Empty;
+        var segments = text[offset..].Split(separator);
+        var changed = false;
+
+        for (var index = 0; index < segments.Length; index++)
+        {
+            var segment = segments[index];
+            if (string.IsNullOrEmpty(segment))
+            {
+                continue;
+            }
+
+            var delimiterIndex = segment.IndexOf('=');
+            var rawKey = delimiterIndex >= 0 ? segment[..delimiterIndex] : segment;
+            var decodedKey = WebUtility.UrlDecode(rawKey.Replace('+', ' '));
+            if (!IsSensitiveFieldName(decodedKey, options))
+            {
+                continue;
+            }
+
+            segments[index] = delimiterIndex >= 0
+                ? $"{rawKey}={options.RedactionValue}"
+                : rawKey;
+            changed = true;
+        }
+
+        return changed ? prefix + string.Join(separator, segments) : text;
+    }
+
+    private static bool IsSensitiveFieldName(string? fieldName, HttpRequestResponseLoggingOptions options)
+    {
+        if (string.IsNullOrWhiteSpace(fieldName))
+        {
+            return false;
+        }
+
+        var normalizedFieldName = fieldName.Trim();
+        return options.RedactedFieldNames.Any(candidate =>
+            string.Equals(candidate, normalizedFieldName, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static bool IsSensitiveFieldName(ReadOnlySpan<char> fieldName, HttpRequestResponseLoggingOptions options)
+    {
+        var normalizedFieldName = fieldName.Trim();
+        if (normalizedFieldName.IsEmpty)
+        {
+            return false;
+        }
+
+        foreach (var candidate in options.RedactedFieldNames)
+        {
+            if (normalizedFieldName.Equals(candidate, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static Encoding ResolveEncoding(string? contentType)
@@ -422,8 +817,11 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
     private sealed class LimitedBodyCaptureStream(Stream innerStream, int bodyLimit) : Stream
     {
         private readonly Stream innerStream = innerStream;
-        private readonly MemoryStream capture = new(Math.Max(1, Math.Max(0, bodyLimit) + 1));
         private readonly int bodyLimit = Math.Max(0, bodyLimit);
+        private readonly byte[] captureBuffer = ArrayPool<byte>.Shared.Rent(Math.Max(1, Math.Max(0, bodyLimit) + 1));
+        private readonly int captureLimit = Math.Max(1, Math.Max(0, bodyLimit) + 1);
+        private int capturedBytes;
+        private bool disposed;
 
         public long TotalBytesWritten { get; private set; }
 
@@ -448,18 +846,12 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
                 return BodyCaptureResult.None;
             }
 
-            if (capture.Length == 0)
+            if (capturedBytes == 0)
             {
                 return BodyCaptureResult.Empty(contentType);
             }
 
-            var payload = capture.ToArray();
-            var truncated = payload.Length > bodyLimit;
-            var effectiveLength = truncated ? bodyLimit : payload.Length;
-            var encoding = ResolveEncoding(contentType);
-            var text = encoding.GetString(payload, 0, effectiveLength);
-
-            return new BodyCaptureResult(text, contentType, truncated);
+            return CreateBodyCaptureResult(captureBuffer, capturedBytes, contentType, bodyLimit);
         }
 
         public override void Flush()
@@ -513,9 +905,11 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (disposing && !disposed)
             {
-                capture.Dispose();
+                Array.Clear(captureBuffer, 0, capturedBytes);
+                ArrayPool<byte>.Shared.Return(captureBuffer);
+                disposed = true;
             }
 
             base.Dispose(disposing);
@@ -524,13 +918,13 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
         private void Capture(ReadOnlySpan<byte> buffer)
         {
             TotalBytesWritten += buffer.Length;
-            if (capture.Length > bodyLimit)
+            if (capturedBytes >= captureLimit)
             {
                 return;
             }
 
-            var remaining = (int)Math.Max(0, (bodyLimit + 1) - capture.Length);
-            if (remaining == 0)
+            var remaining = captureLimit - capturedBytes;
+            if (remaining <= 0)
             {
                 return;
             }
@@ -538,7 +932,8 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
             var length = Math.Min(buffer.Length, remaining);
             if (length > 0)
             {
-                capture.Write(buffer[..length]);
+                buffer[..length].CopyTo(captureBuffer.AsSpan(capturedBytes));
+                capturedBytes += length;
             }
         }
     }
