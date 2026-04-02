@@ -468,22 +468,23 @@ Acceptance:
 
 ### ENG-029 Cloud-targeted observability companion integrations
 
-Status: later
-Estimate: 92
+Status: current focus
+Estimate: 113
 
 Why:
 
-- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, and Huawei Cloud vendor slices are now shipped, and the remaining provider matrix stays later until the next target is narrowed explicitly
+- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, and Huawei Cloud vendor slices are now shipped, and Alibaba Cloud is now the next explicit provider target under `ENG-029`
 - this work should stay in companion packages, preserve the shared `ILogger` pipeline plus the cloud-neutral OTLP baseline, and leave room for downstream developer-authored provider packages
 
 Acceptance:
 
 - keep the shipped self-hosted deployment defaults explicit and reusable instead of burying them inside vendor-specific companion packs
 - keep the shipped Azure Monitor, AWS, GCP, and Huawei Cloud slices explicit on top of the shared OpenTelemetry baseline
+- land the Alibaba Cloud companion follow-through as the current next explicit child item instead of reopening one ambiguous multi-cloud scope
 - keep vendor/platform-specific exporter wiring, auth, resource attributes, and hosted defaults outside `Cephalon.Engine` and `Cephalon.Abstractions`
 - keep the shared `ILogger` pipeline and existing `Cephalon.Observability.OpenTelemetry` baseline intact
 - add docs, validation, and planning sync for the supported targets plus the downstream companion-package authoring path
-- keep the remaining Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu follow-through narrowed into explicit child items under `ENG-029` before implementation starts instead of reopening one ambiguous multi-cloud scope
+- keep the remaining Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu follow-through narrowed into explicit child items under `ENG-029` before implementation starts instead of reopening one ambiguous multi-cloud scope
 - avoid starting implementation on any new vendor/platform target without first narrowing it explicitly
 
 ## Sprint history and next 3 sprints
@@ -535,6 +536,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-026 GraphQL transport adapter
 - ENG-027 DocFX XML-comment readiness beyond shipped packages
 - ENG-029 Huawei Cloud observability exporter wiring and hosted Huawei Cloud defaults on top of the OTLP baseline
+- ENG-029 Alibaba Cloud observability exporter wiring and hosted Alibaba Cloud defaults on top of the OTLP baseline
 
 ### Sprint 2
 
