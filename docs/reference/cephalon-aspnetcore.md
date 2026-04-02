@@ -448,6 +448,24 @@ Parameters:
 - `builder`: The ASP.NET Core application builder to extend.
 - `configure`: The callback that configures the underlying engine builder.
 
+<a id="member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addcephalonhttplogging-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions"></a>
+
+##### `AddCephalonHttpLogging`
+
+```csharp
+WebApplicationBuilder AddCephalonHttpLogging(this WebApplicationBuilder builder, Action<HttpRequestResponseLoggingOptions> configure)
+```
+
+Adds Cephalon's HTTP request and response logging options to the ASP.NET Core host.
+
+Remarks: The logging contract is read from `Engine:Observability:HttpLogging` so teams can opt into request/response summaries and bounded body capture without introducing a separate host-specific section.
+
+Returns: The same builder instance for fluent host composition.
+
+Parameters:
+- `builder`: The ASP.NET Core application builder to extend.
+- `configure`: An optional callback that can extend or override the configuration-driven request-logging setup.
+
 <a id="member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addcephalonprojectconfigurations-microsoft-aspnetcore-builder-webapplicationbuilder"></a>
 
 ##### `AddCephalonProjectConfigurations`
@@ -514,6 +532,101 @@ Returns: The same application instance for fluent host composition.
 
 Parameters:
 - `app`: The ASP.NET Core application to extend.
+
+<a id="type-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions"></a>
+
+### `HttpRequestResponseLoggingOptions`
+
+Configures opt-in HTTP request and response logging for Cephalon ASP.NET Core hosts.
+
+Remarks: These settings are read from `Engine:Observability:HttpLogging` by default. Request and response bodies are captured only for textual content types such as JSON, XML, GraphQL, form payloads, and `text/*` responses, and body capture is truncated to the configured limits.
+
+#### Declaration
+```csharp
+public sealed class HttpRequestResponseLoggingOptions
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-ctor"></a>
+
+##### `HttpRequestResponseLoggingOptions`
+
+```csharp
+HttpRequestResponseLoggingOptions()
+```
+
+Creates request and response logging options with body capture disabled by default.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool Enabled { get; set; }
+```
+
+Gets or sets a value indicating whether the ASP.NET Core host should log request and response summaries.
+
+<a id="member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-logrequestbody"></a>
+
+##### `LogRequestBody`
+
+```csharp
+bool LogRequestBody { get; set; }
+```
+
+Gets or sets a value indicating whether textual request bodies should be logged.
+
+<a id="member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-logresponsebody"></a>
+
+##### `LogResponseBody`
+
+```csharp
+bool LogResponseBody { get; set; }
+```
+
+Gets or sets a value indicating whether textual response bodies should be logged.
+
+<a id="member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-requestbodylimit"></a>
+
+##### `RequestBodyLimit`
+
+```csharp
+int RequestBodyLimit { get; set; }
+```
+
+Gets or sets the maximum number of request-body characters to log before the payload is truncated.
+
+<a id="member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-responsebodylimit"></a>
+
+##### `ResponseBodyLimit`
+
+```csharp
+int ResponseBodyLimit { get; set; }
+```
+
+Gets or sets the maximum number of response-body characters to log before the payload is truncated.
+
+#### Methods
+
+<a id="member-m-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
+
+##### `FromConfiguration`
+
+```csharp
+HttpRequestResponseLoggingOptions FromConfiguration(IConfiguration configuration, string sectionPath)
+```
+
+Binds request and response logging options from configuration.
+
+Returns: The bound request and response logging options.
+
+Parameters:
+- `configuration`: The application configuration root.
+- `sectionPath`: The configuration section path that contains the engine settings. The default is `Engine`.
 
 <a id="type-cephalon-aspnetcore-hosting-itransportroutemapper"></a>
 

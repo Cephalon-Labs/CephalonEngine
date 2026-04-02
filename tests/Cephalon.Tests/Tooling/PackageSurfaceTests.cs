@@ -37,6 +37,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.AspNetCore.Documentation.ReferenceDocsSurface),
             typeof(global::Cephalon.AspNetCore.Hosting.EngineWebApplicationBuilderExtensions),
             typeof(global::Cephalon.AspNetCore.Hosting.EngineWebApplicationExtensions),
+            typeof(global::Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions),
             typeof(global::Cephalon.AspNetCore.Hosting.ITransportRouteMapper),
             typeof(global::Cephalon.AspNetCore.Modules.IEndpointModule),
             typeof(global::Cephalon.AspNetCore.Transformers.XmlCommentsDocumentTransformer),

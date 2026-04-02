@@ -69,11 +69,17 @@ public static class EngineWebApplicationExtensions
         var localizedTextCatalog = app.Services.GetRequiredService<ILocalizedTextCatalog>();
         var localizationSettings = app.Services.GetRequiredService<LocalizationSettings>();
         var referenceDocsOptions = app.Services.GetService<ReferenceDocsHostingOptions>() ?? new ReferenceDocsHostingOptions();
+        var httpLoggingOptions = app.Services.GetService<HttpRequestResponseLoggingOptions>()
+            ?? HttpRequestResponseLoggingOptions.FromConfiguration(app.Services.GetRequiredService<IConfiguration>());
         var referenceDocsSurface = CreateReferenceDocsSurface(referenceDocsOptions);
         var restApiSelected = runtime.Manifest.AppProfile.Transports.Any(transport =>
             string.Equals(transport.Id, "rest-api", StringComparison.OrdinalIgnoreCase));
 
         app.UseRequestLocalization(BuildRequestLocalizationOptions(localizationSettings, localizedTextCatalog));
+        if (httpLoggingOptions.Enabled)
+        {
+            app.UseMiddleware<HttpRequestResponseLoggingMiddleware>();
+        }
 
         var engineGroup = app.MapGroup("/engine");
         engineGroup.ExcludeFromDescription();

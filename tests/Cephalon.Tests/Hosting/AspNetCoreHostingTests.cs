@@ -35,8 +35,10 @@ using Cephalon.Retrieval.Registration;
 using Cephalon.Retrieval.Services;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Cephalon.Tests.Support;
 
 namespace Cephalon.Tests.Hosting;
@@ -679,12 +681,78 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal(2000, engineConvention.MinimumEventId);
         Assert.Equal(2003, engineConvention.MaximumEventId);
         Assert.Contains(engineConvention.Events, entry => entry.Id == 2002 && entry.Name == "LogRuntimeFailure");
+        var aspNetCoreConvention = Assert.Single(diagnostics.Conventions, convention => convention.Source == "Cephalon.AspNetCore");
+        Assert.Equal(3200, aspNetCoreConvention.MinimumEventId);
+        Assert.Equal(3204, aspNetCoreConvention.MaximumEventId);
+        Assert.Contains(aspNetCoreConvention.Events, entry => entry.Id == 3201 && entry.Name == "HttpRequestBodyCaptured");
 
         Assert.NotNull(snapshot);
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Engine");
+        Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.AspNetCore");
         Assert.Contains(
             snapshot.DiagnosticsConventions.Single(convention => convention.Source == "Cephalon.Engine").Events,
             entry => entry.Id == 2002);
+        Assert.Contains(
+            snapshot.DiagnosticsConventions.Single(convention => convention.Source == "Cephalon.AspNetCore").Events,
+            entry => entry.Id == 3203);
+    }
+
+    [Fact]
+    public async Task MapCephalonLogsHttpRequestsAndResponsesWithBodiesAndTraceCorrelation()
+    {
+        var loggerProvider = new TestLoggerProvider();
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Logging.ClearProviders();
+        builder.Logging.AddProvider(loggerProvider);
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:LogRequestBody"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:LogResponseBody"] = "true";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        app.MapPost("/echo", async context =>
+        {
+            using var reader = new StreamReader(context.Request.Body, leaveOpen: true);
+            var payload = await reader.ReadToEndAsync();
+            context.Response.ContentType = "text/plain; charset=utf-8";
+            await context.Response.WriteAsync($"echo:{payload}");
+        });
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/echo?mode=inspect")
+        {
+            Content = new StringContent("""{"hello":"world"}""", Encoding.UTF8, "application/json")
+        };
+        request.Headers.TryAddWithoutValidation("traceparent", "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01");
+
+        var response = await client.SendAsync(request);
+        var payload = await response.Content.ReadAsStringAsync();
+
+        Assert.True(response.IsSuccessStatusCode, payload);
+        Assert.Equal("""echo:{"hello":"world"}""", payload);
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3200 &&
+            entry.Message.Contains("POST", StringComparison.Ordinal) &&
+            entry.Message.Contains("/echo", StringComparison.Ordinal) &&
+            entry.Message.Contains("4bf92f3577b34da6a3ce929d0e0e4736", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3201 &&
+            entry.Message.Contains("""{"hello":"world"}""", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3202 &&
+            entry.Message.Contains("200", StringComparison.Ordinal) &&
+            entry.Message.Contains("4bf92f3577b34da6a3ce929d0e0e4736", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3203 &&
+            entry.Message.Contains("""echo:{"hello":"world"}""", StringComparison.Ordinal));
     }
 
     [Fact]

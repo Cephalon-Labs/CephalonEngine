@@ -57,6 +57,7 @@ Current baseline:
 - `Cephalon.Observability.OpenTelemetry` now wires OTLP logs, metrics, and traces through `AddCephalonOpenTelemetry()`
 - `Cephalon.Observability.Serilog` now wires Serilog through `AddCephalonSerilog()` while keeping the shared `ILogger` contract intact
 - the shipped companion package supports `otlp`, `otlp/grpc`, and `otlp/http`, with automatic signal-path normalization for OTLP HTTP collectors
+- the shipped OpenTelemetry baseline now also adds ASP.NET Core server tracing so request traces line up with Cephalon HTTP log correlation when hosts export traces
 
 Outcome:
 
@@ -71,6 +72,8 @@ Shipped follow-through:
 - `Cephalon.Engine` and `Cephalon.Observability` continue to emit through `Microsoft.Extensions.Logging.ILogger`
 - `Cephalon.Observability.Serilog` now provides `AddCephalonSerilog()` for host-neutral Serilog registration on `IHostApplicationBuilder`
 - the companion package reads the standard top-level `Serilog` section, supports code-based sink and enricher extension, and keeps registration additive to the shared `ILogger` pipeline
+- `Cephalon.AspNetCore` now ships `Engine:Observability:HttpLogging` plus `AddCephalonHttpLogging()` for opt-in request/response summaries, bounded body capture, and request-scope correlation over the same shared `ILogger` pipeline
+- when ASP.NET Core request logging is enabled, Serilog receives `RequestId`, `TraceId`, `SpanId`, and `TraceParent` through the same MEL scope flow, so request diagnostics and trace exports stay linkable without a new Cephalon logger API
 
 Why this stays separate:
 
@@ -83,6 +86,7 @@ Current baseline:
 
 - hosts can declare telemetry export intent through `Engine:Observability:Telemetry`
 - `Cephalon.Observability.OpenTelemetry` already wires OTLP logs, metrics, and traces through `AddCephalonOpenTelemetry()`
+- the shipped OTLP baseline now includes ASP.NET Core server instrumentation so exported traces can correlate with Cephalon request logging
 - the current shipped export story is cloud-neutral and works without locking Cephalon into one vendor/runtime target
 
 Gap:

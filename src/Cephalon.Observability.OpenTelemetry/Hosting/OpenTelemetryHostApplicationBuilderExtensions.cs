@@ -66,6 +66,7 @@ public static class OpenTelemetryHostApplicationBuilderExtensions
         {
             openTelemetry.WithTracing(tracing =>
             {
+                tracing.AddAspNetCoreInstrumentation();
                 tracing.AddSource(EngineDiagnostics.ActivitySourceName);
                 tracing.AddOtlpExporter(exporter =>
                     ConfigureExporter(exporter, telemetry, exporterProtocol, TelemetrySignal.Traces));

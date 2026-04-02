@@ -78,6 +78,9 @@ Browse the published API surface by public member.
 - [AddCephalonHttpDependencyHealth](cephalon-observability-httpdependencies.md#member-m-cephalon-observability-httpdependencies-hosting-httpdependencyhealthservicecollectionextensions-addcephalonhttpdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions): `Methods` on `HttpDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.HttpDependencies.Hosting` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=AddCephalonHttpDependencyHealth&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Hosting&scope=members)
   - Adds HTTP dependency-health services using configuration as the primary source of probe settings.
   - `IServiceCollection AddCephalonHttpDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<HttpDependencyHealthOptions> configure)`
+- [AddCephalonHttpLogging](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addcephalonhttplogging-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions): `Methods` on `EngineWebApplicationBuilderExtensions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=AddCephalonHttpLogging&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Adds Cephalon's HTTP request and response logging options to the ASP.NET Core host.
+  - `WebApplicationBuilder AddCephalonHttpLogging(this WebApplicationBuilder builder, Action<HttpRequestResponseLoggingOptions> configure)`
 - [AddCephalonKafkaDependencyHealth](cephalon-observability-kafkadependencies.md#member-m-cephalon-observability-kafkadependencies-hosting-kafkadependencyhealthservicecollectionextensions-addcephalonkafkadependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions): `Methods` on `KafkaDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.KafkaDependencies.Hosting` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=AddCephalonKafkaDependencyHealth&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Hosting&scope=members)
   - Adds Kafka dependency-health services using code-first configuration.
   - `IServiceCollection AddCephalonKafkaDependencyHealth(this IServiceCollection services, Action<KafkaDependencyHealthOptions> configure)`
@@ -882,6 +885,9 @@ Browse the published API surface by public member.
 - [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-modulediscoverysettings-empty): `Properties` on `ModuleDiscoverySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets an empty module discovery settings instance.
   - `ModuleDiscoverySettings Empty { get; }`
+- [Enabled](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-enabled): `Properties` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Enabled&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or sets a value indicating whether the ASP.NET Core host should log request and response summaries.
+  - `bool Enabled { get; set; }`
 - [Enabled](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocshostingoptions-enabled): `Properties` on `ReferenceDocsHostingOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Enabled&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Gets or sets a value indicating whether hosted reference docs should be exposed.
   - `bool Enabled { get; set; }`
@@ -1074,6 +1080,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability-httpdependencies.md#member-m-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `HttpDependencyHealthOptions` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Binds HTTP dependency-health options from configuration.
   - `HttpDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Binds request and response logging options from configuration.
+  - `HttpRequestResponseLoggingOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability-kafkadependencies.md#member-m-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `KafkaDependencyHealthOptions` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
   - Binds Kafka dependency-health options from configuration.
   - `KafkaDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -1245,6 +1254,9 @@ Browse the published API surface by public member.
 - [HttpDependencyHealthOptions](cephalon-observability-httpdependencies.md#member-m-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-ctor): `Constructors` on `HttpDependencyHealthOptions` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=HttpDependencyHealthOptions&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Initializes a new instance of the `HttpDependencyHealthOptions` class.
   - `HttpDependencyHealthOptions()`
+- [HttpRequestResponseLoggingOptions](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-ctor): `Constructors` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=HttpRequestResponseLoggingOptions&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Creates request and response logging options with body capture disabled by default.
+  - `HttpRequestResponseLoggingOptions()`
 
 ## I
 
@@ -1539,6 +1551,12 @@ Browse the published API surface by public member.
 - [LogModuleSummary](cephalon-observability.md#member-p-cephalon-observability-configuration-observabilityoptions-logmodulesummary): `Properties` on `ObservabilityOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=LogModuleSummary&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Gets or sets a value indicating whether a module summary should be written at host startup.
   - `bool LogModuleSummary { get; set; }`
+- [LogRequestBody](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-logrequestbody): `Properties` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=LogRequestBody&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or sets a value indicating whether textual request bodies should be logged.
+  - `bool LogRequestBody { get; set; }`
+- [LogResponseBody](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-logresponsebody): `Properties` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=LogResponseBody&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or sets a value indicating whether textual response bodies should be logged.
+  - `bool LogResponseBody { get; set; }`
 
 ## M
 
@@ -2217,6 +2235,9 @@ Browse the published API surface by public member.
 - [Request](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedscaffold-request): `Properties` on `RenderedScaffold` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Request&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the original scaffold request.
   - `ScaffoldRequest Request { get; }`
+- [RequestBodyLimit](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-requestbodylimit): `Properties` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RequestBodyLimit&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or sets the maximum number of request-body characters to log before the payload is truncated.
+  - `int RequestBodyLimit { get; set; }`
 - [RequestResponse](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-transportfeatures-requestresponse): `Fields` on `TransportFeatures` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequestResponse&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Indicates request-response interactions are supported.
   - `const TransportFeatures RequestResponse`
@@ -2334,6 +2355,9 @@ Browse the published API surface by public member.
 - [Resources](cephalon-abstractions.md#member-p-cephalon-abstractions-localization-localizedresourcessnapshot-resources): `Properties` on `LocalizedResourcesSnapshot` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Resources&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
   - Gets the localized resources visible to the snapshot.
   - `IReadOnlyDictionary<string, string> Resources { get; }`
+- [ResponseBodyLimit](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-responsebodylimit): `Properties` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ResponseBodyLimit&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or sets the maximum number of response-body characters to log before the payload is truncated.
+  - `int ResponseBodyLimit { get; set; }`
 - [RestApi](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-restapi): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=RestApi&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
   - Gets the built-in REST transport descriptor.
   - `TransportDescriptor RestApi { get; }`

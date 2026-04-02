@@ -1,11 +1,15 @@
 using System.Collections.Concurrent;
+using Cephalon.AspNetCore.Hosting;
 using Cephalon.Observability.Serilog.Hosting;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog.Core;
 using Serilog.Events;
+using Cephalon.Tests.Support;
 
 namespace Cephalon.Tests.Hosting;
 
@@ -34,6 +38,12 @@ public sealed class SerilogHostingTests
             LogLevel.Information,
             eventId: new EventId(3603, nameof(LogTransportMessage)),
             formatString: "ASP.NET Core host for {Transport}");
+
+    private static readonly Action<ILogger, Exception?> LogEndpointDetailMessage =
+        LoggerMessage.Define(
+            LogLevel.Information,
+            eventId: new EventId(3604, nameof(LogEndpointDetailMessage)),
+            formatString: "Endpoint detail emitted");
 
     [Fact]
     public void AddCephalonSerilogDoesNothingWhenNoConfigurationOrCodeOverridesAreProvided()
@@ -108,6 +118,48 @@ public sealed class SerilogHostingTests
         var entry = Assert.Single(sink.Events);
         var transport = Assert.IsType<ScalarValue>(entry.Properties["Transport"]);
         Assert.Equal("RestApi", transport.Value);
+    }
+
+    [Fact]
+    public async Task AddCephalonSerilogCarriesHttpLoggingCorrelationScopesIntoRequestLogs()
+    {
+        var sink = new TestSerilogSink();
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["Engine:Observability:HttpLogging:Enabled"] = "true";
+        builder.AddCephalonSerilog((_, loggerConfiguration) => loggerConfiguration
+            .MinimumLevel.Information()
+            .WriteTo.Sink(sink));
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        app.MapGet("/correlated-log", (ILogger<SerilogHostingTests> logger) =>
+        {
+            LogEndpointDetailMessage(logger, null);
+            return Results.Ok(new { status = "ok" });
+        });
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/correlated-log");
+        request.Headers.TryAddWithoutValidation("traceparent", "00-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-bbbbbbbbbbbbbbbb-01");
+
+        var response = await client.SendAsync(request);
+
+        Assert.True(response.IsSuccessStatusCode);
+        var entry = Assert.Single(sink.Events, item => item.MessageTemplate.Text == "Endpoint detail emitted");
+        var requestId = Assert.IsType<ScalarValue>(entry.Properties["RequestId"]);
+        Assert.False(string.IsNullOrWhiteSpace(requestId.Value?.ToString()));
+        var traceParent = Assert.IsType<ScalarValue>(entry.Properties["TraceParent"]);
+        Assert.Equal("00-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-bbbbbbbbbbbbbbbb-01", traceParent.Value);
+        var traceId = Assert.IsType<ScalarValue>(entry.Properties["TraceId"]);
+        Assert.Equal("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", traceId.Value);
     }
 
     private sealed class TestSerilogSink : ILogEventSink

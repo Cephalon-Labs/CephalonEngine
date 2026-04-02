@@ -792,12 +792,61 @@ Operational notes:
 - hosts can still append sinks, enrichers, or policy with code when configuration alone is not enough
 - bootstrap logging before the host builder exists stays an explicit host concern rather than hidden in the Cephalon runtime layer
 
+## ASP.NET Core request and response logging
+
+`Cephalon.AspNetCore` can opt into HTTP request/response logging through `Engine:Observability:HttpLogging`.
+This keeps the feature in the shared host surface instead of introducing a second logging abstraction, and it can capture bounded textual request/response bodies when teams explicitly enable it.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "HttpLogging": {
+        "Enabled": true,
+        "LogRequestBody": true,
+        "LogResponseBody": true,
+        "RequestBodyLimit": 4096,
+        "ResponseBodyLimit": 4096
+      }
+    }
+  }
+}
+```
+
+Optional code-level override:
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+builder.AddCephalonHttpLogging(options =>
+{
+    options.Enabled = true;
+    options.LogRequestBody = true;
+    options.LogResponseBody = true;
+    options.RequestBodyLimit = 4096;
+    options.ResponseBodyLimit = 4096;
+});
+builder.AddCephalon();
+```
+
+Operational notes:
+
+- `AddCephalon()` already registers the `Engine:Observability:HttpLogging` contract, so the extra method is only needed for code-based overrides
+- request/response body capture is opt-in and limited to textual payloads such as `text/*`, JSON, XML, GraphQL, JavaScript, and form payloads
+- request scopes carry `RequestId`, `TraceId`, `SpanId`, and `TraceParent`, so logs written inside the request pipeline keep the same correlation context
+- `/engine/diagnostics` publishes the ASP.NET Core event-id range for request start, request body, response completion, response body, and request failure events
+- the same correlation values flow through Serilog when `Cephalon.Observability.Serilog` is enabled
+- `Cephalon.Observability.OpenTelemetry` now adds ASP.NET Core tracing instrumentation, so OTLP-exported request traces can be matched with the corresponding Cephalon HTTP logs
+
 ## Release-validation guidance
 
 `.\scripts\validate-operational-conventions.ps1` is the focused operational validation pass for health and export conventions.
 It executes a curated test suite that validates:
 
 - ASP.NET Core `/health/live`, `/health/ready`, `/engine/diagnostics`, and `/engine/dependencies` behavior
+- ASP.NET Core request/response logging, bounded body capture, and trace/log correlation behavior
 - worker-host parity through `RuntimeHealthEvaluator`
 - startup manifest and telemetry-export guidance emitted by `Cephalon.Observability`
 - Serilog provider wiring through `Cephalon.Observability.Serilog`

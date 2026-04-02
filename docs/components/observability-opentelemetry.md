@@ -7,6 +7,7 @@
 - host-builder registration for OpenTelemetry logs, metrics, and traces
 - OTLP exporter wiring over the shared `Engine:Observability:Telemetry` contract
 - signal-specific HTTP/protobuf endpoint normalization so hosts can configure a base collector URL once
+- ASP.NET Core server-trace instrumentation so exported request traces line up with Cephalon HTTP log correlation
 
 ## Main surfaces
 
@@ -19,6 +20,8 @@
 ## How it fits
 
 This package stays outside `Cephalon.Engine` and `Cephalon.Observability` on purpose. The engine still owns the diagnostics names and lifecycle signals, `Cephalon.Observability` still owns startup summaries and the shared telemetry config contract, and this companion package turns that contract into a reusable OTLP integration path for ASP.NET Core or worker hosts that want real exporter wiring.
+
+For ASP.NET Core hosts, the shipped baseline now also adds server-request tracing so `traceId` and `spanId` values emitted by Cephalon request logging can be followed through exported OTLP traces without adding cloud-specific dependencies to the engine layer.
 
 ## Related docs
 

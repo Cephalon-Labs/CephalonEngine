@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T06:32:39.3224699+00:00",
+  "GeneratedAtUtc": "2026-04-02T08:26:43.678125+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -127,7 +127,7 @@
       "Description": "ASP.NET Core host core, REST surface, docs, health, and runtime endpoints.",
       "FileName": "cephalon-aspnetcore.md",
       "NamespaceCount": 8,
-      "TypeCount": 12
+      "TypeCount": 13
     },
     {
       "AssemblyName": "Cephalon.AspNetCore.GraphQL",
@@ -469,7 +469,7 @@
       "AssemblyName": "Cephalon.AspNetCore",
       "FileName": "cephalon-aspnetcore.md",
       "AnchorId": "namespace-cephalon-aspnetcore-hosting",
-      "TypeCount": 3
+      "TypeCount": 4
     },
     {
       "NamespaceName": "Cephalon.AspNetCore.JsonRpc.Hosting",
@@ -1482,7 +1482,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
-        "Methods": 4
+        "Methods": 5
       }
     },
     {
@@ -1693,6 +1693,21 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "HttpRequestResponseLoggingOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions",
+      "Declaration": "public sealed class HttpRequestResponseLoggingOptions",
+      "Summary": "Configures opt-in HTTP request and response logging for Cephalon ASP.NET Core hosts.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 1
       }
     },
     {
@@ -4090,6 +4105,17 @@
       "AnchorId": "member-m-cephalon-observability-httpdependencies-hosting-httpdependencyhealthservicecollectionextensions-addcephalonhttpdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions",
       "Signature": "IServiceCollection AddCephalonHttpDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CHttpDependencyHealthOptions\u003E configure)",
       "Summary": "Adds HTTP dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
+      "DisplayName": "AddCephalonHttpLogging",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineWebApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addcephalonhttplogging-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions",
+      "Signature": "WebApplicationBuilder AddCephalonHttpLogging(this WebApplicationBuilder builder, Action\u003CHttpRequestResponseLoggingOptions\u003E configure)",
+      "Summary": "Adds Cephalon\u0027s HTTP request and response logging options to the ASP.NET Core host."
     },
     {
       "DisplayName": "AddCephalonKafkaDependencyHealth",
@@ -6998,6 +7024,17 @@
     {
       "DisplayName": "Enabled",
       "Category": "Properties",
+      "DeclaringTypeName": "HttpRequestResponseLoggingOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-enabled",
+      "Signature": "bool Enabled { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the ASP.NET Core host should log request and response summaries."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocsHostingOptions",
       "NamespaceName": "Cephalon.AspNetCore.Documentation",
       "AssemblyName": "Cephalon.AspNetCore",
@@ -7691,6 +7728,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "HttpRequestResponseLoggingOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "HttpRequestResponseLoggingOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds request and response logging options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "KafkaDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.KafkaDependencies",
@@ -8292,6 +8340,17 @@
       "AnchorId": "member-m-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-ctor",
       "Signature": "HttpDependencyHealthOptions()",
       "Summary": "Initializes a new instance of the \u0060HttpDependencyHealthOptions\u0060 class."
+    },
+    {
+      "DisplayName": "HttpRequestResponseLoggingOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "HttpRequestResponseLoggingOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-ctor",
+      "Signature": "HttpRequestResponseLoggingOptions()",
+      "Summary": "Creates request and response logging options with body capture disabled by default."
     },
     {
       "DisplayName": "Id",
@@ -9326,6 +9385,28 @@
       "AnchorId": "member-p-cephalon-observability-configuration-observabilityoptions-logmodulesummary",
       "Signature": "bool LogModuleSummary { get; set; }",
       "Summary": "Gets or sets a value indicating whether a module summary should be written at host startup."
+    },
+    {
+      "DisplayName": "LogRequestBody",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpRequestResponseLoggingOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-logrequestbody",
+      "Signature": "bool LogRequestBody { get; set; }",
+      "Summary": "Gets or sets a value indicating whether textual request bodies should be logged."
+    },
+    {
+      "DisplayName": "LogResponseBody",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpRequestResponseLoggingOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-logresponsebody",
+      "Signature": "bool LogResponseBody { get; set; }",
+      "Summary": "Gets or sets a value indicating whether textual response bodies should be logged."
     },
     {
       "DisplayName": "Manifest",
@@ -11759,6 +11840,17 @@
       "Summary": "Gets the original scaffold request."
     },
     {
+      "DisplayName": "RequestBodyLimit",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpRequestResponseLoggingOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-requestbodylimit",
+      "Signature": "int RequestBodyLimit { get; set; }",
+      "Summary": "Gets or sets the maximum number of request-body characters to log before the payload is truncated."
+    },
+    {
       "DisplayName": "RequestResponse",
       "Category": "Fields",
       "DeclaringTypeName": "TransportFeatures",
@@ -12186,6 +12278,17 @@
       "AnchorId": "member-p-cephalon-abstractions-localization-localizedresourcessnapshot-resources",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Resources { get; }",
       "Summary": "Gets the localized resources visible to the snapshot."
+    },
+    {
+      "DisplayName": "ResponseBodyLimit",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpRequestResponseLoggingOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-responsebodylimit",
+      "Signature": "int ResponseBodyLimit { get; set; }",
+      "Summary": "Gets or sets the maximum number of response-body characters to log before the payload is truncated."
     },
     {
       "DisplayName": "RestApi",
