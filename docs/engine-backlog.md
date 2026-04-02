@@ -176,7 +176,7 @@ Follow-up later:
 
 ## SDK hardening follow-through
 
-Phase 1 SDK hardening is now substantially complete. Phase 2 operational hardening has also closed on its shipped baseline. Phase 3 extensibility and package loading remains the main structural follow-through, while phase 6 now has an active `ENG-029` track with the shipped self-hosted OTLP slice and an explicit Azure Monitor first-vendor follow-through.
+Phase 1 SDK hardening is now substantially complete. Phase 2 operational hardening has also closed on its shipped baseline. Phase 3 extensibility and package loading remains the main structural follow-through, while phase 6 now has an active `ENG-029` track with the shipped self-hosted OTLP slice, the shipped Azure Monitor first-vendor slice, and an explicit AWS next-vendor follow-through.
 
 ### ENG-005 Engine API and package surface hardening
 
@@ -469,21 +469,22 @@ Acceptance:
 ### ENG-029 Cloud-targeted observability companion integrations
 
 Status: current focus
-Estimate: 34
+Estimate: 55
 
 Why:
 
-- the self-hosted OTLP collector/runtime-default slice is now shipped, and the first vendor-specific follow-through is narrowed to Azure Monitor before broader AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu expansion
+- the self-hosted OTLP collector/runtime-default slice and Azure Monitor vendor slice are now shipped, and the next vendor-specific follow-through is narrowed to AWS before broader GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu expansion
 - this work should stay in companion packages and preserve the shared `ILogger` pipeline plus the cloud-neutral OTLP baseline
 
 Acceptance:
 
 - keep the shipped self-hosted deployment defaults explicit and reusable instead of burying them inside vendor-specific companion packs
-- treat Azure Monitor as the first explicit cloud-targeted slice on top of the shared OpenTelemetry baseline
+- keep the shipped Azure Monitor slice explicit on top of the shared OpenTelemetry baseline
+- treat AWS as the next explicit cloud-targeted slice on top of the shared OpenTelemetry baseline
 - keep vendor/platform-specific exporter wiring, auth, resource attributes, and hosted defaults outside `Cephalon.Engine` and `Cephalon.Abstractions`
 - keep the shared `ILogger` pipeline and existing `Cephalon.Observability.OpenTelemetry` baseline intact
 - add docs, validation, and planning sync for the supported targets
-- keep the remaining AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu follow-through split into explicit child items under `ENG-029` instead of reopening one ambiguous multi-cloud scope
+- keep the remaining GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu follow-through split into explicit child items under `ENG-029` instead of reopening one ambiguous multi-cloud scope
 - avoid starting implementation on any new vendor/platform target without first narrowing it explicitly
 
 ## Sprint history and next 3 sprints
@@ -545,7 +546,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 - ENG-013 Workflow and orchestration primitives
 - package distribution and trust follow-through beyond the current baseline
-- ENG-029 self-hosted OTLP collector/runtime-default follow-through plus the Azure Monitor first-vendor target split
+- ENG-029 self-hosted OTLP collector/runtime-default follow-through plus the shipped Azure Monitor first-vendor slice and the AWS next-target split
 
 ### Later / not scheduled yet
 
