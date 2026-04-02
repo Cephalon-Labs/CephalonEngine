@@ -101,7 +101,7 @@ Parameters:
 
 Describes how operators intend host telemetry to be exported.
 
-Remarks: These settings let Cephalon packages, hosts, and downstream companion packages agree on provider, protocol, endpoint, and enabled signals without forcing exporter dependencies into the engine core. Companion packages such as `Cephalon.Observability.OpenTelemetry`, `Cephalon.Observability.Aws`, `Cephalon.Observability.Gcp`, or `Cephalon.Observability.AzureMonitor` can interpret the same contract when a host wants a supported export path, including the explicit self-hosted collector defaults that remain outside `Cephalon.Engine`. The same contract is also intended for developer-authored provider packages that need to layer Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, or other deployment-targeted auth, resource attributes, and hosted defaults on top of the existing `ILogger` pipeline.
+Remarks: These settings let Cephalon packages, hosts, and downstream companion packages agree on provider, protocol, endpoint, and enabled signals without forcing exporter dependencies into the engine core. Companion packages such as `Cephalon.Observability.OpenTelemetry`, `Cephalon.Observability.Aws`, `Cephalon.Observability.Gcp`, `Cephalon.Observability.HuaweiCloud`, or `Cephalon.Observability.AzureMonitor` can interpret the same contract when a host wants a supported export path, including the explicit self-hosted collector defaults that remain outside `Cephalon.Engine`. The same contract is also intended for developer-authored provider packages that need to layer Alibaba Cloud, Cloudflare, DigitalOcean, or other deployment-targeted auth, resource attributes, and hosted defaults on top of the existing `ILogger` pipeline.
 
 #### Declaration
 ```csharp

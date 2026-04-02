@@ -976,6 +976,7 @@ Current shipped event-id ranges include:
 - `Cephalon.Engine`: `2000-2003`
 - `Cephalon.Observability`: `3000-3006`
 - `Cephalon.Observability.Gcp`: `3111-3111`
+- `Cephalon.Observability.HuaweiCloud`: `3112-3112`
 - `Cephalon.Observability.CassandraDependencies`: `3146-3147`
 - `Cephalon.Observability.ConsulDependencies`: `3142-3143`
 - `Cephalon.Observability.ElasticsearchDependencies`: `3138-3139`
@@ -1224,6 +1225,55 @@ Operational notes:
 - `HostedPlatform` can be `gce`, `gke`, `cloudrun`, `appengine`, or `functions`
 - `Location` lets the package stamp `location`, `cloud.region`, and when applicable `cloud.availability_zone`
 
+## Huawei Cloud observability path
+
+`Cephalon.Observability.HuaweiCloud` keeps hosted Huawei Cloud defaults and an optional managed APM trace path in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "Telemetry": {
+        "Provider": "OpenTelemetry",
+        "Protocol": "otlp",
+        "ExportLogs": false,
+        "ExportMetrics": false,
+        "ExportTraces": true,
+        "HuaweiCloud": {
+          "HostedPlatform": "cce",
+          "Region": "ap-southeast-3",
+          "UseApmManagedTraceIngestion": true,
+          "ApmEndpoint": "https://apm.example.huaweicloud.com:4317",
+          "AuthenticationToken": "replace-with-apm-authentication-token"
+        }
+      }
+    }
+  }
+}
+```
+
+Host registration example:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonObservability(builder.Configuration);
+builder.AddCephalonHuaweiCloud();
+```
+
+Operational notes:
+
+- the Huawei Cloud package is optional and stays outside `Cephalon.Engine`
+- when `Engine:Observability:Telemetry:Endpoint` or `UseSelfHostedDefaults` is configured, the package keeps using the shared collector-oriented OTLP path and only adds hosted Huawei Cloud resource defaults
+- when `Engine:Observability:Telemetry:HuaweiCloud:UseApmManagedTraceIngestion` is `true` and no shared endpoint is configured, the package targets the configured `ApmEndpoint` for traces by using OTLP/gRPC plus the Huawei Cloud `Authentication` header
+- managed APM trace ingestion requires `Engine:Observability:Telemetry:Protocol` to stay on `otlp` or `otlp/grpc`
+- direct Huawei Cloud managed APM ingestion does not re-route logs or metrics; keep those signals on the shared collector path or another runtime-specific route
+- `HostedPlatform` can be `ecs`, `cce`, or `functiongraph`
+- `Region` lets the package stamp `cloud.region` when a deployment wants that value to stay explicit
+
 ## Azure Monitor exporter path
 
 `Cephalon.Observability.AzureMonitor` keeps Azure Monitor / Application Insights export wiring in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
@@ -1383,6 +1433,7 @@ It executes a curated test suite that validates:
 - Serilog provider wiring through `Cephalon.Observability.Serilog`
 - AWS-hosted OTLP defaults through `Cephalon.Observability.Aws`
 - GCP-hosted defaults through `Cephalon.Observability.Gcp`
+- Huawei Cloud-hosted defaults and managed APM traces through `Cephalon.Observability.HuaweiCloud`
 - OTLP exporter wiring through `Cephalon.Observability.OpenTelemetry`, including the explicit self-hosted collector-default path
 
 `.\scripts\validate-release.ps1` now runs that focused suite by default in addition to the broader repo test, benchmark, and reference-doc flow.
