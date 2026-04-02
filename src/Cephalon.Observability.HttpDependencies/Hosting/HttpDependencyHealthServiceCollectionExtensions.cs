@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Health;
+using Cephalon.Engine.Diagnostics;
 using Cephalon.Observability.HttpDependencies.Configuration;
 using Cephalon.Observability.HttpDependencies.Services;
 using Microsoft.Extensions.Configuration;
@@ -69,6 +70,7 @@ public static class HttpDependencyHealthServiceCollectionExtensions
         services.AddHttpClient(HttpClientName)
             .ConfigureHttpClient(client => client.Timeout = Timeout.InfiniteTimeSpan);
         services.TryAddSingleton<HttpDependencyHealthStore>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, HttpDependencyHealthDiagnosticsConventionContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, HttpDependencyHealthContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, HttpDependencyHealthProbeHostedService>());
 

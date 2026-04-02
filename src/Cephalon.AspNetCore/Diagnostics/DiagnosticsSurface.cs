@@ -1,3 +1,4 @@
+using Cephalon.Engine.Diagnostics;
 using Cephalon.Engine.Runtime;
 
 namespace Cephalon.AspNetCore.Diagnostics;
@@ -8,6 +9,7 @@ namespace Cephalon.AspNetCore.Diagnostics;
 /// <param name="MeterName">The meter name used for engine metrics.</param>
 /// <param name="ActivitySourceName">The activity source name used for engine tracing.</param>
 /// <param name="Counters">The built-in counter names exposed by the engine.</param>
+/// <param name="Conventions">The published diagnostics conventions and event-id catalogs visible to the current host.</param>
 /// <param name="Liveness">The current liveness report.</param>
 /// <param name="Readiness">The current readiness report.</param>
 /// <param name="SummaryPath">The aggregate health endpoint path.</param>
@@ -17,6 +19,7 @@ public sealed record DiagnosticsSurface(
     string MeterName,
     string ActivitySourceName,
     IReadOnlyList<string> Counters,
+    IReadOnlyList<DiagnosticsConvention> Conventions,
     RuntimeHealthReport Liveness,
     RuntimeHealthReport Readiness,
     string SummaryPath,

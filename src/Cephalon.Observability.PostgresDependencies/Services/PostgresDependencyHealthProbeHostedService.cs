@@ -224,13 +224,13 @@ internal static class PostgresDependencyHealthLogs
 {
     private static readonly Action<ILogger, string, int, Exception?> ProbeTimedOutMessage = LoggerMessage.Define<string, int>(
         LogLevel.Warning,
-        new EventId(3122, nameof(ProbeTimedOut)),
-        "Postgres dependency probe '{DependencyId}' timed out after {TimeoutSeconds}s.");
+        new EventId(PostgresDependencyHealthDiagnosticsConventions.ProbeTimedOut.Id, PostgresDependencyHealthDiagnosticsConventions.ProbeTimedOut.Name),
+        PostgresDependencyHealthDiagnosticsConventions.ProbeTimedOut.MessageTemplate);
 
     private static readonly Action<ILogger, string, Exception?> ProbeFailedMessage = LoggerMessage.Define<string>(
         LogLevel.Warning,
-        new EventId(3123, nameof(ProbeFailed)),
-        "Postgres dependency probe '{DependencyId}' failed.");
+        new EventId(PostgresDependencyHealthDiagnosticsConventions.ProbeFailed.Id, PostgresDependencyHealthDiagnosticsConventions.ProbeFailed.Name),
+        PostgresDependencyHealthDiagnosticsConventions.ProbeFailed.MessageTemplate);
 
     public static void ProbeTimedOut(ILogger logger, string dependencyId, int timeoutSeconds) =>
         ProbeTimedOutMessage(logger, dependencyId, timeoutSeconds, null);

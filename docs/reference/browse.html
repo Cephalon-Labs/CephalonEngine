@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-01T23:13:42.7284921+00:00",
+  "GeneratedAtUtc": "2026-04-01T23:53:01.0576358+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -175,7 +175,7 @@
       "Description": "Composition, runtime, policy, manifest, and introspection services.",
       "FileName": "cephalon-engine.md",
       "NamespaceCount": 12,
-      "TypeCount": 44
+      "TypeCount": 49
     },
     {
       "AssemblyName": "Cephalon.Eventing",
@@ -517,7 +517,7 @@
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
       "AnchorId": "namespace-cephalon-engine-diagnostics",
-      "TypeCount": 1
+      "TypeCount": 6
     },
     {
       "NamespaceName": "Cephalon.Engine.Localization",
@@ -1002,6 +1002,51 @@
       }
     },
     {
+      "DisplayName": "DiagnosticEventDefinition",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-diagnostics-diagnosticeventdefinition",
+      "Declaration": "public sealed class DiagnosticEventDefinition",
+      "Summary": "Describes one published diagnostics event id together with its intended meaning.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "DiagnosticsConvention",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-diagnostics-diagnosticsconvention",
+      "Declaration": "public sealed class DiagnosticsConvention",
+      "Summary": "Describes the diagnostics convention published by one engine package or companion package.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 6,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "DiagnosticSeverity",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-diagnostics-diagnosticseverity",
+      "Declaration": "public enum DiagnosticSeverity",
+      "Summary": "Describes the severity attached to a published diagnostics event definition.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 6,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "DiagnosticsSurface",
       "NamespaceName": "Cephalon.AspNetCore.Diagnostics",
       "AssemblyName": "Cephalon.AspNetCore",
@@ -1012,7 +1057,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 8,
+        "Properties": 9,
         "Methods": 0
       }
     },
@@ -1512,6 +1557,21 @@
       }
     },
     {
+      "DisplayName": "IDiagnosticsConventionContributor",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-diagnostics-idiagnosticsconventioncontributor",
+      "Declaration": "public interface IDiagnosticsConventionContributor",
+      "Summary": "Contributes a diagnostics convention to the runtime-facing diagnostics catalog.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "IEdgeNodeCatalog",
       "NamespaceName": "Cephalon.Edge.Services",
       "AssemblyName": "Cephalon.Edge",
@@ -1809,6 +1869,21 @@
         "Fields": 0,
         "Properties": 7,
         "Methods": 4
+      }
+    },
+    {
+      "DisplayName": "IRuntimeDiagnosticsCatalog",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-diagnostics-iruntimediagnosticscatalog",
+      "Declaration": "public interface IRuntimeDiagnosticsCatalog",
+      "Summary": "Exposes the merged diagnostics conventions visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 1
       }
     },
     {
@@ -2782,7 +2857,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 3,
+        "Properties": 4,
         "Methods": 0
       }
     },
@@ -4622,6 +4697,28 @@
     {
       "DisplayName": "Conventions",
       "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticsSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Diagnostics",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-conventions",
+      "Signature": "IReadOnlyList\u003CDiagnosticsConvention\u003E Conventions { get; set; }",
+      "Summary": "The published diagnostics conventions and event-id catalogs visible to the current host."
+    },
+    {
+      "DisplayName": "Conventions",
+      "Category": "Properties",
+      "DeclaringTypeName": "IRuntimeDiagnosticsCatalog",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-diagnostics-iruntimediagnosticscatalog-conventions",
+      "Signature": "IReadOnlyList\u003CDiagnosticsConvention\u003E Conventions { get; }",
+      "Summary": "Gets the published diagnostics conventions visible to the runtime."
+    },
+    {
+      "DisplayName": "Conventions",
+      "Category": "Properties",
       "DeclaringTypeName": "ScaffoldPlan",
       "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
       "AssemblyName": "Cephalon.Abstractions",
@@ -4708,6 +4805,17 @@
       "Summary": "Creates a serialization-friendly snapshot of the merged localized resources."
     },
     {
+      "DisplayName": "Critical",
+      "Category": "Fields",
+      "DeclaringTypeName": "DiagnosticSeverity",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-f-cephalon-engine-diagnostics-diagnosticseverity-critical",
+      "Signature": "const DiagnosticSeverity Critical",
+      "Summary": "The event indicates a critical condition that usually requires immediate attention."
+    },
+    {
       "DisplayName": "CurrentVersion",
       "Category": "Fields",
       "DeclaringTypeName": "RuntimeManifest",
@@ -4750,6 +4858,17 @@
       "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-database",
       "Signature": "int? Database { get; set; }",
       "Summary": "Gets or sets the optional Redis logical database index to select before pinging."
+    },
+    {
+      "DisplayName": "Debug",
+      "Category": "Fields",
+      "DeclaringTypeName": "DiagnosticSeverity",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-f-cephalon-engine-diagnostics-diagnosticseverity-debug",
+      "Signature": "const DiagnosticSeverity Debug",
+      "Summary": "The event is intended for debug-oriented diagnostics."
     },
     {
       "DisplayName": "Default",
@@ -5049,6 +5168,17 @@
       "Summary": "Identifies a deployment-oriented technology."
     },
     {
+      "DisplayName": "DescribeDiagnosticsConvention",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDiagnosticsConventionContributor",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-diagnostics-idiagnosticsconventioncontributor-describediagnosticsconvention",
+      "Signature": "DiagnosticsConvention DescribeDiagnosticsConvention()",
+      "Summary": "Describes the diagnostics convention owned by the contributor."
+    },
+    {
       "DisplayName": "DescribeRuntimeSurface",
       "Category": "Methods",
       "DeclaringTypeName": "ITechnologyRuntimeContributor",
@@ -5113,6 +5243,28 @@
       "AnchorId": "member-p-cephalon-abstractions-health-dependencyhealthreport-description",
       "Signature": "string Description { get; set; }",
       "Summary": "The operator-facing health description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticEventDefinition",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-description",
+      "Signature": "string Description { get; set; }",
+      "Summary": "The operator-facing explanation of when the event is emitted."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticsConvention",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-diagnostics-diagnosticsconvention-description",
+      "Signature": "string Description { get; set; }",
+      "Summary": "The operator-facing explanation of what the convention covers."
     },
     {
       "DisplayName": "Description",
@@ -5302,14 +5454,47 @@
       "Summary": "Identifies a design pattern."
     },
     {
+      "DisplayName": "DiagnosticEventDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "DiagnosticEventDefinition",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-diagnostics-diagnosticeventdefinition-ctor-system-int32-system-string-cephalon-engine-diagnostics-diagnosticseverity-system-string-system-string",
+      "Signature": "DiagnosticEventDefinition(int Id, string Name, DiagnosticSeverity Severity, string MessageTemplate, string Description)",
+      "Summary": "Describes one published diagnostics event id together with its intended meaning."
+    },
+    {
+      "DisplayName": "DiagnosticsConvention",
+      "Category": "Constructors",
+      "DeclaringTypeName": "DiagnosticsConvention",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-diagnostics-diagnosticsconvention-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticeventdefinition",
+      "Signature": "DiagnosticsConvention(string Source, string LoggerCategoryPrefix, string Description, IReadOnlyList\u003CDiagnosticEventDefinition\u003E Events)",
+      "Summary": "Describes the diagnostics convention published by one engine package or companion package."
+    },
+    {
+      "DisplayName": "DiagnosticsConventions",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-diagnosticsconventions",
+      "Signature": "IReadOnlyList\u003CDiagnosticsConvention\u003E DiagnosticsConventions { get; set; }",
+      "Summary": "The diagnostics conventions and published event-id catalogs visible to the runtime at the time the snapshot was created."
+    },
+    {
       "DisplayName": "DiagnosticsSurface",
       "Category": "Constructors",
       "DeclaringTypeName": "DiagnosticsSurface",
       "NamespaceName": "Cephalon.AspNetCore.Diagnostics",
       "AssemblyName": "Cephalon.AspNetCore",
       "FileName": "cephalon-aspnetcore.md",
-      "AnchorId": "member-m-cephalon-aspnetcore-diagnostics-diagnosticssurface-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-runtime-runtimehealthreport-cephalon-engine-runtime-runtimehealthreport-system-string-system-string-system-string",
-      "Signature": "DiagnosticsSurface(string MeterName, string ActivitySourceName, IReadOnlyList\u003Cstring\u003E Counters, RuntimeHealthReport Liveness, RuntimeHealthReport Readiness, string SummaryPath, string LivenessPath, string ReadinessPath)",
+      "AnchorId": "member-m-cephalon-aspnetcore-diagnostics-diagnosticssurface-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention-cephalon-engine-runtime-runtimehealthreport-cephalon-engine-runtime-runtimehealthreport-system-string-system-string-system-string",
+      "Signature": "DiagnosticsSurface(string MeterName, string ActivitySourceName, IReadOnlyList\u003Cstring\u003E Counters, IReadOnlyList\u003CDiagnosticsConvention\u003E Conventions, RuntimeHealthReport Liveness, RuntimeHealthReport Readiness, string SummaryPath, string LivenessPath, string ReadinessPath)",
       "Summary": "Describes the operator-facing diagnostics surface exposed by a Cephalon ASP.NET Core host."
     },
     {
@@ -5885,6 +6070,17 @@
       "Summary": "Gets the entries currently projected by this surface."
     },
     {
+      "DisplayName": "Error",
+      "Category": "Fields",
+      "DeclaringTypeName": "DiagnosticSeverity",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-f-cephalon-engine-diagnostics-diagnosticseverity-error",
+      "Signature": "const DiagnosticSeverity Error",
+      "Summary": "The event indicates an error condition."
+    },
+    {
       "DisplayName": "EvaluateDependencies",
       "Category": "Methods",
       "DeclaringTypeName": "RuntimeHealthEvaluator",
@@ -5949,6 +6145,17 @@
       "AnchorId": "member-m-cephalon-eventing-configuration-eventingoptions-ctor",
       "Signature": "EventingOptions()",
       "Summary": "Creates eventing options with the default host-owned features enabled."
+    },
+    {
+      "DisplayName": "Events",
+      "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticsConvention",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-diagnostics-diagnosticsconvention-events",
+      "Signature": "IReadOnlyList\u003CDiagnosticEventDefinition\u003E Events { get; set; }",
+      "Summary": "The published event definitions that belong to the convention."
     },
     {
       "DisplayName": "ExceptionType",
@@ -6457,6 +6664,17 @@
       "Summary": "Field number for the \u0022generated_at_utc\u0022 field."
     },
     {
+      "DisplayName": "GetBySource",
+      "Category": "Methods",
+      "DeclaringTypeName": "IRuntimeDiagnosticsCatalog",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-diagnostics-iruntimediagnosticscatalog-getbysource-system-string",
+      "Signature": "IReadOnlyList\u003CDiagnosticsConvention\u003E GetBySource(string source)",
+      "Summary": "Gets the diagnostics conventions owned by the requested source."
+    },
+    {
       "DisplayName": "GetByTechnology",
       "Category": "Methods",
       "DeclaringTypeName": "ITechnologyRuntimeCatalog",
@@ -6756,6 +6974,17 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticEventDefinition",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-id",
+      "Signature": "int Id { get; set; }",
+      "Summary": "The stable numeric event identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "EdgeNodeDescriptor",
       "NamespaceName": "Cephalon.Edge.Services",
       "AssemblyName": "Cephalon.Edge",
@@ -6950,6 +7179,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-modulepackagedirectory-includesubdirectories",
       "Signature": "bool IncludeSubdirectories { get; }",
       "Summary": "Gets a value indicating whether nested directories should also be scanned."
+    },
+    {
+      "DisplayName": "Information",
+      "Category": "Fields",
+      "DeclaringTypeName": "DiagnosticSeverity",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-f-cephalon-engine-diagnostics-diagnosticseverity-information",
+      "Signature": "const DiagnosticSeverity Information",
+      "Summary": "The event describes expected informational runtime behavior."
     },
     {
       "DisplayName": "InitializeAsync",
@@ -7480,6 +7720,17 @@
       "Summary": "Gets or sets a value indicating whether a capability summary should be written at host startup."
     },
     {
+      "DisplayName": "LoggerCategoryPrefix",
+      "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticsConvention",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-diagnostics-diagnosticsconvention-loggercategoryprefix",
+      "Signature": "string LoggerCategoryPrefix { get; set; }",
+      "Summary": "The logger category prefix used by the convention."
+    },
+    {
       "DisplayName": "LogManifestSummary",
       "Category": "Properties",
       "DeclaringTypeName": "ObservabilityOptions",
@@ -7678,6 +7929,17 @@
       "Summary": "Gets the maximum engine version supported by the package manifest, when available."
     },
     {
+      "DisplayName": "MaximumEventId",
+      "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticsConvention",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-diagnostics-diagnosticsconvention-maximumeventid",
+      "Signature": "int? MaximumEventId { get; }",
+      "Summary": "Gets the largest event id published by this convention."
+    },
+    {
       "DisplayName": "MaxRestartAttempts",
       "Category": "Properties",
       "DeclaringTypeName": "FailurePolicy",
@@ -7775,6 +8037,17 @@
       "AnchorId": "member-f-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-messagefieldnumber",
       "Signature": "const int MessageFieldNumber",
       "Summary": "Field number for the \u0022message\u0022 field."
+    },
+    {
+      "DisplayName": "MessageTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticEventDefinition",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-messagetemplate",
+      "Signature": "string MessageTemplate { get; set; }",
+      "Summary": "The structured message template emitted by the logger."
     },
     {
       "DisplayName": "Messaging",
@@ -8028,6 +8301,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-packagemanifest-minimumengineversion",
       "Signature": "string MinimumEngineVersion { get; }",
       "Summary": "Gets the minimum engine version required by the package manifest, when available."
+    },
+    {
+      "DisplayName": "MinimumEventId",
+      "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticsConvention",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-diagnostics-diagnosticsconvention-minimumeventid",
+      "Signature": "int? MinimumEventId { get; }",
+      "Summary": "Gets the smallest event id published by this convention."
     },
     {
       "DisplayName": "ModularArchitecture",
@@ -8292,6 +8576,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimefailureinfo-moduleversion",
       "Signature": "string ModuleVersion { get; set; }",
       "Summary": "The module version that was active when the failure occurred, if known."
+    },
+    {
+      "DisplayName": "Name",
+      "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticEventDefinition",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-name",
+      "Signature": "string Name { get; set; }",
+      "Summary": "The stable event name paired with the numeric identifier."
     },
     {
       "DisplayName": "Name",
@@ -10027,8 +10322,8 @@
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface",
-      "Signature": "RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList\u003CTechnologyRuntimeSurface\u003E TechnologySurfaces)",
+      "AnchorId": "member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention",
+      "Signature": "RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList\u003CTechnologyRuntimeSurface\u003E TechnologySurfaces, IReadOnlyList\u003CDiagnosticsConvention\u003E DiagnosticsConventions)",
       "Summary": "Combines the main operator-facing runtime views into a single payload."
     },
     {
@@ -10329,6 +10624,17 @@
       "Summary": "Gets the root service provider for the runtime."
     },
     {
+      "DisplayName": "Severity",
+      "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticEventDefinition",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-severity",
+      "Signature": "DiagnosticSeverity Severity { get; set; }",
+      "Summary": "The intended severity for the event."
+    },
+    {
       "DisplayName": "SharedFoundationPattern",
       "Category": "Properties",
       "DeclaringTypeName": "BuiltInPatterns",
@@ -10525,6 +10831,17 @@
       "AnchorId": "member-p-cephalon-abstractions-health-dependencyhealthreport-source",
       "Signature": "string Source { get; set; }",
       "Summary": "The contributor or subsystem that reported the dependency."
+    },
+    {
+      "DisplayName": "Source",
+      "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticsConvention",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-diagnostics-diagnosticsconvention-source",
+      "Signature": "string Source { get; set; }",
+      "Summary": "The stable package or subsystem identifier that owns the convention."
     },
     {
       "DisplayName": "SourceModuleId",
@@ -11418,6 +11735,17 @@
       "Summary": "Gets the effective tool set after host options and module contributors have both been applied."
     },
     {
+      "DisplayName": "Trace",
+      "Category": "Fields",
+      "DeclaringTypeName": "DiagnosticSeverity",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-f-cephalon-engine-diagnostics-diagnosticseverity-trace",
+      "Signature": "const DiagnosticSeverity Trace",
+      "Summary": "The event is useful only for highly detailed trace output."
+    },
+    {
       "DisplayName": "Traits",
       "Category": "Properties",
       "DeclaringTypeName": "HelloReply",
@@ -11999,6 +12327,17 @@
       "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-virtualhost",
       "Signature": "string VirtualHost { get; set; }",
       "Summary": "Gets or sets the RabbitMQ virtual host used for the probe connection."
+    },
+    {
+      "DisplayName": "Warning",
+      "Category": "Fields",
+      "DeclaringTypeName": "DiagnosticSeverity",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-f-cephalon-engine-diagnostics-diagnosticseverity-warning",
+      "Signature": "const DiagnosticSeverity Warning",
+      "Summary": "The event highlights a warning condition or degraded behavior."
     },
     {
       "DisplayName": "WebSocket",

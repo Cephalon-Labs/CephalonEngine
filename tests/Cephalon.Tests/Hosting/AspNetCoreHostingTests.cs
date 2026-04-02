@@ -12,6 +12,7 @@ using Cephalon.Abstractions.Technologies;
 using Cephalon.Abstractions.Transports;
 using Cephalon.Agentics.Registration;
 using Cephalon.Agentics.Services;
+using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Documentation;
 using Cephalon.AspNetCore.GraphQL.Hosting;
@@ -643,6 +644,40 @@ public sealed class AspNetCoreHostingTests
         var edge = Assert.Single(surfaces, surface => surface.TechnologyId == "edge-native-delivery");
         Assert.Contains(edge.Entries, entry => entry.Id == "storefront-edge");
         Assert.Contains(edge.Entries, entry => entry.Id == "warehouse-edge");
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesDiagnosticsCatalogAcrossDiagnosticsAndSnapshot()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var diagnostics = await client.GetFromJsonAsync<DiagnosticsSurface>("/engine/diagnostics");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(diagnostics);
+        var engineConvention = Assert.Single(diagnostics.Conventions, convention => convention.Source == "Cephalon.Engine");
+        Assert.Equal(2000, engineConvention.MinimumEventId);
+        Assert.Equal(2003, engineConvention.MaximumEventId);
+        Assert.Contains(engineConvention.Events, entry => entry.Id == 2002 && entry.Name == "LogRuntimeFailure");
+
+        Assert.NotNull(snapshot);
+        Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Engine");
+        Assert.Contains(
+            snapshot.DiagnosticsConventions.Single(convention => convention.Source == "Cephalon.Engine").Events,
+            entry => entry.Id == 2002);
     }
 
     [Fact]

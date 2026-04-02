@@ -241,10 +241,20 @@ Operational notes:
 - `meterName`
 - `activitySourceName`
 - counter names used by the runtime
+- published diagnostics conventions and event-id catalogs for the active engine and companion packages
 - the current liveness report
 - the current readiness report
 - dependency details folded into those runtime reports
 - the mapped health routes
+
+Current shipped event-id ranges include:
+
+- `Cephalon.Engine`: `2000-2003`
+- `Cephalon.Observability`: `3000-3006`
+- `Cephalon.Observability.HttpDependencies`: `3100-3101`
+- `Cephalon.Observability.RedisDependencies`: `3120-3121`
+- `Cephalon.Observability.PostgresDependencies`: `3122-3123`
+- `Cephalon.Observability.RabbitMqDependencies`: `3124-3125`
 
 This is the quickest way to discover the engine's observability contract without opening code.
 

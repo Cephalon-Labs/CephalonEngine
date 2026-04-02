@@ -177,13 +177,13 @@ internal static class HttpDependencyHealthLogs
 {
     private static readonly Action<ILogger, string, int, Uri, Exception?> ProbeTimedOutMessage = LoggerMessage.Define<string, int, Uri>(
         LogLevel.Warning,
-        new EventId(3100, nameof(ProbeTimedOut)),
-        "HTTP dependency probe '{DependencyId}' timed out after {TimeoutSeconds}s against {Endpoint}.");
+        new EventId(HttpDependencyHealthDiagnosticsConventions.ProbeTimedOut.Id, HttpDependencyHealthDiagnosticsConventions.ProbeTimedOut.Name),
+        HttpDependencyHealthDiagnosticsConventions.ProbeTimedOut.MessageTemplate);
 
     private static readonly Action<ILogger, string, Uri, Exception?> ProbeFailedMessage = LoggerMessage.Define<string, Uri>(
         LogLevel.Warning,
-        new EventId(3101, nameof(ProbeFailed)),
-        "HTTP dependency probe '{DependencyId}' failed against {Endpoint}.");
+        new EventId(HttpDependencyHealthDiagnosticsConventions.ProbeFailed.Id, HttpDependencyHealthDiagnosticsConventions.ProbeFailed.Name),
+        HttpDependencyHealthDiagnosticsConventions.ProbeFailed.MessageTemplate);
 
     public static void ProbeTimedOut(ILogger logger, string dependencyId, int timeoutSeconds, Uri endpoint) =>
         ProbeTimedOutMessage(logger, dependencyId, timeoutSeconds, endpoint, null);

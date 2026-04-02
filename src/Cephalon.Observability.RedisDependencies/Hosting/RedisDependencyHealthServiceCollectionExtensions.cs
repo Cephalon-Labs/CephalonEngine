@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Health;
+using Cephalon.Engine.Diagnostics;
 using Cephalon.Observability.RedisDependencies.Configuration;
 using Cephalon.Observability.RedisDependencies.Services;
 using Microsoft.Extensions.Configuration;
@@ -65,6 +66,7 @@ public static class RedisDependencyHealthServiceCollectionExtensions
 
         services.TryAddSingleton(options);
         services.TryAddSingleton<RedisDependencyHealthStore>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, RedisDependencyHealthDiagnosticsConventionContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, RedisDependencyHealthContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, RedisDependencyHealthProbeHostedService>());
 

@@ -405,6 +405,12 @@ Browse the published API surface by public member.
 - [Contracts](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-contracts): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Contracts&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies the contracts project.
   - `const string Contracts`
+- [Conventions](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-conventions): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Conventions&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
+  - The published diagnostics conventions and event-id catalogs visible to the current host.
+  - `IReadOnlyList<DiagnosticsConvention> Conventions { get; set; }`
+- [Conventions](cephalon-engine.md#member-p-cephalon-engine-diagnostics-iruntimediagnosticscatalog-conventions): `Properties` on `IRuntimeDiagnosticsCatalog` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Conventions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Gets the published diagnostics conventions visible to the runtime.
+  - `IReadOnlyList<DiagnosticsConvention> Conventions { get; }`
 - [Conventions](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-conventions): `Properties` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Conventions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the conventions implied by the scaffold.
   - `IReadOnlyList<string> Conventions { get; }`
@@ -429,6 +435,9 @@ Browse the published API surface by public member.
 - [CreateSnapshot](cephalon-engine.md#member-m-cephalon-engine-localization-localizedtextcatalog-createsnapshot-system-string): `Methods` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=CreateSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
   - Creates a serialization-friendly snapshot of the merged localized resources.
   - `LocalizedResourcesSnapshot CreateSnapshot(string culture)`
+- [Critical](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-critical): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Critical&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - The event indicates a critical condition that usually requires immediate attention.
+  - `const DiagnosticSeverity Critical`
 - [CurrentVersion](cephalon-engine.md#member-f-cephalon-engine-manifest-runtimemanifest-currentversion): `Fields` on `RuntimeManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=CurrentVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the current manifest schema version emitted by the engine.
   - `const string CurrentVersion`
@@ -444,6 +453,9 @@ Browse the published API surface by public member.
 - [Database](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-database): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=Database&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
   - Gets or sets the optional Redis logical database index to select before pinging.
   - `int? Database { get; set; }`
+- [Debug](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-debug): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Debug&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - The event is intended for debug-oriented diagnostics.
+  - `const DiagnosticSeverity Debug`
 - [Default](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-default): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Default&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the default failure policy used when no explicit configuration is supplied.
   - `FailurePolicy Default { get; }`
@@ -525,6 +537,9 @@ Browse the published API surface by public member.
 - [Deployment](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-deployment): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Deployment&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Identifies a deployment-oriented technology.
   - `const TechnologyKind Deployment`
+- [DescribeDiagnosticsConvention](cephalon-engine.md#member-m-cephalon-engine-diagnostics-idiagnosticsconventioncontributor-describediagnosticsconvention): `Methods` on `IDiagnosticsConventionContributor` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=DescribeDiagnosticsConvention&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Describes the diagnostics convention owned by the contributor.
+  - `DiagnosticsConvention DescribeDiagnosticsConvention()`
 - [DescribeRuntimeSurface](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-itechnologyruntimecontributor-describeruntimesurface): `Methods` on `ITechnologyRuntimeContributor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=DescribeRuntimeSurface&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Describes the runtime surface projected by the contributor.
   - `TechnologyRuntimeSurface DescribeRuntimeSurface()`
@@ -542,6 +557,12 @@ Browse the published API surface by public member.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-description): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The operator-facing health description.
+  - `string Description { get; set; }`
+- [Description](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-description): `Properties` on `DiagnosticEventDefinition` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - The operator-facing explanation of when the event is emitted.
+  - `string Description { get; set; }`
+- [Description](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticsconvention-description): `Properties` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - The operator-facing explanation of what the convention covers.
   - `string Description { get; set; }`
 - [Description](cephalon-edge.md#member-p-cephalon-edge-services-edgenodedescriptor-description): `Properties` on `EdgeNodeDescriptor` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=Description&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
   - Gets the human-readable description of the node.
@@ -594,9 +615,18 @@ Browse the published API surface by public member.
 - [Design](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-patternkind-design): `Fields` on `PatternKind` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Design&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Identifies a design pattern.
   - `const PatternKind Design`
-- [DiagnosticsSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-diagnostics-diagnosticssurface-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-runtime-runtimehealthreport-cephalon-engine-runtime-runtimehealthreport-system-string-system-string-system-string): `Constructors` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=DiagnosticsSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
+- [DiagnosticEventDefinition](cephalon-engine.md#member-m-cephalon-engine-diagnostics-diagnosticeventdefinition-ctor-system-int32-system-string-cephalon-engine-diagnostics-diagnosticseverity-system-string-system-string): `Constructors` on `DiagnosticEventDefinition` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=DiagnosticEventDefinition&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Describes one published diagnostics event id together with its intended meaning.
+  - `DiagnosticEventDefinition(int Id, string Name, DiagnosticSeverity Severity, string MessageTemplate, string Description)`
+- [DiagnosticsConvention](cephalon-engine.md#member-m-cephalon-engine-diagnostics-diagnosticsconvention-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticeventdefinition): `Constructors` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=DiagnosticsConvention&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Describes the diagnostics convention published by one engine package or companion package.
+  - `DiagnosticsConvention(string Source, string LoggerCategoryPrefix, string Description, IReadOnlyList<DiagnosticEventDefinition> Events)`
+- [DiagnosticsConventions](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-diagnosticsconventions): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DiagnosticsConventions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The diagnostics conventions and published event-id catalogs visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions { get; set; }`
+- [DiagnosticsSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-diagnostics-diagnosticssurface-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention-cephalon-engine-runtime-runtimehealthreport-cephalon-engine-runtime-runtimehealthreport-system-string-system-string-system-string): `Constructors` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=DiagnosticsSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - Describes the operator-facing diagnostics surface exposed by a Cephalon ASP.NET Core host.
-  - `DiagnosticsSurface(string MeterName, string ActivitySourceName, IReadOnlyList<string> Counters, RuntimeHealthReport Liveness, RuntimeHealthReport Readiness, string SummaryPath, string LivenessPath, string ReadinessPath)`
+  - `DiagnosticsSurface(string MeterName, string ActivitySourceName, IReadOnlyList<string> Counters, IReadOnlyList<DiagnosticsConvention> Conventions, RuntimeHealthReport Liveness, RuntimeHealthReport Readiness, string SummaryPath, string LivenessPath, string ReadinessPath)`
 - [DirectoryManifestKind](cephalon-engine.md#member-f-cephalon-engine-configuration-modulepackagereference-directorymanifestkind): `Fields` on `ModulePackageReference` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DirectoryManifestKind&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Identifies a package input that was discovered from a directory manifest scan.
   - `const string DirectoryManifestKind`
@@ -756,6 +786,9 @@ Browse the published API surface by public member.
 - [Entries](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologyruntimesurface-entries): `Properties` on `TechnologyRuntimeSurface` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Entries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the entries currently projected by this surface.
   - `IReadOnlyList<TechnologyRuntimeEntry> Entries { get; }`
+- [Error](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-error): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Error&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - The event indicates an error condition.
+  - `const DiagnosticSeverity Error`
 - [EvaluateDependencies](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimehealthevaluator-evaluatedependencies): `Methods` on `RuntimeHealthEvaluator` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EvaluateDependencies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Evaluates dependency-level health reports without applying probe semantics.
   - `DependencyHealthReport[] EvaluateDependencies()`
@@ -774,6 +807,9 @@ Browse the published API surface by public member.
 - [EventingOptions](cephalon-eventing.md#member-m-cephalon-eventing-configuration-eventingoptions-ctor): `Constructors` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=EventingOptions&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Creates eventing options with the default host-owned features enabled.
   - `EventingOptions()`
+- [Events](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticsconvention-events): `Properties` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Events&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - The published event definitions that belong to the convention.
+  - `IReadOnlyList<DiagnosticEventDefinition> Events { get; set; }`
 - [ExceptionType](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-exceptiontype): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ExceptionType&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The fully qualified exception type that caused the failure.
   - `string ExceptionType { get; set; }`
@@ -918,6 +954,9 @@ Browse the published API surface by public member.
 - [GeneratedAtUtcFieldNumber](cephalon-aspnetcore-grpc.md#member-f-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-generatedatutcfieldnumber): `Fields` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=GeneratedAtUtcFieldNumber&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Field number for the "generated_at_utc" field.
   - `const int GeneratedAtUtcFieldNumber`
+- [GetBySource](cephalon-engine.md#member-m-cephalon-engine-diagnostics-iruntimediagnosticscatalog-getbysource-system-string): `Methods` on `IRuntimeDiagnosticsCatalog` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=GetBySource&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Gets the diagnostics conventions owned by the requested source.
+  - `IReadOnlyList<DiagnosticsConvention> GetBySource(string source)`
 - [GetByTechnology](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-itechnologyruntimecatalog-getbytechnology-system-string): `Methods` on `ITechnologyRuntimeCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTechnology&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the runtime surfaces associated with a specific technology identifier.
   - `IReadOnlyList<TechnologyRuntimeSurface> GetByTechnology(string technologyId)`
@@ -1005,6 +1044,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-id): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The stable dependency identifier.
   - `string Id { get; set; }`
+- [Id](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-id): `Properties` on `DiagnosticEventDefinition` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - The stable numeric event identifier.
+  - `int Id { get; set; }`
 - [Id](cephalon-edge.md#member-p-cephalon-edge-services-edgenodedescriptor-id): `Properties` on `EdgeNodeDescriptor` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=Id&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
   - Gets the stable node identifier.
   - `string Id { get; }`
@@ -1059,6 +1101,9 @@ Browse the published API surface by public member.
 - [IncludeSubdirectories](cephalon-engine.md#member-p-cephalon-engine-configuration-modulepackagedirectory-includesubdirectories): `Properties` on `ModulePackageDirectory` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IncludeSubdirectories&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether nested directories should also be scanned.
   - `bool IncludeSubdirectories { get; }`
+- [Information](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-information): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Information&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - The event describes expected informational runtime behavior.
+  - `const DiagnosticSeverity Information`
 - [InitializeAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-initializeasync-system-iserviceprovider-system-threading-cancellationtoken): `Methods` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=InitializeAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Initializes the runtime and its modules.
   - `Task InitializeAsync(IServiceProvider services, CancellationToken cancellationToken)`
@@ -1212,6 +1257,9 @@ Browse the published API surface by public member.
 - [LogCapabilitySummary](cephalon-observability.md#member-p-cephalon-observability-configuration-observabilityoptions-logcapabilitysummary): `Properties` on `ObservabilityOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=LogCapabilitySummary&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Gets or sets a value indicating whether a capability summary should be written at host startup.
   - `bool LogCapabilitySummary { get; set; }`
+- [LoggerCategoryPrefix](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticsconvention-loggercategoryprefix): `Properties` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=LoggerCategoryPrefix&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - The logger category prefix used by the convention.
+  - `string LoggerCategoryPrefix { get; set; }`
 - [LogManifestSummary](cephalon-observability.md#member-p-cephalon-observability-configuration-observabilityoptions-logmanifestsummary): `Properties` on `ObservabilityOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=LogManifestSummary&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Gets or sets a value indicating whether a manifest summary should be written at host startup.
   - `bool LogManifestSummary { get; set; }`
@@ -1269,6 +1317,9 @@ Browse the published API surface by public member.
 - [MaximumEngineVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-maximumengineversion): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=MaximumEngineVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the maximum engine version supported by the package manifest, when available.
   - `string MaximumEngineVersion { get; }`
+- [MaximumEventId](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticsconvention-maximumeventid): `Properties` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=MaximumEventId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Gets the largest event id published by this convention.
+  - `int? MaximumEventId { get; }`
 - [MaxRestartAttempts](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-maxrestartattempts): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxRestartAttempts&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the maximum number of manual restarts.
   - `int MaxRestartAttempts { get; }`
@@ -1296,6 +1347,9 @@ Browse the published API surface by public member.
 - [MessageFieldNumber](cephalon-aspnetcore-grpc.md#member-f-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-messagefieldnumber): `Fields` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=MessageFieldNumber&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Field number for the "message" field.
   - `const int MessageFieldNumber`
+- [MessageTemplate](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-messagetemplate): `Properties` on `DiagnosticEventDefinition` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=MessageTemplate&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - The structured message template emitted by the logger.
+  - `string MessageTemplate { get; set; }`
 - [Messaging](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-messaging): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Messaging&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Identifies a messaging-oriented technology.
   - `const TechnologyKind Messaging`
@@ -1365,6 +1419,9 @@ Browse the published API surface by public member.
 - [MinimumEngineVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-minimumengineversion): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=MinimumEngineVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the minimum engine version required by the package manifest, when available.
   - `string MinimumEngineVersion { get; }`
+- [MinimumEventId](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticsconvention-minimumeventid): `Properties` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=MinimumEventId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Gets the smallest event id published by this convention.
+  - `int? MinimumEventId { get; }`
 - [ModularArchitecture](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-modulararchitecture): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=ModularArchitecture&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the modular-architecture composition pattern.
   - `PatternDescriptor ModularArchitecture { get; }`
@@ -1440,6 +1497,9 @@ Browse the published API surface by public member.
 
 ## N
 
+- [Name](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-name): `Properties` on `DiagnosticEventDefinition` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Name&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - The stable event name paired with the numeric identifier.
+  - `string Name { get; set; }`
 - [Name](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-name): `Properties` on `HelloRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Name&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - The display name to greet.
   - `string Name { get; set; }`
@@ -1920,9 +1980,9 @@ Browse the published API surface by public member.
 - [RuntimeHealthReport](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimehealthreport-ctor-system-string-cephalon-engine-runtime-runtimehealthstate-system-string-cephalon-engine-runtime-runtimestatus-system-int32-cephalon-engine-runtime-runtimefailureinfo-system-collections-generic-ireadonlylist-cephalon-abstractions-health-dependencyhealthreport): `Constructors` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeHealthReport&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Captures the health result for a runtime liveness or readiness probe.
   - `RuntimeHealthReport(string Probe, RuntimeHealthState State, string Description, RuntimeStatus RuntimeStatus, int RestartCount, RuntimeFailureInfo LastFailure, IReadOnlyList<DependencyHealthReport> Dependencies)`
-- [RuntimeIntrospectionSnapshot](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface): `Constructors` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeIntrospectionSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+- [RuntimeIntrospectionSnapshot](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention): `Constructors` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeIntrospectionSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Combines the main operator-facing runtime views into a single payload.
-  - `RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces)`
+  - `RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces, IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions)`
 - [RuntimeManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-runtimemanifest-ctor-system-string-system-string-system-datetimeoffset-cephalon-abstractions-appmodel-appprofile-system-collections-generic-ireadonlylist-cephalon-engine-manifest-modulemanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-capabilitymanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest): `Constructors` on `RuntimeManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Creates a new runtime manifest.
   - `RuntimeManifest(string manifestVersion, string engineVersion, DateTimeOffset generatedAtUtc, AppProfile appProfile, IReadOnlyList<ModuleManifest> modules, IReadOnlyList<CapabilityManifest> capabilities, IReadOnlyList<PackageManifest> packages)`
@@ -2007,6 +2067,9 @@ Browse the published API surface by public member.
 - [Services](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-modulecontext-services): `Properties` on `ModuleContext` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Services&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Gets the root service provider for the runtime.
   - `IServiceProvider Services { get; }`
+- [Severity](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-severity): `Properties` on `DiagnosticEventDefinition` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Severity&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - The intended severity for the event.
+  - `DiagnosticSeverity Severity { get; set; }`
 - [SharedFoundationPattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-sharedfoundationpattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=SharedFoundationPattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the shared-foundation pattern.
   - `PatternDescriptor SharedFoundationPattern { get; }`
@@ -2060,6 +2123,9 @@ Browse the published API surface by public member.
   - `const string Solution`
 - [Source](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-source): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Source&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The contributor or subsystem that reported the dependency.
+  - `string Source { get; set; }`
+- [Source](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticsconvention-source): `Properties` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Source&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - The stable package or subsystem identifier that owns the convention.
   - `string Source { get; set; }`
 - [SourceModuleId](cephalon-engine.md#member-p-cephalon-engine-manifest-capabilitymanifest-sourcemoduleid): `Properties` on `CapabilityManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the identifier of the module that contributed the capability.
@@ -2307,6 +2373,9 @@ Browse the published API surface by public member.
 - [Tools](cephalon-agentics.md#member-p-cephalon-agentics-services-iagenttoolcatalog-tools): `Properties` on `IAgentToolCatalog` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Tools&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the effective tool set after host options and module contributors have both been applied.
   - `IReadOnlyList<AgentToolDescriptor> Tools { get; }`
+- [Trace](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-trace): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Trace&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - The event is useful only for highly detailed trace output.
+  - `const DiagnosticSeverity Trace`
 - [Traits](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-traits): `Properties` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Traits&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Additional traits or descriptors associated with the generated greeting.
   - `RepeatedField<string> Traits { get; }`
@@ -2475,6 +2544,9 @@ Browse the published API surface by public member.
 
 ## W
 
+- [Warning](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-warning): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Warning&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - The event highlights a warning condition or degraded behavior.
+  - `const DiagnosticSeverity Warning`
 - [WebSocket](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-websocket): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=WebSocket&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
   - Gets the built-in WebSocket transport descriptor.
   - `TransportDescriptor WebSocket { get; }`

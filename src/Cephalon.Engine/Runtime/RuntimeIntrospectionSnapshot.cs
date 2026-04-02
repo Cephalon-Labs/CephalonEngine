@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Technologies;
+using Cephalon.Engine.Diagnostics;
 using Cephalon.Engine.Manifest;
 
 namespace Cephalon.Engine.Runtime;
@@ -11,11 +12,15 @@ namespace Cephalon.Engine.Runtime;
 /// <param name="TechnologySurfaces">
 /// The active technology-pack runtime surfaces visible to the runtime at the time the snapshot was created.
 /// </param>
+/// <param name="DiagnosticsConventions">
+/// The diagnostics conventions and published event-id catalogs visible to the runtime at the time the snapshot was created.
+/// </param>
 /// <remarks>
 /// This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime
-/// without issuing separate requests for manifest, status, and technology-pack details.
+/// without issuing separate requests for manifest, status, technology-pack details, and diagnostics conventions.
 /// </remarks>
 public sealed record RuntimeIntrospectionSnapshot(
     RuntimeManifest Manifest,
     RuntimeStatusSnapshot Status,
-    IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces);
+    IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces,
+    IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions);

@@ -259,13 +259,13 @@ internal static class RedisDependencyHealthLogs
 {
     private static readonly Action<ILogger, string, int, string, int, Exception?> ProbeTimedOutMessage = LoggerMessage.Define<string, int, string, int>(
         LogLevel.Warning,
-        new EventId(3120, nameof(ProbeTimedOut)),
-        "Redis dependency probe '{DependencyId}' timed out after {TimeoutSeconds}s against {Host}:{Port}.");
+        new EventId(RedisDependencyHealthDiagnosticsConventions.ProbeTimedOut.Id, RedisDependencyHealthDiagnosticsConventions.ProbeTimedOut.Name),
+        RedisDependencyHealthDiagnosticsConventions.ProbeTimedOut.MessageTemplate);
 
     private static readonly Action<ILogger, string, string, int, Exception?> ProbeFailedMessage = LoggerMessage.Define<string, string, int>(
         LogLevel.Warning,
-        new EventId(3121, nameof(ProbeFailed)),
-        "Redis dependency probe '{DependencyId}' failed against {Host}:{Port}.");
+        new EventId(RedisDependencyHealthDiagnosticsConventions.ProbeFailed.Id, RedisDependencyHealthDiagnosticsConventions.ProbeFailed.Name),
+        RedisDependencyHealthDiagnosticsConventions.ProbeFailed.MessageTemplate);
 
     public static void ProbeTimedOut(ILogger logger, string dependencyId, int timeoutSeconds, string host, int port) =>
         ProbeTimedOutMessage(logger, dependencyId, timeoutSeconds, host, port, null);

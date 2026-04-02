@@ -24,7 +24,7 @@
 
 ## How it fits
 
-This package keeps RabbitMQ-specific connection handling out of `Cephalon.Engine` while still feeding the existing dependency-health contract. Hosts can opt into it when they need broker readiness to surface through `/engine/dependencies`, `/health/live`, `/health/ready`, and `/engine/diagnostics` without re-implementing AMQP connection setup, vhost handling, or TLS toggles per host.
+This package keeps RabbitMQ-specific connection handling out of `Cephalon.Engine` while still feeding the existing dependency-health contract. Hosts can opt into it when they need broker readiness to surface through `/engine/dependencies`, `/health/live`, `/health/ready`, and `/engine/diagnostics` without re-implementing AMQP connection setup, vhost handling, or TLS toggles per host. When active, it also publishes its probe event ids through the shared runtime diagnostics catalog.
 
 ## Related docs
 

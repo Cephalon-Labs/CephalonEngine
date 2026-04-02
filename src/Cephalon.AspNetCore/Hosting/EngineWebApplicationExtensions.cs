@@ -128,7 +128,7 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonTrustPolicy");
         engineGroup.MapGet("/status", (IRuntime runtime) => TypedResults.Ok(runtime.StatusSnapshot))
             .WithName("GetCephalonStatus");
-        engineGroup.MapGet("/diagnostics", (RuntimeHealthEvaluator health) => TypedResults.Ok(new DiagnosticsSurface(
+        engineGroup.MapGet("/diagnostics", (RuntimeHealthEvaluator health, IRuntimeDiagnosticsCatalog diagnosticsCatalog) => TypedResults.Ok(new DiagnosticsSurface(
                 MeterName: EngineDiagnostics.MeterName,
                 ActivitySourceName: EngineDiagnostics.ActivitySourceName,
                 Counters:
@@ -140,6 +140,7 @@ public static class EngineWebApplicationExtensions
                     EngineDiagnostics.ModuleFailureCounterName,
                     EngineDiagnostics.RuntimeRestartCounterName
                 ],
+                Conventions: diagnosticsCatalog.Conventions,
                 Liveness: health.EvaluateLiveness(),
                 Readiness: health.EvaluateReadiness(),
                 SummaryPath: "/health",

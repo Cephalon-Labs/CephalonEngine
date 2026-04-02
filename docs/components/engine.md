@@ -26,6 +26,8 @@
 - `Runtime/EngineRuntime.cs`
 - `Runtime/IRuntime.cs`
 - `Runtime/IRuntimeIntrospectionSnapshotProvider.cs`
+- `Diagnostics/IRuntimeDiagnosticsCatalog.cs`
+- `Diagnostics/DiagnosticsConvention.cs`
 - `Manifest/RuntimeManifest.cs`
 - `Manifest/PackageManifest.cs`
 - `Configuration/EngineSettings.cs`
@@ -54,7 +56,7 @@
 
 ## How it fits
 
-This package is the host-agnostic center of the framework. ASP.NET Core, worker hosts, CLI, scaffolding, and companion technology packs all consume this runtime model instead of rebuilding engine logic locally.
+This package is the host-agnostic center of the framework. ASP.NET Core, worker hosts, CLI, scaffolding, and companion technology packs all consume this runtime model instead of rebuilding engine logic locally. That now includes the runtime diagnostics catalog that publishes stable event-id conventions for the active engine and companion packages.
 
 Package loading is also governed here. `cephalon.package.json` compatibility metadata, publisher/signature provenance fields, optional integrity hashes, detached signature verification against trusted public keys, publisher/signer/checksum-based trust allow-lists, and `/engine/packages` manifest output are all part of the engine contract rather than host-specific behavior.
 

@@ -146,7 +146,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Engine.Diagnostics`
 
-- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-diagnostics): 1 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics)
+- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-diagnostics): 6 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics)
 
 ## `Cephalon.Engine.Localization`
 

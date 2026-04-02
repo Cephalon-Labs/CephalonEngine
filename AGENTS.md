@@ -61,6 +61,7 @@ When working in this repository:
 - prefer `ITechnologyRuntimeContributor` when a technology pack needs an introspectable runtime snapshot
 - prefer `ITechnologyRuntimeCatalog` when host or package code needs to read the merged runtime surface set without referencing `Cephalon.Engine` concrete types
 - prefer `IRuntimeIntrospectionSnapshotProvider` and `/engine/snapshot` when host or operator flows need manifest, runtime status, and technology-pack surfaces in one payload
+- prefer `IRuntimeDiagnosticsCatalog`, `/engine/diagnostics`, and `/engine/snapshot` when host or operator flows need the merged diagnostics convention and event-id catalog for active packages
 - prefer configuration-driven language selection through `Engine:Localization`, with project code used only to extend or replace it deliberately
 - prefer configuration-driven failure semantics through `Engine:FailurePolicy` instead of ad-hoc host try/catch behavior
 - prefer configuration-driven package and capability governance through `Engine:Trust`
@@ -77,6 +78,7 @@ When working in this repository:
 - keep the merged technology catalog explicit and introspectable; surface available technology profiles through `/engine/technology-catalog`
 - keep active technology-pack runtime surfaces explicit and introspectable; surface them through `/engine/technology-surfaces`
 - keep the broader runtime introspection snapshot explicit and introspectable; surface it through `/engine/snapshot`
+- keep package diagnostics conventions explicit and introspectable; surface them through `IRuntimeDiagnosticsCatalog`, `/engine/diagnostics`, and `/engine/snapshot`
 - keep public engine, companion-pack, host-adapter, and tooling contracts documented with meaningful XML comments so external doc generators and IntelliSense stay useful
 - keep the supported DocFX input set limited to assemblies whose public APIs have complete XML comments
 - keep test-only projects such as `tests/Cephalon.Tests` excluded from generated reference-doc and DocFX publishing scope unless they are deliberately promoted into supported docs input

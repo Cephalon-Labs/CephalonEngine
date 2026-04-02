@@ -4,6 +4,15 @@ using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.Engine.Runtime;
+using Cephalon.Observability.Hosting;
+using Cephalon.Observability.HttpDependencies.Configuration;
+using Cephalon.Observability.HttpDependencies.Hosting;
+using Cephalon.Observability.PostgresDependencies.Configuration;
+using Cephalon.Observability.PostgresDependencies.Hosting;
+using Cephalon.Observability.RabbitMqDependencies.Configuration;
+using Cephalon.Observability.RabbitMqDependencies.Hosting;
+using Cephalon.Observability.RedisDependencies.Configuration;
+using Cephalon.Observability.RedisDependencies.Hosting;
 using Cephalon.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -139,5 +148,101 @@ public sealed class EngineDiagnosticsTests
         Assert.Contains(EngineDiagnostics.RuntimeFailureCounterName, measurementSnapshot);
         Assert.Contains(EngineDiagnostics.ModuleFailureCounterName, measurementSnapshot);
         Assert.Contains(EngineDiagnostics.RuntimeRestartCounterName, measurementSnapshot);
+    }
+
+    [Fact]
+    public void AddCephalonBuildsRuntimeDiagnosticsCatalogForActivePackages()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+            engine.AddModule(new PlatformTestModule());
+        });
+        services.AddCephalonObservability();
+        services.AddCephalonHttpDependencyHealth(options =>
+        {
+            options.Dependencies =
+            [
+                new HttpDependencyDefinition
+                {
+                    Id = "upstream-api",
+                    Endpoint = "https://upstream.example/health"
+                }
+            ];
+        });
+        services.AddCephalonPostgresDependencyHealth(options =>
+        {
+            options.Dependencies =
+            [
+                new PostgresDependencyDefinition
+                {
+                    Id = "primary-sql",
+                    Host = "postgres.internal.example"
+                }
+            ];
+        });
+        services.AddCephalonRabbitMqDependencyHealth(options =>
+        {
+            options.Dependencies =
+            [
+                new RabbitMqDependencyDefinition
+                {
+                    Id = "events-broker",
+                    Host = "rabbitmq.internal.example"
+                }
+            ];
+        });
+        services.AddCephalonRedisDependencyHealth(options =>
+        {
+            options.Dependencies =
+            [
+                new RedisDependencyDefinition
+                {
+                    Id = "distributed-cache",
+                    Host = "redis.internal.example"
+                }
+            ];
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IRuntimeDiagnosticsCatalog>();
+        var snapshot = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+
+        Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Engine");
+        Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability");
+        Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.HttpDependencies");
+        Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.PostgresDependencies");
+        Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.RabbitMqDependencies");
+        Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.RedisDependencies");
+
+        Assert.Contains(
+            catalog.GetBySource("Cephalon.Engine").Single().Events,
+            static entry => entry.Id == 2002 && entry.Name == "LogRuntimeFailure");
+        Assert.Contains(
+            catalog.GetBySource("Cephalon.Observability").Single().Events,
+            static entry => entry.Id == 3006 && entry.Name == "DiagnosticsCatalogEntry");
+        Assert.Contains(
+            catalog.GetBySource("Cephalon.Observability.HttpDependencies").Single().Events,
+            static entry => entry.Id == 3100);
+        Assert.Contains(
+            catalog.GetBySource("Cephalon.Observability.PostgresDependencies").Single().Events,
+            static entry => entry.Id == 3122);
+        Assert.Contains(
+            catalog.GetBySource("Cephalon.Observability.RabbitMqDependencies").Single().Events,
+            static entry => entry.Id == 3124);
+        Assert.Contains(
+            catalog.GetBySource("Cephalon.Observability.RedisDependencies").Single().Events,
+            static entry => entry.Id == 3120);
+
+        var eventIds = catalog.Conventions
+            .SelectMany(static convention => convention.Events)
+            .Select(static entry => entry.Id)
+            .ToArray();
+
+        Assert.Equal(eventIds.Length, eventIds.Distinct().Count());
+        Assert.Equal(catalog.Conventions.Count, snapshot.DiagnosticsConventions.Count);
+        Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.RabbitMqDependencies");
     }
 }

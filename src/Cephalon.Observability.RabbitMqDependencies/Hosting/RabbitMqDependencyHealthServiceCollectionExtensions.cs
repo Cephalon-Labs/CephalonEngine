@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Health;
+using Cephalon.Engine.Diagnostics;
 using Cephalon.Observability.RabbitMqDependencies.Configuration;
 using Cephalon.Observability.RabbitMqDependencies.Services;
 using Microsoft.Extensions.Configuration;
@@ -66,6 +67,7 @@ public static class RabbitMqDependencyHealthServiceCollectionExtensions
         services.TryAddSingleton(options);
         services.TryAddSingleton<IRabbitMqDependencyProbeClient, RabbitMqDependencyProbeClient>();
         services.TryAddSingleton<RabbitMqDependencyHealthStore>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, RabbitMqDependencyHealthDiagnosticsConventionContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, RabbitMqDependencyHealthContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, RabbitMqDependencyHealthProbeHostedService>());
 

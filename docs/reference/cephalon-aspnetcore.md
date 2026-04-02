@@ -31,12 +31,12 @@ public sealed class DiagnosticsSurface
 
 #### Constructors
 
-<a id="member-m-cephalon-aspnetcore-diagnostics-diagnosticssurface-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-runtime-runtimehealthreport-cephalon-engine-runtime-runtimehealthreport-system-string-system-string-system-string"></a>
+<a id="member-m-cephalon-aspnetcore-diagnostics-diagnosticssurface-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention-cephalon-engine-runtime-runtimehealthreport-cephalon-engine-runtime-runtimehealthreport-system-string-system-string-system-string"></a>
 
 ##### `DiagnosticsSurface`
 
 ```csharp
-DiagnosticsSurface(string MeterName, string ActivitySourceName, IReadOnlyList<string> Counters, RuntimeHealthReport Liveness, RuntimeHealthReport Readiness, string SummaryPath, string LivenessPath, string ReadinessPath)
+DiagnosticsSurface(string MeterName, string ActivitySourceName, IReadOnlyList<string> Counters, IReadOnlyList<DiagnosticsConvention> Conventions, RuntimeHealthReport Liveness, RuntimeHealthReport Readiness, string SummaryPath, string LivenessPath, string ReadinessPath)
 ```
 
 Describes the operator-facing diagnostics surface exposed by a Cephalon ASP.NET Core host.
@@ -45,6 +45,7 @@ Parameters:
 - `MeterName`: The meter name used for engine metrics.
 - `ActivitySourceName`: The activity source name used for engine tracing.
 - `Counters`: The built-in counter names exposed by the engine.
+- `Conventions`: The published diagnostics conventions and event-id catalogs visible to the current host.
 - `Liveness`: The current liveness report.
 - `Readiness`: The current readiness report.
 - `SummaryPath`: The aggregate health endpoint path.
@@ -62,6 +63,16 @@ string ActivitySourceName { get; set; }
 ```
 
 The activity source name used for engine tracing.
+
+<a id="member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-conventions"></a>
+
+##### `Conventions`
+
+```csharp
+IReadOnlyList<DiagnosticsConvention> Conventions { get; set; }
+```
+
+The published diagnostics conventions and event-id catalogs visible to the current host.
 
 <a id="member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-counters"></a>
 

@@ -88,17 +88,19 @@ Why this stays separate:
 Current baseline:
 
 - `Cephalon.Engine` already emits structured runtime/module transition and failure logs with event ids in the `2000` range
-- `Cephalon.Observability` already emits startup-summary and telemetry-guidance logs with event ids in the `3000` range
+- `Cephalon.Observability` already emits startup-summary, diagnostics-catalog, and telemetry-guidance logs with event ids in the `3000` range
+- active engine and companion packages now publish their diagnostics conventions through `IRuntimeDiagnosticsCatalog`, `/engine/diagnostics`, and `/engine/snapshot`
+- currently shipped package coverage includes `Cephalon.Engine`, `Cephalon.Observability`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, and `Cephalon.Observability.RedisDependencies`
 
 Gap:
 
-- event-id coverage is not yet documented or standardized across the broader package set
-- companion packages and adapters do not yet share a published event-id catalog or package-by-package diagnostics convention
+- the currently shipped packages now share one published event-id catalog and package-by-package diagnostics convention
+- future packages should follow the same contributor model when they add new operator-facing structured logs, but that no longer blocks the current phase-2 diagnostics baseline
 
 Why this stays separate:
 
-- the engine baseline exists
-- the missing work is widening that convention across packages and documenting it as operator-facing contract
+- the engine baseline exists and is now widened across the active observability packages
+- remaining phase-2 work shifts to richer runtime answers rather than inventing another diagnostics abstraction for the current shipped set
 
 ### `#35` Clearer runtime answers for what loaded, started, failed, and why
 
@@ -160,6 +162,6 @@ Recommended execution sequence remains:
 
 1. `#31` inventory and sequencing
 2. `#33` dependency-health packs on top of the shipped exporter path
-3. `#34` structured diagnostics and `#35` clearer runtime answers
+3. `#35` clearer runtime answers
 4. `#73` deeper readiness/liveness and restart-policy follow-through
 5. `#74` release-validation guidance once the operational surface above is clearer

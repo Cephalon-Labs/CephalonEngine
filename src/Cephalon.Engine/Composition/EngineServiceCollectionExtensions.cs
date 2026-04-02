@@ -1,6 +1,8 @@
 using Cephalon.Engine.Configuration;
+using Cephalon.Engine.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using Cephalon.Engine.Runtime;
 
@@ -63,10 +65,15 @@ public static class EngineServiceCollectionExtensions
         configure(builder);
 
         var runtime = builder.Build();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, EngineDiagnosticsConventionContributor>());
         services.AddSingleton<IRuntime>(runtime);
         services.AddSingleton(runtime);
         services.AddSingleton(runtime.Manifest);
         services.AddSingleton<RuntimeHealthEvaluator>();
+        services.AddSingleton<RuntimeDiagnosticsCatalogSnapshot>(serviceProvider =>
+            new RuntimeDiagnosticsCatalogSnapshot(serviceProvider.GetServices<IDiagnosticsConventionContributor>()));
+        services.AddSingleton<IRuntimeDiagnosticsCatalog>(serviceProvider =>
+            serviceProvider.GetRequiredService<RuntimeDiagnosticsCatalogSnapshot>());
         services.AddSingleton<IRuntimeIntrospectionSnapshotProvider, RuntimeIntrospectionSnapshotProvider>();
 
         return services;

@@ -233,13 +233,13 @@ internal static class RabbitMqDependencyHealthLogs
 {
     private static readonly Action<ILogger, string, int, Exception?> ProbeTimedOutMessage = LoggerMessage.Define<string, int>(
         LogLevel.Warning,
-        new EventId(3124, nameof(ProbeTimedOut)),
-        "RabbitMQ dependency probe '{DependencyId}' timed out after {TimeoutSeconds}s.");
+        new EventId(RabbitMqDependencyHealthDiagnosticsConventions.ProbeTimedOut.Id, RabbitMqDependencyHealthDiagnosticsConventions.ProbeTimedOut.Name),
+        RabbitMqDependencyHealthDiagnosticsConventions.ProbeTimedOut.MessageTemplate);
 
     private static readonly Action<ILogger, string, Exception?> ProbeFailedMessage = LoggerMessage.Define<string>(
         LogLevel.Warning,
-        new EventId(3125, nameof(ProbeFailed)),
-        "RabbitMQ dependency probe '{DependencyId}' failed.");
+        new EventId(RabbitMqDependencyHealthDiagnosticsConventions.ProbeFailed.Id, RabbitMqDependencyHealthDiagnosticsConventions.ProbeFailed.Name),
+        RabbitMqDependencyHealthDiagnosticsConventions.ProbeFailed.MessageTemplate);
 
     public static void ProbeTimedOut(ILogger logger, string dependencyId, int timeoutSeconds) =>
         ProbeTimedOutMessage(logger, dependencyId, timeoutSeconds, null);

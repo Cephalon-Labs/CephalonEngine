@@ -100,7 +100,7 @@ Companion adapter packages can extend that host with additional transport surfac
 
 `Cephalon.Worker` is the non-HTTP generic-host adapter. It starts and stops the same runtime inside worker processes and keeps module/background behavior aligned with standard hosted-service lifecycles.
 
-`Cephalon.Observability` is the diagnostics companion package. It turns the engine's built-in logs, meter, and activity source into host-friendly startup summaries and conventions that both ASP.NET Core and worker hosts can opt into.
+`Cephalon.Observability` is the diagnostics companion package. It turns the engine's built-in logs, meter, and activity source into host-friendly startup summaries and conventions that both ASP.NET Core and worker hosts can opt into, and it publishes the active package-level event-id catalog through the runtime diagnostics surface.
 
 `Cephalon.Observability.HttpDependencies` is the optional external API dependency-health companion package. It turns configured HTTP upstream probes into `IDependencyHealthContributor` data without pushing provider-specific network checks into `Cephalon.Engine`.
 
@@ -226,12 +226,13 @@ Companion adapter packages:
 - engine future-tech selection can be driven through `Engine:Technologies`
 - engine future-tech catalog can be extended through `ITechnologyContributor` or `engine.RegisterTechnology(...)`
 - active future-tech runtime surfaces can be inspected through `ITechnologyRuntimeContributor` and `/engine/technology-surfaces`
-- merged operator-facing runtime introspection should come from `IRuntimeIntrospectionSnapshotProvider` and `/engine/snapshot` instead of recomposing manifest, status, and technology surfaces ad hoc in hosts
+- merged operator-facing runtime introspection should come from `IRuntimeIntrospectionSnapshotProvider` and `/engine/snapshot` instead of recomposing manifest, status, technology surfaces, and diagnostics conventions ad hoc in hosts
 - future-tech runtime primitives should live in companion packages such as `Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, or `Cephalon.Edge`
 - installed modules should extend shipped technology packs through pack-specific contributor services instead of hardcoding host-owned descriptor lists
 - engine options can disable modules and capabilities through `Engine:Options`
 - engine observability conventions can be tuned through `Engine:Observability`
 - engine telemetry export guidance can be tuned through `Engine:Observability:Telemetry`
+- runtime diagnostics conventions should flow through `IRuntimeDiagnosticsCatalog`, `/engine/diagnostics`, and `/engine/snapshot`
 - hosts can turn external HTTP upstreams into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Http` and `Cephalon.Observability.HttpDependencies`
 - hosts can turn Postgres dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Postgres` and `Cephalon.Observability.PostgresDependencies`
 - hosts can turn RabbitMQ dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:RabbitMq` and `Cephalon.Observability.RabbitMqDependencies`
@@ -249,7 +250,7 @@ Companion adapter packages:
 - runtime lifecycle is explicit and introspectable
 - runtime policy state is introspectable through `/engine/options`
 - runtime failure policy is introspectable through `/engine/failure-policy`
-- runtime diagnostics conventions are introspectable through `/engine/diagnostics`
+- runtime diagnostics conventions are introspectable through `IRuntimeDiagnosticsCatalog`, `/engine/diagnostics`, and `/engine/snapshot`
 - runtime trust policy is introspectable through `/engine/trust-policy`
 - runtime package loading is introspectable through `/engine/packages`, including package `kind`, resolved assembly `path`, discovery `sourcePath`, declared version/compatibility, computed checksum, signature verification state, and trust reason
 - runtime package provenance is introspectable through `/engine/packages` and `/engine/trust-policy`, including publisher id, signature key id, and signer fingerprint when the package manifest declared them
@@ -275,7 +276,7 @@ Companion adapter packages:
 - richer capability metadata and policy
 - startup hooks and lifecycle events
 - event bus / workflow runtime
-- broader provider-specific dependency-health packs, richer diagnostics conventions, and deeper release-validation guidance on top of the shipped HTTP, Postgres, RabbitMQ, Redis, and OpenTelemetry observability companions
+- broader provider-specific dependency-health packs, richer operator-runtime answers, and deeper release-validation guidance on top of the shipped HTTP, Postgres, RabbitMQ, Redis, and OpenTelemetry observability companions
 - richer parameterized templates and generators driven by scaffold plans
 - richer localization catalogs and package-provided language packs
 - sustained benchmark coverage for hot engine paths

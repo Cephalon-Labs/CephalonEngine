@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Health;
+using Cephalon.Engine.Diagnostics;
 using Cephalon.Observability.PostgresDependencies.Configuration;
 using Cephalon.Observability.PostgresDependencies.Services;
 using Microsoft.Extensions.Configuration;
@@ -66,6 +67,7 @@ public static class PostgresDependencyHealthServiceCollectionExtensions
         services.TryAddSingleton(options);
         services.TryAddSingleton<IPostgresDependencyProbeClient, NpgsqlPostgresDependencyProbeClient>();
         services.TryAddSingleton<PostgresDependencyHealthStore>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, PostgresDependencyHealthDiagnosticsConventionContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, PostgresDependencyHealthContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, PostgresDependencyHealthProbeHostedService>());
 

@@ -2028,6 +2028,252 @@ Parameters:
 
 ## Namespace Cephalon.Engine.Diagnostics
 
+<a id="type-cephalon-engine-diagnostics-diagnosticeventdefinition"></a>
+
+### `DiagnosticEventDefinition`
+
+Describes one published diagnostics event id together with its intended meaning.
+
+#### Declaration
+```csharp
+public sealed class DiagnosticEventDefinition
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-diagnostics-diagnosticeventdefinition-ctor-system-int32-system-string-cephalon-engine-diagnostics-diagnosticseverity-system-string-system-string"></a>
+
+##### `DiagnosticEventDefinition`
+
+```csharp
+DiagnosticEventDefinition(int Id, string Name, DiagnosticSeverity Severity, string MessageTemplate, string Description)
+```
+
+Describes one published diagnostics event id together with its intended meaning.
+
+Parameters:
+- `Id`: The stable numeric event identifier.
+- `Name`: The stable event name paired with the numeric identifier.
+- `Severity`: The intended severity for the event.
+- `MessageTemplate`: The structured message template emitted by the logger.
+- `Description`: The operator-facing explanation of when the event is emitted.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; set; }
+```
+
+The operator-facing explanation of when the event is emitted.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-id"></a>
+
+##### `Id`
+
+```csharp
+int Id { get; set; }
+```
+
+The stable numeric event identifier.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-messagetemplate"></a>
+
+##### `MessageTemplate`
+
+```csharp
+string MessageTemplate { get; set; }
+```
+
+The structured message template emitted by the logger.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-name"></a>
+
+##### `Name`
+
+```csharp
+string Name { get; set; }
+```
+
+The stable event name paired with the numeric identifier.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-severity"></a>
+
+##### `Severity`
+
+```csharp
+DiagnosticSeverity Severity { get; set; }
+```
+
+The intended severity for the event.
+
+<a id="type-cephalon-engine-diagnostics-diagnosticsconvention"></a>
+
+### `DiagnosticsConvention`
+
+Describes the diagnostics convention published by one engine package or companion package.
+
+#### Declaration
+```csharp
+public sealed class DiagnosticsConvention
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-diagnostics-diagnosticsconvention-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticeventdefinition"></a>
+
+##### `DiagnosticsConvention`
+
+```csharp
+DiagnosticsConvention(string Source, string LoggerCategoryPrefix, string Description, IReadOnlyList<DiagnosticEventDefinition> Events)
+```
+
+Describes the diagnostics convention published by one engine package or companion package.
+
+Parameters:
+- `Source`: The stable package or subsystem identifier that owns the convention.
+- `LoggerCategoryPrefix`: The logger category prefix used by the convention.
+- `Description`: The operator-facing explanation of what the convention covers.
+- `Events`: The published event definitions that belong to the convention.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticsconvention-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; set; }
+```
+
+The operator-facing explanation of what the convention covers.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticsconvention-events"></a>
+
+##### `Events`
+
+```csharp
+IReadOnlyList<DiagnosticEventDefinition> Events { get; set; }
+```
+
+The published event definitions that belong to the convention.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticsconvention-loggercategoryprefix"></a>
+
+##### `LoggerCategoryPrefix`
+
+```csharp
+string LoggerCategoryPrefix { get; set; }
+```
+
+The logger category prefix used by the convention.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticsconvention-maximumeventid"></a>
+
+##### `MaximumEventId`
+
+```csharp
+int? MaximumEventId { get; }
+```
+
+Gets the largest event id published by this convention.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticsconvention-minimumeventid"></a>
+
+##### `MinimumEventId`
+
+```csharp
+int? MinimumEventId { get; }
+```
+
+Gets the smallest event id published by this convention.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticsconvention-source"></a>
+
+##### `Source`
+
+```csharp
+string Source { get; set; }
+```
+
+The stable package or subsystem identifier that owns the convention.
+
+<a id="type-cephalon-engine-diagnostics-diagnosticseverity"></a>
+
+### `DiagnosticSeverity`
+
+Describes the severity attached to a published diagnostics event definition.
+
+#### Declaration
+```csharp
+public enum DiagnosticSeverity
+```
+
+#### Fields
+
+<a id="member-f-cephalon-engine-diagnostics-diagnosticseverity-critical"></a>
+
+##### `Critical`
+
+```csharp
+const DiagnosticSeverity Critical
+```
+
+The event indicates a critical condition that usually requires immediate attention.
+
+<a id="member-f-cephalon-engine-diagnostics-diagnosticseverity-debug"></a>
+
+##### `Debug`
+
+```csharp
+const DiagnosticSeverity Debug
+```
+
+The event is intended for debug-oriented diagnostics.
+
+<a id="member-f-cephalon-engine-diagnostics-diagnosticseverity-error"></a>
+
+##### `Error`
+
+```csharp
+const DiagnosticSeverity Error
+```
+
+The event indicates an error condition.
+
+<a id="member-f-cephalon-engine-diagnostics-diagnosticseverity-information"></a>
+
+##### `Information`
+
+```csharp
+const DiagnosticSeverity Information
+```
+
+The event describes expected informational runtime behavior.
+
+<a id="member-f-cephalon-engine-diagnostics-diagnosticseverity-trace"></a>
+
+##### `Trace`
+
+```csharp
+const DiagnosticSeverity Trace
+```
+
+The event is useful only for highly detailed trace output.
+
+<a id="member-f-cephalon-engine-diagnostics-diagnosticseverity-warning"></a>
+
+##### `Warning`
+
+```csharp
+const DiagnosticSeverity Warning
+```
+
+The event highlights a warning condition or degraded behavior.
+
 <a id="type-cephalon-engine-diagnostics-enginediagnostics"></a>
 
 ### `EngineDiagnostics`
@@ -2130,6 +2376,71 @@ const string RuntimeTransitionCounterName
 ```
 
 Gets the counter name for runtime lifecycle transitions.
+
+<a id="type-cephalon-engine-diagnostics-idiagnosticsconventioncontributor"></a>
+
+### `IDiagnosticsConventionContributor`
+
+Contributes a diagnostics convention to the runtime-facing diagnostics catalog.
+
+#### Declaration
+```csharp
+public interface IDiagnosticsConventionContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-engine-diagnostics-idiagnosticsconventioncontributor-describediagnosticsconvention"></a>
+
+##### `DescribeDiagnosticsConvention`
+
+```csharp
+DiagnosticsConvention DescribeDiagnosticsConvention()
+```
+
+Describes the diagnostics convention owned by the contributor.
+
+Returns: The diagnostics convention published by the contributor.
+
+<a id="type-cephalon-engine-diagnostics-iruntimediagnosticscatalog"></a>
+
+### `IRuntimeDiagnosticsCatalog`
+
+Exposes the merged diagnostics conventions visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IRuntimeDiagnosticsCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-engine-diagnostics-iruntimediagnosticscatalog-conventions"></a>
+
+##### `Conventions`
+
+```csharp
+IReadOnlyList<DiagnosticsConvention> Conventions { get; }
+```
+
+Gets the published diagnostics conventions visible to the runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-diagnostics-iruntimediagnosticscatalog-getbysource-system-string"></a>
+
+##### `GetBySource`
+
+```csharp
+IReadOnlyList<DiagnosticsConvention> GetBySource(string source)
+```
+
+Gets the diagnostics conventions owned by the requested source.
+
+Returns: The matching conventions, or an empty list when the source is not active.
+
+Parameters:
+- `source`: The diagnostics source or package identifier.
 
 <a id="namespace-cephalon-engine-localization"></a>
 
@@ -3878,7 +4189,7 @@ The runtime is not healthy enough to serve traffic.
 
 Combines the main operator-facing runtime views into a single payload.
 
-Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, and technology-pack details.
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, technology-pack details, and diagnostics conventions.
 
 #### Declaration
 ```csharp
@@ -3887,24 +4198,35 @@ public sealed class RuntimeIntrospectionSnapshot
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface"></a>
+<a id="member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention"></a>
 
 ##### `RuntimeIntrospectionSnapshot`
 
 ```csharp
-RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces)
+RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces, IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions)
 ```
 
 Combines the main operator-facing runtime views into a single payload.
 
-Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, and technology-pack details.
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, technology-pack details, and diagnostics conventions.
 
 Parameters:
 - `Manifest`: The immutable manifest that describes the built runtime shape.
 - `Status`: The current lifecycle status of the runtime.
 - `TechnologySurfaces`: The active technology-pack runtime surfaces visible to the runtime at the time the snapshot was created.
+- `DiagnosticsConventions`: The diagnostics conventions and published event-id catalogs visible to the runtime at the time the snapshot was created.
 
 #### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-diagnosticsconventions"></a>
+
+##### `DiagnosticsConventions`
+
+```csharp
+IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions { get; set; }
+```
+
+The diagnostics conventions and published event-id catalogs visible to the runtime at the time the snapshot was created.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-manifest"></a>
 

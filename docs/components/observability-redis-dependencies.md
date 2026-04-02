@@ -24,7 +24,7 @@
 
 ## How it fits
 
-This package keeps Redis-specific socket probing out of `Cephalon.Engine` while still feeding the existing dependency-health contract. Hosts can opt into it when they need Redis or cache readiness to surface through `/engine/dependencies`, `/health/live`, `/health/ready`, and `/engine/diagnostics` without re-implementing probe loops, auth handling, or `PING` checks per host.
+This package keeps Redis-specific socket probing out of `Cephalon.Engine` while still feeding the existing dependency-health contract. Hosts can opt into it when they need Redis or cache readiness to surface through `/engine/dependencies`, `/health/live`, `/health/ready`, and `/engine/diagnostics` without re-implementing probe loops, auth handling, or `PING` checks per host. When active, it also publishes its probe event ids through the shared runtime diagnostics catalog.
 
 ## Related docs
 

@@ -17,23 +17,23 @@ public sealed class EngineRuntime : IRuntime, IDisposable
     private static readonly Action<ILogger, string, string, string, int, Exception?> LogRuntimeTransitionMessage =
         LoggerMessage.Define<string, string, string, int>(
             LogLevel.Information,
-            new EventId(2000, nameof(LogRuntimeTransition)),
-            "Runtime phase '{Phase}' completed with status {Status}. Blueprint {BlueprintId}. Modules {ModuleCount}.");
+            new EventId(EngineRuntimeDiagnosticsConventions.RuntimeTransition.Id, EngineRuntimeDiagnosticsConventions.RuntimeTransition.Name),
+            EngineRuntimeDiagnosticsConventions.RuntimeTransition.MessageTemplate);
     private static readonly Action<ILogger, string, string, string, Exception?> LogModuleTransitionMessage =
         LoggerMessage.Define<string, string, string>(
             LogLevel.Information,
-            new EventId(2001, nameof(LogModuleTransition)),
-            "Module '{ModuleId}' completed phase '{Phase}' with version {Version}.");
+            new EventId(EngineRuntimeDiagnosticsConventions.ModuleTransition.Id, EngineRuntimeDiagnosticsConventions.ModuleTransition.Name),
+            EngineRuntimeDiagnosticsConventions.ModuleTransition.MessageTemplate);
     private static readonly Action<ILogger, string, string, Exception> LogRuntimeFailureMessage =
         LoggerMessage.Define<string, string>(
             LogLevel.Error,
-            new EventId(2002, nameof(LogRuntimeFailure)),
-            "Runtime phase '{Phase}' failed while status was {Status}.");
+            new EventId(EngineRuntimeDiagnosticsConventions.RuntimeFailure.Id, EngineRuntimeDiagnosticsConventions.RuntimeFailure.Name),
+            EngineRuntimeDiagnosticsConventions.RuntimeFailure.MessageTemplate);
     private static readonly Action<ILogger, string, string, Exception> LogModuleFailureMessage =
         LoggerMessage.Define<string, string>(
             LogLevel.Error,
-            new EventId(2003, nameof(LogModuleFailure)),
-            "Module '{ModuleId}' failed during phase '{Phase}'.");
+            new EventId(EngineRuntimeDiagnosticsConventions.ModuleFailure.Id, EngineRuntimeDiagnosticsConventions.ModuleFailure.Name),
+            EngineRuntimeDiagnosticsConventions.ModuleFailure.MessageTemplate);
 
     private readonly SemaphoreSlim lifecycleLock = new(1, 1);
     private readonly List<IModule> initializedModules = [];
