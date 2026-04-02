@@ -59,7 +59,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Platform Sprint 0`: `ENG-012`
 - `Sprint 1`: delivered `ENG-005`, `ENG-026`, and `ENG-027`, and opened the phase 2 operational gap-inventory track
 - `Sprint 2`: exporter packaging is now part of the shipped phase-2 baseline, Cassandra contact-point health plus ClickHouse analytics health plus Consul control-plane health plus Elasticsearch cluster health plus HTTP external API plus Kafka broker metadata plus Memcached cache plus MongoDB plus MQTT plus MySQL plus NATS plus Neo4j plus OpenSearch plus Oracle plus Postgres plus RabbitMQ plus Redis/cache plus SQL Server dependency-health packaging anchor the provider-specific follow-through, the shared diagnostics/event-id catalog now anchors the structured diagnostics baseline, and release validation now calls out the health/export convention suite explicitly
-- `Sprint 3`: runtime-answers follow-through, package distribution and trust follow-through, `ENG-013` planning readiness, the shipped `ENG-029` self-hosted OTLP follow-through slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, and the GCP next-target split that keeps the next cloud-specific companion package explicit
+- `Sprint 3`: runtime-answers follow-through, package distribution and trust follow-through, `ENG-013` planning readiness, the shipped `ENG-029` self-hosted OTLP follow-through slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, and the GCP next-target split that keeps the next cloud-specific companion package explicit while the later provider matrix stays visible for downstream follow-through
 - `Later / not scheduled yet`: `ENG-022` and future solution-level expansion work
 
 ## Planning principles
@@ -142,7 +142,7 @@ Current inventory:
 
 - `docs/operational-hardening-gap-inventory.md` now records the shipped baseline versus the remaining phase-2 gaps so follow-through work stays grounded in the code that already exists
 - that inventory now includes shipped `Cephalon.Observability.OpenTelemetry` and `Cephalon.Observability.Serilog` companion packages plus shipped `Cephalon.Observability.CassandraDependencies`, `Cephalon.Observability.ClickHouseDependencies`, `Cephalon.Observability.ConsulDependencies`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.Neo4jDependencies`, `Cephalon.Observability.OpenSearchDependencies`, `Cephalon.Observability.OracleDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` companion packages, together with a published runtime diagnostics catalog, runtime-story surface, configurable failure-policy warmup/drain/backoff semantics, opt-in ASP.NET Core request/response body logging with request/trace correlation plus default sensitive-value redaction, explicit release-validation guidance for health/export conventions, and refreshed benchmark guardrails that separate prepared composition/lifecycle hot paths plus strict trust-policy composition plus bounded, correlated, and concurrent ASP.NET Core request-logging paths from benchmark harness setup
-- the remaining cloud-vendor tracing/export follow-through has been re-scoped into phase 6 cloud and platform integrations because the expanded self-hosted plus AWS plus Azure plus GCP plus Huawei Cloud plus Alibaba Cloud plus Red Hat OpenShift plus VMware Tanzu target list is broader than the shipped phase-2 operational baseline
+- the remaining cloud-vendor tracing/export follow-through has been re-scoped into phase 6 cloud and platform integrations because the expanded self-hosted plus AWS plus Azure plus GCP plus Huawei Cloud plus Alibaba Cloud plus Cloudflare plus DigitalOcean plus Red Hat OpenShift plus VMware Tanzu target list is broader than the shipped phase-2 operational baseline
 
 Exit criteria:
 
@@ -232,7 +232,7 @@ Current baseline already in place:
 - the shared `Microsoft.Extensions.Logging.ILogger` pipeline plus `Cephalon.Observability.Serilog`
 - correlated ASP.NET Core request/response logging through `Engine:Observability:HttpLogging`
 - host-agnostic runtime, diagnostics, health, and validation surfaces that later cloud-targeted companions can build on
-- self-hosted collector and runtime defaults plus Azure Monitor and AWS are now shipped as the first slices on top of the cloud-neutral OTLP baseline, and GCP is now the next explicit vendor-specific follow-through while broader vendor/platform expansion stays behind additional child items
+- self-hosted collector and runtime defaults plus Azure Monitor and AWS are now shipped as the first slices on top of the cloud-neutral OTLP baseline, and GCP is now the next explicit vendor-specific follow-through while broader vendor/platform expansion across Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu stays behind additional child items
 
 Deliverables:
 
@@ -240,15 +240,16 @@ Deliverables:
 - Azure Monitor companion follow-through as the first explicit cloud-specific slice on top of the shared OpenTelemetry baseline is now shipped
 - AWS companion follow-through as the second explicit cloud-specific slice on top of the shared OpenTelemetry baseline is now shipped
 - GCP companion follow-through is the next explicit cloud-specific slice on top of the shared OpenTelemetry baseline
-- additional cloud-targeted observability companion follow-through for Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu once each target is narrowed into its own child item
+- additional cloud-targeted observability companion follow-through for Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu once each target is narrowed into its own child item
 - exporter wiring, auth, resource-attribute conventions, and hosted-runtime defaults that stay inside companion packages instead of `Cephalon.Engine`
-- documentation, validation, and planning guidance that make the supported targets and deployment assumptions explicit
+- documentation, validation, and planning guidance that make the supported targets, deployment assumptions, and downstream companion-package authoring path explicit
 - a clear package split whenever different clouds or platforms need distinct companion packs instead of one overloaded abstraction
 
 Exit criteria:
 
 - self-hosted collector and runtime defaults can be enabled on top of the shipped OTLP baseline without modifying `Cephalon.Engine` or `Cephalon.Abstractions`
 - supported cloud and platform integrations can be enabled without modifying `Cephalon.Engine` or `Cephalon.Abstractions`
+- downstream developer-authored provider packages can reuse the shared telemetry contract without modifying `Cephalon.Engine` or `Cephalon.Abstractions`
 - the shared `ILogger` pipeline and cloud-neutral OTLP baseline remain intact
 - docs, validation flows, and planning metadata make the supported targets explicit
 
@@ -260,7 +261,7 @@ Updated priority order as of `April 2, 2026`:
 2. package distribution, provenance, and richer trust follow-through beyond the current baseline
 3. workflow and orchestration primitives
 4. multi-service suite blueprints
-5. cloud and platform integrations, with self-hosted plus Azure Monitor plus AWS shipped and GCP now the next explicit vendor-specific slice
+5. cloud and platform integrations, with self-hosted plus Azure Monitor plus AWS shipped, GCP now the next explicit vendor-specific slice, and the later Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, OpenShift, and Tanzu matrix kept ready for explicit follow-up items
 6. broader release automation and package-publishing polish
 
 ## Decision guardrails

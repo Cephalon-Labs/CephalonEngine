@@ -1068,6 +1068,8 @@ This is the main operator surface for package provenance and compatibility diagn
 `Cephalon.Observability` reads `Engine:Observability:Telemetry` and logs the effective export guidance on startup.
 `Cephalon.Observability.OpenTelemetry` can then turn that same section into a supported OTLP export path for logs, metrics, and traces, including the explicit self-hosted collector defaults that sit on top of the same shared contract.
 
+The same shared contract is also the intended downstream extension point. Teams that install Cephalon packages can build their own provider-specific companion integration by reusing `ObservabilityOptions.FromConfiguration(builder.Configuration).Telemetry`, binding an additional provider-specific sub-section, keeping exporter/auth/resource logic in their own package, and optionally publishing a diagnostics convention plus startup summary through `IDiagnosticsConventionContributor` and `IHostedService`.
+
 Example:
 
 ```json
@@ -1124,6 +1126,7 @@ Operational notes:
 - when `UseSelfHostedDefaults` is `true` and `Endpoint` is omitted, the package falls back to `http://localhost:4317` for `otlp` / `otlp/grpc` or `http://localhost:4318` for `otlp/http`
 - when `otlp/http` is selected, the package appends `/v1/logs`, `/v1/metrics`, and `/v1/traces` automatically from the configured base endpoint
 - the self-hosted path also adds `deployment.environment.name` from the active host environment alongside the existing service-name and service-version resource defaults
+- downstream companion packages should reuse this same contract instead of introducing a second Cephalon telemetry abstraction; that is the intended path for Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, OpenShift, Tanzu, or internal-provider integrations
 
 ## AWS observability path
 

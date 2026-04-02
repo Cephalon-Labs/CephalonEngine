@@ -176,7 +176,7 @@ Follow-up later:
 
 ## SDK hardening follow-through
 
-Phase 1 SDK hardening is now substantially complete. Phase 2 operational hardening has also closed on its shipped baseline. Phase 3 extensibility and package loading remains the main structural follow-through, while phase 6 now has an active `ENG-029` track with the shipped self-hosted OTLP slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, and an explicit GCP next-vendor follow-through.
+Phase 1 SDK hardening is now substantially complete. Phase 2 operational hardening has also closed on its shipped baseline. Phase 3 extensibility and package loading remains the main structural follow-through, while phase 6 now has an active `ENG-029` track with the shipped self-hosted OTLP slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the explicit GCP next-vendor follow-through, and a later-provider matrix that now also includes Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu.
 
 ### ENG-005 Engine API and package surface hardening
 
@@ -473,8 +473,8 @@ Estimate: 71
 
 Why:
 
-- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor and AWS vendor slices are now shipped, and the next vendor-specific follow-through is narrowed to GCP before broader Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu expansion
-- this work should stay in companion packages and preserve the shared `ILogger` pipeline plus the cloud-neutral OTLP baseline
+- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor and AWS vendor slices are now shipped, and the next vendor-specific follow-through is narrowed to GCP before broader Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu expansion
+- this work should stay in companion packages, preserve the shared `ILogger` pipeline plus the cloud-neutral OTLP baseline, and leave room for downstream developer-authored provider packages
 
 Acceptance:
 
@@ -483,8 +483,8 @@ Acceptance:
 - treat GCP as the next explicit cloud-targeted slice on top of the shared OpenTelemetry baseline
 - keep vendor/platform-specific exporter wiring, auth, resource attributes, and hosted defaults outside `Cephalon.Engine` and `Cephalon.Abstractions`
 - keep the shared `ILogger` pipeline and existing `Cephalon.Observability.OpenTelemetry` baseline intact
-- add docs, validation, and planning sync for the supported targets
-- keep the remaining Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu follow-through split into explicit child items under `ENG-029` instead of reopening one ambiguous multi-cloud scope
+- add docs, validation, and planning sync for the supported targets plus the downstream companion-package authoring path
+- keep the remaining Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu follow-through narrowed into explicit child items under `ENG-029` before implementation starts instead of reopening one ambiguous multi-cloud scope
 - avoid starting implementation on any new vendor/platform target without first narrowing it explicitly
 
 ## Sprint history and next 3 sprints
@@ -546,7 +546,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 - ENG-013 Workflow and orchestration primitives
 - package distribution and trust follow-through beyond the current baseline
-- ENG-029 self-hosted OTLP collector/runtime-default follow-through plus the shipped Azure Monitor and AWS slices and the GCP next-target split
+- ENG-029 self-hosted OTLP collector/runtime-default follow-through plus the shipped Azure Monitor and AWS slices, the GCP next-target split, and the downstream companion-package path for later providers
 
 ### Later / not scheduled yet
 

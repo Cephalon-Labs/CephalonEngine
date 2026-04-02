@@ -6,12 +6,15 @@ namespace Cephalon.Observability.Configuration;
 /// Describes how operators intend host telemetry to be exported.
 /// </summary>
 /// <remarks>
-/// These settings let Cephalon packages and hosts agree on provider, protocol, endpoint, and enabled
-/// signals without forcing exporter dependencies into the engine core. Companion packages such as
-/// <c>Cephalon.Observability.OpenTelemetry</c>, <c>Cephalon.Observability.Aws</c>,
-/// <c>Cephalon.Observability.Gcp</c>, or <c>Cephalon.Observability.AzureMonitor</c> can
-/// interpret the same contract when a host wants a supported export path, including the explicit
-/// self-hosted collector defaults that remain outside <c>Cephalon.Engine</c>.
+/// These settings let Cephalon packages, hosts, and downstream companion packages agree on provider,
+/// protocol, endpoint, and enabled signals without forcing exporter dependencies into the engine core.
+/// Companion packages such as <c>Cephalon.Observability.OpenTelemetry</c>,
+/// <c>Cephalon.Observability.Aws</c>, <c>Cephalon.Observability.Gcp</c>, or
+/// <c>Cephalon.Observability.AzureMonitor</c> can interpret the same contract when a host wants a
+/// supported export path, including the explicit self-hosted collector defaults that remain outside
+/// <c>Cephalon.Engine</c>. The same contract is also intended for developer-authored provider packages
+/// that need to layer Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, or other deployment-targeted
+/// auth, resource attributes, and hosted defaults on top of the existing <c>ILogger</c> pipeline.
 /// </remarks>
 public sealed class TelemetryExportOptions
 {
