@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T00:59:26.4036307+00:00",
+  "GeneratedAtUtc": "2026-04-02T01:25:12.2312298+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -198,6 +198,14 @@
       "Category": "Hosts",
       "Description": "External HTTP dependency-health integration for Cephalon hosts.",
       "FileName": "cephalon-observability-httpdependencies.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "Category": "Hosts",
+      "Description": "MySQL dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-mysqldependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
     },
@@ -623,6 +631,20 @@
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
       "FileName": "cephalon-observability-httpdependencies.md",
       "AnchorId": "namespace-cephalon-observability-httpdependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "namespace-cephalon-observability-mysqldependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "namespace-cephalon-observability-mysqldependencies-hosting",
       "TypeCount": 1
     },
     {
@@ -2239,6 +2261,51 @@
       }
     },
     {
+      "DisplayName": "MySqlDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "type-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition",
+      "Declaration": "public sealed class MySqlDependencyDefinition",
+      "Summary": "Describes one MySQL dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 13,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "MySqlDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "type-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions",
+      "Declaration": "public sealed class MySqlDependencyHealthOptions",
+      "Summary": "Configures MySQL dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "MySqlDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "type-cephalon-observability-mysqldependencies-hosting-mysqldependencyhealthservicecollectionextensions",
+      "Declaration": "public static class MySqlDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds MySQL dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
       "DisplayName": "ObservabilityOptions",
       "NamespaceName": "Cephalon.Observability.Configuration",
       "AssemblyName": "Cephalon.Observability",
@@ -3616,6 +3683,28 @@
       "Summary": "Adds HTTP dependency-health services using configuration as the primary source of probe settings."
     },
     {
+      "DisplayName": "AddCephalonMySqlDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "MySqlDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-m-cephalon-observability-mysqldependencies-hosting-mysqldependencyhealthservicecollectionextensions-addcephalonmysqldependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonMySqlDependencyHealth(this IServiceCollection services, Action\u003CMySqlDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds MySQL dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonMySqlDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "MySqlDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-m-cephalon-observability-mysqldependencies-hosting-mysqldependencyhealthservicecollectionextensions-addcephalonmysqldependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonMySqlDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CMySqlDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds MySQL dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
       "DisplayName": "AddCephalonObservability",
       "Category": "Methods",
       "DeclaringTypeName": "ObservabilityServiceCollectionExtensions",
@@ -4208,6 +4297,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-failurepolicy-allowmanualrestart",
       "Signature": "bool AllowManualRestart { get; }",
       "Summary": "Gets a value indicating whether manual restart is allowed after supported failures."
+    },
+    {
+      "DisplayName": "AllowPublicKeyRetrieval",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-allowpublickeyretrieval",
+      "Signature": "bool? AllowPublicKeyRetrieval { get; set; }",
+      "Summary": "Gets or sets the optional value that controls whether the server RSA public key may be requested automatically."
     },
     {
       "DisplayName": "AppBlueprint",
@@ -4817,6 +4917,17 @@
     {
       "DisplayName": "ConnectionString",
       "Category": "Properties",
+      "DeclaringTypeName": "MySqlDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-connectionstring",
+      "Signature": "string ConnectionString { get; set; }",
+      "Summary": "Gets or sets the optional full MySQL connection string used for the probe."
+    },
+    {
+      "DisplayName": "ConnectionString",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -5022,6 +5133,17 @@
       "AnchorId": "member-f-cephalon-abstractions-technologies-technologykind-data",
       "Signature": "const TechnologyKind Data",
       "Summary": "Identifies a data-oriented technology."
+    },
+    {
+      "DisplayName": "Database",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-database",
+      "Signature": "string Database { get; set; }",
+      "Summary": "Gets or sets the database name used for the health query."
     },
     {
       "DisplayName": "Database",
@@ -5253,6 +5375,17 @@
       "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-dependencies",
       "Signature": "IReadOnlyList\u003CHttpDependencyDefinition\u003E Dependencies { get; set; }",
       "Summary": "Gets or sets the configured HTTP dependencies that should contribute to runtime health."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003CMySqlDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured MySQL dependencies that should contribute to runtime health."
     },
     {
       "DisplayName": "Dependencies",
@@ -5880,6 +6013,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-modulemanifest-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing display name for the module."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
     },
     {
       "DisplayName": "DisplayName",
@@ -6786,6 +6930,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "MySqlDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-m-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "MySqlDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds MySQL dependency-health options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "ObservabilityOptions",
       "NamespaceName": "Cephalon.Observability.Configuration",
       "AssemblyName": "Cephalon.Observability",
@@ -7127,6 +7282,17 @@
     {
       "DisplayName": "HealthQuery",
       "Category": "Properties",
+      "DeclaringTypeName": "MySqlDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-healthquery",
+      "Signature": "string HealthQuery { get; set; }",
+      "Summary": "Gets or sets the SQL statement executed to verify the dependency."
+    },
+    {
+      "DisplayName": "HealthQuery",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -7167,6 +7333,17 @@
       "AnchorId": "member-f-cephalon-engine-runtime-runtimehealthstate-healthy",
       "Signature": "const RuntimeHealthState Healthy",
       "Summary": "The runtime and its dependencies are healthy."
+    },
+    {
+      "DisplayName": "Host",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-host",
+      "Signature": "string Host { get; set; }",
+      "Summary": "Gets or sets the MySQL host name or IP address to probe when no full connection string is supplied."
     },
     {
       "DisplayName": "Host",
@@ -7365,6 +7542,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-modulepackagereference-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the optional package identifier override."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
     {
       "DisplayName": "Id",
@@ -9050,6 +9238,28 @@
       "Summary": "The module version that was active when the failure occurred, if known."
     },
     {
+      "DisplayName": "MySqlDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MySqlDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-m-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-ctor",
+      "Signature": "MySqlDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060MySqlDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "MySqlDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MySqlDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-m-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions-ctor",
+      "Signature": "MySqlDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060MySqlDependencyHealthOptions\u0060 class."
+    },
+    {
       "DisplayName": "Name",
       "Category": "Properties",
       "DeclaringTypeName": "DiagnosticEventDefinition",
@@ -9448,6 +9658,17 @@
     {
       "DisplayName": "Password",
       "Category": "Properties",
+      "DeclaringTypeName": "MySqlDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-password",
+      "Signature": "string Password { get; set; }",
+      "Summary": "Gets or sets the optional password used for authentication when no full connection string is supplied."
+    },
+    {
+      "DisplayName": "Password",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -9686,6 +9907,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-trustsnapshot-policy",
       "Signature": "TrustPolicy Policy { get; set; }",
       "Summary": "The policy that produced the trust decisions."
+    },
+    {
+      "DisplayName": "Port",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-port",
+      "Signature": "int Port { get; set; }",
+      "Summary": "Gets or sets the MySQL TCP port."
     },
     {
       "DisplayName": "Port",
@@ -10108,6 +10340,17 @@
     {
       "DisplayName": "RefreshIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "MySqlDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -10377,6 +10620,17 @@
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
       "FileName": "cephalon-observability-httpdependencies.md",
       "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
@@ -11615,6 +11869,17 @@
     {
       "DisplayName": "SslMode",
       "Category": "Properties",
+      "DeclaringTypeName": "MySqlDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-sslmode",
+      "Signature": "string SslMode { get; set; }",
+      "Summary": "Gets or sets the optional MySQL SSL mode such as \u0060Preferred\u0060, \u0060Required\u0060, \u0060VerifyCA\u0060, or \u0060VerifyFull\u0060."
+    },
+    {
+      "DisplayName": "SslMode",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -12451,6 +12716,17 @@
     {
       "DisplayName": "TimeoutSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "MySqlDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-probe timeout in seconds."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -12986,6 +13262,17 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-usepackagepolicy-cephalon-engine-configuration-packagepolicy",
       "Signature": "EngineBuilder UsePackagePolicy(PackagePolicy policy)",
       "Summary": "Replaces the package-governance policy used when loading independently shipped module packages."
+    },
+    {
+      "DisplayName": "Username",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
+      "FileName": "cephalon-observability-mysqldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-username",
+      "Signature": "string Username { get; set; }",
+      "Summary": "Gets or sets the optional user name used for authentication when no full connection string is supplied."
     },
     {
       "DisplayName": "Username",

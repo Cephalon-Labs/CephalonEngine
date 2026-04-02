@@ -24,11 +24,12 @@
 
 ## How it fits
 
-This package does not replace the engine's diagnostics primitives. It turns them into conventions and startup behavior that ASP.NET Core and worker hosts can opt into consistently, and it emits a startup summary of the active diagnostics catalog so operators can see which package-level event-id ranges are live. When a host needs reusable external API probes, pair it with `Cephalon.Observability.HttpDependencies`; when a host needs reusable Postgres probes, pair it with `Cephalon.Observability.PostgresDependencies`; when a host needs reusable RabbitMQ probes, pair it with `Cephalon.Observability.RabbitMqDependencies`; when a host needs reusable Redis or cache probes, pair it with `Cephalon.Observability.RedisDependencies`; when a host needs reusable SQL Server or Azure SQL probes, pair it with `Cephalon.Observability.SqlServerDependencies`; when a host needs a supported OTLP export path, pair it with `Cephalon.Observability.OpenTelemetry` instead of pulling provider-specific dependencies into the engine or this baseline package.
+This package does not replace the engine's diagnostics primitives. It turns them into conventions and startup behavior that ASP.NET Core and worker hosts can opt into consistently, and it emits a startup summary of the active diagnostics catalog so operators can see which package-level event-id ranges are live. When a host needs reusable external API probes, pair it with `Cephalon.Observability.HttpDependencies`; when a host needs reusable MySQL or MariaDB probes, pair it with `Cephalon.Observability.MySqlDependencies`; when a host needs reusable Postgres probes, pair it with `Cephalon.Observability.PostgresDependencies`; when a host needs reusable RabbitMQ probes, pair it with `Cephalon.Observability.RabbitMqDependencies`; when a host needs reusable Redis or cache probes, pair it with `Cephalon.Observability.RedisDependencies`; when a host needs reusable SQL Server or Azure SQL probes, pair it with `Cephalon.Observability.SqlServerDependencies`; when a host needs a supported OTLP export path, pair it with `Cephalon.Observability.OpenTelemetry` instead of pulling provider-specific dependencies into the engine or this baseline package.
 
 ## Related docs
 
 - [Cephalon.Observability.HttpDependencies](observability-http-dependencies.md)
+- [Cephalon.Observability.MySqlDependencies](observability-mysql-dependencies.md)
 - [Cephalon.Observability.PostgresDependencies](observability-postgres-dependencies.md)
 - [Cephalon.Observability.RabbitMqDependencies](observability-rabbitmq-dependencies.md)
 - [Cephalon.Observability.RedisDependencies](observability-redis-dependencies.md)

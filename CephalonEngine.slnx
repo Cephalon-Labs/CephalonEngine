@@ -25,6 +25,7 @@
     <Project Path="src/Cephalon.Engine/Cephalon.Engine.csproj" />
     <Project Path="src/Cephalon.Observability/Cephalon.Observability.csproj" />
     <Project Path="src/Cephalon.Observability.HttpDependencies/Cephalon.Observability.HttpDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.MySqlDependencies/Cephalon.Observability.MySqlDependencies.csproj" />
     <Project Path="src/Cephalon.Observability.PostgresDependencies/Cephalon.Observability.PostgresDependencies.csproj" />
     <Project Path="src/Cephalon.Observability.RabbitMqDependencies/Cephalon.Observability.RabbitMqDependencies.csproj" />
     <Project Path="src/Cephalon.Observability.RedisDependencies/Cephalon.Observability.RedisDependencies.csproj" />

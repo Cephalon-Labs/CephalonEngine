@@ -66,6 +66,12 @@ Browse the published API surface by public member.
 - [AddCephalonHttpDependencyHealth](cephalon-observability-httpdependencies.md#member-m-cephalon-observability-httpdependencies-hosting-httpdependencyhealthservicecollectionextensions-addcephalonhttpdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions): `Methods` on `HttpDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.HttpDependencies.Hosting` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=AddCephalonHttpDependencyHealth&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Hosting&scope=members)
   - Adds HTTP dependency-health services using configuration as the primary source of probe settings.
   - `IServiceCollection AddCephalonHttpDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<HttpDependencyHealthOptions> configure)`
+- [AddCephalonMySqlDependencyHealth](cephalon-observability-mysqldependencies.md#member-m-cephalon-observability-mysqldependencies-hosting-mysqldependencyhealthservicecollectionextensions-addcephalonmysqldependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions): `Methods` on `MySqlDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.MySqlDependencies.Hosting` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=AddCephalonMySqlDependencyHealth&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Hosting&scope=members)
+  - Adds MySQL dependency-health services using code-first configuration.
+  - `IServiceCollection AddCephalonMySqlDependencyHealth(this IServiceCollection services, Action<MySqlDependencyHealthOptions> configure)`
+- [AddCephalonMySqlDependencyHealth](cephalon-observability-mysqldependencies.md#member-m-cephalon-observability-mysqldependencies-hosting-mysqldependencyhealthservicecollectionextensions-addcephalonmysqldependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions): `Methods` on `MySqlDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.MySqlDependencies.Hosting` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=AddCephalonMySqlDependencyHealth&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Hosting&scope=members)
+  - Adds MySQL dependency-health services using configuration as the primary source of probe settings.
+  - `IServiceCollection AddCephalonMySqlDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<MySqlDependencyHealthOptions> configure)`
 - [AddCephalonObservability](cephalon-observability.md#member-m-cephalon-observability-hosting-observabilityservicecollectionextensions-addcephalonobservability-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-configuration-observabilityoptions): `Methods` on `ObservabilityServiceCollectionExtensions` in `Cephalon.Observability.Hosting` (`Cephalon.Observability`) [Browse](browse.html?q=AddCephalonObservability&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Hosting&scope=members)
   - Adds observability services using code-first configuration.
   - `IServiceCollection AddCephalonObservability(this IServiceCollection services, Action<ObservabilityOptions> configure)`
@@ -228,6 +234,9 @@ Browse the published API surface by public member.
 - [AllowManualRestart](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-allowmanualrestart): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=AllowManualRestart&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether manual restart is allowed after supported failures.
   - `bool AllowManualRestart { get; }`
+- [AllowPublicKeyRetrieval](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-allowpublickeyretrieval): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=AllowPublicKeyRetrieval&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
+  - Gets or sets the optional value that controls whether the server RSA public key may be requested automatically.
+  - `bool? AllowPublicKeyRetrieval { get; set; }`
 - [AppBlueprint](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appblueprint-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AppBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppBlueprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Creates a blueprint without scaffold metadata.
   - `AppBlueprint(string id, string displayName, string description, IReadOnlyList<PatternDescriptor> patterns, IReadOnlyDictionary<string, string> metadata)`
@@ -399,6 +408,9 @@ Browse the published API surface by public member.
 - [ConflictsWith](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-conflictswith): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConflictsWith&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the technology identifiers that conflict with the technology.
   - `IReadOnlyList<string> ConflictsWith { get; }`
+- [ConnectionString](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-connectionstring): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
+  - Gets or sets the optional full MySQL connection string used for the probe.
+  - `string ConnectionString { get; set; }`
 - [ConnectionString](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-connectionstring): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the optional full Postgres connection string used for the probe.
   - `string ConnectionString { get; set; }`
@@ -459,6 +471,9 @@ Browse the published API surface by public member.
 - [Data](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-data): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Data&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Identifies a data-oriented technology.
   - `const TechnologyKind Data`
+- [Database](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-database): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=Database&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
+  - Gets or sets the database name used for the health query.
+  - `string Database { get; set; }`
 - [Database](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-database): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=Database&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the database name used for the health query.
   - `string Database { get; set; }`
@@ -522,6 +537,9 @@ Browse the published API surface by public member.
 - [Dependencies](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-dependencies): `Properties` on `HttpDependencyHealthOptions` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the configured HTTP dependencies that should contribute to runtime health.
   - `IReadOnlyList<HttpDependencyDefinition> Dependencies { get; set; }`
+- [Dependencies](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions-dependencies): `Properties` on `MySqlDependencyHealthOptions` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
+  - Gets or sets the configured MySQL dependencies that should contribute to runtime health.
+  - `IReadOnlyList<MySqlDependencyDefinition> Dependencies { get; set; }`
 - [Dependencies](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-dependencies): `Properties` on `PostgresDependencyHealthOptions` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the configured Postgres dependencies that should contribute to runtime health.
   - `IReadOnlyList<PostgresDependencyDefinition> Dependencies { get; set; }`
@@ -693,6 +711,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-engine.md#member-p-cephalon-engine-manifest-modulemanifest-displayname): `Properties` on `ModuleManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the operator-facing display name for the module.
   - `string DisplayName { get; }`
+- [DisplayName](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-displayname): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
+  - Gets or sets the human-readable dependency name shown to operators.
+  - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-displayname): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the human-readable pattern name.
   - `string DisplayName { get; }`
@@ -945,6 +966,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-modulediscoverysettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `ModuleDiscoverySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads module discovery settings from configuration.
   - `ModuleDiscoverySettings FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-observability-mysqldependencies.md#member-m-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `MySqlDependencyHealthOptions` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
+  - Binds MySQL dependency-health options from configuration.
+  - `MySqlDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability.md#member-m-cephalon-observability-configuration-observabilityoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `ObservabilityOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Binds observability options from configuration.
   - `ObservabilityOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -1044,6 +1068,9 @@ Browse the published API surface by public member.
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-trustpolicy-hasvalues): `Properties` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether the policy differs from the default baseline.
   - `bool HasValues { get; }`
+- [HealthQuery](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-healthquery): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=HealthQuery&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
+  - Gets or sets the SQL statement executed to verify the dependency.
+  - `string HealthQuery { get; set; }`
 - [HealthQuery](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-healthquery): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=HealthQuery&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the SQL statement executed to verify the dependency.
   - `string HealthQuery { get; set; }`
@@ -1056,6 +1083,9 @@ Browse the published API surface by public member.
 - [Healthy](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimehealthstate-healthy): `Fields` on `RuntimeHealthState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Healthy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime and its dependencies are healthy.
   - `const RuntimeHealthState Healthy`
+- [Host](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-host): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
+  - Gets or sets the MySQL host name or IP address to probe when no full connection string is supplied.
+  - `string Host { get; set; }`
 - [Host](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-host): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the Postgres host name or IP address to probe when no full connection string is supplied.
   - `string Host { get; set; }`
@@ -1113,6 +1143,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-engine.md#member-p-cephalon-engine-configuration-modulepackagereference-id): `Properties` on `ModulePackageReference` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the optional package identifier override.
   - `string Id { get; }`
+- [Id](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-id): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
+  - Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
+  - `string Id { get; set; }`
 - [Id](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-id): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the stable package identifier.
   - `string Id { get; }`
@@ -1584,6 +1617,12 @@ Browse the published API surface by public member.
 - [ModuleVersion](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-moduleversion): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ModuleVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The module version that was active when the failure occurred, if known.
   - `string ModuleVersion { get; set; }`
+- [MySqlDependencyDefinition](cephalon-observability-mysqldependencies.md#member-m-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-ctor): `Constructors` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=MySqlDependencyDefinition&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
+  - Initializes a new instance of the `MySqlDependencyDefinition` class.
+  - `MySqlDependencyDefinition()`
+- [MySqlDependencyHealthOptions](cephalon-observability-mysqldependencies.md#member-m-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions-ctor): `Constructors` on `MySqlDependencyHealthOptions` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=MySqlDependencyHealthOptions&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
+  - Initializes a new instance of the `MySqlDependencyHealthOptions` class.
+  - `MySqlDependencyHealthOptions()`
 
 ## N
 
@@ -1701,6 +1740,9 @@ Browse the published API surface by public member.
 - [PackageTrustDecision](cephalon-engine.md#member-m-cephalon-engine-trust-packagetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagesignaturetrustdecision-system-boolean-system-string-system-boolean-system-string): `Constructors` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=PackageTrustDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Describes the trust outcome for a package after package metadata, signature verification, and host trust rules have been evaluated.
   - `PackageTrustDecision(string PackageId, string AssemblyName, string Path, string PublisherId, string SignatureKeyId, string SignatureFingerprint, IReadOnlyList<PackageSignatureTrustDecision> Signatures, bool IsSignatureVerified, string SignatureVerificationReason, bool IsTrusted, string Reason)`
+- [Password](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-password): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
+  - Gets or sets the optional password used for authentication when no full connection string is supplied.
+  - `string Password { get; set; }`
 - [Password](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-password): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the optional password used for authentication when no full connection string is supplied.
   - `string Password { get; set; }`
@@ -1767,6 +1809,9 @@ Browse the published API surface by public member.
 - [Policy](cephalon-engine.md#member-p-cephalon-engine-trust-trustsnapshot-policy): `Properties` on `TrustSnapshot` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Policy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The policy that produced the trust decisions.
   - `TrustPolicy Policy { get; set; }`
+- [Port](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-port): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
+  - Gets or sets the MySQL TCP port.
+  - `int Port { get; set; }`
 - [Port](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-port): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the Postgres TCP port.
   - `int Port { get; set; }`
@@ -1884,6 +1929,9 @@ Browse the published API surface by public member.
 - [RefreshIntervalSeconds](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-refreshintervalseconds): `Properties` on `HttpDependencyHealthOptions` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the interval, in seconds, between background refresh attempts.
   - `int RefreshIntervalSeconds { get; set; }`
+- [RefreshIntervalSeconds](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions-refreshintervalseconds): `Properties` on `MySqlDependencyHealthOptions` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
+  - Gets or sets the interval, in seconds, between background refresh attempts.
+  - `int RefreshIntervalSeconds { get; set; }`
 - [RefreshIntervalSeconds](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-refreshintervalseconds): `Properties` on `PostgresDependencyHealthOptions` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the interval, in seconds, between background refresh attempts.
   - `int RefreshIntervalSeconds { get; set; }`
@@ -1957,6 +2005,9 @@ Browse the published API surface by public member.
   - Whether the dependency is required for readiness.
   - `bool Required { get; set; }`
 - [Required](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-required): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
+  - Gets or sets a value indicating whether this dependency is required for readiness.
+  - `bool Required { get; set; }`
+- [Required](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-required): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
   - Gets or sets a value indicating whether this dependency is required for readiness.
   - `bool Required { get; set; }`
 - [Required](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-required): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
@@ -2298,6 +2349,9 @@ Browse the published API surface by public member.
 - [SqlServerDependencyHealthOptions](cephalon-observability-sqlserverdependencies.md#member-m-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions-ctor): `Constructors` on `SqlServerDependencyHealthOptions` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=SqlServerDependencyHealthOptions&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Initializes a new instance of the `SqlServerDependencyHealthOptions` class.
   - `SqlServerDependencyHealthOptions()`
+- [SslMode](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-sslmode): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=SslMode&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
+  - Gets or sets the optional MySQL SSL mode such as `Preferred`, `Required`, `VerifyCA`, or `VerifyFull`.
+  - `string SslMode { get; set; }`
 - [SslMode](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-sslmode): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=SslMode&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the optional Postgres SSL mode used when building the probe connection string.
   - `string SslMode { get; set; }`
@@ -2529,6 +2583,9 @@ Browse the published API surface by public member.
 - [TimeoutSeconds](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-timeoutseconds): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the per-request timeout in seconds.
   - `int TimeoutSeconds { get; set; }`
+- [TimeoutSeconds](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-timeoutseconds): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
+  - Gets or sets the per-probe timeout in seconds.
+  - `int TimeoutSeconds { get; set; }`
 - [TimeoutSeconds](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-timeoutseconds): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the per-probe timeout in seconds.
   - `int TimeoutSeconds { get; set; }`
@@ -2679,6 +2736,9 @@ Browse the published API surface by public member.
 - [UsePackagePolicy](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-usepackagepolicy-cephalon-engine-configuration-packagepolicy): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UsePackagePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Replaces the package-governance policy used when loading independently shipped module packages.
   - `EngineBuilder UsePackagePolicy(PackagePolicy policy)`
+- [Username](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-username): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
+  - Gets or sets the optional user name used for authentication when no full connection string is supplied.
+  - `string Username { get; set; }`
 - [Username](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-username): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the optional user name used for authentication when no full connection string is supplied.
   - `string Username { get; set; }`

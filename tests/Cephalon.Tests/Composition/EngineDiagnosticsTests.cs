@@ -7,6 +7,8 @@ using Cephalon.Engine.Runtime;
 using Cephalon.Observability.Hosting;
 using Cephalon.Observability.HttpDependencies.Configuration;
 using Cephalon.Observability.HttpDependencies.Hosting;
+using Cephalon.Observability.MySqlDependencies.Configuration;
+using Cephalon.Observability.MySqlDependencies.Hosting;
 using Cephalon.Observability.PostgresDependencies.Configuration;
 using Cephalon.Observability.PostgresDependencies.Hosting;
 using Cephalon.Observability.RabbitMqDependencies.Configuration;
@@ -185,6 +187,18 @@ public sealed class EngineDiagnosticsTests
                 }
             ];
         });
+        services.AddCephalonMySqlDependencyHealth(options =>
+        {
+            options.Dependencies =
+            [
+                new MySqlDependencyDefinition
+                {
+                    Id = "catalog-mysql",
+                    Host = "mysql.internal.example",
+                    Database = "catalog"
+                }
+            ];
+        });
         services.AddCephalonRabbitMqDependencyHealth(options =>
         {
             options.Dependencies =
@@ -227,6 +241,7 @@ public sealed class EngineDiagnosticsTests
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Engine");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.HttpDependencies");
+        Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.MySqlDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.PostgresDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.RabbitMqDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.RedisDependencies");
@@ -241,6 +256,9 @@ public sealed class EngineDiagnosticsTests
         Assert.Contains(
             catalog.GetBySource("Cephalon.Observability.HttpDependencies").Single().Events,
             static entry => entry.Id == 3100);
+        Assert.Contains(
+            catalog.GetBySource("Cephalon.Observability.MySqlDependencies").Single().Events,
+            static entry => entry.Id == 3128);
         Assert.Contains(
             catalog.GetBySource("Cephalon.Observability.PostgresDependencies").Single().Events,
             static entry => entry.Id == 3122);
@@ -261,6 +279,7 @@ public sealed class EngineDiagnosticsTests
 
         Assert.Equal(eventIds.Length, eventIds.Distinct().Count());
         Assert.Equal(catalog.Conventions.Count, snapshot.DiagnosticsConventions.Count);
+        Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.MySqlDependencies");
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.RabbitMqDependencies");
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.SqlServerDependencies");
     }

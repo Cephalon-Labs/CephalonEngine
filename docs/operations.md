@@ -13,7 +13,7 @@ ASP.NET Core hosts that call `app.MapCephalon()` now expose three health routes:
 - `/health/ready`
 
 Health responses are JSON and include the check status, duration, and runtime-specific details such as restart count and the most recent failure context.
-When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
+When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
 
 Current semantics:
 
@@ -288,6 +288,60 @@ Operational notes:
 - optional `Encrypt` and `TrustServerCertificate` settings let hosts keep SQL Server or Azure SQL transport expectations explicit instead of hidden in host-specific code
 - required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
 
+### MySQL dependency probes
+
+`Cephalon.Observability.MySqlDependencies` reads `Engine:Observability:DependencyHealth:MySql` and turns configured MySQL endpoints into reusable `IDependencyHealthContributor` data.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "DependencyHealth": {
+        "MySql": {
+          "RefreshIntervalSeconds": 30,
+          "Dependencies": [
+            {
+              "Id": "catalog-mysql",
+              "DisplayName": "Catalog MySQL",
+              "Host": "mysql.internal.example",
+              "Port": 3306,
+              "Database": "catalog",
+              "Username": "cephalon-runtime",
+              "Password": "${MYSQL_PASSWORD}",
+              "SslMode": "Required",
+              "AllowPublicKeyRetrieval": false,
+              "HealthQuery": "SELECT 1;",
+              "Required": true,
+              "TimeoutSeconds": 5
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonMySqlDependencyHealth(builder.Configuration);
+```
+
+Operational notes:
+
+- the MySQL dependency-health package is optional and stays outside `Cephalon.Engine`
+- the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
+- probes can use either a full `ConnectionString` or discrete host/port/database settings
+- each probe opens a dedicated `MySqlConnection` with pooling disabled, runs the configured health query, and reports the result through the shared dependency-health contract
+- optional `SslMode` and `AllowPublicKeyRetrieval` settings let hosts keep MySQL transport and authentication expectations explicit instead of hidden in host-specific code
+- required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
+
 ## Diagnostics surface
 
 `GET /engine/diagnostics` exposes the engine's operational conventions in one place:
@@ -310,6 +364,7 @@ Current shipped event-id ranges include:
 - `Cephalon.Observability.PostgresDependencies`: `3122-3123`
 - `Cephalon.Observability.RabbitMqDependencies`: `3124-3125`
 - `Cephalon.Observability.SqlServerDependencies`: `3126-3127`
+- `Cephalon.Observability.MySqlDependencies`: `3128-3129`
 
 This is the quickest way to discover the engine's observability contract without opening code.
 
