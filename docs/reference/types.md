@@ -12,6 +12,8 @@ Browse the published API surface by public type.
 - [AppBlueprint](cephalon-abstractions.md#type-cephalon-abstractions-appmodel-appblueprint): `Cephalon.Abstractions.AppModel` in `Cephalon.Abstractions` [Browse](browse.html?q=AppBlueprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel)
 - [AppProfile](cephalon-abstractions.md#type-cephalon-abstractions-appmodel-appprofile): `Cephalon.Abstractions.AppModel` in `Cephalon.Abstractions` [Browse](browse.html?q=AppProfile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel)
 - [AppProfileFactory](cephalon-engine.md#type-cephalon-engine-appmodel-appprofilefactory): `Cephalon.Engine.AppModel` in `Cephalon.Engine` [Browse](browse.html?q=AppProfileFactory&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel)
+- [AzureMonitorExportOptions](cephalon-observability-azuremonitor.md#type-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions): `Cephalon.Observability.AzureMonitor.Configuration` in `Cephalon.Observability.AzureMonitor` [Browse](browse.html?q=AzureMonitorExportOptions&assembly=Cephalon.Observability.AzureMonitor&namespace=Cephalon.Observability.AzureMonitor.Configuration)
+- [AzureMonitorHostApplicationBuilderExtensions](cephalon-observability-azuremonitor.md#type-cephalon-observability-azuremonitor-hosting-azuremonitorhostapplicationbuilderextensions): `Cephalon.Observability.AzureMonitor.Hosting` in `Cephalon.Observability.AzureMonitor` [Browse](browse.html?q=AzureMonitorHostApplicationBuilderExtensions&assembly=Cephalon.Observability.AzureMonitor&namespace=Cephalon.Observability.AzureMonitor.Hosting)
 
 ## B
 

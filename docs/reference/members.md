@@ -69,6 +69,9 @@ Browse the published API surface by public member.
 - [AddCephalon](cephalon-worker.md#member-m-cephalon-worker-hosting-workerhostapplicationbuilderextensions-addcephalon-microsoft-extensions-hosting-hostapplicationbuilder-system-action-cephalon-engine-composition-enginebuilder): `Methods` on `WorkerHostApplicationBuilderExtensions` in `Cephalon.Worker.Hosting` (`Cephalon.Worker`) [Browse](browse.html?q=AddCephalon&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting&scope=members)
   - Adds Cephalon worker hosting and allows additional code-based engine configuration.
   - `HostApplicationBuilder AddCephalon(this HostApplicationBuilder builder, Action<EngineBuilder> configure)`
+- [AddCephalonAzureMonitor](cephalon-observability-azuremonitor.md#member-m-cephalon-observability-azuremonitor-hosting-azuremonitorhostapplicationbuilderextensions-addcephalonazuremonitor-1-0-system-action-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions): `Methods` on `AzureMonitorHostApplicationBuilderExtensions` in `Cephalon.Observability.AzureMonitor.Hosting` (`Cephalon.Observability.AzureMonitor`) [Browse](browse.html?q=AddCephalonAzureMonitor&assembly=Cephalon.Observability.AzureMonitor&namespace=Cephalon.Observability.AzureMonitor.Hosting&scope=members)
+  - Adds Azure Monitor exporter registration for the Cephalon engine diagnostics surface.
+  - `TBuilder AddCephalonAzureMonitor<TBuilder>(this TBuilder builder, Action<AzureMonitorExportOptions> configure)`
 - [AddCephalonCassandraDependencyHealth](cephalon-observability-cassandradependencies.md#member-m-cephalon-observability-cassandradependencies-hosting-cassandradependencyhealthservicecollectionextensions-addcephaloncassandradependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-cassandradependencies-configuration-cassandradependencyhealthoptions): `Methods` on `CassandraDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.CassandraDependencies.Hosting` (`Cephalon.Observability.CassandraDependencies`) [Browse](browse.html?q=AddCephalonCassandraDependencyHealth&assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Hosting&scope=members)
   - Adds Cassandra dependency-health services using code-first configuration.
   - `IServiceCollection AddCephalonCassandraDependencyHealth(this IServiceCollection services, Action<CassandraDependencyHealthOptions> configure)`
@@ -378,6 +381,9 @@ Browse the published API surface by public member.
 - [Available](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-available): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Available&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Whether the configured documentation directory and default document were found and mapped.
   - `bool Available { get; set; }`
+- [AzureMonitorExportOptions](cephalon-observability-azuremonitor.md#member-m-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-ctor): `Constructors` on `AzureMonitorExportOptions` in `Cephalon.Observability.AzureMonitor.Configuration` (`Cephalon.Observability.AzureMonitor`) [Browse](browse.html?q=AzureMonitorExportOptions&assembly=Cephalon.Observability.AzureMonitor&namespace=Cephalon.Observability.AzureMonitor.Configuration&scope=members)
+  - Initializes a new instance of the `AzureMonitorExportOptions` class.
+  - `AzureMonitorExportOptions()`
 
 ## B
 
@@ -534,6 +540,9 @@ Browse the published API surface by public member.
 - [ConflictsWith](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-conflictswith): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConflictsWith&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the technology identifiers that conflict with the technology.
   - `IReadOnlyList<string> ConflictsWith { get; }`
+- [ConnectionString](cephalon-observability-azuremonitor.md#member-p-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-connectionstring): `Properties` on `AzureMonitorExportOptions` in `Cephalon.Observability.AzureMonitor.Configuration` (`Cephalon.Observability.AzureMonitor`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Observability.AzureMonitor&namespace=Cephalon.Observability.AzureMonitor.Configuration&scope=members)
+  - Gets or sets the Azure Monitor / Application Insights connection string used by the exporter.
+  - `string ConnectionString { get; set; }`
 - [ConnectionString](cephalon-observability-clickhousedependencies.md#member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-connectionstring): `Properties` on `ClickHouseDependencyDefinition` in `Cephalon.Observability.ClickHouseDependencies.Configuration` (`Cephalon.Observability.ClickHouseDependencies`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Observability.ClickHouseDependencies&namespace=Cephalon.Observability.ClickHouseDependencies.Configuration&scope=members)
   - Gets or sets the optional full ClickHouse connection string used for the probe.
   - `string ConnectionString { get; set; }`
@@ -1197,6 +1206,9 @@ Browse the published API surface by public member.
 - [Foundation](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-foundation): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Foundation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies the shared foundation project.
   - `const string Foundation`
+- [FromConfiguration](cephalon-observability-azuremonitor.md#member-m-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `AzureMonitorExportOptions` in `Cephalon.Observability.AzureMonitor.Configuration` (`Cephalon.Observability.AzureMonitor`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.AzureMonitor&namespace=Cephalon.Observability.AzureMonitor.Configuration&scope=members)
+  - Binds Azure Monitor export options from configuration.
+  - `AzureMonitorExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability-cassandradependencies.md#member-m-cephalon-observability-cassandradependencies-configuration-cassandradependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `CassandraDependencyHealthOptions` in `Cephalon.Observability.CassandraDependencies.Configuration` (`Cephalon.Observability.CassandraDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Configuration&scope=members)
   - Binds Cassandra dependency-health options from configuration.
   - `CassandraDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -1425,6 +1437,9 @@ Browse the published API surface by public member.
 - [Host](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-host): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the SQL Server host name or IP address to probe when no full connection string is supplied.
   - `string Host { get; set; }`
+- [HostedPlatform](cephalon-observability-azuremonitor.md#member-p-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-hostedplatform): `Properties` on `AzureMonitorExportOptions` in `Cephalon.Observability.AzureMonitor.Configuration` (`Cephalon.Observability.AzureMonitor`) [Browse](browse.html?q=HostedPlatform&assembly=Cephalon.Observability.AzureMonitor&namespace=Cephalon.Observability.AzureMonitor.Configuration&scope=members)
+  - Gets or sets the hosted Azure platform whose default resource attributes should be applied.
+  - `string HostedPlatform { get; set; }`
 - [HttpDependencyDefinition](cephalon-observability-httpdependencies.md#member-m-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-ctor): `Constructors` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=HttpDependencyDefinition&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Initializes a new instance of the `HttpDependencyDefinition` class.
   - `HttpDependencyDefinition()`
@@ -3372,6 +3387,9 @@ Browse the published API surface by public member.
 - [UseConfiguration](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-useconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Reads engine settings from configuration and merges them into the current builder state.
   - `EngineBuilder UseConfiguration(IConfiguration configuration, string sectionPath)`
+- [UseDefaultAzureCredential](cephalon-observability-azuremonitor.md#member-p-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-usedefaultazurecredential): `Properties` on `AzureMonitorExportOptions` in `Cephalon.Observability.AzureMonitor.Configuration` (`Cephalon.Observability.AzureMonitor`) [Browse](browse.html?q=UseDefaultAzureCredential&assembly=Cephalon.Observability.AzureMonitor&namespace=Cephalon.Observability.AzureMonitor.Configuration&scope=members)
+  - Gets or sets a value indicating whether the exporter should authenticate with `DefaultAzureCredential`.
+  - `bool UseDefaultAzureCredential { get; set; }`
 - [UseFailurePolicy](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-usefailurepolicy-cephalon-engine-configuration-failurepolicy): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseFailurePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Replaces the failure policy used by the runtime lifecycle state machine.
   - `EngineBuilder UseFailurePolicy(FailurePolicy policy)`

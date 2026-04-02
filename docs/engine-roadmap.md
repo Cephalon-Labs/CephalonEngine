@@ -59,7 +59,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Platform Sprint 0`: `ENG-012`
 - `Sprint 1`: delivered `ENG-005`, `ENG-026`, and `ENG-027`, and opened the phase 2 operational gap-inventory track
 - `Sprint 2`: exporter packaging is now part of the shipped phase-2 baseline, Cassandra contact-point health plus ClickHouse analytics health plus Consul control-plane health plus Elasticsearch cluster health plus HTTP external API plus Kafka broker metadata plus Memcached cache plus MongoDB plus MQTT plus MySQL plus NATS plus Neo4j plus OpenSearch plus Oracle plus Postgres plus RabbitMQ plus Redis/cache plus SQL Server dependency-health packaging anchor the provider-specific follow-through, the shared diagnostics/event-id catalog now anchors the structured diagnostics baseline, and release validation now calls out the health/export convention suite explicitly
-- `Sprint 3`: runtime-answers follow-through, package distribution and trust follow-through, `ENG-013` planning readiness, and the first `ENG-029` self-hosted OTLP follow-through slice
+- `Sprint 3`: runtime-answers follow-through, package distribution and trust follow-through, `ENG-013` planning readiness, the shipped `ENG-029` self-hosted OTLP follow-through slice, and the Azure Monitor first-vendor target split that unblocks the next cloud-specific companion package
 - `Later / not scheduled yet`: `ENG-022` and future solution-level expansion work
 
 ## Planning principles
@@ -232,12 +232,13 @@ Current baseline already in place:
 - the shared `Microsoft.Extensions.Logging.ILogger` pipeline plus `Cephalon.Observability.Serilog`
 - correlated ASP.NET Core request/response logging through `Engine:Observability:HttpLogging`
 - host-agnostic runtime, diagnostics, health, and validation surfaces that later cloud-targeted companions can build on
-- self-hosted collector and runtime defaults are now the active first slice on top of the cloud-neutral OTLP baseline, with broader vendor/platform follow-through still staged behind that entry point
+- self-hosted collector and runtime defaults are now shipped as the first slice on top of the cloud-neutral OTLP baseline, and Azure Monitor is now the first explicit vendor-specific follow-through while broader vendor/platform expansion stays behind additional child items
 
 Deliverables:
 
 - self-hosted observability companion follow-through for OTLP-collector-managed deployments and host-managed runtime defaults
-- cloud-targeted observability companion follow-through for explicit deployment targets such as AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu
+- Azure Monitor companion follow-through as the first explicit cloud-specific slice on top of the shared OpenTelemetry baseline
+- additional cloud-targeted observability companion follow-through for AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu once each target is narrowed into its own child item
 - exporter wiring, auth, resource-attribute conventions, and hosted-runtime defaults that stay inside companion packages instead of `Cephalon.Engine`
 - documentation, validation, and planning guidance that make the supported targets and deployment assumptions explicit
 - a clear package split whenever different clouds or platforms need distinct companion packs instead of one overloaded abstraction
@@ -257,7 +258,7 @@ Updated priority order as of `April 2, 2026`:
 2. package distribution, provenance, and richer trust follow-through beyond the current baseline
 3. workflow and orchestration primitives
 4. multi-service suite blueprints
-5. cloud and platform integrations once the target companion-pack split and first deployment target are explicit
+5. cloud and platform integrations, with Azure Monitor now the first explicit vendor-specific slice after the shipped self-hosted path
 6. broader release automation and package-publishing polish
 
 ## Decision guardrails
