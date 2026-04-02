@@ -92,7 +92,7 @@ Current baseline:
 
 Re-scope decision:
 
-- the original later follow-through has now expanded into a broader cloud/platform companion track spanning AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu
+- the original later follow-through has now expanded into a broader cloud/platform companion track spanning self-hosted collectors and runtimes plus AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu
 - that broader scope now belongs to `ENG-029` in phase 6 cloud and platform integrations instead of remaining a phase-2 child task
 
 Why it moved out of phase 2:
@@ -209,5 +209,5 @@ Current conclusion from this inventory:
 Recommended execution sequence now is:
 
 1. treat phase 2 as complete for the shipped operational baseline
-2. track `#86` under `ENG-029` in phase 6 cloud and platform integrations, only after the first supported target slice is explicit
+2. track `#86` under `ENG-029` in phase 6 cloud and platform integrations, starting with an explicit self-hosted collector/runtime slice before broader vendor-specific expansion unless an adopter reprioritizes the target order
 3. keep adoption-driven provider-pack additions separate unless a concrete infrastructure gap appears
