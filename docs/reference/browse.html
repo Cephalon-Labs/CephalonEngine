@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T08:26:43.678125+00:00",
+  "GeneratedAtUtc": "2026-04-02T09:17:35.1214771+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -214,6 +214,14 @@
       "Category": "Hosts",
       "Description": "Kafka dependency-health integration for Cephalon hosts.",
       "FileName": "cephalon-observability-kafkadependencies.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "Category": "Hosts",
+      "Description": "Memcached dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
     },
@@ -707,6 +715,20 @@
       "AssemblyName": "Cephalon.Observability.KafkaDependencies",
       "FileName": "cephalon-observability-kafkadependencies.md",
       "AnchorId": "namespace-cephalon-observability-kafkadependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "namespace-cephalon-observability-memcacheddependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "namespace-cephalon-observability-memcacheddependencies-hosting",
       "TypeCount": 1
     },
     {
@@ -2383,6 +2405,51 @@
         "Fields": 0,
         "Properties": 2,
         "Methods": 4
+      }
+    },
+    {
+      "DisplayName": "MemcachedDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "type-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition",
+      "Declaration": "public sealed class MemcachedDependencyDefinition",
+      "Summary": "Describes one Memcached dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 6,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "MemcachedDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "type-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions",
+      "Declaration": "public sealed class MemcachedDependencyHealthOptions",
+      "Summary": "Configures Memcached dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "MemcachedDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "type-cephalon-observability-memcacheddependencies-hosting-memcacheddependencyhealthservicecollectionextensions",
+      "Declaration": "public static class MemcachedDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds Memcached dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
       }
     },
     {
@@ -4138,6 +4205,28 @@
       "AnchorId": "member-m-cephalon-observability-kafkadependencies-hosting-kafkadependencyhealthservicecollectionextensions-addcephalonkafkadependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions",
       "Signature": "IServiceCollection AddCephalonKafkaDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CKafkaDependencyHealthOptions\u003E configure)",
       "Summary": "Adds Kafka dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
+      "DisplayName": "AddCephalonMemcachedDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "MemcachedDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "member-m-cephalon-observability-memcacheddependencies-hosting-memcacheddependencyhealthservicecollectionextensions-addcephalonmemcacheddependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonMemcachedDependencyHealth(this IServiceCollection services, Action\u003CMemcachedDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Memcached dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonMemcachedDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "MemcachedDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "member-m-cephalon-observability-memcacheddependencies-hosting-memcacheddependencyhealthservicecollectionextensions-addcephalonmemcacheddependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonMemcachedDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CMemcachedDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Memcached dependency-health services using configuration as the primary source of probe settings."
     },
     {
       "DisplayName": "AddCephalonMongoDbDependencyHealth",
@@ -6045,6 +6134,17 @@
     {
       "DisplayName": "Dependencies",
       "Category": "Properties",
+      "DeclaringTypeName": "MemcachedDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003CMemcachedDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured Memcached dependencies that should contribute to runtime health."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
       "DeclaringTypeName": "MongoDbDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
@@ -6723,6 +6823,17 @@
       "AnchorId": "member-p-cephalon-retrieval-services-knowledgecollectiondescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing display name for the collection."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "MemcachedDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
     },
     {
       "DisplayName": "DisplayName",
@@ -7761,6 +7872,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "MemcachedDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "member-m-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "MemcachedDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Memcached dependency-health options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "ModuleDiscoverySettings",
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
@@ -8223,6 +8345,17 @@
     {
       "DisplayName": "Host",
       "Category": "Properties",
+      "DeclaringTypeName": "MemcachedDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-host",
+      "Signature": "string Host { get; set; }",
+      "Summary": "Gets or sets the Memcached host name or IP address to probe."
+    },
+    {
+      "DisplayName": "Host",
+      "Category": "Properties",
       "DeclaringTypeName": "MongoDbDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
@@ -8461,6 +8594,17 @@
       "AnchorId": "member-p-cephalon-retrieval-services-knowledgecollectiondescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable collection identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "MemcachedDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
     {
       "DisplayName": "Id",
@@ -9638,6 +9782,28 @@
       "AnchorId": "member-p-cephalon-aspnetcore-documentation-referencedocssurface-memberindexpath",
       "Signature": "string MemberIndexPath { get; set; }",
       "Summary": "The hosted path to the member index."
+    },
+    {
+      "DisplayName": "MemcachedDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MemcachedDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "member-m-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-ctor",
+      "Signature": "MemcachedDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060MemcachedDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "MemcachedDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MemcachedDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "member-m-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions-ctor",
+      "Signature": "MemcachedDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060MemcachedDependencyHealthOptions\u0060 class."
     },
     {
       "DisplayName": "Merge",
@@ -11083,6 +11249,17 @@
     {
       "DisplayName": "Port",
       "Category": "Properties",
+      "DeclaringTypeName": "MemcachedDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-port",
+      "Signature": "int Port { get; set; }",
+      "Summary": "Gets or sets the Memcached TCP port."
+    },
+    {
+      "DisplayName": "Port",
+      "Category": "Properties",
       "DeclaringTypeName": "MongoDbDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
@@ -11567,6 +11744,17 @@
     {
       "DisplayName": "RefreshIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "MemcachedDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "MongoDbDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
@@ -11913,6 +12101,17 @@
       "AssemblyName": "Cephalon.Observability.KafkaDependencies",
       "FileName": "cephalon-observability-kafkadependencies.md",
       "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "MemcachedDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
@@ -14135,6 +14334,17 @@
       "AssemblyName": "Cephalon.Observability.KafkaDependencies",
       "FileName": "cephalon-observability-kafkadependencies.md",
       "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-probe timeout in seconds."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "MemcachedDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
+      "FileName": "cephalon-observability-memcacheddependencies.md",
+      "AnchorId": "member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-timeoutseconds",
       "Signature": "int TimeoutSeconds { get; set; }",
       "Summary": "Gets or sets the per-probe timeout in seconds."
     },

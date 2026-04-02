@@ -87,6 +87,12 @@ Browse the published API surface by public member.
 - [AddCephalonKafkaDependencyHealth](cephalon-observability-kafkadependencies.md#member-m-cephalon-observability-kafkadependencies-hosting-kafkadependencyhealthservicecollectionextensions-addcephalonkafkadependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions): `Methods` on `KafkaDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.KafkaDependencies.Hosting` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=AddCephalonKafkaDependencyHealth&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Hosting&scope=members)
   - Adds Kafka dependency-health services using configuration as the primary source of probe settings.
   - `IServiceCollection AddCephalonKafkaDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<KafkaDependencyHealthOptions> configure)`
+- [AddCephalonMemcachedDependencyHealth](cephalon-observability-memcacheddependencies.md#member-m-cephalon-observability-memcacheddependencies-hosting-memcacheddependencyhealthservicecollectionextensions-addcephalonmemcacheddependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions): `Methods` on `MemcachedDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.MemcachedDependencies.Hosting` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=AddCephalonMemcachedDependencyHealth&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Hosting&scope=members)
+  - Adds Memcached dependency-health services using code-first configuration.
+  - `IServiceCollection AddCephalonMemcachedDependencyHealth(this IServiceCollection services, Action<MemcachedDependencyHealthOptions> configure)`
+- [AddCephalonMemcachedDependencyHealth](cephalon-observability-memcacheddependencies.md#member-m-cephalon-observability-memcacheddependencies-hosting-memcacheddependencyhealthservicecollectionextensions-addcephalonmemcacheddependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions): `Methods` on `MemcachedDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.MemcachedDependencies.Hosting` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=AddCephalonMemcachedDependencyHealth&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Hosting&scope=members)
+  - Adds Memcached dependency-health services using configuration as the primary source of probe settings.
+  - `IServiceCollection AddCephalonMemcachedDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<MemcachedDependencyHealthOptions> configure)`
 - [AddCephalonMongoDbDependencyHealth](cephalon-observability-mongodbdependencies.md#member-m-cephalon-observability-mongodbdependencies-hosting-mongodbdependencyhealthservicecollectionextensions-addcephalonmongodbdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions): `Methods` on `MongoDbDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.MongoDbDependencies.Hosting` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=AddCephalonMongoDbDependencyHealth&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Hosting&scope=members)
   - Adds MongoDB dependency-health services using code-first configuration.
   - `IServiceCollection AddCephalonMongoDbDependencyHealth(this IServiceCollection services, Action<MongoDbDependencyHealthOptions> configure)`
@@ -615,6 +621,9 @@ Browse the published API surface by public member.
 - [Dependencies](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-dependencies): `Properties` on `KafkaDependencyHealthOptions` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
   - Gets or sets the configured Kafka dependencies that should contribute to runtime health.
   - `IReadOnlyList<KafkaDependencyDefinition> Dependencies { get; set; }`
+- [Dependencies](cephalon-observability-memcacheddependencies.md#member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions-dependencies): `Properties` on `MemcachedDependencyHealthOptions` in `Cephalon.Observability.MemcachedDependencies.Configuration` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Configuration&scope=members)
+  - Gets or sets the configured Memcached dependencies that should contribute to runtime health.
+  - `IReadOnlyList<MemcachedDependencyDefinition> Dependencies { get; set; }`
 - [Dependencies](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-dependencies): `Properties` on `MongoDbDependencyHealthOptions` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the configured MongoDB dependencies that should contribute to runtime health.
   - `IReadOnlyList<MongoDbDependencyDefinition> Dependencies { get; set; }`
@@ -801,6 +810,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgecollectiondescriptor-displayname): `Properties` on `KnowledgeCollectionDescriptor` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets the operator-facing display name for the collection.
   - `string DisplayName { get; }`
+- [DisplayName](cephalon-observability-memcacheddependencies.md#member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-displayname): `Properties` on `MemcachedDependencyDefinition` in `Cephalon.Observability.MemcachedDependencies.Configuration` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Configuration&scope=members)
+  - Gets or sets the human-readable dependency name shown to operators.
+  - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-displayname): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Gets the human-readable module name.
   - `string DisplayName { get; }`
@@ -1089,6 +1101,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-localizationsettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `LocalizationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads localization settings from configuration.
   - `LocalizationSettings FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-observability-memcacheddependencies.md#member-m-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `MemcachedDependencyHealthOptions` in `Cephalon.Observability.MemcachedDependencies.Configuration` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Configuration&scope=members)
+  - Binds Memcached dependency-health options from configuration.
+  - `MemcachedDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-modulediscoverysettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `ModuleDiscoverySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads module discovery settings from configuration.
   - `ModuleDiscoverySettings FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -1221,6 +1236,9 @@ Browse the published API surface by public member.
 - [Healthy](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimehealthstate-healthy): `Fields` on `RuntimeHealthState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Healthy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime and its dependencies are healthy.
   - `const RuntimeHealthState Healthy`
+- [Host](cephalon-observability-memcacheddependencies.md#member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-host): `Properties` on `MemcachedDependencyDefinition` in `Cephalon.Observability.MemcachedDependencies.Configuration` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Configuration&scope=members)
+  - Gets or sets the Memcached host name or IP address to probe.
+  - `string Host { get; set; }`
 - [Host](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-host): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the MongoDB host name or IP address to probe when no full connection string is supplied.
   - `string Host { get; set; }`
@@ -1290,6 +1308,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgecollectiondescriptor-id): `Properties` on `KnowledgeCollectionDescriptor` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Id&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets the stable collection identifier.
   - `string Id { get; }`
+- [Id](cephalon-observability-memcacheddependencies.md#member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-id): `Properties` on `MemcachedDependencyDefinition` in `Cephalon.Observability.MemcachedDependencies.Configuration` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Configuration&scope=members)
+  - Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
+  - `string Id { get; set; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-id): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Gets the stable module identifier.
   - `string Id { get; }`
@@ -1623,6 +1644,12 @@ Browse the published API surface by public member.
 - [MemberIndexPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-memberindexpath): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=MemberIndexPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The hosted path to the member index.
   - `string MemberIndexPath { get; set; }`
+- [MemcachedDependencyDefinition](cephalon-observability-memcacheddependencies.md#member-m-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-ctor): `Constructors` on `MemcachedDependencyDefinition` in `Cephalon.Observability.MemcachedDependencies.Configuration` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=MemcachedDependencyDefinition&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Configuration&scope=members)
+  - Initializes a new instance of the `MemcachedDependencyDefinition` class.
+  - `MemcachedDependencyDefinition()`
+- [MemcachedDependencyHealthOptions](cephalon-observability-memcacheddependencies.md#member-m-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions-ctor): `Constructors` on `MemcachedDependencyHealthOptions` in `Cephalon.Observability.MemcachedDependencies.Configuration` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=MemcachedDependencyHealthOptions&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Configuration&scope=members)
+  - Initializes a new instance of the `MemcachedDependencyHealthOptions` class.
+  - `MemcachedDependencyHealthOptions()`
 - [Merge](cephalon-engine.md#member-m-cephalon-engine-configuration-engineoptions-merge-cephalon-engine-configuration-engineoptions): `Methods` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Merge&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Merges another option set into the current instance.
   - `EngineOptions Merge(EngineOptions other)`
@@ -2025,6 +2052,9 @@ Browse the published API surface by public member.
 - [Policy](cephalon-engine.md#member-p-cephalon-engine-trust-trustsnapshot-policy): `Properties` on `TrustSnapshot` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Policy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The policy that produced the trust decisions.
   - `TrustPolicy Policy { get; set; }`
+- [Port](cephalon-observability-memcacheddependencies.md#member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-port): `Properties` on `MemcachedDependencyDefinition` in `Cephalon.Observability.MemcachedDependencies.Configuration` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Configuration&scope=members)
+  - Gets or sets the Memcached TCP port.
+  - `int Port { get; set; }`
 - [Port](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-port): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the MongoDB TCP port.
   - `int Port { get; set; }`
@@ -2160,6 +2190,9 @@ Browse the published API surface by public member.
 - [RefreshIntervalSeconds](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-refreshintervalseconds): `Properties` on `KafkaDependencyHealthOptions` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
   - Gets or sets the interval, in seconds, between background refresh attempts.
   - `int RefreshIntervalSeconds { get; set; }`
+- [RefreshIntervalSeconds](cephalon-observability-memcacheddependencies.md#member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions-refreshintervalseconds): `Properties` on `MemcachedDependencyHealthOptions` in `Cephalon.Observability.MemcachedDependencies.Configuration` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Configuration&scope=members)
+  - Gets or sets the interval, in seconds, between background refresh attempts.
+  - `int RefreshIntervalSeconds { get; set; }`
 - [RefreshIntervalSeconds](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-refreshintervalseconds): `Properties` on `MongoDbDependencyHealthOptions` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the interval, in seconds, between background refresh attempts.
   - `int RefreshIntervalSeconds { get; set; }`
@@ -2254,6 +2287,9 @@ Browse the published API surface by public member.
   - Gets or sets a value indicating whether this dependency is required for readiness.
   - `bool Required { get; set; }`
 - [Required](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-required): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
+  - Gets or sets a value indicating whether this dependency is required for readiness.
+  - `bool Required { get; set; }`
+- [Required](cephalon-observability-memcacheddependencies.md#member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-required): `Properties` on `MemcachedDependencyDefinition` in `Cephalon.Observability.MemcachedDependencies.Configuration` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Configuration&scope=members)
   - Gets or sets a value indicating whether this dependency is required for readiness.
   - `bool Required { get; set; }`
 - [Required](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-required): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
@@ -2866,6 +2902,9 @@ Browse the published API surface by public member.
   - Gets or sets the per-request timeout in seconds.
   - `int TimeoutSeconds { get; set; }`
 - [TimeoutSeconds](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-timeoutseconds): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
+  - Gets or sets the per-probe timeout in seconds.
+  - `int TimeoutSeconds { get; set; }`
+- [TimeoutSeconds](cephalon-observability-memcacheddependencies.md#member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-timeoutseconds): `Properties` on `MemcachedDependencyDefinition` in `Cephalon.Observability.MemcachedDependencies.Configuration` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Configuration&scope=members)
   - Gets or sets the per-probe timeout in seconds.
   - `int TimeoutSeconds { get; set; }`
 - [TimeoutSeconds](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-timeoutseconds): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)

@@ -128,6 +128,7 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.Observability.ElasticsearchDependencies",
                 "Cephalon.Observability.HttpDependencies",
                 "Cephalon.Observability.KafkaDependencies",
+                "Cephalon.Observability.MemcachedDependencies",
                 "Cephalon.Observability.MongoDbDependencies",
                 "Cephalon.Observability.MqttDependencies",
                 "Cephalon.Observability.MySqlDependencies",
@@ -188,6 +189,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-aspnetcore-graphql.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-elasticsearchdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-kafkadependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-memcacheddependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-mongodbdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-mqttdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-mysqldependencies.md");
@@ -211,6 +213,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.KafkaDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.MemcachedDependencies", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.MongoDbDependencies", StringComparison.Ordinal));

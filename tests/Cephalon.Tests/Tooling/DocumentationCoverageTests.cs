@@ -19,6 +19,7 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.Observability.ElasticsearchDependencies"] = "observability-elasticsearch-dependencies.md",
             ["Cephalon.Observability.HttpDependencies"] = "observability-http-dependencies.md",
             ["Cephalon.Observability.KafkaDependencies"] = "observability-kafka-dependencies.md",
+            ["Cephalon.Observability.MemcachedDependencies"] = "observability-memcached-dependencies.md",
             ["Cephalon.Observability.MongoDbDependencies"] = "observability-mongodb-dependencies.md",
             ["Cephalon.Observability.MqttDependencies"] = "observability-mqtt-dependencies.md",
             ["Cephalon.Observability.MySqlDependencies"] = "observability-mysql-dependencies.md",

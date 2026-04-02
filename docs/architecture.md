@@ -108,6 +108,8 @@ Companion adapter packages can extend that host with additional transport surfac
 
 `Cephalon.Observability.KafkaDependencies` is the optional Kafka dependency-health companion package. It turns configured broker metadata and optional topic probes into `IDependencyHealthContributor` data without pushing Kafka client configuration into `Cephalon.Engine`.
 
+`Cephalon.Observability.MemcachedDependencies` is the optional Memcached dependency-health companion package. It turns configured cache `version` probes into `IDependencyHealthContributor` data without pushing Memcached-specific socket logic into `Cephalon.Engine`.
+
 `Cephalon.Observability.MongoDbDependencies` is the optional MongoDB dependency-health companion package. It turns configured database commands, TLS policy, and connection-string probing into `IDependencyHealthContributor` data without pushing MongoDB-specific connection logic into `Cephalon.Engine`.
 
 `Cephalon.Observability.MqttDependencies` is the optional MQTT dependency-health companion package. It turns configured broker `CONNECT`, `CONNACK`, and `PINGREQ`/`PINGRESP` probes into `IDependencyHealthContributor` data without pushing MQTT protocol handling into `Cephalon.Engine`.
@@ -186,6 +188,9 @@ Companion adapter packages:
 - `src/Cephalon.Observability.KafkaDependencies/Configuration` -> `Cephalon.Observability.KafkaDependencies.Configuration`
 - `src/Cephalon.Observability.KafkaDependencies/Hosting` -> `Cephalon.Observability.KafkaDependencies.Hosting`
 - `src/Cephalon.Observability.KafkaDependencies/Services` -> `Cephalon.Observability.KafkaDependencies.Services`
+- `src/Cephalon.Observability.MemcachedDependencies/Configuration` -> `Cephalon.Observability.MemcachedDependencies.Configuration`
+- `src/Cephalon.Observability.MemcachedDependencies/Hosting` -> `Cephalon.Observability.MemcachedDependencies.Hosting`
+- `src/Cephalon.Observability.MemcachedDependencies/Services` -> `Cephalon.Observability.MemcachedDependencies.Services`
 - `src/Cephalon.Observability.MongoDbDependencies/Configuration` -> `Cephalon.Observability.MongoDbDependencies.Configuration`
 - `src/Cephalon.Observability.MongoDbDependencies/Hosting` -> `Cephalon.Observability.MongoDbDependencies.Hosting`
 - `src/Cephalon.Observability.MongoDbDependencies/Services` -> `Cephalon.Observability.MongoDbDependencies.Services`
@@ -275,6 +280,7 @@ Companion adapter packages:
 - hosts can turn Elasticsearch cluster-health checks into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Elasticsearch` and `Cephalon.Observability.ElasticsearchDependencies`
 - hosts can turn external HTTP upstreams into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Http` and `Cephalon.Observability.HttpDependencies`, but that pack should stay generic across HTTP semantics rather than absorbing product-specific response mapping
 - hosts can turn Kafka cluster metadata checks into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Kafka` and `Cephalon.Observability.KafkaDependencies`
+- hosts can turn Memcached cache endpoints into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Memcached` and `Cephalon.Observability.MemcachedDependencies`
 - hosts can turn MongoDB dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:MongoDb` and `Cephalon.Observability.MongoDbDependencies`
 - hosts can turn MQTT broker dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Mqtt` and `Cephalon.Observability.MqttDependencies`
 - hosts can turn MySQL and MariaDB dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:MySql` and `Cephalon.Observability.MySqlDependencies`
@@ -324,7 +330,7 @@ Companion adapter packages:
 - richer capability metadata and policy
 - startup hooks and lifecycle events
 - event bus / workflow runtime
-- broader provider-specific dependency-health packs, richer operator-runtime answers, and deeper release-validation guidance on top of the shipped Elasticsearch, HTTP, Kafka, MongoDB, MQTT, MySQL, NATS, Postgres, RabbitMQ, Redis, SQL Server, and OpenTelemetry observability companions
+- broader provider-specific dependency-health packs, richer operator-runtime answers, and deeper release-validation guidance on top of the shipped Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Postgres, RabbitMQ, Redis, SQL Server, and OpenTelemetry observability companions
 - richer parameterized templates and generators driven by scaffold plans
 - richer localization catalogs and package-provided language packs
 - sustained benchmark coverage for hot engine paths

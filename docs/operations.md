@@ -13,7 +13,7 @@ ASP.NET Core hosts that call `app.MapCephalon()` now expose three health routes:
 - `/health/ready`
 
 Health responses are JSON and include the check status, duration, and runtime-specific details such as restart count and the most recent failure context.
-When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
+When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
 
 Current semantics:
 
@@ -184,6 +184,52 @@ Operational notes:
 - the Redis dependency-health package is optional and stays outside `Cephalon.Engine`
 - the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
 - each probe opens a TCP connection, optionally authenticates, optionally selects a logical database, and then verifies `PING` -> `PONG`
+- required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
+
+### Memcached dependency probes
+
+`Cephalon.Observability.MemcachedDependencies` reads `Engine:Observability:DependencyHealth:Memcached` and turns configured Memcached endpoints into reusable `IDependencyHealthContributor` data.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "DependencyHealth": {
+        "Memcached": {
+          "RefreshIntervalSeconds": 30,
+          "Dependencies": [
+            {
+              "Id": "session-cache",
+              "DisplayName": "Session Cache",
+              "Host": "memcached.internal.example",
+              "Port": 11211,
+              "Required": true,
+              "TimeoutSeconds": 5
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonMemcachedDependencyHealth(builder.Configuration);
+```
+
+Operational notes:
+
+- the Memcached dependency-health package is optional and stays outside `Cephalon.Engine`
+- the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
+- each probe opens a TCP connection and verifies that the Memcached `version` command returns a valid `VERSION ...` response
 - required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
 
 ### Postgres dependency probes
@@ -635,6 +681,7 @@ Current shipped event-id ranges include:
 - `Cephalon.Observability.KafkaDependencies`: `3132-3133`
 - `Cephalon.Observability.NatsDependencies`: `3134-3135`
 - `Cephalon.Observability.MqttDependencies`: `3136-3137`
+- `Cephalon.Observability.MemcachedDependencies`: `3140-3141`
 
 This is the quickest way to discover the engine's observability contract without opening code.
 

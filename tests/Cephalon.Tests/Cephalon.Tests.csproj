@@ -41,6 +41,7 @@
     <ProjectReference Include="..\..\src\Cephalon.Observability.HttpDependencies\Cephalon.Observability.HttpDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.KafkaDependencies\Cephalon.Observability.KafkaDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.ElasticsearchDependencies\Cephalon.Observability.ElasticsearchDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.MemcachedDependencies\Cephalon.Observability.MemcachedDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.MongoDbDependencies\Cephalon.Observability.MongoDbDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.MqttDependencies\Cephalon.Observability.MqttDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.MySqlDependencies\Cephalon.Observability.MySqlDependencies.csproj" />

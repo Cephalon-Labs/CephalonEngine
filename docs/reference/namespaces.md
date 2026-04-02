@@ -220,6 +220,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Observability.KafkaDependencies](cephalon-observability-kafkadependencies.md#namespace-cephalon-observability-kafkadependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Hosting)
 
+## `Cephalon.Observability.MemcachedDependencies.Configuration`
+
+- [Cephalon.Observability.MemcachedDependencies](cephalon-observability-memcacheddependencies.md#namespace-cephalon-observability-memcacheddependencies-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Configuration)
+
+## `Cephalon.Observability.MemcachedDependencies.Hosting`
+
+- [Cephalon.Observability.MemcachedDependencies](cephalon-observability-memcacheddependencies.md#namespace-cephalon-observability-memcacheddependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Hosting)
+
 ## `Cephalon.Observability.MongoDbDependencies.Configuration`
 
 - [Cephalon.Observability.MongoDbDependencies](cephalon-observability-mongodbdependencies.md#namespace-cephalon-observability-mongodbdependencies-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration)
