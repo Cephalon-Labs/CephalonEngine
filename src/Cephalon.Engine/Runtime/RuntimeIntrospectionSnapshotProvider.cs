@@ -14,6 +14,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             runtime.Manifest,
             runtime.StatusSnapshot,
             technologyRuntimeCatalog.Surfaces,
-            diagnosticsCatalog.Conventions);
+            diagnosticsCatalog.Conventions,
+            runtime.OperationalStory);
     }
 }

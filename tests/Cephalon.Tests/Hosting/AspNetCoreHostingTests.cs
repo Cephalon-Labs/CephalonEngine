@@ -681,6 +681,51 @@ public sealed class AspNetCoreHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonExposesRuntimeStoryAcrossDedicatedRouteAndSnapshot()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var story = await client.GetFromJsonAsync<RuntimeOperationalStory>("/engine/runtime-story");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(story);
+        Assert.Equal(RuntimeStatus.Started, story.Status.Status);
+        Assert.Single(story.Modules);
+        var platform = Assert.Single(story.Modules, module => module.ModuleId == "platform");
+        Assert.True(platform.IsLoaded);
+        Assert.True(platform.IsInitialized);
+        Assert.True(platform.IsStarted);
+        Assert.False(platform.IsStopped);
+        Assert.Contains(
+            story.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.Runtime &&
+                entry.Phase == "start" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Succeeded);
+
+        Assert.NotNull(snapshot);
+        Assert.Equal(RuntimeStatus.Started, snapshot.OperationalStory.Status.Status);
+        Assert.Contains(snapshot.OperationalStory.Modules, module => module.ModuleId == "platform" && module.IsStarted);
+        Assert.Contains(
+            snapshot.OperationalStory.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.Module &&
+                entry.SubjectId == "platform" &&
+                entry.Phase == "load");
+    }
+
+    [Fact]
     public async Task MapCephalonExposesCapturedStartupFailuresWhenPolicyDoesNotFailFast()
     {
         var builder = WebApplication.CreateSlimBuilder();
@@ -703,6 +748,7 @@ public sealed class AspNetCoreHostingTests
         var client = app.GetTestClient();
 
         var status = await client.GetFromJsonAsync<RuntimeStatusSnapshot>("/engine/status");
+        var story = await client.GetFromJsonAsync<RuntimeOperationalStory>("/engine/runtime-story");
         var failurePolicy = await client.GetFromJsonAsync<FailurePolicy>("/engine/failure-policy");
         var diagnosticsResponse = await client.GetAsync("/engine/diagnostics");
         var diagnosticsPayload = await diagnosticsResponse.Content.ReadAsStringAsync();
@@ -717,6 +763,24 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal("start", status.LastFailure?.Phase);
         Assert.Equal("Simulated startup failure.", status.LastFailure?.Message);
         Assert.True(status.LastFailure?.CanRestart);
+
+        Assert.NotNull(story);
+        Assert.Equal(RuntimeStatus.Failed, story.Status.Status);
+        var failingModule = Assert.Single(story.Modules, module => module.ModuleId == "flaky-start");
+        Assert.Equal("start", failingModule.LastObservedPhase);
+        Assert.Equal("Simulated startup failure.", failingModule.LastFailure?.Message);
+        Assert.Contains(
+            story.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.Module &&
+                entry.SubjectId == "flaky-start" &&
+                entry.Phase == "start" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Failed);
+        Assert.Contains(
+            story.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.Runtime &&
+                entry.Phase == "start" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Failed &&
+                entry.Message.Contains("Simulated startup failure.", StringComparison.Ordinal));
 
         Assert.NotNull(failurePolicy);
         Assert.Equal(StartupFailureBehavior.CaptureOnly, failurePolicy.StartupFailureBehavior);

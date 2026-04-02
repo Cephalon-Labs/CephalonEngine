@@ -226,13 +226,14 @@ Companion adapter packages:
 - engine future-tech selection can be driven through `Engine:Technologies`
 - engine future-tech catalog can be extended through `ITechnologyContributor` or `engine.RegisterTechnology(...)`
 - active future-tech runtime surfaces can be inspected through `ITechnologyRuntimeContributor` and `/engine/technology-surfaces`
-- merged operator-facing runtime introspection should come from `IRuntimeIntrospectionSnapshotProvider` and `/engine/snapshot` instead of recomposing manifest, status, technology surfaces, and diagnostics conventions ad hoc in hosts
+- merged operator-facing runtime introspection should come from `IRuntimeIntrospectionSnapshotProvider` and `/engine/snapshot` instead of recomposing manifest, status, technology surfaces, diagnostics conventions, and lifecycle story data ad hoc in hosts
 - future-tech runtime primitives should live in companion packages such as `Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, or `Cephalon.Edge`
 - installed modules should extend shipped technology packs through pack-specific contributor services instead of hardcoding host-owned descriptor lists
 - engine options can disable modules and capabilities through `Engine:Options`
 - engine observability conventions can be tuned through `Engine:Observability`
 - engine telemetry export guidance can be tuned through `Engine:Observability:Telemetry`
 - runtime diagnostics conventions should flow through `IRuntimeDiagnosticsCatalog`, `/engine/diagnostics`, and `/engine/snapshot`
+- runtime lifecycle answers should flow through `IRuntime.OperationalStory`, `/engine/runtime-story`, and `/engine/snapshot`
 - hosts can turn external HTTP upstreams into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Http` and `Cephalon.Observability.HttpDependencies`
 - hosts can turn Postgres dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Postgres` and `Cephalon.Observability.PostgresDependencies`
 - hosts can turn RabbitMQ dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:RabbitMq` and `Cephalon.Observability.RabbitMqDependencies`
@@ -251,6 +252,7 @@ Companion adapter packages:
 - runtime policy state is introspectable through `/engine/options`
 - runtime failure policy is introspectable through `/engine/failure-policy`
 - runtime diagnostics conventions are introspectable through `IRuntimeDiagnosticsCatalog`, `/engine/diagnostics`, and `/engine/snapshot`
+- runtime lifecycle story is introspectable through `IRuntime.OperationalStory`, `/engine/runtime-story`, and `/engine/snapshot`
 - runtime trust policy is introspectable through `/engine/trust-policy`
 - runtime package loading is introspectable through `/engine/packages`, including package `kind`, resolved assembly `path`, discovery `sourcePath`, declared version/compatibility, computed checksum, signature verification state, and trust reason
 - runtime package provenance is introspectable through `/engine/packages` and `/engine/trust-policy`, including publisher id, signature key id, and signer fingerprint when the package manifest declared them

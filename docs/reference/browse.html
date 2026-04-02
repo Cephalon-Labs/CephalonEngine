@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-01T23:53:01.0576358+00:00",
+  "GeneratedAtUtc": "2026-04-02T00:28:37.675219+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -175,7 +175,7 @@
       "Description": "Composition, runtime, policy, manifest, and introspection services.",
       "FileName": "cephalon-engine.md",
       "NamespaceCount": 12,
-      "TypeCount": 49
+      "TypeCount": 54
     },
     {
       "AssemblyName": "Cephalon.Eventing",
@@ -545,7 +545,7 @@
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
       "AnchorId": "namespace-cephalon-engine-runtime",
-      "TypeCount": 10
+      "TypeCount": 15
     },
     {
       "NamespaceName": "Cephalon.Engine.Technologies",
@@ -1222,7 +1222,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 7,
+        "Properties": 8,
         "Methods": 5
       }
     },
@@ -1867,7 +1867,7 @@
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
-        "Properties": 7,
+        "Properties": 8,
         "Methods": 4
       }
     },
@@ -2857,7 +2857,52 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 4,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "RuntimeLifecycleEvent",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-runtime-runtimelifecycleevent",
+      "Declaration": "public sealed class RuntimeLifecycleEvent",
+      "Summary": "Captures one operator-facing lifecycle event in the runtime story timeline.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 9,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "RuntimeLifecycleEventOutcome",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-runtime-runtimelifecycleeventoutcome",
+      "Declaration": "public enum RuntimeLifecycleEventOutcome",
+      "Summary": "Describes whether one lifecycle event completed successfully or failed.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 2,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "RuntimeLifecycleEventScope",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-runtime-runtimelifecycleeventscope",
+      "Declaration": "public enum RuntimeLifecycleEventScope",
+      "Summary": "Identifies which runtime surface produced one operator-facing lifecycle event.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 3,
+        "Properties": 0,
         "Methods": 0
       }
     },
@@ -2873,6 +2918,36 @@
         "Constructors": 1,
         "Fields": 1,
         "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-runtime-runtimemodulelifecyclestate",
+      "Declaration": "public sealed class RuntimeModuleLifecycleState",
+      "Summary": "Describes the current operator-facing lifecycle state for one loaded module.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 16,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "RuntimeOperationalStory",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-runtime-runtimeoperationalstory",
+      "Declaration": "public sealed class RuntimeOperationalStory",
+      "Summary": "Combines the operator-facing runtime story into one payload that explains what loaded, started, failed, and why.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
         "Methods": 0
       }
     },
@@ -4176,6 +4251,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-packagetrustdecision-assemblyname",
       "Signature": "string AssemblyName { get; set; }",
       "Summary": "The resolved assembly name for the package."
+    },
+    {
+      "DisplayName": "AssemblyName",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-assemblyname",
+      "Signature": "string AssemblyName { get; set; }",
+      "Summary": "The assembly that contains the module implementation."
     },
     {
       "DisplayName": "AssemblyPathKind",
@@ -5720,6 +5806,17 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "The operator-facing module display name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "ScaffoldPlan",
       "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
       "AssemblyName": "Cephalon.Abstractions",
@@ -6169,6 +6266,17 @@
       "Summary": "The fully qualified exception type that caused the failure."
     },
     {
+      "DisplayName": "ExceptionType",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeLifecycleEvent",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimelifecycleevent-exceptiontype",
+      "Signature": "string ExceptionType { get; set; }",
+      "Summary": "The exception type captured for failed events when available."
+    },
+    {
       "DisplayName": "ExchangeGreetings",
       "Category": "Methods",
       "DeclaringTypeName": "DiscoveryServiceBase",
@@ -6255,6 +6363,17 @@
       "AnchorId": "member-p-cephalon-observability-configuration-telemetryexportoptions-exporttraces",
       "Signature": "bool ExportTraces { get; set; }",
       "Summary": "Gets or sets a value indicating whether traces should be exported."
+    },
+    {
+      "DisplayName": "Failed",
+      "Category": "Fields",
+      "DeclaringTypeName": "RuntimeLifecycleEventOutcome",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-f-cephalon-engine-runtime-runtimelifecycleeventoutcome-failed",
+      "Signature": "const RuntimeLifecycleEventOutcome Failed",
+      "Summary": "The lifecycle event failed."
     },
     {
       "DisplayName": "Failed",
@@ -6651,6 +6770,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-runtimemanifest-generatedatutc",
       "Signature": "DateTimeOffset GeneratedAtUtc { get; }",
       "Summary": "Gets the UTC timestamp when the manifest was generated."
+    },
+    {
+      "DisplayName": "GeneratedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeOperationalStory",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperationalstory-generatedatutc",
+      "Signature": "DateTimeOffset GeneratedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the story snapshot was created."
     },
     {
       "DisplayName": "GeneratedAtUtcFieldNumber",
@@ -7249,6 +7379,17 @@
     {
       "DisplayName": "InitializedAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-initializedatutc",
+      "Signature": "DateTimeOffset? InitializedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when module initialization last completed successfully."
+    },
+    {
+      "DisplayName": "InitializedAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeStatusSnapshot",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -7346,6 +7487,28 @@
       "Summary": "Gets a value indicating whether the report represents a healthy state."
     },
     {
+      "DisplayName": "IsInitialized",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isinitialized",
+      "Signature": "bool IsInitialized { get; }",
+      "Summary": "Gets a value indicating whether the module completed initialization successfully."
+    },
+    {
+      "DisplayName": "IsLoaded",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isloaded",
+      "Signature": "bool IsLoaded { get; }",
+      "Summary": "Gets a value indicating whether the module is present in the built runtime."
+    },
+    {
       "DisplayName": "IsManifestFile",
       "Category": "Properties",
       "DeclaringTypeName": "ModulePackageReference",
@@ -7399,6 +7562,28 @@
       "AnchorId": "member-p-cephalon-engine-trust-packagetrustdecision-issignatureverified",
       "Signature": "bool IsSignatureVerified { get; set; }",
       "Summary": "Whether at least one declared signature verified successfully."
+    },
+    {
+      "DisplayName": "IsStarted",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isstarted",
+      "Signature": "bool IsStarted { get; }",
+      "Summary": "Gets a value indicating whether the module most recently completed startup without a later successful stop."
+    },
+    {
+      "DisplayName": "IsStopped",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isstopped",
+      "Signature": "bool IsStopped { get; }",
+      "Summary": "Gets a value indicating whether the module most recently completed shutdown."
     },
     {
       "DisplayName": "IsTrusted",
@@ -7623,6 +7808,17 @@
     {
       "DisplayName": "LastFailure",
       "Category": "Properties",
+      "DeclaringTypeName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-lastfailure",
+      "Signature": "RuntimeFailureInfo LastFailure { get; set; }",
+      "Summary": "The last failure recorded for the module when one is still relevant to the current runtime story."
+    },
+    {
+      "DisplayName": "LastFailure",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeStatusSnapshot",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -7630,6 +7826,28 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimestatussnapshot-lastfailure",
       "Signature": "RuntimeFailureInfo LastFailure { get; set; }",
       "Summary": "The last captured failure, if the runtime has faulted."
+    },
+    {
+      "DisplayName": "LastObservedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-lastobservedatutc",
+      "Signature": "DateTimeOffset? LastObservedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the last lifecycle phase was recorded for the module."
+    },
+    {
+      "DisplayName": "LastObservedPhase",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-lastobservedphase",
+      "Signature": "string LastObservedPhase { get; set; }",
+      "Summary": "The last lifecycle phase recorded for the module."
     },
     {
       "DisplayName": "Liveness",
@@ -7663,6 +7881,28 @@
       "AnchorId": "member-p-cephalon-engine-manifest-packagemanifest-loadcontext",
       "Signature": "string LoadContext { get; }",
       "Summary": "Gets the assembly load context name used for the package."
+    },
+    {
+      "DisplayName": "LoadedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-loadedatutc",
+      "Signature": "DateTimeOffset? LoadedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the module became part of the built runtime story."
+    },
+    {
+      "DisplayName": "LoadedPackages",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeOperationalStory",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperationalstory-loadedpackages",
+      "Signature": "IReadOnlyList\u003CPackageManifest\u003E LoadedPackages { get; set; }",
+      "Summary": "The packages currently visible to the runtime story."
     },
     {
       "DisplayName": "Localization",
@@ -8028,6 +8268,17 @@
       "Summary": "The failure message surfaced to operators."
     },
     {
+      "DisplayName": "Message",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeLifecycleEvent",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimelifecycleevent-message",
+      "Signature": "string Message { get; set; }",
+      "Summary": "The operator-facing narrative for the event."
+    },
+    {
       "DisplayName": "MessageFieldNumber",
       "Category": "Fields",
       "DeclaringTypeName": "HelloReply",
@@ -8382,6 +8633,17 @@
     {
       "DisplayName": "Module",
       "Category": "Fields",
+      "DeclaringTypeName": "RuntimeLifecycleEventScope",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-f-cephalon-engine-runtime-runtimelifecycleeventscope-module",
+      "Signature": "const RuntimeLifecycleEventScope Module",
+      "Summary": "The event belongs to one module lifecycle transition."
+    },
+    {
+      "DisplayName": "Module",
+      "Category": "Fields",
       "DeclaringTypeName": "ScaffoldScopes",
       "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
       "AssemblyName": "Cephalon.Abstractions",
@@ -8455,6 +8717,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimefailureinfo-moduleid",
       "Signature": "string ModuleId { get; set; }",
       "Summary": "The module identifier that triggered the failure when available."
+    },
+    {
+      "DisplayName": "ModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-moduleid",
+      "Signature": "string ModuleId { get; set; }",
+      "Summary": "The stable module identifier."
     },
     {
       "DisplayName": "ModuleManifest",
@@ -8543,6 +8816,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-runtimemanifest-modules",
       "Signature": "IReadOnlyList\u003CModuleManifest\u003E Modules { get; }",
       "Summary": "Gets the effective module set after discovery, policy filtering, and dependency ordering."
+    },
+    {
+      "DisplayName": "Modules",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeOperationalStory",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperationalstory-modules",
+      "Signature": "IReadOnlyList\u003CRuntimeModuleLifecycleState\u003E Modules { get; set; }",
+      "Summary": "The current lifecycle state for each loaded module."
     },
     {
       "DisplayName": "Modules",
@@ -8699,6 +8983,50 @@
       "Summary": "The UTC timestamp when the failure was captured."
     },
     {
+      "DisplayName": "OccurredAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeLifecycleEvent",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimelifecycleevent-occurredatutc",
+      "Signature": "DateTimeOffset OccurredAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the event was recorded."
+    },
+    {
+      "DisplayName": "OperationalStory",
+      "Category": "Properties",
+      "DeclaringTypeName": "EngineRuntime",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-engineruntime-operationalstory",
+      "Signature": "RuntimeOperationalStory OperationalStory { get; }",
+      "Summary": "Gets the richer operator-facing lifecycle story for the runtime."
+    },
+    {
+      "DisplayName": "OperationalStory",
+      "Category": "Properties",
+      "DeclaringTypeName": "IRuntime",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-iruntime-operationalstory",
+      "Signature": "RuntimeOperationalStory OperationalStory { get; }",
+      "Summary": "Gets the richer operator-facing runtime story that explains what loaded, started, failed, and why."
+    },
+    {
+      "DisplayName": "OperationalStory",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-operationalstory",
+      "Signature": "RuntimeOperationalStory OperationalStory { get; set; }",
+      "Summary": "The richer operator-facing lifecycle story that combines loaded packages, module state, and the ordered runtime timeline."
+    },
+    {
       "DisplayName": "Options",
       "Category": "Properties",
       "DeclaringTypeName": "EngineSettings",
@@ -8721,6 +9049,17 @@
       "Summary": "Identifies an organization pattern."
     },
     {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeLifecycleEvent",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimelifecycleevent-outcome",
+      "Signature": "RuntimeLifecycleEventOutcome Outcome { get; set; }",
+      "Summary": "The completion outcome for the event."
+    },
+    {
       "DisplayName": "OutputPath",
       "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocsRequest",
@@ -8730,6 +9069,17 @@
       "AnchorId": "member-p-cephalon-referencedocs-generation-referencedocsrequest-outputpath",
       "Signature": "string OutputPath { get; }",
       "Summary": "Gets the output directory where reference docs should be written."
+    },
+    {
+      "DisplayName": "Package",
+      "Category": "Fields",
+      "DeclaringTypeName": "RuntimeLifecycleEventScope",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-f-cephalon-engine-runtime-runtimelifecycleeventscope-package",
+      "Signature": "const RuntimeLifecycleEventScope Package",
+      "Summary": "The event belongs to package loading and package-origin visibility."
     },
     {
       "DisplayName": "PackageDirectories",
@@ -8774,6 +9124,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-packagetrustdecision-packageid",
       "Signature": "string PackageId { get; set; }",
       "Summary": "The stable package identifier."
+    },
+    {
+      "DisplayName": "PackageId",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-packageid",
+      "Signature": "string PackageId { get; set; }",
+      "Summary": "The package that supplied the module when package loading was used."
     },
     {
       "DisplayName": "PackageManifest",
@@ -9093,6 +9454,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimefailureinfo-phase",
       "Signature": "string Phase { get; set; }",
       "Summary": "The lifecycle phase that failed, such as \u0060initialize\u0060, \u0060start\u0060, or \u0060stop\u0060."
+    },
+    {
+      "DisplayName": "Phase",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeLifecycleEvent",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimelifecycleevent-phase",
+      "Signature": "string Phase { get; set; }",
+      "Summary": "The lifecycle phase or story phase, such as \u0060load\u0060, \u0060initialize\u0060, \u0060start\u0060, \u0060stop\u0060, or \u0060restart\u0060."
     },
     {
       "DisplayName": "PipelinePattern",
@@ -10272,6 +10644,17 @@
       "Summary": "Runs the reference docs generator for the supplied arguments and writers."
     },
     {
+      "DisplayName": "Runtime",
+      "Category": "Fields",
+      "DeclaringTypeName": "RuntimeLifecycleEventScope",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-f-cephalon-engine-runtime-runtimelifecycleeventscope-runtime",
+      "Signature": "const RuntimeLifecycleEventScope Runtime",
+      "Summary": "The event belongs to the overall runtime lifecycle."
+    },
+    {
       "DisplayName": "RuntimeFailureCounterName",
       "Category": "Fields",
       "DeclaringTypeName": "EngineDiagnostics",
@@ -10322,9 +10705,20 @@
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention",
-      "Signature": "RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList\u003CTechnologyRuntimeSurface\u003E TechnologySurfaces, IReadOnlyList\u003CDiagnosticsConvention\u003E DiagnosticsConventions)",
+      "AnchorId": "member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention-cephalon-engine-runtime-runtimeoperationalstory",
+      "Signature": "RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList\u003CTechnologyRuntimeSurface\u003E TechnologySurfaces, IReadOnlyList\u003CDiagnosticsConvention\u003E DiagnosticsConventions, RuntimeOperationalStory OperationalStory)",
       "Summary": "Combines the main operator-facing runtime views into a single payload."
+    },
+    {
+      "DisplayName": "RuntimeLifecycleEvent",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RuntimeLifecycleEvent",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-runtime-runtimelifecycleevent-ctor-system-datetimeoffset-cephalon-engine-runtime-runtimelifecycleeventscope-system-string-cephalon-engine-runtime-runtimelifecycleeventoutcome-cephalon-engine-runtime-runtimestatus-system-string-system-string-system-string-system-string",
+      "Signature": "RuntimeLifecycleEvent(DateTimeOffset OccurredAtUtc, RuntimeLifecycleEventScope Scope, string Phase, RuntimeLifecycleEventOutcome Outcome, RuntimeStatus RuntimeStatus, string SubjectId, string SubjectVersion, string Message, string ExceptionType)",
+      "Summary": "Captures one operator-facing lifecycle event in the runtime story timeline."
     },
     {
       "DisplayName": "RuntimeManifest",
@@ -10336,6 +10730,28 @@
       "AnchorId": "member-m-cephalon-engine-manifest-runtimemanifest-ctor-system-string-system-string-system-datetimeoffset-cephalon-abstractions-appmodel-appprofile-system-collections-generic-ireadonlylist-cephalon-engine-manifest-modulemanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-capabilitymanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest",
       "Signature": "RuntimeManifest(string manifestVersion, string engineVersion, DateTimeOffset generatedAtUtc, AppProfile appProfile, IReadOnlyList\u003CModuleManifest\u003E modules, IReadOnlyList\u003CCapabilityManifest\u003E capabilities, IReadOnlyList\u003CPackageManifest\u003E packages)",
       "Summary": "Creates a new runtime manifest."
+    },
+    {
+      "DisplayName": "RuntimeModuleLifecycleState",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-runtime-runtimemodulelifecyclestate-ctor-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-nullable-system-datetimeoffset-cephalon-engine-runtime-runtimefailureinfo",
+      "Signature": "RuntimeModuleLifecycleState(string ModuleId, string DisplayName, string Version, string AssemblyName, string PackageId, DateTimeOffset? LoadedAtUtc, DateTimeOffset? InitializedAtUtc, DateTimeOffset? StartedAtUtc, DateTimeOffset? StoppedAtUtc, string LastObservedPhase, DateTimeOffset? LastObservedAtUtc, RuntimeFailureInfo LastFailure)",
+      "Summary": "Describes the current operator-facing lifecycle state for one loaded module."
+    },
+    {
+      "DisplayName": "RuntimeOperationalStory",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RuntimeOperationalStory",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-runtime-runtimeoperationalstory-ctor-system-datetimeoffset-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimemodulelifecyclestate-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimelifecycleevent",
+      "Signature": "RuntimeOperationalStory(DateTimeOffset GeneratedAtUtc, RuntimeStatusSnapshot Status, IReadOnlyList\u003CPackageManifest\u003E LoadedPackages, IReadOnlyList\u003CRuntimeModuleLifecycleState\u003E Modules, IReadOnlyList\u003CRuntimeLifecycleEvent\u003E Timeline)",
+      "Summary": "Combines the operator-facing runtime story into one payload that explains what loaded, started, failed, and why."
     },
     {
       "DisplayName": "RuntimeRestartCounterName",
@@ -10358,6 +10774,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimehealthreport-runtimestatus",
       "Signature": "RuntimeStatus RuntimeStatus { get; set; }",
       "Summary": "The runtime lifecycle status at the time of evaluation."
+    },
+    {
+      "DisplayName": "RuntimeStatus",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeLifecycleEvent",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimelifecycleevent-runtimestatus",
+      "Signature": "RuntimeStatus RuntimeStatus { get; set; }",
+      "Summary": "The runtime status visible when the event was recorded."
     },
     {
       "DisplayName": "RuntimeStatusSnapshot",
@@ -10523,6 +10950,17 @@
       "AnchorId": "member-p-cephalon-scaffolding-generation-renderedproject-scope",
       "Signature": "string Scope { get; }",
       "Summary": "Gets the scaffold scope that produced the project."
+    },
+    {
+      "DisplayName": "Scope",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeLifecycleEvent",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimelifecycleevent-scope",
+      "Signature": "RuntimeLifecycleEventScope Scope { get; set; }",
+      "Summary": "The runtime surface that emitted the event."
     },
     {
       "DisplayName": "Scope",
@@ -10989,6 +11427,17 @@
     {
       "DisplayName": "StartedAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-startedatutc",
+      "Signature": "DateTimeOffset? StartedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when module startup last completed successfully."
+    },
+    {
+      "DisplayName": "StartedAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeStatusSnapshot",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -11084,6 +11533,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-status",
       "Signature": "RuntimeStatusSnapshot Status { get; set; }",
       "Summary": "The current lifecycle status of the runtime."
+    },
+    {
+      "DisplayName": "Status",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeOperationalStory",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperationalstory-status",
+      "Signature": "RuntimeStatusSnapshot Status { get; set; }",
+      "Summary": "The current runtime lifecycle status snapshot."
     },
     {
       "DisplayName": "Status",
@@ -11209,6 +11669,17 @@
     {
       "DisplayName": "StoppedAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-stoppedatutc",
+      "Signature": "DateTimeOffset? StoppedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when module shutdown last completed successfully."
+    },
+    {
+      "DisplayName": "StoppedAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeStatusSnapshot",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -11271,6 +11742,39 @@
       "AnchorId": "member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-streamprinciples-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken",
       "Signature": "AsyncServerStreamingCall\u003CPrincipleReply\u003E StreamPrinciples(PrinciplesRequest request, Metadata headers, DateTime? deadline, CancellationToken cancellationToken)",
       "Summary": "Streams the host principles that describe the Cephalon runtime shape."
+    },
+    {
+      "DisplayName": "SubjectId",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeLifecycleEvent",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimelifecycleevent-subjectid",
+      "Signature": "string SubjectId { get; set; }",
+      "Summary": "The runtime, module, or package identifier associated with the event when available."
+    },
+    {
+      "DisplayName": "SubjectVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeLifecycleEvent",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimelifecycleevent-subjectversion",
+      "Signature": "string SubjectVersion { get; set; }",
+      "Summary": "The version associated with the event subject when available."
+    },
+    {
+      "DisplayName": "Succeeded",
+      "Category": "Fields",
+      "DeclaringTypeName": "RuntimeLifecycleEventOutcome",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-f-cephalon-engine-runtime-runtimelifecycleeventoutcome-succeeded",
+      "Signature": "const RuntimeLifecycleEventOutcome Succeeded",
+      "Summary": "The lifecycle event completed successfully."
     },
     {
       "DisplayName": "SummaryPath",
@@ -11667,6 +12171,17 @@
       "AnchorId": "member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-tests",
       "Signature": "const string Tests",
       "Summary": "Identifies a test project."
+    },
+    {
+      "DisplayName": "Timeline",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeOperationalStory",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperationalstory-timeline",
+      "Signature": "IReadOnlyList\u003CRuntimeLifecycleEvent\u003E Timeline { get; set; }",
+      "Summary": "The ordered lifecycle narrative for package load, module transitions, runtime transitions, and failures."
     },
     {
       "DisplayName": "TimeoutSeconds",
@@ -12305,6 +12820,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-packagemanifest-version",
       "Signature": "string Version { get; }",
       "Summary": "Gets the package version declared by the package manifest, when available."
+    },
+    {
+      "DisplayName": "Version",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeModuleLifecycleState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-version",
+      "Signature": "string Version { get; set; }",
+      "Summary": "The effective module version."
     },
     {
       "DisplayName": "VerticalSliceOrganization",

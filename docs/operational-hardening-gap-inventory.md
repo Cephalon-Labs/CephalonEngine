@@ -107,16 +107,19 @@ Why this stays separate:
 Current baseline:
 
 - `/engine/status`, `/engine/packages`, `/engine/dependencies`, `/engine/diagnostics`, and `/engine/snapshot` already expose useful point-in-time answers
+- `/engine/runtime-story` now combines loaded packages, per-module lifecycle state, and an ordered runtime timeline into one operator-facing payload
+- `IRuntime.OperationalStory` keeps the same lifecycle narrative available outside ASP.NET Core hosts
+- `/engine/snapshot` now folds that runtime story into the broader manifest/status/technology/diagnostics payload
 
-Gap:
+Outcome:
 
-- there is no richer lifecycle narrative or operator-oriented timeline that answers startup and failure questions in one place
-- current surfaces are snapshots, not a stronger “what happened in order and why” diagnostic story
+- operators now have one host-level route and one host-agnostic runtime contract for answering what loaded, what started, what failed, and why
+- the runtime story keeps package load visibility, module lifecycle state, and ordered timeline events aligned without inventing a second manifest or health abstraction
 
 Why this stays separate:
 
 - no new engine abstraction is obviously missing yet
-- the follow-through should improve operator answers without duplicating the existing manifest/status/health surfaces
+- the follow-through improved operator answers without duplicating the existing manifest/status/health surfaces
 
 ### `#73` Deeper readiness/liveness semantics and richer restart or backoff policy
 

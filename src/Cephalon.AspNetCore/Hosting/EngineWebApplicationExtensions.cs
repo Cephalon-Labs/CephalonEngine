@@ -128,6 +128,8 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonTrustPolicy");
         engineGroup.MapGet("/status", (IRuntime runtime) => TypedResults.Ok(runtime.StatusSnapshot))
             .WithName("GetCephalonStatus");
+        engineGroup.MapGet("/runtime-story", (IRuntime runtime) => TypedResults.Ok(runtime.OperationalStory))
+            .WithName("GetCephalonRuntimeStory");
         engineGroup.MapGet("/diagnostics", (RuntimeHealthEvaluator health, IRuntimeDiagnosticsCatalog diagnosticsCatalog) => TypedResults.Ok(new DiagnosticsSurface(
                 MeterName: EngineDiagnostics.MeterName,
                 ActivitySourceName: EngineDiagnostics.ActivitySourceName,

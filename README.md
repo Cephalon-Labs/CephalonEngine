@@ -113,6 +113,7 @@ When the playground is running, open:
 - `/engine`
 - `/engine/manifest`
 - `/engine/snapshot`
+- `/engine/runtime-story`
 - `/engine/app-model`
 - `/engine/scaffold`
 - `/engine/modules`
@@ -497,6 +498,8 @@ That gives Cephalon a predictable precedence chain:
 
 `/engine` continues to expose manifest v2 data, and `/engine/manifest` is now the explicit alias for that contract. The manifest includes the schema version, engine version, per-module version and metadata, capability source-module mapping, and explicit package load metadata for modules that came from assembly paths, manifest files, or configured package directories. When operators need that manifest plus the current runtime status and active technology-pack surfaces in a single payload, `GET /engine/snapshot` and `IRuntimeIntrospectionSnapshotProvider` are now the preferred integration point.
 
+When operators need the shorter answer to “what loaded, what started, what failed, and why?”, `GET /engine/runtime-story` now exposes loaded packages, per-module lifecycle state, and an ordered runtime timeline in one host-agnostic contract that also folds into `GET /engine/snapshot`.
+
 `Engine:PackagePolicy` is now the baseline governance surface for package metadata and discovery rules. It can disallow raw DLL-path package loads and require `version`, engine compatibility fields, target framework declarations, publisher ids, signer fingerprints, or `integrity.sha256` before a package is allowed to load.
 
 `Engine:Trust` is now the baseline governance surface for package and capability policy. It can require explicit trust for package-loaded assemblies, declare trusted package, assembly, publisher, signer-fingerprint, or checksum allow-lists, and override capability access per capability key.
@@ -574,7 +577,7 @@ Lifecycle is now host-managed for ASP.NET Core. When the host starts, Cephalon i
 
 Runtime failure policy is now configuration-driven through `Engine:FailurePolicy`. Startup can either `FailFast` or `CaptureOnly`, stop behavior can either `FailFast` or `BestEffortContinue`, and the runtime tracks restart limits for explicit `RestartAsync(...)` calls. `/engine/failure-policy` exposes the effective policy, while `/engine/status` now includes restart count and the most recent failure context when the runtime is in a failed state.
 
-Operational health is now a first-class host surface too. ASP.NET Core hosts expose `/health`, `/health/live`, and `/health/ready` with JSON payloads backed by the runtime state machine, while `/engine/diagnostics` exposes the engine meter, activity source, counter names, the published package-level diagnostics conventions and event-id catalog, and the current liveness/readiness reports in one place.
+Operational health is now a first-class host surface too. ASP.NET Core hosts expose `/health`, `/health/live`, and `/health/ready` with JSON payloads backed by the runtime state machine, while `/engine/diagnostics` exposes the engine meter, activity source, counter names, the published package-level diagnostics conventions and event-id catalog, and the current liveness/readiness reports in one place. The companion `GET /engine/runtime-story` route answers the adjacent operator question of what actually loaded, started, failed, and why, without forcing callers to join manifest, status, and failure payloads by hand.
 
 Modules and installed packages can now also contribute dependency health details through `IDependencyHealthContributor`. That keeps dependency-specific health checks host-agnostic, exposes them through `/engine/dependencies`, and folds them into `/health/live`, `/health/ready`, and `/engine/diagnostics` without hardwiring database or infrastructure assumptions into the engine itself. Hosts that want supported provider-specific probes can pair that contract with `Cephalon.Observability.HttpDependencies` for external APIs, `Cephalon.Observability.PostgresDependencies` for Postgres databases, `Cephalon.Observability.RabbitMqDependencies` for RabbitMQ brokers, or `Cephalon.Observability.RedisDependencies` for Redis and cache endpoints.
 

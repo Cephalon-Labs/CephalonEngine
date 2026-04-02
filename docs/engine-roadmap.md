@@ -140,7 +140,7 @@ Deliverables:
 Current inventory:
 
 - `docs/operational-hardening-gap-inventory.md` now records the shipped baseline versus the remaining phase-2 gaps so follow-through work stays grounded in the code that already exists
-- that inventory now includes a shipped `Cephalon.Observability.OpenTelemetry` companion package plus shipped `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, and `Cephalon.Observability.RedisDependencies` companion packages, together with a published runtime diagnostics catalog for the active engine and companion packages, which narrows the open phase-2 work to broader dependency-health coverage, richer runtime answers, deeper health semantics, and release-validation guidance
+- that inventory now includes a shipped `Cephalon.Observability.OpenTelemetry` companion package plus shipped `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, and `Cephalon.Observability.RedisDependencies` companion packages, together with a published runtime diagnostics catalog and runtime-story surface for the active engine and companion packages, which narrows the open phase-2 work to broader dependency-health coverage, deeper health semantics, and release-validation guidance
 
 Exit criteria:
 
@@ -222,7 +222,7 @@ Exit criteria:
 
 Updated priority order as of `April 2, 2026`:
 
-1. operational hardening follow-through: broader dependency-health packs, readiness/liveness semantics, richer operator answers, and release-validation guidance now that the exporter path is shipped, HTTP plus Postgres plus RabbitMQ plus Redis coverage have landed, and the structured diagnostics catalog is in place
+1. operational hardening follow-through: broader dependency-health packs, readiness/liveness semantics, and release-validation guidance now that the exporter path is shipped, HTTP plus Postgres plus RabbitMQ plus Redis coverage have landed, and both the structured diagnostics catalog and runtime-story surface are in place
 2. package/plugin loading
 3. package distribution, provenance, and richer trust follow-through beyond the current baseline
 4. workflow and orchestration primitives

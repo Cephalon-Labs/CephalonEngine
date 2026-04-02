@@ -3552,6 +3552,16 @@ IReadOnlyList<IModule> Modules { get; }
 
 Gets the modules that participate in runtime lifecycle transitions.
 
+<a id="member-p-cephalon-engine-runtime-engineruntime-operationalstory"></a>
+
+##### `OperationalStory`
+
+```csharp
+RuntimeOperationalStory OperationalStory { get; }
+```
+
+Gets the richer operator-facing lifecycle story for the runtime.
+
 <a id="member-p-cephalon-engine-runtime-engineruntime-restartcount"></a>
 
 ##### `RestartCount`
@@ -3709,6 +3719,16 @@ IReadOnlyList<IModule> Modules { get; }
 ```
 
 Gets the ordered module set that participates in runtime lifecycle execution.
+
+<a id="member-p-cephalon-engine-runtime-iruntime-operationalstory"></a>
+
+##### `OperationalStory`
+
+```csharp
+RuntimeOperationalStory OperationalStory { get; }
+```
+
+Gets the richer operator-facing runtime story that explains what loaded, started, failed, and why.
 
 <a id="member-p-cephalon-engine-runtime-iruntime-restartcount"></a>
 
@@ -4189,7 +4209,7 @@ The runtime is not healthy enough to serve traffic.
 
 Combines the main operator-facing runtime views into a single payload.
 
-Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, technology-pack details, and diagnostics conventions.
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, technology-pack details, diagnostics conventions, and lifecycle story data.
 
 #### Declaration
 ```csharp
@@ -4198,23 +4218,24 @@ public sealed class RuntimeIntrospectionSnapshot
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention"></a>
+<a id="member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention-cephalon-engine-runtime-runtimeoperationalstory"></a>
 
 ##### `RuntimeIntrospectionSnapshot`
 
 ```csharp
-RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces, IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions)
+RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces, IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions, RuntimeOperationalStory OperationalStory)
 ```
 
 Combines the main operator-facing runtime views into a single payload.
 
-Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, technology-pack details, and diagnostics conventions.
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, technology-pack details, diagnostics conventions, and lifecycle story data.
 
 Parameters:
 - `Manifest`: The immutable manifest that describes the built runtime shape.
 - `Status`: The current lifecycle status of the runtime.
 - `TechnologySurfaces`: The active technology-pack runtime surfaces visible to the runtime at the time the snapshot was created.
 - `DiagnosticsConventions`: The diagnostics conventions and published event-id catalogs visible to the runtime at the time the snapshot was created.
+- `OperationalStory`: The richer operator-facing lifecycle story that combines loaded packages, module state, and the ordered runtime timeline.
 
 #### Properties
 
@@ -4238,6 +4259,16 @@ RuntimeManifest Manifest { get; set; }
 
 The immutable manifest that describes the built runtime shape.
 
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-operationalstory"></a>
+
+##### `OperationalStory`
+
+```csharp
+RuntimeOperationalStory OperationalStory { get; set; }
+```
+
+The richer operator-facing lifecycle story that combines loaded packages, module state, and the ordered runtime timeline.
+
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-status"></a>
 
 ##### `Status`
@@ -4257,6 +4288,489 @@ IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces { get; set; }
 ```
 
 The active technology-pack runtime surfaces visible to the runtime at the time the snapshot was created.
+
+<a id="type-cephalon-engine-runtime-runtimelifecycleevent"></a>
+
+### `RuntimeLifecycleEvent`
+
+Captures one operator-facing lifecycle event in the runtime story timeline.
+
+#### Declaration
+```csharp
+public sealed class RuntimeLifecycleEvent
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-runtime-runtimelifecycleevent-ctor-system-datetimeoffset-cephalon-engine-runtime-runtimelifecycleeventscope-system-string-cephalon-engine-runtime-runtimelifecycleeventoutcome-cephalon-engine-runtime-runtimestatus-system-string-system-string-system-string-system-string"></a>
+
+##### `RuntimeLifecycleEvent`
+
+```csharp
+RuntimeLifecycleEvent(DateTimeOffset OccurredAtUtc, RuntimeLifecycleEventScope Scope, string Phase, RuntimeLifecycleEventOutcome Outcome, RuntimeStatus RuntimeStatus, string SubjectId, string SubjectVersion, string Message, string ExceptionType)
+```
+
+Captures one operator-facing lifecycle event in the runtime story timeline.
+
+Parameters:
+- `OccurredAtUtc`: The UTC timestamp when the event was recorded.
+- `Scope`: The runtime surface that emitted the event.
+- `Phase`: The lifecycle phase or story phase, such as `load`, `initialize`, `start`, `stop`, or `restart`.
+- `Outcome`: The completion outcome for the event.
+- `RuntimeStatus`: The runtime status visible when the event was recorded.
+- `SubjectId`: The runtime, module, or package identifier associated with the event when available.
+- `SubjectVersion`: The version associated with the event subject when available.
+- `Message`: The operator-facing narrative for the event.
+- `ExceptionType`: The exception type captured for failed events when available.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-exceptiontype"></a>
+
+##### `ExceptionType`
+
+```csharp
+string ExceptionType { get; set; }
+```
+
+The exception type captured for failed events when available.
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-message"></a>
+
+##### `Message`
+
+```csharp
+string Message { get; set; }
+```
+
+The operator-facing narrative for the event.
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-occurredatutc"></a>
+
+##### `OccurredAtUtc`
+
+```csharp
+DateTimeOffset OccurredAtUtc { get; set; }
+```
+
+The UTC timestamp when the event was recorded.
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+RuntimeLifecycleEventOutcome Outcome { get; set; }
+```
+
+The completion outcome for the event.
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-phase"></a>
+
+##### `Phase`
+
+```csharp
+string Phase { get; set; }
+```
+
+The lifecycle phase or story phase, such as `load`, `initialize`, `start`, `stop`, or `restart`.
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-runtimestatus"></a>
+
+##### `RuntimeStatus`
+
+```csharp
+RuntimeStatus RuntimeStatus { get; set; }
+```
+
+The runtime status visible when the event was recorded.
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-scope"></a>
+
+##### `Scope`
+
+```csharp
+RuntimeLifecycleEventScope Scope { get; set; }
+```
+
+The runtime surface that emitted the event.
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-subjectid"></a>
+
+##### `SubjectId`
+
+```csharp
+string SubjectId { get; set; }
+```
+
+The runtime, module, or package identifier associated with the event when available.
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-subjectversion"></a>
+
+##### `SubjectVersion`
+
+```csharp
+string SubjectVersion { get; set; }
+```
+
+The version associated with the event subject when available.
+
+<a id="type-cephalon-engine-runtime-runtimelifecycleeventoutcome"></a>
+
+### `RuntimeLifecycleEventOutcome`
+
+Describes whether one lifecycle event completed successfully or failed.
+
+#### Declaration
+```csharp
+public enum RuntimeLifecycleEventOutcome
+```
+
+#### Fields
+
+<a id="member-f-cephalon-engine-runtime-runtimelifecycleeventoutcome-failed"></a>
+
+##### `Failed`
+
+```csharp
+const RuntimeLifecycleEventOutcome Failed
+```
+
+The lifecycle event failed.
+
+<a id="member-f-cephalon-engine-runtime-runtimelifecycleeventoutcome-succeeded"></a>
+
+##### `Succeeded`
+
+```csharp
+const RuntimeLifecycleEventOutcome Succeeded
+```
+
+The lifecycle event completed successfully.
+
+<a id="type-cephalon-engine-runtime-runtimelifecycleeventscope"></a>
+
+### `RuntimeLifecycleEventScope`
+
+Identifies which runtime surface produced one operator-facing lifecycle event.
+
+#### Declaration
+```csharp
+public enum RuntimeLifecycleEventScope
+```
+
+#### Fields
+
+<a id="member-f-cephalon-engine-runtime-runtimelifecycleeventscope-module"></a>
+
+##### `Module`
+
+```csharp
+const RuntimeLifecycleEventScope Module
+```
+
+The event belongs to one module lifecycle transition.
+
+<a id="member-f-cephalon-engine-runtime-runtimelifecycleeventscope-package"></a>
+
+##### `Package`
+
+```csharp
+const RuntimeLifecycleEventScope Package
+```
+
+The event belongs to package loading and package-origin visibility.
+
+<a id="member-f-cephalon-engine-runtime-runtimelifecycleeventscope-runtime"></a>
+
+##### `Runtime`
+
+```csharp
+const RuntimeLifecycleEventScope Runtime
+```
+
+The event belongs to the overall runtime lifecycle.
+
+<a id="type-cephalon-engine-runtime-runtimemodulelifecyclestate"></a>
+
+### `RuntimeModuleLifecycleState`
+
+Describes the current operator-facing lifecycle state for one loaded module.
+
+#### Declaration
+```csharp
+public sealed class RuntimeModuleLifecycleState
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-runtime-runtimemodulelifecyclestate-ctor-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-nullable-system-datetimeoffset-cephalon-engine-runtime-runtimefailureinfo"></a>
+
+##### `RuntimeModuleLifecycleState`
+
+```csharp
+RuntimeModuleLifecycleState(string ModuleId, string DisplayName, string Version, string AssemblyName, string PackageId, DateTimeOffset? LoadedAtUtc, DateTimeOffset? InitializedAtUtc, DateTimeOffset? StartedAtUtc, DateTimeOffset? StoppedAtUtc, string LastObservedPhase, DateTimeOffset? LastObservedAtUtc, RuntimeFailureInfo LastFailure)
+```
+
+Describes the current operator-facing lifecycle state for one loaded module.
+
+Parameters:
+- `ModuleId`: The stable module identifier.
+- `DisplayName`: The operator-facing module display name.
+- `Version`: The effective module version.
+- `AssemblyName`: The assembly that contains the module implementation.
+- `PackageId`: The package that supplied the module when package loading was used.
+- `LoadedAtUtc`: The UTC timestamp when the module became part of the built runtime story.
+- `InitializedAtUtc`: The UTC timestamp when module initialization last completed successfully.
+- `StartedAtUtc`: The UTC timestamp when module startup last completed successfully.
+- `StoppedAtUtc`: The UTC timestamp when module shutdown last completed successfully.
+- `LastObservedPhase`: The last lifecycle phase recorded for the module.
+- `LastObservedAtUtc`: The UTC timestamp when the last lifecycle phase was recorded for the module.
+- `LastFailure`: The last failure recorded for the module when one is still relevant to the current runtime story.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-assemblyname"></a>
+
+##### `AssemblyName`
+
+```csharp
+string AssemblyName { get; set; }
+```
+
+The assembly that contains the module implementation.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; set; }
+```
+
+The operator-facing module display name.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-initializedatutc"></a>
+
+##### `InitializedAtUtc`
+
+```csharp
+DateTimeOffset? InitializedAtUtc { get; set; }
+```
+
+The UTC timestamp when module initialization last completed successfully.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isinitialized"></a>
+
+##### `IsInitialized`
+
+```csharp
+bool IsInitialized { get; }
+```
+
+Gets a value indicating whether the module completed initialization successfully.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isloaded"></a>
+
+##### `IsLoaded`
+
+```csharp
+bool IsLoaded { get; }
+```
+
+Gets a value indicating whether the module is present in the built runtime.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isstarted"></a>
+
+##### `IsStarted`
+
+```csharp
+bool IsStarted { get; }
+```
+
+Gets a value indicating whether the module most recently completed startup without a later successful stop.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isstopped"></a>
+
+##### `IsStopped`
+
+```csharp
+bool IsStopped { get; }
+```
+
+Gets a value indicating whether the module most recently completed shutdown.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-lastfailure"></a>
+
+##### `LastFailure`
+
+```csharp
+RuntimeFailureInfo LastFailure { get; set; }
+```
+
+The last failure recorded for the module when one is still relevant to the current runtime story.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-lastobservedatutc"></a>
+
+##### `LastObservedAtUtc`
+
+```csharp
+DateTimeOffset? LastObservedAtUtc { get; set; }
+```
+
+The UTC timestamp when the last lifecycle phase was recorded for the module.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-lastobservedphase"></a>
+
+##### `LastObservedPhase`
+
+```csharp
+string LastObservedPhase { get; set; }
+```
+
+The last lifecycle phase recorded for the module.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-loadedatutc"></a>
+
+##### `LoadedAtUtc`
+
+```csharp
+DateTimeOffset? LoadedAtUtc { get; set; }
+```
+
+The UTC timestamp when the module became part of the built runtime story.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-moduleid"></a>
+
+##### `ModuleId`
+
+```csharp
+string ModuleId { get; set; }
+```
+
+The stable module identifier.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-packageid"></a>
+
+##### `PackageId`
+
+```csharp
+string PackageId { get; set; }
+```
+
+The package that supplied the module when package loading was used.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-startedatutc"></a>
+
+##### `StartedAtUtc`
+
+```csharp
+DateTimeOffset? StartedAtUtc { get; set; }
+```
+
+The UTC timestamp when module startup last completed successfully.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-stoppedatutc"></a>
+
+##### `StoppedAtUtc`
+
+```csharp
+DateTimeOffset? StoppedAtUtc { get; set; }
+```
+
+The UTC timestamp when module shutdown last completed successfully.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-version"></a>
+
+##### `Version`
+
+```csharp
+string Version { get; set; }
+```
+
+The effective module version.
+
+<a id="type-cephalon-engine-runtime-runtimeoperationalstory"></a>
+
+### `RuntimeOperationalStory`
+
+Combines the operator-facing runtime story into one payload that explains what loaded, started, failed, and why.
+
+#### Declaration
+```csharp
+public sealed class RuntimeOperationalStory
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-runtime-runtimeoperationalstory-ctor-system-datetimeoffset-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimemodulelifecyclestate-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimelifecycleevent"></a>
+
+##### `RuntimeOperationalStory`
+
+```csharp
+RuntimeOperationalStory(DateTimeOffset GeneratedAtUtc, RuntimeStatusSnapshot Status, IReadOnlyList<PackageManifest> LoadedPackages, IReadOnlyList<RuntimeModuleLifecycleState> Modules, IReadOnlyList<RuntimeLifecycleEvent> Timeline)
+```
+
+Combines the operator-facing runtime story into one payload that explains what loaded, started, failed, and why.
+
+Parameters:
+- `GeneratedAtUtc`: The UTC timestamp when the story snapshot was created.
+- `Status`: The current runtime lifecycle status snapshot.
+- `LoadedPackages`: The packages currently visible to the runtime story.
+- `Modules`: The current lifecycle state for each loaded module.
+- `Timeline`: The ordered lifecycle narrative for package load, module transitions, runtime transitions, and failures.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperationalstory-generatedatutc"></a>
+
+##### `GeneratedAtUtc`
+
+```csharp
+DateTimeOffset GeneratedAtUtc { get; set; }
+```
+
+The UTC timestamp when the story snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperationalstory-loadedpackages"></a>
+
+##### `LoadedPackages`
+
+```csharp
+IReadOnlyList<PackageManifest> LoadedPackages { get; set; }
+```
+
+The packages currently visible to the runtime story.
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperationalstory-modules"></a>
+
+##### `Modules`
+
+```csharp
+IReadOnlyList<RuntimeModuleLifecycleState> Modules { get; set; }
+```
+
+The current lifecycle state for each loaded module.
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperationalstory-status"></a>
+
+##### `Status`
+
+```csharp
+RuntimeStatusSnapshot Status { get; set; }
+```
+
+The current runtime lifecycle status snapshot.
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperationalstory-timeline"></a>
+
+##### `Timeline`
+
+```csharp
+IReadOnlyList<RuntimeLifecycleEvent> Timeline { get; set; }
+```
+
+The ordered lifecycle narrative for package load, module transitions, runtime transitions, and failures.
 
 <a id="type-cephalon-engine-runtime-runtimestatus"></a>
 

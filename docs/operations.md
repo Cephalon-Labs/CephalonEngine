@@ -258,6 +258,17 @@ Current shipped event-id ranges include:
 
 This is the quickest way to discover the engine's observability contract without opening code.
 
+## Runtime story surface
+
+`GET /engine/runtime-story` exposes the operator-facing lifecycle narrative in one place:
+
+- the current runtime status and last failure context
+- loaded package metadata for the active runtime
+- per-module lifecycle state, including loaded, initialized, started, and stopped timestamps
+- an ordered timeline for package load, module transitions, runtime transitions, restart attempts, and failures
+
+This is the quickest way to answer the adjacent operational question that `/engine/status`, `/engine/packages`, `/engine/diagnostics`, and `/engine/snapshot` already support in pieces: what loaded, what started, what failed, and why.
+
 ## Trust surface
 
 `GET /engine/trust-policy` exposes the effective package and capability trust snapshot:

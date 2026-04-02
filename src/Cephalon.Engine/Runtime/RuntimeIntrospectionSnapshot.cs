@@ -15,12 +15,16 @@ namespace Cephalon.Engine.Runtime;
 /// <param name="DiagnosticsConventions">
 /// The diagnostics conventions and published event-id catalogs visible to the runtime at the time the snapshot was created.
 /// </param>
+/// <param name="OperationalStory">
+/// The richer operator-facing lifecycle story that combines loaded packages, module state, and the ordered runtime timeline.
+/// </param>
 /// <remarks>
 /// This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime
-/// without issuing separate requests for manifest, status, technology-pack details, and diagnostics conventions.
+/// without issuing separate requests for manifest, status, technology-pack details, diagnostics conventions, and lifecycle story data.
 /// </remarks>
 public sealed record RuntimeIntrospectionSnapshot(
     RuntimeManifest Manifest,
     RuntimeStatusSnapshot Status,
     IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces,
-    IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions);
+    IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions,
+    RuntimeOperationalStory OperationalStory);
