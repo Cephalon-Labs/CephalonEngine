@@ -9,6 +9,9 @@ param(
         "FullyQualifiedName~Cephalon.Tests.Hosting.ObservabilityHostingTests.AddCephalonObservabilityLogsManifestSummaryAndRuntimeSurface",
         "FullyQualifiedName~Cephalon.Tests.Hosting.ObservabilityHostingTests.AddCephalonObservabilityLogsSelfHostedTelemetryDefaultEndpointWhenEnabled",
         "FullyQualifiedName~Cephalon.Tests.Hosting.SerilogHostingTests.AddCephalonSerilogReadsTheStandardSerilogConfigurationSection",
+        "FullyQualifiedName~Cephalon.Tests.Hosting.AlibabaCloudHostingTests.AddCephalonAlibabaCloudRegistersWhenManagedGrpcIngestionIsEnabled",
+        "FullyQualifiedName~Cephalon.Tests.Hosting.AlibabaCloudHostingTests.AddCephalonAlibabaCloudRegistersWhenManagedHttpIngestionIsEnabled",
+        "FullyQualifiedName~Cephalon.Tests.Hosting.AlibabaCloudHostingTests.AddCephalonAlibabaCloudLogsHostedPlatformSummaryWhenConfigured",
         "FullyQualifiedName~Cephalon.Tests.Hosting.AwsHostingTests.AddCephalonAwsRegistersWhenEndpointIsConfigured",
         "FullyQualifiedName~Cephalon.Tests.Hosting.AwsHostingTests.AddCephalonAwsLogsHostedPlatformSummaryWhenConfigured",
         "FullyQualifiedName~Cephalon.Tests.Hosting.AzureMonitorHostingTests.AddCephalonAzureMonitorRegistersWhenConnectionStringIsConfigured",
@@ -43,7 +46,7 @@ function Invoke-DotNet {
 $filterExpression = $TestFilters -join "|"
 
 Write-Host "Validating Cephalon operational health and telemetry-export conventions..." -ForegroundColor Cyan
-Write-Host "Focused suite covers ASP.NET Core health routes, worker-host health parity, observability startup guidance, Serilog provider wiring, AWS hosted defaults, GCP managed-ingestion defaults, Huawei Cloud managed traces, Azure Monitor exporter wiring, and OTLP exporter wiring." -ForegroundColor DarkCyan
+Write-Host "Focused suite covers ASP.NET Core health routes, worker-host health parity, observability startup guidance, Serilog provider wiring, Alibaba Cloud managed ingestion, AWS hosted defaults, GCP managed-ingestion defaults, Huawei Cloud managed traces, Azure Monitor exporter wiring, and OTLP exporter wiring." -ForegroundColor DarkCyan
 
 Push-Location $repoRoot
 try {
