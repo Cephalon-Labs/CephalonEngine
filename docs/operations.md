@@ -977,6 +977,7 @@ Current shipped event-id ranges include:
 - `Cephalon.Observability`: `3000-3006`
 - `Cephalon.Observability.Gcp`: `3111-3111`
 - `Cephalon.Observability.HuaweiCloud`: `3112-3112`
+- `Cephalon.Observability.AlibabaCloud`: `3113-3113`
 - `Cephalon.Observability.CassandraDependencies`: `3146-3147`
 - `Cephalon.Observability.ConsulDependencies`: `3142-3143`
 - `Cephalon.Observability.ElasticsearchDependencies`: `3138-3139`
@@ -1127,7 +1128,7 @@ Operational notes:
 - when `UseSelfHostedDefaults` is `true` and `Endpoint` is omitted, the package falls back to `http://localhost:4317` for `otlp` / `otlp/grpc` or `http://localhost:4318` for `otlp/http`
 - when `otlp/http` is selected, the package appends `/v1/logs`, `/v1/metrics`, and `/v1/traces` automatically from the configured base endpoint
 - the self-hosted path also adds `deployment.environment.name` from the active host environment alongside the existing service-name and service-version resource defaults
-- downstream companion packages should reuse this same contract instead of introducing a second Cephalon telemetry abstraction; that is the intended path for Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, OpenShift, Tanzu, or internal-provider integrations
+- downstream companion packages should reuse this same contract instead of introducing a second Cephalon telemetry abstraction; that is the intended path for Cloudflare, DigitalOcean, OpenShift, Tanzu, or internal-provider integrations
 
 ## AWS observability path
 
@@ -1272,6 +1273,56 @@ Operational notes:
 - managed APM trace ingestion requires `Engine:Observability:Telemetry:Protocol` to stay on `otlp` or `otlp/grpc`
 - direct Huawei Cloud managed APM ingestion does not re-route logs or metrics; keep those signals on the shared collector path or another runtime-specific route
 - `HostedPlatform` can be `ecs`, `cce`, or `functiongraph`
+- `Region` lets the package stamp `cloud.region` when a deployment wants that value to stay explicit
+
+## Alibaba Cloud observability path
+
+`Cephalon.Observability.AlibabaCloud` keeps hosted Alibaba Cloud defaults and an optional managed OpenTelemetry traces/metrics path in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "Telemetry": {
+        "Provider": "OpenTelemetry",
+        "Protocol": "otlp",
+        "ExportLogs": false,
+        "ExportMetrics": true,
+        "ExportTraces": true,
+        "AlibabaCloud": {
+          "HostedPlatform": "ecs",
+          "Region": "cn-hangzhou",
+          "UseManagedOpenTelemetryIngestion": true,
+          "ManagedGrpcEndpoint": "https://otel.example.aliyuncs.com:8000",
+          "AuthenticationToken": "replace-with-managed-otel-authentication-token"
+        }
+      }
+    }
+  }
+}
+```
+
+Host registration example:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonObservability(builder.Configuration);
+builder.AddCephalonAlibabaCloud();
+```
+
+Operational notes:
+
+- the Alibaba Cloud package is optional and stays outside `Cephalon.Engine`
+- when `Engine:Observability:Telemetry:Endpoint` or `UseSelfHostedDefaults` is configured, the package keeps using the shared collector-oriented OTLP path and only adds hosted Alibaba Cloud resource defaults
+- when `Engine:Observability:Telemetry:AlibabaCloud:UseManagedOpenTelemetryIngestion` is `true` and no shared endpoint is configured, the package targets the configured Alibaba Cloud Managed Service for OpenTelemetry path for traces and metrics
+- managed Alibaba Cloud OTLP/gRPC ingestion requires `Engine:Observability:Telemetry:Protocol` to stay on `otlp` or `otlp/grpc` and uses the Alibaba Cloud `Authentication` header
+- managed Alibaba Cloud OTLP/HTTP ingestion requires `Engine:Observability:Telemetry:Protocol` to stay on `otlp/http` and uses the configured signal-specific traces and metrics endpoints directly
+- direct Alibaba Cloud managed ingestion does not re-route logs; keep logs on the shared collector path, SLS, or another runtime-specific route
+- `HostedPlatform` can be `ecs`, `fc`, `functioncompute`, or `openshift`
 - `Region` lets the package stamp `cloud.region` when a deployment wants that value to stay explicit
 
 ## Azure Monitor exporter path
@@ -1431,6 +1482,7 @@ It executes a curated test suite that validates:
 - worker-host parity through `RuntimeHealthEvaluator`
 - startup manifest and telemetry-export guidance emitted by `Cephalon.Observability`, including self-hosted OTLP default endpoint guidance
 - Serilog provider wiring through `Cephalon.Observability.Serilog`
+- Alibaba Cloud-hosted defaults and managed OpenTelemetry traces/metrics through `Cephalon.Observability.AlibabaCloud`
 - AWS-hosted OTLP defaults through `Cephalon.Observability.Aws`
 - GCP-hosted defaults through `Cephalon.Observability.Gcp`
 - Huawei Cloud-hosted defaults and managed APM traces through `Cephalon.Observability.HuaweiCloud`

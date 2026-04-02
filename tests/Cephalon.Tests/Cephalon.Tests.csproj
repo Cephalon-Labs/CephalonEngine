@@ -50,6 +50,7 @@
     <ProjectReference Include="..\..\src\Cephalon.Observability.MySqlDependencies\Cephalon.Observability.MySqlDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.NatsDependencies\Cephalon.Observability.NatsDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.Neo4jDependencies\Cephalon.Observability.Neo4jDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.AlibabaCloud\Cephalon.Observability.AlibabaCloud.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.Aws\Cephalon.Observability.Aws.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.AzureMonitor\Cephalon.Observability.AzureMonitor.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.Gcp\Cephalon.Observability.Gcp.csproj" />

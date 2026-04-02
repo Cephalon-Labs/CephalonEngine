@@ -69,6 +69,9 @@ Browse the published API surface by public member.
 - [AddCephalon](cephalon-worker.md#member-m-cephalon-worker-hosting-workerhostapplicationbuilderextensions-addcephalon-microsoft-extensions-hosting-hostapplicationbuilder-system-action-cephalon-engine-composition-enginebuilder): `Methods` on `WorkerHostApplicationBuilderExtensions` in `Cephalon.Worker.Hosting` (`Cephalon.Worker`) [Browse](browse.html?q=AddCephalon&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting&scope=members)
   - Adds Cephalon worker hosting and allows additional code-based engine configuration.
   - `HostApplicationBuilder AddCephalon(this HostApplicationBuilder builder, Action<EngineBuilder> configure)`
+- [AddCephalonAlibabaCloud](cephalon-observability-alibabacloud.md#member-m-cephalon-observability-alibabacloud-hosting-alibabacloudhostapplicationbuilderextensions-addcephalonalibabacloud-1-0-system-action-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions): `Methods` on `AlibabaCloudHostApplicationBuilderExtensions` in `Cephalon.Observability.AlibabaCloud.Hosting` (`Cephalon.Observability.AlibabaCloud`) [Browse](browse.html?q=AddCephalonAlibabaCloud&assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Hosting&scope=members)
+  - Adds Alibaba Cloud-aware OpenTelemetry registration for the Cephalon engine diagnostics surface.
+  - `TBuilder AddCephalonAlibabaCloud<TBuilder>(this TBuilder builder, Action<AlibabaCloudTelemetryExportOptions> configure)`
 - [AddCephalonAws](cephalon-observability-aws.md#member-m-cephalon-observability-aws-hosting-awshostapplicationbuilderextensions-addcephalonaws-1-0-system-action-cephalon-observability-aws-configuration-awstelemetryexportoptions): `Methods` on `AwsHostApplicationBuilderExtensions` in `Cephalon.Observability.Aws.Hosting` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=AddCephalonAws&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Hosting&scope=members)
   - Adds AWS-aware OpenTelemetry registration for the Cephalon engine diagnostics surface.
   - `TBuilder AddCephalonAws<TBuilder>(this TBuilder builder, Action<AwsTelemetryExportOptions> configure)`
@@ -309,6 +312,9 @@ Browse the published API surface by public member.
 - [Algorithm](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-algorithm): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Algorithm&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared signature algorithm.
   - `string Algorithm { get; }`
+- [AlibabaCloudTelemetryExportOptions](cephalon-observability-alibabacloud.md#member-m-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-ctor): `Constructors` on `AlibabaCloudTelemetryExportOptions` in `Cephalon.Observability.AlibabaCloud.Configuration` (`Cephalon.Observability.AlibabaCloud`) [Browse](browse.html?q=AlibabaCloudTelemetryExportOptions&assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Configuration&scope=members)
+  - Initializes a new instance of the `AlibabaCloudTelemetryExportOptions` class.
+  - `AlibabaCloudTelemetryExportOptions()`
 - [All](cephalon-engine.md#member-p-cephalon-engine-appmodel-builtinblueprints-all): `Properties` on `BuiltInBlueprints` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=All&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
   - Gets all built-in blueprints.
   - `IReadOnlyList<AppBlueprint> All { get; }`
@@ -387,6 +393,9 @@ Browse the published API surface by public member.
 - [AssemblyPathKind](cephalon-engine.md#member-f-cephalon-engine-configuration-modulepackagereference-assemblypathkind): `Fields` on `ModulePackageReference` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=AssemblyPathKind&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Identifies a package input that points directly to an assembly path.
   - `const string AssemblyPathKind`
+- [AuthenticationToken](cephalon-observability-alibabacloud.md#member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-authenticationtoken): `Properties` on `AlibabaCloudTelemetryExportOptions` in `Cephalon.Observability.AlibabaCloud.Configuration` (`Cephalon.Observability.AlibabaCloud`) [Browse](browse.html?q=AuthenticationToken&assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Configuration&scope=members)
+  - Gets or sets the authentication token written to the Alibaba Cloud `Authentication` header for OTLP/gRPC direct managed ingestion.
+  - `string AuthenticationToken { get; set; }`
 - [AuthenticationToken](cephalon-observability-huaweicloud.md#member-p-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions-authenticationtoken): `Properties` on `HuaweiCloudTelemetryExportOptions` in `Cephalon.Observability.HuaweiCloud.Configuration` (`Cephalon.Observability.HuaweiCloud`) [Browse](browse.html?q=AuthenticationToken&assembly=Cephalon.Observability.HuaweiCloud&namespace=Cephalon.Observability.HuaweiCloud.Configuration&scope=members)
   - Gets or sets the authentication token written to the Huawei Cloud `Authentication` header for direct managed trace ingestion.
   - `string AuthenticationToken { get; set; }`
@@ -1230,6 +1239,9 @@ Browse the published API surface by public member.
 - [Foundation](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-foundation): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Foundation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies the shared foundation project.
   - `const string Foundation`
+- [FromConfiguration](cephalon-observability-alibabacloud.md#member-m-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `AlibabaCloudTelemetryExportOptions` in `Cephalon.Observability.AlibabaCloud.Configuration` (`Cephalon.Observability.AlibabaCloud`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Configuration&scope=members)
+  - Binds Alibaba Cloud telemetry export options from configuration.
+  - `AlibabaCloudTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability-aws.md#member-m-cephalon-observability-aws-configuration-awstelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `AwsTelemetryExportOptions` in `Cephalon.Observability.Aws.Configuration` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Configuration&scope=members)
   - Binds AWS telemetry export options from configuration.
   - `AwsTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -1473,6 +1485,9 @@ Browse the published API surface by public member.
 - [Host](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-host): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the SQL Server host name or IP address to probe when no full connection string is supplied.
   - `string Host { get; set; }`
+- [HostedPlatform](cephalon-observability-alibabacloud.md#member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-hostedplatform): `Properties` on `AlibabaCloudTelemetryExportOptions` in `Cephalon.Observability.AlibabaCloud.Configuration` (`Cephalon.Observability.AlibabaCloud`) [Browse](browse.html?q=HostedPlatform&assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Configuration&scope=members)
+  - Gets or sets the hosted Alibaba Cloud platform whose default resource attributes should be applied.
+  - `string HostedPlatform { get; set; }`
 - [HostedPlatform](cephalon-observability-aws.md#member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-hostedplatform): `Properties` on `AwsTelemetryExportOptions` in `Cephalon.Observability.Aws.Configuration` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=HostedPlatform&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Configuration&scope=members)
   - Gets or sets the hosted AWS platform whose default resource attributes and detectors should be applied.
   - `string HostedPlatform { get; set; }`
@@ -1830,6 +1845,15 @@ Browse the published API surface by public member.
 
 ## M
 
+- [ManagedGrpcEndpoint](cephalon-observability-alibabacloud.md#member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-managedgrpcendpoint): `Properties` on `AlibabaCloudTelemetryExportOptions` in `Cephalon.Observability.AlibabaCloud.Configuration` (`Cephalon.Observability.AlibabaCloud`) [Browse](browse.html?q=ManagedGrpcEndpoint&assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Configuration&scope=members)
+  - Gets or sets the Alibaba Cloud Managed Service for OpenTelemetry OTLP/gRPC endpoint used for direct managed traces and metrics ingestion.
+  - `string ManagedGrpcEndpoint { get; set; }`
+- [ManagedHttpMetricsEndpoint](cephalon-observability-alibabacloud.md#member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-managedhttpmetricsendpoint): `Properties` on `AlibabaCloudTelemetryExportOptions` in `Cephalon.Observability.AlibabaCloud.Configuration` (`Cephalon.Observability.AlibabaCloud`) [Browse](browse.html?q=ManagedHttpMetricsEndpoint&assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Configuration&scope=members)
+  - Gets or sets the Alibaba Cloud Managed Service for OpenTelemetry OTLP/HTTP metrics endpoint used for direct managed ingestion.
+  - `string ManagedHttpMetricsEndpoint { get; set; }`
+- [ManagedHttpTracesEndpoint](cephalon-observability-alibabacloud.md#member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-managedhttptracesendpoint): `Properties` on `AlibabaCloudTelemetryExportOptions` in `Cephalon.Observability.AlibabaCloud.Configuration` (`Cephalon.Observability.AlibabaCloud`) [Browse](browse.html?q=ManagedHttpTracesEndpoint&assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Configuration&scope=members)
+  - Gets or sets the Alibaba Cloud Managed Service for OpenTelemetry OTLP/HTTP traces endpoint used for direct managed ingestion.
+  - `string ManagedHttpTracesEndpoint { get; set; }`
 - [Manifest](cephalon-engine.md#member-p-cephalon-engine-runtime-engineruntime-manifest): `Properties` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Manifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the runtime manifest that describes the built runtime shape.
   - `RuntimeManifest Manifest { get; }`
@@ -2547,6 +2571,9 @@ Browse the published API surface by public member.
 - [RefreshIntervalSeconds](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions-refreshintervalseconds): `Properties` on `SqlServerDependencyHealthOptions` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the interval, in seconds, between background refresh attempts.
   - `int RefreshIntervalSeconds { get; set; }`
+- [Region](cephalon-observability-alibabacloud.md#member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-region): `Properties` on `AlibabaCloudTelemetryExportOptions` in `Cephalon.Observability.AlibabaCloud.Configuration` (`Cephalon.Observability.AlibabaCloud`) [Browse](browse.html?q=Region&assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Configuration&scope=members)
+  - Gets or sets the Alibaba Cloud region to stamp onto exported resources when one should be explicit.
+  - `string Region { get; set; }`
 - [Region](cephalon-observability-huaweicloud.md#member-p-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions-region): `Properties` on `HuaweiCloudTelemetryExportOptions` in `Cephalon.Observability.HuaweiCloud.Configuration` (`Cephalon.Observability.HuaweiCloud`) [Browse](browse.html?q=Region&assembly=Cephalon.Observability.HuaweiCloud&namespace=Cephalon.Observability.HuaweiCloud.Configuration&scope=members)
   - Gets or sets the Huawei Cloud region to stamp onto exported resources when one should be explicit.
   - `string Region { get; set; }`
@@ -3465,6 +3492,9 @@ Browse the published API surface by public member.
 - [UseLocalization](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-uselocalization-cephalon-engine-configuration-localizationsettings): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseLocalization&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Merges localization settings into the current builder state.
   - `EngineBuilder UseLocalization(LocalizationSettings settings)`
+- [UseManagedOpenTelemetryIngestion](cephalon-observability-alibabacloud.md#member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-usemanagedopentelemetryingestion): `Properties` on `AlibabaCloudTelemetryExportOptions` in `Cephalon.Observability.AlibabaCloud.Configuration` (`Cephalon.Observability.AlibabaCloud`) [Browse](browse.html?q=UseManagedOpenTelemetryIngestion&assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Configuration&scope=members)
+  - Gets or sets a value indicating whether the package should use Alibaba Cloud Managed Service for OpenTelemetry when no shared collector endpoint is configured.
+  - `bool UseManagedOpenTelemetryIngestion { get; set; }`
 - [UseOptions](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-useoptions-cephalon-engine-configuration-engineoptions): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseOptions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Merges engine option overrides such as module enablement and capability toggles.
   - `EngineBuilder UseOptions(EngineOptions options)`

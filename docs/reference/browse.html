@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T19:29:37.8170069+00:00",
+  "GeneratedAtUtc": "2026-04-02T20:35:24.2194493+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -192,6 +192,14 @@
       "FileName": "cephalon-observability.md",
       "NamespaceCount": 2,
       "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.AlibabaCloud",
+      "Category": "Hosts",
+      "Description": "Alibaba Cloud OTLP defaults and managed OpenTelemetry traces/metrics integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-alibabacloud.md",
+      "NamespaceCount": 2,
+      "TypeCount": 2
     },
     {
       "AssemblyName": "Cephalon.Observability.Aws",
@@ -742,6 +750,20 @@
       "TypeCount": 4
     },
     {
+      "NamespaceName": "Cephalon.Observability.AlibabaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.AlibabaCloud",
+      "FileName": "cephalon-observability-alibabacloud.md",
+      "AnchorId": "namespace-cephalon-observability-alibabacloud-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.AlibabaCloud.Hosting",
+      "AssemblyName": "Cephalon.Observability.AlibabaCloud",
+      "FileName": "cephalon-observability-alibabacloud.md",
+      "AnchorId": "namespace-cephalon-observability-alibabacloud-hosting",
+      "TypeCount": 1
+    },
+    {
       "NamespaceName": "Cephalon.Observability.Aws.Configuration",
       "AssemblyName": "Cephalon.Observability.Aws",
       "FileName": "cephalon-observability-aws.md",
@@ -1185,6 +1207,36 @@
         "Fields": 0,
         "Properties": 4,
         "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "AlibabaCloudHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.AlibabaCloud.Hosting",
+      "AssemblyName": "Cephalon.Observability.AlibabaCloud",
+      "FileName": "cephalon-observability-alibabacloud.md",
+      "AnchorId": "type-cephalon-observability-alibabacloud-hosting-alibabacloudhostapplicationbuilderextensions",
+      "Declaration": "public static class AlibabaCloudHostApplicationBuilderExtensions",
+      "Summary": "Adds Alibaba Cloud-hosted observability defaults and optional managed OpenTelemetry ingestion for Cephalon hosts.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "AlibabaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.AlibabaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.AlibabaCloud",
+      "FileName": "cephalon-observability-alibabacloud.md",
+      "AnchorId": "type-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions",
+      "Declaration": "public sealed class AlibabaCloudTelemetryExportOptions",
+      "Summary": "Configures Alibaba Cloud observability defaults on top of the shared Cephalon telemetry contract.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 1
       }
     },
     {
@@ -4751,6 +4803,17 @@
       "Summary": "Adds Cephalon worker hosting and allows additional code-based engine configuration."
     },
     {
+      "DisplayName": "AddCephalonAlibabaCloud",
+      "Category": "Methods",
+      "DeclaringTypeName": "AlibabaCloudHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.AlibabaCloud.Hosting",
+      "AssemblyName": "Cephalon.Observability.AlibabaCloud",
+      "FileName": "cephalon-observability-alibabacloud.md",
+      "AnchorId": "member-m-cephalon-observability-alibabacloud-hosting-alibabacloudhostapplicationbuilderextensions-addcephalonalibabacloud-1-0-system-action-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions",
+      "Signature": "TBuilder AddCephalonAlibabaCloud\u003CTBuilder\u003E(this TBuilder builder, Action\u003CAlibabaCloudTelemetryExportOptions\u003E configure)",
+      "Summary": "Adds Alibaba Cloud-aware OpenTelemetry registration for the Cephalon engine diagnostics surface."
+    },
+    {
       "DisplayName": "AddCephalonAws",
       "Category": "Methods",
       "DeclaringTypeName": "AwsHostApplicationBuilderExtensions",
@@ -5631,6 +5694,17 @@
       "Summary": "Gets the declared signature algorithm."
     },
     {
+      "DisplayName": "AlibabaCloudTelemetryExportOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AlibabaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.AlibabaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.AlibabaCloud",
+      "FileName": "cephalon-observability-alibabacloud.md",
+      "AnchorId": "member-m-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-ctor",
+      "Signature": "AlibabaCloudTelemetryExportOptions()",
+      "Summary": "Initializes a new instance of the \u0060AlibabaCloudTelemetryExportOptions\u0060 class."
+    },
+    {
       "DisplayName": "All",
       "Category": "Properties",
       "DeclaringTypeName": "BuiltInBlueprints",
@@ -5915,6 +5989,17 @@
       "AnchorId": "member-f-cephalon-engine-configuration-modulepackagereference-assemblypathkind",
       "Signature": "const string AssemblyPathKind",
       "Summary": "Identifies a package input that points directly to an assembly path."
+    },
+    {
+      "DisplayName": "AuthenticationToken",
+      "Category": "Properties",
+      "DeclaringTypeName": "AlibabaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.AlibabaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.AlibabaCloud",
+      "FileName": "cephalon-observability-alibabacloud.md",
+      "AnchorId": "member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-authenticationtoken",
+      "Signature": "string AuthenticationToken { get; set; }",
+      "Summary": "Gets or sets the authentication token written to the Alibaba Cloud \u0060Authentication\u0060 header for OTLP/gRPC direct managed ingestion."
     },
     {
       "DisplayName": "AuthenticationToken",
@@ -8955,6 +9040,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "AlibabaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.AlibabaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.AlibabaCloud",
+      "FileName": "cephalon-observability-alibabacloud.md",
+      "AnchorId": "member-m-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "AlibabaCloudTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Alibaba Cloud telemetry export options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "AwsTelemetryExportOptions",
       "NamespaceName": "Cephalon.Observability.Aws.Configuration",
       "AssemblyName": "Cephalon.Observability.Aws",
@@ -9820,6 +9916,17 @@
       "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-host",
       "Signature": "string Host { get; set; }",
       "Summary": "Gets or sets the SQL Server host name or IP address to probe when no full connection string is supplied."
+    },
+    {
+      "DisplayName": "HostedPlatform",
+      "Category": "Properties",
+      "DeclaringTypeName": "AlibabaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.AlibabaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.AlibabaCloud",
+      "FileName": "cephalon-observability-alibabacloud.md",
+      "AnchorId": "member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-hostedplatform",
+      "Signature": "string HostedPlatform { get; set; }",
+      "Summary": "Gets or sets the hosted Alibaba Cloud platform whose default resource attributes should be applied."
     },
     {
       "DisplayName": "HostedPlatform",
@@ -11074,6 +11181,39 @@
       "AnchorId": "member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-logresponsebody",
       "Signature": "bool LogResponseBody { get; set; }",
       "Summary": "Gets or sets a value indicating whether textual response bodies should be logged."
+    },
+    {
+      "DisplayName": "ManagedGrpcEndpoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "AlibabaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.AlibabaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.AlibabaCloud",
+      "FileName": "cephalon-observability-alibabacloud.md",
+      "AnchorId": "member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-managedgrpcendpoint",
+      "Signature": "string ManagedGrpcEndpoint { get; set; }",
+      "Summary": "Gets or sets the Alibaba Cloud Managed Service for OpenTelemetry OTLP/gRPC endpoint used for direct managed traces and metrics ingestion."
+    },
+    {
+      "DisplayName": "ManagedHttpMetricsEndpoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "AlibabaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.AlibabaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.AlibabaCloud",
+      "FileName": "cephalon-observability-alibabacloud.md",
+      "AnchorId": "member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-managedhttpmetricsendpoint",
+      "Signature": "string ManagedHttpMetricsEndpoint { get; set; }",
+      "Summary": "Gets or sets the Alibaba Cloud Managed Service for OpenTelemetry OTLP/HTTP metrics endpoint used for direct managed ingestion."
+    },
+    {
+      "DisplayName": "ManagedHttpTracesEndpoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "AlibabaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.AlibabaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.AlibabaCloud",
+      "FileName": "cephalon-observability-alibabacloud.md",
+      "AnchorId": "member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-managedhttptracesendpoint",
+      "Signature": "string ManagedHttpTracesEndpoint { get; set; }",
+      "Summary": "Gets or sets the Alibaba Cloud Managed Service for OpenTelemetry OTLP/HTTP traces endpoint used for direct managed ingestion."
     },
     {
       "DisplayName": "Manifest",
@@ -13648,6 +13788,17 @@
       "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions-refreshintervalseconds",
       "Signature": "int RefreshIntervalSeconds { get; set; }",
       "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
+      "DisplayName": "Region",
+      "Category": "Properties",
+      "DeclaringTypeName": "AlibabaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.AlibabaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.AlibabaCloud",
+      "FileName": "cephalon-observability-alibabacloud.md",
+      "AnchorId": "member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-region",
+      "Signature": "string Region { get; set; }",
+      "Summary": "Gets or sets the Alibaba Cloud region to stamp onto exported resources when one should be explicit."
     },
     {
       "DisplayName": "Region",
@@ -16981,6 +17132,17 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-uselocalization-cephalon-engine-configuration-localizationsettings",
       "Signature": "EngineBuilder UseLocalization(LocalizationSettings settings)",
       "Summary": "Merges localization settings into the current builder state."
+    },
+    {
+      "DisplayName": "UseManagedOpenTelemetryIngestion",
+      "Category": "Properties",
+      "DeclaringTypeName": "AlibabaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.AlibabaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.AlibabaCloud",
+      "FileName": "cephalon-observability-alibabacloud.md",
+      "AnchorId": "member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-usemanagedopentelemetryingestion",
+      "Signature": "bool UseManagedOpenTelemetryIngestion { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the package should use Alibaba Cloud Managed Service for OpenTelemetry when no shared collector endpoint is configured."
     },
     {
       "DisplayName": "UseOptions",
