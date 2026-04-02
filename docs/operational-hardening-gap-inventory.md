@@ -64,7 +64,7 @@ Outcome:
 
 - exporter packaging should remain outside `Cephalon.Engine`
 - the repository now ships a reusable companion package instead of leaving exporter wiring to sample-only host code
-- remaining phase-2 work now sits primarily in phase-6 cloud tracing/export follow-through, with the self-hosted, Azure Monitor, and AWS slices shipped and GCP now the next explicit vendor-specific target; any extra provider packs or operator refinements stay adoption-driven expansion work
+- remaining phase-2 work now sits primarily in phase-6 cloud tracing/export follow-through, with the self-hosted, Azure Monitor, and AWS slices shipped and GCP now the next explicit vendor-specific target; any extra provider packs, downstream provider companions, or operator refinements stay adoption-driven expansion work
 
 ### `#87` `ILogger` provider wiring and Serilog host integration
 
@@ -92,9 +92,9 @@ Current baseline:
 
 Shipped result:
 
-- the original later follow-through expanded into a broader cloud/platform companion track spanning self-hosted collectors and runtimes plus AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu
+- the original later follow-through expanded into a broader cloud/platform companion track spanning self-hosted collectors and runtimes plus AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu
 - the self-hosted slice is now shipped, `#86` has now shipped Azure Monitor exporter wiring plus hosted Azure defaults as the first explicit vendor-specific child under `ENG-029`, and `#95` has now shipped the AWS follow-through as the second explicit vendor-specific child
-- GCP is now the next explicit follow-up child item under `ENG-029`, while Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu remain later follow-up child items instead of staying folded into one ambiguous task
+- GCP is now the next explicit follow-up child item under `ENG-029`, while Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu remain later follow-up targets to split into child items instead of staying folded into one ambiguous task
 
 Why this target stays in phase 6:
 
@@ -108,7 +108,7 @@ Shipped result:
 
 - `Cephalon.Observability.Aws` now ships AWS-specific companion wiring on top of the shared OpenTelemetry baseline, including X-Ray-compatible trace IDs and propagation, AWS SDK instrumentation, and hosted defaults for the supported AWS runtimes
 - the AWS slice keeps cloud-specific behavior in companion packages instead of moving it back into `Cephalon.Engine`
-- GCP is now the next explicit vendor-specific child under `ENG-029`, while Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu remain later follow-up child items under the same epic
+- GCP is now the next explicit vendor-specific child under `ENG-029`, while Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu remain later follow-up targets under the same epic
 
 Why this target stays in phase 6:
 
@@ -129,7 +129,7 @@ Next-target decision:
 
 - GCP is now the next explicit vendor-specific child under `ENG-029`
 - GCP narrows the next follow-through to one concrete deployment family instead of reopening a broader cloud/platform matrix
-- Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu remain later follow-up child items under `ENG-029`
+- Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu remain later follow-up targets under `ENG-029`
 
 Why this target stays in phase 6:
 
@@ -245,5 +245,5 @@ Current conclusion from this inventory:
 Recommended execution sequence now is:
 
 1. treat phase 2 as complete for the shipped operational baseline
-2. track `#98` under `ENG-029` in phase 6 cloud and platform integrations as the GCP vendor slice, with Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu split into later explicit child items
-3. keep adoption-driven provider-pack additions separate unless a concrete infrastructure gap appears
+2. track `#98` under `ENG-029` in phase 6 cloud and platform integrations as the GCP vendor slice, with Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu narrowed into later explicit child items only when implementation actually starts
+3. keep adoption-driven provider-pack additions separate unless a concrete infrastructure gap appears, and keep the downstream companion-package story explicit for teams that need to implement their own provider path

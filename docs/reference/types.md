@@ -82,6 +82,8 @@ Browse the published API surface by public type.
 
 ## G
 
+- [GcpHostApplicationBuilderExtensions](cephalon-observability-gcp.md#type-cephalon-observability-gcp-hosting-gcphostapplicationbuilderextensions): `Cephalon.Observability.Gcp.Hosting` in `Cephalon.Observability.Gcp` [Browse](browse.html?q=GcpHostApplicationBuilderExtensions&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Hosting)
+- [GcpTelemetryExportOptions](cephalon-observability-gcp.md#type-cephalon-observability-gcp-configuration-gcptelemetryexportoptions): `Cephalon.Observability.Gcp.Configuration` in `Cephalon.Observability.Gcp` [Browse](browse.html?q=GcpTelemetryExportOptions&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Configuration)
 - [GraphQLTransportServiceCollectionExtensions](cephalon-aspnetcore-graphql.md#type-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions): `Cephalon.AspNetCore.GraphQL.Hosting` in `Cephalon.AspNetCore.GraphQL` [Browse](browse.html?q=GraphQLTransportServiceCollectionExtensions&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting)
 - [GrpcTransportServiceCollectionExtensions](cephalon-aspnetcore-grpc.md#type-cephalon-aspnetcore-grpc-hosting-grpctransportservicecollectionextensions): `Cephalon.AspNetCore.Grpc.Hosting` in `Cephalon.AspNetCore.Grpc` [Browse](browse.html?q=GrpcTransportServiceCollectionExtensions&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Hosting)
 

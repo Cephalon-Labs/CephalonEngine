@@ -1,6 +1,6 @@
 # Cephalon Operations
 
-This document captures the current operational surface for Cephalon as of `April 2, 2026`.
+This document captures the current operational surface for Cephalon as of `April 3, 2026`.
 
 For the active phase-2 follow-through inventory, see `docs/operational-hardening-gap-inventory.md`.
 
@@ -975,6 +975,7 @@ Current shipped event-id ranges include:
 
 - `Cephalon.Engine`: `2000-2003`
 - `Cephalon.Observability`: `3000-3006`
+- `Cephalon.Observability.Gcp`: `3111-3111`
 - `Cephalon.Observability.CassandraDependencies`: `3146-3147`
 - `Cephalon.Observability.ConsulDependencies`: `3142-3143`
 - `Cephalon.Observability.ElasticsearchDependencies`: `3138-3139`
@@ -1067,6 +1068,8 @@ This is the main operator surface for package provenance and compatibility diagn
 `Cephalon.Observability` reads `Engine:Observability:Telemetry` and logs the effective export guidance on startup.
 `Cephalon.Observability.OpenTelemetry` can then turn that same section into a supported OTLP export path for logs, metrics, and traces, including the explicit self-hosted collector defaults that sit on top of the same shared contract.
 
+The same shared contract is also the intended downstream extension point. Teams that install Cephalon packages can build their own provider-specific companion integration by reusing `ObservabilityOptions.FromConfiguration(builder.Configuration).Telemetry`, binding an additional provider-specific sub-section, keeping exporter/auth/resource logic in their own package, and optionally publishing a diagnostics convention plus startup summary through `IDiagnosticsConventionContributor` and `IHostedService`.
+
 Example:
 
 ```json
@@ -1123,6 +1126,7 @@ Operational notes:
 - when `UseSelfHostedDefaults` is `true` and `Endpoint` is omitted, the package falls back to `http://localhost:4317` for `otlp` / `otlp/grpc` or `http://localhost:4318` for `otlp/http`
 - when `otlp/http` is selected, the package appends `/v1/logs`, `/v1/metrics`, and `/v1/traces` automatically from the configured base endpoint
 - the self-hosted path also adds `deployment.environment.name` from the active host environment alongside the existing service-name and service-version resource defaults
+- downstream companion packages should reuse this same contract instead of introducing a second Cephalon telemetry abstraction; that is the intended path for Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, OpenShift, Tanzu, or internal-provider integrations
 
 ## AWS observability path
 
@@ -1171,6 +1175,54 @@ Operational notes:
 - the package keeps the shared OTLP exporter contract intact while adding AWS X-Ray-compatible trace IDs, optional AWS X-Ray propagation, and AWS SDK client tracing
 - EC2, ECS, EKS, and Elastic Beanstalk use AWS resource detectors, while Lambda uses explicit AWS resource attributes plus optional Lambda context configuration
 - if a deployment targets AWS-managed OTLP endpoints directly, prefer an ADOT collector or another SigV4-capable gateway in front of that endpoint instead of baking AWS auth rules into the host
+
+## GCP observability path
+
+`Cephalon.Observability.Gcp` keeps hosted GCP defaults and an optional Google-managed traces/metrics path in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "Telemetry": {
+        "Provider": "OpenTelemetry",
+        "Protocol": "otlp/http",
+        "ExportLogs": true,
+        "ExportMetrics": true,
+        "ExportTraces": true,
+        "Gcp": {
+          "HostedPlatform": "cloudrun",
+          "Location": "asia-southeast1",
+          "UseGoogleManagedIngestion": true,
+          "UseApplicationDefaultCredentials": true
+        }
+      }
+    }
+  }
+}
+```
+
+Host registration example:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonObservability(builder.Configuration);
+builder.AddCephalonGcp();
+```
+
+Operational notes:
+
+- the GCP package is optional and stays outside `Cephalon.Engine`
+- when `Engine:Observability:Telemetry:Endpoint` or `UseSelfHostedDefaults` is configured, the package keeps using the shared collector-oriented OTLP path and only adds hosted GCP resource defaults
+- when `Engine:Observability:Telemetry:Gcp:UseGoogleManagedIngestion` is `true` and no shared endpoint is configured, the package targets `https://telemetry.googleapis.com` for traces and metrics by using OTLP/HTTP plus Application Default Credentials
+- Google-managed ingestion requires `Engine:Observability:Telemetry:Protocol` to stay on `otlp/http`
+- direct Google-managed ingestion does not re-route logs; keep logs on the shared collector path or the platform logging path for the target runtime
+- `HostedPlatform` can be `gce`, `gke`, `cloudrun`, `appengine`, or `functions`
+- `Location` lets the package stamp `location`, `cloud.region`, and when applicable `cloud.availability_zone`
 
 ## Azure Monitor exporter path
 
@@ -1330,6 +1382,7 @@ It executes a curated test suite that validates:
 - startup manifest and telemetry-export guidance emitted by `Cephalon.Observability`, including self-hosted OTLP default endpoint guidance
 - Serilog provider wiring through `Cephalon.Observability.Serilog`
 - AWS-hosted OTLP defaults through `Cephalon.Observability.Aws`
+- GCP-hosted defaults through `Cephalon.Observability.Gcp`
 - OTLP exporter wiring through `Cephalon.Observability.OpenTelemetry`, including the explicit self-hosted collector-default path
 
 `.\scripts\validate-release.ps1` now runs that focused suite by default in addition to the broader repo test, benchmark, and reference-doc flow.

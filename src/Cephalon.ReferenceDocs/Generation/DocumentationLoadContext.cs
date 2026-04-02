@@ -64,11 +64,20 @@ internal sealed class DocumentationLoadContext : AssemblyLoadContext, IDisposabl
 
     internal Assembly LoadAssembly(string assemblyPath)
     {
-        return LoadFromAssemblyPath(assemblyPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(assemblyPath);
+
+        var assemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
+        return FindLoadedAssembly(assemblyName) ?? LoadFromAssemblyPath(assemblyPath);
     }
 
     protected override Assembly? Load(AssemblyName assemblyName)
     {
+        var loadedAssembly = FindLoadedAssembly(assemblyName.Name);
+        if (loadedAssembly is not null)
+        {
+            return loadedAssembly;
+        }
+
         foreach (var resolver in _dependencyResolvers)
         {
             var resolvedPath = resolver.ResolveAssemblyToPath(assemblyName);
@@ -98,6 +107,17 @@ internal sealed class DocumentationLoadContext : AssemblyLoadContext, IDisposabl
     {
         Unload();
         GC.SuppressFinalize(this);
+    }
+
+    private Assembly? FindLoadedAssembly(string? assemblyName)
+    {
+        if (string.IsNullOrWhiteSpace(assemblyName))
+        {
+            return null;
+        }
+
+        return Assemblies.FirstOrDefault(
+            candidate => string.Equals(candidate.GetName().Name, assemblyName, StringComparison.OrdinalIgnoreCase));
     }
 
     private static IEnumerable<string> EnumerateSearchDirectories(ReferenceDocsRequest request)

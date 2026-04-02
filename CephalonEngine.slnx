@@ -44,6 +44,7 @@
     <Project Path="src/Cephalon.Observability.SqlServerDependencies/Cephalon.Observability.SqlServerDependencies.csproj" />
     <Project Path="src/Cephalon.Observability.OpenTelemetry/Cephalon.Observability.OpenTelemetry.csproj" />
     <Project Path="src/Cephalon.Observability.Serilog/Cephalon.Observability.Serilog.csproj" />
+    <Project Path="src/Cephalon.Observability.Gcp/Cephalon.Observability.Gcp.csproj" />
     <Project Path="src/Cephalon.ReferenceDocs/Cephalon.ReferenceDocs.csproj" />
     <Project Path="src/Cephalon.Retrieval/Cephalon.Retrieval.csproj" />
     <Project Path="src/Cephalon.Scaffolding/Cephalon.Scaffolding.csproj" />

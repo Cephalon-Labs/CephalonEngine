@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T17:16:37.0164229+00:00",
+  "GeneratedAtUtc": "2026-04-02T18:26:15.2446342+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -240,6 +240,14 @@
       "FileName": "cephalon-observability-elasticsearchdependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.Gcp",
+      "Category": "Hosts",
+      "Description": "GCP OTLP defaults and Google-managed traces/metrics integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-gcp.md",
+      "NamespaceCount": 2,
+      "TypeCount": 2
     },
     {
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
@@ -814,6 +822,20 @@
       "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
       "FileName": "cephalon-observability-elasticsearchdependencies.md",
       "AnchorId": "namespace-cephalon-observability-elasticsearchdependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.Gcp.Configuration",
+      "AssemblyName": "Cephalon.Observability.Gcp",
+      "FileName": "cephalon-observability-gcp.md",
+      "AnchorId": "namespace-cephalon-observability-gcp-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.Gcp.Hosting",
+      "AssemblyName": "Cephalon.Observability.Gcp",
+      "FileName": "cephalon-observability-gcp.md",
+      "AnchorId": "namespace-cephalon-observability-gcp-hosting",
       "TypeCount": 1
     },
     {
@@ -1965,6 +1987,36 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "GcpHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.Gcp.Hosting",
+      "AssemblyName": "Cephalon.Observability.Gcp",
+      "FileName": "cephalon-observability-gcp.md",
+      "AnchorId": "type-cephalon-observability-gcp-hosting-gcphostapplicationbuilderextensions",
+      "Declaration": "public static class GcpHostApplicationBuilderExtensions",
+      "Summary": "Adds GCP-hosted observability defaults and OTLP exporter wiring for Cephalon hosts.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "GcpTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Gcp.Configuration",
+      "AssemblyName": "Cephalon.Observability.Gcp",
+      "FileName": "cephalon-observability-gcp.md",
+      "AnchorId": "type-cephalon-observability-gcp-configuration-gcptelemetryexportoptions",
+      "Declaration": "public sealed class GcpTelemetryExportOptions",
+      "Summary": "Configures GCP-hosted observability defaults on top of the shared Cephalon telemetry contract.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
         "Methods": 1
       }
     },
@@ -4755,6 +4807,17 @@
       "AnchorId": "member-m-cephalon-observability-elasticsearchdependencies-hosting-elasticsearchdependencyhealthservicecollectionextensions-addcephalonelasticsearchdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions",
       "Signature": "IServiceCollection AddCephalonElasticsearchDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CElasticsearchDependencyHealthOptions\u003E configure)",
       "Summary": "Adds Elasticsearch dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
+      "DisplayName": "AddCephalonGcp",
+      "Category": "Methods",
+      "DeclaringTypeName": "GcpHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.Gcp.Hosting",
+      "AssemblyName": "Cephalon.Observability.Gcp",
+      "FileName": "cephalon-observability-gcp.md",
+      "AnchorId": "member-m-cephalon-observability-gcp-hosting-gcphostapplicationbuilderextensions-addcephalongcp-1-0-system-action-cephalon-observability-gcp-configuration-gcptelemetryexportoptions",
+      "Signature": "TBuilder AddCephalonGcp\u003CTBuilder\u003E(this TBuilder builder, Action\u003CGcpTelemetryExportOptions\u003E configure)",
+      "Summary": "Adds GCP-aware OpenTelemetry registration for the Cephalon engine diagnostics surface."
     },
     {
       "DisplayName": "AddCephalonHttpDependencyHealth",
@@ -8906,6 +8969,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "GcpTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Gcp.Configuration",
+      "AssemblyName": "Cephalon.Observability.Gcp",
+      "FileName": "cephalon-observability-gcp.md",
+      "AnchorId": "member-m-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "GcpTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds GCP telemetry export options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "HttpDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
@@ -9144,6 +9218,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-modulepackagereference-frommanifest-system-string-system-string",
       "Signature": "ModulePackageReference FromManifest(string manifestPath, string id)",
       "Summary": "Creates a manifest-backed package reference."
+    },
+    {
+      "DisplayName": "GcpTelemetryExportOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "GcpTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Gcp.Configuration",
+      "AssemblyName": "Cephalon.Observability.Gcp",
+      "FileName": "cephalon-observability-gcp.md",
+      "AnchorId": "member-m-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-ctor",
+      "Signature": "GcpTelemetryExportOptions()",
+      "Summary": "Initializes a new instance of the \u0060GcpTelemetryExportOptions\u0060 class."
     },
     {
       "DisplayName": "Generate",
@@ -9661,6 +9746,17 @@
       "AnchorId": "member-p-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-hostedplatform",
       "Signature": "string HostedPlatform { get; set; }",
       "Summary": "Gets or sets the hosted Azure platform whose default resource attributes should be applied."
+    },
+    {
+      "DisplayName": "HostedPlatform",
+      "Category": "Properties",
+      "DeclaringTypeName": "GcpTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Gcp.Configuration",
+      "AssemblyName": "Cephalon.Observability.Gcp",
+      "FileName": "cephalon-observability-gcp.md",
+      "AnchorId": "member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-hostedplatform",
+      "Signature": "string HostedPlatform { get; set; }",
+      "Summary": "Gets or sets the hosted GCP platform whose default resource attributes should be applied."
     },
     {
       "DisplayName": "HttpDependencyDefinition",
@@ -10783,6 +10879,17 @@
       "AnchorId": "member-m-cephalon-engine-localization-localizedtextcatalog-ctor-cephalon-engine-configuration-localizationsettings",
       "Signature": "LocalizedTextCatalog(LocalizationSettings settings)",
       "Summary": "Initializes a new instance of the \u0060LocalizedTextCatalog\u0060 class."
+    },
+    {
+      "DisplayName": "Location",
+      "Category": "Properties",
+      "DeclaringTypeName": "GcpTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Gcp.Configuration",
+      "AssemblyName": "Cephalon.Observability.Gcp",
+      "FileName": "cephalon-observability-gcp.md",
+      "AnchorId": "member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-location",
+      "Signature": "string Location { get; set; }",
+      "Summary": "Gets or sets the GCP location to stamp onto exported resources when one should be made explicit."
     },
     {
       "DisplayName": "LogCapabilitySummary",
@@ -13016,6 +13123,17 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder-purpose",
       "Signature": "string Purpose { get; }",
       "Summary": "Gets the human-readable purpose of the folder."
+    },
+    {
+      "DisplayName": "QuotaProjectId",
+      "Category": "Properties",
+      "DeclaringTypeName": "GcpTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Gcp.Configuration",
+      "AssemblyName": "Cephalon.Observability.Gcp",
+      "FileName": "cephalon-observability-gcp.md",
+      "AnchorId": "member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-quotaprojectid",
+      "Signature": "string QuotaProjectId { get; set; }",
+      "Summary": "Gets or sets the optional quota project header used for Google-managed ingestion requests."
     },
     {
       "DisplayName": "RabbitMqDependencyDefinition",
@@ -16648,6 +16766,17 @@
       "Summary": "Gets or sets the optional full Neo4j endpoint URI such as \u0060neo4j://graph.internal.example:7687\u0060 or \u0060neo4j\u002Bs://graph.internal.example:7687\u0060."
     },
     {
+      "DisplayName": "UseApplicationDefaultCredentials",
+      "Category": "Properties",
+      "DeclaringTypeName": "GcpTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Gcp.Configuration",
+      "AssemblyName": "Cephalon.Observability.Gcp",
+      "FileName": "cephalon-observability-gcp.md",
+      "AnchorId": "member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-useapplicationdefaultcredentials",
+      "Signature": "bool UseApplicationDefaultCredentials { get; set; }",
+      "Summary": "Gets or sets a value indicating whether Google-managed ingestion should authenticate by using Application Default Credentials."
+    },
+    {
       "DisplayName": "UseBlueprint",
       "Category": "Methods",
       "DeclaringTypeName": "EngineBuilder",
@@ -16690,6 +16819,17 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-usefailurepolicy-cephalon-engine-configuration-failurepolicy",
       "Signature": "EngineBuilder UseFailurePolicy(FailurePolicy policy)",
       "Summary": "Replaces the failure policy used by the runtime lifecycle state machine."
+    },
+    {
+      "DisplayName": "UseGoogleManagedIngestion",
+      "Category": "Properties",
+      "DeclaringTypeName": "GcpTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Gcp.Configuration",
+      "AssemblyName": "Cephalon.Observability.Gcp",
+      "FileName": "cephalon-observability-gcp.md",
+      "AnchorId": "member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-usegooglemanagedingestion",
+      "Signature": "bool UseGoogleManagedIngestion { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the package should use Google-managed OTLP ingestion for traces and metrics when no shared collector endpoint is configured."
     },
     {
       "DisplayName": "UseLocalization",
