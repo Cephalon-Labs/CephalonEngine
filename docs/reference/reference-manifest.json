@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T09:17:35.1214771+00:00",
+  "GeneratedAtUtc": "2026-04-02T09:47:56.1648864+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -87,6 +87,14 @@
       "Category": "Hosts",
       "Description": "Operational diagnostics and telemetry conventions for hosts.",
       "FileName": "cephalon-observability.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "Category": "Hosts",
+      "Description": "Consul dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-consuldependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
     },
@@ -564,6 +572,20 @@
       "FileName": "cephalon-observability.md",
       "AnchorId": "namespace-cephalon-observability-configuration",
       "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "namespace-cephalon-observability-consuldependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "namespace-cephalon-observability-consuldependencies-hosting",
+      "TypeCount": 1
     },
     {
       "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
@@ -1072,6 +1094,51 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ConsulDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "type-cephalon-observability-consuldependencies-configuration-consuldependencydefinition",
+      "Declaration": "public sealed class ConsulDependencyDefinition",
+      "Summary": "Describes one Consul dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ConsulDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "type-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions",
+      "Declaration": "public sealed class ConsulDependencyHealthOptions",
+      "Summary": "Configures Consul dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ConsulDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "type-cephalon-observability-consuldependencies-hosting-consuldependencyhealthservicecollectionextensions",
+      "Declaration": "public static class ConsulDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds Consul dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
       }
     },
     {
@@ -3818,6 +3885,17 @@
       "Summary": "The effective access mode resolved from policy."
     },
     {
+      "DisplayName": "AclToken",
+      "Category": "Properties",
+      "DeclaringTypeName": "ConsulDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-acltoken",
+      "Signature": "string AclToken { get; set; }",
+      "Summary": "Gets or sets the optional Consul ACL token sent as the \u0060X-Consul-Token\u0060 header."
+    },
+    {
       "DisplayName": "ActiveWindow",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeHealthReport",
@@ -4025,6 +4103,28 @@
       "AnchorId": "member-m-cephalon-worker-hosting-workerhostapplicationbuilderextensions-addcephalon-microsoft-extensions-hosting-hostapplicationbuilder-system-action-cephalon-engine-composition-enginebuilder",
       "Signature": "HostApplicationBuilder AddCephalon(this HostApplicationBuilder builder, Action\u003CEngineBuilder\u003E configure)",
       "Summary": "Adds Cephalon worker hosting and allows additional code-based engine configuration."
+    },
+    {
+      "DisplayName": "AddCephalonConsulDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "ConsulDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "member-m-cephalon-observability-consuldependencies-hosting-consuldependencyhealthservicecollectionextensions-addcephalonconsuldependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonConsulDependencyHealth(this IServiceCollection services, Action\u003CConsulDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Consul dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonConsulDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "ConsulDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "member-m-cephalon-observability-consuldependencies-hosting-consuldependencyhealthservicecollectionextensions-addcephalonconsuldependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonConsulDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CConsulDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Consul dependency-health services using configuration as the primary source of probe settings."
     },
     {
       "DisplayName": "AddCephalonElasticsearchDependencyHealth",
@@ -5578,6 +5678,28 @@
       "Summary": "Gets or sets the optional full SQL Server connection string used for the probe."
     },
     {
+      "DisplayName": "ConsulDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ConsulDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "member-m-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-ctor",
+      "Signature": "ConsulDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060ConsulDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "ConsulDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ConsulDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "member-m-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions-ctor",
+      "Signature": "ConsulDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060ConsulDependencyHealthOptions\u0060 class."
+    },
+    {
       "DisplayName": "Contents",
       "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocFile",
@@ -5809,6 +5931,17 @@
       "Summary": "Gets or sets the database name used for the health query."
     },
     {
+      "DisplayName": "Datacenter",
+      "Category": "Properties",
+      "DeclaringTypeName": "ConsulDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-datacenter",
+      "Signature": "string Datacenter { get; set; }",
+      "Summary": "Gets or sets the optional Consul datacenter name added as the \u0060dc\u0060 query parameter."
+    },
+    {
       "DisplayName": "Debug",
       "Category": "Fields",
       "DeclaringTypeName": "DiagnosticSeverity",
@@ -5994,6 +6127,17 @@
       "AnchorId": "member-f-cephalon-abstractions-capabilities-capabilityaccess-denied",
       "Signature": "const CapabilityAccess Denied",
       "Summary": "Indicates the capability is denied."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
+      "DeclaringTypeName": "ConsulDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003CConsulDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured Consul dependencies that should contribute to runtime health."
     },
     {
       "DisplayName": "Dependencies",
@@ -6647,6 +6791,17 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "ConsulDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "DependencyHealthReport",
       "NamespaceName": "Cephalon.Abstractions.Health",
       "AssemblyName": "Cephalon.Abstractions",
@@ -7164,6 +7319,17 @@
     {
       "DisplayName": "Endpoint",
       "Category": "Properties",
+      "DeclaringTypeName": "ConsulDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-endpoint",
+      "Signature": "string Endpoint { get; set; }",
+      "Summary": "Gets or sets the absolute Consul base URL or status endpoint that should be probed."
+    },
+    {
+      "DisplayName": "Endpoint",
+      "Category": "Properties",
       "DeclaringTypeName": "ElasticsearchDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
@@ -7677,6 +7843,17 @@
       "AnchorId": "member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-foundation",
       "Signature": "const string Foundation",
       "Summary": "Identifies the shared foundation project."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
+      "DeclaringTypeName": "ConsulDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "member-m-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "ConsulDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Consul dependency-health options from configuration."
     },
     {
       "DisplayName": "FromConfiguration",
@@ -8403,6 +8580,17 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-appblueprint-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable blueprint identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "ConsulDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
     {
       "DisplayName": "Id",
@@ -11608,6 +11796,17 @@
     {
       "DisplayName": "RefreshIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "ConsulDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "ElasticsearchDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
@@ -11956,6 +12155,17 @@
       "AnchorId": "member-m-cephalon-aspnetcore-transports-rest-restendpointconventionbuilderextensions-requirecapability-microsoft-aspnetcore-builder-routehandlerbuilder-system-string",
       "Signature": "RouteHandlerBuilder RequireCapability(this RouteHandlerBuilder builder, string capabilityKey)",
       "Summary": "Requires a Cephalon capability decision before a REST endpoint can execute."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "ConsulDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
     {
       "DisplayName": "Required",
@@ -14200,6 +14410,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperationalstory-timeline",
       "Signature": "IReadOnlyList\u003CRuntimeLifecycleEvent\u003E Timeline { get; set; }",
       "Summary": "The ordered lifecycle narrative for package load, module transitions, runtime transitions, and failures."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "ConsulDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
+      "FileName": "cephalon-observability-consuldependencies.md",
+      "AnchorId": "member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-request timeout in seconds."
     },
     {
       "DisplayName": "TimeoutSeconds",

@@ -13,7 +13,7 @@ ASP.NET Core hosts that call `app.MapCephalon()` now expose three health routes:
 - `/health/ready`
 
 Health responses are JSON and include the check status, duration, and runtime-specific details such as restart count and the most recent failure context.
-When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
+When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.ConsulDependencies`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
 
 Current semantics:
 
@@ -88,6 +88,55 @@ Operational notes:
 - the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
 - required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
 - if `ExpectedStatusCodes` is omitted, standard successful HTTP responses are treated as healthy
+
+### Consul dependency probes
+
+`Cephalon.Observability.ConsulDependencies` reads `Engine:Observability:DependencyHealth:Consul` and turns configured Consul endpoints into reusable `IDependencyHealthContributor` data.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "DependencyHealth": {
+        "Consul": {
+          "RefreshIntervalSeconds": 30,
+          "Dependencies": [
+            {
+              "Id": "service-discovery",
+              "DisplayName": "Service Discovery",
+              "Endpoint": "https://consul.internal.example:8501",
+              "AclToken": "${CONSUL_HTTP_TOKEN}",
+              "Datacenter": "ops-dc",
+              "Required": true,
+              "TimeoutSeconds": 5
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonConsulDependencyHealth(builder.Configuration);
+```
+
+Operational notes:
+
+- the Consul dependency-health package is optional and stays outside `Cephalon.Engine`
+- the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
+- if the configured endpoint is just the Consul base URL, the probe automatically resolves `GET /v1/status/leader`
+- probes support `X-Consul-Token` ACL headers plus optional datacenter selection through the `dc` query parameter
+- a non-empty leader response maps to `Healthy`; an empty leader response maps to `Unhealthy`
+- required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
 
 ### Elasticsearch dependency probes
 
@@ -670,6 +719,7 @@ Current shipped event-id ranges include:
 
 - `Cephalon.Engine`: `2000-2003`
 - `Cephalon.Observability`: `3000-3006`
+- `Cephalon.Observability.ConsulDependencies`: `3142-3143`
 - `Cephalon.Observability.ElasticsearchDependencies`: `3138-3139`
 - `Cephalon.Observability.HttpDependencies`: `3100-3101`
 - `Cephalon.Observability.RedisDependencies`: `3120-3121`

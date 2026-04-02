@@ -9,6 +9,9 @@ Browse the published API surface by public member.
 - [Access](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-access): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Access&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The effective access mode resolved from policy.
   - `CapabilityAccess Access { get; set; }`
+- [AclToken](cephalon-observability-consuldependencies.md#member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-acltoken): `Properties` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=AclToken&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
+  - Gets or sets the optional Consul ACL token sent as the `X-Consul-Token` header.
+  - `string AclToken { get; set; }`
 - [ActiveWindow](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-activewindow): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ActiveWindow&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The active policy-driven lifecycle window, such as startup warmup, shutdown drain, or restart backoff.
   - `string ActiveWindow { get; set; }`
@@ -66,6 +69,12 @@ Browse the published API surface by public member.
 - [AddCephalon](cephalon-worker.md#member-m-cephalon-worker-hosting-workerhostapplicationbuilderextensions-addcephalon-microsoft-extensions-hosting-hostapplicationbuilder-system-action-cephalon-engine-composition-enginebuilder): `Methods` on `WorkerHostApplicationBuilderExtensions` in `Cephalon.Worker.Hosting` (`Cephalon.Worker`) [Browse](browse.html?q=AddCephalon&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting&scope=members)
   - Adds Cephalon worker hosting and allows additional code-based engine configuration.
   - `HostApplicationBuilder AddCephalon(this HostApplicationBuilder builder, Action<EngineBuilder> configure)`
+- [AddCephalonConsulDependencyHealth](cephalon-observability-consuldependencies.md#member-m-cephalon-observability-consuldependencies-hosting-consuldependencyhealthservicecollectionextensions-addcephalonconsuldependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions): `Methods` on `ConsulDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.ConsulDependencies.Hosting` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=AddCephalonConsulDependencyHealth&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Hosting&scope=members)
+  - Adds Consul dependency-health services using code-first configuration.
+  - `IServiceCollection AddCephalonConsulDependencyHealth(this IServiceCollection services, Action<ConsulDependencyHealthOptions> configure)`
+- [AddCephalonConsulDependencyHealth](cephalon-observability-consuldependencies.md#member-m-cephalon-observability-consuldependencies-hosting-consuldependencyhealthservicecollectionextensions-addcephalonconsuldependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions): `Methods` on `ConsulDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.ConsulDependencies.Hosting` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=AddCephalonConsulDependencyHealth&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Hosting&scope=members)
+  - Adds Consul dependency-health services using configuration as the primary source of probe settings.
+  - `IServiceCollection AddCephalonConsulDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<ConsulDependencyHealthOptions> configure)`
 - [AddCephalonElasticsearchDependencyHealth](cephalon-observability-elasticsearchdependencies.md#member-m-cephalon-observability-elasticsearchdependencies-hosting-elasticsearchdependencyhealthservicecollectionextensions-addcephalonelasticsearchdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions): `Methods` on `ElasticsearchDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.ElasticsearchDependencies.Hosting` (`Cephalon.Observability.ElasticsearchDependencies`) [Browse](browse.html?q=AddCephalonElasticsearchDependencyHealth&assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Hosting&scope=members)
   - Adds Elasticsearch dependency-health services using code-first configuration.
   - `IServiceCollection AddCephalonElasticsearchDependencyHealth(this IServiceCollection services, Action<ElasticsearchDependencyHealthOptions> configure)`
@@ -495,6 +504,12 @@ Browse the published API surface by public member.
 - [ConnectionString](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-connectionstring): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the optional full SQL Server connection string used for the probe.
   - `string ConnectionString { get; set; }`
+- [ConsulDependencyDefinition](cephalon-observability-consuldependencies.md#member-m-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-ctor): `Constructors` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=ConsulDependencyDefinition&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
+  - Initializes a new instance of the `ConsulDependencyDefinition` class.
+  - `ConsulDependencyDefinition()`
+- [ConsulDependencyHealthOptions](cephalon-observability-consuldependencies.md#member-m-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions-ctor): `Constructors` on `ConsulDependencyHealthOptions` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=ConsulDependencyHealthOptions&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
+  - Initializes a new instance of the `ConsulDependencyHealthOptions` class.
+  - `ConsulDependencyHealthOptions()`
 - [Contents](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocfile-contents): `Properties` on `ReferenceDocFile` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Contents&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the markdown contents of the file.
   - `string Contents { get; }`
@@ -561,6 +576,9 @@ Browse the published API surface by public member.
 - [Database](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-database): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=Database&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the database name used for the health query.
   - `string Database { get; set; }`
+- [Datacenter](cephalon-observability-consuldependencies.md#member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-datacenter): `Properties` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=Datacenter&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
+  - Gets or sets the optional Consul datacenter name added as the `dc` query parameter.
+  - `string Datacenter { get; set; }`
 - [Debug](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-debug): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Debug&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The event is intended for debug-oriented diagnostics.
   - `const DiagnosticSeverity Debug`
@@ -612,6 +630,9 @@ Browse the published API surface by public member.
 - [Denied](cephalon-abstractions.md#member-f-cephalon-abstractions-capabilities-capabilityaccess-denied): `Fields` on `CapabilityAccess` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=Denied&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
   - Indicates the capability is denied.
   - `const CapabilityAccess Denied`
+- [Dependencies](cephalon-observability-consuldependencies.md#member-p-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions-dependencies): `Properties` on `ConsulDependencyHealthOptions` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
+  - Gets or sets the configured Consul dependencies that should contribute to runtime health.
+  - `IReadOnlyList<ConsulDependencyDefinition> Dependencies { get; set; }`
 - [Dependencies](cephalon-observability-elasticsearchdependencies.md#member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions-dependencies): `Properties` on `ElasticsearchDependencyHealthOptions` in `Cephalon.Observability.ElasticsearchDependencies.Configuration` (`Cephalon.Observability.ElasticsearchDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Configuration&scope=members)
   - Gets or sets the configured Elasticsearch dependencies that should contribute to runtime health.
   - `IReadOnlyList<ElasticsearchDependencyDefinition> Dependencies { get; set; }`
@@ -789,6 +810,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-engine.md#member-p-cephalon-engine-manifest-capabilitymanifest-displayname): `Properties` on `CapabilityManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the operator-facing capability name.
   - `string DisplayName { get; }`
+- [DisplayName](cephalon-observability-consuldependencies.md#member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-displayname): `Properties` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
+  - Gets or sets the human-readable dependency name shown to operators.
+  - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-displayname): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The human-readable dependency name.
   - `string DisplayName { get; set; }`
@@ -933,6 +957,9 @@ Browse the published API surface by public member.
 - [Encrypt](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-encrypt): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=Encrypt&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the optional SQL Server encryption mode such as `Optional`, `Mandatory`, or `Strict`.
   - `string Encrypt { get; set; }`
+- [Endpoint](cephalon-observability-consuldependencies.md#member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-endpoint): `Properties` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=Endpoint&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
+  - Gets or sets the absolute Consul base URL or status endpoint that should be probed.
+  - `string Endpoint { get; set; }`
 - [Endpoint](cephalon-observability-elasticsearchdependencies.md#member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-endpoint): `Properties` on `ElasticsearchDependencyDefinition` in `Cephalon.Observability.ElasticsearchDependencies.Configuration` (`Cephalon.Observability.ElasticsearchDependencies`) [Browse](browse.html?q=Endpoint&assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Configuration&scope=members)
   - Gets or sets the absolute Elasticsearch base URL or cluster-health endpoint that should be probed.
   - `string Endpoint { get; set; }`
@@ -1077,6 +1104,9 @@ Browse the published API surface by public member.
 - [Foundation](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-foundation): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Foundation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies the shared foundation project.
   - `const string Foundation`
+- [FromConfiguration](cephalon-observability-consuldependencies.md#member-m-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `ConsulDependencyHealthOptions` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
+  - Binds Consul dependency-health options from configuration.
+  - `ConsulDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability-elasticsearchdependencies.md#member-m-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `ElasticsearchDependencyHealthOptions` in `Cephalon.Observability.ElasticsearchDependencies.Configuration` (`Cephalon.Observability.ElasticsearchDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Configuration&scope=members)
   - Binds Elasticsearch dependency-health options from configuration.
   - `ElasticsearchDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -1284,6 +1314,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appblueprint-id): `Properties` on `AppBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the stable blueprint identifier.
   - `string Id { get; }`
+- [Id](cephalon-observability-consuldependencies.md#member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-id): `Properties` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
+  - Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
+  - `string Id { get; set; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-id): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The stable dependency identifier.
   - `string Id { get; set; }`
@@ -2181,6 +2214,9 @@ Browse the published API surface by public member.
 - [ReferenceDocsSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-documentation-referencedocssurface-ctor-system-boolean-system-boolean-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Constructors` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ReferenceDocsSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Describes the operator-facing HTTP surface for hosted Cephalon reference documentation.
   - `ReferenceDocsSurface(bool Enabled, bool Available, string RoutePrefix, string DefaultDocument, string DefaultDocumentPath, string ReadmePath, string BrowserPath, string NamespaceIndexPath, string TypeIndexPath, string MemberIndexPath, string ManifestPath)`
+- [RefreshIntervalSeconds](cephalon-observability-consuldependencies.md#member-p-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions-refreshintervalseconds): `Properties` on `ConsulDependencyHealthOptions` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
+  - Gets or sets the interval, in seconds, between background refresh attempts.
+  - `int RefreshIntervalSeconds { get; set; }`
 - [RefreshIntervalSeconds](cephalon-observability-elasticsearchdependencies.md#member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions-refreshintervalseconds): `Properties` on `ElasticsearchDependencyHealthOptions` in `Cephalon.Observability.ElasticsearchDependencies.Configuration` (`Cephalon.Observability.ElasticsearchDependencies`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Configuration&scope=members)
   - Gets or sets the interval, in seconds, between background refresh attempts.
   - `int RefreshIntervalSeconds { get; set; }`
@@ -2277,6 +2313,9 @@ Browse the published API surface by public member.
 - [RequireCapability](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-transports-rest-restendpointconventionbuilderextensions-requirecapability-microsoft-aspnetcore-builder-routehandlerbuilder-system-string): `Methods` on `RestEndpointConventionBuilderExtensions` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RequireCapability&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
   - Requires a Cephalon capability decision before a REST endpoint can execute.
   - `RouteHandlerBuilder RequireCapability(this RouteHandlerBuilder builder, string capabilityKey)`
+- [Required](cephalon-observability-consuldependencies.md#member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-required): `Properties` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
+  - Gets or sets a value indicating whether this dependency is required for readiness.
+  - `bool Required { get; set; }`
 - [Required](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-required): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Required&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - Whether the dependency is required for readiness.
   - `bool Required { get; set; }`
@@ -2895,6 +2934,9 @@ Browse the published API surface by public member.
 - [Timeline](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperationalstory-timeline): `Properties` on `RuntimeOperationalStory` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Timeline&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The ordered lifecycle narrative for package load, module transitions, runtime transitions, and failures.
   - `IReadOnlyList<RuntimeLifecycleEvent> Timeline { get; set; }`
+- [TimeoutSeconds](cephalon-observability-consuldependencies.md#member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-timeoutseconds): `Properties` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
+  - Gets or sets the per-request timeout in seconds.
+  - `int TimeoutSeconds { get; set; }`
 - [TimeoutSeconds](cephalon-observability-elasticsearchdependencies.md#member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-timeoutseconds): `Properties` on `ElasticsearchDependencyDefinition` in `Cephalon.Observability.ElasticsearchDependencies.Configuration` (`Cephalon.Observability.ElasticsearchDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Configuration&scope=members)
   - Gets or sets the per-request timeout in seconds.
   - `int TimeoutSeconds { get; set; }`

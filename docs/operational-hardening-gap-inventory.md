@@ -106,6 +106,7 @@ Current baseline:
 
 - `IDependencyHealthContributor` exists
 - `RuntimeHealthEvaluator` aggregates dependency reports cleanly
+- `Cephalon.Observability.ConsulDependencies` now provides a reusable provider-specific pack for Consul control planes, including leader checks plus optional ACL-token and datacenter selection
 - `Cephalon.Observability.ElasticsearchDependencies` now provides a reusable provider-specific pack for Elasticsearch clusters, including cluster-health requests plus API-key, bearer-token, or basic-auth handling
 - `Cephalon.Observability.HttpDependencies` now provides a reusable provider-specific pack for external HTTP and API upstreams
 - `Cephalon.Observability.KafkaDependencies` now provides a reusable provider-specific pack for Kafka brokers, including bootstrap-server metadata checks plus optional topic verification and SASL/security protocol selection
@@ -122,7 +123,7 @@ Current baseline:
 Gap:
 
 - broader provider-specific packs for additional databases and brokers are still missing
-- current shipped provider coverage now includes Elasticsearch cluster endpoints plus external HTTP/API upstreams plus Kafka broker metadata endpoints plus Memcached cache endpoints plus MongoDB document-database endpoints plus MQTT broker endpoints plus MySQL/MariaDB database endpoints plus NATS broker endpoints plus Postgres database endpoints plus RabbitMQ broker endpoints plus Redis/cache endpoints plus SQL Server and Azure SQL endpoints; richer infrastructure-specific packs beyond that baseline are still left to host or module authors
+- current shipped provider coverage now includes Consul control-plane endpoints plus Elasticsearch cluster endpoints plus external HTTP/API upstreams plus Kafka broker metadata endpoints plus Memcached cache endpoints plus MongoDB document-database endpoints plus MQTT broker endpoints plus MySQL/MariaDB database endpoints plus NATS broker endpoints plus Postgres database endpoints plus RabbitMQ broker endpoints plus Redis/cache endpoints plus SQL Server and Azure SQL endpoints; richer infrastructure-specific packs beyond that baseline are still left to host or module authors
 - `Cephalon.Observability.HttpDependencies` should continue growing along generic HTTP semantics instead of absorbing product-aware response mapping; HTTP-based systems such as Elasticsearch stay in dedicated packs when they need first-class endpoint or payload contracts
 - `Cephalon.Observability.NatsDependencies` can continue growing across NATS-native wire semantics without forcing unrelated workload semantics into the shared broker baseline
 
@@ -138,7 +139,7 @@ Current baseline:
 - `Cephalon.Engine` already emits structured runtime/module transition and failure logs with event ids in the `2000` range
 - `Cephalon.Observability` already emits startup-summary, diagnostics-catalog, and telemetry-guidance logs with event ids in the `3000` range
 - active engine and companion packages now publish their diagnostics conventions through `IRuntimeDiagnosticsCatalog`, `/engine/diagnostics`, and `/engine/snapshot`
-- currently shipped package coverage includes `Cephalon.Engine`, `Cephalon.Observability`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies`
+- currently shipped package coverage includes `Cephalon.Engine`, `Cephalon.Observability`, `Cephalon.Observability.ConsulDependencies`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies`
 
 Gap:
 

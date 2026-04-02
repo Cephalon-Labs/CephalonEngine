@@ -102,6 +102,8 @@ Companion adapter packages can extend that host with additional transport surfac
 
 `Cephalon.Observability` is the diagnostics companion package. It turns the engine's built-in logs, meter, and activity source into host-friendly startup summaries and conventions that both ASP.NET Core and worker hosts can opt into, and it publishes the active package-level event-id catalog through the runtime diagnostics surface.
 
+`Cephalon.Observability.ConsulDependencies` is the optional Consul dependency-health companion package. It turns configured Consul leader checks, ACL tokens, and datacenter selection into `IDependencyHealthContributor` data without pushing Consul-specific control-plane behavior into `Cephalon.Engine`.
+
 `Cephalon.Observability.ElasticsearchDependencies` is the optional Elasticsearch dependency-health companion package. It turns configured cluster-health requests, auth policies, and Elasticsearch `green`/`yellow`/`red` status mapping into `IDependencyHealthContributor` data without pushing Elasticsearch-specific HTTP behavior into `Cephalon.Engine`.
 
 `Cephalon.Observability.HttpDependencies` is the optional external API dependency-health companion package. It turns configured HTTP upstream probes into `IDependencyHealthContributor` data without pushing provider-specific network checks into `Cephalon.Engine`. That package should stay protocol-generic: method, headers, auth, timeout, status, body, and TLS expectations belong there, but product-aware HTTP semantics should stay in dedicated packs when they need endpoint shaping or payload-aware mapping.
@@ -179,6 +181,9 @@ Companion adapter packages:
 - `src/Cephalon.Worker/Hosting` -> `Cephalon.Worker.Hosting`
 - `src/Cephalon.Observability/Configuration` -> `Cephalon.Observability.Configuration`
 - `src/Cephalon.Observability/Hosting` -> `Cephalon.Observability.Hosting`
+- `src/Cephalon.Observability.ConsulDependencies/Configuration` -> `Cephalon.Observability.ConsulDependencies.Configuration`
+- `src/Cephalon.Observability.ConsulDependencies/Hosting` -> `Cephalon.Observability.ConsulDependencies.Hosting`
+- `src/Cephalon.Observability.ConsulDependencies/Services` -> `Cephalon.Observability.ConsulDependencies.Services`
 - `src/Cephalon.Observability.ElasticsearchDependencies/Configuration` -> `Cephalon.Observability.ElasticsearchDependencies.Configuration`
 - `src/Cephalon.Observability.ElasticsearchDependencies/Hosting` -> `Cephalon.Observability.ElasticsearchDependencies.Hosting`
 - `src/Cephalon.Observability.ElasticsearchDependencies/Services` -> `Cephalon.Observability.ElasticsearchDependencies.Services`
@@ -278,6 +283,7 @@ Companion adapter packages:
 - runtime diagnostics conventions should flow through `IRuntimeDiagnosticsCatalog`, `/engine/diagnostics`, and `/engine/snapshot`
 - runtime lifecycle answers should flow through `IRuntime.OperationalStory`, `/engine/runtime-story`, and `/engine/snapshot`
 - hosts can turn Elasticsearch cluster-health checks into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Elasticsearch` and `Cephalon.Observability.ElasticsearchDependencies`
+- hosts can turn Consul control-plane leader checks into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Consul` and `Cephalon.Observability.ConsulDependencies`
 - hosts can turn external HTTP upstreams into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Http` and `Cephalon.Observability.HttpDependencies`, but that pack should stay generic across HTTP semantics rather than absorbing product-specific response mapping
 - hosts can turn Kafka cluster metadata checks into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Kafka` and `Cephalon.Observability.KafkaDependencies`
 - hosts can turn Memcached cache endpoints into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Memcached` and `Cephalon.Observability.MemcachedDependencies`
@@ -330,7 +336,7 @@ Companion adapter packages:
 - richer capability metadata and policy
 - startup hooks and lifecycle events
 - event bus / workflow runtime
-- broader provider-specific dependency-health packs, richer operator-runtime answers, and deeper release-validation guidance on top of the shipped Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Postgres, RabbitMQ, Redis, SQL Server, and OpenTelemetry observability companions
+- broader provider-specific dependency-health packs, richer operator-runtime answers, and deeper release-validation guidance on top of the shipped Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Postgres, RabbitMQ, Redis, SQL Server, and OpenTelemetry observability companions
 - richer parameterized templates and generators driven by scaffold plans
 - richer localization catalogs and package-provided language packs
 - sustained benchmark coverage for hot engine paths

@@ -25,7 +25,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [Benchmarking](benchmarking.md)
 - [Reference docs publishing](reference-docs.md)
 
-The component catalog now includes the observability baseline package plus the optional HTTP dependency-health, Memcached dependency-health, MongoDB dependency-health, MySQL dependency-health, Postgres dependency-health, RabbitMQ dependency-health, Redis dependency-health, SQL Server dependency-health, OpenTelemetry exporter, and Serilog provider companions so operator-facing docs stay aligned with the shipped host integration paths, diagnostics conventions, runtime-story surface, and release-validation guidance.
+The component catalog now includes the observability baseline package plus the optional Consul dependency-health, HTTP dependency-health, Memcached dependency-health, MongoDB dependency-health, MySQL dependency-health, Postgres dependency-health, RabbitMQ dependency-health, Redis dependency-health, SQL Server dependency-health, OpenTelemetry exporter, and Serilog provider companions so operator-facing docs stay aligned with the shipped host integration paths, diagnostics conventions, runtime-story surface, and release-validation guidance.
 
 ## Optional generated reference docs
 
