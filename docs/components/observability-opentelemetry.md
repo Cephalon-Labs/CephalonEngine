@@ -24,12 +24,13 @@ This package stays outside `Cephalon.Engine` and `Cephalon.Observability` on pur
 
 For ASP.NET Core hosts, the shipped baseline now also adds server-request tracing so `traceId` and `spanId` values emitted by Cephalon request logging can be followed through exported OTLP traces without adding cloud-specific dependencies to the engine layer.
 
-For self-hosted deployments, the same companion package now supports an explicit no-vendor-default path: set `Engine:Observability:Telemetry:UseSelfHostedDefaults` to `true`, omit `Endpoint`, and the package will target the standard local OTLP collector ports (`http://localhost:4317` for `otlp` / `otlp/grpc`, `http://localhost:4318` for `otlp/http`). The host also adds `deployment.environment.name` from the active environment alongside the existing service-name and service-version resource defaults. Hosts that need AWS-specific X-Ray propagation or hosted AWS resource defaults can instead pair the same shared telemetry contract with `Cephalon.Observability.Aws`.
+For self-hosted deployments, the same companion package now supports an explicit no-vendor-default path: set `Engine:Observability:Telemetry:UseSelfHostedDefaults` to `true`, omit `Endpoint`, and the package will target the standard local OTLP collector ports (`http://localhost:4317` for `otlp` / `otlp/grpc`, `http://localhost:4318` for `otlp/http`). The host also adds `deployment.environment.name` from the active environment alongside the existing service-name and service-version resource defaults. Hosts that need AWS-specific X-Ray propagation or hosted AWS resource defaults can instead pair the same shared telemetry contract with `Cephalon.Observability.Aws`, while hosts that need GCP-specific resource defaults or an opt-in Google-managed traces/metrics path can pair it with `Cephalon.Observability.Gcp`.
 
 ## Related docs
 
 - [Cephalon.Observability](observability.md)
 - [Cephalon.Observability.Aws](observability-aws.md)
+- [Cephalon.Observability.Gcp](observability-gcp.md)
 - [Cephalon.Observability.AzureMonitor](observability-azure-monitor.md)
 - [Operations](../operations.md)
 - [Architecture](../architecture.md)

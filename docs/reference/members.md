@@ -99,6 +99,9 @@ Browse the published API surface by public member.
 - [AddCephalonElasticsearchDependencyHealth](cephalon-observability-elasticsearchdependencies.md#member-m-cephalon-observability-elasticsearchdependencies-hosting-elasticsearchdependencyhealthservicecollectionextensions-addcephalonelasticsearchdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions): `Methods` on `ElasticsearchDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.ElasticsearchDependencies.Hosting` (`Cephalon.Observability.ElasticsearchDependencies`) [Browse](browse.html?q=AddCephalonElasticsearchDependencyHealth&assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Hosting&scope=members)
   - Adds Elasticsearch dependency-health services using configuration as the primary source of probe settings.
   - `IServiceCollection AddCephalonElasticsearchDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<ElasticsearchDependencyHealthOptions> configure)`
+- [AddCephalonGcp](cephalon-observability-gcp.md#member-m-cephalon-observability-gcp-hosting-gcphostapplicationbuilderextensions-addcephalongcp-1-0-system-action-cephalon-observability-gcp-configuration-gcptelemetryexportoptions): `Methods` on `GcpHostApplicationBuilderExtensions` in `Cephalon.Observability.Gcp.Hosting` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=AddCephalonGcp&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Hosting&scope=members)
+  - Adds GCP-aware OpenTelemetry registration for the Cephalon engine diagnostics surface.
+  - `TBuilder AddCephalonGcp<TBuilder>(this TBuilder builder, Action<GcpTelemetryExportOptions> configure)`
 - [AddCephalonHttpDependencyHealth](cephalon-observability-httpdependencies.md#member-m-cephalon-observability-httpdependencies-hosting-httpdependencyhealthservicecollectionextensions-addcephalonhttpdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions): `Methods` on `HttpDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.HttpDependencies.Hosting` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=AddCephalonHttpDependencyHealth&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Hosting&scope=members)
   - Adds HTTP dependency-health services using code-first configuration.
   - `IServiceCollection AddCephalonHttpDependencyHealth(this IServiceCollection services, Action<HttpDependencyHealthOptions> configure)`
@@ -1245,6 +1248,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-failurepolicy-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads the failure policy from configuration.
   - `FailurePolicy FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-observability-gcp.md#member-m-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `GcpTelemetryExportOptions` in `Cephalon.Observability.Gcp.Configuration` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Configuration&scope=members)
+  - Binds GCP telemetry export options from configuration.
+  - `GcpTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability-httpdependencies.md#member-m-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `HttpDependencyHealthOptions` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Binds HTTP dependency-health options from configuration.
   - `HttpDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -1314,6 +1320,9 @@ Browse the published API surface by public member.
 
 ## G
 
+- [GcpTelemetryExportOptions](cephalon-observability-gcp.md#member-m-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-ctor): `Constructors` on `GcpTelemetryExportOptions` in `Cephalon.Observability.Gcp.Configuration` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=GcpTelemetryExportOptions&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Configuration&scope=members)
+  - Initializes a new instance of the `GcpTelemetryExportOptions` class.
+  - `GcpTelemetryExportOptions()`
 - [Generate](cephalon-referencedocs.md#member-m-cephalon-referencedocs-generation-referencedocsgenerator-generate-cephalon-referencedocs-generation-referencedocsrequest): `Methods` on `ReferenceDocsGenerator` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Generate&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Generates rendered markdown reference docs for the supplied request.
   - `RenderedReferenceDocs Generate(ReferenceDocsRequest request)`
@@ -1457,6 +1466,9 @@ Browse the published API surface by public member.
   - `string HostedPlatform { get; set; }`
 - [HostedPlatform](cephalon-observability-azuremonitor.md#member-p-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-hostedplatform): `Properties` on `AzureMonitorExportOptions` in `Cephalon.Observability.AzureMonitor.Configuration` (`Cephalon.Observability.AzureMonitor`) [Browse](browse.html?q=HostedPlatform&assembly=Cephalon.Observability.AzureMonitor&namespace=Cephalon.Observability.AzureMonitor.Configuration&scope=members)
   - Gets or sets the hosted Azure platform whose default resource attributes should be applied.
+  - `string HostedPlatform { get; set; }`
+- [HostedPlatform](cephalon-observability-gcp.md#member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-hostedplatform): `Properties` on `GcpTelemetryExportOptions` in `Cephalon.Observability.Gcp.Configuration` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=HostedPlatform&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Configuration&scope=members)
+  - Gets or sets the hosted GCP platform whose default resource attributes should be applied.
   - `string HostedPlatform { get; set; }`
 - [HttpDependencyDefinition](cephalon-observability-httpdependencies.md#member-m-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-ctor): `Constructors` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=HttpDependencyDefinition&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Initializes a new instance of the `HttpDependencyDefinition` class.
@@ -1776,6 +1788,9 @@ Browse the published API surface by public member.
 - [LocalizedTextCatalog](cephalon-engine.md#member-m-cephalon-engine-localization-localizedtextcatalog-ctor-cephalon-engine-configuration-localizationsettings): `Constructors` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=LocalizedTextCatalog&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
   - Initializes a new instance of the `LocalizedTextCatalog` class.
   - `LocalizedTextCatalog(LocalizationSettings settings)`
+- [Location](cephalon-observability-gcp.md#member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-location): `Properties` on `GcpTelemetryExportOptions` in `Cephalon.Observability.Gcp.Configuration` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=Location&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Configuration&scope=members)
+  - Gets or sets the GCP location to stamp onto exported resources when one should be made explicit.
+  - `string Location { get; set; }`
 - [LogCapabilitySummary](cephalon-observability.md#member-p-cephalon-observability-configuration-observabilityoptions-logcapabilitysummary): `Properties` on `ObservabilityOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=LogCapabilitySummary&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Gets or sets a value indicating whether a capability summary should be written at host startup.
   - `bool LogCapabilitySummary { get; set; }`
@@ -2397,6 +2412,12 @@ Browse the published API surface by public member.
 - [Purpose](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder-purpose): `Properties` on `ScaffoldFolder` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Purpose&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the human-readable purpose of the folder.
   - `string Purpose { get; }`
+
+## Q
+
+- [QuotaProjectId](cephalon-observability-gcp.md#member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-quotaprojectid): `Properties` on `GcpTelemetryExportOptions` in `Cephalon.Observability.Gcp.Configuration` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=QuotaProjectId&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Configuration&scope=members)
+  - Gets or sets the optional quota project header used for Google-managed ingestion requests.
+  - `string QuotaProjectId { get; set; }`
 
 ## R
 
@@ -3399,6 +3420,9 @@ Browse the published API surface by public member.
 - [Uri](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-uri): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Uri&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
   - Gets or sets the optional full Neo4j endpoint URI such as `neo4j://graph.internal.example:7687` or `neo4j+s://graph.internal.example:7687`.
   - `string Uri { get; set; }`
+- [UseApplicationDefaultCredentials](cephalon-observability-gcp.md#member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-useapplicationdefaultcredentials): `Properties` on `GcpTelemetryExportOptions` in `Cephalon.Observability.Gcp.Configuration` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=UseApplicationDefaultCredentials&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Configuration&scope=members)
+  - Gets or sets a value indicating whether Google-managed ingestion should authenticate by using Application Default Credentials.
+  - `bool UseApplicationDefaultCredentials { get; set; }`
 - [UseBlueprint](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-useblueprint-cephalon-abstractions-appmodel-appblueprint): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseBlueprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Selects the base application blueprint that should shape the runtime.
   - `EngineBuilder UseBlueprint(AppBlueprint blueprint)`
@@ -3411,6 +3435,9 @@ Browse the published API surface by public member.
 - [UseFailurePolicy](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-usefailurepolicy-cephalon-engine-configuration-failurepolicy): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseFailurePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Replaces the failure policy used by the runtime lifecycle state machine.
   - `EngineBuilder UseFailurePolicy(FailurePolicy policy)`
+- [UseGoogleManagedIngestion](cephalon-observability-gcp.md#member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-usegooglemanagedingestion): `Properties` on `GcpTelemetryExportOptions` in `Cephalon.Observability.Gcp.Configuration` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=UseGoogleManagedIngestion&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Configuration&scope=members)
+  - Gets or sets a value indicating whether the package should use Google-managed OTLP ingestion for traces and metrics when no shared collector endpoint is configured.
+  - `bool UseGoogleManagedIngestion { get; set; }`
 - [UseLocalization](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-uselocalization-cephalon-engine-configuration-localizationsettings): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseLocalization&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Merges localization settings into the current builder state.
   - `EngineBuilder UseLocalization(LocalizationSettings settings)`
