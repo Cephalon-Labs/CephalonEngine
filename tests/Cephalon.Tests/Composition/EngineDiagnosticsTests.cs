@@ -4,6 +4,8 @@ using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.Engine.Runtime;
+using Cephalon.Observability.CassandraDependencies.Configuration;
+using Cephalon.Observability.CassandraDependencies.Hosting;
 using Cephalon.Observability.Hosting;
 using Cephalon.Observability.ConsulDependencies.Configuration;
 using Cephalon.Observability.ConsulDependencies.Hosting;
@@ -192,6 +194,18 @@ public sealed class EngineDiagnosticsTests
                 }
             ];
         });
+        services.AddCephalonCassandraDependencyHealth(options =>
+        {
+            options.Dependencies =
+            [
+                new CassandraDependencyDefinition
+                {
+                    Id = "orders-cassandra",
+                    ContactPoints = ["cass-a.internal.example", "cass-b.internal.example"],
+                    Keyspace = "orders"
+                }
+            ];
+        });
         services.AddCephalonElasticsearchDependencyHealth(options =>
         {
             options.Dependencies =
@@ -347,6 +361,7 @@ public sealed class EngineDiagnosticsTests
 
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Engine");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability");
+        Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.CassandraDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.ConsulDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.ElasticsearchDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.HttpDependencies");
@@ -368,6 +383,9 @@ public sealed class EngineDiagnosticsTests
         Assert.Contains(
             catalog.GetBySource("Cephalon.Observability").Single().Events,
             static entry => entry.Id == 3006 && entry.Name == "DiagnosticsCatalogEntry");
+        Assert.Contains(
+            catalog.GetBySource("Cephalon.Observability.CassandraDependencies").Single().Events,
+            static entry => entry.Id == 3146);
         Assert.Contains(
             catalog.GetBySource("Cephalon.Observability.ConsulDependencies").Single().Events,
             static entry => entry.Id == 3142);
@@ -418,6 +436,7 @@ public sealed class EngineDiagnosticsTests
 
         Assert.Equal(eventIds.Length, eventIds.Distinct().Count());
         Assert.Equal(catalog.Conventions.Count, snapshot.DiagnosticsConventions.Count);
+        Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.CassandraDependencies");
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.ConsulDependencies");
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.ElasticsearchDependencies");
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.KafkaDependencies");

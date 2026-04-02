@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T10:14:28.3050021+00:00",
+  "GeneratedAtUtc": "2026-04-02T10:42:15.6355639+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -190,6 +190,14 @@
       "Category": "Hosts",
       "Description": "Operational diagnostics and telemetry conventions for hosts.",
       "FileName": "cephalon-observability.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "Category": "Hosts",
+      "Description": "Cassandra dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-cassandradependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
     },
@@ -676,6 +684,20 @@
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
       "TypeCount": 4
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "namespace-cephalon-observability-cassandradependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "namespace-cephalon-observability-cassandradependencies-hosting",
+      "TypeCount": 1
     },
     {
       "NamespaceName": "Cephalon.Observability.Configuration",
@@ -1204,6 +1226,51 @@
         "Fields": 0,
         "Properties": 1,
         "Methods": 3
+      }
+    },
+    {
+      "DisplayName": "CassandraDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "type-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition",
+      "Declaration": "public sealed class CassandraDependencyDefinition",
+      "Summary": "Describes one Cassandra dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 10,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CassandraDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "type-cephalon-observability-cassandradependencies-configuration-cassandradependencyhealthoptions",
+      "Declaration": "public sealed class CassandraDependencyHealthOptions",
+      "Summary": "Configures Cassandra dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "CassandraDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "type-cephalon-observability-cassandradependencies-hosting-cassandradependencyhealthservicecollectionextensions",
+      "Declaration": "public static class CassandraDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds Cassandra dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
       }
     },
     {
@@ -4275,6 +4342,28 @@
       "Summary": "Adds Cephalon worker hosting and allows additional code-based engine configuration."
     },
     {
+      "DisplayName": "AddCephalonCassandraDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "CassandraDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "member-m-cephalon-observability-cassandradependencies-hosting-cassandradependencyhealthservicecollectionextensions-addcephaloncassandradependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-cassandradependencies-configuration-cassandradependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonCassandraDependencyHealth(this IServiceCollection services, Action\u003CCassandraDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Cassandra dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonCassandraDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "CassandraDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "member-m-cephalon-observability-cassandradependencies-hosting-cassandradependencyhealthservicecollectionextensions-addcephaloncassandradependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-cassandradependencies-configuration-cassandradependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonCassandraDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CCassandraDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Cassandra dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
       "DisplayName": "AddCephalonConsulDependencyHealth",
       "Category": "Methods",
       "DeclaringTypeName": "ConsulDependencyHealthServiceCollectionExtensions",
@@ -5573,6 +5662,28 @@
       "Summary": "Capture the failure in runtime status without rethrowing it to the host."
     },
     {
+      "DisplayName": "CassandraDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CassandraDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "member-m-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-ctor",
+      "Signature": "CassandraDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060CassandraDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "CassandraDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CassandraDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "member-m-cephalon-observability-cassandradependencies-configuration-cassandradependencyhealthoptions-ctor",
+      "Signature": "CassandraDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060CassandraDependencyHealthOptions\u0060 class."
+    },
+    {
       "DisplayName": "Catalog",
       "Category": "Properties",
       "DeclaringTypeName": "TechnologySelection",
@@ -5901,6 +6012,17 @@
       "AnchorId": "member-m-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions-ctor",
       "Signature": "ConsulDependencyHealthOptions()",
       "Summary": "Initializes a new instance of the \u0060ConsulDependencyHealthOptions\u0060 class."
+    },
+    {
+      "DisplayName": "ContactPoints",
+      "Category": "Properties",
+      "DeclaringTypeName": "CassandraDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-contactpoints",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ContactPoints { get; set; }",
+      "Summary": "Gets or sets the Cassandra contact points used to establish the probe session."
     },
     {
       "DisplayName": "Contents",
@@ -6330,6 +6452,17 @@
       "AnchorId": "member-f-cephalon-abstractions-capabilities-capabilityaccess-denied",
       "Signature": "const CapabilityAccess Denied",
       "Summary": "Indicates the capability is denied."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
+      "DeclaringTypeName": "CassandraDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003CCassandraDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured Cassandra dependencies that should contribute to runtime health."
     },
     {
       "DisplayName": "Dependencies",
@@ -7001,6 +7134,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-capabilitymanifest-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing capability name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "CassandraDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
     },
     {
       "DisplayName": "DisplayName",
@@ -8072,6 +8216,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "CassandraDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "member-m-cephalon-observability-cassandradependencies-configuration-cassandradependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "CassandraDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Cassandra dependency-health options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "ConsulDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.ConsulDependencies",
@@ -8600,6 +8755,17 @@
     {
       "DisplayName": "HealthQuery",
       "Category": "Properties",
+      "DeclaringTypeName": "CassandraDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-healthquery",
+      "Signature": "string HealthQuery { get; set; }",
+      "Summary": "Gets or sets the CQL statement executed to verify the dependency."
+    },
+    {
+      "DisplayName": "HealthQuery",
+      "Category": "Properties",
       "DeclaringTypeName": "MySqlDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -8838,6 +9004,17 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-appblueprint-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable blueprint identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "CassandraDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
     {
       "DisplayName": "Id",
@@ -9597,6 +9774,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-packagesignaturetrustdecision-keyid",
       "Signature": "string KeyId { get; set; }",
       "Summary": "The declared signing-key identifier, when available."
+    },
+    {
+      "DisplayName": "Keyspace",
+      "Category": "Properties",
+      "DeclaringTypeName": "CassandraDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-keyspace",
+      "Signature": "string Keyspace { get; set; }",
+      "Summary": "Gets or sets the optional Cassandra keyspace used when opening the probe session."
     },
     {
       "DisplayName": "Kind",
@@ -11317,6 +11505,17 @@
     {
       "DisplayName": "Password",
       "Category": "Properties",
+      "DeclaringTypeName": "CassandraDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-password",
+      "Signature": "string Password { get; set; }",
+      "Summary": "Gets or sets the optional password used for authentication."
+    },
+    {
+      "DisplayName": "Password",
+      "Category": "Properties",
       "DeclaringTypeName": "ElasticsearchDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
@@ -11632,6 +11831,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-trustsnapshot-policy",
       "Signature": "TrustPolicy Policy { get; set; }",
       "Summary": "The policy that produced the trust decisions."
+    },
+    {
+      "DisplayName": "Port",
+      "Category": "Properties",
+      "DeclaringTypeName": "CassandraDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-port",
+      "Signature": "int Port { get; set; }",
+      "Summary": "Gets or sets the Cassandra native-protocol TCP port."
     },
     {
       "DisplayName": "Port",
@@ -12109,6 +12319,17 @@
     {
       "DisplayName": "RefreshIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "CassandraDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "ConsulDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.ConsulDependencies",
@@ -12479,6 +12700,17 @@
       "AnchorId": "member-m-cephalon-aspnetcore-transports-rest-restendpointconventionbuilderextensions-requirecapability-microsoft-aspnetcore-builder-routehandlerbuilder-system-string",
       "Signature": "RouteHandlerBuilder RequireCapability(this RouteHandlerBuilder builder, string capabilityKey)",
       "Summary": "Requires a Cephalon capability decision before a REST endpoint can execute."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "CassandraDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
     {
       "DisplayName": "Required",
@@ -14760,6 +14992,17 @@
     {
       "DisplayName": "TimeoutSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "CassandraDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-probe timeout in seconds."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "ConsulDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.ConsulDependencies",
@@ -15449,6 +15692,17 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-usepackagepolicy-cephalon-engine-configuration-packagepolicy",
       "Signature": "EngineBuilder UsePackagePolicy(PackagePolicy policy)",
       "Summary": "Replaces the package-governance policy used when loading independently shipped module packages."
+    },
+    {
+      "DisplayName": "Username",
+      "Category": "Properties",
+      "DeclaringTypeName": "CassandraDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
+      "FileName": "cephalon-observability-cassandradependencies.md",
+      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-username",
+      "Signature": "string Username { get; set; }",
+      "Summary": "Gets or sets the optional user name used for authentication."
     },
     {
       "DisplayName": "Username",

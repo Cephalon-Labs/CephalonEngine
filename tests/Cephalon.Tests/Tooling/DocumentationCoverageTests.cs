@@ -16,6 +16,7 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.Engine"] = "engine.md",
             ["Cephalon.Eventing"] = "eventing.md",
             ["Cephalon.Observability"] = "observability.md",
+            ["Cephalon.Observability.CassandraDependencies"] = "observability-cassandra-dependencies.md",
             ["Cephalon.Observability.ConsulDependencies"] = "observability-consul-dependencies.md",
             ["Cephalon.Observability.ElasticsearchDependencies"] = "observability-elasticsearch-dependencies.md",
             ["Cephalon.Observability.HttpDependencies"] = "observability-http-dependencies.md",

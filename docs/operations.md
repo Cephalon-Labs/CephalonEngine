@@ -13,7 +13,7 @@ ASP.NET Core hosts that call `app.MapCephalon()` now expose three health routes:
 - `/health/ready`
 
 Health responses are JSON and include the check status, duration, and runtime-specific details such as restart count and the most recent failure context.
-When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.ConsulDependencies`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.OracleDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
+When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.CassandraDependencies`, `Cephalon.Observability.ConsulDependencies`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.OracleDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
 
 Current semantics:
 
@@ -595,6 +595,60 @@ Operational notes:
 - each probe opens a dedicated `OracleConnection` with pooling disabled, runs the configured health query, and reports the result through the shared dependency-health contract
 - required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
 
+### Cassandra dependency probes
+
+`Cephalon.Observability.CassandraDependencies` reads `Engine:Observability:DependencyHealth:Cassandra` and turns configured Cassandra clusters into reusable `IDependencyHealthContributor` data.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "DependencyHealth": {
+        "Cassandra": {
+          "RefreshIntervalSeconds": 30,
+          "Dependencies": [
+            {
+              "Id": "orders-cassandra",
+              "DisplayName": "Orders Cassandra",
+              "ContactPoints": [
+                "cass-a.internal.example",
+                "cass-b.internal.example"
+              ],
+              "Port": 9042,
+              "Keyspace": "orders",
+              "Username": "cephalon-runtime",
+              "Password": "${CASSANDRA_PASSWORD}",
+              "HealthQuery": "SELECT release_version FROM system.local;",
+              "Required": true,
+              "TimeoutSeconds": 5
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonCassandraDependencyHealth(builder.Configuration);
+```
+
+Operational notes:
+
+- the Cassandra dependency-health package is optional and stays outside `Cephalon.Engine`
+- the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
+- probes accept `ContactPoints` as either an array or a comma-separated scalar value so hosts can keep cluster seed-node configuration explicit
+- each probe opens a dedicated Cassandra session, optionally selects a keyspace, runs the configured CQL health query, and reports the result through the shared dependency-health contract
+- required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
+
 ### NATS dependency probes
 
 `Cephalon.Observability.NatsDependencies` reads `Engine:Observability:DependencyHealth:Nats` and turns configured NATS endpoints into reusable `IDependencyHealthContributor` data.
@@ -770,6 +824,7 @@ Current shipped event-id ranges include:
 
 - `Cephalon.Engine`: `2000-2003`
 - `Cephalon.Observability`: `3000-3006`
+- `Cephalon.Observability.CassandraDependencies`: `3146-3147`
 - `Cephalon.Observability.ConsulDependencies`: `3142-3143`
 - `Cephalon.Observability.ElasticsearchDependencies`: `3138-3139`
 - `Cephalon.Observability.HttpDependencies`: `3100-3101`

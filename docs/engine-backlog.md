@@ -237,7 +237,7 @@ Acceptance:
 The active planning wave now moves to phase 2 operational hardening:
 
 - keep the completed gap inventory, shipped OpenTelemetry companion package, and published diagnostics catalog reflected accurately in docs and project tracking
-- keep the shipped Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Oracle, Postgres, RabbitMQ, Redis, and SQL Server dependency-health companions reflected accurately in docs and project tracking while broader provider coverage stays explicit
+- keep the shipped Cassandra, Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Oracle, Postgres, RabbitMQ, Redis, and SQL Server dependency-health companions reflected accurately in docs and project tracking while broader provider coverage stays explicit
 - keep the shipped Serilog provider companion package reflected accurately in docs and project tracking while cloud tracing/export integration remains an explicit later follow-through item
 - keep the shipped ASP.NET Core request/response logging, bounded body capture, and trace/log correlation surfaces reflected accurately in docs and project tracking
 - keep the shipped runtime-story surface plus the shipped failure-policy warmup, drain, and restart-backoff semantics reflected accurately in docs and project tracking
@@ -516,7 +516,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 - ENG-011 Package and plugin loading
 - operational hardening follow-through after the shipped health, telemetry, and CI baselines
-- shipped OpenTelemetry companion packaging plus Consul control-plane health plus Elasticsearch cluster health plus HTTP external API, Kafka broker metadata, Memcached cache, MongoDB document database, MQTT broker, MySQL database, NATS broker, Oracle database, Postgres database, RabbitMQ broker, Redis/cache, and SQL Server dependency-health companions, together with the shared diagnostics/event-id catalog for active packages, opt-in ASP.NET Core request/response logging with trace correlation, and explicit release-validation guidance for health/export conventions
+- shipped OpenTelemetry companion packaging plus Cassandra contact-point health plus Consul control-plane health plus Elasticsearch cluster health plus HTTP external API, Kafka broker metadata, Memcached cache, MongoDB document database, MQTT broker, MySQL database, NATS broker, Oracle database, Postgres database, RabbitMQ broker, Redis/cache, and SQL Server dependency-health companions, together with the shared diagnostics/event-id catalog for active packages, opt-in ASP.NET Core request/response logging with trace correlation, and explicit release-validation guidance for health/export conventions
 
 ### Sprint 3
 

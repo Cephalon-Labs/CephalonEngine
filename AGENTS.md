@@ -23,6 +23,7 @@ When working in this repository:
 - `Cephalon.AspNetCore` is a host adapter, not the core engine
 - `Cephalon.Worker` is the generic-host worker adapter for non-HTTP runtime scenarios
 - `Cephalon.Observability` is the diagnostics companion package for logs, metrics, and tracing conventions
+- `Cephalon.Observability.CassandraDependencies` is the optional Cassandra dependency-health companion package
 - `Cephalon.Observability.ConsulDependencies` is the optional Consul dependency-health companion package
 - `Cephalon.Observability.ElasticsearchDependencies` is the optional Elasticsearch dependency-health companion package
 - `Cephalon.Observability.HttpDependencies` is the optional external API dependency-health companion package for HTTP-based upstreams
@@ -208,6 +209,9 @@ Current source layout:
 - `src/Cephalon.Worker/Hosting` -> `Cephalon.Worker.Hosting`
 - `src/Cephalon.Observability/Configuration` -> `Cephalon.Observability.Configuration`
 - `src/Cephalon.Observability/Hosting` -> `Cephalon.Observability.Hosting`
+- `src/Cephalon.Observability.CassandraDependencies/Configuration` -> `Cephalon.Observability.CassandraDependencies.Configuration`
+- `src/Cephalon.Observability.CassandraDependencies/Hosting` -> `Cephalon.Observability.CassandraDependencies.Hosting`
+- `src/Cephalon.Observability.CassandraDependencies/Services` -> `Cephalon.Observability.CassandraDependencies.Services`
 - `src/Cephalon.Observability.ConsulDependencies/Configuration` -> `Cephalon.Observability.ConsulDependencies.Configuration`
 - `src/Cephalon.Observability.ConsulDependencies/Hosting` -> `Cephalon.Observability.ConsulDependencies.Hosting`
 - `src/Cephalon.Observability.ConsulDependencies/Services` -> `Cephalon.Observability.ConsulDependencies.Services`

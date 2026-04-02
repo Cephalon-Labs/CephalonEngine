@@ -188,6 +188,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Eventing](cephalon-eventing.md#namespace-cephalon-eventing-services): 4 public types [Browse](browse.html?assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
 
+## `Cephalon.Observability.CassandraDependencies.Configuration`
+
+- [Cephalon.Observability.CassandraDependencies](cephalon-observability-cassandradependencies.md#namespace-cephalon-observability-cassandradependencies-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Configuration)
+
+## `Cephalon.Observability.CassandraDependencies.Hosting`
+
+- [Cephalon.Observability.CassandraDependencies](cephalon-observability-cassandradependencies.md#namespace-cephalon-observability-cassandradependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Hosting)
+
 ## `Cephalon.Observability.Configuration`
 
 - [Cephalon.Observability](cephalon-observability.md#namespace-cephalon-observability-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration)
