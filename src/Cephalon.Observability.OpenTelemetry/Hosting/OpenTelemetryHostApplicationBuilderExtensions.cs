@@ -32,7 +32,10 @@ public static class OpenTelemetryHostApplicationBuilderExtensions
     /// Hosts opt in explicitly when they want a supported OpenTelemetry path instead of guidance-only settings.
     /// </para>
     /// <para>
-    /// Registration is skipped when no export endpoint is configured or when every signal is disabled.
+    /// Registration is skipped when every signal is disabled or when no export endpoint is configured
+    /// and explicit self-hosted defaults are not enabled. When <c>UseSelfHostedDefaults</c> is enabled,
+    /// the package falls back to the standard local OTLP collector ports and adds a
+    /// <c>deployment.environment.name</c> resource attribute from the current host environment.
     /// The endpoint is interpreted as a base collector endpoint for HTTP/protobuf and the signal-specific
     /// OTLP paths are appended automatically.
     /// </para>
@@ -60,7 +63,21 @@ public static class OpenTelemetryHostApplicationBuilderExtensions
 
         var openTelemetry = builder.Services
             .AddOpenTelemetry()
-            .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion: serviceVersion));
+            .ConfigureResource(resource =>
+            {
+                resource.AddService(serviceName, serviceVersion: serviceVersion);
+
+                if (telemetry.UseSelfHostedDefaults &&
+                    !string.IsNullOrWhiteSpace(builder.Environment.EnvironmentName))
+                {
+                    resource.AddAttributes(
+                    [
+                        new KeyValuePair<string, object>(
+                            "deployment.environment.name",
+                            builder.Environment.EnvironmentName.Trim())
+                    ]);
+                }
+            });
 
         if (telemetry.ExportTraces)
         {
@@ -90,7 +107,11 @@ public static class OpenTelemetryHostApplicationBuilderExtensions
                 logging.IncludeFormattedMessage = true;
                 logging.IncludeScopes = true;
                 logging.ParseStateValues = true;
-                logging.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName, serviceVersion: serviceVersion));
+                logging.SetResourceBuilder(BuildResourceBuilder(
+                    serviceName,
+                    serviceVersion,
+                    builder.Environment.EnvironmentName,
+                    telemetry.UseSelfHostedDefaults));
                 logging.AddOtlpExporter(exporter =>
                     ConfigureExporter(exporter, telemetry, exporterProtocol, TelemetrySignal.Logs));
             });
@@ -103,7 +124,7 @@ public static class OpenTelemetryHostApplicationBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(telemetry);
 
-        return !string.IsNullOrWhiteSpace(telemetry.Endpoint) &&
+        return (!string.IsNullOrWhiteSpace(telemetry.Endpoint) || telemetry.UseSelfHostedDefaults) &&
             (telemetry.ExportLogs || telemetry.ExportMetrics || telemetry.ExportTraces);
     }
 
@@ -167,20 +188,67 @@ public static class OpenTelemetryHostApplicationBuilderExtensions
 
         exporter.Protocol = exporterProtocol;
 
-        if (string.IsNullOrWhiteSpace(telemetry.Endpoint))
+        var endpoint = ResolveCollectorEndpoint(telemetry, exporterProtocol);
+        if (endpoint is null)
         {
             return;
-        }
-
-        if (!Uri.TryCreate(telemetry.Endpoint, UriKind.Absolute, out var endpoint))
-        {
-            throw new InvalidOperationException(
-                $"Telemetry endpoint '{telemetry.Endpoint}' is not a valid absolute URI.");
         }
 
         exporter.Endpoint = exporterProtocol == OtlpExportProtocol.HttpProtobuf
             ? BuildSignalEndpoint(endpoint, signal)
             : endpoint;
+    }
+
+    private static ResourceBuilder BuildResourceBuilder(
+        string serviceName,
+        string? serviceVersion,
+        string? environmentName,
+        bool useSelfHostedDefaults)
+    {
+        var resourceBuilder = ResourceBuilder.CreateDefault()
+            .AddService(serviceName, serviceVersion: serviceVersion);
+
+        if (useSelfHostedDefaults && !string.IsNullOrWhiteSpace(environmentName))
+        {
+            resourceBuilder.AddAttributes(
+            [
+                new KeyValuePair<string, object>(
+                    "deployment.environment.name",
+                    environmentName.Trim())
+            ]);
+        }
+
+        return resourceBuilder;
+    }
+
+    private static Uri? ResolveCollectorEndpoint(
+        TelemetryExportOptions telemetry,
+        OtlpExportProtocol exporterProtocol)
+    {
+        ArgumentNullException.ThrowIfNull(telemetry);
+
+        if (!string.IsNullOrWhiteSpace(telemetry.Endpoint))
+        {
+            if (!Uri.TryCreate(telemetry.Endpoint, UriKind.Absolute, out var endpoint))
+            {
+                throw new InvalidOperationException(
+                    $"Telemetry endpoint '{telemetry.Endpoint}' is not a valid absolute URI.");
+            }
+
+            return endpoint;
+        }
+
+        if (!telemetry.UseSelfHostedDefaults)
+        {
+            return null;
+        }
+
+        return exporterProtocol switch
+        {
+            OtlpExportProtocol.Grpc => new Uri("http://localhost:4317", UriKind.Absolute),
+            OtlpExportProtocol.HttpProtobuf => new Uri("http://localhost:4318", UriKind.Absolute),
+            _ => throw new ArgumentOutOfRangeException(nameof(exporterProtocol))
+        };
     }
 
     private static Uri BuildSignalEndpoint(Uri endpoint, TelemetrySignal signal)

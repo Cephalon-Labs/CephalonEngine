@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T11:53:41.7787216+00:00",
+  "GeneratedAtUtc": "2026-04-02T15:19:57.8498286+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -1892,7 +1892,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 5,
+        "Properties": 8,
         "Methods": 1
       }
     },
@@ -4097,7 +4097,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 6,
+        "Properties": 7,
         "Methods": 0
       }
     },
@@ -12789,6 +12789,39 @@
       "Summary": "The reason the package was trusted or rejected."
     },
     {
+      "DisplayName": "RedactedFieldNames",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpRequestResponseLoggingOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-redactedfieldnames",
+      "Signature": "IReadOnlyList\u003Cstring\u003E RedactedFieldNames { get; set; }",
+      "Summary": "Gets or sets the field names that should be treated as sensitive when request and response content is logged."
+    },
+    {
+      "DisplayName": "RedactionValue",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpRequestResponseLoggingOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-redactionvalue",
+      "Signature": "string RedactionValue { get; set; }",
+      "Summary": "Gets or sets the placeholder written to logs when a sensitive value is redacted."
+    },
+    {
+      "DisplayName": "RedactSensitiveValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "HttpRequestResponseLoggingOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-redactsensitivevalues",
+      "Signature": "bool RedactSensitiveValues { get; set; }",
+      "Summary": "Gets or sets a value indicating whether known-sensitive query-string and payload fields should be redacted before logging."
+    },
+    {
       "DisplayName": "RedisDependencyDefinition",
       "Category": "Constructors",
       "DeclaringTypeName": "RedisDependencyDefinition",
@@ -16516,6 +16549,17 @@
       "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-username",
       "Signature": "string Username { get; set; }",
       "Summary": "Gets or sets the optional user name used for authentication when no full connection string is supplied."
+    },
+    {
+      "DisplayName": "UseSelfHostedDefaults",
+      "Category": "Properties",
+      "DeclaringTypeName": "TelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Configuration",
+      "AssemblyName": "Cephalon.Observability",
+      "FileName": "cephalon-observability.md",
+      "AnchorId": "member-p-cephalon-observability-configuration-telemetryexportoptions-useselfhosteddefaults",
+      "Signature": "bool UseSelfHostedDefaults { get; set; }",
+      "Summary": "Gets or sets a value indicating whether companion packages should apply the supported self-hosted collector and runtime defaults when the export endpoint is omitted."
     },
     {
       "DisplayName": "UseSettings",

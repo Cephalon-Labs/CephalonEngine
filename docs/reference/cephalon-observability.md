@@ -101,7 +101,7 @@ Parameters:
 
 Describes how operators intend host telemetry to be exported.
 
-Remarks: These settings let Cephalon packages and hosts agree on provider, protocol, endpoint, and enabled signals without forcing exporter dependencies into the engine core. Companion packages such as `Cephalon.Observability.OpenTelemetry` can interpret the same contract when a host wants a supported OTLP export path.
+Remarks: These settings let Cephalon packages and hosts agree on provider, protocol, endpoint, and enabled signals without forcing exporter dependencies into the engine core. Companion packages such as `Cephalon.Observability.OpenTelemetry` can interpret the same contract when a host wants a supported OTLP export path, including the explicit self-hosted collector defaults that remain outside `Cephalon.Engine`.
 
 #### Declaration
 ```csharp
@@ -181,6 +181,18 @@ string Provider { get; set; }
 ```
 
 Gets or sets the telemetry provider name, such as `OpenTelemetry`.
+
+<a id="member-p-cephalon-observability-configuration-telemetryexportoptions-useselfhosteddefaults"></a>
+
+##### `UseSelfHostedDefaults`
+
+```csharp
+bool UseSelfHostedDefaults { get; set; }
+```
+
+Gets or sets a value indicating whether companion packages should apply the supported self-hosted collector and runtime defaults when the export endpoint is omitted.
+
+Remarks: The shipped OpenTelemetry companion interprets this flag as an explicit self-hosted path on top of the shared OTLP baseline, using the standard local collector ports and host-managed runtime resource defaults instead of vendor-specific wiring.
 
 <a id="namespace-cephalon-observability-hosting"></a>
 

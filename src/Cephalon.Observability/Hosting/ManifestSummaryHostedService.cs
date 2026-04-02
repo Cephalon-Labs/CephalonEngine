@@ -110,7 +110,7 @@ internal sealed class ManifestSummaryHostedService : IHostedService
                 logger,
                 options.Telemetry.Provider,
                 options.Telemetry.Protocol,
-                options.Telemetry.Endpoint ?? "not-configured",
+                ResolveTelemetryEndpointDisplay(options.Telemetry),
                 options.Telemetry.ExportLogs,
                 options.Telemetry.ExportMetrics,
                 options.Telemetry.ExportTraces,
@@ -145,5 +145,44 @@ internal sealed class ManifestSummaryHostedService : IHostedService
     public Task StopAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
+    }
+
+    private static string ResolveTelemetryEndpointDisplay(TelemetryExportOptions telemetry)
+    {
+        ArgumentNullException.ThrowIfNull(telemetry);
+
+        if (!string.IsNullOrWhiteSpace(telemetry.Endpoint))
+        {
+            return telemetry.Endpoint;
+        }
+
+        if (!telemetry.UseSelfHostedDefaults)
+        {
+            return "not-configured";
+        }
+
+        return ResolveSelfHostedCollectorEndpoint(telemetry.Protocol) is { } endpoint
+            ? $"{endpoint} (self-hosted default)"
+            : $"not-configured (unsupported self-hosted protocol '{telemetry.Protocol}')";
+    }
+
+    private static string? ResolveSelfHostedCollectorEndpoint(string? protocol)
+    {
+        var normalizedProtocol = string.IsNullOrWhiteSpace(protocol)
+            ? "otlp"
+            : protocol.Trim().ToLowerInvariant();
+
+        return normalizedProtocol switch
+        {
+            "otlp" => "http://localhost:4317",
+            "grpc" => "http://localhost:4317",
+            "otlp/grpc" => "http://localhost:4317",
+            "http" => "http://localhost:4318",
+            "otlp/http" => "http://localhost:4318",
+            "otlp-http" => "http://localhost:4318",
+            "http/protobuf" => "http://localhost:4318",
+            "httpprotobuf" => "http://localhost:4318",
+            _ => null
+        };
     }
 }

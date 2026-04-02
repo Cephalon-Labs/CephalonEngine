@@ -209,5 +209,5 @@ Current conclusion from this inventory:
 Recommended execution sequence now is:
 
 1. treat phase 2 as complete for the shipped operational baseline
-2. track `#86` under `ENG-029` in phase 6 cloud and platform integrations, starting with an explicit self-hosted collector/runtime slice before broader vendor-specific expansion unless an adopter reprioritizes the target order
+2. track `#86` under `ENG-029` in phase 6 cloud and platform integrations, with the self-hosted collector/runtime slice now current focus before broader vendor-specific expansion unless an adopter reprioritizes the target order
 3. keep adoption-driven provider-pack additions separate unless a concrete infrastructure gap appears

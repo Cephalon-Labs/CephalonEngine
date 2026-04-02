@@ -1065,7 +1065,7 @@ This is the main operator surface for package provenance and compatibility diagn
   - `cephalon.runtime.restarts`
 
 `Cephalon.Observability` reads `Engine:Observability:Telemetry` and logs the effective export guidance on startup.
-`Cephalon.Observability.OpenTelemetry` can then turn that same section into a supported OTLP export path for logs, metrics, and traces.
+`Cephalon.Observability.OpenTelemetry` can then turn that same section into a supported OTLP export path for logs, metrics, and traces, including the explicit self-hosted collector defaults that sit on top of the same shared contract.
 
 Example:
 
@@ -1077,6 +1077,25 @@ Example:
         "Provider": "OpenTelemetry",
         "Protocol": "otlp/http",
         "Endpoint": "http://localhost:4318",
+        "ExportLogs": true,
+        "ExportMetrics": true,
+        "ExportTraces": true
+      }
+    }
+  }
+}
+```
+
+Self-hosted example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "Telemetry": {
+        "Provider": "OpenTelemetry",
+        "Protocol": "otlp/http",
+        "UseSelfHostedDefaults": true,
         "ExportLogs": true,
         "ExportMetrics": true,
         "ExportTraces": true
@@ -1099,9 +1118,11 @@ builder.AddCephalonOpenTelemetry();
 Operational notes:
 
 - the exporter package is optional and stays outside `Cephalon.Engine`
-- registration is skipped when `Engine:Observability:Telemetry:Endpoint` is not configured
+- registration is skipped when `Engine:Observability:Telemetry:Endpoint` is not configured and `UseSelfHostedDefaults` is not enabled
 - `otlp`, `otlp/grpc`, and `otlp/http` are the supported protocol values for the shipped companion package
+- when `UseSelfHostedDefaults` is `true` and `Endpoint` is omitted, the package falls back to `http://localhost:4317` for `otlp` / `otlp/grpc` or `http://localhost:4318` for `otlp/http`
 - when `otlp/http` is selected, the package appends `/v1/logs`, `/v1/metrics`, and `/v1/traces` automatically from the configured base endpoint
+- the self-hosted path also adds `deployment.environment.name` from the active host environment alongside the existing service-name and service-version resource defaults
 
 ## Serilog provider path
 
@@ -1214,9 +1235,9 @@ It executes a curated test suite that validates:
 - ASP.NET Core `/health/live`, `/health/ready`, `/engine/diagnostics`, and `/engine/dependencies` behavior
 - ASP.NET Core request/response logging, bounded body capture, and trace/log correlation behavior
 - worker-host parity through `RuntimeHealthEvaluator`
-- startup manifest and telemetry-export guidance emitted by `Cephalon.Observability`
+- startup manifest and telemetry-export guidance emitted by `Cephalon.Observability`, including self-hosted OTLP default endpoint guidance
 - Serilog provider wiring through `Cephalon.Observability.Serilog`
-- OTLP exporter wiring through `Cephalon.Observability.OpenTelemetry`
+- OTLP exporter wiring through `Cephalon.Observability.OpenTelemetry`, including the explicit self-hosted collector-default path
 
 `.\scripts\validate-release.ps1` now runs that focused suite by default in addition to the broader repo test, benchmark, and reference-doc flow.
 Use `-SkipOperationalConventions` only when you intentionally want the wider release flow without the named operational replay.

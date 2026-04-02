@@ -468,7 +468,7 @@ Acceptance:
 
 ### ENG-029 Cloud-targeted observability companion integrations
 
-Status: later
+Status: current focus
 Estimate: 34
 
 Why:
@@ -483,6 +483,7 @@ Acceptance:
 - keep vendor/platform-specific exporter wiring, auth, resource attributes, and hosted defaults outside `Cephalon.Engine` and `Cephalon.Abstractions`
 - keep the shared `ILogger` pipeline and existing `Cephalon.Observability.OpenTelemetry` baseline intact
 - add docs, validation, and planning sync for the supported targets
+- keep the self-hosted OTLP collector/runtime-default slice as the active entry point before broader vendor expansion
 - avoid starting implementation on an ambiguous multi-cloud scope without first narrowing the supported target slice
 
 ## Sprint history and next 3 sprints
@@ -544,9 +545,9 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 - ENG-013 Workflow and orchestration primitives
 - package distribution and trust follow-through beyond the current baseline
+- ENG-029 self-hosted OTLP collector/runtime-default follow-through
 
 ### Later / not scheduled yet
 
 - ENG-022 `MicroserviceSuite` blueprint
-- ENG-029 Cloud-targeted observability companion integrations
 - ENG-028 repo-wide XML-comment hygiene for test harnesses
