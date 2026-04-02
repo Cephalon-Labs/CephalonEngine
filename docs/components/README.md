@@ -26,6 +26,7 @@ See also: [Docs hub](../README.md)
 ## Tooling and adoption
 
 - [Cephalon.Observability](observability.md)
+- [Cephalon.Observability.ElasticsearchDependencies](observability-elasticsearch-dependencies.md)
 - [Cephalon.Observability.HttpDependencies](observability-http-dependencies.md)
 - [Cephalon.Observability.KafkaDependencies](observability-kafka-dependencies.md)
 - [Cephalon.Observability.MongoDbDependencies](observability-mongodb-dependencies.md)

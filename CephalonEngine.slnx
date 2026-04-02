@@ -26,6 +26,7 @@
     <Project Path="src/Cephalon.Observability/Cephalon.Observability.csproj" />
     <Project Path="src/Cephalon.Observability.HttpDependencies/Cephalon.Observability.HttpDependencies.csproj" />
     <Project Path="src/Cephalon.Observability.KafkaDependencies/Cephalon.Observability.KafkaDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.ElasticsearchDependencies/Cephalon.Observability.ElasticsearchDependencies.csproj" />
     <Project Path="src/Cephalon.Observability.MongoDbDependencies/Cephalon.Observability.MongoDbDependencies.csproj" />
     <Project Path="src/Cephalon.Observability.MqttDependencies/Cephalon.Observability.MqttDependencies.csproj" />
     <Project Path="src/Cephalon.Observability.MySqlDependencies/Cephalon.Observability.MySqlDependencies.csproj" />

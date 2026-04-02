@@ -13,7 +13,7 @@ ASP.NET Core hosts that call `app.MapCephalon()` now expose three health routes:
 - `/health/ready`
 
 Health responses are JSON and include the check status, duration, and runtime-specific details such as restart count and the most recent failure context.
-When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
+When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
 
 Current semantics:
 
@@ -88,6 +88,54 @@ Operational notes:
 - the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
 - required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
 - if `ExpectedStatusCodes` is omitted, standard successful HTTP responses are treated as healthy
+
+### Elasticsearch dependency probes
+
+`Cephalon.Observability.ElasticsearchDependencies` reads `Engine:Observability:DependencyHealth:Elasticsearch` and turns configured Elasticsearch endpoints into reusable `IDependencyHealthContributor` data.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "DependencyHealth": {
+        "Elasticsearch": {
+          "RefreshIntervalSeconds": 30,
+          "Dependencies": [
+            {
+              "Id": "search-cluster",
+              "DisplayName": "Search Cluster",
+              "Endpoint": "https://search.internal.example:9200",
+              "ApiKey": "${ELASTICSEARCH_API_KEY}",
+              "Required": true,
+              "TimeoutSeconds": 5
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonElasticsearchDependencyHealth(builder.Configuration);
+```
+
+Operational notes:
+
+- the Elasticsearch dependency-health package is optional and stays outside `Cephalon.Engine`
+- the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
+- if the configured endpoint is just the cluster base URL, the probe automatically resolves `GET /_cluster/health`
+- probes support API-key auth, bearer-token auth, or basic auth without hiding those choices in host code
+- cluster `green` maps to `Healthy`, `yellow` maps to `Degraded`, `red` maps to `Unhealthy`, and Elasticsearch-side `timed_out` responses are treated as `Unhealthy`
+- required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
 
 ### Redis dependency probes
 
@@ -576,6 +624,7 @@ Current shipped event-id ranges include:
 
 - `Cephalon.Engine`: `2000-2003`
 - `Cephalon.Observability`: `3000-3006`
+- `Cephalon.Observability.ElasticsearchDependencies`: `3138-3139`
 - `Cephalon.Observability.HttpDependencies`: `3100-3101`
 - `Cephalon.Observability.RedisDependencies`: `3120-3121`
 - `Cephalon.Observability.PostgresDependencies`: `3122-3123`

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T04:37:53.3927063+00:00",
+  "GeneratedAtUtc": "2026-04-02T05:12:02.8031588+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -190,6 +190,14 @@
       "Category": "Hosts",
       "Description": "Operational diagnostics and telemetry conventions for hosts.",
       "FileName": "cephalon-observability.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "Category": "Hosts",
+      "Description": "Elasticsearch dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
     },
@@ -643,6 +651,20 @@
       "FileName": "cephalon-observability.md",
       "AnchorId": "namespace-cephalon-observability-configuration",
       "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-elasticsearchdependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-elasticsearchdependencies-hosting",
+      "TypeCount": 1
     },
     {
       "NamespaceName": "Cephalon.Observability.Hosting",
@@ -1296,6 +1318,51 @@
         "Fields": 0,
         "Properties": 3,
         "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ElasticsearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "type-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition",
+      "Declaration": "public sealed class ElasticsearchDependencyDefinition",
+      "Summary": "Describes one Elasticsearch dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 9,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ElasticsearchDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "type-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions",
+      "Declaration": "public sealed class ElasticsearchDependencyHealthOptions",
+      "Summary": "Configures Elasticsearch dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ElasticsearchDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "type-cephalon-observability-elasticsearchdependencies-hosting-elasticsearchdependencyhealthservicecollectionextensions",
+      "Declaration": "public static class ElasticsearchDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds Elasticsearch dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
       }
     },
     {
@@ -3951,6 +4018,28 @@
       "Summary": "Adds Cephalon worker hosting and allows additional code-based engine configuration."
     },
     {
+      "DisplayName": "AddCephalonElasticsearchDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "ElasticsearchDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-elasticsearchdependencies-hosting-elasticsearchdependencyhealthservicecollectionextensions-addcephalonelasticsearchdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonElasticsearchDependencyHealth(this IServiceCollection services, Action\u003CElasticsearchDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Elasticsearch dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonElasticsearchDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "ElasticsearchDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-elasticsearchdependencies-hosting-elasticsearchdependencyhealthservicecollectionextensions-addcephalonelasticsearchdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonElasticsearchDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CElasticsearchDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Elasticsearch dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
       "DisplayName": "AddCephalonHttpDependencyHealth",
       "Category": "Methods",
       "DeclaringTypeName": "HttpDependencyHealthServiceCollectionExtensions",
@@ -4699,6 +4788,17 @@
       "Summary": "Gets or sets the optional value that controls whether the server RSA public key may be requested automatically."
     },
     {
+      "DisplayName": "ApiKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "ElasticsearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-apikey",
+      "Signature": "string ApiKey { get; set; }",
+      "Summary": "Gets or sets the optional API key used for Elasticsearch API-key authentication."
+    },
+    {
       "DisplayName": "AppBlueprint",
       "Category": "Constructors",
       "DeclaringTypeName": "AppBlueprint",
@@ -4873,6 +4973,17 @@
       "AnchorId": "member-p-cephalon-aspnetcore-documentation-referencedocssurface-available",
       "Signature": "bool Available { get; set; }",
       "Summary": "Whether the configured documentation directory and default document were found and mapped."
+    },
+    {
+      "DisplayName": "BearerToken",
+      "Category": "Properties",
+      "DeclaringTypeName": "ElasticsearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-bearertoken",
+      "Signature": "string BearerToken { get; set; }",
+      "Summary": "Gets or sets the optional bearer token used for Elasticsearch bearer-token authentication."
     },
     {
       "DisplayName": "BestEffortContinue",
@@ -5834,6 +5945,17 @@
     {
       "DisplayName": "Dependencies",
       "Category": "Properties",
+      "DeclaringTypeName": "ElasticsearchDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003CElasticsearchDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured Elasticsearch dependencies that should contribute to runtime health."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
       "DeclaringTypeName": "HttpDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
@@ -6483,6 +6605,17 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "ElasticsearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "EventChannelDescriptor",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -6767,6 +6900,28 @@
       "Summary": "Creates edge runtime options with the default host-owned features enabled."
     },
     {
+      "DisplayName": "ElasticsearchDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ElasticsearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-ctor",
+      "Signature": "ElasticsearchDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060ElasticsearchDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "ElasticsearchDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ElasticsearchDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions-ctor",
+      "Signature": "ElasticsearchDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060ElasticsearchDependencyHealthOptions\u0060 class."
+    },
+    {
       "DisplayName": "Empty",
       "Category": "Properties",
       "DeclaringTypeName": "EngineOptions",
@@ -6919,6 +7074,17 @@
       "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-encrypt",
       "Signature": "string Encrypt { get; set; }",
       "Summary": "Gets or sets the optional SQL Server encryption mode such as \u0060Optional\u0060, \u0060Mandatory\u0060, or \u0060Strict\u0060."
+    },
+    {
+      "DisplayName": "Endpoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "ElasticsearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-endpoint",
+      "Signature": "string Endpoint { get; set; }",
+      "Summary": "Gets or sets the absolute Elasticsearch base URL or cluster-health endpoint that should be probed."
     },
     {
       "DisplayName": "Endpoint",
@@ -7425,6 +7591,17 @@
       "AnchorId": "member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-foundation",
       "Signature": "const string Foundation",
       "Summary": "Identifies the shared foundation project."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
+      "DeclaringTypeName": "ElasticsearchDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "ElasticsearchDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Elasticsearch dependency-health options from configuration."
     },
     {
       "DisplayName": "FromConfiguration",
@@ -8129,6 +8306,17 @@
       "AnchorId": "member-p-cephalon-edge-services-edgenodedescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable node identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "ElasticsearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
     {
       "DisplayName": "Id",
@@ -10465,6 +10653,17 @@
     {
       "DisplayName": "Password",
       "Category": "Properties",
+      "DeclaringTypeName": "ElasticsearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-password",
+      "Signature": "string Password { get; set; }",
+      "Summary": "Gets or sets the optional password used for Elasticsearch basic authentication."
+    },
+    {
+      "DisplayName": "Password",
+      "Category": "Properties",
       "DeclaringTypeName": "KafkaDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.KafkaDependencies",
@@ -11213,6 +11412,17 @@
     {
       "DisplayName": "RefreshIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "ElasticsearchDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "HttpDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
@@ -11539,6 +11749,17 @@
       "AnchorId": "member-p-cephalon-abstractions-health-dependencyhealthreport-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Whether the dependency is required for readiness."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "ElasticsearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
     {
       "DisplayName": "Required",
@@ -13743,6 +13964,17 @@
     {
       "DisplayName": "TimeoutSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "ElasticsearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-request timeout in seconds."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "HttpDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
@@ -14388,6 +14620,17 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-usepackagepolicy-cephalon-engine-configuration-packagepolicy",
       "Signature": "EngineBuilder UsePackagePolicy(PackagePolicy policy)",
       "Summary": "Replaces the package-governance policy used when loading independently shipped module packages."
+    },
+    {
+      "DisplayName": "Username",
+      "Category": "Properties",
+      "DeclaringTypeName": "ElasticsearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
+      "FileName": "cephalon-observability-elasticsearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-username",
+      "Signature": "string Username { get; set; }",
+      "Summary": "Gets or sets the optional user name used for Elasticsearch basic authentication."
     },
     {
       "DisplayName": "Username",

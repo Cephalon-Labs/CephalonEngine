@@ -192,6 +192,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Observability](cephalon-observability.md#namespace-cephalon-observability-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration)
 
+## `Cephalon.Observability.ElasticsearchDependencies.Configuration`
+
+- [Cephalon.Observability.ElasticsearchDependencies](cephalon-observability-elasticsearchdependencies.md#namespace-cephalon-observability-elasticsearchdependencies-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Configuration)
+
+## `Cephalon.Observability.ElasticsearchDependencies.Hosting`
+
+- [Cephalon.Observability.ElasticsearchDependencies](cephalon-observability-elasticsearchdependencies.md#namespace-cephalon-observability-elasticsearchdependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Hosting)
+
 ## `Cephalon.Observability.Hosting`
 
 - [Cephalon.Observability](cephalon-observability.md#namespace-cephalon-observability-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability&namespace=Cephalon.Observability.Hosting)
