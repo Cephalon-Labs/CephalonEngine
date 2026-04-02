@@ -1124,6 +1124,54 @@ Operational notes:
 - when `otlp/http` is selected, the package appends `/v1/logs`, `/v1/metrics`, and `/v1/traces` automatically from the configured base endpoint
 - the self-hosted path also adds `deployment.environment.name` from the active host environment alongside the existing service-name and service-version resource defaults
 
+## AWS observability path
+
+`Cephalon.Observability.Aws` keeps AWS-specific propagation, AWS SDK instrumentation, and hosted AWS resource defaults in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "Telemetry": {
+        "Provider": "OpenTelemetry",
+        "Protocol": "otlp/http",
+        "Endpoint": "http://localhost:4318",
+        "ExportLogs": true,
+        "ExportMetrics": true,
+        "ExportTraces": true,
+        "Aws": {
+          "HostedPlatform": "ecs",
+          "UseXRayTraceIds": true,
+          "UseXRayPropagator": true,
+          "EnableAwsSdkInstrumentation": true
+        }
+      }
+    }
+  }
+}
+```
+
+Host registration example:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonObservability(builder.Configuration);
+builder.AddCephalonAws();
+```
+
+Operational notes:
+
+- the AWS package is optional and stays outside `Cephalon.Engine`
+- registration is skipped when `Engine:Observability:Telemetry:Endpoint` is not configured and `UseSelfHostedDefaults` is not enabled
+- `HostedPlatform` can be `ec2`, `ecs`, `eks`, `elasticbeanstalk`, or `lambda`
+- the package keeps the shared OTLP exporter contract intact while adding AWS X-Ray-compatible trace IDs, optional AWS X-Ray propagation, and AWS SDK client tracing
+- EC2, ECS, EKS, and Elastic Beanstalk use AWS resource detectors, while Lambda uses explicit AWS resource attributes plus optional Lambda context configuration
+- if a deployment targets AWS-managed OTLP endpoints directly, prefer an ADOT collector or another SigV4-capable gateway in front of that endpoint instead of baking AWS auth rules into the host
+
 ## Azure Monitor exporter path
 
 `Cephalon.Observability.AzureMonitor` keeps Azure Monitor / Application Insights export wiring in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
@@ -1281,6 +1329,7 @@ It executes a curated test suite that validates:
 - worker-host parity through `RuntimeHealthEvaluator`
 - startup manifest and telemetry-export guidance emitted by `Cephalon.Observability`, including self-hosted OTLP default endpoint guidance
 - Serilog provider wiring through `Cephalon.Observability.Serilog`
+- AWS-hosted OTLP defaults through `Cephalon.Observability.Aws`
 - OTLP exporter wiring through `Cephalon.Observability.OpenTelemetry`, including the explicit self-hosted collector-default path
 
 `.\scripts\validate-release.ps1` now runs that focused suite by default in addition to the broader repo test, benchmark, and reference-doc flow.
