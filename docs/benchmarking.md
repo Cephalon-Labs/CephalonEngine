@@ -46,7 +46,7 @@ dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --validate-gua
 
 ## Run the release validation flow
 
-For a repo-native validation pass that builds, tests, runs the benchmark smoke suite, validates guardrails, and publishes release reference docs:
+For a repo-native validation pass that builds, runs the focused operational health/export convention suite, runs the broader test suite, runs the benchmark smoke suite, validates guardrails, and publishes release reference docs:
 
 ```powershell
 .\scripts\validate-release.ps1
@@ -57,8 +57,15 @@ Useful switches:
 ```powershell
 .\scripts\validate-release.ps1 -SkipBuild
 .\scripts\validate-release.ps1 -SkipTests
+.\scripts\validate-release.ps1 -SkipOperationalConventions
 .\scripts\validate-release.ps1 -SkipReferenceDocs
 .\scripts\validate-release.ps1 -BenchmarkFilters "*EngineBuilderBenchmarks*" "*EngineRuntimeBenchmarks*"
+```
+
+Run only the focused health/export convention suite:
+
+```powershell
+.\scripts\validate-operational-conventions.ps1
 ```
 
 ## CI validation

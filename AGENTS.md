@@ -114,6 +114,7 @@ When working in this repository:
 - keep generic-host worker startup/shutdown aligned with the same runtime lifecycle guarantees used by ASP.NET Core
 - keep observability conventions additive; engine emits the signals, companion packages shape how hosts surface them
 - keep benchmark guardrails explicit; if hot-path scenarios change, update the benchmark catalog and validation docs intentionally
+- keep `scripts/validate-operational-conventions.ps1`, `scripts/validate-release.ps1`, and the health/export docs aligned when the operational validation contract changes
 - keep `scripts/validate-release.ps1` aligned with the benchmark smoke suite and guardrail validation flow
 - keep `scripts/validate-release.ps1` aligned with benchmark and reference-doc publishing flows
 - keep `.github/workflows/release-validation.yml` aligned with `scripts/validate-release.ps1`; the script stays the source of truth and the workflow should stay thin

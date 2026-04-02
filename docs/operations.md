@@ -539,6 +539,19 @@ Operational notes:
 - `otlp`, `otlp/grpc`, and `otlp/http` are the supported protocol values for the shipped companion package
 - when `otlp/http` is selected, the package appends `/v1/logs`, `/v1/metrics`, and `/v1/traces` automatically from the configured base endpoint
 
+## Release-validation guidance
+
+`.\scripts\validate-operational-conventions.ps1` is the focused operational validation pass for health and export conventions.
+It executes a curated test suite that validates:
+
+- ASP.NET Core `/health/live`, `/health/ready`, `/engine/diagnostics`, and `/engine/dependencies` behavior
+- worker-host parity through `RuntimeHealthEvaluator`
+- startup manifest and telemetry-export guidance emitted by `Cephalon.Observability`
+- OTLP exporter wiring through `Cephalon.Observability.OpenTelemetry`
+
+`.\scripts\validate-release.ps1` now runs that focused suite by default in addition to the broader repo test, benchmark, and reference-doc flow.
+Use `-SkipOperationalConventions` only when you intentionally want the wider release flow without the named operational replay.
+
 ## Worker hosts
 
 Worker hosts do not expose HTTP health routes, but the same runtime health semantics are available through `RuntimeHealthEvaluator` in DI.

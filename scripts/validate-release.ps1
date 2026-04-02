@@ -1,6 +1,7 @@
 param(
     [switch]$SkipBuild,
     [switch]$SkipTests,
+    [switch]$SkipOperationalConventions,
     [switch]$SkipBenchmarks,
     [switch]$SkipReferenceDocs,
     [string[]]$BenchmarkFilters = @(
@@ -18,6 +19,7 @@ $solutionPath = Join-Path $repoRoot "CephalonEngine.slnx"
 $testsProjectPath = Join-Path $repoRoot "tests\Cephalon.Tests\Cephalon.Tests.csproj"
 $benchmarkProjectPath = Join-Path $repoRoot "benchmarks\Cephalon.Benchmarks\Cephalon.Benchmarks.csproj"
 $referenceDocsScriptPath = Join-Path $repoRoot "scripts\publish-reference-docs.ps1"
+$operationalConventionsScriptPath = Join-Path $repoRoot "scripts\validate-operational-conventions.ps1"
 $referenceDocsOutputPath = Join-Path $repoRoot "artifacts\reference-docs-release"
 
 function Invoke-Step {
@@ -75,6 +77,20 @@ try {
             }
 
             Invoke-DotNet $arguments
+        }
+    }
+
+    if (-not $SkipOperationalConventions) {
+        Invoke-Step "Validate operational health and export conventions (Release)" {
+            $arguments = @(
+                "-Configuration", "Release"
+            )
+
+            if ((-not $SkipBuild) -or (-not $SkipTests)) {
+                $arguments += "-NoBuild"
+            }
+
+            Invoke-PowerShellScript -Path $operationalConventionsScriptPath -Arguments $arguments
         }
     }
 

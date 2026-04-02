@@ -138,18 +138,14 @@ What still stays later:
 
 ### `#74` Release-validation guidance for health and export conventions
 
-Current baseline:
+Shipped follow-through:
 
-- release validation already runs build, test, benchmarks, guardrail validation, and reference-doc publishing
+- `scripts/validate-operational-conventions.ps1` now gives operators and maintainers a focused validation pass for ASP.NET Core health routes, worker-host health parity, observability startup guidance, and OTLP exporter wiring
+- `scripts/validate-release.ps1` now runs that focused operational suite explicitly alongside the broader build, test, benchmark, guardrail, and reference-doc flow
 
-Gap:
+Why this stays separate:
 
-- the release-validation flow does not yet validate operational-health or telemetry-export conventions directly
-- operator guidance for checking health/export behavior in release validation is still implicit rather than documented and scripted
-
-Why this stays later than the inventory task:
-
-- the guidance should be written after the phase-2 implementation shape for exporters and the shipped health semantics settle
+- the follow-through turns a previously implicit convention check into an explicit, repeatable release signal without moving exporter dependencies or health semantics back into the engine core
 
 ## Planning outcome
 
@@ -157,11 +153,10 @@ Current conclusion from this inventory:
 
 - the existing phase-2 child-task split remains valid
 - no additional child tasks were required from this audit
-- the main missing work is packaging breadth, release-validation guidance, and operator-facing hardening on top of a shipped baseline
+- the main missing work is packaging breadth and operator-facing hardening on top of a shipped baseline
 
 Recommended execution sequence remains:
 
 1. `#31` inventory and sequencing
 2. `#33` dependency-health packs on top of the shipped exporter path
 3. `#35` clearer runtime answers
-4. `#74` release-validation guidance once the operational surface above is clearer

@@ -58,7 +58,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Operational Sprint 0`: `ENG-019`, `ENG-020`, `ENG-021`, `ENG-024`, `ENG-023`
 - `Platform Sprint 0`: `ENG-012`
 - `Sprint 1`: delivered `ENG-005`, `ENG-026`, and `ENG-027`, and opened the phase 2 operational gap-inventory track
-- `Sprint 2`: exporter packaging is now part of the shipped phase-2 baseline, HTTP external API plus MongoDB, MySQL, Postgres, RabbitMQ, Redis/cache, and SQL Server dependency-health packaging anchor the provider-specific follow-through, and the shared diagnostics/event-id catalog now anchors the structured diagnostics baseline
+- `Sprint 2`: exporter packaging is now part of the shipped phase-2 baseline, HTTP external API plus MongoDB, MySQL, Postgres, RabbitMQ, Redis/cache, and SQL Server dependency-health packaging anchor the provider-specific follow-through, the shared diagnostics/event-id catalog now anchors the structured diagnostics baseline, and release validation now calls out the health/export convention suite explicitly
 - `Sprint 3`: runtime-answers follow-through, package distribution and trust follow-through, and `ENG-013` planning readiness
 - `Later / not scheduled yet`: `ENG-022` and future solution-level expansion work
 
@@ -140,7 +140,7 @@ Deliverables:
 Current inventory:
 
 - `docs/operational-hardening-gap-inventory.md` now records the shipped baseline versus the remaining phase-2 gaps so follow-through work stays grounded in the code that already exists
-- that inventory now includes a shipped `Cephalon.Observability.OpenTelemetry` companion package plus shipped `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` companion packages, together with a published runtime diagnostics catalog, runtime-story surface, and configurable failure-policy warmup/drain/backoff semantics for the active engine and companion packages, which narrows the open phase-2 work to broader dependency-health coverage and release-validation guidance
+- that inventory now includes a shipped `Cephalon.Observability.OpenTelemetry` companion package plus shipped `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` companion packages, together with a published runtime diagnostics catalog, runtime-story surface, configurable failure-policy warmup/drain/backoff semantics, and explicit release-validation guidance for health/export conventions, which narrows the open phase-2 work to broader dependency-health coverage and operator-facing hardening
 
 Exit criteria:
 
@@ -222,7 +222,7 @@ Exit criteria:
 
 Updated priority order as of `April 2, 2026`:
 
-1. operational hardening follow-through: broader dependency-health packs and release-validation guidance now that the exporter path is shipped, HTTP plus MongoDB plus MySQL plus Postgres plus RabbitMQ plus Redis plus SQL Server coverage have landed, and the structured diagnostics catalog, runtime-story surface, and failure-policy warmup/drain/backoff semantics are in place
+1. operational hardening follow-through: broader dependency-health packs and operator-facing hardening now that the exporter path is shipped, HTTP plus MongoDB plus MySQL plus Postgres plus RabbitMQ plus Redis plus SQL Server coverage have landed, the structured diagnostics catalog, runtime-story surface, and failure-policy warmup/drain/backoff semantics are in place, and release validation now calls out the health/export convention suite directly
 2. package/plugin loading
 3. package distribution, provenance, and richer trust follow-through beyond the current baseline
 4. workflow and orchestration primitives
