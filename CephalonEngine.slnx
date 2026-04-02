@@ -33,6 +33,7 @@
     <Project Path="src/Cephalon.Observability.MqttDependencies/Cephalon.Observability.MqttDependencies.csproj" />
     <Project Path="src/Cephalon.Observability.MySqlDependencies/Cephalon.Observability.MySqlDependencies.csproj" />
     <Project Path="src/Cephalon.Observability.NatsDependencies/Cephalon.Observability.NatsDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.OracleDependencies/Cephalon.Observability.OracleDependencies.csproj" />
     <Project Path="src/Cephalon.Observability.PostgresDependencies/Cephalon.Observability.PostgresDependencies.csproj" />
     <Project Path="src/Cephalon.Observability.RabbitMqDependencies/Cephalon.Observability.RabbitMqDependencies.csproj" />
     <Project Path="src/Cephalon.Observability.RedisDependencies/Cephalon.Observability.RedisDependencies.csproj" />

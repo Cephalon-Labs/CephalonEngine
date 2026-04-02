@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T09:47:56.1648864+00:00",
+  "GeneratedAtUtc": "2026-04-02T10:14:28.3050021+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -169,6 +169,14 @@
       "FileName": "cephalon-observability-opentelemetry.md",
       "NamespaceCount": 1,
       "TypeCount": 1
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "Category": "Hosts",
+      "Description": "Oracle dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
     },
     {
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -711,6 +719,20 @@
       "AssemblyName": "Cephalon.Observability.OpenTelemetry",
       "FileName": "cephalon-observability-opentelemetry.md",
       "AnchorId": "namespace-cephalon-observability-opentelemetry-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "namespace-cephalon-observability-oracledependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "namespace-cephalon-observability-oracledependencies-hosting",
       "TypeCount": 1
     },
     {
@@ -2747,6 +2769,51 @@
       }
     },
     {
+      "DisplayName": "OracleDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "type-cephalon-observability-oracledependencies-configuration-oracledependencydefinition",
+      "Declaration": "public sealed class OracleDependencyDefinition",
+      "Summary": "Describes one Oracle dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 11,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "OracleDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "type-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions",
+      "Declaration": "public sealed class OracleDependencyHealthOptions",
+      "Summary": "Configures Oracle dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "OracleDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "type-cephalon-observability-oracledependencies-hosting-oracledependencyhealthservicecollectionextensions",
+      "Declaration": "public static class OracleDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds Oracle dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
       "DisplayName": "PackageManifest",
       "NamespaceName": "Cephalon.Engine.Manifest",
       "AssemblyName": "Cephalon.Engine",
@@ -4347,6 +4414,28 @@
       "Summary": "Adds OpenTelemetry exporter registration for the Cephalon engine diagnostics surface."
     },
     {
+      "DisplayName": "AddCephalonOracleDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "OracleDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-m-cephalon-observability-oracledependencies-hosting-oracledependencyhealthservicecollectionextensions-addcephalonoracledependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonOracleDependencyHealth(this IServiceCollection services, Action\u003COracleDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Oracle dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonOracleDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "OracleDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-m-cephalon-observability-oracledependencies-hosting-oracledependencyhealthservicecollectionextensions-addcephalonoracledependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonOracleDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003COracleDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds Oracle dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
       "DisplayName": "AddCephalonPostgresDependencyHealth",
       "Category": "Methods",
       "DeclaringTypeName": "PostgresDependencyHealthServiceCollectionExtensions",
@@ -5647,6 +5736,17 @@
     {
       "DisplayName": "ConnectionString",
       "Category": "Properties",
+      "DeclaringTypeName": "OracleDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-connectionstring",
+      "Signature": "string ConnectionString { get; set; }",
+      "Summary": "Gets or sets the optional full Oracle connection string used for the probe."
+    },
+    {
+      "DisplayName": "ConnectionString",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -6226,6 +6326,17 @@
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions-dependencies",
       "Signature": "IReadOnlyList\u003CNatsDependencyDefinition\u003E Dependencies { get; set; }",
       "Summary": "Gets or sets the configured NATS dependencies that should contribute to runtime health."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003COracleDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured Oracle dependencies that should contribute to runtime health."
     },
     {
       "DisplayName": "Dependencies",
@@ -6950,6 +7061,17 @@
       "AssemblyName": "Cephalon.Observability.NatsDependencies",
       "FileName": "cephalon-observability-natsdependencies.md",
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-displayname",
       "Signature": "string DisplayName { get; set; }",
       "Summary": "Gets or sets the human-readable dependency name shown to operators."
     },
@@ -8023,6 +8145,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "OracleDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-m-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "OracleDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Oracle dependency-health options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "PackagePolicy",
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
@@ -8375,6 +8508,17 @@
     {
       "DisplayName": "HealthQuery",
       "Category": "Properties",
+      "DeclaringTypeName": "OracleDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-healthquery",
+      "Signature": "string HealthQuery { get; set; }",
+      "Summary": "Gets or sets the SQL statement executed to verify the dependency."
+    },
+    {
+      "DisplayName": "HealthQuery",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -8470,6 +8614,17 @@
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-host",
       "Signature": "string Host { get; set; }",
       "Summary": "Gets or sets the NATS host name or IP address to probe."
+    },
+    {
+      "DisplayName": "Host",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-host",
+      "Signature": "string Host { get; set; }",
+      "Summary": "Gets or sets the Oracle host name or IP address to probe when no full connection string is supplied."
     },
     {
       "DisplayName": "Host",
@@ -8765,6 +8920,17 @@
       "AssemblyName": "Cephalon.Observability.NatsDependencies",
       "FileName": "cephalon-observability-natsdependencies.md",
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-id",
       "Signature": "string Id { get; set; }",
       "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
@@ -10804,6 +10970,28 @@
       "Summary": "Gets module and capability option overrides."
     },
     {
+      "DisplayName": "OracleDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "OracleDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-m-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-ctor",
+      "Signature": "OracleDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060OracleDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "OracleDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "OracleDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-m-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions-ctor",
+      "Signature": "OracleDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060OracleDependencyHealthOptions\u0060 class."
+    },
+    {
       "DisplayName": "Organization",
       "Category": "Fields",
       "DeclaringTypeName": "PatternKind",
@@ -11088,6 +11276,17 @@
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-password",
       "Signature": "string Password { get; set; }",
       "Summary": "Gets or sets the optional password used for NATS user/password authentication."
+    },
+    {
+      "DisplayName": "Password",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-password",
+      "Signature": "string Password { get; set; }",
+      "Summary": "Gets or sets the optional password used for authentication when no full connection string is supplied."
     },
     {
       "DisplayName": "Password",
@@ -11385,6 +11584,17 @@
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-port",
       "Signature": "int Port { get; set; }",
       "Summary": "Gets or sets the NATS client port."
+    },
+    {
+      "DisplayName": "Port",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-port",
+      "Signature": "int Port { get; set; }",
+      "Summary": "Gets or sets the Oracle TCP port."
     },
     {
       "DisplayName": "Port",
@@ -11895,6 +12105,17 @@
     {
       "DisplayName": "RefreshIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "OracleDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -12263,6 +12484,17 @@
       "AssemblyName": "Cephalon.Observability.NatsDependencies",
       "FileName": "cephalon-observability-natsdependencies.md",
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
@@ -13200,6 +13432,17 @@
       "AnchorId": "member-f-cephalon-abstractions-transports-transportfeatures-serverstreaming",
       "Signature": "const TransportFeatures ServerStreaming",
       "Summary": "Indicates server-streaming interactions are supported."
+    },
+    {
+      "DisplayName": "ServiceName",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-servicename",
+      "Signature": "string ServiceName { get; set; }",
+      "Summary": "Gets or sets the Oracle service name used in the Easy Connect data source when no full connection string is supplied."
     },
     {
       "DisplayName": "Services",
@@ -14513,6 +14756,17 @@
     {
       "DisplayName": "TimeoutSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "OracleDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-probe timeout in seconds."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -15158,6 +15412,17 @@
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-username",
       "Signature": "string Username { get; set; }",
       "Summary": "Gets or sets the optional user name used for NATS user/password authentication."
+    },
+    {
+      "DisplayName": "Username",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleDependencies",
+      "FileName": "cephalon-observability-oracledependencies.md",
+      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-username",
+      "Signature": "string Username { get; set; }",
+      "Summary": "Gets or sets the optional user name used for authentication when no full connection string is supplied."
     },
     {
       "DisplayName": "Username",

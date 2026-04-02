@@ -120,6 +120,8 @@ Companion adapter packages can extend that host with additional transport surfac
 
 `Cephalon.Observability.NatsDependencies` is the optional NATS dependency-health companion package. It turns configured broker `INFO`, `CONNECT`, and `PING`/`PONG` probes into `IDependencyHealthContributor` data without pushing NATS protocol handling into `Cephalon.Engine`.
 
+`Cephalon.Observability.OracleDependencies` is the optional Oracle dependency-health companion package. It turns configured `SELECT 1 FROM DUAL`-style queries, Easy Connect data-source shaping, and connection-string probing into `IDependencyHealthContributor` data without pushing Oracle-specific connection logic into `Cephalon.Engine`.
+
 `Cephalon.Observability.PostgresDependencies` is the optional Postgres dependency-health companion package. It turns configured database probes and health queries into `IDependencyHealthContributor` data without pushing Postgres-specific connection logic into `Cephalon.Engine`.
 
 `Cephalon.Observability.RabbitMqDependencies` is the optional RabbitMQ dependency-health companion package. It turns configured broker connection probes into `IDependencyHealthContributor` data without pushing AMQP-specific connection logic into `Cephalon.Engine`.
@@ -208,6 +210,9 @@ Companion adapter packages:
 - `src/Cephalon.Observability.NatsDependencies/Configuration` -> `Cephalon.Observability.NatsDependencies.Configuration`
 - `src/Cephalon.Observability.NatsDependencies/Hosting` -> `Cephalon.Observability.NatsDependencies.Hosting`
 - `src/Cephalon.Observability.NatsDependencies/Services` -> `Cephalon.Observability.NatsDependencies.Services`
+- `src/Cephalon.Observability.OracleDependencies/Configuration` -> `Cephalon.Observability.OracleDependencies.Configuration`
+- `src/Cephalon.Observability.OracleDependencies/Hosting` -> `Cephalon.Observability.OracleDependencies.Hosting`
+- `src/Cephalon.Observability.OracleDependencies/Services` -> `Cephalon.Observability.OracleDependencies.Services`
 - `src/Cephalon.Observability.PostgresDependencies/Configuration` -> `Cephalon.Observability.PostgresDependencies.Configuration`
 - `src/Cephalon.Observability.PostgresDependencies/Hosting` -> `Cephalon.Observability.PostgresDependencies.Hosting`
 - `src/Cephalon.Observability.PostgresDependencies/Services` -> `Cephalon.Observability.PostgresDependencies.Services`
@@ -291,6 +296,7 @@ Companion adapter packages:
 - hosts can turn MQTT broker dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Mqtt` and `Cephalon.Observability.MqttDependencies`
 - hosts can turn MySQL and MariaDB dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:MySql` and `Cephalon.Observability.MySqlDependencies`
 - hosts can turn NATS broker dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Nats` and `Cephalon.Observability.NatsDependencies`, with the package free to grow across NATS-native auth, TLS, and broker reachability semantics without becoming a catch-all for unrelated workload logic
+- hosts can turn Oracle dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Oracle` and `Cephalon.Observability.OracleDependencies`
 - hosts can turn Postgres dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Postgres` and `Cephalon.Observability.PostgresDependencies`
 - hosts can turn RabbitMQ dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:RabbitMq` and `Cephalon.Observability.RabbitMqDependencies`
 - hosts can turn Redis and cache endpoints into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Redis` and `Cephalon.Observability.RedisDependencies`
@@ -336,7 +342,7 @@ Companion adapter packages:
 - richer capability metadata and policy
 - startup hooks and lifecycle events
 - event bus / workflow runtime
-- broader provider-specific dependency-health packs, richer operator-runtime answers, and deeper release-validation guidance on top of the shipped Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Postgres, RabbitMQ, Redis, SQL Server, and OpenTelemetry observability companions
+- broader provider-specific dependency-health packs, richer operator-runtime answers, and deeper release-validation guidance on top of the shipped Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Oracle, Postgres, RabbitMQ, Redis, SQL Server, and OpenTelemetry observability companions
 - richer parameterized templates and generators driven by scaffold plans
 - richer localization catalogs and package-provided language packs
 - sustained benchmark coverage for hot engine paths
