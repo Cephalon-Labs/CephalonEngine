@@ -176,7 +176,7 @@ Follow-up later:
 
 ## SDK hardening follow-through
 
-Phase 1 SDK hardening is now substantially complete. Phase 2 operational hardening has also closed on its shipped baseline. Phase 3 extensibility and package loading remains the main structural follow-through, while phase 6 now has an `ENG-029` track with the shipped self-hosted OTLP slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, and a later-provider matrix that now also includes Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu.
+Phase 1 SDK hardening is now substantially complete. Phase 2 operational hardening has also closed on its shipped baseline. Phase 3 extensibility and package loading remains the main structural follow-through, while phase 6 now has an `ENG-029` track with the shipped self-hosted OTLP slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped Huawei Cloud fourth-vendor slice, the shipped Alibaba Cloud fifth-vendor slice, and a later-provider matrix that now includes Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu.
 
 ### ENG-005 Engine API and package surface hardening
 
@@ -468,19 +468,18 @@ Acceptance:
 
 ### ENG-029 Cloud-targeted observability companion integrations
 
-Status: current focus
+Status: later
 Estimate: 113
 
 Why:
 
-- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, and Huawei Cloud vendor slices are now shipped, and Alibaba Cloud is now the next explicit provider target under `ENG-029`
+- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, Huawei Cloud, and Alibaba Cloud vendor slices are now shipped, while the remaining provider/platform matrix stays intentionally narrowed into later explicit child items under `ENG-029`
 - this work should stay in companion packages, preserve the shared `ILogger` pipeline plus the cloud-neutral OTLP baseline, and leave room for downstream developer-authored provider packages
 
 Acceptance:
 
 - keep the shipped self-hosted deployment defaults explicit and reusable instead of burying them inside vendor-specific companion packs
-- keep the shipped Azure Monitor, AWS, GCP, and Huawei Cloud slices explicit on top of the shared OpenTelemetry baseline
-- land the Alibaba Cloud companion follow-through as the current next explicit child item instead of reopening one ambiguous multi-cloud scope
+- keep the shipped Azure Monitor, AWS, GCP, Huawei Cloud, and Alibaba Cloud slices explicit on top of the shared OpenTelemetry baseline
 - keep vendor/platform-specific exporter wiring, auth, resource attributes, and hosted defaults outside `Cephalon.Engine` and `Cephalon.Abstractions`
 - keep the shared `ILogger` pipeline and existing `Cephalon.Observability.OpenTelemetry` baseline intact
 - add docs, validation, and planning sync for the supported targets plus the downstream companion-package authoring path
