@@ -13,7 +13,7 @@ ASP.NET Core hosts that call `app.MapCephalon()` now expose three health routes:
 - `/health/ready`
 
 Health responses are JSON and include the check status, duration, and runtime-specific details such as restart count and the most recent failure context.
-When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
+When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
 
 Current semantics:
 
@@ -342,6 +342,62 @@ Operational notes:
 - optional `SslMode` and `AllowPublicKeyRetrieval` settings let hosts keep MySQL transport and authentication expectations explicit instead of hidden in host-specific code
 - required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
 
+### MongoDB dependency probes
+
+`Cephalon.Observability.MongoDbDependencies` reads `Engine:Observability:DependencyHealth:MongoDb` and turns configured MongoDB endpoints into reusable `IDependencyHealthContributor` data.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "DependencyHealth": {
+        "MongoDb": {
+          "RefreshIntervalSeconds": 30,
+          "Dependencies": [
+            {
+              "Id": "catalog-mongodb",
+              "DisplayName": "Catalog MongoDB",
+              "Host": "mongo.internal.example",
+              "Port": 27017,
+              "Database": "catalog",
+              "Username": "cephalon-runtime",
+              "Password": "${MONGODB_PASSWORD}",
+              "AuthSource": "admin",
+              "UseTls": true,
+              "AllowInsecureTls": false,
+              "DirectConnection": true,
+              "HealthCommand": "ping",
+              "Required": true,
+              "TimeoutSeconds": 5
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonMongoDbDependencyHealth(builder.Configuration);
+```
+
+Operational notes:
+
+- the MongoDB dependency-health package is optional and stays outside `Cephalon.Engine`
+- the package performs one probe refresh during host startup and then refreshes in the background on the configured interval
+- probes can use either a full `ConnectionString` or discrete host/port/database settings
+- each probe creates a dedicated `MongoClient`, runs the configured health command against the selected database, and reports the result through the shared dependency-health contract
+- optional `UseTls`, `AllowInsecureTls`, and `DirectConnection` settings let hosts keep MongoDB topology and transport expectations explicit instead of hidden in host-specific code
+- required dependency failures pull readiness to `Unhealthy`; optional failures degrade readiness/liveness without hiding the runtime state
+
 ## Diagnostics surface
 
 `GET /engine/diagnostics` exposes the engine's operational conventions in one place:
@@ -365,6 +421,7 @@ Current shipped event-id ranges include:
 - `Cephalon.Observability.RabbitMqDependencies`: `3124-3125`
 - `Cephalon.Observability.SqlServerDependencies`: `3126-3127`
 - `Cephalon.Observability.MySqlDependencies`: `3128-3129`
+- `Cephalon.Observability.MongoDbDependencies`: `3130-3131`
 
 This is the quickest way to discover the engine's observability contract without opening code.
 

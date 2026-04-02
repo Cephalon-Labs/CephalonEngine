@@ -39,6 +39,7 @@
     <ProjectReference Include="..\..\src\Cephalon.Eventing\Cephalon.Eventing.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability\Cephalon.Observability.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.HttpDependencies\Cephalon.Observability.HttpDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.MongoDbDependencies\Cephalon.Observability.MongoDbDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.MySqlDependencies\Cephalon.Observability.MySqlDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.PostgresDependencies\Cephalon.Observability.PostgresDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.RabbitMqDependencies\Cephalon.Observability.RabbitMqDependencies.csproj" />

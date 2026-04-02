@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T01:25:12.2312298+00:00",
+  "GeneratedAtUtc": "2026-04-02T01:51:45.9743293+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -198,6 +198,14 @@
       "Category": "Hosts",
       "Description": "External HTTP dependency-health integration for Cephalon hosts.",
       "FileName": "cephalon-observability-httpdependencies.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "Category": "Hosts",
+      "Description": "MongoDB dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
     },
@@ -631,6 +639,20 @@
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
       "FileName": "cephalon-observability-httpdependencies.md",
       "AnchorId": "namespace-cephalon-observability-httpdependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-mongodbdependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-mongodbdependencies-hosting",
       "TypeCount": 1
     },
     {
@@ -2261,6 +2283,51 @@
       }
     },
     {
+      "DisplayName": "MongoDbDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "type-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition",
+      "Declaration": "public sealed class MongoDbDependencyDefinition",
+      "Summary": "Describes one MongoDB dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 15,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "MongoDbDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "type-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions",
+      "Declaration": "public sealed class MongoDbDependencyHealthOptions",
+      "Summary": "Configures MongoDB dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "MongoDbDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "type-cephalon-observability-mongodbdependencies-hosting-mongodbdependencyhealthservicecollectionextensions",
+      "Declaration": "public static class MongoDbDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds MongoDB dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
       "DisplayName": "MySqlDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -3683,6 +3750,28 @@
       "Summary": "Adds HTTP dependency-health services using configuration as the primary source of probe settings."
     },
     {
+      "DisplayName": "AddCephalonMongoDbDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "MongoDbDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-mongodbdependencies-hosting-mongodbdependencyhealthservicecollectionextensions-addcephalonmongodbdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonMongoDbDependencyHealth(this IServiceCollection services, Action\u003CMongoDbDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds MongoDB dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonMongoDbDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "MongoDbDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-mongodbdependencies-hosting-mongodbdependencyhealthservicecollectionextensions-addcephalonmongodbdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonMongoDbDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CMongoDbDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds MongoDB dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
       "DisplayName": "AddCephalonMySqlDependencyHealth",
       "Category": "Methods",
       "DeclaringTypeName": "MySqlDependencyHealthServiceCollectionExtensions",
@@ -4288,6 +4377,17 @@
       "Summary": "Gets the package checksum allow-lists keyed by package identifier."
     },
     {
+      "DisplayName": "AllowInsecureTls",
+      "Category": "Properties",
+      "DeclaringTypeName": "MongoDbDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-allowinsecuretls",
+      "Signature": "bool? AllowInsecureTls { get; set; }",
+      "Summary": "Gets or sets the optional value that controls whether TLS certificate validation should be relaxed."
+    },
+    {
       "DisplayName": "AllowManualRestart",
       "Category": "Properties",
       "DeclaringTypeName": "FailurePolicy",
@@ -4462,6 +4562,17 @@
       "AnchorId": "member-f-cephalon-engine-configuration-modulepackagereference-assemblypathkind",
       "Signature": "const string AssemblyPathKind",
       "Summary": "Identifies a package input that points directly to an assembly path."
+    },
+    {
+      "DisplayName": "AuthSource",
+      "Category": "Properties",
+      "DeclaringTypeName": "MongoDbDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-authsource",
+      "Signature": "string AuthSource { get; set; }",
+      "Summary": "Gets or sets the optional authentication source used when creating credentials from discrete settings."
     },
     {
       "DisplayName": "Available",
@@ -4917,6 +5028,17 @@
     {
       "DisplayName": "ConnectionString",
       "Category": "Properties",
+      "DeclaringTypeName": "MongoDbDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-connectionstring",
+      "Signature": "string ConnectionString { get; set; }",
+      "Summary": "Gets or sets the optional full MongoDB connection string used for the probe."
+    },
+    {
+      "DisplayName": "ConnectionString",
+      "Category": "Properties",
       "DeclaringTypeName": "MySqlDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -5133,6 +5255,17 @@
       "AnchorId": "member-f-cephalon-abstractions-technologies-technologykind-data",
       "Signature": "const TechnologyKind Data",
       "Summary": "Identifies a data-oriented technology."
+    },
+    {
+      "DisplayName": "Database",
+      "Category": "Properties",
+      "DeclaringTypeName": "MongoDbDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-database",
+      "Signature": "string Database { get; set; }",
+      "Summary": "Gets or sets the database name used for the health command."
     },
     {
       "DisplayName": "Database",
@@ -5375,6 +5508,17 @@
       "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-dependencies",
       "Signature": "IReadOnlyList\u003CHttpDependencyDefinition\u003E Dependencies { get; set; }",
       "Summary": "Gets or sets the configured HTTP dependencies that should contribute to runtime health."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
+      "DeclaringTypeName": "MongoDbDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003CMongoDbDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured MongoDB dependencies that should contribute to runtime health."
     },
     {
       "DisplayName": "Dependencies",
@@ -5839,6 +5983,17 @@
       "Summary": "Describes the operator-facing diagnostics surface exposed by a Cephalon ASP.NET Core host."
     },
     {
+      "DisplayName": "DirectConnection",
+      "Category": "Properties",
+      "DeclaringTypeName": "MongoDbDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-directconnection",
+      "Signature": "bool? DirectConnection { get; set; }",
+      "Summary": "Gets or sets the optional value that controls whether the client should connect directly to the target server."
+    },
+    {
       "DisplayName": "DirectoryManifestKind",
       "Category": "Fields",
       "DeclaringTypeName": "ModulePackageReference",
@@ -6013,6 +6168,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-modulemanifest-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing display name for the module."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "MongoDbDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
     },
     {
       "DisplayName": "DisplayName",
@@ -6930,6 +7096,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "MongoDbDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "MongoDbDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds MongoDB dependency-health options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "MySqlDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -7280,6 +7457,17 @@
       "Summary": "Gets a value indicating whether the policy differs from the default baseline."
     },
     {
+      "DisplayName": "HealthCommand",
+      "Category": "Properties",
+      "DeclaringTypeName": "MongoDbDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-healthcommand",
+      "Signature": "string HealthCommand { get; set; }",
+      "Summary": "Gets or sets the MongoDB database command executed to verify the dependency."
+    },
+    {
       "DisplayName": "HealthQuery",
       "Category": "Properties",
       "DeclaringTypeName": "MySqlDependencyDefinition",
@@ -7333,6 +7521,17 @@
       "AnchorId": "member-f-cephalon-engine-runtime-runtimehealthstate-healthy",
       "Signature": "const RuntimeHealthState Healthy",
       "Summary": "The runtime and its dependencies are healthy."
+    },
+    {
+      "DisplayName": "Host",
+      "Category": "Properties",
+      "DeclaringTypeName": "MongoDbDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-host",
+      "Signature": "string Host { get; set; }",
+      "Summary": "Gets or sets the MongoDB host name or IP address to probe when no full connection string is supplied."
     },
     {
       "DisplayName": "Host",
@@ -7542,6 +7741,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-modulepackagereference-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the optional package identifier override."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "MongoDbDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
     {
       "DisplayName": "Id",
@@ -9238,6 +9448,28 @@
       "Summary": "The module version that was active when the failure occurred, if known."
     },
     {
+      "DisplayName": "MongoDbDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MongoDbDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-ctor",
+      "Signature": "MongoDbDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060MongoDbDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "MongoDbDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MongoDbDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-ctor",
+      "Signature": "MongoDbDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060MongoDbDependencyHealthOptions\u0060 class."
+    },
+    {
       "DisplayName": "MySqlDependencyDefinition",
       "Category": "Constructors",
       "DeclaringTypeName": "MySqlDependencyDefinition",
@@ -9658,6 +9890,17 @@
     {
       "DisplayName": "Password",
       "Category": "Properties",
+      "DeclaringTypeName": "MongoDbDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-password",
+      "Signature": "string Password { get; set; }",
+      "Summary": "Gets or sets the optional password used for authentication when no full connection string is supplied."
+    },
+    {
+      "DisplayName": "Password",
+      "Category": "Properties",
       "DeclaringTypeName": "MySqlDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -9907,6 +10150,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-trustsnapshot-policy",
       "Signature": "TrustPolicy Policy { get; set; }",
       "Summary": "The policy that produced the trust decisions."
+    },
+    {
+      "DisplayName": "Port",
+      "Category": "Properties",
+      "DeclaringTypeName": "MongoDbDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-port",
+      "Signature": "int Port { get; set; }",
+      "Summary": "Gets or sets the MongoDB TCP port."
     },
     {
       "DisplayName": "Port",
@@ -10340,6 +10594,17 @@
     {
       "DisplayName": "RefreshIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "MongoDbDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "MySqlDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -10620,6 +10885,17 @@
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
       "FileName": "cephalon-observability-httpdependencies.md",
       "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "MongoDbDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
@@ -12716,6 +12992,17 @@
     {
       "DisplayName": "TimeoutSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "MongoDbDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-probe timeout in seconds."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "MySqlDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -13266,6 +13553,17 @@
     {
       "DisplayName": "Username",
       "Category": "Properties",
+      "DeclaringTypeName": "MongoDbDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-username",
+      "Signature": "string Username { get; set; }",
+      "Summary": "Gets or sets the optional user name used for authentication when no full connection string is supplied."
+    },
+    {
+      "DisplayName": "Username",
+      "Category": "Properties",
       "DeclaringTypeName": "MySqlDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -13328,6 +13626,17 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-usesettings-cephalon-engine-configuration-enginesettings",
       "Signature": "EngineBuilder UseSettings(EngineSettings settings)",
       "Summary": "Applies a preconstructed \u0060EngineSettings\u0060 instance to the builder."
+    },
+    {
+      "DisplayName": "UseTls",
+      "Category": "Properties",
+      "DeclaringTypeName": "MongoDbDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
+      "FileName": "cephalon-observability-mongodbdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-usetls",
+      "Signature": "bool? UseTls { get; set; }",
+      "Summary": "Gets or sets the optional value that controls whether TLS should be used for the probe."
     },
     {
       "DisplayName": "UseTls",

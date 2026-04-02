@@ -24,6 +24,7 @@ When working in this repository:
 - `Cephalon.Worker` is the generic-host worker adapter for non-HTTP runtime scenarios
 - `Cephalon.Observability` is the diagnostics companion package for logs, metrics, and tracing conventions
 - `Cephalon.Observability.HttpDependencies` is the optional external API dependency-health companion package for HTTP-based upstreams
+- `Cephalon.Observability.MongoDbDependencies` is the optional MongoDB dependency-health companion package
 - `Cephalon.Observability.MySqlDependencies` is the optional MySQL dependency-health companion package
 - `Cephalon.Observability.PostgresDependencies` is the optional Postgres dependency-health companion package
 - `Cephalon.Observability.RabbitMqDependencies` is the optional RabbitMQ dependency-health companion package
@@ -196,6 +197,9 @@ Current source layout:
 - `src/Cephalon.Observability.HttpDependencies/Configuration` -> `Cephalon.Observability.HttpDependencies.Configuration`
 - `src/Cephalon.Observability.HttpDependencies/Hosting` -> `Cephalon.Observability.HttpDependencies.Hosting`
 - `src/Cephalon.Observability.HttpDependencies/Services` -> `Cephalon.Observability.HttpDependencies.Services`
+- `src/Cephalon.Observability.MongoDbDependencies/Configuration` -> `Cephalon.Observability.MongoDbDependencies.Configuration`
+- `src/Cephalon.Observability.MongoDbDependencies/Hosting` -> `Cephalon.Observability.MongoDbDependencies.Hosting`
+- `src/Cephalon.Observability.MongoDbDependencies/Services` -> `Cephalon.Observability.MongoDbDependencies.Services`
 - `src/Cephalon.Observability.MySqlDependencies/Configuration` -> `Cephalon.Observability.MySqlDependencies.Configuration`
 - `src/Cephalon.Observability.MySqlDependencies/Hosting` -> `Cephalon.Observability.MySqlDependencies.Hosting`
 - `src/Cephalon.Observability.MySqlDependencies/Services` -> `Cephalon.Observability.MySqlDependencies.Services`
