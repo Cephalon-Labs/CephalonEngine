@@ -2,8 +2,14 @@ using Cephalon.Abstractions.AppModel.Scaffolding;
 
 namespace Cephalon.Engine.AppModel.Scaffolding;
 
+/// <summary>
+/// Provides the built-in scaffold plans that back the shipped Cephalon blueprints.
+/// </summary>
 public static class BuiltInScaffolds
 {
+    /// <summary>
+    /// Gets the scaffold plan for the modular-monolith blueprint.
+    /// </summary>
     public static ScaffoldPlan ModularMonolith { get; } = new(
         id: "modular-monolith",
         displayName: "Modular Monolith Scaffold",
@@ -69,6 +75,9 @@ public static class BuiltInScaffolds
             ["organizationStyle"] = "module-first"
         });
 
+    /// <summary>
+    /// Gets the scaffold plan for the modular-vertical-slice blueprint.
+    /// </summary>
     public static ScaffoldPlan ModularVerticalSlice { get; } = new(
         id: "modular-vertical-slice",
         displayName: "Modular Vertical Slice Scaffold",
@@ -135,6 +144,9 @@ public static class BuiltInScaffolds
             ["organizationStyle"] = "vertical-slice"
         });
 
+    /// <summary>
+    /// Gets the scaffold plan for the microservice blueprint.
+    /// </summary>
     public static ScaffoldPlan Microservice { get; } = new(
         id: "microservice",
         displayName: "Microservice Scaffold",

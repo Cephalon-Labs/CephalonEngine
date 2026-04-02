@@ -2,10 +2,29 @@ using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.Engine.Configuration;
 
+/// <summary>
+/// Represents the configuration-driven app-model and runtime policy settings for Cephalon.
+/// </summary>
 public sealed class EngineSettings
 {
+    /// <summary>
+    /// Gets the default root configuration section name for engine settings.
+    /// </summary>
     public const string SectionName = "Engine";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EngineSettings" /> class.
+    /// </summary>
+    /// <param name="blueprint">The selected blueprint identifier, if any.</param>
+    /// <param name="patterns">The selected pattern identifiers.</param>
+    /// <param name="transports">The selected transport identifiers.</param>
+    /// <param name="technologies">The selected technology identifiers.</param>
+    /// <param name="options">Module and capability option overrides.</param>
+    /// <param name="discovery">Module discovery inputs.</param>
+    /// <param name="localization">Localization configuration values.</param>
+    /// <param name="failurePolicy">Runtime failure policy values.</param>
+    /// <param name="trustPolicy">Capability and package trust policy values.</param>
+    /// <param name="packagePolicy">Package metadata and integrity policy values.</param>
     public EngineSettings(
         string? blueprint = null,
         IReadOnlyList<string>? patterns = null,
@@ -39,26 +58,59 @@ public sealed class EngineSettings
         PackagePolicy = packagePolicy ?? PackagePolicy.Default;
     }
 
+    /// <summary>
+    /// Gets the selected blueprint identifier.
+    /// </summary>
     public string? Blueprint { get; }
 
+    /// <summary>
+    /// Gets the selected pattern identifiers.
+    /// </summary>
     public IReadOnlyList<string> Patterns { get; }
 
+    /// <summary>
+    /// Gets the selected transport identifiers.
+    /// </summary>
     public IReadOnlyList<string> Transports { get; }
 
+    /// <summary>
+    /// Gets the selected technology identifiers.
+    /// </summary>
     public IReadOnlyList<string> Technologies { get; }
 
+    /// <summary>
+    /// Gets module and capability option overrides.
+    /// </summary>
     public EngineOptions Options { get; }
 
+    /// <summary>
+    /// Gets module discovery inputs.
+    /// </summary>
     public ModuleDiscoverySettings Discovery { get; }
 
+    /// <summary>
+    /// Gets localization configuration values.
+    /// </summary>
     public LocalizationSettings Localization { get; }
 
+    /// <summary>
+    /// Gets runtime failure policy values.
+    /// </summary>
     public FailurePolicy FailurePolicy { get; }
 
+    /// <summary>
+    /// Gets capability and package trust policy values.
+    /// </summary>
     public TrustPolicy TrustPolicy { get; }
 
+    /// <summary>
+    /// Gets package metadata and integrity policy values.
+    /// </summary>
     public PackagePolicy PackagePolicy { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether any engine settings were explicitly supplied.
+    /// </summary>
     public bool HasValues =>
         Blueprint is not null ||
         Patterns.Count > 0 ||
@@ -71,6 +123,12 @@ public sealed class EngineSettings
         TrustPolicy.HasValues ||
         PackagePolicy.HasValues;
 
+    /// <summary>
+    /// Reads engine settings from configuration.
+    /// </summary>
+    /// <param name="configuration">The configuration source that contains the engine section.</param>
+    /// <param name="sectionPath">The root configuration section path to read from.</param>
+    /// <returns>The parsed engine settings.</returns>
     public static EngineSettings FromConfiguration(
         IConfiguration configuration,
         string sectionPath = SectionName)

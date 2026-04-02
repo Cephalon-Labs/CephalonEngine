@@ -1,5 +1,6 @@
 using Cephalon.Cli;
 using Cephalon.Cli.Commands;
+using Cephalon.Tests.Support;
 using System.Text.Json.Nodes;
 
 namespace Cephalon.Tests.Tooling;
@@ -70,7 +71,7 @@ public sealed class CliApplicationTests
                 [
                     "docs",
                     "publish",
-                    "--root", GetRepositoryRoot(),
+                    "--root", RepositoryPaths.GetRepositoryRoot(),
                     "--output", outputPath,
                     "--configuration", GetCurrentBuildConfiguration(),
                     "--assembly", "Cephalon.Engine",
@@ -100,7 +101,7 @@ public sealed class CliApplicationTests
     [Fact]
     public async Task RunAsyncPublishesReferenceDocsAndEnablesHostingFromCli()
     {
-        var rootPath = GetRepositoryRoot();
+        var rootPath = RepositoryPaths.GetRepositoryRoot();
         var workspacePath = Path.Combine(Path.GetTempPath(), $"cephalon-cli-publish-hosting-{Guid.NewGuid():N}");
         var outputPath = Path.Combine(workspacePath, "published-docs");
         var appSettingsDirectory = Path.Combine(workspacePath, "src", "Acme.Store.Service");
@@ -162,7 +163,7 @@ public sealed class CliApplicationTests
     [Fact]
     public async Task RunAsyncPublishesReferenceDocsAndValidatesHostingFromCli()
     {
-        var rootPath = GetRepositoryRoot();
+        var rootPath = RepositoryPaths.GetRepositoryRoot();
         var workspacePath = Path.Combine(Path.GetTempPath(), $"cephalon-cli-publish-validate-{Guid.NewGuid():N}");
         var outputPath = Path.Combine(workspacePath, "published-docs");
         var appSettingsDirectory = Path.Combine(workspacePath, "src", "Acme.Store.Service");
@@ -235,7 +236,7 @@ public sealed class CliApplicationTests
                 [
                     "docs",
                     "publish",
-                    "--root", GetRepositoryRoot(),
+                    "--root", RepositoryPaths.GetRepositoryRoot(),
                     "--output", outputPath,
                     "--configuration", GetCurrentBuildConfiguration(),
                     "--assembly", "Cephalon.Engine",
@@ -265,7 +266,7 @@ public sealed class CliApplicationTests
     [Fact]
     public async Task RunAsyncPublishOpenUsesHostedUrlWhenRequested()
     {
-        var rootPath = GetRepositoryRoot();
+        var rootPath = RepositoryPaths.GetRepositoryRoot();
         var workspacePath = Path.Combine(Path.GetTempPath(), $"cephalon-cli-open-hosted-{Guid.NewGuid():N}");
         var outputPath = Path.Combine(workspacePath, "published-docs");
         var appSettingsDirectory = Path.Combine(workspacePath, "src", "Acme.Store.Service");
@@ -447,7 +448,7 @@ public sealed class CliApplicationTests
             [
                 "docs",
                 "publish",
-                "--root", GetRepositoryRoot(),
+                "--root", RepositoryPaths.GetRepositoryRoot(),
                 "--enable-hosting"
             ],
             stdout,
@@ -467,7 +468,7 @@ public sealed class CliApplicationTests
             [
                 "docs",
                 "publish",
-                "--root", GetRepositoryRoot(),
+                "--root", RepositoryPaths.GetRepositoryRoot(),
                 "--validate-hosting"
             ],
             stdout,
@@ -487,7 +488,7 @@ public sealed class CliApplicationTests
             [
                 "docs",
                 "publish",
-                "--root", GetRepositoryRoot(),
+                "--root", RepositoryPaths.GetRepositoryRoot(),
                 "--enable-hosting",
                 "--appsettings", "appsettings.json",
                 "--host-url", "https://localhost:7235"
@@ -613,24 +614,6 @@ public sealed class CliApplicationTests
 
         Assert.Equal(1, exitCode);
         Assert.Contains("Unknown option '--unknown'.", stderr.ToString(), StringComparison.Ordinal);
-    }
-
-    private static string GetRepositoryRoot()
-    {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-
-        while (directory is not null)
-        {
-            var solutionPath = Path.Combine(directory.FullName, "Cephalon.slnx");
-            if (File.Exists(solutionPath))
-            {
-                return directory.FullName;
-            }
-
-            directory = directory.Parent;
-        }
-
-        throw new DirectoryNotFoundException($"Could not find repository root from '{AppContext.BaseDirectory}'.");
     }
 
     private static string GetCurrentBuildConfiguration()

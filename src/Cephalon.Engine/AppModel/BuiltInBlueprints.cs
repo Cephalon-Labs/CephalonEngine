@@ -4,8 +4,14 @@ using Cephalon.Engine.AppModel.Scaffolding;
 
 namespace Cephalon.Engine.AppModel;
 
+/// <summary>
+/// Provides the built-in Cephalon app blueprints.
+/// </summary>
 public static class BuiltInBlueprints
 {
+    /// <summary>
+    /// Gets the built-in modular-monolith blueprint.
+    /// </summary>
     public static AppBlueprint ModularMonolith { get; } = new(
         id: "modular-monolith",
         displayName: "Modular Monolith",
@@ -19,6 +25,9 @@ public static class BuiltInBlueprints
         ],
         scaffold: BuiltInScaffolds.ModularMonolith);
 
+    /// <summary>
+    /// Gets the built-in modular-vertical-slice blueprint.
+    /// </summary>
     public static AppBlueprint ModularVerticalSlice { get; } = new(
         id: "modular-vertical-slice",
         displayName: "Modular Vertical Slice",
@@ -32,6 +41,9 @@ public static class BuiltInBlueprints
         ],
         scaffold: BuiltInScaffolds.ModularVerticalSlice);
 
+    /// <summary>
+    /// Gets the built-in microservice blueprint.
+    /// </summary>
     public static AppBlueprint Microservice { get; } = new(
         id: "microservice",
         displayName: "Microservice",
@@ -54,8 +66,17 @@ public static class BuiltInBlueprints
 
     private static readonly Dictionary<string, AppBlueprint> Index = CreateIndex();
 
+    /// <summary>
+    /// Gets all built-in blueprints.
+    /// </summary>
     public static IReadOnlyList<AppBlueprint> All => Items;
 
+    /// <summary>
+    /// Attempts to resolve a blueprint identifier, display name, or alias.
+    /// </summary>
+    /// <param name="value">The blueprint identifier, display name, or alias to resolve.</param>
+    /// <param name="blueprint">The resolved blueprint when the lookup succeeds.</param>
+    /// <returns><see langword="true" /> when the blueprint was resolved; otherwise, <see langword="false" />.</returns>
     public static bool TryResolve(string value, out AppBlueprint blueprint)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
@@ -63,6 +84,11 @@ public static class BuiltInBlueprints
         return Index.TryGetValue(NormalizeKey(value), out blueprint!);
     }
 
+    /// <summary>
+    /// Resolves a blueprint identifier, display name, or alias.
+    /// </summary>
+    /// <param name="value">The blueprint identifier, display name, or alias to resolve.</param>
+    /// <returns>The resolved blueprint.</returns>
     public static AppBlueprint Resolve(string value)
     {
         if (TryResolve(value, out var blueprint))

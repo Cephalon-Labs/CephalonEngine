@@ -2,10 +2,22 @@ using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.Engine.Configuration;
 
+/// <summary>
+/// Describes how the engine discovers modules from assemblies, package references, and package directories.
+/// </summary>
 public sealed class ModuleDiscoverySettings
 {
+    /// <summary>
+    /// Gets an empty module discovery settings instance.
+    /// </summary>
     public static ModuleDiscoverySettings Empty { get; } = new();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ModuleDiscoverySettings" /> class.
+    /// </summary>
+    /// <param name="assemblies">Assembly names or paths to scan for modules.</param>
+    /// <param name="packages">Explicit package references to load.</param>
+    /// <param name="packageDirectories">Package directories to scan for manifests.</param>
     public ModuleDiscoverySettings(
         IReadOnlyList<string>? assemblies = null,
         IReadOnlyList<ModulePackageReference>? packages = null,
@@ -24,14 +36,32 @@ public sealed class ModuleDiscoverySettings
             .ToArray() ?? [];
     }
 
+    /// <summary>
+    /// Gets assembly names or paths to scan for modules.
+    /// </summary>
     public IReadOnlyList<string> Assemblies { get; }
 
+    /// <summary>
+    /// Gets explicit package references to load.
+    /// </summary>
     public IReadOnlyList<ModulePackageReference> Packages { get; }
 
+    /// <summary>
+    /// Gets package directories to scan for manifests.
+    /// </summary>
     public IReadOnlyList<ModulePackageDirectory> PackageDirectories { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether any discovery inputs were explicitly supplied.
+    /// </summary>
     public bool HasValues => Assemblies.Count > 0 || Packages.Count > 0 || PackageDirectories.Count > 0;
 
+    /// <summary>
+    /// Reads module discovery settings from configuration.
+    /// </summary>
+    /// <param name="configuration">The configuration source that contains the engine section.</param>
+    /// <param name="sectionPath">The root configuration section path to read from.</param>
+    /// <returns>The parsed module discovery settings.</returns>
     public static ModuleDiscoverySettings FromConfiguration(
         IConfiguration configuration,
         string sectionPath = EngineSettings.SectionName)

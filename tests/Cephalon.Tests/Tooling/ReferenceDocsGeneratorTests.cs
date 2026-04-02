@@ -105,6 +105,177 @@ public sealed class ReferenceDocsGeneratorTests
     }
 
     [Fact]
+    public void GenerateIncludesSummariesForCurrentDocumentedPublicAssemblies()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-coverage-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies:
+            [
+                "Cephalon.Abstractions",
+                "Cephalon.Agentics",
+                "Cephalon.AspNetCore",
+                "Cephalon.AspNetCore.GraphQL",
+                "Cephalon.AspNetCore.Grpc",
+                "Cephalon.AspNetCore.JsonRpc",
+                "Cephalon.Cli",
+                "Cephalon.Edge",
+                "Cephalon.Engine",
+                "Cephalon.Eventing",
+                "Cephalon.Observability",
+                "Cephalon.Observability.CassandraDependencies",
+                "Cephalon.Observability.ClickHouseDependencies",
+                "Cephalon.Observability.ConsulDependencies",
+                "Cephalon.Observability.ElasticsearchDependencies",
+                "Cephalon.Observability.HttpDependencies",
+                "Cephalon.Observability.KafkaDependencies",
+                "Cephalon.Observability.MemcachedDependencies",
+                "Cephalon.Observability.MongoDbDependencies",
+                "Cephalon.Observability.MqttDependencies",
+                "Cephalon.Observability.MySqlDependencies",
+                "Cephalon.Observability.NatsDependencies",
+                "Cephalon.Observability.Neo4jDependencies",
+                "Cephalon.Observability.OpenSearchDependencies",
+                "Cephalon.Observability.OracleDependencies",
+                "Cephalon.Observability.PostgresDependencies",
+                "Cephalon.Observability.RabbitMqDependencies",
+                "Cephalon.Observability.RedisDependencies",
+                "Cephalon.Observability.SqlServerDependencies",
+                "Cephalon.Observability.OpenTelemetry",
+                "Cephalon.Observability.Serilog",
+                "Cephalon.ReferenceDocs",
+                "Cephalon.Retrieval",
+                "Cephalon.Scaffolding",
+                "Cephalon.Worker"
+            ]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var manifest = Assert.Single(rendered.Files, file => file.Path == "reference-manifest.json");
+
+        using var manifestDocument = JsonDocument.Parse(manifest.Contents);
+
+        var typeEntries = manifestDocument.RootElement.GetProperty("Types").EnumerateArray().ToArray();
+        var memberEntries = manifestDocument.RootElement.GetProperty("Members").EnumerateArray().ToArray();
+
+        Assert.NotEmpty(typeEntries);
+        Assert.NotEmpty(memberEntries);
+
+        var missingTypeSummaries = typeEntries
+            .Where(static type => !type.TryGetProperty("Summary", out var summary) || string.IsNullOrWhiteSpace(summary.GetString()))
+            .Select(static type => $"{type.GetProperty("AssemblyName").GetString()}::{type.GetProperty("NamespaceName").GetString()}.{type.GetProperty("DisplayName").GetString()}")
+            .OrderBy(static name => name, StringComparer.Ordinal)
+            .ToArray();
+        var missingMemberSummaries = memberEntries
+            .Where(static member => !member.TryGetProperty("Summary", out var summary) || string.IsNullOrWhiteSpace(summary.GetString()))
+            .Select(static member => $"{member.GetProperty("AssemblyName").GetString()}::{member.GetProperty("DeclaringTypeName").GetString()}.{member.GetProperty("DisplayName").GetString()} [{member.GetProperty("Category").GetString()}]")
+            .OrderBy(static name => name, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.True(
+            missingTypeSummaries.Length == 0,
+            CreateMissingSummaryMessage("public types", missingTypeSummaries));
+        Assert.True(
+            missingMemberSummaries.Length == 0,
+            CreateMissingSummaryMessage("public members", missingMemberSummaries));
+    }
+
+    [Fact]
+    public void GenerateDefaultCatalogIncludesCurrentShippedHostCompanions()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-default-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration());
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-aspnetcore-graphql.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-cassandradependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-clickhousedependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-consuldependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-elasticsearchdependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-kafkadependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-memcacheddependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-mongodbdependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-mqttdependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-mysqldependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-natsdependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-neo4jdependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-opensearchdependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-oracledependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-postgresdependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-rabbitmqdependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-redisdependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-sqlserverdependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-serilog.md");
+
+        var manifest = Assert.Single(rendered.Files, file => file.Path == "reference-manifest.json");
+        using var manifestDocument = JsonDocument.Parse(manifest.Contents);
+        var assemblies = manifestDocument.RootElement.GetProperty("Assemblies").EnumerateArray().ToArray();
+
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.AspNetCore.GraphQL", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.CassandraDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.ClickHouseDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.ConsulDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.ElasticsearchDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.KafkaDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.MemcachedDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.MongoDbDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.MqttDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.MySqlDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.NatsDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.Neo4jDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.OpenSearchDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.OracleDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.PostgresDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.RabbitMqDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.RedisDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.SqlServerDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.Serilog", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public async Task WriteAsyncWritesRenderedReferenceDocsToDisk()
     {
         var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-write-{Guid.NewGuid():N}");
@@ -157,5 +328,19 @@ public sealed class ReferenceDocsGeneratorTests
             StringComparison.OrdinalIgnoreCase)
             ? "Release"
             : "Debug";
+    }
+
+    private static string CreateMissingSummaryMessage(string scope, string[] entries)
+    {
+        const int previewCount = 20;
+
+        var preview = entries
+            .Take(previewCount)
+            .Select(static entry => $"- {entry}");
+        var suffix = entries.Length > previewCount
+            ? $"{Environment.NewLine}... and {entries.Length - previewCount} more."
+            : string.Empty;
+
+        return $"Reference docs are missing XML summaries for {scope}:{Environment.NewLine}{string.Join(Environment.NewLine, preview)}{suffix}";
     }
 }

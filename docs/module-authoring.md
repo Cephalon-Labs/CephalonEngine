@@ -102,6 +102,16 @@ Current behavior:
 
 For scaffolded modules and `dotnet new` starters, Cephalon now emits this manifest automatically with the current package version and target framework baseline.
 
+## Compatibility checklist
+
+Keep authored packages aligned with the broader Cephalon compatibility contract:
+
+- `version` and `compatibility.minimumEngineVersion` should reflect the Cephalon package version you intend to support
+- `compatibility.supportedTargetFrameworks` should reflect the actual target framework of the compiled module assembly
+- if you intentionally cap support, set `compatibility.maximumEngineVersion` explicitly instead of relying on undocumented assumptions
+- when you change package version or target framework expectations, update the project file, `cephalon.package.json`, packaging docs, and any starter/template copies together
+- use `docs/compatibility.md` as the repository-wide matrix for what else must stay aligned across scaffolding, CLI, templates, and docs
+
 ## Loading a package
 
 Package-path discovery:

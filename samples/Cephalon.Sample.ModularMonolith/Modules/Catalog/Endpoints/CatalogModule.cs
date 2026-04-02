@@ -7,6 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Sample.ModularMonolith.Modules.Catalog.Endpoints;
 
+/// <summary>
+/// Registers the catalog module for the modular monolith sample.
+/// </summary>
 public sealed class CatalogModule : ModuleBase, IEndpointModule
 {
     private static readonly ModuleDescriptor DescriptorInstance = new(
@@ -16,13 +19,28 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
         tags: ["sample", "monolith"],
         version: "1.0.0");
 
+    /// <summary>
+    /// Gets the descriptor exposed by the catalog module.
+    /// </summary>
     public override ModuleDescriptor Descriptor => DescriptorInstance;
 
+    /// <summary>
+    /// Registers application services required by the catalog module.
+    /// </summary>
+    /// <param name="services">
+    /// The host service collection.
+    /// </param>
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<CatalogOverviewService>();
     }
 
+    /// <summary>
+    /// Registers the capabilities exposed by the catalog module.
+    /// </summary>
+    /// <param name="capabilities">
+    /// The capability registry used during module discovery.
+    /// </param>
     public override void RegisterCapabilities(ICapabilityRegistry capabilities)
     {
         capabilities.Add(new Capability(
@@ -31,6 +49,12 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
             description: "Summarizes the module-first catalog surface."));
     }
 
+    /// <summary>
+    /// Maps the HTTP endpoints exposed by the catalog module.
+    /// </summary>
+    /// <param name="endpoints">
+    /// The endpoint route builder used by the ASP.NET Core host adapter.
+    /// </param>
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("/catalog");

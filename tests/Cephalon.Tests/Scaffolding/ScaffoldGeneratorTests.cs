@@ -15,7 +15,7 @@ public sealed class ScaffoldGeneratorTests
         var builder = new EngineBuilder(new ServiceCollection());
         builder.UseSettings(new EngineSettings(
             blueprint: "ModularVerticalSlice",
-            transports: ["JsonRpc", "Grpc"],
+            transports: ["JsonRpc", "Grpc", "GraphQL"],
             technologies: ["AgenticWorkloads", "EventDrivenIntegration", "KnowledgeRetrieval", "EdgeNativeDelivery"]));
 
         var runtime = builder.Build();
@@ -33,6 +33,7 @@ public sealed class ScaffoldGeneratorTests
             project.Packages.Contains("Cephalon.Eventing", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.Edge", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.Retrieval", StringComparer.OrdinalIgnoreCase) &&
+            project.Packages.Contains("Cephalon.AspNetCore.GraphQL", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.AspNetCore.JsonRpc", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.AspNetCore.Grpc", StringComparer.OrdinalIgnoreCase));
         Assert.Contains(scaffold.Folders, folder =>
@@ -45,6 +46,7 @@ public sealed class ScaffoldGeneratorTests
         Assert.Contains("Acme.Explorer.Modules.Platform", hostSettings.Contents, StringComparison.Ordinal);
         Assert.Contains("\"JSON-RPC\"", hostSettings.Contents, StringComparison.Ordinal);
         Assert.Contains("\"gRPC\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"GraphQL\"", hostSettings.Contents, StringComparison.Ordinal);
         Assert.Contains("\"Technologies\"", hostSettings.Contents, StringComparison.Ordinal);
         Assert.Contains("\"Agentic Workloads\"", hostSettings.Contents, StringComparison.Ordinal);
         Assert.Contains("\"Localization\"", hostSettings.Contents, StringComparison.Ordinal);
@@ -61,6 +63,7 @@ public sealed class ScaffoldGeneratorTests
         Assert.Contains("Cephalon.Eventing", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Edge", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Retrieval", packageProps.Contents, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.AspNetCore.GraphQL", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.AspNetCore.JsonRpc", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Version=\"9.1.0-preview\"", packageProps.Contents, StringComparison.Ordinal);
 
@@ -90,6 +93,11 @@ public sealed class ScaffoldGeneratorTests
             file => file.Path == "src/Acme.Explorer.Host/Acme.Explorer.Host.csproj");
         Assert.Contains("Configurations\\**\\*.json", hostProjectFile.Contents, StringComparison.Ordinal);
         Assert.Contains("<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>", hostProjectFile.Contents, StringComparison.Ordinal);
+
+        var hostProgram = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "src/Acme.Explorer.Host/Program.cs");
+        Assert.Contains("builder.AddGraphQLTransport();", hostProgram.Contents, StringComparison.Ordinal);
 
         var readme = Assert.Single(scaffold.Files, file => file.Path == "README.md");
         Assert.Contains("Engine:Localization", readme.Contents, StringComparison.Ordinal);

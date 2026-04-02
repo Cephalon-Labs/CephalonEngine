@@ -100,6 +100,7 @@ public sealed class WorkerHostingTests
         builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:flaky-start:Enabled"] = "false";
         builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:failing-stop:Enabled"] = "false";
         builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:stop-observer:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:slow-stop:Enabled"] = "false";
         builder.AddCephalon();
 
         using var host = builder.Build();

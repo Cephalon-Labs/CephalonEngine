@@ -16,6 +16,26 @@ This first cut focuses on the core shape we can keep growing:
 - ASP.NET Core integration for shipping modules over HTTP
 - generic-host worker integration for non-HTTP runtime scenarios
 - observability package with runtime logs, metrics, and tracing conventions
+- optional Cassandra dependency-health companion package for Cassandra readiness reporting
+- optional ClickHouse dependency-health companion package for analytics-database readiness reporting
+- optional Consul dependency-health companion package for control-plane readiness reporting
+- optional Elasticsearch dependency-health companion package for search-cluster readiness reporting
+- optional HTTP dependency-health companion package for external API readiness reporting
+- optional Kafka dependency-health companion package for broker metadata readiness reporting
+- optional Memcached dependency-health companion package for cache readiness reporting
+- optional MongoDB dependency-health companion package for document-database readiness reporting
+- optional MQTT dependency-health companion package for broker readiness reporting
+- optional MySQL dependency-health companion package for MySQL and MariaDB readiness reporting
+- optional NATS dependency-health companion package for broker readiness reporting
+- optional Neo4j dependency-health companion package for graph-database readiness reporting
+- optional OpenSearch dependency-health companion package for search-cluster readiness reporting
+- optional Oracle dependency-health companion package for Oracle Database readiness reporting
+- optional Postgres dependency-health companion package for database readiness reporting
+- optional RabbitMQ dependency-health companion package for broker readiness reporting
+- optional Redis dependency-health companion package for cache and Redis readiness reporting
+- optional SQL Server dependency-health companion package for SQL Server and Azure SQL readiness reporting
+- optional OpenTelemetry exporter companion package for OTLP host wiring
+- optional Serilog provider companion package for `ILogger` host wiring
 - a runnable playground and tests that prove the architecture
 
 ## Solution layout
@@ -25,11 +45,32 @@ This first cut focuses on the core shape we can keep growing:
 - `src/Cephalon.Edge`: companion package for edge-native delivery runtime services
 - `src/Cephalon.Engine`: composition, dependency ordering, manifest generation
 - `src/Cephalon.AspNetCore`: ASP.NET Core host core plus built-in REST, SSE, and WebSocket transport mapping
+- `src/Cephalon.AspNetCore.GraphQL`: GraphQL transport adapter for ASP.NET Core
 - `src/Cephalon.AspNetCore.JsonRpc`: JSON-RPC transport adapter for ASP.NET Core
 - `src/Cephalon.AspNetCore.Grpc`: gRPC transport adapter for ASP.NET Core
 - `src/Cephalon.Eventing`: companion package for event-driven integration runtime services
 - `src/Cephalon.Worker`: Generic Host worker adapter for non-HTTP hosts
 - `src/Cephalon.Observability`: observability package for logs, metrics, and tracing conventions
+- `src/Cephalon.Observability.CassandraDependencies`: optional Cassandra dependency-health companion package for Cassandra probes
+- `src/Cephalon.Observability.ClickHouseDependencies`: optional ClickHouse dependency-health companion package for analytics-database probes
+- `src/Cephalon.Observability.ConsulDependencies`: optional Consul dependency-health companion package for control-plane probes
+- `src/Cephalon.Observability.ElasticsearchDependencies`: optional Elasticsearch dependency-health companion package for cluster-health probes
+- `src/Cephalon.Observability.HttpDependencies`: optional HTTP dependency-health companion package for external API probes
+- `src/Cephalon.Observability.KafkaDependencies`: optional Kafka dependency-health companion package for broker metadata probes
+- `src/Cephalon.Observability.MemcachedDependencies`: optional Memcached dependency-health companion package for cache probes
+- `src/Cephalon.Observability.MongoDbDependencies`: optional MongoDB dependency-health companion package for document-database probes
+- `src/Cephalon.Observability.MqttDependencies`: optional MQTT dependency-health companion package for broker protocol probes
+- `src/Cephalon.Observability.MySqlDependencies`: optional MySQL dependency-health companion package for MySQL and MariaDB probes
+- `src/Cephalon.Observability.NatsDependencies`: optional NATS dependency-health companion package for broker protocol probes
+- `src/Cephalon.Observability.Neo4jDependencies`: optional Neo4j dependency-health companion package for graph-database probes
+- `src/Cephalon.Observability.OpenSearchDependencies`: optional OpenSearch dependency-health companion package for search-cluster probes
+- `src/Cephalon.Observability.OracleDependencies`: optional Oracle dependency-health companion package for Oracle Database probes
+- `src/Cephalon.Observability.PostgresDependencies`: optional Postgres dependency-health companion package for database probes
+- `src/Cephalon.Observability.RabbitMqDependencies`: optional RabbitMQ dependency-health companion package for broker probes
+- `src/Cephalon.Observability.RedisDependencies`: optional Redis dependency-health companion package for cache and Redis probes
+- `src/Cephalon.Observability.SqlServerDependencies`: optional SQL Server dependency-health companion package for SQL Server and Azure SQL probes
+- `src/Cephalon.Observability.OpenTelemetry`: optional OpenTelemetry OTLP exporter companion package for host integration
+- `src/Cephalon.Observability.Serilog`: optional Serilog provider companion package for host integration
 - `src/Cephalon.Retrieval`: companion package for retrieval/runtime knowledge services
 - `src/Cephalon.ReferenceDocs`: optional reference-doc publishing tool that can turn XML comments into browsable API reference output
 - `src/Cephalon.Cli`: command-line surface for blueprint generation and reference-doc workflows, with `CliApplication` as the stable entry point
@@ -102,6 +143,7 @@ When the playground is running, open:
 - `/engine`
 - `/engine/manifest`
 - `/engine/snapshot`
+- `/engine/runtime-story`
 - `/engine/app-model`
 - `/engine/scaffold`
 - `/engine/modules`
@@ -160,8 +202,8 @@ The engine is configuration-driven. A Cephalon app can choose its base blueprint
       "LogCapabilitySummary": true,
       "Telemetry": {
         "Provider": "OpenTelemetry",
-        "Protocol": "otlp",
-        "Endpoint": "http://localhost:4317",
+        "Protocol": "otlp/http",
+        "Endpoint": "http://localhost:4318",
         "ExportLogs": true,
         "ExportMetrics": true,
         "ExportTraces": true
@@ -326,6 +368,8 @@ The engine validates that metadata when loading package manifests:
 
 Current note: the shipped baseline now verifies detached signatures when a package declares `signature.keyId` + `signature.value`, or corresponding entries inside `signatures[]`, and the host configures matching trusted public keys. Packages can declare multiple signers; the runtime surfaces per-signer verification results and accepts the package when at least one required signature verifies under the active policy. Remaining work is the broader distribution story around certificate chains, richer provenance attestations, and external package feeds.
 
+Compatibility expectations across package manifests, scaffold output, CLI defaults, template-pack starters, and hosted reference-doc flows are summarized in `docs/compatibility.md`.
+
 Localization is also part of the engine contract now. `Engine:Localization` defines the default culture, supported cultures, and per-culture resource overrides for built-in engine surfaces such as OpenAPI, Scalar, and `/engine/localization`.
 
 Installed modules can also ship language packs by implementing `ILocalizedResourceContributor`. The engine merges those package-provided resources before applying project-level overrides, so package defaults stay available without taking control away from the app.
@@ -484,6 +528,8 @@ That gives Cephalon a predictable precedence chain:
 
 `/engine` continues to expose manifest v2 data, and `/engine/manifest` is now the explicit alias for that contract. The manifest includes the schema version, engine version, per-module version and metadata, capability source-module mapping, and explicit package load metadata for modules that came from assembly paths, manifest files, or configured package directories. When operators need that manifest plus the current runtime status and active technology-pack surfaces in a single payload, `GET /engine/snapshot` and `IRuntimeIntrospectionSnapshotProvider` are now the preferred integration point.
 
+When operators need the shorter answer to “what loaded, what started, what failed, and why?”, `GET /engine/runtime-story` now exposes loaded packages, per-module lifecycle state, and an ordered runtime timeline in one host-agnostic contract that also folds into `GET /engine/snapshot`.
+
 `Engine:PackagePolicy` is now the baseline governance surface for package metadata and discovery rules. It can disallow raw DLL-path package loads and require `version`, engine compatibility fields, target framework declarations, publisher ids, signer fingerprints, or `integrity.sha256` before a package is allowed to load.
 
 `Engine:Trust` is now the baseline governance surface for package and capability policy. It can require explicit trust for package-loaded assemblies, declare trusted package, assembly, publisher, signer-fingerprint, or checksum allow-lists, and override capability access per capability key.
@@ -524,15 +570,17 @@ dotnet new cephalon-monolith -n Acme.Store
 
 The template pack is intentionally lighter than `Cephalon.Cli`. Use the templates for a fast blueprint starter, and use the CLI when you want richer blueprint, module, feature, pattern, and transport composition from one command.
 
+When version, target-framework, or starter-contract expectations change, keep the template pack aligned with `Cephalon.Cli`, `Cephalon.Scaffolding`, and the manifest rules documented in `docs/compatibility.md`.
+
 Cephalon now also ships a first-class module authoring baseline. `dotnet new cephalon-module` gives a host-agnostic package starter, `dotnet new cephalon-rest-module` gives a REST-ready module package starter, and `docs/module-authoring.md` documents the recommended authoring flow. Those starters now emit `cephalon.package.json` and copy it to the build output by default so package discovery works without extra manual setup. The concrete reference package lives in `samples/Cephalon.ReferenceModule.Operations`.
 
 The runtime now also has a package-loading baseline for those authored modules. Explicit package assembly paths, package manifests, and configured package directories can be loaded into the engine, surfaced through `/engine/packages`, and mapped into host transports the same way as in-repo modules. Scaffolded module projects now emit the same `cephalon.package.json` convention, and `/engine/packages` now shows the package `kind`, resolved assembly `path`, original `sourcePath`, declared `version`, compatibility fields, computed `checksumSha256`, and `trustReason` so operators can tell both where a module came from and why the current trust policy accepted or rejected it.
 
 For REST surfaces, Cephalon now also ships a request-time trust hook through `RequireCapability(...)` in `Cephalon.AspNetCore.Transports.Rest`. That lets modules bind an endpoint to a capability key so denied capabilities are rejected at the HTTP boundary, not only hidden from manifest introspection.
 
-The engine now emits built-in observability signals through the `Cephalon.Engine` meter and activity source. `Cephalon.Observability` adds structured manifest, module, capability, operational-health, and telemetry-export logs on host startup, driven by `Engine:Observability`.
+The engine now emits built-in observability signals through the `Cephalon.Engine` meter and activity source. `Cephalon.Observability` adds structured manifest, module, capability, operational-health, telemetry-export, and diagnostics-catalog logs on host startup, driven by `Engine:Observability`, while `Cephalon.Observability.CassandraDependencies` turns Cassandra contact-point endpoints into reusable dependency-health contributions, `Cephalon.Observability.ClickHouseDependencies` turns ClickHouse analytics endpoints into reusable dependency-health contributions, `Cephalon.Observability.ConsulDependencies` turns Consul control-plane endpoints into reusable dependency-health contributions, `Cephalon.Observability.ElasticsearchDependencies` turns Elasticsearch clusters into reusable dependency-health contributions, `Cephalon.Observability.HttpDependencies` turns external HTTP upstreams into reusable dependency-health contributions, `Cephalon.Observability.KafkaDependencies` turns Kafka clusters into reusable dependency-health contributions, `Cephalon.Observability.MemcachedDependencies` turns Memcached cache endpoints into reusable dependency-health contributions, `Cephalon.Observability.MongoDbDependencies` turns MongoDB endpoints into reusable dependency-health contributions, `Cephalon.Observability.MqttDependencies` turns MQTT broker endpoints into reusable dependency-health contributions, `Cephalon.Observability.MySqlDependencies` turns MySQL and MariaDB endpoints into reusable dependency-health contributions, `Cephalon.Observability.NatsDependencies` turns NATS broker endpoints into reusable dependency-health contributions, `Cephalon.Observability.Neo4jDependencies` turns Neo4j graph endpoints into reusable dependency-health contributions, `Cephalon.Observability.OpenSearchDependencies` turns OpenSearch search-cluster endpoints into reusable dependency-health contributions, `Cephalon.Observability.OracleDependencies` turns Oracle Database endpoints into reusable dependency-health contributions, `Cephalon.Observability.PostgresDependencies` turns Postgres endpoints into reusable dependency-health contributions, `Cephalon.Observability.RabbitMqDependencies` turns RabbitMQ broker endpoints into reusable dependency-health contributions, `Cephalon.Observability.RedisDependencies` turns Redis and cache endpoints into reusable dependency-health contributions, `Cephalon.Observability.SqlServerDependencies` turns SQL Server and Azure SQL endpoints into reusable dependency-health contributions, `Cephalon.Observability.OpenTelemetry` gives hosts an optional OTLP export path without pushing exporter dependencies into the engine core, and `Cephalon.Observability.Serilog` gives hosts an optional Serilog provider path without inventing a Cephalon-specific logging abstraction.
 
-The transport catalog currently models `RestApi`, `JsonRpc`, `Grpc`, `ServerSentEvents`, and `WebSocket`. The sample host in this repo currently demonstrates `RestApi`, `JsonRpc`, `Grpc`, `ServerSentEvents`, and `WebSocket`.
+The transport catalog currently models `RestApi`, `GraphQL`, `JsonRpc`, `Grpc`, `ServerSentEvents`, and `WebSocket`. The sample host in this repo currently demonstrates `RestApi`, `GraphQL`, `JsonRpc`, `Grpc`, `ServerSentEvents`, and `WebSocket`.
 
 When `RestApi` is selected on ASP.NET Core, the host exposes OpenAPI at `/openapi/v1.json` and Scalar docs through `/scalar` with the document route at `/scalar/v1`. Cephalon also serves its Scalar JavaScript configuration from `/scalar/openapi-toggle.js` and its docs favicon from `/scalar/assets/favicon.svg`, both with cache-busting references and no-store headers so docs assets stay aligned after upgrades. Non-REST protocol endpoints stay out of that REST-facing API description surface.
 
@@ -557,13 +605,13 @@ Lifecycle is now host-managed for ASP.NET Core. When the host starts, Cephalon i
 
 `Engine:PackagePolicy` is exposed through `/engine/package-policy`, which gives operators the effective package governance rules for raw DLL loads, manifest metadata requirements, provenance requirements, and integrity expectations.
 
-Runtime failure policy is now configuration-driven through `Engine:FailurePolicy`. Startup can either `FailFast` or `CaptureOnly`, stop behavior can either `FailFast` or `BestEffortContinue`, and the runtime tracks restart limits for explicit `RestartAsync(...)` calls. `/engine/failure-policy` exposes the effective policy, while `/engine/status` now includes restart count and the most recent failure context when the runtime is in a failed state.
+Runtime failure policy is now configuration-driven through `Engine:FailurePolicy`. Startup can either `FailFast` or `CaptureOnly`, stop behavior can either `FailFast` or `BestEffortContinue`, readiness can stay unhealthy for a configured startup warmup window, liveness can stay healthy for a configured shutdown drain window, and explicit `RestartAsync(...)` calls can be delayed by a manual restart backoff window on restartable failures. `/engine/failure-policy` exposes the effective policy, while `/engine/status` now includes restart count, shutdown timing, and the most recent failure context, including when a restart exits backoff.
 
-Operational health is now a first-class host surface too. ASP.NET Core hosts expose `/health`, `/health/live`, and `/health/ready` with JSON payloads backed by the runtime state machine, while `/engine/diagnostics` exposes the engine meter, activity source, counter names, and the current liveness/readiness reports in one place.
+Operational health is now a first-class host surface too. ASP.NET Core hosts expose `/health`, `/health/live`, and `/health/ready` with JSON payloads backed by the runtime state machine, while `/engine/diagnostics` exposes the engine meter, activity source, counter names, the published package-level diagnostics conventions and event-id catalog, and the current liveness/readiness reports in one place. Those health reports now also surface active lifecycle windows such as startup warmup, shutdown drain, and restart backoff so operators can see why a probe is still holding traffic or restart eligibility. The companion `GET /engine/runtime-story` route answers the adjacent operator question of what actually loaded, started, failed, and why, without forcing callers to join manifest, status, and failure payloads by hand.
 
-Modules and installed packages can now also contribute dependency health details through `IDependencyHealthContributor`. That keeps dependency-specific health checks host-agnostic, exposes them through `/engine/dependencies`, and folds them into `/health/live`, `/health/ready`, and `/engine/diagnostics` without hardwiring database or infrastructure assumptions into the engine itself.
+Modules and installed packages can now also contribute dependency health details through `IDependencyHealthContributor`. That keeps dependency-specific health checks host-agnostic, exposes them through `/engine/dependencies`, and folds them into `/health/live`, `/health/ready`, and `/engine/diagnostics` without hardwiring database or infrastructure assumptions into the engine itself. Hosts that want supported provider-specific probes can pair that contract with `Cephalon.Observability.CassandraDependencies` for Cassandra clusters, `Cephalon.Observability.ClickHouseDependencies` for ClickHouse analytics databases, `Cephalon.Observability.ConsulDependencies` for Consul control planes, `Cephalon.Observability.ElasticsearchDependencies` for Elasticsearch clusters, `Cephalon.Observability.HttpDependencies` for external APIs, `Cephalon.Observability.KafkaDependencies` for Kafka clusters, `Cephalon.Observability.MemcachedDependencies` for Memcached cache endpoints, `Cephalon.Observability.MongoDbDependencies` for MongoDB databases, `Cephalon.Observability.MqttDependencies` for MQTT brokers, `Cephalon.Observability.MySqlDependencies` for MySQL and MariaDB databases, `Cephalon.Observability.NatsDependencies` for NATS brokers, `Cephalon.Observability.Neo4jDependencies` for Neo4j graph databases, `Cephalon.Observability.OpenSearchDependencies` for OpenSearch clusters, `Cephalon.Observability.OracleDependencies` for Oracle databases, `Cephalon.Observability.PostgresDependencies` for Postgres databases, `Cephalon.Observability.RabbitMqDependencies` for RabbitMQ brokers, `Cephalon.Observability.RedisDependencies` for Redis and cache endpoints, or `Cephalon.Observability.SqlServerDependencies` for SQL Server and Azure SQL endpoints.
 
-`Engine:Observability:Telemetry` is now the export-guidance section for operators. It does not force a specific exporter package into the engine, but it gives hosts and teams one configuration contract for provider, protocol, endpoint, and which signals should be forwarded.
+`Engine:Observability:Telemetry` is now the shared export contract for operators. It still keeps exporter dependencies out of the engine itself, but hosts can now pair it with `Cephalon.Observability.OpenTelemetry` to turn that same provider, protocol, endpoint, and signal-selection contract into a supported OTLP integration path. Hosts that want richer sink, enricher, or formatting behavior over the same shared `ILogger` pipeline can pair the runtime with `Cephalon.Observability.Serilog` and the standard top-level `Serilog` section instead of introducing a new Cephalon logging layer.
 
 The same runtime now also runs under the generic host through `Cephalon.Worker`. The worker playground uses configuration-driven assembly discovery, module lifecycle hooks, and a background heartbeat service to prove the engine can operate cleanly outside HTTP hosts.
 

@@ -2,7 +2,7 @@
 
 Editable roadmap diagram: `docs/cephalon-engine-roadmap.drawio`
 
-Planning baseline in this document reflects the repository state as of `April 1, 2026`.
+Planning baseline in this document reflects the repository state as of `April 2, 2026`.
 
 ## Target outcome
 
@@ -26,7 +26,7 @@ The foundation is no longer hypothetical. The repository already ships:
 - module and capability policy toggles through `Engine:Options`
 - manifest v2 with engine version, module metadata, and capability source mapping
 - host adapters for ASP.NET Core and generic worker hosts
-- transport support for `RestApi`, `JsonRpc`, `Grpc`, `ServerSentEvents`, and `WebSocket`
+- transport support for `RestApi`, `JsonRpc`, `Grpc`, `GraphQL`, `ServerSentEvents`, and `WebSocket`
 - OpenAPI + Scalar for REST-facing ASP.NET Core hosts
 - scaffold plans, scaffold generation, and a working CLI
 - a `dotnet new` template-pack baseline for the shipped blueprints
@@ -37,7 +37,7 @@ The foundation is no longer hypothetical. The repository already ships:
 - runtime failure policy baseline with fail-fast, capture-only, best-effort stop, and restart guards
 - operational health endpoints, diagnostics surface, and dependency-health contributor baseline for ASP.NET Core hosts
 - observability conventions for logs, metrics, tracing, and telemetry export guidance
-- a benchmark suite plus baseline guardrail validation for composition, runtime lifecycle, and scaffolding hot paths
+- a benchmark suite plus baseline guardrail validation for composition, runtime lifecycle, ASP.NET Core request logging, and scaffolding hot paths
 - a GitHub Actions release-validation workflow that runs the repo-native build, test, benchmark, and guardrail flow
 
 That changes the plan materially:
@@ -45,6 +45,22 @@ That changes the plan materially:
 - we do not need another “start the engine” phase
 - we do need an “adopt this safely outside the repo” phase
 - we should prioritize SDK hardening, templates, samples, and operational polish before advanced platform features
+- public-surface hardening and compatibility guidance now sit inside that shipped SDK-adoption baseline rather than as vague follow-up work
+
+## Sprint alignment
+
+The project board now tracks both delivered work and upcoming work through explicit sprint buckets:
+
+- `Foundation Sprint 1`: `ENG-000`, `ENG-001`, `ENG-002`, `ENG-003`, `ENG-004`
+- `Foundation Sprint 2`: `ENG-006`, `ENG-007`, `ENG-008`, `ENG-009`
+- `Foundation Sprint 3`: `ENG-014`, `ENG-015`, `ENG-025`
+- `Adoption Sprint 0`: `ENG-016`, `ENG-017`, `ENG-018`
+- `Operational Sprint 0`: `ENG-019`, `ENG-020`, `ENG-021`, `ENG-024`, `ENG-023`
+- `Platform Sprint 0`: `ENG-012`
+- `Sprint 1`: delivered `ENG-005`, `ENG-026`, and `ENG-027`, and opened the phase 2 operational gap-inventory track
+- `Sprint 2`: exporter packaging is now part of the shipped phase-2 baseline, Cassandra contact-point health plus ClickHouse analytics health plus Consul control-plane health plus Elasticsearch cluster health plus HTTP external API plus Kafka broker metadata plus Memcached cache plus MongoDB plus MQTT plus MySQL plus NATS plus Neo4j plus OpenSearch plus Oracle plus Postgres plus RabbitMQ plus Redis/cache plus SQL Server dependency-health packaging anchor the provider-specific follow-through, the shared diagnostics/event-id catalog now anchors the structured diagnostics baseline, and release validation now calls out the health/export convention suite explicitly
+- `Sprint 3`: runtime-answers follow-through, package distribution and trust follow-through, and `ENG-013` planning readiness
+- `Later / not scheduled yet`: `ENG-022` and future solution-level expansion work
 
 ## Planning principles
 
@@ -74,14 +90,12 @@ What is already in place:
 
 What still belongs to foundation hardening:
 
-- sharper API surface review
 - richer runtime failure and restart policies beyond the shipped baseline
 - more actionable diagnostics for module/package authors
-- stronger compatibility guidance between packages, manifests, and templates
 
 ## Phase 1: SDK hardening and external adoption
 
-Status: current focus
+Status: substantially complete
 
 Goal: turn the current repo from “good internal foundation” into something other teams can adopt predictably.
 
@@ -90,6 +104,8 @@ Deliverables:
 - package/version compatibility guidance
 - CLI polish for real developer workflows
 - generated output that stays aligned across `Cephalon.Scaffolding`, `Cephalon.Cli`, `Cephalon.TemplatePack`, and the repository package catalog
+- GraphQL transport delivery that keeps the runtime catalog, scaffold output, tests, and component docs aligned with the adapter split
+- DocFX-ready XML comments across the supported published assembly set, with tests kept outside that publishing boundary unless promoted intentionally
 - technology profiles that stay aligned across runtime introspection, scaffolding, CLI, and template defaults
 - companion packages that turn selected technology profiles into reusable runtime primitives without bloating the engine core
 - module-authoring starters and reference packages that stay aligned with runtime contracts
@@ -101,9 +117,14 @@ Exit criteria:
 - a new module can be authored from a supported starter path
 - generated apps, docs, package references, and install surfaces stay aligned with the shipped engine conventions
 
+Current note:
+
+- the supported phase-1 adoption baseline is now shipped across public-surface hardening, GraphQL transport delivery, compatibility guidance, and DocFX-ready XML comments
+- `ENG-028` remains an intentional later hygiene item instead of a blocker for phase-1 exit
+
 ## Phase 2: Operational hardening
 
-Status: next after SDK hardening
+Status: current focus
 
 Goal: make Cephalon safe to operate in real environments.
 
@@ -112,9 +133,17 @@ Deliverables:
 - deeper readiness and liveness semantics beyond the shipped baseline
 - richer runtime failure, stop, and restart policies beyond the shipped baseline
 - richer structured diagnostics and event IDs across packages
-- dedicated exporter packages or OpenTelemetry integration layers beyond the shipped guidance baseline
+- `ILogger` provider integration such as Serilog when hosts need richer sinks, enrichers, or log-routing behavior without inventing a new logging abstraction
+- ASP.NET Core request/response logging with bounded body capture and trace/log correlation over the shared `ILogger` pipeline
+- cloud tracing and exporter integrations beyond the shipped OTLP/OpenTelemetry baseline once the target cloud/runtime context is explicit
 - clearer operational answers to “what loaded, what started, what failed, and why?”
 - benchmark-driven performance guardrails for hot engine paths
+
+Current inventory:
+
+- `docs/operational-hardening-gap-inventory.md` now records the shipped baseline versus the remaining phase-2 gaps so follow-through work stays grounded in the code that already exists
+- that inventory now includes shipped `Cephalon.Observability.OpenTelemetry` and `Cephalon.Observability.Serilog` companion packages plus shipped `Cephalon.Observability.CassandraDependencies`, `Cephalon.Observability.ClickHouseDependencies`, `Cephalon.Observability.ConsulDependencies`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.Neo4jDependencies`, `Cephalon.Observability.OpenSearchDependencies`, `Cephalon.Observability.OracleDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` companion packages, together with a published runtime diagnostics catalog, runtime-story surface, configurable failure-policy warmup/drain/backoff semantics, opt-in ASP.NET Core request/response body logging with request/trace correlation, explicit release-validation guidance for health/export conventions, and refreshed benchmark guardrails that separate prepared composition/lifecycle hot paths plus the correlated ASP.NET Core request-logging path from benchmark harness setup
+- the remaining observability follow-through now sits primarily in cloud tracing/export integration once the target cloud/runtime context is explicit, while the shared `ILogger` pipeline already has shipped Serilog provider wiring plus correlated ASP.NET Core request logging
 
 Exit criteria:
 
@@ -194,11 +223,11 @@ Exit criteria:
 
 ## Recommended implementation order
 
-Updated priority order as of `April 1, 2026`:
+Updated priority order as of `April 2, 2026`:
 
-1. operational hardening follow-through: richer dependency health and exporter packaging
+1. operational hardening follow-through: operator-facing hardening and later cloud-targeted tracing/export decisions now that the baseline dependency-health companion set is shipped, Cassandra plus ClickHouse plus Consul plus Elasticsearch plus HTTP plus Kafka plus Memcached plus MongoDB plus MQTT plus MySQL plus NATS plus Neo4j plus OpenSearch plus Oracle plus Postgres plus RabbitMQ plus Redis plus SQL Server coverage have landed, the structured diagnostics catalog, runtime-story surface, and failure-policy warmup/drain/backoff semantics are in place, and release validation now calls out the health/export convention suite directly
 2. package/plugin loading
-3. capability permissions and trust policy
+3. package distribution, provenance, and richer trust follow-through beyond the current baseline
 4. workflow and orchestration primitives
 5. multi-service suite blueprints
 6. broader release automation and package-publishing polish

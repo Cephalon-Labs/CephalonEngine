@@ -1,7 +1,20 @@
 namespace Cephalon.Abstractions.AppModel.Scaffolding;
 
+/// <summary>
+/// Describes the blueprint-driven scaffold plan for an app shape.
+/// </summary>
 public sealed class ScaffoldPlan
 {
+    /// <summary>
+    /// Creates a scaffold plan.
+    /// </summary>
+    /// <param name="id">The stable scaffold-plan identifier.</param>
+    /// <param name="displayName">The human-readable scaffold-plan name.</param>
+    /// <param name="description">The scaffold-plan description.</param>
+    /// <param name="projects">The projects emitted by the scaffold.</param>
+    /// <param name="folders">The folders emitted by the scaffold.</param>
+    /// <param name="conventions">The conventions implied by the scaffold.</param>
+    /// <param name="metadata">Optional scaffold metadata.</param>
     public ScaffoldPlan(
         string id,
         string displayName,
@@ -41,18 +54,39 @@ public sealed class ScaffoldPlan
         ValidateFolderOwnership(Projects, Folders);
     }
 
+    /// <summary>
+    /// Gets the stable scaffold-plan identifier.
+    /// </summary>
     public string Id { get; }
 
+    /// <summary>
+    /// Gets the human-readable scaffold-plan name.
+    /// </summary>
     public string DisplayName { get; }
 
+    /// <summary>
+    /// Gets the scaffold-plan description.
+    /// </summary>
     public string Description { get; }
 
+    /// <summary>
+    /// Gets the projects emitted by the scaffold.
+    /// </summary>
     public IReadOnlyList<ScaffoldProject> Projects { get; }
 
+    /// <summary>
+    /// Gets the folders emitted by the scaffold.
+    /// </summary>
     public IReadOnlyList<ScaffoldFolder> Folders { get; }
 
+    /// <summary>
+    /// Gets the conventions implied by the scaffold.
+    /// </summary>
     public IReadOnlyList<string> Conventions { get; }
 
+    /// <summary>
+    /// Gets optional scaffold metadata.
+    /// </summary>
     public IReadOnlyDictionary<string, string> Metadata { get; }
 
     private static void ValidateProjectIdentity(IReadOnlyList<ScaffoldProject> projects)

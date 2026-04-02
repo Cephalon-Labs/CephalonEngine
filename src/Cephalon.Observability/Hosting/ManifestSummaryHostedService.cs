@@ -11,49 +11,57 @@ internal sealed class ManifestSummaryHostedService : IHostedService
     private static readonly Action<ILogger, string, string, string, int, int, Exception?> LogManifestSummaryMessage =
         LoggerMessage.Define<string, string, string, int, int>(
             LogLevel.Information,
-            new EventId(3000, "ManifestSummary"),
-            "Runtime manifest {ManifestVersion} for engine {EngineVersion} is active on blueprint {BlueprintId}. Modules {ModuleCount}. Capabilities {CapabilityCount}.");
+            new EventId(ObservabilityDiagnosticsConventions.ManifestSummary.Id, ObservabilityDiagnosticsConventions.ManifestSummary.Name),
+            ObservabilityDiagnosticsConventions.ManifestSummary.MessageTemplate);
     private static readonly Action<ILogger, string, string, Exception?> LogDiagnosticsConventionMessage =
         LoggerMessage.Define<string, string>(
             LogLevel.Information,
-            new EventId(3003, "DiagnosticsConvention"),
-            "Diagnostics use meter {MeterName} and activity source {ActivitySourceName}.");
+            new EventId(ObservabilityDiagnosticsConventions.DiagnosticsConvention.Id, ObservabilityDiagnosticsConventions.DiagnosticsConvention.Name),
+            ObservabilityDiagnosticsConventions.DiagnosticsConvention.MessageTemplate);
     private static readonly Action<ILogger, string, string, int, int, Exception?> LogModuleSummaryMessage =
         LoggerMessage.Define<string, string, int, int>(
             LogLevel.Information,
-            new EventId(3001, "ModuleSummary"),
-            "Module loaded '{ModuleId}' version {Version}. Dependencies {DependencyCount}. Tags {TagCount}.");
+            new EventId(ObservabilityDiagnosticsConventions.ModuleSummary.Id, ObservabilityDiagnosticsConventions.ModuleSummary.Name),
+            ObservabilityDiagnosticsConventions.ModuleSummary.MessageTemplate);
     private static readonly Action<ILogger, string, string, Exception?> LogCapabilitySummaryMessage =
         LoggerMessage.Define<string, string>(
             LogLevel.Information,
-            new EventId(3002, "CapabilitySummary"),
-            "Capability exposed '{CapabilityKey}' from module '{SourceModuleId}'.");
+            new EventId(ObservabilityDiagnosticsConventions.CapabilitySummary.Id, ObservabilityDiagnosticsConventions.CapabilitySummary.Name),
+            ObservabilityDiagnosticsConventions.CapabilitySummary.MessageTemplate);
     private static readonly Action<ILogger, string, string, string, Exception?> LogOperationalHealthMessage =
         LoggerMessage.Define<string, string, string>(
             LogLevel.Information,
-            new EventId(3004, "OperationalHealth"),
-            "Operational health reports liveness {LivenessState}, readiness {ReadinessState}, runtime status {RuntimeStatus}.");
+            new EventId(ObservabilityDiagnosticsConventions.OperationalHealth.Id, ObservabilityDiagnosticsConventions.OperationalHealth.Name),
+            ObservabilityDiagnosticsConventions.OperationalHealth.MessageTemplate);
     private static readonly Action<ILogger, string, string, string, bool, bool, bool, Exception?> LogTelemetryExportMessage =
         LoggerMessage.Define<string, string, string, bool, bool, bool>(
             LogLevel.Information,
-            new EventId(3005, "TelemetryExport"),
-            "Telemetry export guidance uses provider {Provider}, protocol {Protocol}, endpoint {Endpoint}, logs {ExportLogs}, metrics {ExportMetrics}, traces {ExportTraces}.");
+            new EventId(ObservabilityDiagnosticsConventions.TelemetryExport.Id, ObservabilityDiagnosticsConventions.TelemetryExport.Name),
+            ObservabilityDiagnosticsConventions.TelemetryExport.MessageTemplate);
+    private static readonly Action<ILogger, string, string, string, int, Exception?> LogDiagnosticsCatalogEntryMessage =
+        LoggerMessage.Define<string, string, string, int>(
+            LogLevel.Information,
+            new EventId(ObservabilityDiagnosticsConventions.DiagnosticsCatalogEntry.Id, ObservabilityDiagnosticsConventions.DiagnosticsCatalogEntry.Name),
+            ObservabilityDiagnosticsConventions.DiagnosticsCatalogEntry.MessageTemplate);
 
     private readonly ILogger<ManifestSummaryHostedService> logger;
     private readonly IRuntime runtime;
     private readonly RuntimeHealthEvaluator health;
     private readonly ObservabilityOptions options;
+    private readonly IRuntimeDiagnosticsCatalog diagnosticsCatalog;
 
     public ManifestSummaryHostedService(
         ILogger<ManifestSummaryHostedService> logger,
         IRuntime runtime,
         RuntimeHealthEvaluator health,
-        ObservabilityOptions options)
+        ObservabilityOptions options,
+        IRuntimeDiagnosticsCatalog diagnosticsCatalog)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
         this.health = health ?? throw new ArgumentNullException(nameof(health));
         this.options = options ?? throw new ArgumentNullException(nameof(options));
+        this.diagnosticsCatalog = diagnosticsCatalog ?? throw new ArgumentNullException(nameof(diagnosticsCatalog));
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -74,6 +82,20 @@ internal sealed class ManifestSummaryHostedService : IHostedService
                 EngineDiagnostics.MeterName,
                 EngineDiagnostics.ActivitySourceName,
                 null);
+
+            foreach (var convention in diagnosticsCatalog.Conventions)
+            {
+                var eventIdRange = convention.MinimumEventId.HasValue && convention.MaximumEventId.HasValue
+                    ? $"{convention.MinimumEventId.Value}-{convention.MaximumEventId.Value}"
+                    : "n/a";
+                LogDiagnosticsCatalogEntryMessage(
+                    logger,
+                    convention.Source,
+                    convention.LoggerCategoryPrefix,
+                    eventIdRange,
+                    convention.Events.Count,
+                    null);
+            }
 
             var liveness = health.EvaluateLiveness();
             var readiness = health.EvaluateReadiness();

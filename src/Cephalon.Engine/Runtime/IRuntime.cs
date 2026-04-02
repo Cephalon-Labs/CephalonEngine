@@ -36,6 +36,11 @@ public interface IRuntime
     RuntimeStatusSnapshot StatusSnapshot { get; }
 
     /// <summary>
+    /// Gets the richer operator-facing runtime story that explains what loaded, started, failed, and why.
+    /// </summary>
+    RuntimeOperationalStory OperationalStory { get; }
+
+    /// <summary>
     /// Gets the most recent failure captured by the lifecycle state machine, if any.
     /// </summary>
     RuntimeFailureInfo? LastFailure { get; }

@@ -69,11 +69,17 @@ public static class EngineWebApplicationExtensions
         var localizedTextCatalog = app.Services.GetRequiredService<ILocalizedTextCatalog>();
         var localizationSettings = app.Services.GetRequiredService<LocalizationSettings>();
         var referenceDocsOptions = app.Services.GetService<ReferenceDocsHostingOptions>() ?? new ReferenceDocsHostingOptions();
+        var httpLoggingOptions = app.Services.GetService<HttpRequestResponseLoggingOptions>()
+            ?? HttpRequestResponseLoggingOptions.FromConfiguration(app.Services.GetRequiredService<IConfiguration>());
         var referenceDocsSurface = CreateReferenceDocsSurface(referenceDocsOptions);
         var restApiSelected = runtime.Manifest.AppProfile.Transports.Any(transport =>
             string.Equals(transport.Id, "rest-api", StringComparison.OrdinalIgnoreCase));
 
         app.UseRequestLocalization(BuildRequestLocalizationOptions(localizationSettings, localizedTextCatalog));
+        if (httpLoggingOptions.Enabled)
+        {
+            app.UseMiddleware<HttpRequestResponseLoggingMiddleware>();
+        }
 
         var engineGroup = app.MapGroup("/engine");
         engineGroup.ExcludeFromDescription();
@@ -128,7 +134,9 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonTrustPolicy");
         engineGroup.MapGet("/status", (IRuntime runtime) => TypedResults.Ok(runtime.StatusSnapshot))
             .WithName("GetCephalonStatus");
-        engineGroup.MapGet("/diagnostics", (RuntimeHealthEvaluator health) => TypedResults.Ok(new DiagnosticsSurface(
+        engineGroup.MapGet("/runtime-story", (IRuntime runtime) => TypedResults.Ok(runtime.OperationalStory))
+            .WithName("GetCephalonRuntimeStory");
+        engineGroup.MapGet("/diagnostics", (RuntimeHealthEvaluator health, IRuntimeDiagnosticsCatalog diagnosticsCatalog) => TypedResults.Ok(new DiagnosticsSurface(
                 MeterName: EngineDiagnostics.MeterName,
                 ActivitySourceName: EngineDiagnostics.ActivitySourceName,
                 Counters:
@@ -140,6 +148,7 @@ public static class EngineWebApplicationExtensions
                     EngineDiagnostics.ModuleFailureCounterName,
                     EngineDiagnostics.RuntimeRestartCounterName
                 ],
+                Conventions: diagnosticsCatalog.Conventions,
                 Liveness: health.EvaluateLiveness(),
                 Readiness: health.EvaluateReadiness(),
                 SummaryPath: "/health",

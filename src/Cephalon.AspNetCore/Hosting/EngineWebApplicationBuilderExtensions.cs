@@ -6,6 +6,7 @@ using Cephalon.AspNetCore.Transports.WebSockets;
 using Cephalon.AspNetCore.Transformers;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
+using Cephalon.Engine.Diagnostics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -65,6 +66,7 @@ public static class EngineWebApplicationBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
         builder.AddCephalonProjectConfigurations();
+        builder.AddCephalonHttpLogging();
 
         builder.Services.AddOpenApi(options =>
         {
@@ -83,6 +85,35 @@ public static class EngineWebApplicationBuilderExtensions
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, EngineHostedService>());
         builder.AddReferenceDocsHosting();
         builder.Services.AddCephalon(builder.Configuration, configure);
+
+        return builder;
+    }
+
+    /// <summary>
+    /// Adds Cephalon's HTTP request and response logging options to the ASP.NET Core host.
+    /// </summary>
+    /// <param name="builder">The ASP.NET Core application builder to extend.</param>
+    /// <param name="configure">
+    /// An optional callback that can extend or override the configuration-driven request-logging setup.
+    /// </param>
+    /// <returns>The same builder instance for fluent host composition.</returns>
+    /// <remarks>
+    /// The logging contract is read from <c>Engine:Observability:HttpLogging</c> so teams can opt into
+    /// request/response summaries and bounded body capture without introducing a separate host-specific section.
+    /// </remarks>
+    public static WebApplicationBuilder AddCephalonHttpLogging(
+        this WebApplicationBuilder builder,
+        Action<HttpRequestResponseLoggingOptions>? configure = null)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        builder.AddCephalonProjectConfigurations();
+
+        var options = HttpRequestResponseLoggingOptions.FromConfiguration(builder.Configuration);
+        configure?.Invoke(options);
+
+        builder.Services.RemoveAll<HttpRequestResponseLoggingOptions>();
+        builder.Services.AddSingleton(options);
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, AspNetCoreDiagnosticsConventionContributor>());
 
         return builder;
     }

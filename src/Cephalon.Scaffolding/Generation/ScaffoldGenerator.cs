@@ -7,7 +7,7 @@ namespace Cephalon.Scaffolding.Generation;
 /// <summary>
 /// Turns a Cephalon app profile and scaffold request into concrete projects, folders, and files.
 /// </summary>
-public sealed class ScaffoldGenerator
+public static class ScaffoldGenerator
 {
     private const string PackageManifestFileName = "cephalon.package.json";
 
@@ -428,6 +428,12 @@ Generated from the Cephalon `{appProfile.BlueprintDisplayName}` blueprint.
         {
             usingLines.Add("using Cephalon.AspNetCore.Grpc.Hosting;");
             registrationLines.Add("builder.AddGrpcTransport();");
+        }
+
+        if (appProfile.Transports.Any(transport => string.Equals(transport.Id, "graphql", StringComparison.OrdinalIgnoreCase)))
+        {
+            usingLines.Add("using Cephalon.AspNetCore.GraphQL.Hosting;");
+            registrationLines.Add("builder.AddGraphQLTransport();");
         }
 
         var registrations = registrationLines.Count == 0

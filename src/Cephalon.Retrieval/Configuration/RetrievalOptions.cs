@@ -12,6 +12,13 @@ namespace Cephalon.Retrieval.Configuration;
 public sealed class RetrievalOptions
 {
     /// <summary>
+    /// Creates retrieval options with the default host-owned features enabled.
+    /// </summary>
+    public RetrievalOptions()
+    {
+    }
+
+    /// <summary>
     /// Gets the host-defined knowledge collections that should be available to the retrieval runtime.
     /// </summary>
     public IList<KnowledgeCollectionDescriptor> Collections { get; } = [];

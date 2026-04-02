@@ -1,10 +1,15 @@
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
+using Cephalon.AspNetCore.GraphQL.Hosting;
+using Cephalon.AspNetCore.GraphQL.Modules;
 using Cephalon.AspNetCore.Grpc.Modules;
 using Cephalon.AspNetCore.Modules;
 using Cephalon.AspNetCore.JsonRpc.Modules;
 using Cephalon.AspNetCore.Transports.ServerSentEvents;
 using Cephalon.AspNetCore.Transports.WebSockets;
+using HotChocolate;
+using HotChocolate.Types;
+using HotChocolate.Types.Descriptors;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -57,7 +62,7 @@ internal sealed class PlatformTestModule : ModuleBase, IEndpointModule
     }
 }
 
-internal sealed class DiscoveryTestModule : ModuleBase, IEndpointModule, IJsonRpcModule, IGrpcModule, IServerSentEventsModule, IWebSocketModule
+internal sealed class DiscoveryTestModule : ModuleBase, IEndpointModule, IGraphQLModule, IJsonRpcModule, IGrpcModule, IServerSentEventsModule, IWebSocketModule
 {
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "discovery",
@@ -78,6 +83,7 @@ internal sealed class DiscoveryTestModule : ModuleBase, IEndpointModule, IJsonRp
     {
         services.AddSingleton<TestGreetingComposer>();
         services.AddTransient<DiscoveryGrpcService>();
+        services.ConfigureGraphQLQuery(DiscoveryGraphQLQueries.Configure);
     }
 
     public override void RegisterCapabilities(ICapabilityRegistry capabilities)
@@ -199,7 +205,7 @@ internal sealed class DiscoveryTestModule : ModuleBase, IEndpointModule, IJsonRp
     }
 }
 
-internal interface ITestClock
+public interface ITestClock
 {
     DateTimeOffset GetUtcNow();
 }
@@ -214,7 +220,7 @@ internal sealed class FixedClock : ITestClock
     }
 }
 
-internal sealed class TestGreetingComposer
+public sealed class TestGreetingComposer
 {
     private readonly ITestClock clock;
 
@@ -234,10 +240,27 @@ internal sealed class TestGreetingComposer
     }
 }
 
+public sealed class DiscoveryGraphQLQueries
+{
+    public static void Configure(IObjectTypeDescriptor descriptor)
+    {
+        descriptor.Field("hello")
+            .Argument("name", argument => argument.Type<StringType>())
+            .Resolve(context =>
+            {
+                var composer = context.Service<TestGreetingComposer>();
+                var name = context.ArgumentValue<string?>("name");
+                return composer.Compose(name);
+            });
+        descriptor.Field("principles")
+            .Resolve(static _ => DiscoveryDefaults.Principles);
+    }
+}
+
 /// <summary>
 /// Discovery greeting payload returned by the REST surface.
 /// </summary>
-internal sealed record GreetingEnvelope(
+public sealed record GreetingEnvelope(
     string Message,
     DateTimeOffset GeneratedAtUtc,
     IReadOnlyList<string> Traits);

@@ -9,6 +9,13 @@ namespace Cephalon.Observability.Configuration;
 public sealed class ObservabilityOptions
 {
     /// <summary>
+    /// Creates observability options with the default startup diagnostics behavior.
+    /// </summary>
+    public ObservabilityOptions()
+    {
+    }
+
+    /// <summary>
     /// Gets or sets a value indicating whether a manifest summary should be written at host startup.
     /// </summary>
     public bool LogManifestSummary { get; set; } = true;

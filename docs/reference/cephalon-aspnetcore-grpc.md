@@ -40,6 +40,8 @@ File descriptor for Protos/discovery.proto
 
 ### `DiscoveryService`
 
+Demonstrates the baseline unary and streaming discovery endpoints exposed by the Cephalon ASP.NET Core gRPC adapter.
+
 #### Declaration
 ```csharp
 public static class DiscoveryService
@@ -99,13 +101,22 @@ public abstract class DiscoveryServiceBase
 
 #### Methods
 
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryservicebase-exchangegreetings-grpc-core-iasyncstreamreader-1-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-iserverstreamwriter-1-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-grpc-core-servercallcontext"></a>
+<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryservicebase-exchangegreetings-grpc-core-iasyncstreamreader-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-iserverstreamwriter-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-grpc-core-servercallcontext"></a>
 
 ##### `ExchangeGreetings`
 
 ```csharp
 Task ExchangeGreetings(IAsyncStreamReader<HelloRequest> requestStream, IServerStreamWriter<HelloReply> responseStream, ServerCallContext context)
 ```
+
+Exchanges greeting messages bidirectionally to validate duplex streaming support.
+
+Returns: A task indicating completion of the handler.
+
+Parameters:
+- `requestStream`: Used for reading requests from the client.
+- `responseStream`: Used for sending responses back to the client.
+- `context`: The context of the server-side call handler being invoked.
 
 <a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryservicebase-sayhello-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-servercallcontext"></a>
 
@@ -115,13 +126,30 @@ Task ExchangeGreetings(IAsyncStreamReader<HelloRequest> requestStream, IServerSt
 Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
 ```
 
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryservicebase-streamprinciples-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-grpc-core-iserverstreamwriter-1-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-grpc-core-servercallcontext"></a>
+Returns a single greeting for the requested caller.
+
+Returns: The response to send back to the client (wrapped by a task).
+
+Parameters:
+- `request`: The request received from the client.
+- `context`: The context of the server-side call handler being invoked.
+
+<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryservicebase-streamprinciples-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-grpc-core-iserverstreamwriter-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-grpc-core-servercallcontext"></a>
 
 ##### `StreamPrinciples`
 
 ```csharp
 Task StreamPrinciples(PrinciplesRequest request, IServerStreamWriter<PrincipleReply> responseStream, ServerCallContext context)
 ```
+
+Streams the host principles that describe the Cephalon runtime shape.
+
+Returns: A task indicating completion of the handler.
+
+Parameters:
+- `request`: The request received from the client.
+- `responseStream`: Used for sending responses back to the client.
+- `context`: The context of the server-side call handler being invoked.
 
 <a id="type-cephalon-aspnetcore-grpc-contracts-discovery-discoveryserviceclient"></a>
 
@@ -172,13 +200,29 @@ Parameters:
 AsyncDuplexStreamingCall<HelloRequest, HelloReply> ExchangeGreetings(CallOptions options)
 ```
 
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-exchangegreetings-grpc-core-metadata-system-nullable-1-system-datetime-system-threading-cancellationtoken"></a>
+Exchanges greeting messages bidirectionally to validate duplex streaming support.
+
+Returns: The call object.
+
+Parameters:
+- `options`: The options for the call.
+
+<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-exchangegreetings-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken"></a>
 
 ##### `ExchangeGreetings`
 
 ```csharp
 AsyncDuplexStreamingCall<HelloRequest, HelloReply> ExchangeGreetings(Metadata headers, DateTime? deadline, CancellationToken cancellationToken)
 ```
+
+Exchanges greeting messages bidirectionally to validate duplex streaming support.
+
+Returns: The call object.
+
+Parameters:
+- `headers`: The initial metadata to send with the call. This parameter is optional.
+- `deadline`: An optional deadline for the call. The call will be cancelled if deadline is hit.
+- `cancellationToken`: An optional token for canceling the call.
 
 <a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-sayhello-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-calloptions"></a>
 
@@ -188,13 +232,31 @@ AsyncDuplexStreamingCall<HelloRequest, HelloReply> ExchangeGreetings(Metadata he
 HelloReply SayHello(HelloRequest request, CallOptions options)
 ```
 
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-sayhello-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-metadata-system-nullable-1-system-datetime-system-threading-cancellationtoken"></a>
+Returns a single greeting for the requested caller.
+
+Returns: The response received from the server.
+
+Parameters:
+- `request`: The request to send to the server.
+- `options`: The options for the call.
+
+<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-sayhello-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken"></a>
 
 ##### `SayHello`
 
 ```csharp
 HelloReply SayHello(HelloRequest request, Metadata headers, DateTime? deadline, CancellationToken cancellationToken)
 ```
+
+Returns a single greeting for the requested caller.
+
+Returns: The response received from the server.
+
+Parameters:
+- `request`: The request to send to the server.
+- `headers`: The initial metadata to send with the call. This parameter is optional.
+- `deadline`: An optional deadline for the call. The call will be cancelled if deadline is hit.
+- `cancellationToken`: An optional token for canceling the call.
 
 <a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-sayhelloasync-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-calloptions"></a>
 
@@ -204,13 +266,31 @@ HelloReply SayHello(HelloRequest request, Metadata headers, DateTime? deadline, 
 AsyncUnaryCall<HelloReply> SayHelloAsync(HelloRequest request, CallOptions options)
 ```
 
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-sayhelloasync-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-metadata-system-nullable-1-system-datetime-system-threading-cancellationtoken"></a>
+Returns a single greeting for the requested caller.
+
+Returns: The call object.
+
+Parameters:
+- `request`: The request to send to the server.
+- `options`: The options for the call.
+
+<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-sayhelloasync-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken"></a>
 
 ##### `SayHelloAsync`
 
 ```csharp
 AsyncUnaryCall<HelloReply> SayHelloAsync(HelloRequest request, Metadata headers, DateTime? deadline, CancellationToken cancellationToken)
 ```
+
+Returns a single greeting for the requested caller.
+
+Returns: The call object.
+
+Parameters:
+- `request`: The request to send to the server.
+- `headers`: The initial metadata to send with the call. This parameter is optional.
+- `deadline`: An optional deadline for the call. The call will be cancelled if deadline is hit.
+- `cancellationToken`: An optional token for canceling the call.
 
 <a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-streamprinciples-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-grpc-core-calloptions"></a>
 
@@ -220,7 +300,15 @@ AsyncUnaryCall<HelloReply> SayHelloAsync(HelloRequest request, Metadata headers,
 AsyncServerStreamingCall<PrincipleReply> StreamPrinciples(PrinciplesRequest request, CallOptions options)
 ```
 
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-streamprinciples-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-grpc-core-metadata-system-nullable-1-system-datetime-system-threading-cancellationtoken"></a>
+Streams the host principles that describe the Cephalon runtime shape.
+
+Returns: The call object.
+
+Parameters:
+- `request`: The request to send to the server.
+- `options`: The options for the call.
+
+<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-streamprinciples-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken"></a>
 
 ##### `StreamPrinciples`
 
@@ -228,31 +316,25 @@ AsyncServerStreamingCall<PrincipleReply> StreamPrinciples(PrinciplesRequest requ
 AsyncServerStreamingCall<PrincipleReply> StreamPrinciples(PrinciplesRequest request, Metadata headers, DateTime? deadline, CancellationToken cancellationToken)
 ```
 
+Streams the host principles that describe the Cephalon runtime shape.
+
+Returns: The call object.
+
+Parameters:
+- `request`: The request to send to the server.
+- `headers`: The initial metadata to send with the call. This parameter is optional.
+- `deadline`: An optional deadline for the call. The call will be cancelled if deadline is hit.
+- `cancellationToken`: An optional token for canceling the call.
+
 <a id="type-cephalon-aspnetcore-grpc-contracts-discovery-helloreply"></a>
 
 ### `HelloReply`
 
+Returns the generated greeting and related metadata.
+
 #### Declaration
 ```csharp
 public sealed class HelloReply
-```
-
-#### Constructors
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-ctor"></a>
-
-##### `HelloReply`
-
-```csharp
-HelloReply()
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-ctor-cephalon-aspnetcore-grpc-contracts-discovery-helloreply"></a>
-
-##### `HelloReply`
-
-```csharp
-HelloReply(HelloReply other)
 ```
 
 #### Fields
@@ -289,14 +371,6 @@ Field number for the "traits" field.
 
 #### Properties
 
-<a id="member-p-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-descriptor"></a>
-
-##### `Descriptor`
-
-```csharp
-MessageDescriptor Descriptor { get; }
-```
-
 <a id="member-p-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-generatedatutc"></a>
 
 ##### `GeneratedAtUtc`
@@ -304,6 +378,8 @@ MessageDescriptor Descriptor { get; }
 ```csharp
 string GeneratedAtUtc { get; set; }
 ```
+
+The UTC timestamp when the reply was generated.
 
 <a id="member-p-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-message"></a>
 
@@ -313,13 +389,7 @@ string GeneratedAtUtc { get; set; }
 string Message { get; set; }
 ```
 
-<a id="member-p-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-parser"></a>
-
-##### `Parser`
-
-```csharp
-MessageParser<HelloReply> Parser { get; }
-```
+The message rendered for the caller.
 
 <a id="member-p-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-traits"></a>
 
@@ -329,73 +399,17 @@ MessageParser<HelloReply> Parser { get; }
 RepeatedField<string> Traits { get; }
 ```
 
-#### Methods
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-calculatesize"></a>
-
-##### `CalculateSize`
-
-```csharp
-int CalculateSize()
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-clone"></a>
-
-##### `Clone`
-
-```csharp
-HelloReply Clone()
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-mergefrom-cephalon-aspnetcore-grpc-contracts-discovery-helloreply"></a>
-
-##### `MergeFrom`
-
-```csharp
-void MergeFrom(HelloReply other)
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-mergefrom-google-protobuf-codedinputstream"></a>
-
-##### `MergeFrom`
-
-```csharp
-void MergeFrom(CodedInputStream input)
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-writeto-google-protobuf-codedoutputstream"></a>
-
-##### `WriteTo`
-
-```csharp
-void WriteTo(CodedOutputStream output)
-```
+Additional traits or descriptors associated with the generated greeting.
 
 <a id="type-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest"></a>
 
 ### `HelloRequest`
 
+Describes the caller that is requesting a greeting.
+
 #### Declaration
 ```csharp
 public sealed class HelloRequest
-```
-
-#### Constructors
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-ctor"></a>
-
-##### `HelloRequest`
-
-```csharp
-HelloRequest()
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-ctor-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest"></a>
-
-##### `HelloRequest`
-
-```csharp
-HelloRequest(HelloRequest other)
 ```
 
 #### Fields
@@ -412,14 +426,6 @@ Field number for the "name" field.
 
 #### Properties
 
-<a id="member-p-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-descriptor"></a>
-
-##### `Descriptor`
-
-```csharp
-MessageDescriptor Descriptor { get; }
-```
-
 <a id="member-p-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-name"></a>
 
 ##### `Name`
@@ -428,81 +434,17 @@ MessageDescriptor Descriptor { get; }
 string Name { get; set; }
 ```
 
-<a id="member-p-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-parser"></a>
-
-##### `Parser`
-
-```csharp
-MessageParser<HelloRequest> Parser { get; }
-```
-
-#### Methods
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-calculatesize"></a>
-
-##### `CalculateSize`
-
-```csharp
-int CalculateSize()
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-clone"></a>
-
-##### `Clone`
-
-```csharp
-HelloRequest Clone()
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-mergefrom-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest"></a>
-
-##### `MergeFrom`
-
-```csharp
-void MergeFrom(HelloRequest other)
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-mergefrom-google-protobuf-codedinputstream"></a>
-
-##### `MergeFrom`
-
-```csharp
-void MergeFrom(CodedInputStream input)
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-writeto-google-protobuf-codedoutputstream"></a>
-
-##### `WriteTo`
-
-```csharp
-void WriteTo(CodedOutputStream output)
-```
+The display name to greet.
 
 <a id="type-cephalon-aspnetcore-grpc-contracts-discovery-principlereply"></a>
 
 ### `PrincipleReply`
 
+Returns one principle from the streamed discovery sequence.
+
 #### Declaration
 ```csharp
 public sealed class PrincipleReply
-```
-
-#### Constructors
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-ctor"></a>
-
-##### `PrincipleReply`
-
-```csharp
-PrincipleReply()
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-ctor-cephalon-aspnetcore-grpc-contracts-discovery-principlereply"></a>
-
-##### `PrincipleReply`
-
-```csharp
-PrincipleReply(PrincipleReply other)
 ```
 
 #### Fields
@@ -519,22 +461,6 @@ Field number for the "principle" field.
 
 #### Properties
 
-<a id="member-p-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-descriptor"></a>
-
-##### `Descriptor`
-
-```csharp
-MessageDescriptor Descriptor { get; }
-```
-
-<a id="member-p-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-parser"></a>
-
-##### `Parser`
-
-```csharp
-MessageParser<PrincipleReply> Parser { get; }
-```
-
 <a id="member-p-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-principle"></a>
 
 ##### `Principle`
@@ -543,133 +469,17 @@ MessageParser<PrincipleReply> Parser { get; }
 string Principle { get; set; }
 ```
 
-#### Methods
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-calculatesize"></a>
-
-##### `CalculateSize`
-
-```csharp
-int CalculateSize()
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-clone"></a>
-
-##### `Clone`
-
-```csharp
-PrincipleReply Clone()
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-mergefrom-cephalon-aspnetcore-grpc-contracts-discovery-principlereply"></a>
-
-##### `MergeFrom`
-
-```csharp
-void MergeFrom(PrincipleReply other)
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-mergefrom-google-protobuf-codedinputstream"></a>
-
-##### `MergeFrom`
-
-```csharp
-void MergeFrom(CodedInputStream input)
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-writeto-google-protobuf-codedoutputstream"></a>
-
-##### `WriteTo`
-
-```csharp
-void WriteTo(CodedOutputStream output)
-```
+The principle text being streamed to the caller.
 
 <a id="type-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest"></a>
 
 ### `PrinciplesRequest`
 
+Requests the baseline Cephalon principles stream.
+
 #### Declaration
 ```csharp
 public sealed class PrinciplesRequest
-```
-
-#### Constructors
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-ctor"></a>
-
-##### `PrinciplesRequest`
-
-```csharp
-PrinciplesRequest()
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-ctor-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest"></a>
-
-##### `PrinciplesRequest`
-
-```csharp
-PrinciplesRequest(PrinciplesRequest other)
-```
-
-#### Properties
-
-<a id="member-p-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-descriptor"></a>
-
-##### `Descriptor`
-
-```csharp
-MessageDescriptor Descriptor { get; }
-```
-
-<a id="member-p-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-parser"></a>
-
-##### `Parser`
-
-```csharp
-MessageParser<PrinciplesRequest> Parser { get; }
-```
-
-#### Methods
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-calculatesize"></a>
-
-##### `CalculateSize`
-
-```csharp
-int CalculateSize()
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-clone"></a>
-
-##### `Clone`
-
-```csharp
-PrinciplesRequest Clone()
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-mergefrom-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest"></a>
-
-##### `MergeFrom`
-
-```csharp
-void MergeFrom(PrinciplesRequest other)
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-mergefrom-google-protobuf-codedinputstream"></a>
-
-##### `MergeFrom`
-
-```csharp
-void MergeFrom(CodedInputStream input)
-```
-
-<a id="member-m-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-writeto-google-protobuf-codedoutputstream"></a>
-
-##### `WriteTo`
-
-```csharp
-void WriteTo(CodedOutputStream output)
 ```
 
 <a id="namespace-cephalon-aspnetcore-grpc-hosting"></a>

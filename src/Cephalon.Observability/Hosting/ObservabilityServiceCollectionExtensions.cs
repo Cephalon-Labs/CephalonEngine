@@ -1,4 +1,5 @@
 using Cephalon.Observability.Configuration;
+using Cephalon.Engine.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -57,6 +58,7 @@ public static class ObservabilityServiceCollectionExtensions
         ObservabilityOptions options)
     {
         services.TryAddSingleton(options);
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, ObservabilityDiagnosticsConventionContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, ManifestSummaryHostedService>());
 
         return services;

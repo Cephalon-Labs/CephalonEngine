@@ -6,8 +6,20 @@ using System.Text.Json.Serialization;
 
 namespace Cephalon.Abstractions.AppModel;
 
+/// <summary>
+/// Describes the resolved runtime profile selected for a Cephalon app.
+/// </summary>
 public sealed class AppProfile
 {
+    /// <summary>
+    /// Creates an app profile without scaffold metadata.
+    /// </summary>
+    /// <param name="blueprintId">The selected blueprint identifier.</param>
+    /// <param name="blueprintDisplayName">The selected blueprint display name.</param>
+    /// <param name="blueprintDescription">The selected blueprint description.</param>
+    /// <param name="patterns">The patterns active for the app.</param>
+    /// <param name="technologies">The selected technology profiles.</param>
+    /// <param name="transports">The selected transports.</param>
     public AppProfile(
         string blueprintId,
         string blueprintDisplayName,
@@ -26,6 +38,16 @@ public sealed class AppProfile
     {
     }
 
+    /// <summary>
+    /// Creates an app profile with optional scaffold metadata.
+    /// </summary>
+    /// <param name="blueprintId">The selected blueprint identifier.</param>
+    /// <param name="blueprintDisplayName">The selected blueprint display name.</param>
+    /// <param name="blueprintDescription">The selected blueprint description.</param>
+    /// <param name="patterns">The patterns active for the app.</param>
+    /// <param name="scaffold">The scaffold plan associated with the app shape.</param>
+    /// <param name="technologies">The selected technology profiles.</param>
+    /// <param name="transports">The selected transports.</param>
     [JsonConstructor]
     public AppProfile(
         string blueprintId,
@@ -60,17 +82,38 @@ public sealed class AppProfile
         Transports = transports ?? [];
     }
 
+    /// <summary>
+    /// Gets the selected blueprint identifier.
+    /// </summary>
     public string BlueprintId { get; }
 
+    /// <summary>
+    /// Gets the selected blueprint display name.
+    /// </summary>
     public string BlueprintDisplayName { get; }
 
+    /// <summary>
+    /// Gets the selected blueprint description.
+    /// </summary>
     public string BlueprintDescription { get; }
 
+    /// <summary>
+    /// Gets the active patterns for the app.
+    /// </summary>
     public IReadOnlyList<PatternDescriptor> Patterns { get; }
 
+    /// <summary>
+    /// Gets the scaffold plan associated with the app shape, when one is defined.
+    /// </summary>
     public ScaffoldPlan? Scaffold { get; }
 
+    /// <summary>
+    /// Gets the selected technology profiles.
+    /// </summary>
     public IReadOnlyList<TechnologyDescriptor> Technologies { get; }
 
+    /// <summary>
+    /// Gets the selected transports.
+    /// </summary>
     public IReadOnlyList<TransportDescriptor> Transports { get; }
 }

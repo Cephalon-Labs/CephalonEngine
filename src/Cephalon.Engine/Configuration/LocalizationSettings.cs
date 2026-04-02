@@ -2,10 +2,22 @@ using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.Engine.Configuration;
 
+/// <summary>
+/// Describes localization configuration for the runtime and module resources.
+/// </summary>
 public sealed class LocalizationSettings
 {
+    /// <summary>
+    /// Gets an empty localization configuration instance.
+    /// </summary>
     public static LocalizationSettings Empty { get; } = new();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LocalizationSettings" /> class.
+    /// </summary>
+    /// <param name="defaultCulture">The default culture to use when no explicit culture is requested.</param>
+    /// <param name="supportedCultures">The supported culture identifiers.</param>
+    /// <param name="resources">Localized resource entries keyed by culture and resource key.</param>
     public LocalizationSettings(
         string? defaultCulture = null,
         IReadOnlyList<string>? supportedCultures = null,
@@ -16,17 +28,34 @@ public sealed class LocalizationSettings
         Resources = NormalizeResources(resources);
     }
 
+    /// <summary>
+    /// Gets the default culture to use when no explicit culture is requested.
+    /// </summary>
     public string? DefaultCulture { get; }
 
+    /// <summary>
+    /// Gets the supported culture identifiers.
+    /// </summary>
     public IReadOnlyList<string> SupportedCultures { get; }
 
+    /// <summary>
+    /// Gets localized resource entries keyed by culture and resource key.
+    /// </summary>
     public IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Resources { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether any localization settings were explicitly supplied.
+    /// </summary>
     public bool HasValues =>
         DefaultCulture is not null ||
         SupportedCultures.Count > 0 ||
         Resources.Count > 0;
 
+    /// <summary>
+    /// Merges another localization settings instance into the current instance.
+    /// </summary>
+    /// <param name="other">The localization settings to overlay on top of the current values.</param>
+    /// <returns>A merged localization settings instance.</returns>
     public LocalizationSettings Merge(LocalizationSettings? other)
     {
         if (other is null || !other.HasValues)
@@ -70,6 +99,12 @@ public sealed class LocalizationSettings
             resources: mergedResources);
     }
 
+    /// <summary>
+    /// Reads localization settings from configuration.
+    /// </summary>
+    /// <param name="configuration">The configuration source that contains the engine section.</param>
+    /// <param name="sectionPath">The root configuration section path to read from.</param>
+    /// <returns>The parsed localization settings.</returns>
     public static LocalizationSettings FromConfiguration(
         IConfiguration configuration,
         string sectionPath = EngineSettings.SectionName)

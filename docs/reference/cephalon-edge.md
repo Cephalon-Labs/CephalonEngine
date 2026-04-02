@@ -36,6 +36,8 @@ public sealed class EdgeRuntimeOptions
 EdgeRuntimeOptions()
 ```
 
+Creates edge runtime options with the default host-owned features enabled.
+
 #### Properties
 
 <a id="member-p-cephalon-edge-configuration-edgeruntimeoptions-enableofflinemode"></a>
@@ -85,13 +87,21 @@ public static class EdgeEngineBuilderExtensions
 
 #### Methods
 
-<a id="member-m-cephalon-edge-registration-edgeenginebuilderextensions-addedge-cephalon-engine-composition-enginebuilder-system-action-1-cephalon-edge-configuration-edgeruntimeoptions"></a>
+<a id="member-m-cephalon-edge-registration-edgeenginebuilderextensions-addedge-cephalon-engine-composition-enginebuilder-system-action-cephalon-edge-configuration-edgeruntimeoptions"></a>
 
 ##### `AddEdge`
 
 ```csharp
 EngineBuilder AddEdge(this EngineBuilder builder, Action<EdgeRuntimeOptions> configure)
 ```
+
+Adds the edge runtime pack to the engine.
+
+Returns: The same engine builder for fluent composition.
+
+Parameters:
+- `builder`: The engine builder to extend.
+- `configure`: An optional callback that configures the host-owned edge runtime options.
 
 <a id="namespace-cephalon-edge-services"></a>
 
@@ -110,13 +120,21 @@ public sealed class EdgeNodeDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-edge-services-edgenodedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string"></a>
+<a id="member-m-cephalon-edge-services-edgenodedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string"></a>
 
 ##### `EdgeNodeDescriptor`
 
 ```csharp
 EdgeNodeDescriptor(string id, string displayName, string description, IReadOnlyList<string> tags)
 ```
+
+Creates a new edge node descriptor.
+
+Parameters:
+- `id`: The stable node identifier.
+- `displayName`: The operator-facing node name.
+- `description`: The human-readable description of the node.
+- `tags`: Optional tags that classify the node.
 
 #### Properties
 

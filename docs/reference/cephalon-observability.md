@@ -33,6 +33,8 @@ public sealed class ObservabilityOptions
 ObservabilityOptions()
 ```
 
+Creates observability options with the default startup diagnostics behavior.
+
 #### Properties
 
 <a id="member-p-cephalon-observability-configuration-observabilityoptions-logcapabilitysummary"></a>
@@ -99,7 +101,7 @@ Parameters:
 
 Describes how operators intend host telemetry to be exported.
 
-Remarks: These settings are intentionally guidance-oriented. They let Cephalon packages and hosts agree on provider, protocol, endpoint, and enabled signals without forcing a specific exporter implementation.
+Remarks: These settings let Cephalon packages and hosts agree on provider, protocol, endpoint, and enabled signals without forcing exporter dependencies into the engine core. Companion packages such as `Cephalon.Observability.OpenTelemetry` can interpret the same contract when a host wants a supported OTLP export path.
 
 #### Declaration
 ```csharp
@@ -116,6 +118,8 @@ public sealed class TelemetryExportOptions
 TelemetryExportOptions()
 ```
 
+Creates telemetry export options with the default guidance values.
+
 #### Properties
 
 <a id="member-p-cephalon-observability-configuration-telemetryexportoptions-endpoint"></a>
@@ -126,7 +130,7 @@ TelemetryExportOptions()
 string Endpoint { get; set; }
 ```
 
-Gets or sets the target export endpoint, if one is configured.
+Gets or sets the target export endpoint, if one is configured. Companion packages interpret this as the base collector endpoint for the selected export protocol.
 
 <a id="member-p-cephalon-observability-configuration-telemetryexportoptions-exportlogs"></a>
 
@@ -166,7 +170,7 @@ Gets or sets a value indicating whether traces should be exported.
 string Protocol { get; set; }
 ```
 
-Gets or sets the telemetry transport protocol, such as `otlp`.
+Gets or sets the telemetry transport protocol, such as `otlp`, `otlp/grpc`, or `otlp/http`.
 
 <a id="member-p-cephalon-observability-configuration-telemetryexportoptions-provider"></a>
 
@@ -195,7 +199,7 @@ public static class ObservabilityServiceCollectionExtensions
 
 #### Methods
 
-<a id="member-m-cephalon-observability-hosting-observabilityservicecollectionextensions-addcephalonobservability-microsoft-extensions-dependencyinjection-iservicecollection-system-action-1-cephalon-observability-configuration-observabilityoptions"></a>
+<a id="member-m-cephalon-observability-hosting-observabilityservicecollectionextensions-addcephalonobservability-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-configuration-observabilityoptions"></a>
 
 ##### `AddCephalonObservability`
 
@@ -203,10 +207,27 @@ public static class ObservabilityServiceCollectionExtensions
 IServiceCollection AddCephalonObservability(this IServiceCollection services, Action<ObservabilityOptions> configure)
 ```
 
-<a id="member-m-cephalon-observability-hosting-observabilityservicecollectionextensions-addcephalonobservability-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-1-cephalon-observability-configuration-observabilityoptions"></a>
+Adds observability services using code-first configuration.
+
+Returns: The same service collection for further registration.
+
+Parameters:
+- `services`: The target service collection.
+- `configure`: An optional callback that configures observability options.
+
+<a id="member-m-cephalon-observability-hosting-observabilityservicecollectionextensions-addcephalonobservability-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-configuration-observabilityoptions"></a>
 
 ##### `AddCephalonObservability`
 
 ```csharp
 IServiceCollection AddCephalonObservability(this IServiceCollection services, IConfiguration configuration, Action<ObservabilityOptions> configure)
 ```
+
+Adds observability services using configuration as the primary source of observability options.
+
+Returns: The same service collection for further registration.
+
+Parameters:
+- `services`: The target service collection.
+- `configuration`: The application configuration root.
+- `configure`: An optional callback that can extend or override the configuration-driven observability setup.

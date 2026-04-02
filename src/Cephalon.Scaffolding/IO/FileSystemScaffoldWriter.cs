@@ -5,7 +5,7 @@ namespace Cephalon.Scaffolding.IO;
 /// <summary>
 /// Writes a rendered scaffold to the local file system.
 /// </summary>
-public sealed class FileSystemScaffoldWriter
+public static class FileSystemScaffoldWriter
 {
     /// <summary>
     /// Writes the supplied scaffold to disk.

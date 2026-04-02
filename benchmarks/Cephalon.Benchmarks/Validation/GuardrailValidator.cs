@@ -1,7 +1,22 @@
 namespace Cephalon.Benchmarks.Validation;
 
+/// <summary>
+/// Compares benchmark measurements against the configured guardrail catalog.
+/// </summary>
 public sealed class GuardrailValidator
 {
+    /// <summary>
+    /// Validates the supplied measurements against the catalog entries.
+    /// </summary>
+    /// <param name="catalog">
+    /// The guardrail catalog that defines the accepted thresholds.
+    /// </param>
+    /// <param name="measurements">
+    /// The measurements produced by the current benchmark run.
+    /// </param>
+    /// <returns>
+    /// The validation result, including pass/fail state and diagnostic messages.
+    /// </returns>
     public static GuardrailValidationResult Validate(
         GuardrailCatalog catalog,
         IReadOnlyList<BenchmarkMeasurement> measurements)

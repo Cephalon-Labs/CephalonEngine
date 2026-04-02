@@ -1,3 +1,4 @@
+using System.CodeDom.Compiler;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -23,10 +24,31 @@ public static class ReferenceDocsGenerator
         new("Cephalon.Abstractions", "Core", "Host-agnostic contracts that module and package authors build against."),
         new("Cephalon.Engine", "Core", "Composition, runtime, policy, manifest, and introspection services."),
         new("Cephalon.AspNetCore", "Hosts", "ASP.NET Core host core, REST surface, docs, health, and runtime endpoints."),
+        new("Cephalon.AspNetCore.GraphQL", "Hosts", "GraphQL transport adapter for ASP.NET Core hosts."),
         new("Cephalon.AspNetCore.JsonRpc", "Hosts", "JSON-RPC transport adapter for ASP.NET Core hosts."),
         new("Cephalon.AspNetCore.Grpc", "Hosts", "gRPC transport adapter and contracts for ASP.NET Core hosts."),
         new("Cephalon.Worker", "Hosts", "Generic-host worker adapter for non-HTTP runtime execution."),
         new("Cephalon.Observability", "Hosts", "Operational diagnostics and telemetry conventions for hosts."),
+        new("Cephalon.Observability.CassandraDependencies", "Hosts", "Cassandra dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.ClickHouseDependencies", "Hosts", "ClickHouse dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.ConsulDependencies", "Hosts", "Consul dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.ElasticsearchDependencies", "Hosts", "Elasticsearch dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.HttpDependencies", "Hosts", "External HTTP dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.KafkaDependencies", "Hosts", "Kafka dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.MemcachedDependencies", "Hosts", "Memcached dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.MongoDbDependencies", "Hosts", "MongoDB dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.MqttDependencies", "Hosts", "MQTT dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.MySqlDependencies", "Hosts", "MySQL dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.NatsDependencies", "Hosts", "NATS dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.Neo4jDependencies", "Hosts", "Neo4j dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.OpenSearchDependencies", "Hosts", "OpenSearch dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.OracleDependencies", "Hosts", "Oracle dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.PostgresDependencies", "Hosts", "Postgres dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.RabbitMqDependencies", "Hosts", "RabbitMQ dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.RedisDependencies", "Hosts", "Redis and cache dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.SqlServerDependencies", "Hosts", "SQL Server and Azure SQL dependency-health integration for Cephalon hosts."),
+        new("Cephalon.Observability.OpenTelemetry", "Hosts", "OpenTelemetry OTLP exporter integration for Cephalon hosts."),
+        new("Cephalon.Observability.Serilog", "Hosts", "Serilog provider integration for Cephalon hosts."),
         new("Cephalon.Agentics", "Technology Packs", "Agentic workload runtime services and extension points."),
         new("Cephalon.Eventing", "Technology Packs", "Event-driven integration runtime services and extension points."),
         new("Cephalon.Retrieval", "Technology Packs", "Knowledge retrieval runtime services and extension points."),
@@ -41,6 +63,7 @@ public static class ReferenceDocsGenerator
         "Cephalon.Abstractions",
         "Cephalon.Agentics",
         "Cephalon.AspNetCore",
+        "Cephalon.AspNetCore.GraphQL",
         "Cephalon.AspNetCore.Grpc",
         "Cephalon.AspNetCore.JsonRpc",
         "Cephalon.Cli",
@@ -48,6 +71,26 @@ public static class ReferenceDocsGenerator
         "Cephalon.Engine",
         "Cephalon.Eventing",
         "Cephalon.Observability",
+        "Cephalon.Observability.CassandraDependencies",
+        "Cephalon.Observability.ClickHouseDependencies",
+        "Cephalon.Observability.ConsulDependencies",
+        "Cephalon.Observability.ElasticsearchDependencies",
+        "Cephalon.Observability.HttpDependencies",
+        "Cephalon.Observability.KafkaDependencies",
+        "Cephalon.Observability.MemcachedDependencies",
+        "Cephalon.Observability.MongoDbDependencies",
+        "Cephalon.Observability.MqttDependencies",
+        "Cephalon.Observability.MySqlDependencies",
+        "Cephalon.Observability.NatsDependencies",
+        "Cephalon.Observability.Neo4jDependencies",
+        "Cephalon.Observability.OpenSearchDependencies",
+        "Cephalon.Observability.OracleDependencies",
+        "Cephalon.Observability.PostgresDependencies",
+        "Cephalon.Observability.RabbitMqDependencies",
+        "Cephalon.Observability.RedisDependencies",
+        "Cephalon.Observability.SqlServerDependencies",
+        "Cephalon.Observability.OpenTelemetry",
+        "Cephalon.Observability.Serilog",
         "Cephalon.ReferenceDocs",
         "Cephalon.Retrieval",
         "Cephalon.Scaffolding",
@@ -169,22 +212,26 @@ public static class ReferenceDocsGenerator
             .Where(static constructor => !constructor.IsDefined(typeof(CompilerGeneratedAttribute), inherit: false))
             .OrderBy(static constructor => constructor.GetParameters().Length)
             .Select(constructor => CreateMemberPage(constructor, comments, "Constructors"))
+            .OfType<MemberPage>()
             .ToArray();
         var fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
             .Where(static field => !field.IsSpecialName)
             .Where(static field => !field.IsDefined(typeof(CompilerGeneratedAttribute), inherit: false))
             .OrderBy(static field => field.Name, StringComparer.OrdinalIgnoreCase)
             .Select(field => CreateMemberPage(field, comments, "Fields"))
+            .OfType<MemberPage>()
             .ToArray();
         var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
             .OrderBy(static property => property.Name, StringComparer.OrdinalIgnoreCase)
             .Select(property => CreateMemberPage(property, comments, "Properties"))
+            .OfType<MemberPage>()
             .ToArray();
         var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
             .Where(static method => IsDocumentableMethod(method))
             .OrderBy(static method => method.Name, StringComparer.OrdinalIgnoreCase)
             .ThenBy(static method => method.GetParameters().Length)
             .Select(method => CreateMemberPage(method, comments, "Methods"))
+            .OfType<MemberPage>()
             .ToArray();
 
         return new TypePage(
@@ -219,20 +266,26 @@ public static class ReferenceDocsGenerator
             and not "op_Inequality";
     }
 
-    private static MemberPage CreateMemberPage(
+    private static MemberPage? CreateMemberPage(
         MemberInfo member,
         Dictionary<string, XElement> comments,
         string category)
     {
         var memberDocId = GetMemberDocId(member);
         var comment = comments.TryGetValue(memberDocId, out var memberComment) ? memberComment : null;
+        var summary = RenderElement(comment?.Element("summary"));
+
+        if (ShouldSkipGeneratedMember(member, summary))
+        {
+            return null;
+        }
 
         return new MemberPage(
             AnchorId: GetMemberAnchorId(memberDocId),
             Category: category,
             DisplayName: GetMemberDisplayName(member),
             Signature: BuildMemberSignature(member),
-            Summary: RenderElement(comment?.Element("summary")),
+            Summary: summary,
             Remarks: RenderElement(comment?.Element("remarks")),
             Returns: RenderElement(comment?.Element("returns")),
             Parameters: comment is null
@@ -247,6 +300,12 @@ public static class ReferenceDocsGenerator
                     .Select(static typeParam => CreateNamedDocumentation(typeParam))
                     .OfType<NamedDocumentation>()
                     .ToArray());
+    }
+
+    private static bool ShouldSkipGeneratedMember(MemberInfo member, string? summary)
+    {
+        return member.IsDefined(typeof(GeneratedCodeAttribute), inherit: false) &&
+               string.IsNullOrWhiteSpace(summary);
     }
 
     private static string BuildIndex(IReadOnlyList<AssemblyPage> pages)
@@ -731,7 +790,7 @@ public static class ReferenceDocsGenerator
         if (type.IsGenericType)
         {
             var definition = type.GetGenericTypeDefinition();
-            var definitionName = (definition.FullName ?? definition.Name).Replace('+', '.');
+            var definitionName = StripGenericArity((definition.FullName ?? definition.Name).Replace('+', '.'));
             var arguments = string.Join(",", type.GetGenericArguments().Select(GetDocumentationTypeName));
             return $"{definitionName}{{{arguments}}}";
         }
@@ -952,6 +1011,30 @@ public static class ReferenceDocsGenerator
     {
         var index = value.IndexOf('`');
         return index < 0 ? value : value[..index];
+    }
+
+    private static string StripGenericArity(string value)
+    {
+        var builder = new StringBuilder(value.Length);
+
+        for (var index = 0; index < value.Length; index++)
+        {
+            if (value[index] == '`')
+            {
+                index++;
+                while (index < value.Length && char.IsDigit(value[index]))
+                {
+                    index++;
+                }
+
+                index--;
+                continue;
+            }
+
+            builder.Append(value[index]);
+        }
+
+        return builder.ToString();
     }
 
     private static NamedDocumentation? CreateNamedDocumentation(XElement element)

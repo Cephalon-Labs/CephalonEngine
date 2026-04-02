@@ -1,12 +1,13 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `April 1, 2026`.
+Backlog status in this document reflects the repository state as of `April 2, 2026`.
 
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
 
 Status: done
+Estimate: 5
 
 Delivered:
 
@@ -24,6 +25,7 @@ Follow-up later:
 ### ENG-001 Module discovery from assemblies
 
 Status: done
+Estimate: 8
 
 Delivered:
 
@@ -35,6 +37,7 @@ Delivered:
 ### ENG-002 Lifecycle hooks baseline
 
 Status: done
+Estimate: 5
 
 Delivered:
 
@@ -46,6 +49,7 @@ Delivered:
 ### ENG-003 Engine options and policy baseline
 
 Status: done
+Estimate: 3
 
 Delivered:
 
@@ -62,6 +66,7 @@ Follow-up later:
 ### ENG-004 Manifest v2
 
 Status: done
+Estimate: 5
 
 Delivered:
 
@@ -77,6 +82,7 @@ Follow-up later:
 ### ENG-006 Worker adapter baseline
 
 Status: done
+Estimate: 5
 
 Delivered:
 
@@ -87,17 +93,19 @@ Delivered:
 ### ENG-007 ASP.NET Core contribution model baseline
 
 Status: done
+Estimate: 8
 
 Delivered:
 
 - host mapping conventions for engine endpoints
 - protocol-separated transport contribution model
 - OpenAPI + Scalar for REST surfaces
-- adapter split for `JsonRpc` and `Grpc`
+- adapter split for companion transport packages such as `JsonRpc` and `Grpc`
 
 ### ENG-008 Observability baseline
 
 Status: done
+Estimate: 5
 
 Delivered:
 
@@ -113,6 +121,7 @@ Follow-up later:
 ### ENG-009 Blueprint-aware scaffolding and CLI baseline
 
 Status: done
+Estimate: 8
 
 Delivered:
 
@@ -124,6 +133,7 @@ Delivered:
 ### ENG-014 Protocol adapter packages baseline
 
 Status: done
+Estimate: 8
 
 Delivered:
 
@@ -135,6 +145,7 @@ Delivered:
 ### ENG-015 Benchmark suite baseline
 
 Status: done
+Estimate: 5
 
 Delivered:
 
@@ -146,6 +157,7 @@ Delivered:
 ### ENG-025 Technology companion packages baseline
 
 Status: done
+Estimate: 13
 
 Delivered:
 
@@ -162,26 +174,80 @@ Follow-up later:
 - add additional packs such as eventing, edge, or orchestration only when they need shared runtime primitives
 - define publishing/versioning guidance for technology packs outside the repository
 
-## Current priority work
+## SDK hardening follow-through
+
+Phase 1 SDK hardening is now substantially complete. Current execution focus has moved to phase 2 operational hardening follow-through on the roadmap and project board.
 
 ### ENG-005 Engine API and package surface hardening
 
-Status: next
+Status: done
+Estimate: 4
+
+Delivered:
+
+- public-surface audit across abstractions, engine, adapters, scaffolding, tooling, and companion packages
+- regression tests locking the intended exported surface for the CLI, reference-doc tooling, host adapters, worker adapter, scaffolding package, and companion packs
+- package-facing guidance tightened so compatibility expectations are explicit across package manifests, scaffold output, template starters, and CLI flows
+- the public surface now behaves like a supported product contract instead of repo-internal plumbing
+
+### ENG-026 GraphQL transport adapter
+
+Status: done
+Estimate: 5
+
+Delivered:
+
+- dedicated `Cephalon.AspNetCore.GraphQL` adapter package built on Hot Chocolate
+- GraphQL transport selection aligned across runtime introspection, scaffolding, and host registration
+- working `/graphql` endpoint with module-driven schema contributions on ASP.NET Core
+- integration coverage and component docs for GraphQL hosting guidance
+
+### ENG-027 DocFX XML-comment readiness beyond shipped packages
+
+Status: done
+Estimate: 8
+
+Delivered:
+
+- XML comments added across benchmark, sample, and reference-module public APIs that belong in the supported published docs set
+- supported DocFX/reference-doc boundary documented explicitly for shipped packages, samples, benchmarks, and reference modules
+- `tests/Cephalon.Tests` excluded from generated docs scope so test-only fixtures do not blur supported documentation input
+
+Follow-up later:
+
+- keep repo-wide XML-comment hygiene for test harnesses as a separate explicit choice instead of silently expanding published docs scope
+
+### ENG-028 Repo-wide XML-comment hygiene for test harnesses
+
+Status: later
+Estimate: 6
 
 Why:
 
-- the public surface is becoming real product surface, not just repo-internal code
+- a fully repo-wide CS1591-clean build would still require a separate decision on whether public test fixtures should become internal, documented, or excluded by convention
 
 Acceptance:
 
-- review extension points across abstractions, engine, adapters, scaffolding, and CLI
-- reduce incidental public API where possible
-- improve XML docs and package-facing guidance
-- make compatibility expectations explicit
+- decide whether public xUnit fixtures and shared test helpers should stay public or become internal where safe
+- if repo-wide XML-comment enforcement beyond the published docs set becomes a goal, make the test-harness policy explicit and tooling-backed
+- avoid letting test-only visibility choices blur the supported DocFX/reference-doc publishing boundary
+
+## Current operational focus
+
+The active planning wave now moves to phase 2 operational hardening:
+
+- keep the completed gap inventory, shipped OpenTelemetry companion package, and published diagnostics catalog reflected accurately in docs and project tracking
+- keep the shipped Cassandra, ClickHouse, Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Neo4j, OpenSearch, Oracle, Postgres, RabbitMQ, Redis, and SQL Server dependency-health companion baseline reflected accurately in docs and project tracking, with any additional provider packs treated as future adoption-driven expansion work
+- keep the shipped Serilog provider companion package reflected accurately in docs and project tracking while cloud tracing/export integration remains an explicit later follow-through item
+- keep the shipped ASP.NET Core request/response logging, bounded body capture, and trace/log correlation surfaces reflected accurately in docs and project tracking
+- keep the shipped runtime-story surface plus the shipped failure-policy warmup, drain, and restart-backoff semantics reflected accurately in docs and project tracking
+- keep the shipped operational release-validation guidance for health and telemetry-export conventions reflected accurately in docs and project tracking
+- keep `docs/operational-hardening-gap-inventory.md` current as the source of truth for what phase-2 gaps are still genuinely open
 
 ### ENG-016 Blueprint sample suite
 
 Status: done
+Estimate: 8
 
 Delivered:
 
@@ -193,6 +259,7 @@ Delivered:
 ### ENG-017 `dotnet new` / template-pack support
 
 Status: done
+Estimate: 8
 
 Delivered:
 
@@ -211,6 +278,7 @@ Follow-up later:
 ### ENG-018 Module SDK and authoring path
 
 Status: done
+Estimate: 8
 
 Delivered:
 
@@ -230,6 +298,7 @@ Follow-up later:
 ### ENG-019 Runtime failure and restart policy
 
 Status: done
+Estimate: 13
 
 Delivered:
 
@@ -248,6 +317,7 @@ Follow-up later:
 ### ENG-020 Operational health and telemetry exports
 
 Status: done
+Estimate: 13
 
 Delivered:
 
@@ -258,16 +328,16 @@ Delivered:
 - `/engine/diagnostics` with meter, activity source, counter names, and live health reports
 - runtime failure and restart counters for telemetry baselines
 - `Engine:Observability:Telemetry` config contract plus startup log guidance
+- `Engine:Observability:HttpLogging` plus opt-in ASP.NET Core request/response logging with bounded body capture and request/trace correlation
 
 Follow-up later:
 
-- dedicated exporter packages or OpenTelemetry companion integration
-- richer provider-specific dependency health packs beyond the baseline contributor contract
-- release-validation guidance for health and export conventions
+- adoption-driven provider-specific dependency health packs beyond the shipped Cassandra, ClickHouse, Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Neo4j, OpenSearch, Oracle, Postgres, RabbitMQ, Redis, and SQL Server baseline
 
 ### ENG-021 Benchmark guardrails in validation flow
 
 Status: done
+Estimate: 5
 
 Delivered:
 
@@ -276,6 +346,9 @@ Delivered:
 - CLI validation command for the latest BenchmarkDotNet reports
 - test coverage for benchmark report parsing and guardrail evaluation
 - benchmark docs updated with the validation flow
+- composition and runtime benchmarks now prepare configured builders, runtimes, and service providers outside the measured loop so guardrails track `Build()` and lifecycle transition costs directly
+- composition baseline thresholds refreshed to match the prepared-scenario hot path shipped in the release-validation flow
+- ASP.NET Core request logging now has a shipped guardrail scenario that covers correlated request/response body capture over the public host surface
 
 Follow-up later:
 
@@ -285,6 +358,7 @@ Follow-up later:
 ### ENG-024 Explicit package assembly loading baseline
 
 Status: done
+Estimate: 13
 
 Delivered:
 
@@ -308,6 +382,7 @@ Follow-up later:
 ### ENG-023 GitHub Actions release-validation baseline
 
 Status: done
+Estimate: 5
 
 Delivered:
 
@@ -326,6 +401,7 @@ Follow-up later:
 ### ENG-011 Package and plugin loading
 
 Status: later
+Estimate: 19
 
 Why:
 
@@ -341,6 +417,7 @@ Acceptance:
 ### ENG-012 Capability permissions and trust policy
 
 Status: done
+Estimate: 8
 
 Delivered:
 
@@ -359,6 +436,7 @@ Follow-up later:
 ### ENG-013 Workflow and orchestration primitives
 
 Status: later
+Estimate: 19
 
 Why:
 
@@ -373,6 +451,7 @@ Acceptance:
 ### ENG-022 `MicroserviceSuite` blueprint
 
 Status: later
+Estimate: 10
 
 Why:
 
@@ -384,19 +463,67 @@ Acceptance:
 - keep suite blueprints composed from existing app-level contracts
 - add reference samples for multi-service Cephalon solutions
 
-## Recommended next 3 sprints
+## Sprint history and next 3 sprints
+
+Historical sprint buckets below are retrospective planning groups used to backfill iteration and estimate metadata for delivered work.
+
+### Foundation Sprint 1
+
+- ENG-000 App model and blueprint contract
+- ENG-001 Module discovery from assemblies
+- ENG-002 Lifecycle hooks baseline
+- ENG-003 Engine options and policy baseline
+- ENG-004 Manifest v2
+
+### Foundation Sprint 2
+
+- ENG-006 Worker adapter baseline
+- ENG-007 ASP.NET Core contribution model baseline
+- ENG-008 Observability baseline
+- ENG-009 Blueprint-aware scaffolding and CLI baseline
+
+### Foundation Sprint 3
+
+- ENG-014 Protocol adapter packages baseline
+- ENG-015 Benchmark suite baseline
+- ENG-025 Technology companion packages baseline
+
+### Adoption Sprint 0
+
+- ENG-016 Blueprint sample suite
+- ENG-017 `dotnet new` / template-pack support
+- ENG-018 Module SDK and authoring path
+
+### Operational Sprint 0
+
+- ENG-019 Runtime failure and restart policy
+- ENG-020 Operational health and telemetry exports
+- ENG-021 Benchmark guardrails in validation flow
+- ENG-024 Explicit package assembly loading baseline
+- ENG-023 GitHub Actions release-validation baseline
+
+### Platform Sprint 0
+
+- ENG-012 Capability permissions and trust policy
 
 ### Sprint 1
 
 - ENG-005 Engine API and package surface hardening
-- operational hardening follow-through after the shipped health, telemetry, and CI baselines
+- ENG-026 GraphQL transport adapter
+- ENG-027 DocFX XML-comment readiness beyond shipped packages
 
 ### Sprint 2
 
 - ENG-011 Package and plugin loading
-- exporter packaging and dependency-specific health follow-through
+- operational hardening follow-through after the shipped health, telemetry, and CI baselines
+- shipped OpenTelemetry companion packaging plus Cassandra contact-point health plus ClickHouse analytics health plus Consul control-plane health plus Elasticsearch cluster health plus HTTP external API, Kafka broker metadata, Memcached cache, MongoDB document database, MQTT broker, MySQL database, NATS broker, Neo4j graph database, OpenSearch cluster health, Oracle database, Postgres database, RabbitMQ broker, Redis/cache, and SQL Server dependency-health companions, together with the shared diagnostics/event-id catalog for active packages, opt-in ASP.NET Core request/response logging with trace correlation, and explicit release-validation guidance for health/export conventions
 
 ### Sprint 3
 
 - ENG-013 Workflow and orchestration primitives
 - package distribution and trust follow-through beyond the current baseline
+
+### Later / not scheduled yet
+
+- ENG-022 `MicroserviceSuite` blueprint
+- ENG-028 repo-wide XML-comment hygiene for test harnesses

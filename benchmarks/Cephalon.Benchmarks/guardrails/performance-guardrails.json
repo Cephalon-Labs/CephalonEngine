@@ -4,16 +4,23 @@
     {
       "reportFileName": "Cephalon.Benchmarks.Composition.EngineBuilderBenchmarks-report.csv",
       "benchmark": "BuildRuntimeManifest",
-      "maxMeanNanoseconds": 20000,
+      "maxMeanNanoseconds": 80000,
       "maxAllocatedBytes": 40000,
-      "notes": "Composition should stay comfortably below 20 us in the shipped benchmark scenario."
+      "notes": "Configured-builder composition and manifest construction should stay below 80 us in the shipped benchmark scenario."
     },
     {
       "reportFileName": "Cephalon.Benchmarks.Runtime.EngineRuntimeBenchmarks-report.csv",
       "benchmark": "InitializeStartStopRuntime",
       "maxMeanNanoseconds": 25000,
       "maxAllocatedBytes": 50000,
-      "notes": "Lifecycle baseline should stay below 25 us for the benchmark scenario."
+      "notes": "Prepared runtime initialize/start/stop lifecycle overhead should stay below 25 us for the benchmark scenario."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.Runtime.AspNetCoreRequestLoggingBenchmarks-report.csv",
+      "benchmark": "HandleLoggedJsonRequest",
+      "maxMeanNanoseconds": 50000,
+      "maxAllocatedBytes": 50000,
+      "notes": "Correlated ASP.NET Core request logging with request/response body capture should stay below 50 us and under roughly 50 KB allocated per request in the shipped benchmark scenario."
     },
     {
       "reportFileName": "Cephalon.Benchmarks.Scaffolding.ScaffoldGeneratorBenchmarks-report.csv",

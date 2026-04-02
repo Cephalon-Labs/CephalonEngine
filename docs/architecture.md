@@ -96,11 +96,51 @@ Source structure:
 - optional hosted reference-doc surfaces for generated API documentation
 - built-in transport-aware module surfaces such as `/api`, `/events`, and `/ws`
 
-Companion adapter packages can extend that host with additional transport surfaces such as `/rpc` for JSON-RPC or gRPC bindings with unary and streaming contracts.
+Companion adapter packages can extend that host with additional transport surfaces such as `/graphql` for GraphQL, `/rpc` for JSON-RPC, or gRPC bindings with unary and streaming contracts.
 
 `Cephalon.Worker` is the non-HTTP generic-host adapter. It starts and stops the same runtime inside worker processes and keeps module/background behavior aligned with standard hosted-service lifecycles.
 
-`Cephalon.Observability` is the diagnostics companion package. It turns the engine's built-in logs, meter, and activity source into host-friendly startup summaries and conventions that both ASP.NET Core and worker hosts can opt into.
+`Cephalon.Observability` is the diagnostics companion package. It turns the engine's built-in logs, meter, and activity source into host-friendly startup summaries and conventions that both ASP.NET Core and worker hosts can opt into, and it publishes the active package-level event-id catalog through the runtime diagnostics surface.
+
+`Cephalon.Observability.CassandraDependencies` is the optional Cassandra dependency-health companion package. It turns configured contact-point lists, optional keyspace selection, credentials, and CQL health queries into `IDependencyHealthContributor` data without pushing Cassandra-driver specifics into `Cephalon.Engine`.
+
+`Cephalon.Observability.ClickHouseDependencies` is the optional ClickHouse dependency-health companion package. It turns configured ClickHouse connection strings or discrete host/protocol/database settings and health queries into `IDependencyHealthContributor` data without pushing ClickHouse-driver specifics into `Cephalon.Engine`.
+
+`Cephalon.Observability.ConsulDependencies` is the optional Consul dependency-health companion package. It turns configured Consul leader checks, ACL tokens, and datacenter selection into `IDependencyHealthContributor` data without pushing Consul-specific control-plane behavior into `Cephalon.Engine`.
+
+`Cephalon.Observability.ElasticsearchDependencies` is the optional Elasticsearch dependency-health companion package. It turns configured cluster-health requests, auth policies, and Elasticsearch `green`/`yellow`/`red` status mapping into `IDependencyHealthContributor` data without pushing Elasticsearch-specific HTTP behavior into `Cephalon.Engine`.
+
+`Cephalon.Observability.HttpDependencies` is the optional external API dependency-health companion package. It turns configured HTTP upstream probes into `IDependencyHealthContributor` data without pushing provider-specific network checks into `Cephalon.Engine`. That package should stay protocol-generic: method, headers, auth, timeout, status, body, and TLS expectations belong there, but product-aware HTTP semantics should stay in dedicated packs when they need endpoint shaping or payload-aware mapping.
+
+`Cephalon.Observability.KafkaDependencies` is the optional Kafka dependency-health companion package. It turns configured broker metadata and optional topic probes into `IDependencyHealthContributor` data without pushing Kafka client configuration into `Cephalon.Engine`.
+
+`Cephalon.Observability.MemcachedDependencies` is the optional Memcached dependency-health companion package. It turns configured cache `version` probes into `IDependencyHealthContributor` data without pushing Memcached-specific socket logic into `Cephalon.Engine`.
+
+`Cephalon.Observability.MongoDbDependencies` is the optional MongoDB dependency-health companion package. It turns configured database commands, TLS policy, and connection-string probing into `IDependencyHealthContributor` data without pushing MongoDB-specific connection logic into `Cephalon.Engine`.
+
+`Cephalon.Observability.MqttDependencies` is the optional MQTT dependency-health companion package. It turns configured broker `CONNECT`, `CONNACK`, and `PINGREQ`/`PINGRESP` probes into `IDependencyHealthContributor` data without pushing MQTT protocol handling into `Cephalon.Engine`.
+
+`Cephalon.Observability.MySqlDependencies` is the optional MySQL dependency-health companion package. It turns configured SQL queries, SSL/public-key retrieval policy, and MySQL connection probing into `IDependencyHealthContributor` data without pushing MySQL-specific connection logic into `Cephalon.Engine`.
+
+`Cephalon.Observability.NatsDependencies` is the optional NATS dependency-health companion package. It turns configured broker `INFO`, `CONNECT`, and `PING`/`PONG` probes into `IDependencyHealthContributor` data without pushing NATS protocol handling into `Cephalon.Engine`.
+
+`Cephalon.Observability.Neo4jDependencies` is the optional Neo4j dependency-health companion package. It turns configured Neo4j endpoint URIs, discrete host/port/scheme settings, database selection, and Cypher health queries into `IDependencyHealthContributor` data without pushing graph-driver specifics into `Cephalon.Engine`.
+
+`Cephalon.Observability.OpenSearchDependencies` is the optional OpenSearch dependency-health companion package. It turns configured OpenSearch base URLs, optional index-specific cluster-health checks, and secured REST auth headers into `IDependencyHealthContributor` data without pushing search-cluster transport semantics into `Cephalon.Engine`.
+
+`Cephalon.Observability.OracleDependencies` is the optional Oracle dependency-health companion package. It turns configured `SELECT 1 FROM DUAL`-style queries, Easy Connect data-source shaping, and connection-string probing into `IDependencyHealthContributor` data without pushing Oracle-specific connection logic into `Cephalon.Engine`.
+
+`Cephalon.Observability.PostgresDependencies` is the optional Postgres dependency-health companion package. It turns configured database probes and health queries into `IDependencyHealthContributor` data without pushing Postgres-specific connection logic into `Cephalon.Engine`.
+
+`Cephalon.Observability.RabbitMqDependencies` is the optional RabbitMQ dependency-health companion package. It turns configured broker connection probes into `IDependencyHealthContributor` data without pushing AMQP-specific connection logic into `Cephalon.Engine`.
+
+`Cephalon.Observability.RedisDependencies` is the optional Redis and cache dependency-health companion package. It turns configured Redis `PING` probes, optional authentication, and logical database selection into `IDependencyHealthContributor` data without pushing Redis-specific socket logic into `Cephalon.Engine`.
+
+`Cephalon.Observability.SqlServerDependencies` is the optional SQL Server and Azure SQL dependency-health companion package. It turns configured SQL queries, SQL authentication, and connection-string probing into `IDependencyHealthContributor` data without pushing SQL Server-specific connection logic into `Cephalon.Engine`.
+
+`Cephalon.Observability.OpenTelemetry` is the optional exporter companion package. It takes the shared `Engine:Observability:Telemetry` contract and turns it into OTLP registration for logs, metrics, and traces without pushing exporter dependencies back into the engine or the baseline observability package.
+
+`Cephalon.Observability.Serilog` is the optional logger-provider companion package. It keeps Serilog-specific sink, enricher, and formatting registration outside `Cephalon.Engine` and `Cephalon.Observability` while still flowing engine and module logs through the shared `Microsoft.Extensions.Logging.ILogger` pipeline.
 
 `Cephalon.Scaffolding` is the adoption companion package. It turns `AppProfile.Scaffold` into concrete solution, project, file, and folder output so future CLIs or templates do not need to re-encode blueprint rules.
 
@@ -141,6 +181,9 @@ Companion adapter packages:
 - `src/Cephalon.AspNetCore.JsonRpc/Hosting` -> `Cephalon.AspNetCore.JsonRpc.Hosting`
 - `src/Cephalon.AspNetCore.JsonRpc/Modules` -> `Cephalon.AspNetCore.JsonRpc.Modules`
 - `src/Cephalon.AspNetCore.JsonRpc/Routing` -> `Cephalon.AspNetCore.JsonRpc.Routing`
+- `src/Cephalon.AspNetCore.GraphQL/Hosting` -> `Cephalon.AspNetCore.GraphQL.Hosting`
+- `src/Cephalon.AspNetCore.GraphQL/Modules` -> `Cephalon.AspNetCore.GraphQL.Modules`
+- `src/Cephalon.AspNetCore.GraphQL/Routing` -> `Cephalon.AspNetCore.GraphQL.Routing`
 - `src/Cephalon.AspNetCore.Grpc/Hosting` -> `Cephalon.AspNetCore.Grpc.Hosting`
 - `src/Cephalon.AspNetCore.Grpc/Modules` -> `Cephalon.AspNetCore.Grpc.Modules`
 - `src/Cephalon.AspNetCore.Grpc/Protos` -> generated `Cephalon.AspNetCore.Grpc.Contracts.*`
@@ -148,6 +191,62 @@ Companion adapter packages:
 - `src/Cephalon.Worker/Hosting` -> `Cephalon.Worker.Hosting`
 - `src/Cephalon.Observability/Configuration` -> `Cephalon.Observability.Configuration`
 - `src/Cephalon.Observability/Hosting` -> `Cephalon.Observability.Hosting`
+- `src/Cephalon.Observability.CassandraDependencies/Configuration` -> `Cephalon.Observability.CassandraDependencies.Configuration`
+- `src/Cephalon.Observability.CassandraDependencies/Hosting` -> `Cephalon.Observability.CassandraDependencies.Hosting`
+- `src/Cephalon.Observability.CassandraDependencies/Services` -> `Cephalon.Observability.CassandraDependencies.Services`
+- `src/Cephalon.Observability.ClickHouseDependencies/Configuration` -> `Cephalon.Observability.ClickHouseDependencies.Configuration`
+- `src/Cephalon.Observability.ClickHouseDependencies/Hosting` -> `Cephalon.Observability.ClickHouseDependencies.Hosting`
+- `src/Cephalon.Observability.ClickHouseDependencies/Services` -> `Cephalon.Observability.ClickHouseDependencies.Services`
+- `src/Cephalon.Observability.ConsulDependencies/Configuration` -> `Cephalon.Observability.ConsulDependencies.Configuration`
+- `src/Cephalon.Observability.ConsulDependencies/Hosting` -> `Cephalon.Observability.ConsulDependencies.Hosting`
+- `src/Cephalon.Observability.ConsulDependencies/Services` -> `Cephalon.Observability.ConsulDependencies.Services`
+- `src/Cephalon.Observability.ElasticsearchDependencies/Configuration` -> `Cephalon.Observability.ElasticsearchDependencies.Configuration`
+- `src/Cephalon.Observability.ElasticsearchDependencies/Hosting` -> `Cephalon.Observability.ElasticsearchDependencies.Hosting`
+- `src/Cephalon.Observability.ElasticsearchDependencies/Services` -> `Cephalon.Observability.ElasticsearchDependencies.Services`
+- `src/Cephalon.Observability.HttpDependencies/Configuration` -> `Cephalon.Observability.HttpDependencies.Configuration`
+- `src/Cephalon.Observability.HttpDependencies/Hosting` -> `Cephalon.Observability.HttpDependencies.Hosting`
+- `src/Cephalon.Observability.HttpDependencies/Services` -> `Cephalon.Observability.HttpDependencies.Services`
+- `src/Cephalon.Observability.KafkaDependencies/Configuration` -> `Cephalon.Observability.KafkaDependencies.Configuration`
+- `src/Cephalon.Observability.KafkaDependencies/Hosting` -> `Cephalon.Observability.KafkaDependencies.Hosting`
+- `src/Cephalon.Observability.KafkaDependencies/Services` -> `Cephalon.Observability.KafkaDependencies.Services`
+- `src/Cephalon.Observability.MemcachedDependencies/Configuration` -> `Cephalon.Observability.MemcachedDependencies.Configuration`
+- `src/Cephalon.Observability.MemcachedDependencies/Hosting` -> `Cephalon.Observability.MemcachedDependencies.Hosting`
+- `src/Cephalon.Observability.MemcachedDependencies/Services` -> `Cephalon.Observability.MemcachedDependencies.Services`
+- `src/Cephalon.Observability.MongoDbDependencies/Configuration` -> `Cephalon.Observability.MongoDbDependencies.Configuration`
+- `src/Cephalon.Observability.MongoDbDependencies/Hosting` -> `Cephalon.Observability.MongoDbDependencies.Hosting`
+- `src/Cephalon.Observability.MongoDbDependencies/Services` -> `Cephalon.Observability.MongoDbDependencies.Services`
+- `src/Cephalon.Observability.MqttDependencies/Configuration` -> `Cephalon.Observability.MqttDependencies.Configuration`
+- `src/Cephalon.Observability.MqttDependencies/Hosting` -> `Cephalon.Observability.MqttDependencies.Hosting`
+- `src/Cephalon.Observability.MqttDependencies/Services` -> `Cephalon.Observability.MqttDependencies.Services`
+- `src/Cephalon.Observability.MySqlDependencies/Configuration` -> `Cephalon.Observability.MySqlDependencies.Configuration`
+- `src/Cephalon.Observability.MySqlDependencies/Hosting` -> `Cephalon.Observability.MySqlDependencies.Hosting`
+- `src/Cephalon.Observability.MySqlDependencies/Services` -> `Cephalon.Observability.MySqlDependencies.Services`
+- `src/Cephalon.Observability.NatsDependencies/Configuration` -> `Cephalon.Observability.NatsDependencies.Configuration`
+- `src/Cephalon.Observability.NatsDependencies/Hosting` -> `Cephalon.Observability.NatsDependencies.Hosting`
+- `src/Cephalon.Observability.NatsDependencies/Services` -> `Cephalon.Observability.NatsDependencies.Services`
+- `src/Cephalon.Observability.Neo4jDependencies/Configuration` -> `Cephalon.Observability.Neo4jDependencies.Configuration`
+- `src/Cephalon.Observability.Neo4jDependencies/Hosting` -> `Cephalon.Observability.Neo4jDependencies.Hosting`
+- `src/Cephalon.Observability.Neo4jDependencies/Services` -> `Cephalon.Observability.Neo4jDependencies.Services`
+- `src/Cephalon.Observability.OpenSearchDependencies/Configuration` -> `Cephalon.Observability.OpenSearchDependencies.Configuration`
+- `src/Cephalon.Observability.OpenSearchDependencies/Hosting` -> `Cephalon.Observability.OpenSearchDependencies.Hosting`
+- `src/Cephalon.Observability.OpenSearchDependencies/Services` -> `Cephalon.Observability.OpenSearchDependencies.Services`
+- `src/Cephalon.Observability.OracleDependencies/Configuration` -> `Cephalon.Observability.OracleDependencies.Configuration`
+- `src/Cephalon.Observability.OracleDependencies/Hosting` -> `Cephalon.Observability.OracleDependencies.Hosting`
+- `src/Cephalon.Observability.OracleDependencies/Services` -> `Cephalon.Observability.OracleDependencies.Services`
+- `src/Cephalon.Observability.PostgresDependencies/Configuration` -> `Cephalon.Observability.PostgresDependencies.Configuration`
+- `src/Cephalon.Observability.PostgresDependencies/Hosting` -> `Cephalon.Observability.PostgresDependencies.Hosting`
+- `src/Cephalon.Observability.PostgresDependencies/Services` -> `Cephalon.Observability.PostgresDependencies.Services`
+- `src/Cephalon.Observability.RabbitMqDependencies/Configuration` -> `Cephalon.Observability.RabbitMqDependencies.Configuration`
+- `src/Cephalon.Observability.RabbitMqDependencies/Hosting` -> `Cephalon.Observability.RabbitMqDependencies.Hosting`
+- `src/Cephalon.Observability.RabbitMqDependencies/Services` -> `Cephalon.Observability.RabbitMqDependencies.Services`
+- `src/Cephalon.Observability.RedisDependencies/Configuration` -> `Cephalon.Observability.RedisDependencies.Configuration`
+- `src/Cephalon.Observability.RedisDependencies/Hosting` -> `Cephalon.Observability.RedisDependencies.Hosting`
+- `src/Cephalon.Observability.RedisDependencies/Services` -> `Cephalon.Observability.RedisDependencies.Services`
+- `src/Cephalon.Observability.SqlServerDependencies/Configuration` -> `Cephalon.Observability.SqlServerDependencies.Configuration`
+- `src/Cephalon.Observability.SqlServerDependencies/Hosting` -> `Cephalon.Observability.SqlServerDependencies.Hosting`
+- `src/Cephalon.Observability.SqlServerDependencies/Services` -> `Cephalon.Observability.SqlServerDependencies.Services`
+- `src/Cephalon.Observability.OpenTelemetry/Hosting` -> `Cephalon.Observability.OpenTelemetry.Hosting`
+- `src/Cephalon.Observability.Serilog/Hosting` -> `Cephalon.Observability.Serilog.Hosting`
 - `src/Cephalon.Cli/Commands` -> `Cephalon.Cli.Commands`
 - `src/Cephalon.Cli/Console` -> `Cephalon.Cli.Console`
 - `src/Cephalon.ReferenceDocs/Generation` -> `Cephalon.ReferenceDocs.Generation`
@@ -200,25 +299,48 @@ Companion adapter packages:
 - engine future-tech selection can be driven through `Engine:Technologies`
 - engine future-tech catalog can be extended through `ITechnologyContributor` or `engine.RegisterTechnology(...)`
 - active future-tech runtime surfaces can be inspected through `ITechnologyRuntimeContributor` and `/engine/technology-surfaces`
-- merged operator-facing runtime introspection should come from `IRuntimeIntrospectionSnapshotProvider` and `/engine/snapshot` instead of recomposing manifest, status, and technology surfaces ad hoc in hosts
+- merged operator-facing runtime introspection should come from `IRuntimeIntrospectionSnapshotProvider` and `/engine/snapshot` instead of recomposing manifest, status, technology surfaces, diagnostics conventions, and lifecycle story data ad hoc in hosts
 - future-tech runtime primitives should live in companion packages such as `Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, or `Cephalon.Edge`
 - installed modules should extend shipped technology packs through pack-specific contributor services instead of hardcoding host-owned descriptor lists
 - engine options can disable modules and capabilities through `Engine:Options`
 - engine observability conventions can be tuned through `Engine:Observability`
 - engine telemetry export guidance can be tuned through `Engine:Observability:Telemetry`
+- runtime diagnostics conventions should flow through `IRuntimeDiagnosticsCatalog`, `/engine/diagnostics`, and `/engine/snapshot`
+- runtime lifecycle answers should flow through `IRuntime.OperationalStory`, `/engine/runtime-story`, and `/engine/snapshot`
+- hosts can turn Elasticsearch cluster-health checks into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Elasticsearch` and `Cephalon.Observability.ElasticsearchDependencies`
+- hosts can turn Consul control-plane leader checks into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Consul` and `Cephalon.Observability.ConsulDependencies`
+- hosts can turn external HTTP upstreams into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Http` and `Cephalon.Observability.HttpDependencies`, but that pack should stay generic across HTTP semantics rather than absorbing product-specific response mapping
+- hosts can turn Kafka cluster metadata checks into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Kafka` and `Cephalon.Observability.KafkaDependencies`
+- hosts can turn Memcached cache endpoints into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Memcached` and `Cephalon.Observability.MemcachedDependencies`
+- hosts can turn MongoDB dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:MongoDb` and `Cephalon.Observability.MongoDbDependencies`
+- hosts can turn MQTT broker dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Mqtt` and `Cephalon.Observability.MqttDependencies`
+- hosts can turn MySQL and MariaDB dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:MySql` and `Cephalon.Observability.MySqlDependencies`
+- hosts can turn NATS broker dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Nats` and `Cephalon.Observability.NatsDependencies`, with the package free to grow across NATS-native auth, TLS, and broker reachability semantics without becoming a catch-all for unrelated workload logic
+- hosts can turn Neo4j graph dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Neo4j` and `Cephalon.Observability.Neo4jDependencies`
+- hosts can turn OpenSearch cluster dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:OpenSearch` and `Cephalon.Observability.OpenSearchDependencies`
+- hosts can turn ClickHouse analytics dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:ClickHouse` and `Cephalon.Observability.ClickHouseDependencies`
+- hosts can turn Cassandra dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Cassandra` and `Cephalon.Observability.CassandraDependencies`
+- hosts can turn Oracle dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Oracle` and `Cephalon.Observability.OracleDependencies`
+- hosts can turn Postgres dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Postgres` and `Cephalon.Observability.PostgresDependencies`
+- hosts can turn RabbitMQ dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:RabbitMq` and `Cephalon.Observability.RabbitMqDependencies`
+- hosts can turn Redis and cache endpoints into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Redis` and `Cephalon.Observability.RedisDependencies`
+- hosts can turn SQL Server and Azure SQL dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:SqlServer` and `Cephalon.Observability.SqlServerDependencies`
+- hosts can turn that telemetry contract into a supported OTLP path through `Cephalon.Observability.OpenTelemetry`
+- hosts can turn the shared `ILogger` pipeline into a supported Serilog path through `Cephalon.Observability.Serilog`
 - engine trust and capability policy can be tuned through `Engine:Trust`
 - engine trust policy can also allow-list package checksums through `Engine:Trust:AllowedPackageChecksums`
 - engine trust policy can also allow-list publishers, signer fingerprints, and trusted signature public keys
 - engine package metadata requirements can be tuned through `Engine:PackagePolicy`
 - engine localization can be tuned through `Engine:Localization`
-- engine startup, stop, and restart behavior can be tuned through `Engine:FailurePolicy`
+- engine startup, stop, and restart behavior can be tuned through `Engine:FailurePolicy`, including startup warmup, shutdown drain, and manual restart backoff windows
 - installed modules can contribute dependency health through `IDependencyHealthContributor`
 - installed modules can contribute localization resources through `ILocalizedResourceContributor`
 - the runtime manifest is always available
 - runtime lifecycle is explicit and introspectable
 - runtime policy state is introspectable through `/engine/options`
 - runtime failure policy is introspectable through `/engine/failure-policy`
-- runtime diagnostics conventions are introspectable through `/engine/diagnostics`
+- runtime diagnostics conventions are introspectable through `IRuntimeDiagnosticsCatalog`, `/engine/diagnostics`, and `/engine/snapshot`
+- runtime lifecycle story is introspectable through `IRuntime.OperationalStory`, `/engine/runtime-story`, and `/engine/snapshot`
 - runtime trust policy is introspectable through `/engine/trust-policy`
 - runtime package loading is introspectable through `/engine/packages`, including package `kind`, resolved assembly `path`, discovery `sourcePath`, declared version/compatibility, computed checksum, signature verification state, and trust reason
 - runtime package provenance is introspectable through `/engine/packages` and `/engine/trust-policy`, including publisher id, signature key id, and signer fingerprint when the package manifest declared them
@@ -244,7 +366,7 @@ Companion adapter packages:
 - richer capability metadata and policy
 - startup hooks and lifecycle events
 - event bus / workflow runtime
-- richer observability exports and telemetry adapters
+- richer operator-runtime answers, cloud-targeted tracing/export follow-through, and any additional provider-specific dependency-health packs only when concrete adoption needs justify expanding beyond the shipped Cassandra, ClickHouse, Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Neo4j, OpenSearch, Oracle, Postgres, RabbitMQ, Redis, SQL Server, and OpenTelemetry observability companions
 - richer parameterized templates and generators driven by scaffold plans
 - richer localization catalogs and package-provided language packs
 - sustained benchmark coverage for hot engine paths
