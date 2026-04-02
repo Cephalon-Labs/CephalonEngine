@@ -64,7 +64,7 @@ Outcome:
 
 - exporter packaging should remain outside `Cephalon.Engine`
 - the repository now ships a reusable companion package instead of leaving exporter wiring to sample-only host code
-- remaining phase-2 work now sits primarily in later cloud tracing/export follow-through once the target cloud/runtime context is explicit, with any extra provider packs or operator refinements treated as adoption-driven expansion work
+- remaining phase-2 work now sits primarily in phase-6 cloud tracing/export follow-through, with the self-hosted slice shipped and Azure Monitor now the first explicit vendor-specific target; any extra provider packs or operator refinements stay adoption-driven expansion work
 
 ### `#87` `ILogger` provider wiring and Serilog host integration
 
@@ -81,7 +81,7 @@ Why this stays separate:
 - logging-provider selection is orthogonal to cloud tracing/export concerns
 - Serilog now integrates as an `ILogger` provider, not as a new Cephalon logging surface
 
-### `#86` Cloud tracing and exporter follow-through beyond the shipped OTLP baseline
+### `#86` Azure Monitor exporter and hosted Azure defaults on top of the OTLP baseline
 
 Current baseline:
 
@@ -92,14 +92,15 @@ Current baseline:
 
 Re-scope decision:
 
-- the original later follow-through has now expanded into a broader cloud/platform companion track spanning self-hosted collectors and runtimes plus AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu
-- that broader scope now belongs to `ENG-029` in phase 6 cloud and platform integrations instead of remaining a phase-2 child task
+- the original later follow-through expanded into a broader cloud/platform companion track spanning self-hosted collectors and runtimes plus AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu
+- the self-hosted slice is now shipped, so `#86` is being narrowed to Azure Monitor exporter wiring plus hosted Azure defaults as the first explicit vendor-specific child under `ENG-029`
+- AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu remain later follow-up child items under `ENG-029` instead of staying folded into one ambiguous task
 
-Why it moved out of phase 2:
+Why this target stays in phase 6:
 
 - cloud tracing/export work is deployment-context-specific
-- multi-cloud exporter wiring, auth, resource attributes, and hosted defaults are broader than the reusable host/runtime primitives shipped in phase 2
-- moving it out lets phase 2 close on the cloud-neutral operational baseline that is already shipped
+- Azure-specific exporter wiring, auth, resource attributes, and hosted defaults still belong in companion packages rather than the reusable host/runtime primitives shipped in phase 2
+- Azure is the cleanest first vendor-specific slice after the shipped self-hosted path because Cephalon already centers .NET host composition and operational guidance without needing to reopen phase 2
 
 ### `#33` Baseline provider-specific dependency health companion packages
 
@@ -203,11 +204,11 @@ Why this stays separate:
 
 Current conclusion from this inventory:
 
-- the phase-2 child-task split served its purpose for the shipped baseline, but `#86` no longer belongs inside that phase because its scope is now a later multi-cloud companion-integration program
+- the phase-2 child-task split served its purpose for the shipped baseline; with the self-hosted slice complete, `#86` should stop acting as a multi-cloud umbrella and instead carry the first explicit Azure Monitor follow-through under `ENG-029`
 - phase 2 can now be treated as substantially complete on top of a shipped provider/logging/runtime-surface baseline, with any extra provider packs still treated as future adoption-driven expansion
 
 Recommended execution sequence now is:
 
 1. treat phase 2 as complete for the shipped operational baseline
-2. track `#86` under `ENG-029` in phase 6 cloud and platform integrations, with the self-hosted collector/runtime slice now current focus before broader vendor-specific expansion unless an adopter reprioritizes the target order
+2. track `#86` under `ENG-029` in phase 6 cloud and platform integrations as the Azure Monitor vendor slice, with AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu split into later explicit child items
 3. keep adoption-driven provider-pack additions separate unless a concrete infrastructure gap appears

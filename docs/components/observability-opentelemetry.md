@@ -29,5 +29,6 @@ For self-hosted deployments, the same companion package now supports an explicit
 ## Related docs
 
 - [Cephalon.Observability](observability.md)
+- [Cephalon.Observability.AzureMonitor](observability-azure-monitor.md)
 - [Operations](../operations.md)
 - [Architecture](../architecture.md)
