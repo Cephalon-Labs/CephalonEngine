@@ -106,6 +106,9 @@ When working in this repository:
 - prefer `Engine:Observability` for startup diagnostics behavior instead of scattering host-specific logging decisions
 - prefer `Engine:Observability:Telemetry` for export guidance instead of ad-hoc host notes
 - let modules and installed packages contribute dependency health through `IDependencyHealthContributor`, but keep the engine itself infrastructure-agnostic
+- keep `Cephalon.Observability.HttpDependencies` protocol-generic: method, headers, auth, timeout, status, body, and TLS expectations can grow there, but provider-aware HTTP semantics should stay in dedicated companion packs
+- keep HTTP-based provider packs such as `Cephalon.Observability.ElasticsearchDependencies` separate when they need endpoint shaping, payload-aware health mapping, or product-specific auth semantics beyond a generic HTTP probe
+- keep `Cephalon.Observability.NatsDependencies` focused on NATS protocol semantics such as `INFO`, `CONNECT`, `PING`/`PONG`, auth, TLS, and cluster reachability; deeper workload semantics should only join deliberately when the package contract stays clearly NATS-native
 - selected transports should gate route mapping instead of exposing every protocol by default
 - when `RestApi` is enabled on ASP.NET Core, keep OpenAPI and Scalar docs available for REST endpoints
 - keep REST OpenAPI customization inside `Cephalon.AspNetCore.Transformers`

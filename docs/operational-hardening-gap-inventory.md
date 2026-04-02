@@ -84,6 +84,8 @@ Gap:
 
 - broader provider-specific packs for additional databases and brokers are still missing
 - current shipped provider coverage now includes Elasticsearch cluster endpoints plus external HTTP/API upstreams plus Kafka broker metadata endpoints plus MongoDB document-database endpoints plus MQTT broker endpoints plus MySQL/MariaDB database endpoints plus NATS broker endpoints plus Postgres database endpoints plus RabbitMQ broker endpoints plus Redis/cache endpoints plus SQL Server and Azure SQL endpoints; richer infrastructure-specific packs beyond that baseline are still left to host or module authors
+- `Cephalon.Observability.HttpDependencies` should continue growing along generic HTTP semantics instead of absorbing product-aware response mapping; HTTP-based systems such as Elasticsearch stay in dedicated packs when they need first-class endpoint or payload contracts
+- `Cephalon.Observability.NatsDependencies` can continue growing across NATS-native wire semantics without forcing unrelated workload semantics into the shared broker baseline
 
 Why this stays separate:
 

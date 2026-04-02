@@ -25,6 +25,8 @@
 
 This package stays outside `Cephalon.Engine` and turns configured NATS endpoints into `IDependencyHealthContributor` data. Hosts keep the shared runtime health and readiness semantics from the engine, while this companion handles the provider-specific wire exchange: read the initial `INFO` line, send `CONNECT`, and verify a successful `PING`/`PONG` round-trip. Pair it with `Cephalon.Eventing` when a host wants broker-aware operational checks without pushing NATS socket details into the engine core.
 
+This pack can grow across NATS-native protocol semantics such as richer auth modes, TLS controls, server-list handling, and broker reachability checks. If future work needs deeper workload semantics above the transport layer, keep that split deliberate instead of silently turning the baseline NATS probe pack into a product-specific runtime.
+
 ## Related docs
 
 - [Cephalon.Observability](observability.md)

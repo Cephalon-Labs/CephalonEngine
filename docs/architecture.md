@@ -104,7 +104,7 @@ Companion adapter packages can extend that host with additional transport surfac
 
 `Cephalon.Observability.ElasticsearchDependencies` is the optional Elasticsearch dependency-health companion package. It turns configured cluster-health requests, auth policies, and Elasticsearch `green`/`yellow`/`red` status mapping into `IDependencyHealthContributor` data without pushing Elasticsearch-specific HTTP behavior into `Cephalon.Engine`.
 
-`Cephalon.Observability.HttpDependencies` is the optional external API dependency-health companion package. It turns configured HTTP upstream probes into `IDependencyHealthContributor` data without pushing provider-specific network checks into `Cephalon.Engine`.
+`Cephalon.Observability.HttpDependencies` is the optional external API dependency-health companion package. It turns configured HTTP upstream probes into `IDependencyHealthContributor` data without pushing provider-specific network checks into `Cephalon.Engine`. That package should stay protocol-generic: method, headers, auth, timeout, status, body, and TLS expectations belong there, but product-aware HTTP semantics should stay in dedicated packs when they need endpoint shaping or payload-aware mapping.
 
 `Cephalon.Observability.KafkaDependencies` is the optional Kafka dependency-health companion package. It turns configured broker metadata and optional topic probes into `IDependencyHealthContributor` data without pushing Kafka client configuration into `Cephalon.Engine`.
 
@@ -270,12 +270,12 @@ Companion adapter packages:
 - runtime diagnostics conventions should flow through `IRuntimeDiagnosticsCatalog`, `/engine/diagnostics`, and `/engine/snapshot`
 - runtime lifecycle answers should flow through `IRuntime.OperationalStory`, `/engine/runtime-story`, and `/engine/snapshot`
 - hosts can turn Elasticsearch cluster-health checks into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Elasticsearch` and `Cephalon.Observability.ElasticsearchDependencies`
-- hosts can turn external HTTP upstreams into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Http` and `Cephalon.Observability.HttpDependencies`
+- hosts can turn external HTTP upstreams into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Http` and `Cephalon.Observability.HttpDependencies`, but that pack should stay generic across HTTP semantics rather than absorbing product-specific response mapping
 - hosts can turn Kafka cluster metadata checks into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Kafka` and `Cephalon.Observability.KafkaDependencies`
 - hosts can turn MongoDB dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:MongoDb` and `Cephalon.Observability.MongoDbDependencies`
 - hosts can turn MQTT broker dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Mqtt` and `Cephalon.Observability.MqttDependencies`
 - hosts can turn MySQL and MariaDB dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:MySql` and `Cephalon.Observability.MySqlDependencies`
-- hosts can turn NATS broker dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Nats` and `Cephalon.Observability.NatsDependencies`
+- hosts can turn NATS broker dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Nats` and `Cephalon.Observability.NatsDependencies`, with the package free to grow across NATS-native auth, TLS, and broker reachability semantics without becoming a catch-all for unrelated workload logic
 - hosts can turn Postgres dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Postgres` and `Cephalon.Observability.PostgresDependencies`
 - hosts can turn RabbitMQ dependencies into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:RabbitMq` and `Cephalon.Observability.RabbitMqDependencies`
 - hosts can turn Redis and cache endpoints into reusable dependency-health contributions through `Engine:Observability:DependencyHealth:Redis` and `Cephalon.Observability.RedisDependencies`
