@@ -115,7 +115,8 @@ public sealed class ProjectConfigurationConventionTests
                         "failure-platform": { "Enabled": false },
                         "flaky-start": { "Enabled": false },
                         "failing-stop": { "Enabled": false },
-                        "stop-observer": { "Enabled": false }
+                        "stop-observer": { "Enabled": false },
+                        "slow-stop": { "Enabled": false }
                       }
                     }
                   }
