@@ -7,6 +7,7 @@ param(
         "FullyQualifiedName~Cephalon.Tests.Hosting.AspNetCoreHostingTests.MapCephalonKeepsReadinessUnhealthyDuringConfiguredStartupWarmup",
         "FullyQualifiedName~Cephalon.Tests.Hosting.WorkerHostingTests.AddCephalonSurfacesDependencyHealthWithinGenericHost",
         "FullyQualifiedName~Cephalon.Tests.Hosting.ObservabilityHostingTests.AddCephalonObservabilityLogsManifestSummaryAndRuntimeSurface",
+        "FullyQualifiedName~Cephalon.Tests.Hosting.SerilogHostingTests.AddCephalonSerilogReadsTheStandardSerilogConfigurationSection",
         "FullyQualifiedName~Cephalon.Tests.Hosting.OpenTelemetryHostingTests.AddCephalonOpenTelemetryExportsConfiguredSignalsOverHttpProtobuf"
     )
 )
@@ -32,7 +33,7 @@ function Invoke-DotNet {
 $filterExpression = $TestFilters -join "|"
 
 Write-Host "Validating Cephalon operational health and telemetry-export conventions..." -ForegroundColor Cyan
-Write-Host "Focused suite covers ASP.NET Core health routes, worker-host health parity, observability startup guidance, and OTLP exporter wiring." -ForegroundColor DarkCyan
+Write-Host "Focused suite covers ASP.NET Core health routes, worker-host health parity, observability startup guidance, Serilog provider wiring, and OTLP exporter wiring." -ForegroundColor DarkCyan
 
 Push-Location $repoRoot
 try {

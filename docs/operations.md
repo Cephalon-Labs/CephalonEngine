@@ -745,6 +745,53 @@ Operational notes:
 - `otlp`, `otlp/grpc`, and `otlp/http` are the supported protocol values for the shipped companion package
 - when `otlp/http` is selected, the package appends `/v1/logs`, `/v1/metrics`, and `/v1/traces` automatically from the configured base endpoint
 
+## Serilog provider path
+
+`Cephalon.Observability.Serilog` lets hosts keep logging through injected `ILogger<T>` services while routing the resulting events through Serilog sinks, enrichers, and formatting.
+
+Example:
+
+```json
+{
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning",
+        "Microsoft.Hosting.Lifetime": "Information"
+      }
+    },
+    "WriteTo": [
+      {
+        "Name": "Console"
+      }
+    ],
+    "Enrich": [ "FromLogContext" ],
+    "Properties": {
+      "Application": "Cephalon.Host"
+    }
+  }
+}
+```
+
+Host registration example:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonObservability(builder.Configuration);
+builder.AddCephalonSerilog();
+```
+
+Operational notes:
+
+- the Serilog package is optional and stays outside `Cephalon.Engine` and `Cephalon.Observability`
+- registration continues to flow through `Microsoft.Extensions.Logging.ILogger`; Cephalon does not introduce a separate logging abstraction
+- the package reads the standard top-level `Serilog` configuration section and skips registration when that section is absent and no code-based Serilog callback is supplied
+- hosts can still append sinks, enrichers, or policy with code when configuration alone is not enough
+- bootstrap logging before the host builder exists stays an explicit host concern rather than hidden in the Cephalon runtime layer
+
 ## Release-validation guidance
 
 `.\scripts\validate-operational-conventions.ps1` is the focused operational validation pass for health and export conventions.
@@ -753,6 +800,7 @@ It executes a curated test suite that validates:
 - ASP.NET Core `/health/live`, `/health/ready`, `/engine/diagnostics`, and `/engine/dependencies` behavior
 - worker-host parity through `RuntimeHealthEvaluator`
 - startup manifest and telemetry-export guidance emitted by `Cephalon.Observability`
+- Serilog provider wiring through `Cephalon.Observability.Serilog`
 - OTLP exporter wiring through `Cephalon.Observability.OpenTelemetry`
 
 `.\scripts\validate-release.ps1` now runs that focused suite by default in addition to the broader repo test, benchmark, and reference-doc flow.

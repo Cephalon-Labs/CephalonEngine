@@ -238,7 +238,7 @@ The active planning wave now moves to phase 2 operational hardening:
 
 - keep the completed gap inventory, shipped OpenTelemetry companion package, and published diagnostics catalog reflected accurately in docs and project tracking
 - keep the shipped Elasticsearch, HTTP, Kafka, MongoDB, MQTT, MySQL, NATS, Postgres, RabbitMQ, Redis, and SQL Server dependency-health companions reflected accurately in docs and project tracking while broader provider coverage stays explicit
-- split observability follow-through clearly between `ILogger` provider integration such as Serilog that can move ahead now and cloud tracing/export integration that should wait for an explicit cloud/runtime target
+- keep the shipped Serilog provider companion package reflected accurately in docs and project tracking while cloud tracing/export integration remains an explicit later follow-through item
 - keep the shipped runtime-story surface plus the shipped failure-policy warmup, drain, and restart-backoff semantics reflected accurately in docs and project tracking
 - keep the shipped operational release-validation guidance for health and telemetry-export conventions reflected accurately in docs and project tracking
 - keep `docs/operational-hardening-gap-inventory.md` current as the source of truth for what phase-2 gaps are still genuinely open

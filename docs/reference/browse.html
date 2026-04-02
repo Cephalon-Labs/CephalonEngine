@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T05:12:02.8031588+00:00",
+  "GeneratedAtUtc": "2026-04-02T06:32:39.3224699+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -280,6 +280,14 @@
       "FileName": "cephalon-observability-redisdependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.Serilog",
+      "Category": "Hosts",
+      "Description": "Serilog provider integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-serilog.md",
+      "NamespaceCount": 1,
+      "TypeCount": 1
     },
     {
       "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
@@ -804,6 +812,13 @@
       "AssemblyName": "Cephalon.Observability.RedisDependencies",
       "FileName": "cephalon-observability-redisdependencies.md",
       "AnchorId": "namespace-cephalon-observability-redisdependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.Serilog.Hosting",
+      "AssemblyName": "Cephalon.Observability.Serilog",
+      "FileName": "cephalon-observability-serilog.md",
+      "AnchorId": "namespace-cephalon-observability-serilog-hosting",
       "TypeCount": 1
     },
     {
@@ -3496,6 +3511,21 @@
       }
     },
     {
+      "DisplayName": "SerilogHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.Serilog.Hosting",
+      "AssemblyName": "Cephalon.Observability.Serilog",
+      "FileName": "cephalon-observability-serilog.md",
+      "AnchorId": "type-cephalon-observability-serilog-hosting-seriloghostapplicationbuilderextensions",
+      "Declaration": "public static class SerilogHostApplicationBuilderExtensions",
+      "Summary": "Adds Serilog provider wiring for Cephalon hosts without changing the shared \u0060ILogger\u0060 contract.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "SqlServerDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
@@ -4302,6 +4332,17 @@
       "AnchorId": "member-m-cephalon-observability-redisdependencies-hosting-redisdependencyhealthservicecollectionextensions-addcephalonredisdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions",
       "Signature": "IServiceCollection AddCephalonRedisDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CRedisDependencyHealthOptions\u003E configure)",
       "Summary": "Adds Redis dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
+      "DisplayName": "AddCephalonSerilog",
+      "Category": "Methods",
+      "DeclaringTypeName": "SerilogHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.Serilog.Hosting",
+      "AssemblyName": "Cephalon.Observability.Serilog",
+      "FileName": "cephalon-observability-serilog.md",
+      "AnchorId": "member-m-cephalon-observability-serilog-hosting-seriloghostapplicationbuilderextensions-addcephalonserilog-1-0-system-action-system-iserviceprovider-serilog-loggerconfiguration",
+      "Signature": "TBuilder AddCephalonSerilog\u003CTBuilder\u003E(this TBuilder builder, Action\u003CIServiceProvider, LoggerConfiguration\u003E configure)",
+      "Summary": "Adds Serilog as an \u0060ILogger\u0060 provider for the target host builder."
     },
     {
       "DisplayName": "AddCephalonSqlServerDependencyHealth",

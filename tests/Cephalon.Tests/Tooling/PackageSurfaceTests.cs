@@ -123,6 +123,14 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void ObservabilitySerilogAssemblyExposesOnlyTheDocumentedRegistrationSurface()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Observability.Serilog.Hosting.SerilogHostApplicationBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Observability.Serilog.Hosting.SerilogHostApplicationBuilderExtensions));
+    }
+
+    [Fact]
     public void ObservabilityHttpDependenciesAssemblyExposesOnlyTheDocumentedConfigurationAndRegistrationSurface()
     {
         AssertExportedTypes(

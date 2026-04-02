@@ -28,6 +28,7 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.Observability.RedisDependencies"] = "observability-redis-dependencies.md",
             ["Cephalon.Observability.SqlServerDependencies"] = "observability-sqlserver-dependencies.md",
             ["Cephalon.Observability.OpenTelemetry"] = "observability-opentelemetry.md",
+            ["Cephalon.Observability.Serilog"] = "observability-serilog.md",
             ["Cephalon.ReferenceDocs"] = "reference-docs.md",
             ["Cephalon.Retrieval"] = "retrieval.md",
             ["Cephalon.Scaffolding"] = "scaffolding.md",

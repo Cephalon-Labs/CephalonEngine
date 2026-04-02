@@ -35,6 +35,7 @@ When working in this repository:
 - `Cephalon.Observability.RedisDependencies` is the optional Redis and cache dependency-health companion package
 - `Cephalon.Observability.SqlServerDependencies` is the optional SQL Server and Azure SQL dependency-health companion package
 - `Cephalon.Observability.OpenTelemetry` is the optional exporter companion package for OpenTelemetry OTLP host wiring
+- `Cephalon.Observability.Serilog` is the optional logger-provider companion package for Serilog host wiring
 - `Cephalon.Cli` is the user-facing shell for blueprint-driven generation
 - `Cephalon.ReferenceDocs` is the optional repo-local reference-doc publishing tool for XML-comment-driven API output
 - `Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, and `Cephalon.Edge` are the baseline technology companion packages
@@ -238,6 +239,7 @@ Current source layout:
 - `src/Cephalon.Observability.SqlServerDependencies/Hosting` -> `Cephalon.Observability.SqlServerDependencies.Hosting`
 - `src/Cephalon.Observability.SqlServerDependencies/Services` -> `Cephalon.Observability.SqlServerDependencies.Services`
 - `src/Cephalon.Observability.OpenTelemetry/Hosting` -> `Cephalon.Observability.OpenTelemetry.Hosting`
+- `src/Cephalon.Observability.Serilog/Hosting` -> `Cephalon.Observability.Serilog.Hosting`
 - `src/Cephalon.Cli/Commands` -> `Cephalon.Cli.Commands`
 - `src/Cephalon.Cli/Console` -> `Cephalon.Cli.Console`
 - `src/Cephalon.ReferenceDocs/Generation` -> `Cephalon.ReferenceDocs.Generation`

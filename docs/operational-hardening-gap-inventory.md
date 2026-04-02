@@ -54,6 +54,7 @@ Current baseline:
 - hosts can declare telemetry export intent through `Engine:Observability:Telemetry`
 - `Cephalon.Observability` logs that guidance on startup
 - `Cephalon.Observability.OpenTelemetry` now wires OTLP logs, metrics, and traces through `AddCephalonOpenTelemetry()`
+- `Cephalon.Observability.Serilog` now wires Serilog through `AddCephalonSerilog()` while keeping the shared `ILogger` contract intact
 - the shipped companion package supports `otlp`, `otlp/grpc`, and `otlp/http`, with automatic signal-path normalization for OTLP HTTP collectors
 
 Outcome:
@@ -64,21 +65,16 @@ Outcome:
 
 ### `#87` `ILogger` provider wiring and Serilog host integration
 
-Current baseline:
+Shipped follow-through:
 
-- `Cephalon.Engine` and `Cephalon.Observability` already emit through `Microsoft.Extensions.Logging.ILogger`
-- `Cephalon.Observability` already provides structured startup-summary, diagnostics-catalog, operational-health, and telemetry-guidance logging over the shared `ILogger` pipeline
-- there is no Cephalon-specific logging abstraction to replace `ILogger`, and there should not be one
-
-Gap:
-
-- hosts that want Serilog-specific sinks, enrichers, formatting, or provider wiring still need a deliberate integration path
-- the repository does not yet ship a first-class Serilog host-integration story over the existing `ILogger` contract
+- `Cephalon.Engine` and `Cephalon.Observability` continue to emit through `Microsoft.Extensions.Logging.ILogger`
+- `Cephalon.Observability.Serilog` now provides `AddCephalonSerilog()` for host-neutral Serilog registration on `IHostApplicationBuilder`
+- the companion package reads the standard top-level `Serilog` section, supports code-based sink and enricher extension, and keeps registration additive to the shared `ILogger` pipeline
 
 Why this stays separate:
 
 - logging-provider selection is orthogonal to cloud tracing/export concerns
-- Serilog should integrate as an `ILogger` provider, not as a new Cephalon logging surface
+- Serilog now integrates as an `ILogger` provider, not as a new Cephalon logging surface
 
 ### `#86` Cloud tracing and exporter follow-through beyond the shipped OTLP baseline
 
@@ -182,7 +178,7 @@ What still stays later:
 
 Shipped follow-through:
 
-- `scripts/validate-operational-conventions.ps1` now gives operators and maintainers a focused validation pass for ASP.NET Core health routes, worker-host health parity, observability startup guidance, and OTLP exporter wiring
+- `scripts/validate-operational-conventions.ps1` now gives operators and maintainers a focused validation pass for ASP.NET Core health routes, worker-host health parity, observability startup guidance, Serilog provider wiring, and OTLP exporter wiring
 - `scripts/validate-release.ps1` now runs that focused operational suite explicitly alongside the broader build, test, benchmark, guardrail, and reference-doc flow
 
 Why this stays separate:
@@ -194,11 +190,10 @@ Why this stays separate:
 Current conclusion from this inventory:
 
 - the existing phase-2 child-task split remains valid, but observability follow-through is clearer when `ILogger` provider integration is tracked separately from cloud tracing/export work
-- the main missing work is packaging breadth, `ILogger` provider integration, and operator-facing hardening on top of a shipped baseline, with cloud tracing/export deliberately deferred until the cloud target is explicit
+- the main missing work is broader provider packaging and later cloud tracing/export follow-through on top of a shipped baseline, with cloud tracing/export deliberately deferred until the cloud target is explicit
 
 Recommended execution sequence remains:
 
 1. `#31` inventory and sequencing
 2. `#33` dependency-health packs on top of the shipped exporter path
-3. `#87` `ILogger` provider wiring and Serilog host integration
-4. `#86` cloud tracing/export follow-through when the target cloud/runtime is explicit
+3. `#86` cloud tracing/export follow-through when the target cloud/runtime is explicit
