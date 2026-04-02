@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T11:09:29.4446957+00:00",
+  "GeneratedAtUtc": "2026-04-02T11:32:40.4990802+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -278,6 +278,14 @@
       "Category": "Hosts",
       "Description": "Neo4j dependency-health integration for Cephalon hosts.",
       "FileName": "cephalon-observability-neo4jdependencies.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "Category": "Hosts",
+      "Description": "OpenSearch dependency-health integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
     },
@@ -859,6 +867,20 @@
       "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
       "FileName": "cephalon-observability-neo4jdependencies.md",
       "AnchorId": "namespace-cephalon-observability-neo4jdependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-opensearchdependencies-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "namespace-cephalon-observability-opensearchdependencies-hosting",
       "TypeCount": 1
     },
     {
@@ -2991,6 +3013,51 @@
       }
     },
     {
+      "DisplayName": "OpenSearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "type-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition",
+      "Declaration": "public sealed class OpenSearchDependencyDefinition",
+      "Summary": "Describes one OpenSearch dependency that should contribute to runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 9,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "OpenSearchDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "type-cephalon-observability-opensearchdependencies-configuration-opensearchdependencyhealthoptions",
+      "Declaration": "public sealed class OpenSearchDependencyHealthOptions",
+      "Summary": "Configures OpenSearch dependency probes contributed to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "OpenSearchDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "type-cephalon-observability-opensearchdependencies-hosting-opensearchdependencyhealthservicecollectionextensions",
+      "Declaration": "public static class OpenSearchDependencyHealthServiceCollectionExtensions",
+      "Summary": "Adds OpenSearch dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
       "DisplayName": "OpenTelemetryHostApplicationBuilderExtensions",
       "NamespaceName": "Cephalon.Observability.OpenTelemetry.Hosting",
       "AssemblyName": "Cephalon.Observability.OpenTelemetry",
@@ -4684,6 +4751,28 @@
       "Summary": "Adds observability services using configuration as the primary source of observability options."
     },
     {
+      "DisplayName": "AddCephalonOpenSearchDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "OpenSearchDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-opensearchdependencies-hosting-opensearchdependencyhealthservicecollectionextensions-addcephalonopensearchdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-opensearchdependencies-configuration-opensearchdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonOpenSearchDependencyHealth(this IServiceCollection services, Action\u003COpenSearchDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds OpenSearch dependency-health services using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonOpenSearchDependencyHealth",
+      "Category": "Methods",
+      "DeclaringTypeName": "OpenSearchDependencyHealthServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Hosting",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-opensearchdependencies-hosting-opensearchdependencyhealthservicecollectionextensions-addcephalonopensearchdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-opensearchdependencies-configuration-opensearchdependencyhealthoptions",
+      "Signature": "IServiceCollection AddCephalonOpenSearchDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003COpenSearchDependencyHealthOptions\u003E configure)",
+      "Summary": "Adds OpenSearch dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
       "DisplayName": "AddCephalonOpenTelemetry",
       "Category": "Methods",
       "DeclaringTypeName": "OpenTelemetryHostApplicationBuilderExtensions",
@@ -5507,6 +5596,17 @@
       "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-bearertoken",
       "Signature": "string BearerToken { get; set; }",
       "Summary": "Gets or sets the optional bearer token used for Elasticsearch bearer-token authentication."
+    },
+    {
+      "DisplayName": "BearerToken",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenSearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-bearertoken",
+      "Signature": "string BearerToken { get; set; }",
+      "Summary": "Gets or sets the optional bearer token used for OpenSearch bearer-token authentication."
     },
     {
       "DisplayName": "BestEffortContinue",
@@ -6677,6 +6777,17 @@
     {
       "DisplayName": "Dependencies",
       "Category": "Properties",
+      "DeclaringTypeName": "OpenSearchDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencyhealthoptions-dependencies",
+      "Signature": "IReadOnlyList\u003COpenSearchDependencyDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured OpenSearch dependencies that should contribute to runtime health."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
       "DeclaringTypeName": "OracleDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.OracleDependencies",
@@ -7436,6 +7547,17 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "OpenSearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name shown to operators."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "OracleDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.OracleDependencies",
@@ -7839,6 +7961,17 @@
       "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-endpoint",
       "Signature": "string Endpoint { get; set; }",
       "Summary": "Gets or sets the absolute endpoint that should be probed for this dependency."
+    },
+    {
+      "DisplayName": "Endpoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenSearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-endpoint",
+      "Signature": "string Endpoint { get; set; }",
+      "Summary": "Gets or sets the absolute OpenSearch base URL or cluster-health endpoint that should be probed."
     },
     {
       "DisplayName": "Endpoint",
@@ -8532,6 +8665,17 @@
       "AnchorId": "member-m-cephalon-observability-configuration-observabilityoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
       "Signature": "ObservabilityOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
       "Summary": "Binds observability options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
+      "DeclaringTypeName": "OpenSearchDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-opensearchdependencies-configuration-opensearchdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "OpenSearchDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds OpenSearch dependency-health options from configuration."
     },
     {
       "DisplayName": "FromConfiguration",
@@ -9372,6 +9516,17 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "OpenSearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "OracleDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.OracleDependencies",
@@ -9511,6 +9666,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-modulepackagedirectory-includesubdirectories",
       "Signature": "bool IncludeSubdirectories { get; }",
       "Summary": "Gets a value indicating whether nested directories should also be scanned."
+    },
+    {
+      "DisplayName": "Index",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenSearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-index",
+      "Signature": "string Index { get; set; }",
+      "Summary": "Gets or sets the optional index name or comma-delimited index list that should be checked through the cluster-health API."
     },
     {
       "DisplayName": "Information",
@@ -11405,6 +11571,28 @@
       "Summary": "The UTC timestamp when the event was recorded."
     },
     {
+      "DisplayName": "OpenSearchDependencyDefinition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "OpenSearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-ctor",
+      "Signature": "OpenSearchDependencyDefinition()",
+      "Summary": "Initializes a new instance of the \u0060OpenSearchDependencyDefinition\u0060 class."
+    },
+    {
+      "DisplayName": "OpenSearchDependencyHealthOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "OpenSearchDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "member-m-cephalon-observability-opensearchdependencies-configuration-opensearchdependencyhealthoptions-ctor",
+      "Signature": "OpenSearchDependencyHealthOptions()",
+      "Summary": "Initializes a new instance of the \u0060OpenSearchDependencyHealthOptions\u0060 class."
+    },
+    {
       "DisplayName": "OperationalStory",
       "Category": "Properties",
       "DeclaringTypeName": "EngineRuntime",
@@ -11777,6 +11965,17 @@
       "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-password",
       "Signature": "string Password { get; set; }",
       "Summary": "Gets or sets the optional password used for authentication."
+    },
+    {
+      "DisplayName": "Password",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenSearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-password",
+      "Signature": "string Password { get; set; }",
+      "Summary": "Gets or sets the optional password used for OpenSearch basic authentication."
     },
     {
       "DisplayName": "Password",
@@ -12650,6 +12849,17 @@
     {
       "DisplayName": "RefreshIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "OpenSearchDependencyHealthOptions",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencyhealthoptions-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
+    },
+    {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "OracleDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.OracleDependencies",
@@ -13051,6 +13261,17 @@
       "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
       "FileName": "cephalon-observability-neo4jdependencies.md",
       "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenSearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
@@ -15356,6 +15577,17 @@
     {
       "DisplayName": "TimeoutSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "OpenSearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-request timeout in seconds."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "OracleDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.OracleDependencies",
@@ -16045,6 +16277,17 @@
       "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-username",
       "Signature": "string Username { get; set; }",
       "Summary": "Gets or sets the optional user name used for authentication."
+    },
+    {
+      "DisplayName": "Username",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenSearchDependencyDefinition",
+      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
+      "FileName": "cephalon-observability-opensearchdependencies.md",
+      "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-username",
+      "Signature": "string Username { get; set; }",
+      "Summary": "Gets or sets the optional user name used for OpenSearch basic authentication."
     },
     {
       "DisplayName": "Username",

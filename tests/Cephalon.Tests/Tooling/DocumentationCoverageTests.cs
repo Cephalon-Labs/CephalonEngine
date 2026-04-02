@@ -27,6 +27,7 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.Observability.MySqlDependencies"] = "observability-mysql-dependencies.md",
             ["Cephalon.Observability.NatsDependencies"] = "observability-nats-dependencies.md",
             ["Cephalon.Observability.Neo4jDependencies"] = "observability-neo4j-dependencies.md",
+            ["Cephalon.Observability.OpenSearchDependencies"] = "observability-opensearch-dependencies.md",
             ["Cephalon.Observability.OracleDependencies"] = "observability-oracle-dependencies.md",
             ["Cephalon.Observability.PostgresDependencies"] = "observability-postgres-dependencies.md",
             ["Cephalon.Observability.RabbitMqDependencies"] = "observability-rabbitmq-dependencies.md",

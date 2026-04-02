@@ -27,6 +27,8 @@ using Cephalon.Observability.NatsDependencies.Configuration;
 using Cephalon.Observability.NatsDependencies.Hosting;
 using Cephalon.Observability.Neo4jDependencies.Configuration;
 using Cephalon.Observability.Neo4jDependencies.Hosting;
+using Cephalon.Observability.OpenSearchDependencies.Configuration;
+using Cephalon.Observability.OpenSearchDependencies.Hosting;
 using Cephalon.Observability.OracleDependencies.Configuration;
 using Cephalon.Observability.OracleDependencies.Hosting;
 using Cephalon.Observability.PostgresDependencies.Configuration;
@@ -299,6 +301,18 @@ public sealed class EngineDiagnosticsTests
                 }
             ];
         });
+        services.AddCephalonOpenSearchDependencyHealth(options =>
+        {
+            options.Dependencies =
+            [
+                new OpenSearchDependencyDefinition
+                {
+                    Id = "catalog-search",
+                    Endpoint = "https://search.internal.example:9200",
+                    Index = "catalog-items"
+                }
+            ];
+        });
         services.AddCephalonOracleDependencyHealth(options =>
         {
             options.Dependencies =
@@ -386,6 +400,7 @@ public sealed class EngineDiagnosticsTests
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.MySqlDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.NatsDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.Neo4jDependencies");
+        Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.OpenSearchDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.OracleDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.PostgresDependencies");
         Assert.Contains(catalog.Conventions, convention => convention.Source == "Cephalon.Observability.RabbitMqDependencies");
@@ -432,6 +447,9 @@ public sealed class EngineDiagnosticsTests
             catalog.GetBySource("Cephalon.Observability.Neo4jDependencies").Single().Events,
             static entry => entry.Id == 3148);
         Assert.Contains(
+            catalog.GetBySource("Cephalon.Observability.OpenSearchDependencies").Single().Events,
+            static entry => entry.Id == 3150);
+        Assert.Contains(
             catalog.GetBySource("Cephalon.Observability.OracleDependencies").Single().Events,
             static entry => entry.Id == 3144);
         Assert.Contains(
@@ -464,6 +482,7 @@ public sealed class EngineDiagnosticsTests
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.MySqlDependencies");
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.NatsDependencies");
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.Neo4jDependencies");
+        Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.OpenSearchDependencies");
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.OracleDependencies");
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.RabbitMqDependencies");
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Observability.SqlServerDependencies");

@@ -136,6 +136,7 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.Observability.MySqlDependencies",
                 "Cephalon.Observability.NatsDependencies",
                 "Cephalon.Observability.Neo4jDependencies",
+                "Cephalon.Observability.OpenSearchDependencies",
                 "Cephalon.Observability.OracleDependencies",
                 "Cephalon.Observability.PostgresDependencies",
                 "Cephalon.Observability.RabbitMqDependencies",
@@ -201,6 +202,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-mysqldependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-natsdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-neo4jdependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-opensearchdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-oracledependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-postgresdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-rabbitmqdependencies.md");
@@ -245,6 +247,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.Neo4jDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.OpenSearchDependencies", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.OracleDependencies", StringComparison.Ordinal));

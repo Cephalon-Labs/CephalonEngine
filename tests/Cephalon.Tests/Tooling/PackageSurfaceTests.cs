@@ -146,6 +146,16 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void ObservabilityOpenSearchDependenciesAssemblyExposesOnlyTheDocumentedConfigurationAndRegistrationSurface()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Observability.OpenSearchDependencies.Hosting.OpenSearchDependencyHealthServiceCollectionExtensions).Assembly,
+            typeof(global::Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyDefinition),
+            typeof(global::Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyHealthOptions),
+            typeof(global::Cephalon.Observability.OpenSearchDependencies.Hosting.OpenSearchDependencyHealthServiceCollectionExtensions));
+    }
+
+    [Fact]
     public void ObservabilityOpenTelemetryAssemblyExposesOnlyTheDocumentedRegistrationSurface()
     {
         AssertExportedTypes(
