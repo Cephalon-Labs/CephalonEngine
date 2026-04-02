@@ -260,6 +260,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Observability.HttpDependencies](cephalon-observability-httpdependencies.md#namespace-cephalon-observability-httpdependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Hosting)
 
+## `Cephalon.Observability.HuaweiCloud.Configuration`
+
+- [Cephalon.Observability.HuaweiCloud](cephalon-observability-huaweicloud.md#namespace-cephalon-observability-huaweicloud-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.HuaweiCloud&namespace=Cephalon.Observability.HuaweiCloud.Configuration)
+
+## `Cephalon.Observability.HuaweiCloud.Hosting`
+
+- [Cephalon.Observability.HuaweiCloud](cephalon-observability-huaweicloud.md#namespace-cephalon-observability-huaweicloud-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.HuaweiCloud&namespace=Cephalon.Observability.HuaweiCloud.Hosting)
+
 ## `Cephalon.Observability.KafkaDependencies.Configuration`
 
 - [Cephalon.Observability.KafkaDependencies](cephalon-observability-kafkadependencies.md#namespace-cephalon-observability-kafkadependencies-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration)

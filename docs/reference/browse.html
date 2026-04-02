@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T18:26:15.2446342+00:00",
+  "GeneratedAtUtc": "2026-04-02T19:29:37.8170069+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -256,6 +256,14 @@
       "FileName": "cephalon-observability-httpdependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.HuaweiCloud",
+      "Category": "Hosts",
+      "Description": "Huawei Cloud OTLP defaults and managed APM trace integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-huaweicloud.md",
+      "NamespaceCount": 2,
+      "TypeCount": 2
     },
     {
       "AssemblyName": "Cephalon.Observability.KafkaDependencies",
@@ -857,6 +865,20 @@
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
       "FileName": "cephalon-observability-httpdependencies.md",
       "AnchorId": "namespace-cephalon-observability-httpdependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.HuaweiCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.HuaweiCloud",
+      "FileName": "cephalon-observability-huaweicloud.md",
+      "AnchorId": "namespace-cephalon-observability-huaweicloud-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.HuaweiCloud.Hosting",
+      "AssemblyName": "Cephalon.Observability.HuaweiCloud",
+      "FileName": "cephalon-observability-huaweicloud.md",
+      "AnchorId": "namespace-cephalon-observability-huaweicloud-hosting",
       "TypeCount": 1
     },
     {
@@ -2152,6 +2174,36 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 8,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "HuaweiCloudHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.HuaweiCloud.Hosting",
+      "AssemblyName": "Cephalon.Observability.HuaweiCloud",
+      "FileName": "cephalon-observability-huaweicloud.md",
+      "AnchorId": "type-cephalon-observability-huaweicloud-hosting-huaweicloudhostapplicationbuilderextensions",
+      "Declaration": "public static class HuaweiCloudHostApplicationBuilderExtensions",
+      "Summary": "Adds Huawei Cloud-hosted observability defaults and optional managed APM trace ingestion for Cephalon hosts.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "HuaweiCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.HuaweiCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.HuaweiCloud",
+      "FileName": "cephalon-observability-huaweicloud.md",
+      "AnchorId": "type-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions",
+      "Declaration": "public sealed class HuaweiCloudTelemetryExportOptions",
+      "Summary": "Configures Huawei Cloud observability defaults on top of the shared Cephalon telemetry contract.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
         "Methods": 1
       }
     },
@@ -4853,6 +4905,17 @@
       "Summary": "Adds Cephalon\u0027s HTTP request and response logging options to the ASP.NET Core host."
     },
     {
+      "DisplayName": "AddCephalonHuaweiCloud",
+      "Category": "Methods",
+      "DeclaringTypeName": "HuaweiCloudHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.HuaweiCloud.Hosting",
+      "AssemblyName": "Cephalon.Observability.HuaweiCloud",
+      "FileName": "cephalon-observability-huaweicloud.md",
+      "AnchorId": "member-m-cephalon-observability-huaweicloud-hosting-huaweicloudhostapplicationbuilderextensions-addcephalonhuaweicloud-1-0-system-action-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions",
+      "Signature": "TBuilder AddCephalonHuaweiCloud\u003CTBuilder\u003E(this TBuilder builder, Action\u003CHuaweiCloudTelemetryExportOptions\u003E configure)",
+      "Summary": "Adds Huawei Cloud-aware OpenTelemetry registration for the Cephalon engine diagnostics surface."
+    },
+    {
       "DisplayName": "AddCephalonKafkaDependencyHealth",
       "Category": "Methods",
       "DeclaringTypeName": "KafkaDependencyHealthServiceCollectionExtensions",
@@ -5689,6 +5752,17 @@
       "Summary": "Gets or sets the optional API key used for Elasticsearch API-key authentication."
     },
     {
+      "DisplayName": "ApmEndpoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "HuaweiCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.HuaweiCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.HuaweiCloud",
+      "FileName": "cephalon-observability-huaweicloud.md",
+      "AnchorId": "member-p-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions-apmendpoint",
+      "Signature": "string ApmEndpoint { get; set; }",
+      "Summary": "Gets or sets the Huawei Cloud APM OTLP endpoint used for direct managed trace ingestion."
+    },
+    {
       "DisplayName": "AppBlueprint",
       "Category": "Constructors",
       "DeclaringTypeName": "AppBlueprint",
@@ -5841,6 +5915,17 @@
       "AnchorId": "member-f-cephalon-engine-configuration-modulepackagereference-assemblypathkind",
       "Signature": "const string AssemblyPathKind",
       "Summary": "Identifies a package input that points directly to an assembly path."
+    },
+    {
+      "DisplayName": "AuthenticationToken",
+      "Category": "Properties",
+      "DeclaringTypeName": "HuaweiCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.HuaweiCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.HuaweiCloud",
+      "FileName": "cephalon-observability-huaweicloud.md",
+      "AnchorId": "member-p-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions-authenticationtoken",
+      "Signature": "string AuthenticationToken { get; set; }",
+      "Summary": "Gets or sets the authentication token written to the Huawei Cloud \u0060Authentication\u0060 header for direct managed trace ingestion."
     },
     {
       "DisplayName": "AuthSource",
@@ -9002,6 +9087,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "HuaweiCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.HuaweiCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.HuaweiCloud",
+      "FileName": "cephalon-observability-huaweicloud.md",
+      "AnchorId": "member-m-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "HuaweiCloudTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Huawei Cloud telemetry export options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "KafkaDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.KafkaDependencies",
@@ -9759,6 +9855,17 @@
       "Summary": "Gets or sets the hosted GCP platform whose default resource attributes should be applied."
     },
     {
+      "DisplayName": "HostedPlatform",
+      "Category": "Properties",
+      "DeclaringTypeName": "HuaweiCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.HuaweiCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.HuaweiCloud",
+      "FileName": "cephalon-observability-huaweicloud.md",
+      "AnchorId": "member-p-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions-hostedplatform",
+      "Signature": "string HostedPlatform { get; set; }",
+      "Summary": "Gets or sets the hosted Huawei Cloud platform whose default resource attributes should be applied."
+    },
+    {
       "DisplayName": "HttpDependencyDefinition",
       "Category": "Constructors",
       "DeclaringTypeName": "HttpDependencyDefinition",
@@ -9790,6 +9897,17 @@
       "AnchorId": "member-m-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-ctor",
       "Signature": "HttpRequestResponseLoggingOptions()",
       "Summary": "Creates request and response logging options with body capture disabled by default."
+    },
+    {
+      "DisplayName": "HuaweiCloudTelemetryExportOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "HuaweiCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.HuaweiCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.HuaweiCloud",
+      "FileName": "cephalon-observability-huaweicloud.md",
+      "AnchorId": "member-m-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions-ctor",
+      "Signature": "HuaweiCloudTelemetryExportOptions()",
+      "Summary": "Initializes a new instance of the \u0060HuaweiCloudTelemetryExportOptions\u0060 class."
     },
     {
       "DisplayName": "Id",
@@ -13532,6 +13650,17 @@
       "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
     },
     {
+      "DisplayName": "Region",
+      "Category": "Properties",
+      "DeclaringTypeName": "HuaweiCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.HuaweiCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.HuaweiCloud",
+      "FileName": "cephalon-observability-huaweicloud.md",
+      "AnchorId": "member-p-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions-region",
+      "Signature": "string Region { get; set; }",
+      "Summary": "Gets or sets the Huawei Cloud region to stamp onto exported resources when one should be explicit."
+    },
+    {
       "DisplayName": "RegisterCapabilities",
       "Category": "Methods",
       "DeclaringTypeName": "IModule",
@@ -16764,6 +16893,17 @@
       "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-uri",
       "Signature": "string Uri { get; set; }",
       "Summary": "Gets or sets the optional full Neo4j endpoint URI such as \u0060neo4j://graph.internal.example:7687\u0060 or \u0060neo4j\u002Bs://graph.internal.example:7687\u0060."
+    },
+    {
+      "DisplayName": "UseApmManagedTraceIngestion",
+      "Category": "Properties",
+      "DeclaringTypeName": "HuaweiCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.HuaweiCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.HuaweiCloud",
+      "FileName": "cephalon-observability-huaweicloud.md",
+      "AnchorId": "member-p-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions-useapmmanagedtraceingestion",
+      "Signature": "bool UseApmManagedTraceIngestion { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the package should send traces directly to Huawei Cloud APM when no shared OTLP endpoint is configured."
     },
     {
       "DisplayName": "UseApplicationDefaultCredentials",
