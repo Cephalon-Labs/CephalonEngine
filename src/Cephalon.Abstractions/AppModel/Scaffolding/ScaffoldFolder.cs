@@ -1,7 +1,18 @@
 namespace Cephalon.Abstractions.AppModel.Scaffolding;
 
+/// <summary>
+/// Describes a folder that should exist in a scaffolded app shape.
+/// </summary>
 public sealed class ScaffoldFolder
 {
+    /// <summary>
+    /// Creates a scaffold-folder description.
+    /// </summary>
+    /// <param name="pathTemplate">The folder path template.</param>
+    /// <param name="purpose">The human-readable folder purpose.</param>
+    /// <param name="scope">The scaffold scope that owns the folder.</param>
+    /// <param name="projectId">The owning project identifier when the folder belongs to a project.</param>
+    /// <param name="metadata">Optional folder metadata.</param>
     public ScaffoldFolder(
         string pathTemplate,
         string purpose,
@@ -33,13 +44,28 @@ public sealed class ScaffoldFolder
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Gets the folder path template.
+    /// </summary>
     public string PathTemplate { get; }
 
+    /// <summary>
+    /// Gets the human-readable purpose of the folder.
+    /// </summary>
     public string Purpose { get; }
 
+    /// <summary>
+    /// Gets the scaffold scope that owns the folder.
+    /// </summary>
     public string Scope { get; }
 
+    /// <summary>
+    /// Gets the owning project identifier when the folder belongs to a project.
+    /// </summary>
     public string? ProjectId { get; }
 
+    /// <summary>
+    /// Gets optional folder metadata.
+    /// </summary>
     public IReadOnlyDictionary<string, string> Metadata { get; }
 }

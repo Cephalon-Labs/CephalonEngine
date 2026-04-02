@@ -36,6 +36,8 @@ public sealed class EventingOptions
 EventingOptions()
 ```
 
+Creates eventing options with the default host-owned features enabled.
+
 #### Properties
 
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-channels"></a>
@@ -85,13 +87,21 @@ public static class EventingEngineBuilderExtensions
 
 #### Methods
 
-<a id="member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventing-cephalon-engine-composition-enginebuilder-system-action-1-cephalon-eventing-configuration-eventingoptions"></a>
+<a id="member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventing-cephalon-engine-composition-enginebuilder-system-action-cephalon-eventing-configuration-eventingoptions"></a>
 
 ##### `AddEventing`
 
 ```csharp
 EngineBuilder AddEventing(this EngineBuilder builder, Action<EventingOptions> configure)
 ```
+
+Adds the eventing runtime pack to the engine.
+
+Returns: The same engine builder for fluent composition.
+
+Parameters:
+- `builder`: The engine builder to extend.
+- `configure`: An optional callback that configures the host-owned eventing options.
 
 <a id="namespace-cephalon-eventing-services"></a>
 
@@ -110,13 +120,21 @@ public sealed class EventChannelDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-eventing-services-eventchanneldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string"></a>
+<a id="member-m-cephalon-eventing-services-eventchanneldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string"></a>
 
 ##### `EventChannelDescriptor`
 
 ```csharp
 EventChannelDescriptor(string id, string displayName, string description, IReadOnlyList<string> tags)
 ```
+
+Creates a new event channel descriptor.
+
+Parameters:
+- `id`: The stable channel identifier.
+- `displayName`: The operator-facing channel name.
+- `description`: The human-readable description of the channel.
+- `tags`: Optional tags that classify the channel.
 
 #### Properties
 

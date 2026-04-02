@@ -2,6 +2,9 @@ using Cephalon.ReferenceModule.Operations.Contracts;
 
 namespace Cephalon.ReferenceModule.Operations.Application;
 
+/// <summary>
+/// Tracks lifecycle state for the reference operations module.
+/// </summary>
 public sealed class OperationsStatusService
 {
     private readonly object sync = new();
@@ -11,6 +14,9 @@ public sealed class OperationsStatusService
     private string currentPhase = "Created";
     private DateTimeOffset? lastTransitionUtc;
 
+    /// <summary>
+    /// Records that the module completed initialization.
+    /// </summary>
     public void MarkInitialized()
     {
         lock (sync)
@@ -21,6 +27,9 @@ public sealed class OperationsStatusService
         }
     }
 
+    /// <summary>
+    /// Records that the module completed startup.
+    /// </summary>
     public void MarkStarted()
     {
         lock (sync)
@@ -31,6 +40,9 @@ public sealed class OperationsStatusService
         }
     }
 
+    /// <summary>
+    /// Records that the module completed shutdown.
+    /// </summary>
     public void MarkStopped()
     {
         lock (sync)
@@ -41,6 +53,18 @@ public sealed class OperationsStatusService
         }
     }
 
+    /// <summary>
+    /// Creates a transport-safe snapshot of the current lifecycle status.
+    /// </summary>
+    /// <param name="culture">
+    /// The culture used to localize the response message.
+    /// </param>
+    /// <param name="message">
+    /// The localized status message to include in the response.
+    /// </param>
+    /// <returns>
+    /// A snapshot of the current lifecycle counters and message payload.
+    /// </returns>
     public OperationsStatusEnvelope CreateEnvelope(string culture, string message)
     {
         lock (sync)

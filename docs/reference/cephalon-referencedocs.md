@@ -138,13 +138,22 @@ public sealed class ReferenceDocsRequest
 
 #### Constructors
 
-<a id="member-m-cephalon-referencedocs-generation-referencedocsrequest-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string"></a>
+<a id="member-m-cephalon-referencedocs-generation-referencedocsrequest-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string"></a>
 
 ##### `ReferenceDocsRequest`
 
 ```csharp
 ReferenceDocsRequest(string rootPath, string outputPath, string configuration, string targetFramework, IReadOnlyList<string> assemblies)
 ```
+
+Creates a new reference docs request.
+
+Parameters:
+- `rootPath`: The repository root path.
+- `outputPath`: The output directory where reference docs should be written.
+- `configuration`: The build configuration to read from.
+- `targetFramework`: The target framework to read from.
+- `assemblies`: The assemblies to document. When omitted, the generator uses its curated defaults.
 
 #### Properties
 
@@ -211,13 +220,19 @@ public sealed class RenderedReferenceDocs
 
 #### Constructors
 
-<a id="member-m-cephalon-referencedocs-generation-renderedreferencedocs-ctor-cephalon-referencedocs-generation-referencedocsrequest-system-collections-generic-ireadonlylist-1-cephalon-referencedocs-generation-referencedocfile"></a>
+<a id="member-m-cephalon-referencedocs-generation-renderedreferencedocs-ctor-cephalon-referencedocs-generation-referencedocsrequest-system-collections-generic-ireadonlylist-cephalon-referencedocs-generation-referencedocfile"></a>
 
 ##### `RenderedReferenceDocs`
 
 ```csharp
 RenderedReferenceDocs(ReferenceDocsRequest request, IReadOnlyList<ReferenceDocFile> files)
 ```
+
+Creates a new rendered reference docs result.
+
+Parameters:
+- `request`: The original generation request.
+- `files`: The generated markdown files.
 
 #### Properties
 

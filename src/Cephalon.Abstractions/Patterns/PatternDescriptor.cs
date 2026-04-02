@@ -1,7 +1,21 @@
 namespace Cephalon.Abstractions.Patterns;
 
+/// <summary>
+/// Describes one pattern that can shape a Cephalon app.
+/// </summary>
 public sealed class PatternDescriptor
 {
+    /// <summary>
+    /// Creates a pattern descriptor.
+    /// </summary>
+    /// <param name="id">The stable pattern identifier.</param>
+    /// <param name="displayName">The human-readable pattern name.</param>
+    /// <param name="description">The pattern description.</param>
+    /// <param name="kind">The category of the pattern.</param>
+    /// <param name="tags">The tags associated with the pattern.</param>
+    /// <param name="requires">The pattern identifiers required by this pattern.</param>
+    /// <param name="conflictsWith">The pattern identifiers that conflict with this pattern.</param>
+    /// <param name="metadata">Optional pattern metadata.</param>
     public PatternDescriptor(
         string id,
         string displayName,
@@ -39,20 +53,44 @@ public sealed class PatternDescriptor
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Gets the stable pattern identifier.
+    /// </summary>
     public string Id { get; }
 
+    /// <summary>
+    /// Gets the human-readable pattern name.
+    /// </summary>
     public string DisplayName { get; }
 
+    /// <summary>
+    /// Gets the pattern description.
+    /// </summary>
     public string Description { get; }
 
+    /// <summary>
+    /// Gets the category of the pattern.
+    /// </summary>
     public PatternKind Kind { get; }
 
+    /// <summary>
+    /// Gets the tags associated with the pattern.
+    /// </summary>
     public IReadOnlyList<string> Tags { get; }
 
+    /// <summary>
+    /// Gets the pattern identifiers required by this pattern.
+    /// </summary>
     public IReadOnlyList<string> Requires { get; }
 
+    /// <summary>
+    /// Gets the pattern identifiers that conflict with this pattern.
+    /// </summary>
     public IReadOnlyList<string> ConflictsWith { get; }
 
+    /// <summary>
+    /// Gets optional pattern metadata.
+    /// </summary>
     public IReadOnlyDictionary<string, string> Metadata { get; }
 
     private static string[] Normalize(IReadOnlyList<string>? values)

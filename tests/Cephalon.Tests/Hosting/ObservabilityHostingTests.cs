@@ -54,6 +54,14 @@ public sealed class ObservabilityHostingTests
             entry.EventId.Id == 3005 &&
             entry.Message.Contains("http://collector:4317", StringComparison.Ordinal));
         Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3006 &&
+            entry.Message.Contains("Cephalon.Engine", StringComparison.Ordinal) &&
+            entry.Message.Contains("2000-2003", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3006 &&
+            entry.Message.Contains("Cephalon.Observability", StringComparison.Ordinal) &&
+            entry.Message.Contains("3000-3006", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 2000 &&
             entry.Message.Contains("Runtime phase 'start' completed", StringComparison.Ordinal));
     }

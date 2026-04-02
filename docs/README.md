@@ -12,6 +12,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 
 - [Architecture](architecture.md)
 - [Component catalog](components/README.md)
+- [Compatibility](compatibility.md)
 - [App models](app-models.md)
 - [Module authoring](module-authoring.md)
 - [Technology packs](technology-packs.md)
@@ -19,9 +20,12 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 ## Runtime and operations
 
 - [Operations](operations.md)
+- [Operational hardening gap inventory](operational-hardening-gap-inventory.md)
 - [Runtime failure policy](runtime-failure-policy.md)
 - [Benchmarking](benchmarking.md)
 - [Reference docs publishing](reference-docs.md)
+
+The component catalog now includes the observability baseline package plus the optional Cassandra dependency-health, ClickHouse dependency-health, Consul dependency-health, Elasticsearch dependency-health, HTTP dependency-health, Kafka dependency-health, Memcached dependency-health, MongoDB dependency-health, MQTT dependency-health, MySQL dependency-health, NATS dependency-health, Neo4j dependency-health, OpenSearch dependency-health, Oracle dependency-health, Postgres dependency-health, RabbitMQ dependency-health, Redis dependency-health, SQL Server dependency-health, OpenTelemetry exporter, and Serilog provider companions so operator-facing docs stay aligned with the shipped host integration paths, diagnostics conventions, runtime-story surface, and release-validation guidance.
 
 ## Optional generated reference docs
 

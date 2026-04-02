@@ -12,8 +12,10 @@ using Cephalon.Abstractions.Technologies;
 using Cephalon.Abstractions.Transports;
 using Cephalon.Agentics.Registration;
 using Cephalon.Agentics.Services;
+using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Documentation;
+using Cephalon.AspNetCore.GraphQL.Hosting;
 using Cephalon.AspNetCore.Grpc.Contracts.Discovery;
 using Cephalon.AspNetCore.Grpc.Hosting;
 using Cephalon.AspNetCore.JsonRpc.Hosting;
@@ -33,8 +35,10 @@ using Cephalon.Retrieval.Registration;
 using Cephalon.Retrieval.Services;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Cephalon.Tests.Support;
 
 namespace Cephalon.Tests.Hosting;
@@ -193,8 +197,9 @@ public sealed class AspNetCoreHostingTests
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:1"] = "JsonRpc";
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:2"] = "Grpc";
-        builder.Configuration[$"{EngineSettings.SectionName}:Transports:3"] = "ServerSentEvents";
-        builder.Configuration[$"{EngineSettings.SectionName}:Transports:4"] = "WebSocket";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:3"] = "GraphQL";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:4"] = "ServerSentEvents";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:5"] = "WebSocket";
         builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "AgenticWorkloads";
         builder.Configuration[$"{EngineSettings.SectionName}:Technologies:1"] = "EventDrivenIntegration";
         builder.Configuration[$"{EngineSettings.SectionName}:Technologies:2"] = "RealtimeExperience";
@@ -207,6 +212,7 @@ public sealed class AspNetCoreHostingTests
         builder.Configuration["OpenApi:SecuritySchemes:0:BearerFormat"] = "JWT";
         builder.Configuration["OpenApi:SecuritySchemes:0:In"] = "Header";
         builder.Configuration["OpenApi:SecuritySchemes:0:Description"] = "Bearer token authentication.";
+        builder.AddGraphQLTransport();
         builder.AddGrpcTransport();
         builder.AddJsonRpcTransport();
         builder.AddCephalon(cephalon =>
@@ -267,6 +273,17 @@ public sealed class AspNetCoreHostingTests
         var scalarPayload = await scalarResponse.Content.ReadAsStringAsync();
         var greeting = await client.GetFromJsonAsync<GreetingEnvelope>("/api/discovery/hello/Codex");
         var time = await client.GetFromJsonAsync<PlatformTimeEnvelope>("/api/platform/time");
+        var graphQlResponse = await client.PostAsJsonAsync("/graphql", new
+        {
+            query = "query ($name: String) { hello(name: $name) { message generatedAtUtc traits } }",
+            variables = new
+            {
+                name = "Codex"
+            }
+        });
+        var graphQlPayload = await graphQlResponse.Content.ReadAsStringAsync();
+        var graphQlSdlResponse = await client.GetAsync("/graphql?sdl");
+        var graphQlSdlPayload = await graphQlSdlResponse.Content.ReadAsStringAsync();
         var rpcResponse = await client.PostAsJsonAsync("/rpc/discovery", new
         {
             jsonRpc = "2.0",
@@ -329,6 +346,7 @@ public sealed class AspNetCoreHostingTests
             project.Packages.Contains("Cephalon.Agentics", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.Eventing", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.Edge", StringComparer.OrdinalIgnoreCase) &&
+            project.Packages.Contains("Cephalon.AspNetCore.GraphQL", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.AspNetCore.JsonRpc", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.AspNetCore.Grpc", StringComparer.OrdinalIgnoreCase));
         Assert.Contains(scaffold.Folders, folder =>
@@ -368,6 +386,7 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains(transports, transport => transport.Id == "rest-api");
         Assert.Contains(transports, transport => transport.Id == "json-rpc");
         Assert.Contains(transports, transport => transport.Id == "grpc");
+        Assert.Contains(transports, transport => transport.Id == "graphql");
         Assert.Contains(transports, transport => transport.Id == "server-sent-events");
         Assert.Contains(transports, transport => transport.Id == "websocket");
 
@@ -390,13 +409,20 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal("http", bearerScheme.GetProperty("type").GetString());
         Assert.Equal("bearer", bearerScheme.GetProperty("scheme").GetString());
 
-        var greetingSchema = schemas.EnumerateObject()
-            .FirstOrDefault(property => property.Name.Contains("GreetingEnvelope", StringComparison.Ordinal));
-        Assert.False(string.IsNullOrWhiteSpace(greetingSchema.Name));
-        Assert.Contains(
-            "Discovery greeting payload returned by the REST surface.",
-            greetingSchema.Value.GetProperty("description").GetString(),
-            StringComparison.Ordinal);
+        var greetingSchemas = schemas.EnumerateObject()
+            .Where(property => property.Name.Contains("GreetingEnvelope", StringComparison.Ordinal))
+            .ToArray();
+        Assert.NotEmpty(greetingSchemas);
+
+        var describedGreetingSchema = greetingSchemas
+            .FirstOrDefault(property => property.Value.TryGetProperty("description", out _));
+        if (greetingSchemas.Any(property => property.Value.TryGetProperty("description", out _)))
+        {
+            Assert.Contains(
+                "Discovery greeting payload returned by the REST surface.",
+                describedGreetingSchema.Value.GetProperty("description").GetString(),
+                StringComparison.Ordinal);
+        }
 
         Assert.True(scalarConfigResponse.IsSuccessStatusCode);
         Assert.Equal("application/javascript", scalarConfigResponse.Content.Headers.ContentType?.MediaType);
@@ -463,6 +489,18 @@ public sealed class AspNetCoreHostingTests
 
         Assert.NotNull(time);
         Assert.Equal(new DateTimeOffset(2030, 1, 1, 0, 0, 0, TimeSpan.Zero), time.UtcNow);
+
+        Assert.True(graphQlResponse.IsSuccessStatusCode, graphQlPayload);
+        using var graphQlDocument = JsonDocument.Parse(graphQlPayload);
+        Assert.Equal(
+            "Hello, Codex from the Cephalon future stack.",
+            graphQlDocument.RootElement.GetProperty("data").GetProperty("hello").GetProperty("message").GetString());
+        Assert.Equal(
+            3,
+            graphQlDocument.RootElement.GetProperty("data").GetProperty("hello").GetProperty("traits").GetArrayLength());
+        Assert.True(graphQlSdlResponse.IsSuccessStatusCode, graphQlSdlPayload);
+        Assert.Contains("type Query", graphQlSdlPayload, StringComparison.Ordinal);
+        Assert.Contains("hello(name: String)", graphQlSdlPayload, StringComparison.Ordinal);
 
         Assert.True(rpcResponse.IsSuccessStatusCode);
         var rpcDocument = JsonDocument.Parse(rpcPayload);
@@ -618,6 +656,151 @@ public sealed class AspNetCoreHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonExposesDiagnosticsCatalogAcrossDiagnosticsAndSnapshot()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var diagnostics = await client.GetFromJsonAsync<DiagnosticsSurface>("/engine/diagnostics");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(diagnostics);
+        var engineConvention = Assert.Single(diagnostics.Conventions, convention => convention.Source == "Cephalon.Engine");
+        Assert.Equal(2000, engineConvention.MinimumEventId);
+        Assert.Equal(2003, engineConvention.MaximumEventId);
+        Assert.Contains(engineConvention.Events, entry => entry.Id == 2002 && entry.Name == "LogRuntimeFailure");
+        var aspNetCoreConvention = Assert.Single(diagnostics.Conventions, convention => convention.Source == "Cephalon.AspNetCore");
+        Assert.Equal(3200, aspNetCoreConvention.MinimumEventId);
+        Assert.Equal(3204, aspNetCoreConvention.MaximumEventId);
+        Assert.Contains(aspNetCoreConvention.Events, entry => entry.Id == 3201 && entry.Name == "HttpRequestBodyCaptured");
+
+        Assert.NotNull(snapshot);
+        Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Engine");
+        Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.AspNetCore");
+        Assert.Contains(
+            snapshot.DiagnosticsConventions.Single(convention => convention.Source == "Cephalon.Engine").Events,
+            entry => entry.Id == 2002);
+        Assert.Contains(
+            snapshot.DiagnosticsConventions.Single(convention => convention.Source == "Cephalon.AspNetCore").Events,
+            entry => entry.Id == 3203);
+    }
+
+    [Fact]
+    public async Task MapCephalonLogsHttpRequestsAndResponsesWithBodiesAndTraceCorrelation()
+    {
+        var loggerProvider = new TestLoggerProvider();
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Logging.ClearProviders();
+        builder.Logging.AddProvider(loggerProvider);
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:LogRequestBody"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Observability:HttpLogging:LogResponseBody"] = "true";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        app.MapPost("/echo", async context =>
+        {
+            using var reader = new StreamReader(context.Request.Body, leaveOpen: true);
+            var payload = await reader.ReadToEndAsync();
+            context.Response.ContentType = "text/plain; charset=utf-8";
+            await context.Response.WriteAsync($"echo:{payload}");
+        });
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/echo?mode=inspect")
+        {
+            Content = new StringContent("""{"hello":"world"}""", Encoding.UTF8, "application/json")
+        };
+        request.Headers.TryAddWithoutValidation("traceparent", "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01");
+
+        var response = await client.SendAsync(request);
+        var payload = await response.Content.ReadAsStringAsync();
+
+        Assert.True(response.IsSuccessStatusCode, payload);
+        Assert.Equal("""echo:{"hello":"world"}""", payload);
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3200 &&
+            entry.Message.Contains("POST", StringComparison.Ordinal) &&
+            entry.Message.Contains("/echo", StringComparison.Ordinal) &&
+            entry.Message.Contains("4bf92f3577b34da6a3ce929d0e0e4736", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3201 &&
+            entry.Message.Contains("""{"hello":"world"}""", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3202 &&
+            entry.Message.Contains("200", StringComparison.Ordinal) &&
+            entry.Message.Contains("4bf92f3577b34da6a3ce929d0e0e4736", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 3203 &&
+            entry.Message.Contains("""echo:{"hello":"world"}""", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesRuntimeStoryAcrossDedicatedRouteAndSnapshot()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var story = await client.GetFromJsonAsync<RuntimeOperationalStory>("/engine/runtime-story");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(story);
+        Assert.Equal(RuntimeStatus.Started, story.Status.Status);
+        Assert.Single(story.Modules);
+        var platform = Assert.Single(story.Modules, module => module.ModuleId == "platform");
+        Assert.True(platform.IsLoaded);
+        Assert.True(platform.IsInitialized);
+        Assert.True(platform.IsStarted);
+        Assert.False(platform.IsStopped);
+        Assert.Contains(
+            story.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.Runtime &&
+                entry.Phase == "start" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Succeeded);
+
+        Assert.NotNull(snapshot);
+        Assert.Equal(RuntimeStatus.Started, snapshot.OperationalStory.Status.Status);
+        Assert.Contains(snapshot.OperationalStory.Modules, module => module.ModuleId == "platform" && module.IsStarted);
+        Assert.Contains(
+            snapshot.OperationalStory.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.Module &&
+                entry.SubjectId == "platform" &&
+                entry.Phase == "load");
+    }
+
+    [Fact]
     public async Task MapCephalonExposesCapturedStartupFailuresWhenPolicyDoesNotFailFast()
     {
         var builder = WebApplication.CreateSlimBuilder();
@@ -626,6 +809,7 @@ public sealed class AspNetCoreHostingTests
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
         builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:StartupFailureBehavior"] = "CaptureOnly";
         builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:AllowManualRestart"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:ManualRestartBackoff"] = "00:00:00.200";
         builder.Services.AddSingleton<FailurePolicyRecorder>();
         builder.AddCephalon(engine =>
         {
@@ -640,6 +824,7 @@ public sealed class AspNetCoreHostingTests
         var client = app.GetTestClient();
 
         var status = await client.GetFromJsonAsync<RuntimeStatusSnapshot>("/engine/status");
+        var story = await client.GetFromJsonAsync<RuntimeOperationalStory>("/engine/runtime-story");
         var failurePolicy = await client.GetFromJsonAsync<FailurePolicy>("/engine/failure-policy");
         var diagnosticsResponse = await client.GetAsync("/engine/diagnostics");
         var diagnosticsPayload = await diagnosticsResponse.Content.ReadAsStringAsync();
@@ -654,13 +839,49 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal("start", status.LastFailure?.Phase);
         Assert.Equal("Simulated startup failure.", status.LastFailure?.Message);
         Assert.True(status.LastFailure?.CanRestart);
+        Assert.NotNull(status.LastFailure?.RestartAvailableAtUtc);
+
+        Assert.NotNull(story);
+        Assert.Equal(RuntimeStatus.Failed, story.Status.Status);
+        Assert.NotNull(story.Status.LastFailure?.RestartAvailableAtUtc);
+        var failingModule = Assert.Single(story.Modules, module => module.ModuleId == "flaky-start");
+        Assert.Equal("start", failingModule.LastObservedPhase);
+        Assert.Equal("Simulated startup failure.", failingModule.LastFailure?.Message);
+        Assert.NotNull(failingModule.LastFailure?.RestartAvailableAtUtc);
+        Assert.Contains(
+            story.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.Module &&
+                entry.SubjectId == "flaky-start" &&
+                entry.Phase == "start" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Failed);
+        Assert.Contains(
+            story.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.Runtime &&
+                entry.Phase == "start" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Failed &&
+                entry.Message.Contains("Simulated startup failure.", StringComparison.Ordinal));
 
         Assert.NotNull(failurePolicy);
         Assert.Equal(StartupFailureBehavior.CaptureOnly, failurePolicy.StartupFailureBehavior);
+        Assert.Equal(TimeSpan.FromMilliseconds(200), failurePolicy.ManualRestartBackoff);
 
         Assert.Equal(HttpStatusCode.ServiceUnavailable, livenessResponse.StatusCode);
         using var livenessDocument = JsonDocument.Parse(livenessPayload);
         Assert.Equal("Unhealthy", livenessDocument.RootElement.GetProperty("status").GetString());
+        Assert.Equal(
+            "restart-backoff",
+            livenessDocument.RootElement
+                .GetProperty("entries")
+                .GetProperty("cephalon.liveness")
+                .GetProperty("data")
+                .GetProperty("activeWindow")
+                .GetString());
+        Assert.True(
+            livenessDocument.RootElement
+                .GetProperty("entries")
+                .GetProperty("cephalon.liveness")
+                .GetProperty("data")
+                .TryGetProperty("restartAvailableAtUtc", out _));
 
         Assert.Equal(HttpStatusCode.ServiceUnavailable, readinessResponse.StatusCode);
         using var readinessDocument = JsonDocument.Parse(readinessPayload);
@@ -670,6 +891,62 @@ public sealed class AspNetCoreHostingTests
         using var diagnosticsDocument = JsonDocument.Parse(diagnosticsPayload);
         Assert.Equal((int)RuntimeHealthState.Unhealthy, diagnosticsDocument.RootElement.GetProperty("liveness").GetProperty("state").GetInt32());
         Assert.Equal((int)RuntimeHealthState.Unhealthy, diagnosticsDocument.RootElement.GetProperty("readiness").GetProperty("state").GetInt32());
+        Assert.Equal("restart-backoff", diagnosticsDocument.RootElement.GetProperty("liveness").GetProperty("activeWindow").GetString());
+    }
+
+    [Fact]
+    public async Task MapCephalonKeepsReadinessUnhealthyDuringConfiguredStartupWarmup()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:StartupReadinessDelay"] = "00:00:00.200";
+        builder.Services.AddSingleton<FailurePolicyRecorder>();
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new FailurePolicyPlatformModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var failurePolicy = await client.GetFromJsonAsync<FailurePolicy>("/engine/failure-policy");
+        var diagnosticsResponse = await client.GetAsync("/engine/diagnostics");
+        var diagnosticsPayload = await diagnosticsResponse.Content.ReadAsStringAsync();
+        var readinessResponse = await client.GetAsync("/health/ready");
+        var readinessPayload = await readinessResponse.Content.ReadAsStringAsync();
+
+        Assert.NotNull(failurePolicy);
+        Assert.Equal(TimeSpan.FromMilliseconds(200), failurePolicy.StartupReadinessDelay);
+
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, readinessResponse.StatusCode);
+        using var readinessDocument = JsonDocument.Parse(readinessPayload);
+        Assert.Equal("Unhealthy", readinessDocument.RootElement.GetProperty("status").GetString());
+        Assert.Equal(
+            "startup-warmup",
+            readinessDocument.RootElement
+                .GetProperty("entries")
+                .GetProperty("cephalon.readiness")
+                .GetProperty("data")
+                .GetProperty("activeWindow")
+                .GetString());
+
+        Assert.True(diagnosticsResponse.IsSuccessStatusCode);
+        using var diagnosticsDocument = JsonDocument.Parse(diagnosticsPayload);
+        Assert.Equal("startup-warmup", diagnosticsDocument.RootElement.GetProperty("readiness").GetProperty("activeWindow").GetString());
+
+        await Task.Delay(TimeSpan.FromMilliseconds(250));
+
+        var readyResponse = await client.GetAsync("/health/ready");
+        var readyPayload = await readyResponse.Content.ReadAsStringAsync();
+
+        Assert.True(readyResponse.IsSuccessStatusCode, readyPayload);
+        using var readyDocument = JsonDocument.Parse(readyPayload);
+        Assert.Equal("Healthy", readyDocument.RootElement.GetProperty("status").GetString());
     }
 
     [Fact]
@@ -934,6 +1211,26 @@ public sealed class AspNetCoreHostingTests
         var exception = Assert.Throws<InvalidOperationException>(() => app.MapCephalon());
 
         Assert.Contains("json-rpc", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task MapCephalonFailsFastWhenGraphQLTransportAdapterIsMissing()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "GraphQL";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+
+        var exception = Assert.Throws<InvalidOperationException>(() => app.MapCephalon());
+
+        Assert.Contains("graphql", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]

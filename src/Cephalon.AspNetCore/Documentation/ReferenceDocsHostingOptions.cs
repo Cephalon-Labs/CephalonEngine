@@ -17,6 +17,13 @@ public sealed class ReferenceDocsHostingOptions
     public const string SectionName = "ReferenceDocs";
 
     /// <summary>
+    /// Creates reference-doc hosting options with the default hosted-doc route settings.
+    /// </summary>
+    public ReferenceDocsHostingOptions()
+    {
+    }
+
+    /// <summary>
     /// Gets or sets a value indicating whether hosted reference docs should be exposed.
     /// </summary>
     public bool Enabled { get; set; }

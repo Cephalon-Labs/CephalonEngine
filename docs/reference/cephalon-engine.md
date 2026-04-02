@@ -26,6 +26,8 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 ### `AppProfileFactory`
 
+Builds app profiles from `EngineSettings` values.
+
 #### Declaration
 ```csharp
 public static class AppProfileFactory
@@ -41,9 +43,18 @@ public static class AppProfileFactory
 AppProfile Create(EngineSettings settings)
 ```
 
+Creates an app profile from the configured engine settings.
+
+Returns: The built app profile.
+
+Parameters:
+- `settings`: The engine settings that describe the blueprint, patterns, transports, and technologies.
+
 <a id="type-cephalon-engine-appmodel-builtinblueprints"></a>
 
 ### `BuiltInBlueprints`
+
+Provides the built-in Cephalon app blueprints.
 
 #### Declaration
 ```csharp
@@ -60,6 +71,8 @@ public static class BuiltInBlueprints
 IReadOnlyList<AppBlueprint> All { get; }
 ```
 
+Gets all built-in blueprints.
+
 <a id="member-p-cephalon-engine-appmodel-builtinblueprints-microservice"></a>
 
 ##### `Microservice`
@@ -67,6 +80,8 @@ IReadOnlyList<AppBlueprint> All { get; }
 ```csharp
 AppBlueprint Microservice { get; }
 ```
+
+Gets the built-in microservice blueprint.
 
 <a id="member-p-cephalon-engine-appmodel-builtinblueprints-modularmonolith"></a>
 
@@ -76,6 +91,8 @@ AppBlueprint Microservice { get; }
 AppBlueprint ModularMonolith { get; }
 ```
 
+Gets the built-in modular-monolith blueprint.
+
 <a id="member-p-cephalon-engine-appmodel-builtinblueprints-modularverticalslice"></a>
 
 ##### `ModularVerticalSlice`
@@ -83,6 +100,8 @@ AppBlueprint ModularMonolith { get; }
 ```csharp
 AppBlueprint ModularVerticalSlice { get; }
 ```
+
+Gets the built-in modular-vertical-slice blueprint.
 
 #### Methods
 
@@ -94,6 +113,13 @@ AppBlueprint ModularVerticalSlice { get; }
 AppBlueprint Resolve(string value)
 ```
 
+Resolves a blueprint identifier, display name, or alias.
+
+Returns: The resolved blueprint.
+
+Parameters:
+- `value`: The blueprint identifier, display name, or alias to resolve.
+
 <a id="member-m-cephalon-engine-appmodel-builtinblueprints-tryresolve-system-string-cephalon-abstractions-appmodel-appblueprint"></a>
 
 ##### `TryResolve`
@@ -102,6 +128,14 @@ AppBlueprint Resolve(string value)
 bool TryResolve(string value, out AppBlueprint blueprint)
 ```
 
+Attempts to resolve a blueprint identifier, display name, or alias.
+
+Returns: `true` when the blueprint was resolved; otherwise, `false`.
+
+Parameters:
+- `value`: The blueprint identifier, display name, or alias to resolve.
+- `blueprint`: The resolved blueprint when the lookup succeeds.
+
 <a id="namespace-cephalon-engine-appmodel-scaffolding"></a>
 
 ## Namespace Cephalon.Engine.AppModel.Scaffolding
@@ -109,6 +143,8 @@ bool TryResolve(string value, out AppBlueprint blueprint)
 <a id="type-cephalon-engine-appmodel-scaffolding-builtinscaffolds"></a>
 
 ### `BuiltInScaffolds`
+
+Provides the built-in scaffold plans that back the shipped Cephalon blueprints.
 
 #### Declaration
 ```csharp
@@ -125,6 +161,8 @@ public static class BuiltInScaffolds
 ScaffoldPlan Microservice { get; }
 ```
 
+Gets the scaffold plan for the microservice blueprint.
+
 <a id="member-p-cephalon-engine-appmodel-scaffolding-builtinscaffolds-modularmonolith"></a>
 
 ##### `ModularMonolith`
@@ -133,6 +171,8 @@ ScaffoldPlan Microservice { get; }
 ScaffoldPlan ModularMonolith { get; }
 ```
 
+Gets the scaffold plan for the modular-monolith blueprint.
+
 <a id="member-p-cephalon-engine-appmodel-scaffolding-builtinscaffolds-modularverticalslice"></a>
 
 ##### `ModularVerticalSlice`
@@ -140,6 +180,8 @@ ScaffoldPlan ModularMonolith { get; }
 ```csharp
 ScaffoldPlan ModularVerticalSlice { get; }
 ```
+
+Gets the scaffold plan for the modular-vertical-slice blueprint.
 
 <a id="namespace-cephalon-engine-composition"></a>
 
@@ -189,13 +231,23 @@ Gets the service collection that the builder mutates while composing the engine.
 
 #### Methods
 
-<a id="member-m-cephalon-engine-composition-enginebuilder-addlanguageresources-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string"></a>
+<a id="member-m-cephalon-engine-composition-enginebuilder-addlanguageresources-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `AddLanguageResources`
 
 ```csharp
 EngineBuilder AddLanguageResources(string culture, IReadOnlyDictionary<string, string> resources)
 ```
+
+Adds resource overrides for a specific culture without replacing the existing localization contract.
+
+Remarks: This method is typically used by hosts that want to layer project-owned localization on top of engine defaults and any package-provided language packs.
+
+Returns: The same builder instance.
+
+Parameters:
+- `culture`: The culture name to extend, such as `en` or `th-TH`.
+- `resources`: The key/value resource set to merge for that culture.
 
 <a id="member-m-cephalon-engine-composition-enginebuilder-addmodule-1"></a>
 
@@ -227,7 +279,7 @@ Returns: The same builder instance.
 Parameters:
 - `module`: The module instance to register.
 
-<a id="member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassemblies-system-collections-generic-ienumerable-1-system-reflection-assembly-system-func-2-system-type-system-boolean"></a>
+<a id="member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassemblies-system-collections-generic-ienumerable-system-reflection-assembly-system-func-system-type-system-boolean"></a>
 
 ##### `AddModulesFromAssemblies`
 
@@ -235,7 +287,15 @@ Parameters:
 EngineBuilder AddModulesFromAssemblies(IEnumerable<Assembly> assemblies, Func<Type, bool> filter)
 ```
 
-<a id="member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassembly-system-reflection-assembly-system-func-2-system-type-system-boolean"></a>
+Discovers and adds modules from a sequence of assemblies.
+
+Returns: The same builder instance.
+
+Parameters:
+- `assemblies`: The assemblies to scan for modules.
+- `filter`: An optional predicate that can opt specific candidate types in or out before they are instantiated.
+
+<a id="member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassembly-system-reflection-assembly-system-func-system-type-system-boolean"></a>
 
 ##### `AddModulesFromAssembly`
 
@@ -243,13 +303,31 @@ EngineBuilder AddModulesFromAssemblies(IEnumerable<Assembly> assemblies, Func<Ty
 EngineBuilder AddModulesFromAssembly(Assembly assembly, Func<Type, bool> filter)
 ```
 
-<a id="member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassemblycontaining-1-system-func-2-system-type-system-boolean"></a>
+Discovers and adds modules from an assembly.
+
+Returns: The same builder instance.
+
+Parameters:
+- `assembly`: The assembly to scan.
+- `filter`: An optional predicate that can opt specific candidate types in or out before they are instantiated.
+
+<a id="member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassemblycontaining-1-system-func-system-type-system-boolean"></a>
 
 ##### `AddModulesFromAssemblyContaining`
 
 ```csharp
 EngineBuilder AddModulesFromAssemblyContaining<TMarker>(Func<Type, bool> filter)
 ```
+
+Discovers and adds modules from the assembly that contains `TMarker`.
+
+Returns: The same builder instance.
+
+Type parameters:
+- `TMarker`: A type used only to identify the source assembly.
+
+Parameters:
+- `filter`: An optional predicate that can opt specific candidate types in or out before they are instantiated.
 
 <a id="member-m-cephalon-engine-composition-enginebuilder-addpackage-cephalon-engine-configuration-modulepackagereference"></a>
 
@@ -282,13 +360,20 @@ Parameters:
 - `path`: The path to the package assembly.
 - `id`: An optional stable package identifier. When omitted, the identifier is derived from the reference.
 
-<a id="member-m-cephalon-engine-composition-enginebuilder-addpackagedirectories-system-collections-generic-ienumerable-1-cephalon-engine-configuration-modulepackagedirectory"></a>
+<a id="member-m-cephalon-engine-composition-enginebuilder-addpackagedirectories-system-collections-generic-ienumerable-cephalon-engine-configuration-modulepackagedirectory"></a>
 
 ##### `AddPackageDirectories`
 
 ```csharp
 EngineBuilder AddPackageDirectories(IEnumerable<ModulePackageDirectory> directories)
 ```
+
+Adds multiple package-directory discovery rules.
+
+Returns: The same builder instance.
+
+Parameters:
+- `directories`: The package directories to register.
 
 <a id="member-m-cephalon-engine-composition-enginebuilder-addpackagedirectory-cephalon-engine-configuration-modulepackagedirectory"></a>
 
@@ -338,13 +423,20 @@ Parameters:
 - `manifestPath`: The path to the package manifest file.
 - `id`: An optional stable package identifier. When omitted, the identifier is resolved from the manifest.
 
-<a id="member-m-cephalon-engine-composition-enginebuilder-addpackages-system-collections-generic-ienumerable-1-cephalon-engine-configuration-modulepackagereference"></a>
+<a id="member-m-cephalon-engine-composition-enginebuilder-addpackages-system-collections-generic-ienumerable-cephalon-engine-configuration-modulepackagereference"></a>
 
 ##### `AddPackages`
 
 ```csharp
 EngineBuilder AddPackages(IEnumerable<ModulePackageReference> packages)
 ```
+
+Adds multiple explicit package references.
+
+Returns: The same builder instance.
+
+Parameters:
+- `packages`: The package references to register.
 
 <a id="member-m-cephalon-engine-composition-enginebuilder-addpattern-cephalon-abstractions-patterns-patterndescriptor"></a>
 
@@ -560,7 +652,7 @@ public static class EngineServiceCollectionExtensions
 
 #### Methods
 
-<a id="member-m-cephalon-engine-composition-engineservicecollectionextensions-addcephalon-microsoft-extensions-dependencyinjection-iservicecollection-system-action-1-cephalon-engine-composition-enginebuilder"></a>
+<a id="member-m-cephalon-engine-composition-engineservicecollectionextensions-addcephalon-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-engine-composition-enginebuilder"></a>
 
 ##### `AddCephalon`
 
@@ -568,13 +660,31 @@ public static class EngineServiceCollectionExtensions
 IServiceCollection AddCephalon(this IServiceCollection services, Action<EngineBuilder> configure)
 ```
 
-<a id="member-m-cephalon-engine-composition-engineservicecollectionextensions-addcephalon-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-1-cephalon-engine-composition-enginebuilder-system-string"></a>
+Adds Cephalon using code-first configuration.
+
+Returns: The same service collection for further registration.
+
+Parameters:
+- `services`: The target service collection.
+- `configure`: The callback that configures the engine builder.
+
+<a id="member-m-cephalon-engine-composition-engineservicecollectionextensions-addcephalon-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-engine-composition-enginebuilder-system-string"></a>
 
 ##### `AddCephalon`
 
 ```csharp
 IServiceCollection AddCephalon(this IServiceCollection services, IConfiguration configuration, Action<EngineBuilder> configure, string sectionPath)
 ```
+
+Adds Cephalon using configuration as the primary source of engine settings.
+
+Returns: The same service collection for further registration.
+
+Parameters:
+- `services`: The target service collection.
+- `configuration`: The application configuration root.
+- `configure`: An optional callback that can extend or override the configuration-driven engine setup.
+- `sectionPath`: The configuration section path that contains the engine settings. The default is `Engine`.
 
 <a id="namespace-cephalon-engine-configuration"></a>
 
@@ -584,6 +694,8 @@ IServiceCollection AddCephalon(this IServiceCollection services, IConfiguration 
 
 ### `EngineOptions`
 
+Captures module and capability enablement overrides for the runtime.
+
 #### Declaration
 ```csharp
 public sealed class EngineOptions
@@ -591,13 +703,19 @@ public sealed class EngineOptions
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-engineoptions-ctor-system-collections-generic-ireadonlydictionary-2-system-string-system-boolean-system-collections-generic-ireadonlydictionary-2-system-string-system-boolean"></a>
+<a id="member-m-cephalon-engine-configuration-engineoptions-ctor-system-collections-generic-ireadonlydictionary-system-string-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-boolean"></a>
 
 ##### `EngineOptions`
 
 ```csharp
 EngineOptions(IReadOnlyDictionary<string, bool> modules, IReadOnlyDictionary<string, bool> capabilities)
 ```
+
+Initializes a new instance of the `EngineOptions` class.
+
+Parameters:
+- `modules`: Module enablement overrides keyed by module identifier.
+- `capabilities`: Capability enablement overrides keyed by capability key.
 
 #### Properties
 
@@ -609,6 +727,8 @@ EngineOptions(IReadOnlyDictionary<string, bool> modules, IReadOnlyDictionary<str
 IReadOnlyDictionary<string, bool> Capabilities { get; }
 ```
 
+Gets capability enablement overrides keyed by capability key.
+
 <a id="member-p-cephalon-engine-configuration-engineoptions-empty"></a>
 
 ##### `Empty`
@@ -616,6 +736,8 @@ IReadOnlyDictionary<string, bool> Capabilities { get; }
 ```csharp
 EngineOptions Empty { get; }
 ```
+
+Gets an empty options instance with no explicit overrides.
 
 <a id="member-p-cephalon-engine-configuration-engineoptions-hasvalues"></a>
 
@@ -625,6 +747,8 @@ EngineOptions Empty { get; }
 bool HasValues { get; }
 ```
 
+Gets a value indicating whether any explicit option overrides are present.
+
 <a id="member-p-cephalon-engine-configuration-engineoptions-modules"></a>
 
 ##### `Modules`
@@ -632,6 +756,8 @@ bool HasValues { get; }
 ```csharp
 IReadOnlyDictionary<string, bool> Modules { get; }
 ```
+
+Gets module enablement overrides keyed by module identifier.
 
 #### Methods
 
@@ -643,6 +769,14 @@ IReadOnlyDictionary<string, bool> Modules { get; }
 EngineOptions FromConfiguration(IConfiguration configuration, string sectionPath)
 ```
 
+Reads engine options from configuration.
+
+Returns: The parsed engine options.
+
+Parameters:
+- `configuration`: The configuration source that contains the engine section.
+- `sectionPath`: The root configuration section path to read from.
+
 <a id="member-m-cephalon-engine-configuration-engineoptions-iscapabilityenabled-system-string"></a>
 
 ##### `IsCapabilityEnabled`
@@ -650,6 +784,13 @@ EngineOptions FromConfiguration(IConfiguration configuration, string sectionPath
 ```csharp
 bool IsCapabilityEnabled(string capabilityKey)
 ```
+
+Determines whether a capability is enabled under the current option set.
+
+Returns: `true` when the capability is enabled; otherwise, `false`.
+
+Parameters:
+- `capabilityKey`: The capability key to evaluate.
 
 <a id="member-m-cephalon-engine-configuration-engineoptions-ismoduleenabled-system-string"></a>
 
@@ -659,6 +800,13 @@ bool IsCapabilityEnabled(string capabilityKey)
 bool IsModuleEnabled(string moduleId)
 ```
 
+Determines whether a module is enabled under the current option set.
+
+Returns: `true` when the module is enabled; otherwise, `false`.
+
+Parameters:
+- `moduleId`: The module identifier to evaluate.
+
 <a id="member-m-cephalon-engine-configuration-engineoptions-merge-cephalon-engine-configuration-engineoptions"></a>
 
 ##### `Merge`
@@ -667,9 +815,18 @@ bool IsModuleEnabled(string moduleId)
 EngineOptions Merge(EngineOptions other)
 ```
 
+Merges another option set into the current instance.
+
+Returns: A merged option set.
+
+Parameters:
+- `other`: The option set to overlay on top of the current values.
+
 <a id="type-cephalon-engine-configuration-enginesettings"></a>
 
 ### `EngineSettings`
+
+Represents the configuration-driven app-model and runtime policy settings for Cephalon.
 
 #### Declaration
 ```csharp
@@ -678,13 +835,27 @@ public sealed class EngineSettings
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy"></a>
+<a id="member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy"></a>
 
 ##### `EngineSettings`
 
 ```csharp
 EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy)
 ```
+
+Initializes a new instance of the `EngineSettings` class.
+
+Parameters:
+- `blueprint`: The selected blueprint identifier, if any.
+- `patterns`: The selected pattern identifiers.
+- `transports`: The selected transport identifiers.
+- `technologies`: The selected technology identifiers.
+- `options`: Module and capability option overrides.
+- `discovery`: Module discovery inputs.
+- `localization`: Localization configuration values.
+- `failurePolicy`: Runtime failure policy values.
+- `trustPolicy`: Capability and package trust policy values.
+- `packagePolicy`: Package metadata and integrity policy values.
 
 #### Fields
 
@@ -696,6 +867,8 @@ EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<s
 const string SectionName
 ```
 
+Gets the default root configuration section name for engine settings.
+
 #### Properties
 
 <a id="member-p-cephalon-engine-configuration-enginesettings-blueprint"></a>
@@ -706,6 +879,8 @@ const string SectionName
 string Blueprint { get; }
 ```
 
+Gets the selected blueprint identifier.
+
 <a id="member-p-cephalon-engine-configuration-enginesettings-discovery"></a>
 
 ##### `Discovery`
@@ -713,6 +888,8 @@ string Blueprint { get; }
 ```csharp
 ModuleDiscoverySettings Discovery { get; }
 ```
+
+Gets module discovery inputs.
 
 <a id="member-p-cephalon-engine-configuration-enginesettings-failurepolicy"></a>
 
@@ -722,6 +899,8 @@ ModuleDiscoverySettings Discovery { get; }
 FailurePolicy FailurePolicy { get; }
 ```
 
+Gets runtime failure policy values.
+
 <a id="member-p-cephalon-engine-configuration-enginesettings-hasvalues"></a>
 
 ##### `HasValues`
@@ -729,6 +908,8 @@ FailurePolicy FailurePolicy { get; }
 ```csharp
 bool HasValues { get; }
 ```
+
+Gets a value indicating whether any engine settings were explicitly supplied.
 
 <a id="member-p-cephalon-engine-configuration-enginesettings-localization"></a>
 
@@ -738,6 +919,8 @@ bool HasValues { get; }
 LocalizationSettings Localization { get; }
 ```
 
+Gets localization configuration values.
+
 <a id="member-p-cephalon-engine-configuration-enginesettings-options"></a>
 
 ##### `Options`
@@ -745,6 +928,8 @@ LocalizationSettings Localization { get; }
 ```csharp
 EngineOptions Options { get; }
 ```
+
+Gets module and capability option overrides.
 
 <a id="member-p-cephalon-engine-configuration-enginesettings-packagepolicy"></a>
 
@@ -754,6 +939,8 @@ EngineOptions Options { get; }
 PackagePolicy PackagePolicy { get; }
 ```
 
+Gets package metadata and integrity policy values.
+
 <a id="member-p-cephalon-engine-configuration-enginesettings-patterns"></a>
 
 ##### `Patterns`
@@ -761,6 +948,8 @@ PackagePolicy PackagePolicy { get; }
 ```csharp
 IReadOnlyList<string> Patterns { get; }
 ```
+
+Gets the selected pattern identifiers.
 
 <a id="member-p-cephalon-engine-configuration-enginesettings-technologies"></a>
 
@@ -770,6 +959,8 @@ IReadOnlyList<string> Patterns { get; }
 IReadOnlyList<string> Technologies { get; }
 ```
 
+Gets the selected technology identifiers.
+
 <a id="member-p-cephalon-engine-configuration-enginesettings-transports"></a>
 
 ##### `Transports`
@@ -778,6 +969,8 @@ IReadOnlyList<string> Technologies { get; }
 IReadOnlyList<string> Transports { get; }
 ```
 
+Gets the selected transport identifiers.
+
 <a id="member-p-cephalon-engine-configuration-enginesettings-trustpolicy"></a>
 
 ##### `TrustPolicy`
@@ -785,6 +978,8 @@ IReadOnlyList<string> Transports { get; }
 ```csharp
 TrustPolicy TrustPolicy { get; }
 ```
+
+Gets capability and package trust policy values.
 
 #### Methods
 
@@ -796,9 +991,19 @@ TrustPolicy TrustPolicy { get; }
 EngineSettings FromConfiguration(IConfiguration configuration, string sectionPath)
 ```
 
+Reads engine settings from configuration.
+
+Returns: The parsed engine settings.
+
+Parameters:
+- `configuration`: The configuration source that contains the engine section.
+- `sectionPath`: The root configuration section path to read from.
+
 <a id="type-cephalon-engine-configuration-failurepolicy"></a>
 
 ### `FailurePolicy`
+
+Describes how the runtime reacts to startup, stop, and restart failures.
 
 #### Declaration
 ```csharp
@@ -807,13 +1012,24 @@ public sealed class FailurePolicy
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-failurepolicy-ctor-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior-system-boolean-system-int32"></a>
+<a id="member-m-cephalon-engine-configuration-failurepolicy-ctor-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior-system-boolean-system-int32-system-timespan-system-timespan-system-timespan"></a>
 
 ##### `FailurePolicy`
 
 ```csharp
-FailurePolicy(StartupFailureBehavior startupFailureBehavior, StopFailureBehavior stopFailureBehavior, bool allowManualRestart, int maxRestartAttempts)
+FailurePolicy(StartupFailureBehavior startupFailureBehavior, StopFailureBehavior stopFailureBehavior, bool allowManualRestart, int maxRestartAttempts, TimeSpan startupReadinessDelay, TimeSpan shutdownLivenessGracePeriod, TimeSpan manualRestartBackoff)
 ```
+
+Initializes a new instance of the `FailurePolicy` class.
+
+Parameters:
+- `startupFailureBehavior`: How startup failures are handled.
+- `stopFailureBehavior`: How stop failures are handled.
+- `allowManualRestart`: Whether operators can manually restart the runtime after supported failures.
+- `maxRestartAttempts`: The maximum number of manual restarts, where `-1` allows unlimited restarts.
+- `startupReadinessDelay`: The optional warmup window that keeps readiness unhealthy after startup succeeds.
+- `shutdownLivenessGracePeriod`: The optional drain window that keeps liveness healthy while shutdown is in progress.
+- `manualRestartBackoff`: The optional backoff window that delays manual restarts after a restartable failure.
 
 #### Properties
 
@@ -825,6 +1041,8 @@ FailurePolicy(StartupFailureBehavior startupFailureBehavior, StopFailureBehavior
 bool AllowManualRestart { get; }
 ```
 
+Gets a value indicating whether manual restart is allowed after supported failures.
+
 <a id="member-p-cephalon-engine-configuration-failurepolicy-default"></a>
 
 ##### `Default`
@@ -832,6 +1050,8 @@ bool AllowManualRestart { get; }
 ```csharp
 FailurePolicy Default { get; }
 ```
+
+Gets the default failure policy used when no explicit configuration is supplied.
 
 <a id="member-p-cephalon-engine-configuration-failurepolicy-hasvalues"></a>
 
@@ -841,6 +1061,18 @@ FailurePolicy Default { get; }
 bool HasValues { get; }
 ```
 
+Gets a value indicating whether this policy differs from `Default`.
+
+<a id="member-p-cephalon-engine-configuration-failurepolicy-manualrestartbackoff"></a>
+
+##### `ManualRestartBackoff`
+
+```csharp
+TimeSpan ManualRestartBackoff { get; }
+```
+
+Gets the cooldown window that must elapse before a manual restart may run after a restartable failure.
+
 <a id="member-p-cephalon-engine-configuration-failurepolicy-maxrestartattempts"></a>
 
 ##### `MaxRestartAttempts`
@@ -848,6 +1080,18 @@ bool HasValues { get; }
 ```csharp
 int MaxRestartAttempts { get; }
 ```
+
+Gets the maximum number of manual restarts.
+
+<a id="member-p-cephalon-engine-configuration-failurepolicy-shutdownlivenessgraceperiod"></a>
+
+##### `ShutdownLivenessGracePeriod`
+
+```csharp
+TimeSpan ShutdownLivenessGracePeriod { get; }
+```
+
+Gets the liveness grace window that applies while shutdown is still draining.
 
 <a id="member-p-cephalon-engine-configuration-failurepolicy-startupfailurebehavior"></a>
 
@@ -857,6 +1101,18 @@ int MaxRestartAttempts { get; }
 StartupFailureBehavior StartupFailureBehavior { get; }
 ```
 
+Gets how startup failures are handled.
+
+<a id="member-p-cephalon-engine-configuration-failurepolicy-startupreadinessdelay"></a>
+
+##### `StartupReadinessDelay`
+
+```csharp
+TimeSpan StartupReadinessDelay { get; }
+```
+
+Gets the readiness warmup window that applies after startup succeeds.
+
 <a id="member-p-cephalon-engine-configuration-failurepolicy-stopfailurebehavior"></a>
 
 ##### `StopFailureBehavior`
@@ -864,6 +1120,8 @@ StartupFailureBehavior StartupFailureBehavior { get; }
 ```csharp
 StopFailureBehavior StopFailureBehavior { get; }
 ```
+
+Gets how stop failures are handled.
 
 #### Methods
 
@@ -875,9 +1133,19 @@ StopFailureBehavior StopFailureBehavior { get; }
 FailurePolicy FromConfiguration(IConfiguration configuration, string sectionPath)
 ```
 
+Reads the failure policy from configuration.
+
+Returns: The parsed failure policy.
+
+Parameters:
+- `configuration`: The configuration source that contains the engine section.
+- `sectionPath`: The root configuration section path to read from.
+
 <a id="type-cephalon-engine-configuration-localizationsettings"></a>
 
 ### `LocalizationSettings`
+
+Describes localization configuration for the runtime and module resources.
 
 #### Declaration
 ```csharp
@@ -886,13 +1154,20 @@ public sealed class LocalizationSettings
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-localizationsettings-ctor-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string"></a>
+<a id="member-m-cephalon-engine-configuration-localizationsettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `LocalizationSettings`
 
 ```csharp
 LocalizationSettings(string defaultCulture, IReadOnlyList<string> supportedCultures, IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> resources)
 ```
+
+Initializes a new instance of the `LocalizationSettings` class.
+
+Parameters:
+- `defaultCulture`: The default culture to use when no explicit culture is requested.
+- `supportedCultures`: The supported culture identifiers.
+- `resources`: Localized resource entries keyed by culture and resource key.
 
 #### Properties
 
@@ -904,6 +1179,8 @@ LocalizationSettings(string defaultCulture, IReadOnlyList<string> supportedCultu
 string DefaultCulture { get; }
 ```
 
+Gets the default culture to use when no explicit culture is requested.
+
 <a id="member-p-cephalon-engine-configuration-localizationsettings-empty"></a>
 
 ##### `Empty`
@@ -911,6 +1188,8 @@ string DefaultCulture { get; }
 ```csharp
 LocalizationSettings Empty { get; }
 ```
+
+Gets an empty localization configuration instance.
 
 <a id="member-p-cephalon-engine-configuration-localizationsettings-hasvalues"></a>
 
@@ -920,6 +1199,8 @@ LocalizationSettings Empty { get; }
 bool HasValues { get; }
 ```
 
+Gets a value indicating whether any localization settings were explicitly supplied.
+
 <a id="member-p-cephalon-engine-configuration-localizationsettings-resources"></a>
 
 ##### `Resources`
@@ -928,6 +1209,8 @@ bool HasValues { get; }
 IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Resources { get; }
 ```
 
+Gets localized resource entries keyed by culture and resource key.
+
 <a id="member-p-cephalon-engine-configuration-localizationsettings-supportedcultures"></a>
 
 ##### `SupportedCultures`
@@ -935,6 +1218,8 @@ IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Resources { get
 ```csharp
 IReadOnlyList<string> SupportedCultures { get; }
 ```
+
+Gets the supported culture identifiers.
 
 #### Methods
 
@@ -946,6 +1231,14 @@ IReadOnlyList<string> SupportedCultures { get; }
 LocalizationSettings FromConfiguration(IConfiguration configuration, string sectionPath)
 ```
 
+Reads localization settings from configuration.
+
+Returns: The parsed localization settings.
+
+Parameters:
+- `configuration`: The configuration source that contains the engine section.
+- `sectionPath`: The root configuration section path to read from.
+
 <a id="member-m-cephalon-engine-configuration-localizationsettings-merge-cephalon-engine-configuration-localizationsettings"></a>
 
 ##### `Merge`
@@ -954,9 +1247,18 @@ LocalizationSettings FromConfiguration(IConfiguration configuration, string sect
 LocalizationSettings Merge(LocalizationSettings other)
 ```
 
+Merges another localization settings instance into the current instance.
+
+Returns: A merged localization settings instance.
+
+Parameters:
+- `other`: The localization settings to overlay on top of the current values.
+
 <a id="type-cephalon-engine-configuration-modulediscoverysettings"></a>
 
 ### `ModuleDiscoverySettings`
+
+Describes how the engine discovers modules from assemblies, package references, and package directories.
 
 #### Declaration
 ```csharp
@@ -965,13 +1267,20 @@ public sealed class ModuleDiscoverySettings
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-modulediscoverysettings-ctor-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-cephalon-engine-configuration-modulepackagereference-system-collections-generic-ireadonlylist-1-cephalon-engine-configuration-modulepackagedirectory"></a>
+<a id="member-m-cephalon-engine-configuration-modulediscoverysettings-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-engine-configuration-modulepackagereference-system-collections-generic-ireadonlylist-cephalon-engine-configuration-modulepackagedirectory"></a>
 
 ##### `ModuleDiscoverySettings`
 
 ```csharp
 ModuleDiscoverySettings(IReadOnlyList<string> assemblies, IReadOnlyList<ModulePackageReference> packages, IReadOnlyList<ModulePackageDirectory> packageDirectories)
 ```
+
+Initializes a new instance of the `ModuleDiscoverySettings` class.
+
+Parameters:
+- `assemblies`: Assembly names or paths to scan for modules.
+- `packages`: Explicit package references to load.
+- `packageDirectories`: Package directories to scan for manifests.
 
 #### Properties
 
@@ -983,6 +1292,8 @@ ModuleDiscoverySettings(IReadOnlyList<string> assemblies, IReadOnlyList<ModulePa
 IReadOnlyList<string> Assemblies { get; }
 ```
 
+Gets assembly names or paths to scan for modules.
+
 <a id="member-p-cephalon-engine-configuration-modulediscoverysettings-empty"></a>
 
 ##### `Empty`
@@ -990,6 +1301,8 @@ IReadOnlyList<string> Assemblies { get; }
 ```csharp
 ModuleDiscoverySettings Empty { get; }
 ```
+
+Gets an empty module discovery settings instance.
 
 <a id="member-p-cephalon-engine-configuration-modulediscoverysettings-hasvalues"></a>
 
@@ -999,6 +1312,8 @@ ModuleDiscoverySettings Empty { get; }
 bool HasValues { get; }
 ```
 
+Gets a value indicating whether any discovery inputs were explicitly supplied.
+
 <a id="member-p-cephalon-engine-configuration-modulediscoverysettings-packagedirectories"></a>
 
 ##### `PackageDirectories`
@@ -1007,6 +1322,8 @@ bool HasValues { get; }
 IReadOnlyList<ModulePackageDirectory> PackageDirectories { get; }
 ```
 
+Gets package directories to scan for manifests.
+
 <a id="member-p-cephalon-engine-configuration-modulediscoverysettings-packages"></a>
 
 ##### `Packages`
@@ -1014,6 +1331,8 @@ IReadOnlyList<ModulePackageDirectory> PackageDirectories { get; }
 ```csharp
 IReadOnlyList<ModulePackageReference> Packages { get; }
 ```
+
+Gets explicit package references to load.
 
 #### Methods
 
@@ -1025,9 +1344,19 @@ IReadOnlyList<ModulePackageReference> Packages { get; }
 ModuleDiscoverySettings FromConfiguration(IConfiguration configuration, string sectionPath)
 ```
 
+Reads module discovery settings from configuration.
+
+Returns: The parsed module discovery settings.
+
+Parameters:
+- `configuration`: The configuration source that contains the engine section.
+- `sectionPath`: The root configuration section path to read from.
+
 <a id="type-cephalon-engine-configuration-modulepackagedirectory"></a>
 
 ### `ModulePackageDirectory`
+
+Describes a directory that should be scanned for Cephalon package manifests.
 
 #### Declaration
 ```csharp
@@ -1044,6 +1373,13 @@ public sealed class ModulePackageDirectory
 ModulePackageDirectory(string path, string manifestFileName, bool includeSubdirectories)
 ```
 
+Initializes a new instance of the `ModulePackageDirectory` class.
+
+Parameters:
+- `path`: The directory path to scan.
+- `manifestFileName`: The manifest file name to look for inside the directory.
+- `includeSubdirectories`: Whether nested directories should also be scanned.
+
 #### Fields
 
 <a id="member-f-cephalon-engine-configuration-modulepackagedirectory-defaultmanifestfilename"></a>
@@ -1053,6 +1389,8 @@ ModulePackageDirectory(string path, string manifestFileName, bool includeSubdire
 ```csharp
 const string DefaultManifestFileName
 ```
+
+Gets the default manifest file name expected inside package directories.
 
 #### Properties
 
@@ -1064,6 +1402,8 @@ const string DefaultManifestFileName
 bool IncludeSubdirectories { get; }
 ```
 
+Gets a value indicating whether nested directories should also be scanned.
+
 <a id="member-p-cephalon-engine-configuration-modulepackagedirectory-manifestfilename"></a>
 
 ##### `ManifestFileName`
@@ -1071,6 +1411,8 @@ bool IncludeSubdirectories { get; }
 ```csharp
 string ManifestFileName { get; }
 ```
+
+Gets the manifest file name to look for inside the directory.
 
 <a id="member-p-cephalon-engine-configuration-modulepackagedirectory-path"></a>
 
@@ -1080,9 +1422,13 @@ string ManifestFileName { get; }
 string Path { get; }
 ```
 
+Gets the directory path to scan.
+
 <a id="type-cephalon-engine-configuration-modulepackagereference"></a>
 
 ### `ModulePackageReference`
+
+Describes a package input that can be loaded into the engine runtime.
 
 #### Declaration
 ```csharp
@@ -1099,6 +1445,13 @@ public sealed class ModulePackageReference
 ModulePackageReference(string path, string id, string kind)
 ```
 
+Initializes a new instance of the `ModulePackageReference` class.
+
+Parameters:
+- `path`: The assembly or manifest path.
+- `id`: The optional package identifier override.
+- `kind`: The package input kind.
+
 #### Fields
 
 <a id="member-f-cephalon-engine-configuration-modulepackagereference-assemblypathkind"></a>
@@ -1109,6 +1462,8 @@ ModulePackageReference(string path, string id, string kind)
 const string AssemblyPathKind
 ```
 
+Identifies a package input that points directly to an assembly path.
+
 <a id="member-f-cephalon-engine-configuration-modulepackagereference-directorymanifestkind"></a>
 
 ##### `DirectoryManifestKind`
@@ -1117,6 +1472,8 @@ const string AssemblyPathKind
 const string DirectoryManifestKind
 ```
 
+Identifies a package input that was discovered from a directory manifest scan.
+
 <a id="member-f-cephalon-engine-configuration-modulepackagereference-manifestfilekind"></a>
 
 ##### `ManifestFileKind`
@@ -1124,6 +1481,8 @@ const string DirectoryManifestKind
 ```csharp
 const string ManifestFileKind
 ```
+
+Identifies a package input that points directly to a manifest file.
 
 #### Properties
 
@@ -1135,6 +1494,8 @@ const string ManifestFileKind
 string Id { get; }
 ```
 
+Gets the optional package identifier override.
+
 <a id="member-p-cephalon-engine-configuration-modulepackagereference-isassemblypath"></a>
 
 ##### `IsAssemblyPath`
@@ -1142,6 +1503,8 @@ string Id { get; }
 ```csharp
 bool IsAssemblyPath { get; }
 ```
+
+Gets a value indicating whether this reference points directly to an assembly path.
 
 <a id="member-p-cephalon-engine-configuration-modulepackagereference-ismanifestfile"></a>
 
@@ -1151,6 +1514,8 @@ bool IsAssemblyPath { get; }
 bool IsManifestFile { get; }
 ```
 
+Gets a value indicating whether this reference points to a manifest-backed package input.
+
 <a id="member-p-cephalon-engine-configuration-modulepackagereference-kind"></a>
 
 ##### `Kind`
@@ -1159,6 +1524,8 @@ bool IsManifestFile { get; }
 string Kind { get; }
 ```
 
+Gets the normalized package input kind.
+
 <a id="member-p-cephalon-engine-configuration-modulepackagereference-path"></a>
 
 ##### `Path`
@@ -1166,6 +1533,8 @@ string Kind { get; }
 ```csharp
 string Path { get; }
 ```
+
+Gets the assembly or manifest path.
 
 #### Methods
 
@@ -1176,6 +1545,14 @@ string Path { get; }
 ```csharp
 ModulePackageReference FromManifest(string manifestPath, string id)
 ```
+
+Creates a manifest-backed package reference.
+
+Returns: A manifest-backed package reference.
+
+Parameters:
+- `manifestPath`: The manifest path to load.
+- `id`: The optional package identifier override.
 
 <a id="type-cephalon-engine-configuration-packagepolicy"></a>
 
@@ -1420,6 +1797,8 @@ Parameters:
 
 ### `StartupFailureBehavior`
 
+Describes how startup failures are handled.
+
 #### Declaration
 ```csharp
 public enum StartupFailureBehavior
@@ -1435,6 +1814,8 @@ public enum StartupFailureBehavior
 const StartupFailureBehavior CaptureOnly
 ```
 
+Capture the failure in runtime status without rethrowing it to the host.
+
 <a id="member-f-cephalon-engine-configuration-startupfailurebehavior-failfast"></a>
 
 ##### `FailFast`
@@ -1443,9 +1824,13 @@ const StartupFailureBehavior CaptureOnly
 const StartupFailureBehavior FailFast
 ```
 
+Stop startup immediately and rethrow the failure.
+
 <a id="type-cephalon-engine-configuration-stopfailurebehavior"></a>
 
 ### `StopFailureBehavior`
+
+Describes how stop failures are handled.
 
 #### Declaration
 ```csharp
@@ -1462,6 +1847,8 @@ public enum StopFailureBehavior
 const StopFailureBehavior BestEffortContinue
 ```
 
+Continue stopping remaining modules and report failures afterward.
+
 <a id="member-f-cephalon-engine-configuration-stopfailurebehavior-failfast"></a>
 
 ##### `FailFast`
@@ -1469,6 +1856,8 @@ const StopFailureBehavior BestEffortContinue
 ```csharp
 const StopFailureBehavior FailFast
 ```
+
+Stop shutdown immediately and rethrow the failure.
 
 <a id="type-cephalon-engine-configuration-trustpolicy"></a>
 
@@ -1487,13 +1876,26 @@ public sealed class TrustPolicy
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-trustpolicy-ctor-system-boolean-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string-system-collections-generic-ireadonlydictionary-2-system-string-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlydictionary-2-system-string-system-collections-generic-ireadonlylist-1-system-string"></a>
+<a id="member-m-cephalon-engine-configuration-trustpolicy-ctor-system-boolean-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlydictionary-system-string-system-collections-generic-ireadonlylist-system-string"></a>
 
 ##### `TrustPolicy`
 
 ```csharp
 TrustPolicy(bool requireTrustedPackages, CapabilityAccess defaultCapabilityAccess, IReadOnlyList<string> trustedPackages, IReadOnlyList<string> trustedAssemblies, IReadOnlyList<string> trustedPublishers, IReadOnlyList<string> trustedSignerFingerprints, IReadOnlyDictionary<string, string> trustedSignaturePublicKeys, IReadOnlyDictionary<string, CapabilityAccess> capabilities, IReadOnlyDictionary<string, IReadOnlyList<string>> allowedPackageChecksums)
 ```
+
+Creates a trust policy.
+
+Parameters:
+- `requireTrustedPackages`: `true` to require independently loaded packages to match at least one trust rule; otherwise package loads may proceed without an explicit trust match.
+- `defaultCapabilityAccess`: The default access applied when a capability key does not appear in `capabilities`.
+- `trustedPackages`: Package identifiers that should be treated as trusted when package-level allow-listing is in use.
+- `trustedAssemblies`: Assembly names that should be treated as trusted when assembly-level allow-listing is in use.
+- `trustedPublishers`: Stable publisher identifiers that should be treated as trusted for independently shipped packages.
+- `trustedSignerFingerprints`: Signer fingerprints that should be treated as trusted for detached-signature provenance checks.
+- `trustedSignaturePublicKeys`: Public keys keyed by signing identity or signer fingerprint, used for cryptographic signature verification.
+- `capabilities`: Explicit per-capability access overrides keyed by capability key.
+- `allowedPackageChecksums`: Explicit package checksum allow-lists keyed by package identifier.
 
 #### Properties
 
@@ -1659,9 +2061,257 @@ Parameters:
 
 ## Namespace Cephalon.Engine.Diagnostics
 
+<a id="type-cephalon-engine-diagnostics-diagnosticeventdefinition"></a>
+
+### `DiagnosticEventDefinition`
+
+Describes one published diagnostics event id together with its intended meaning.
+
+#### Declaration
+```csharp
+public sealed class DiagnosticEventDefinition
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-diagnostics-diagnosticeventdefinition-ctor-system-int32-system-string-cephalon-engine-diagnostics-diagnosticseverity-system-string-system-string"></a>
+
+##### `DiagnosticEventDefinition`
+
+```csharp
+DiagnosticEventDefinition(int Id, string Name, DiagnosticSeverity Severity, string MessageTemplate, string Description)
+```
+
+Describes one published diagnostics event id together with its intended meaning.
+
+Parameters:
+- `Id`: The stable numeric event identifier.
+- `Name`: The stable event name paired with the numeric identifier.
+- `Severity`: The intended severity for the event.
+- `MessageTemplate`: The structured message template emitted by the logger.
+- `Description`: The operator-facing explanation of when the event is emitted.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; set; }
+```
+
+The operator-facing explanation of when the event is emitted.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-id"></a>
+
+##### `Id`
+
+```csharp
+int Id { get; set; }
+```
+
+The stable numeric event identifier.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-messagetemplate"></a>
+
+##### `MessageTemplate`
+
+```csharp
+string MessageTemplate { get; set; }
+```
+
+The structured message template emitted by the logger.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-name"></a>
+
+##### `Name`
+
+```csharp
+string Name { get; set; }
+```
+
+The stable event name paired with the numeric identifier.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-severity"></a>
+
+##### `Severity`
+
+```csharp
+DiagnosticSeverity Severity { get; set; }
+```
+
+The intended severity for the event.
+
+<a id="type-cephalon-engine-diagnostics-diagnosticsconvention"></a>
+
+### `DiagnosticsConvention`
+
+Describes the diagnostics convention published by one engine package or companion package.
+
+#### Declaration
+```csharp
+public sealed class DiagnosticsConvention
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-diagnostics-diagnosticsconvention-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticeventdefinition"></a>
+
+##### `DiagnosticsConvention`
+
+```csharp
+DiagnosticsConvention(string Source, string LoggerCategoryPrefix, string Description, IReadOnlyList<DiagnosticEventDefinition> Events)
+```
+
+Describes the diagnostics convention published by one engine package or companion package.
+
+Parameters:
+- `Source`: The stable package or subsystem identifier that owns the convention.
+- `LoggerCategoryPrefix`: The logger category prefix used by the convention.
+- `Description`: The operator-facing explanation of what the convention covers.
+- `Events`: The published event definitions that belong to the convention.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticsconvention-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; set; }
+```
+
+The operator-facing explanation of what the convention covers.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticsconvention-events"></a>
+
+##### `Events`
+
+```csharp
+IReadOnlyList<DiagnosticEventDefinition> Events { get; set; }
+```
+
+The published event definitions that belong to the convention.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticsconvention-loggercategoryprefix"></a>
+
+##### `LoggerCategoryPrefix`
+
+```csharp
+string LoggerCategoryPrefix { get; set; }
+```
+
+The logger category prefix used by the convention.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticsconvention-maximumeventid"></a>
+
+##### `MaximumEventId`
+
+```csharp
+int? MaximumEventId { get; }
+```
+
+Gets the largest event id published by this convention.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticsconvention-minimumeventid"></a>
+
+##### `MinimumEventId`
+
+```csharp
+int? MinimumEventId { get; }
+```
+
+Gets the smallest event id published by this convention.
+
+<a id="member-p-cephalon-engine-diagnostics-diagnosticsconvention-source"></a>
+
+##### `Source`
+
+```csharp
+string Source { get; set; }
+```
+
+The stable package or subsystem identifier that owns the convention.
+
+<a id="type-cephalon-engine-diagnostics-diagnosticseverity"></a>
+
+### `DiagnosticSeverity`
+
+Describes the severity attached to a published diagnostics event definition.
+
+#### Declaration
+```csharp
+public enum DiagnosticSeverity
+```
+
+#### Fields
+
+<a id="member-f-cephalon-engine-diagnostics-diagnosticseverity-critical"></a>
+
+##### `Critical`
+
+```csharp
+const DiagnosticSeverity Critical
+```
+
+The event indicates a critical condition that usually requires immediate attention.
+
+<a id="member-f-cephalon-engine-diagnostics-diagnosticseverity-debug"></a>
+
+##### `Debug`
+
+```csharp
+const DiagnosticSeverity Debug
+```
+
+The event is intended for debug-oriented diagnostics.
+
+<a id="member-f-cephalon-engine-diagnostics-diagnosticseverity-error"></a>
+
+##### `Error`
+
+```csharp
+const DiagnosticSeverity Error
+```
+
+The event indicates an error condition.
+
+<a id="member-f-cephalon-engine-diagnostics-diagnosticseverity-information"></a>
+
+##### `Information`
+
+```csharp
+const DiagnosticSeverity Information
+```
+
+The event describes expected informational runtime behavior.
+
+<a id="member-f-cephalon-engine-diagnostics-diagnosticseverity-trace"></a>
+
+##### `Trace`
+
+```csharp
+const DiagnosticSeverity Trace
+```
+
+The event is useful only for highly detailed trace output.
+
+<a id="member-f-cephalon-engine-diagnostics-diagnosticseverity-warning"></a>
+
+##### `Warning`
+
+```csharp
+const DiagnosticSeverity Warning
+```
+
+The event highlights a warning condition or degraded behavior.
+
 <a id="type-cephalon-engine-diagnostics-enginediagnostics"></a>
 
 ### `EngineDiagnostics`
+
+Defines the stable meter, activity source, and counter names emitted by the engine runtime.
 
 #### Declaration
 ```csharp
@@ -1678,6 +2328,8 @@ public static class EngineDiagnostics
 const string ActivitySourceName
 ```
 
+Gets the activity-source name emitted by the engine.
+
 <a id="member-f-cephalon-engine-diagnostics-enginediagnostics-buildactivityname"></a>
 
 ##### `BuildActivityName`
@@ -1685,6 +2337,8 @@ const string ActivitySourceName
 ```csharp
 const string BuildActivityName
 ```
+
+Gets the activity name used while building the runtime.
 
 <a id="member-f-cephalon-engine-diagnostics-enginediagnostics-enginebuildcountername"></a>
 
@@ -1694,6 +2348,8 @@ const string BuildActivityName
 const string EngineBuildCounterName
 ```
 
+Gets the counter name for completed engine builds.
+
 <a id="member-f-cephalon-engine-diagnostics-enginediagnostics-metername"></a>
 
 ##### `MeterName`
@@ -1701,6 +2357,8 @@ const string EngineBuildCounterName
 ```csharp
 const string MeterName
 ```
+
+Gets the meter name emitted by the engine.
 
 <a id="member-f-cephalon-engine-diagnostics-enginediagnostics-modulefailurecountername"></a>
 
@@ -1710,6 +2368,8 @@ const string MeterName
 const string ModuleFailureCounterName
 ```
 
+Gets the counter name for module lifecycle failures.
+
 <a id="member-f-cephalon-engine-diagnostics-enginediagnostics-moduletransitioncountername"></a>
 
 ##### `ModuleTransitionCounterName`
@@ -1717,6 +2377,8 @@ const string ModuleFailureCounterName
 ```csharp
 const string ModuleTransitionCounterName
 ```
+
+Gets the counter name for module lifecycle transitions.
 
 <a id="member-f-cephalon-engine-diagnostics-enginediagnostics-runtimefailurecountername"></a>
 
@@ -1726,6 +2388,8 @@ const string ModuleTransitionCounterName
 const string RuntimeFailureCounterName
 ```
 
+Gets the counter name for runtime lifecycle failures.
+
 <a id="member-f-cephalon-engine-diagnostics-enginediagnostics-runtimerestartcountername"></a>
 
 ##### `RuntimeRestartCounterName`
@@ -1733,6 +2397,8 @@ const string RuntimeFailureCounterName
 ```csharp
 const string RuntimeRestartCounterName
 ```
+
+Gets the counter name for runtime restart attempts.
 
 <a id="member-f-cephalon-engine-diagnostics-enginediagnostics-runtimetransitioncountername"></a>
 
@@ -1742,6 +2408,73 @@ const string RuntimeRestartCounterName
 const string RuntimeTransitionCounterName
 ```
 
+Gets the counter name for runtime lifecycle transitions.
+
+<a id="type-cephalon-engine-diagnostics-idiagnosticsconventioncontributor"></a>
+
+### `IDiagnosticsConventionContributor`
+
+Contributes a diagnostics convention to the runtime-facing diagnostics catalog.
+
+#### Declaration
+```csharp
+public interface IDiagnosticsConventionContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-engine-diagnostics-idiagnosticsconventioncontributor-describediagnosticsconvention"></a>
+
+##### `DescribeDiagnosticsConvention`
+
+```csharp
+DiagnosticsConvention DescribeDiagnosticsConvention()
+```
+
+Describes the diagnostics convention owned by the contributor.
+
+Returns: The diagnostics convention published by the contributor.
+
+<a id="type-cephalon-engine-diagnostics-iruntimediagnosticscatalog"></a>
+
+### `IRuntimeDiagnosticsCatalog`
+
+Exposes the merged diagnostics conventions visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IRuntimeDiagnosticsCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-engine-diagnostics-iruntimediagnosticscatalog-conventions"></a>
+
+##### `Conventions`
+
+```csharp
+IReadOnlyList<DiagnosticsConvention> Conventions { get; }
+```
+
+Gets the published diagnostics conventions visible to the runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-diagnostics-iruntimediagnosticscatalog-getbysource-system-string"></a>
+
+##### `GetBySource`
+
+```csharp
+IReadOnlyList<DiagnosticsConvention> GetBySource(string source)
+```
+
+Gets the diagnostics conventions owned by the requested source.
+
+Returns: The matching conventions, or an empty list when the source is not active.
+
+Parameters:
+- `source`: The diagnostics source or package identifier.
+
 <a id="namespace-cephalon-engine-localization"></a>
 
 ## Namespace Cephalon.Engine.Localization
@@ -1749,6 +2482,8 @@ const string RuntimeTransitionCounterName
 <a id="type-cephalon-engine-localization-localizedtextcatalog"></a>
 
 ### `LocalizedTextCatalog`
+
+Resolves localized resources from built-in and configuration-supplied resource catalogs.
 
 #### Declaration
 ```csharp
@@ -1765,6 +2500,11 @@ public sealed class LocalizedTextCatalog
 LocalizedTextCatalog(LocalizationSettings settings)
 ```
 
+Initializes a new instance of the `LocalizedTextCatalog` class.
+
+Parameters:
+- `settings`: The localization settings that supply culture and resource overrides.
+
 #### Properties
 
 <a id="member-p-cephalon-engine-localization-localizedtextcatalog-defaultculture"></a>
@@ -1775,6 +2515,8 @@ LocalizedTextCatalog(LocalizationSettings settings)
 string DefaultCulture { get; }
 ```
 
+Gets the default culture used when no explicit culture is requested.
+
 <a id="member-p-cephalon-engine-localization-localizedtextcatalog-supportedcultures"></a>
 
 ##### `SupportedCultures`
@@ -1782,6 +2524,8 @@ string DefaultCulture { get; }
 ```csharp
 IReadOnlyList<string> SupportedCultures { get; }
 ```
+
+Gets the supported cultures available from the merged resource catalog.
 
 #### Methods
 
@@ -1793,6 +2537,13 @@ IReadOnlyList<string> SupportedCultures { get; }
 LocalizedResourcesSnapshot CreateSnapshot(string culture)
 ```
 
+Creates a serialization-friendly snapshot of the merged localized resources.
+
+Returns: A snapshot of the resolved localization view.
+
+Parameters:
+- `culture`: The preferred culture to resolve from.
+
 <a id="member-m-cephalon-engine-localization-localizedtextcatalog-getresources-system-string"></a>
 
 ##### `GetResources`
@@ -1800,6 +2551,13 @@ LocalizedResourcesSnapshot CreateSnapshot(string culture)
 ```csharp
 IReadOnlyDictionary<string, string> GetResources(string culture)
 ```
+
+Gets the merged resources visible for the specified culture.
+
+Returns: The merged resource dictionary for the resolved culture chain.
+
+Parameters:
+- `culture`: The preferred culture to resolve from.
 
 <a id="member-m-cephalon-engine-localization-localizedtextcatalog-resolvetext-system-string-system-string-system-string"></a>
 
@@ -1809,6 +2567,15 @@ IReadOnlyDictionary<string, string> GetResources(string culture)
 string ResolveText(string key, string culture, string fallback)
 ```
 
+Resolves a localized value or returns the provided fallback.
+
+Returns: The resolved localized value or the fallback.
+
+Parameters:
+- `key`: The resource key to resolve.
+- `culture`: The preferred culture to resolve from.
+- `fallback`: The fallback value to return when the resource cannot be resolved.
+
 <a id="member-m-cephalon-engine-localization-localizedtextcatalog-tryget-system-string-system-string-system-string"></a>
 
 ##### `TryGet`
@@ -1816,6 +2583,15 @@ string ResolveText(string key, string culture, string fallback)
 ```csharp
 bool TryGet(string key, string culture, out string value)
 ```
+
+Attempts to resolve a localized value for the specified key and culture.
+
+Returns: `true` when a value was resolved; otherwise, `false`.
+
+Parameters:
+- `key`: The resource key to resolve.
+- `culture`: The preferred culture to resolve from.
+- `value`: The resolved localized value when found.
 
 <a id="namespace-cephalon-engine-manifest"></a>
 
@@ -1825,6 +2601,8 @@ bool TryGet(string key, string culture, out string value)
 
 ### `CapabilityManifest`
 
+Describes a capability exposed by a module in the runtime manifest.
+
 #### Declaration
 ```csharp
 public sealed class CapabilityManifest
@@ -1832,13 +2610,22 @@ public sealed class CapabilityManifest
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-manifest-capabilitymanifest-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string"></a>
+<a id="member-m-cephalon-engine-manifest-capabilitymanifest-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `CapabilityManifest`
 
 ```csharp
 CapabilityManifest(string key, string displayName, string description, string sourceModuleId, IReadOnlyDictionary<string, string> metadata)
 ```
+
+Initializes a new instance of the `CapabilityManifest` class.
+
+Parameters:
+- `key`: The stable capability key.
+- `displayName`: The operator-facing capability name.
+- `description`: A description of the capability behavior.
+- `sourceModuleId`: The identifier of the module that contributed the capability.
+- `metadata`: Additional capability metadata.
 
 #### Properties
 
@@ -1850,6 +2637,8 @@ CapabilityManifest(string key, string displayName, string description, string so
 string Description { get; }
 ```
 
+Gets the capability description.
+
 <a id="member-p-cephalon-engine-manifest-capabilitymanifest-displayname"></a>
 
 ##### `DisplayName`
@@ -1857,6 +2646,8 @@ string Description { get; }
 ```csharp
 string DisplayName { get; }
 ```
+
+Gets the operator-facing capability name.
 
 <a id="member-p-cephalon-engine-manifest-capabilitymanifest-key"></a>
 
@@ -1866,6 +2657,8 @@ string DisplayName { get; }
 string Key { get; }
 ```
 
+Gets the stable capability key.
+
 <a id="member-p-cephalon-engine-manifest-capabilitymanifest-metadata"></a>
 
 ##### `Metadata`
@@ -1874,6 +2667,8 @@ string Key { get; }
 IReadOnlyDictionary<string, string> Metadata { get; }
 ```
 
+Gets additional capability metadata.
+
 <a id="member-p-cephalon-engine-manifest-capabilitymanifest-sourcemoduleid"></a>
 
 ##### `SourceModuleId`
@@ -1881,6 +2676,8 @@ IReadOnlyDictionary<string, string> Metadata { get; }
 ```csharp
 string SourceModuleId { get; }
 ```
+
+Gets the identifier of the module that contributed the capability.
 
 <a id="type-cephalon-engine-manifest-modulemanifest"></a>
 
@@ -1895,13 +2692,28 @@ public sealed class ModuleManifest
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-manifest-modulemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlylist-1-system-string-system-collections-generic-ireadonlydictionary-2-system-string-system-string-system-string-system-boolean"></a>
+<a id="member-m-cephalon-engine-manifest-modulemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-boolean"></a>
 
 ##### `ModuleManifest`
 
 ```csharp
 ModuleManifest(string id, string displayName, string description, string version, string assemblyName, string typeName, IReadOnlyList<string> dependsOn, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata, string packageId, bool isTrusted)
 ```
+
+Creates a new module manifest entry.
+
+Parameters:
+- `id`: The stable module identifier.
+- `displayName`: The operator-facing module name.
+- `description`: A human-readable description of the module's role.
+- `version`: The effective module version.
+- `assemblyName`: The assembly that contains the module implementation.
+- `typeName`: The fully qualified CLR type name for the module implementation.
+- `dependsOn`: The identifiers of modules this module depends on.
+- `tags`: The descriptive tags published by the module descriptor.
+- `metadata`: Additional descriptor metadata published by the module.
+- `packageId`: The package identifier that supplied the module, if it was package-loaded.
+- `isTrusted`: Whether the module is currently considered trusted under the active trust policy.
 
 #### Properties
 
@@ -2028,13 +2840,42 @@ public sealed class PackageManifest
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-manifest-packagemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-cephalon-engine-manifest-packagesignaturemanifest-system-boolean-system-string-system-string-system-boolean-system-string"></a>
+<a id="member-m-cephalon-engine-manifest-packagemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagesignaturemanifest-system-boolean-system-string-system-string-system-boolean-system-string"></a>
 
 ##### `PackageManifest`
 
 ```csharp
 PackageManifest(string id, string kind, string assemblyName, string path, string sourcePath, string loadContext, IReadOnlyList<string> modules, string version, string minimumEngineVersion, string maximumEngineVersion, IReadOnlyList<string> supportedTargetFrameworks, string publisherId, string publisherDisplayName, string publisherWebsite, string signatureType, string signatureSigner, string signatureKeyId, string signatureFingerprint, string signatureAlgorithm, IReadOnlyList<PackageSignatureManifest> signatures, bool isSignatureVerified, string signatureVerificationReason, string checksumSha256, bool isTrusted, string trustReason)
 ```
+
+Creates a new package manifest entry.
+
+Parameters:
+- `id`: The stable package identifier.
+- `kind`: The discovery kind used to resolve the package.
+- `assemblyName`: The loaded package assembly name.
+- `path`: The resolved assembly path that was loaded.
+- `sourcePath`: The original source path that led to the package load.
+- `loadContext`: The assembly load context name used for the package.
+- `modules`: The identifiers of modules contributed by the package.
+- `version`: The package version declared by the package manifest, when available.
+- `minimumEngineVersion`: The minimum supported engine version declared by the package manifest, when available.
+- `maximumEngineVersion`: The maximum supported engine version declared by the package manifest, when available.
+- `supportedTargetFrameworks`: The supported target frameworks declared by the package manifest.
+- `publisherId`: The stable publisher identifier declared by the package manifest, when available.
+- `publisherDisplayName`: The publisher display name declared by the package manifest, when available.
+- `publisherWebsite`: The publisher website declared by the package manifest, when available.
+- `signatureType`: The signature metadata type declared by the package manifest, when available.
+- `signatureSigner`: The signer identity declared by the package manifest, when available.
+- `signatureKeyId`: The trusted-key identifier declared by the package manifest, when available.
+- `signatureFingerprint`: The signer fingerprint declared by the package manifest, when available.
+- `signatureAlgorithm`: The signature algorithm declared by the package manifest, when available.
+- `signatures`: The declared package signatures and their individual verification outcomes.
+- `isSignatureVerified`: Whether the package signature was cryptographically verified against a trusted public key.
+- `signatureVerificationReason`: The verification outcome summary for the package signature.
+- `checksumSha256`: The computed SHA-256 checksum of the resolved package assembly.
+- `isTrusted`: Whether the package is trusted by the current trust policy.
+- `trustReason`: The reason the package is trusted or not trusted.
 
 #### Properties
 
@@ -2407,13 +3248,24 @@ public sealed class RuntimeManifest
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-manifest-runtimemanifest-ctor-system-string-system-string-system-datetimeoffset-cephalon-abstractions-appmodel-appprofile-system-collections-generic-ireadonlylist-1-cephalon-engine-manifest-modulemanifest-system-collections-generic-ireadonlylist-1-cephalon-engine-manifest-capabilitymanifest-system-collections-generic-ireadonlylist-1-cephalon-engine-manifest-packagemanifest"></a>
+<a id="member-m-cephalon-engine-manifest-runtimemanifest-ctor-system-string-system-string-system-datetimeoffset-cephalon-abstractions-appmodel-appprofile-system-collections-generic-ireadonlylist-cephalon-engine-manifest-modulemanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-capabilitymanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest"></a>
 
 ##### `RuntimeManifest`
 
 ```csharp
 RuntimeManifest(string manifestVersion, string engineVersion, DateTimeOffset generatedAtUtc, AppProfile appProfile, IReadOnlyList<ModuleManifest> modules, IReadOnlyList<CapabilityManifest> capabilities, IReadOnlyList<PackageManifest> packages)
 ```
+
+Creates a new runtime manifest.
+
+Parameters:
+- `manifestVersion`: The manifest schema version.
+- `engineVersion`: The version of the engine that produced the manifest.
+- `generatedAtUtc`: The UTC timestamp when the manifest was created.
+- `appProfile`: The resolved application profile.
+- `modules`: The effective ordered module set.
+- `capabilities`: The effective capability set after policy has been applied.
+- `packages`: The package-loading metadata associated with the runtime.
 
 #### Fields
 
@@ -2507,6 +3359,8 @@ Gets the packages that contributed modules to the runtime, if any were loaded fr
 
 ### `BuiltInPatterns`
 
+Provides the built-in pattern descriptors used by Cephalon app profiles.
+
 #### Declaration
 ```csharp
 public static class BuiltInPatterns
@@ -2522,6 +3376,8 @@ public static class BuiltInPatterns
 IReadOnlyList<PatternDescriptor> All { get; }
 ```
 
+Gets all built-in pattern descriptors.
+
 <a id="member-p-cephalon-engine-patterns-builtinpatterns-mediatorpattern"></a>
 
 ##### `MediatorPattern`
@@ -2529,6 +3385,8 @@ IReadOnlyList<PatternDescriptor> All { get; }
 ```csharp
 PatternDescriptor MediatorPattern { get; }
 ```
+
+Gets the mediator design pattern.
 
 <a id="member-p-cephalon-engine-patterns-builtinpatterns-microservicetopology"></a>
 
@@ -2538,6 +3396,8 @@ PatternDescriptor MediatorPattern { get; }
 PatternDescriptor MicroserviceTopology { get; }
 ```
 
+Gets the microservice deployment topology pattern.
+
 <a id="member-p-cephalon-engine-patterns-builtinpatterns-modulararchitecture"></a>
 
 ##### `ModularArchitecture`
@@ -2545,6 +3405,8 @@ PatternDescriptor MicroserviceTopology { get; }
 ```csharp
 PatternDescriptor ModularArchitecture { get; }
 ```
+
+Gets the modular-architecture composition pattern.
 
 <a id="member-p-cephalon-engine-patterns-builtinpatterns-modulefirstorganization"></a>
 
@@ -2554,6 +3416,8 @@ PatternDescriptor ModularArchitecture { get; }
 PatternDescriptor ModuleFirstOrganization { get; }
 ```
 
+Gets the module-first organization pattern.
+
 <a id="member-p-cephalon-engine-patterns-builtinpatterns-pipelinepattern"></a>
 
 ##### `PipelinePattern`
@@ -2561,6 +3425,8 @@ PatternDescriptor ModuleFirstOrganization { get; }
 ```csharp
 PatternDescriptor PipelinePattern { get; }
 ```
+
+Gets the pipeline design pattern.
 
 <a id="member-p-cephalon-engine-patterns-builtinpatterns-sharedfoundationpattern"></a>
 
@@ -2570,6 +3436,8 @@ PatternDescriptor PipelinePattern { get; }
 PatternDescriptor SharedFoundationPattern { get; }
 ```
 
+Gets the shared-foundation pattern.
+
 <a id="member-p-cephalon-engine-patterns-builtinpatterns-singlehosttopology"></a>
 
 ##### `SingleHostTopology`
@@ -2577,6 +3445,8 @@ PatternDescriptor SharedFoundationPattern { get; }
 ```csharp
 PatternDescriptor SingleHostTopology { get; }
 ```
+
+Gets the single-host deployment topology pattern.
 
 <a id="member-p-cephalon-engine-patterns-builtinpatterns-specificationpattern"></a>
 
@@ -2586,6 +3456,8 @@ PatternDescriptor SingleHostTopology { get; }
 PatternDescriptor SpecificationPattern { get; }
 ```
 
+Gets the specification design pattern.
+
 <a id="member-p-cephalon-engine-patterns-builtinpatterns-strategypattern"></a>
 
 ##### `StrategyPattern`
@@ -2594,6 +3466,8 @@ PatternDescriptor SpecificationPattern { get; }
 PatternDescriptor StrategyPattern { get; }
 ```
 
+Gets the strategy design pattern.
+
 <a id="member-p-cephalon-engine-patterns-builtinpatterns-verticalsliceorganization"></a>
 
 ##### `VerticalSliceOrganization`
@@ -2601,6 +3475,8 @@ PatternDescriptor StrategyPattern { get; }
 ```csharp
 PatternDescriptor VerticalSliceOrganization { get; }
 ```
+
+Gets the vertical-slice organization pattern.
 
 #### Methods
 
@@ -2612,6 +3488,13 @@ PatternDescriptor VerticalSliceOrganization { get; }
 PatternDescriptor Resolve(string value)
 ```
 
+Resolves a pattern identifier, display name, or alias.
+
+Returns: The resolved pattern descriptor.
+
+Parameters:
+- `value`: The pattern identifier, display name, or alias to resolve.
+
 <a id="member-m-cephalon-engine-patterns-builtinpatterns-tryresolve-system-string-cephalon-abstractions-patterns-patterndescriptor"></a>
 
 ##### `TryResolve`
@@ -2619,6 +3502,14 @@ PatternDescriptor Resolve(string value)
 ```csharp
 bool TryResolve(string value, out PatternDescriptor pattern)
 ```
+
+Attempts to resolve a pattern identifier, display name, or alias.
+
+Returns: `true` when the pattern was resolved; otherwise, `false`.
+
+Parameters:
+- `value`: The pattern identifier, display name, or alias to resolve.
+- `pattern`: The resolved pattern descriptor when the lookup succeeds.
 
 <a id="namespace-cephalon-engine-runtime"></a>
 
@@ -2628,6 +3519,8 @@ bool TryResolve(string value, out PatternDescriptor pattern)
 
 ### `EngineRuntime`
 
+Executes module lifecycle transitions and exposes runtime status, manifest, and failure information.
+
 #### Declaration
 ```csharp
 public sealed class EngineRuntime
@@ -2635,13 +3528,20 @@ public sealed class EngineRuntime
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-1-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy"></a>
+<a id="member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy"></a>
 
 ##### `EngineRuntime`
 
 ```csharp
 EngineRuntime(IReadOnlyList<IModule> modules, RuntimeManifest manifest, FailurePolicy failurePolicy)
 ```
+
+Initializes a new instance of the `EngineRuntime` class.
+
+Parameters:
+- `modules`: The modules that participate in runtime lifecycle transitions.
+- `manifest`: The runtime manifest that describes the built runtime shape.
+- `failurePolicy`: The failure policy that governs startup, stop, and restart behavior.
 
 #### Properties
 
@@ -2653,6 +3553,8 @@ EngineRuntime(IReadOnlyList<IModule> modules, RuntimeManifest manifest, FailureP
 FailurePolicy FailurePolicy { get; }
 ```
 
+Gets the failure policy that governs startup, stop, and restart behavior.
+
 <a id="member-p-cephalon-engine-runtime-engineruntime-lastfailure"></a>
 
 ##### `LastFailure`
@@ -2660,6 +3562,8 @@ FailurePolicy FailurePolicy { get; }
 ```csharp
 RuntimeFailureInfo LastFailure { get; }
 ```
+
+Gets the last captured lifecycle failure when one is available.
 
 <a id="member-p-cephalon-engine-runtime-engineruntime-manifest"></a>
 
@@ -2669,6 +3573,8 @@ RuntimeFailureInfo LastFailure { get; }
 RuntimeManifest Manifest { get; }
 ```
 
+Gets the runtime manifest that describes the built runtime shape.
+
 <a id="member-p-cephalon-engine-runtime-engineruntime-modules"></a>
 
 ##### `Modules`
@@ -2676,6 +3582,18 @@ RuntimeManifest Manifest { get; }
 ```csharp
 IReadOnlyList<IModule> Modules { get; }
 ```
+
+Gets the modules that participate in runtime lifecycle transitions.
+
+<a id="member-p-cephalon-engine-runtime-engineruntime-operationalstory"></a>
+
+##### `OperationalStory`
+
+```csharp
+RuntimeOperationalStory OperationalStory { get; }
+```
+
+Gets the richer operator-facing lifecycle story for the runtime.
 
 <a id="member-p-cephalon-engine-runtime-engineruntime-restartcount"></a>
 
@@ -2685,6 +3603,8 @@ IReadOnlyList<IModule> Modules { get; }
 int RestartCount { get; }
 ```
 
+Gets the number of completed manual restarts.
+
 <a id="member-p-cephalon-engine-runtime-engineruntime-status"></a>
 
 ##### `Status`
@@ -2693,6 +3613,8 @@ int RestartCount { get; }
 RuntimeStatus Status { get; }
 ```
 
+Gets the current lifecycle status.
+
 <a id="member-p-cephalon-engine-runtime-engineruntime-statussnapshot"></a>
 
 ##### `StatusSnapshot`
@@ -2700,6 +3622,8 @@ RuntimeStatus Status { get; }
 ```csharp
 RuntimeStatusSnapshot StatusSnapshot { get; }
 ```
+
+Gets a serialization-friendly snapshot of the current runtime status.
 
 #### Methods
 
@@ -2711,6 +3635,8 @@ RuntimeStatusSnapshot StatusSnapshot { get; }
 void Dispose()
 ```
 
+Releases runtime resources.
+
 <a id="member-m-cephalon-engine-runtime-engineruntime-initializeasync-system-iserviceprovider-system-threading-cancellationtoken"></a>
 
 ##### `InitializeAsync`
@@ -2718,6 +3644,14 @@ void Dispose()
 ```csharp
 Task InitializeAsync(IServiceProvider services, CancellationToken cancellationToken)
 ```
+
+Initializes the runtime and its modules.
+
+Returns: A task that completes when initialization finishes.
+
+Parameters:
+- `services`: The service provider bound to the runtime lifecycle.
+- `cancellationToken`: The cancellation token for the initialization operation.
 
 <a id="member-m-cephalon-engine-runtime-engineruntime-restartasync-system-iserviceprovider-system-threading-cancellationtoken"></a>
 
@@ -2727,6 +3661,14 @@ Task InitializeAsync(IServiceProvider services, CancellationToken cancellationTo
 Task RestartAsync(IServiceProvider services, CancellationToken cancellationToken)
 ```
 
+Restarts the runtime when the current failure policy allows it.
+
+Returns: A task that completes when the restart finishes.
+
+Parameters:
+- `services`: The service provider bound to the runtime lifecycle.
+- `cancellationToken`: The cancellation token for the restart operation.
+
 <a id="member-m-cephalon-engine-runtime-engineruntime-startasync-system-iserviceprovider-system-threading-cancellationtoken"></a>
 
 ##### `StartAsync`
@@ -2735,6 +3677,14 @@ Task RestartAsync(IServiceProvider services, CancellationToken cancellationToken
 Task StartAsync(IServiceProvider services, CancellationToken cancellationToken)
 ```
 
+Starts the runtime and its modules.
+
+Returns: A task that completes when startup finishes.
+
+Parameters:
+- `services`: The service provider bound to the runtime lifecycle.
+- `cancellationToken`: The cancellation token for the startup operation.
+
 <a id="member-m-cephalon-engine-runtime-engineruntime-stopasync-system-threading-cancellationtoken"></a>
 
 ##### `StopAsync`
@@ -2742,6 +3692,13 @@ Task StartAsync(IServiceProvider services, CancellationToken cancellationToken)
 ```csharp
 Task StopAsync(CancellationToken cancellationToken)
 ```
+
+Stops started modules and transitions the runtime to a stopped state.
+
+Returns: A task that completes when shutdown finishes.
+
+Parameters:
+- `cancellationToken`: The cancellation token for the stop operation.
 
 <a id="type-cephalon-engine-runtime-iruntime"></a>
 
@@ -2795,6 +3752,16 @@ IReadOnlyList<IModule> Modules { get; }
 ```
 
 Gets the ordered module set that participates in runtime lifecycle execution.
+
+<a id="member-p-cephalon-engine-runtime-iruntime-operationalstory"></a>
+
+##### `OperationalStory`
+
+```csharp
+RuntimeOperationalStory OperationalStory { get; }
+```
+
+Gets the richer operator-facing runtime story that explains what loaded, started, failed, and why.
 
 <a id="member-p-cephalon-engine-runtime-iruntime-restartcount"></a>
 
@@ -2923,12 +3890,12 @@ public sealed class RuntimeFailureInfo
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-runtime-runtimefailureinfo-ctor-system-string-system-string-system-string-cephalon-engine-runtime-runtimestatus-system-string-system-string-system-datetimeoffset-system-boolean-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior"></a>
+<a id="member-m-cephalon-engine-runtime-runtimefailureinfo-ctor-system-string-system-string-system-string-cephalon-engine-runtime-runtimestatus-system-string-system-string-system-datetimeoffset-system-boolean-system-nullable-system-datetimeoffset-cephalon-engine-configuration-startupfailurebehavior-cephalon-engine-configuration-stopfailurebehavior"></a>
 
 ##### `RuntimeFailureInfo`
 
 ```csharp
-RuntimeFailureInfo(string Phase, string ModuleId, string ModuleVersion, RuntimeStatus StatusBeforeFailure, string ExceptionType, string Message, DateTimeOffset OccurredAtUtc, bool CanRestart, StartupFailureBehavior StartupFailureBehavior, StopFailureBehavior StopFailureBehavior)
+RuntimeFailureInfo(string Phase, string ModuleId, string ModuleVersion, RuntimeStatus StatusBeforeFailure, string ExceptionType, string Message, DateTimeOffset OccurredAtUtc, bool CanRestart, DateTimeOffset? RestartAvailableAtUtc, StartupFailureBehavior StartupFailureBehavior, StopFailureBehavior StopFailureBehavior)
 ```
 
 Describes a runtime lifecycle failure in a way that can be surfaced through diagnostics, status endpoints, and operator tooling.
@@ -2942,6 +3909,7 @@ Parameters:
 - `Message`: The failure message surfaced to operators.
 - `OccurredAtUtc`: The UTC timestamp when the failure was captured.
 - `CanRestart`: Whether the current policy allows a manual restart after this failure.
+- `RestartAvailableAtUtc`: The UTC timestamp when a manual restart exits its configured backoff window, if one applies.
 - `StartupFailureBehavior`: The startup failure behavior in effect when the failure occurred.
 - `StopFailureBehavior`: The stop failure behavior in effect when the failure occurred.
 
@@ -3017,6 +3985,16 @@ string Phase { get; set; }
 
 The lifecycle phase that failed, such as `initialize`, `start`, or `stop`.
 
+<a id="member-p-cephalon-engine-runtime-runtimefailureinfo-restartavailableatutc"></a>
+
+##### `RestartAvailableAtUtc`
+
+```csharp
+DateTimeOffset? RestartAvailableAtUtc { get; set; }
+```
+
+The UTC timestamp when a manual restart exits its configured backoff window, if one applies.
+
 <a id="member-p-cephalon-engine-runtime-runtimefailureinfo-startupfailurebehavior"></a>
 
 ##### `StartupFailureBehavior`
@@ -3051,6 +4029,8 @@ The stop failure behavior in effect when the failure occurred.
 
 ### `RuntimeHealthEvaluator`
 
+Evaluates runtime liveness, readiness, and dependency health.
+
 #### Declaration
 ```csharp
 public sealed class RuntimeHealthEvaluator
@@ -3058,13 +4038,19 @@ public sealed class RuntimeHealthEvaluator
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-runtime-runtimehealthevaluator-ctor-cephalon-engine-runtime-iruntime-system-collections-generic-ienumerable-1-cephalon-abstractions-health-idependencyhealthcontributor"></a>
+<a id="member-m-cephalon-engine-runtime-runtimehealthevaluator-ctor-cephalon-engine-runtime-iruntime-system-collections-generic-ienumerable-cephalon-abstractions-health-idependencyhealthcontributor"></a>
 
 ##### `RuntimeHealthEvaluator`
 
 ```csharp
 RuntimeHealthEvaluator(IRuntime runtime, IEnumerable<IDependencyHealthContributor> dependencyHealthContributors)
 ```
+
+Initializes a new instance of the `RuntimeHealthEvaluator` class.
+
+Parameters:
+- `runtime`: The runtime to evaluate.
+- `dependencyHealthContributors`: The dependency contributors that provide health data.
 
 #### Methods
 
@@ -3076,6 +4062,10 @@ RuntimeHealthEvaluator(IRuntime runtime, IEnumerable<IDependencyHealthContributo
 DependencyHealthReport[] EvaluateDependencies()
 ```
 
+Evaluates dependency-level health reports without applying probe semantics.
+
+Returns: The dependency-health reports visible to the evaluator.
+
 <a id="member-m-cephalon-engine-runtime-runtimehealthevaluator-evaluateliveness"></a>
 
 ##### `EvaluateLiveness`
@@ -3083,6 +4073,10 @@ DependencyHealthReport[] EvaluateDependencies()
 ```csharp
 RuntimeHealthReport EvaluateLiveness()
 ```
+
+Evaluates whether the runtime process is live.
+
+Returns: The liveness report.
 
 <a id="member-m-cephalon-engine-runtime-runtimehealthevaluator-evaluatereadiness"></a>
 
@@ -3092,9 +4086,15 @@ RuntimeHealthReport EvaluateLiveness()
 RuntimeHealthReport EvaluateReadiness()
 ```
 
+Evaluates whether the runtime is ready to serve traffic.
+
+Returns: The readiness report.
+
 <a id="type-cephalon-engine-runtime-runtimehealthreport"></a>
 
 ### `RuntimeHealthReport`
+
+Captures the health result for a runtime liveness or readiness probe.
 
 #### Declaration
 ```csharp
@@ -3103,15 +4103,48 @@ public sealed class RuntimeHealthReport
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-runtime-runtimehealthreport-ctor-system-string-cephalon-engine-runtime-runtimehealthstate-system-string-cephalon-engine-runtime-runtimestatus-system-int32-cephalon-engine-runtime-runtimefailureinfo-system-collections-generic-ireadonlylist-1-cephalon-abstractions-health-dependencyhealthreport"></a>
+<a id="member-m-cephalon-engine-runtime-runtimehealthreport-ctor-system-string-cephalon-engine-runtime-runtimehealthstate-system-string-cephalon-engine-runtime-runtimestatus-system-int32-cephalon-engine-runtime-runtimefailureinfo-system-collections-generic-ireadonlylist-cephalon-abstractions-health-dependencyhealthreport-system-string-system-nullable-system-datetimeoffset"></a>
 
 ##### `RuntimeHealthReport`
 
 ```csharp
-RuntimeHealthReport(string Probe, RuntimeHealthState State, string Description, RuntimeStatus RuntimeStatus, int RestartCount, RuntimeFailureInfo LastFailure, IReadOnlyList<DependencyHealthReport> Dependencies)
+RuntimeHealthReport(string Probe, RuntimeHealthState State, string Description, RuntimeStatus RuntimeStatus, int RestartCount, RuntimeFailureInfo LastFailure, IReadOnlyList<DependencyHealthReport> Dependencies, string ActiveWindow, DateTimeOffset? ActiveWindowEndsAtUtc)
 ```
 
+Captures the health result for a runtime liveness or readiness probe.
+
+Parameters:
+- `Probe`: The probe name that produced the report.
+- `State`: The evaluated runtime health state.
+- `Description`: A human-readable description of the evaluated state.
+- `RuntimeStatus`: The runtime lifecycle status at the time of evaluation.
+- `RestartCount`: The number of completed manual restarts.
+- `LastFailure`: The last runtime failure when one is available.
+- `Dependencies`: The dependency-health reports visible during evaluation.
+- `ActiveWindow`: The active policy-driven lifecycle window, such as startup warmup, shutdown drain, or restart backoff.
+- `ActiveWindowEndsAtUtc`: The UTC timestamp when the active lifecycle window ends, if applicable.
+
 #### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimehealthreport-activewindow"></a>
+
+##### `ActiveWindow`
+
+```csharp
+string ActiveWindow { get; set; }
+```
+
+The active policy-driven lifecycle window, such as startup warmup, shutdown drain, or restart backoff.
+
+<a id="member-p-cephalon-engine-runtime-runtimehealthreport-activewindowendsatutc"></a>
+
+##### `ActiveWindowEndsAtUtc`
+
+```csharp
+DateTimeOffset? ActiveWindowEndsAtUtc { get; set; }
+```
+
+The UTC timestamp when the active lifecycle window ends, if applicable.
 
 <a id="member-p-cephalon-engine-runtime-runtimehealthreport-dependencies"></a>
 
@@ -3121,6 +4154,8 @@ RuntimeHealthReport(string Probe, RuntimeHealthState State, string Description, 
 IReadOnlyList<DependencyHealthReport> Dependencies { get; set; }
 ```
 
+The dependency-health reports visible during evaluation.
+
 <a id="member-p-cephalon-engine-runtime-runtimehealthreport-description"></a>
 
 ##### `Description`
@@ -3128,6 +4163,8 @@ IReadOnlyList<DependencyHealthReport> Dependencies { get; set; }
 ```csharp
 string Description { get; set; }
 ```
+
+A human-readable description of the evaluated state.
 
 <a id="member-p-cephalon-engine-runtime-runtimehealthreport-ishealthy"></a>
 
@@ -3137,6 +4174,8 @@ string Description { get; set; }
 bool IsHealthy { get; }
 ```
 
+Gets a value indicating whether the report represents a healthy state.
+
 <a id="member-p-cephalon-engine-runtime-runtimehealthreport-lastfailure"></a>
 
 ##### `LastFailure`
@@ -3144,6 +4183,8 @@ bool IsHealthy { get; }
 ```csharp
 RuntimeFailureInfo LastFailure { get; set; }
 ```
+
+The last runtime failure when one is available.
 
 <a id="member-p-cephalon-engine-runtime-runtimehealthreport-probe"></a>
 
@@ -3153,6 +4194,8 @@ RuntimeFailureInfo LastFailure { get; set; }
 string Probe { get; set; }
 ```
 
+The probe name that produced the report.
+
 <a id="member-p-cephalon-engine-runtime-runtimehealthreport-restartcount"></a>
 
 ##### `RestartCount`
@@ -3160,6 +4203,8 @@ string Probe { get; set; }
 ```csharp
 int RestartCount { get; set; }
 ```
+
+The number of completed manual restarts.
 
 <a id="member-p-cephalon-engine-runtime-runtimehealthreport-runtimestatus"></a>
 
@@ -3169,6 +4214,8 @@ int RestartCount { get; set; }
 RuntimeStatus RuntimeStatus { get; set; }
 ```
 
+The runtime lifecycle status at the time of evaluation.
+
 <a id="member-p-cephalon-engine-runtime-runtimehealthreport-state"></a>
 
 ##### `State`
@@ -3177,9 +4224,13 @@ RuntimeStatus RuntimeStatus { get; set; }
 RuntimeHealthState State { get; set; }
 ```
 
+The evaluated runtime health state.
+
 <a id="type-cephalon-engine-runtime-runtimehealthstate"></a>
 
 ### `RuntimeHealthState`
+
+Represents the overall health state of the runtime.
 
 #### Declaration
 ```csharp
@@ -3196,6 +4247,8 @@ public enum RuntimeHealthState
 const RuntimeHealthState Degraded
 ```
 
+The runtime is available, but one or more dependencies need attention.
+
 <a id="member-f-cephalon-engine-runtime-runtimehealthstate-healthy"></a>
 
 ##### `Healthy`
@@ -3203,6 +4256,8 @@ const RuntimeHealthState Degraded
 ```csharp
 const RuntimeHealthState Healthy
 ```
+
+The runtime and its dependencies are healthy.
 
 <a id="member-f-cephalon-engine-runtime-runtimehealthstate-unhealthy"></a>
 
@@ -3212,13 +4267,15 @@ const RuntimeHealthState Healthy
 const RuntimeHealthState Unhealthy
 ```
 
+The runtime is not healthy enough to serve traffic.
+
 <a id="type-cephalon-engine-runtime-runtimeintrospectionsnapshot"></a>
 
 ### `RuntimeIntrospectionSnapshot`
 
 Combines the main operator-facing runtime views into a single payload.
 
-Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, and technology-pack details.
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, technology-pack details, diagnostics conventions, and lifecycle story data.
 
 #### Declaration
 ```csharp
@@ -3227,15 +4284,36 @@ public sealed class RuntimeIntrospectionSnapshot
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-1-cephalon-abstractions-technologies-technologyruntimesurface"></a>
+<a id="member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention-cephalon-engine-runtime-runtimeoperationalstory"></a>
 
 ##### `RuntimeIntrospectionSnapshot`
 
 ```csharp
-RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces)
+RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces, IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions, RuntimeOperationalStory OperationalStory)
 ```
 
+Combines the main operator-facing runtime views into a single payload.
+
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, technology-pack details, diagnostics conventions, and lifecycle story data.
+
+Parameters:
+- `Manifest`: The immutable manifest that describes the built runtime shape.
+- `Status`: The current lifecycle status of the runtime.
+- `TechnologySurfaces`: The active technology-pack runtime surfaces visible to the runtime at the time the snapshot was created.
+- `DiagnosticsConventions`: The diagnostics conventions and published event-id catalogs visible to the runtime at the time the snapshot was created.
+- `OperationalStory`: The richer operator-facing lifecycle story that combines loaded packages, module state, and the ordered runtime timeline.
+
 #### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-diagnosticsconventions"></a>
+
+##### `DiagnosticsConventions`
+
+```csharp
+IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions { get; set; }
+```
+
+The diagnostics conventions and published event-id catalogs visible to the runtime at the time the snapshot was created.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-manifest"></a>
 
@@ -3246,6 +4324,16 @@ RuntimeManifest Manifest { get; set; }
 ```
 
 The immutable manifest that describes the built runtime shape.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-operationalstory"></a>
+
+##### `OperationalStory`
+
+```csharp
+RuntimeOperationalStory OperationalStory { get; set; }
+```
+
+The richer operator-facing lifecycle story that combines loaded packages, module state, and the ordered runtime timeline.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-status"></a>
 
@@ -3267,9 +4355,494 @@ IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces { get; set; }
 
 The active technology-pack runtime surfaces visible to the runtime at the time the snapshot was created.
 
+<a id="type-cephalon-engine-runtime-runtimelifecycleevent"></a>
+
+### `RuntimeLifecycleEvent`
+
+Captures one operator-facing lifecycle event in the runtime story timeline.
+
+#### Declaration
+```csharp
+public sealed class RuntimeLifecycleEvent
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-runtime-runtimelifecycleevent-ctor-system-datetimeoffset-cephalon-engine-runtime-runtimelifecycleeventscope-system-string-cephalon-engine-runtime-runtimelifecycleeventoutcome-cephalon-engine-runtime-runtimestatus-system-string-system-string-system-string-system-string"></a>
+
+##### `RuntimeLifecycleEvent`
+
+```csharp
+RuntimeLifecycleEvent(DateTimeOffset OccurredAtUtc, RuntimeLifecycleEventScope Scope, string Phase, RuntimeLifecycleEventOutcome Outcome, RuntimeStatus RuntimeStatus, string SubjectId, string SubjectVersion, string Message, string ExceptionType)
+```
+
+Captures one operator-facing lifecycle event in the runtime story timeline.
+
+Parameters:
+- `OccurredAtUtc`: The UTC timestamp when the event was recorded.
+- `Scope`: The runtime surface that emitted the event.
+- `Phase`: The lifecycle phase or story phase, such as `load`, `initialize`, `start`, `stop`, or `restart`.
+- `Outcome`: The completion outcome for the event.
+- `RuntimeStatus`: The runtime status visible when the event was recorded.
+- `SubjectId`: The runtime, module, or package identifier associated with the event when available.
+- `SubjectVersion`: The version associated with the event subject when available.
+- `Message`: The operator-facing narrative for the event.
+- `ExceptionType`: The exception type captured for failed events when available.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-exceptiontype"></a>
+
+##### `ExceptionType`
+
+```csharp
+string ExceptionType { get; set; }
+```
+
+The exception type captured for failed events when available.
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-message"></a>
+
+##### `Message`
+
+```csharp
+string Message { get; set; }
+```
+
+The operator-facing narrative for the event.
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-occurredatutc"></a>
+
+##### `OccurredAtUtc`
+
+```csharp
+DateTimeOffset OccurredAtUtc { get; set; }
+```
+
+The UTC timestamp when the event was recorded.
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+RuntimeLifecycleEventOutcome Outcome { get; set; }
+```
+
+The completion outcome for the event.
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-phase"></a>
+
+##### `Phase`
+
+```csharp
+string Phase { get; set; }
+```
+
+The lifecycle phase or story phase, such as `load`, `initialize`, `start`, `stop`, or `restart`.
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-runtimestatus"></a>
+
+##### `RuntimeStatus`
+
+```csharp
+RuntimeStatus RuntimeStatus { get; set; }
+```
+
+The runtime status visible when the event was recorded.
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-scope"></a>
+
+##### `Scope`
+
+```csharp
+RuntimeLifecycleEventScope Scope { get; set; }
+```
+
+The runtime surface that emitted the event.
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-subjectid"></a>
+
+##### `SubjectId`
+
+```csharp
+string SubjectId { get; set; }
+```
+
+The runtime, module, or package identifier associated with the event when available.
+
+<a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-subjectversion"></a>
+
+##### `SubjectVersion`
+
+```csharp
+string SubjectVersion { get; set; }
+```
+
+The version associated with the event subject when available.
+
+<a id="type-cephalon-engine-runtime-runtimelifecycleeventoutcome"></a>
+
+### `RuntimeLifecycleEventOutcome`
+
+Describes whether one lifecycle event completed successfully or failed.
+
+#### Declaration
+```csharp
+public enum RuntimeLifecycleEventOutcome
+```
+
+#### Fields
+
+<a id="member-f-cephalon-engine-runtime-runtimelifecycleeventoutcome-failed"></a>
+
+##### `Failed`
+
+```csharp
+const RuntimeLifecycleEventOutcome Failed
+```
+
+The lifecycle event failed.
+
+<a id="member-f-cephalon-engine-runtime-runtimelifecycleeventoutcome-succeeded"></a>
+
+##### `Succeeded`
+
+```csharp
+const RuntimeLifecycleEventOutcome Succeeded
+```
+
+The lifecycle event completed successfully.
+
+<a id="type-cephalon-engine-runtime-runtimelifecycleeventscope"></a>
+
+### `RuntimeLifecycleEventScope`
+
+Identifies which runtime surface produced one operator-facing lifecycle event.
+
+#### Declaration
+```csharp
+public enum RuntimeLifecycleEventScope
+```
+
+#### Fields
+
+<a id="member-f-cephalon-engine-runtime-runtimelifecycleeventscope-module"></a>
+
+##### `Module`
+
+```csharp
+const RuntimeLifecycleEventScope Module
+```
+
+The event belongs to one module lifecycle transition.
+
+<a id="member-f-cephalon-engine-runtime-runtimelifecycleeventscope-package"></a>
+
+##### `Package`
+
+```csharp
+const RuntimeLifecycleEventScope Package
+```
+
+The event belongs to package loading and package-origin visibility.
+
+<a id="member-f-cephalon-engine-runtime-runtimelifecycleeventscope-runtime"></a>
+
+##### `Runtime`
+
+```csharp
+const RuntimeLifecycleEventScope Runtime
+```
+
+The event belongs to the overall runtime lifecycle.
+
+<a id="type-cephalon-engine-runtime-runtimemodulelifecyclestate"></a>
+
+### `RuntimeModuleLifecycleState`
+
+Describes the current operator-facing lifecycle state for one loaded module.
+
+#### Declaration
+```csharp
+public sealed class RuntimeModuleLifecycleState
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-runtime-runtimemodulelifecyclestate-ctor-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-nullable-system-datetimeoffset-cephalon-engine-runtime-runtimefailureinfo"></a>
+
+##### `RuntimeModuleLifecycleState`
+
+```csharp
+RuntimeModuleLifecycleState(string ModuleId, string DisplayName, string Version, string AssemblyName, string PackageId, DateTimeOffset? LoadedAtUtc, DateTimeOffset? InitializedAtUtc, DateTimeOffset? StartedAtUtc, DateTimeOffset? StoppedAtUtc, string LastObservedPhase, DateTimeOffset? LastObservedAtUtc, RuntimeFailureInfo LastFailure)
+```
+
+Describes the current operator-facing lifecycle state for one loaded module.
+
+Parameters:
+- `ModuleId`: The stable module identifier.
+- `DisplayName`: The operator-facing module display name.
+- `Version`: The effective module version.
+- `AssemblyName`: The assembly that contains the module implementation.
+- `PackageId`: The package that supplied the module when package loading was used.
+- `LoadedAtUtc`: The UTC timestamp when the module became part of the built runtime story.
+- `InitializedAtUtc`: The UTC timestamp when module initialization last completed successfully.
+- `StartedAtUtc`: The UTC timestamp when module startup last completed successfully.
+- `StoppedAtUtc`: The UTC timestamp when module shutdown last completed successfully.
+- `LastObservedPhase`: The last lifecycle phase recorded for the module.
+- `LastObservedAtUtc`: The UTC timestamp when the last lifecycle phase was recorded for the module.
+- `LastFailure`: The last failure recorded for the module when one is still relevant to the current runtime story.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-assemblyname"></a>
+
+##### `AssemblyName`
+
+```csharp
+string AssemblyName { get; set; }
+```
+
+The assembly that contains the module implementation.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; set; }
+```
+
+The operator-facing module display name.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-initializedatutc"></a>
+
+##### `InitializedAtUtc`
+
+```csharp
+DateTimeOffset? InitializedAtUtc { get; set; }
+```
+
+The UTC timestamp when module initialization last completed successfully.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isinitialized"></a>
+
+##### `IsInitialized`
+
+```csharp
+bool IsInitialized { get; }
+```
+
+Gets a value indicating whether the module completed initialization successfully.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isloaded"></a>
+
+##### `IsLoaded`
+
+```csharp
+bool IsLoaded { get; }
+```
+
+Gets a value indicating whether the module is present in the built runtime.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isstarted"></a>
+
+##### `IsStarted`
+
+```csharp
+bool IsStarted { get; }
+```
+
+Gets a value indicating whether the module most recently completed startup without a later successful stop.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isstopped"></a>
+
+##### `IsStopped`
+
+```csharp
+bool IsStopped { get; }
+```
+
+Gets a value indicating whether the module most recently completed shutdown.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-lastfailure"></a>
+
+##### `LastFailure`
+
+```csharp
+RuntimeFailureInfo LastFailure { get; set; }
+```
+
+The last failure recorded for the module when one is still relevant to the current runtime story.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-lastobservedatutc"></a>
+
+##### `LastObservedAtUtc`
+
+```csharp
+DateTimeOffset? LastObservedAtUtc { get; set; }
+```
+
+The UTC timestamp when the last lifecycle phase was recorded for the module.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-lastobservedphase"></a>
+
+##### `LastObservedPhase`
+
+```csharp
+string LastObservedPhase { get; set; }
+```
+
+The last lifecycle phase recorded for the module.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-loadedatutc"></a>
+
+##### `LoadedAtUtc`
+
+```csharp
+DateTimeOffset? LoadedAtUtc { get; set; }
+```
+
+The UTC timestamp when the module became part of the built runtime story.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-moduleid"></a>
+
+##### `ModuleId`
+
+```csharp
+string ModuleId { get; set; }
+```
+
+The stable module identifier.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-packageid"></a>
+
+##### `PackageId`
+
+```csharp
+string PackageId { get; set; }
+```
+
+The package that supplied the module when package loading was used.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-startedatutc"></a>
+
+##### `StartedAtUtc`
+
+```csharp
+DateTimeOffset? StartedAtUtc { get; set; }
+```
+
+The UTC timestamp when module startup last completed successfully.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-stoppedatutc"></a>
+
+##### `StoppedAtUtc`
+
+```csharp
+DateTimeOffset? StoppedAtUtc { get; set; }
+```
+
+The UTC timestamp when module shutdown last completed successfully.
+
+<a id="member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-version"></a>
+
+##### `Version`
+
+```csharp
+string Version { get; set; }
+```
+
+The effective module version.
+
+<a id="type-cephalon-engine-runtime-runtimeoperationalstory"></a>
+
+### `RuntimeOperationalStory`
+
+Combines the operator-facing runtime story into one payload that explains what loaded, started, failed, and why.
+
+#### Declaration
+```csharp
+public sealed class RuntimeOperationalStory
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-runtime-runtimeoperationalstory-ctor-system-datetimeoffset-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimemodulelifecyclestate-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimelifecycleevent"></a>
+
+##### `RuntimeOperationalStory`
+
+```csharp
+RuntimeOperationalStory(DateTimeOffset GeneratedAtUtc, RuntimeStatusSnapshot Status, IReadOnlyList<PackageManifest> LoadedPackages, IReadOnlyList<RuntimeModuleLifecycleState> Modules, IReadOnlyList<RuntimeLifecycleEvent> Timeline)
+```
+
+Combines the operator-facing runtime story into one payload that explains what loaded, started, failed, and why.
+
+Parameters:
+- `GeneratedAtUtc`: The UTC timestamp when the story snapshot was created.
+- `Status`: The current runtime lifecycle status snapshot.
+- `LoadedPackages`: The packages currently visible to the runtime story.
+- `Modules`: The current lifecycle state for each loaded module.
+- `Timeline`: The ordered lifecycle narrative for package load, module transitions, runtime transitions, and failures.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperationalstory-generatedatutc"></a>
+
+##### `GeneratedAtUtc`
+
+```csharp
+DateTimeOffset GeneratedAtUtc { get; set; }
+```
+
+The UTC timestamp when the story snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperationalstory-loadedpackages"></a>
+
+##### `LoadedPackages`
+
+```csharp
+IReadOnlyList<PackageManifest> LoadedPackages { get; set; }
+```
+
+The packages currently visible to the runtime story.
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperationalstory-modules"></a>
+
+##### `Modules`
+
+```csharp
+IReadOnlyList<RuntimeModuleLifecycleState> Modules { get; set; }
+```
+
+The current lifecycle state for each loaded module.
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperationalstory-status"></a>
+
+##### `Status`
+
+```csharp
+RuntimeStatusSnapshot Status { get; set; }
+```
+
+The current runtime lifecycle status snapshot.
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperationalstory-timeline"></a>
+
+##### `Timeline`
+
+```csharp
+IReadOnlyList<RuntimeLifecycleEvent> Timeline { get; set; }
+```
+
+The ordered lifecycle narrative for package load, module transitions, runtime transitions, and failures.
+
 <a id="type-cephalon-engine-runtime-runtimestatus"></a>
 
 ### `RuntimeStatus`
+
+Represents the current lifecycle phase of the runtime.
 
 #### Declaration
 ```csharp
@@ -3286,6 +4859,8 @@ public enum RuntimeStatus
 const RuntimeStatus Created
 ```
 
+The runtime has been created but not initialized.
+
 <a id="member-f-cephalon-engine-runtime-runtimestatus-failed"></a>
 
 ##### `Failed`
@@ -3293,6 +4868,8 @@ const RuntimeStatus Created
 ```csharp
 const RuntimeStatus Failed
 ```
+
+The runtime captured a lifecycle failure.
 
 <a id="member-f-cephalon-engine-runtime-runtimestatus-initialized"></a>
 
@@ -3302,6 +4879,8 @@ const RuntimeStatus Failed
 const RuntimeStatus Initialized
 ```
 
+The runtime finished initialization but has not started.
+
 <a id="member-f-cephalon-engine-runtime-runtimestatus-initializing"></a>
 
 ##### `Initializing`
@@ -3309,6 +4888,8 @@ const RuntimeStatus Initialized
 ```csharp
 const RuntimeStatus Initializing
 ```
+
+The runtime is initializing modules.
 
 <a id="member-f-cephalon-engine-runtime-runtimestatus-started"></a>
 
@@ -3318,6 +4899,8 @@ const RuntimeStatus Initializing
 const RuntimeStatus Started
 ```
 
+The runtime is fully started.
+
 <a id="member-f-cephalon-engine-runtime-runtimestatus-starting"></a>
 
 ##### `Starting`
@@ -3325,6 +4908,8 @@ const RuntimeStatus Started
 ```csharp
 const RuntimeStatus Starting
 ```
+
+The runtime is starting modules.
 
 <a id="member-f-cephalon-engine-runtime-runtimestatus-stopped"></a>
 
@@ -3334,6 +4919,8 @@ const RuntimeStatus Starting
 const RuntimeStatus Stopped
 ```
 
+The runtime is stopped.
+
 <a id="member-f-cephalon-engine-runtime-runtimestatus-stopping"></a>
 
 ##### `Stopping`
@@ -3341,6 +4928,8 @@ const RuntimeStatus Stopped
 ```csharp
 const RuntimeStatus Stopping
 ```
+
+The runtime is stopping started modules.
 
 <a id="type-cephalon-engine-runtime-runtimestatussnapshot"></a>
 
@@ -3355,13 +4944,24 @@ public sealed class RuntimeStatusSnapshot
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-runtime-runtimestatussnapshot-ctor-cephalon-engine-runtime-runtimestatus-system-nullable-1-system-datetimeoffset-system-nullable-1-system-datetimeoffset-system-nullable-1-system-datetimeoffset-system-int32-cephalon-engine-runtime-runtimefailureinfo"></a>
+<a id="member-m-cephalon-engine-runtime-runtimestatussnapshot-ctor-cephalon-engine-runtime-runtimestatus-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-cephalon-engine-runtime-runtimefailureinfo"></a>
 
 ##### `RuntimeStatusSnapshot`
 
 ```csharp
-RuntimeStatusSnapshot(RuntimeStatus Status, DateTimeOffset? InitializedAtUtc, DateTimeOffset? StartedAtUtc, DateTimeOffset? StoppedAtUtc, int RestartCount, RuntimeFailureInfo LastFailure)
+RuntimeStatusSnapshot(RuntimeStatus Status, DateTimeOffset? InitializedAtUtc, DateTimeOffset? StartedAtUtc, DateTimeOffset? StoppingAtUtc, DateTimeOffset? StoppedAtUtc, int RestartCount, RuntimeFailureInfo LastFailure)
 ```
+
+Captures the current runtime lifecycle state in a serialization-friendly form.
+
+Parameters:
+- `Status`: The current lifecycle status.
+- `InitializedAtUtc`: The UTC timestamp when initialization completed, if it has completed.
+- `StartedAtUtc`: The UTC timestamp when startup completed, if it has completed.
+- `StoppingAtUtc`: The UTC timestamp when shutdown most recently entered the stopping phase, if any.
+- `StoppedAtUtc`: The UTC timestamp when the runtime last transitioned to a stopped state, if any.
+- `RestartCount`: The number of completed manual restarts.
+- `LastFailure`: The last captured failure, if the runtime has faulted.
 
 #### Properties
 
@@ -3425,6 +5025,16 @@ DateTimeOffset? StoppedAtUtc { get; set; }
 
 The UTC timestamp when the runtime last transitioned to a stopped state, if any.
 
+<a id="member-p-cephalon-engine-runtime-runtimestatussnapshot-stoppingatutc"></a>
+
+##### `StoppingAtUtc`
+
+```csharp
+DateTimeOffset? StoppingAtUtc { get; set; }
+```
+
+The UTC timestamp when shutdown most recently entered the stopping phase, if any.
+
 <a id="namespace-cephalon-engine-technologies"></a>
 
 ## Namespace Cephalon.Engine.Technologies
@@ -3432,6 +5042,8 @@ The UTC timestamp when the runtime last transitioned to a stopped state, if any.
 <a id="type-cephalon-engine-technologies-builtintechnologies"></a>
 
 ### `BuiltInTechnologies`
+
+Provides the built-in technology descriptors used by Cephalon app profiles.
 
 #### Declaration
 ```csharp
@@ -3448,6 +5060,8 @@ public static class BuiltInTechnologies
 TechnologyDescriptor AgenticWorkloads { get; }
 ```
 
+Gets the built-in agentic-workloads technology profile.
+
 <a id="member-p-cephalon-engine-technologies-builtintechnologies-all"></a>
 
 ##### `All`
@@ -3455,6 +5069,8 @@ TechnologyDescriptor AgenticWorkloads { get; }
 ```csharp
 IReadOnlyList<TechnologyDescriptor> All { get; }
 ```
+
+Gets all built-in technology descriptors.
 
 <a id="member-p-cephalon-engine-technologies-builtintechnologies-edgenativedelivery"></a>
 
@@ -3464,6 +5080,8 @@ IReadOnlyList<TechnologyDescriptor> All { get; }
 TechnologyDescriptor EdgeNativeDelivery { get; }
 ```
 
+Gets the built-in edge-native-delivery technology profile.
+
 <a id="member-p-cephalon-engine-technologies-builtintechnologies-eventdrivenintegration"></a>
 
 ##### `EventDrivenIntegration`
@@ -3471,6 +5089,8 @@ TechnologyDescriptor EdgeNativeDelivery { get; }
 ```csharp
 TechnologyDescriptor EventDrivenIntegration { get; }
 ```
+
+Gets the built-in event-driven-integration technology profile.
 
 <a id="member-p-cephalon-engine-technologies-builtintechnologies-knowledgeretrieval"></a>
 
@@ -3480,6 +5100,8 @@ TechnologyDescriptor EventDrivenIntegration { get; }
 TechnologyDescriptor KnowledgeRetrieval { get; }
 ```
 
+Gets the built-in knowledge-retrieval technology profile.
+
 <a id="member-p-cephalon-engine-technologies-builtintechnologies-realtimeexperience"></a>
 
 ##### `RealtimeExperience`
@@ -3487,6 +5109,8 @@ TechnologyDescriptor KnowledgeRetrieval { get; }
 ```csharp
 TechnologyDescriptor RealtimeExperience { get; }
 ```
+
+Gets the built-in realtime-experience technology profile.
 
 #### Methods
 
@@ -3498,6 +5122,13 @@ TechnologyDescriptor RealtimeExperience { get; }
 TechnologyDescriptor Resolve(string value)
 ```
 
+Resolves a technology identifier, display name, or alias.
+
+Returns: The resolved technology descriptor.
+
+Parameters:
+- `value`: The technology identifier, display name, or alias to resolve.
+
 <a id="member-m-cephalon-engine-technologies-builtintechnologies-tryresolve-system-string-cephalon-abstractions-technologies-technologydescriptor"></a>
 
 ##### `TryResolve`
@@ -3506,9 +5137,19 @@ TechnologyDescriptor Resolve(string value)
 bool TryResolve(string value, out TechnologyDescriptor technology)
 ```
 
+Attempts to resolve a technology identifier, display name, or alias.
+
+Returns: `true` when the technology was resolved; otherwise, `false`.
+
+Parameters:
+- `value`: The technology identifier, display name, or alias to resolve.
+- `technology`: The resolved technology descriptor when the lookup succeeds.
+
 <a id="type-cephalon-engine-technologies-technologycatalogsnapshot"></a>
 
 ### `TechnologyCatalogSnapshot`
+
+Captures the built-in and registered technology catalog visible to the runtime.
 
 #### Declaration
 ```csharp
@@ -3517,13 +5158,18 @@ public sealed class TechnologyCatalogSnapshot
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-technologies-technologycatalogsnapshot-ctor-system-collections-generic-ireadonlylist-1-cephalon-abstractions-technologies-technologydescriptor"></a>
+<a id="member-m-cephalon-engine-technologies-technologycatalogsnapshot-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor"></a>
 
 ##### `TechnologyCatalogSnapshot`
 
 ```csharp
 TechnologyCatalogSnapshot(IReadOnlyList<TechnologyDescriptor> technologies)
 ```
+
+Initializes a new instance of the `TechnologyCatalogSnapshot` class.
+
+Parameters:
+- `technologies`: The technologies visible in the catalog.
 
 #### Properties
 
@@ -3535,9 +5181,13 @@ TechnologyCatalogSnapshot(IReadOnlyList<TechnologyDescriptor> technologies)
 IReadOnlyList<TechnologyDescriptor> Technologies { get; }
 ```
 
+Gets the technologies visible in the catalog.
+
 <a id="type-cephalon-engine-technologies-technologyruntimecatalogsnapshot"></a>
 
 ### `TechnologyRuntimeCatalogSnapshot`
+
+Provides a lookup-friendly view of the active technology runtime surfaces.
 
 #### Declaration
 ```csharp
@@ -3546,13 +5196,18 @@ public sealed class TechnologyRuntimeCatalogSnapshot
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-technologies-technologyruntimecatalogsnapshot-ctor-system-collections-generic-ireadonlylist-1-cephalon-abstractions-technologies-technologyruntimesurface"></a>
+<a id="member-m-cephalon-engine-technologies-technologyruntimecatalogsnapshot-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface"></a>
 
 ##### `TechnologyRuntimeCatalogSnapshot`
 
 ```csharp
 TechnologyRuntimeCatalogSnapshot(IReadOnlyList<TechnologyRuntimeSurface> surfaces)
 ```
+
+Initializes a new instance of the `TechnologyRuntimeCatalogSnapshot` class.
+
+Parameters:
+- `surfaces`: The active technology runtime surfaces.
 
 #### Properties
 
@@ -3564,6 +5219,8 @@ TechnologyRuntimeCatalogSnapshot(IReadOnlyList<TechnologyRuntimeSurface> surface
 IReadOnlyList<TechnologyRuntimeSurface> Surfaces { get; }
 ```
 
+Gets the active technology runtime surfaces.
+
 #### Methods
 
 <a id="member-m-cephalon-engine-technologies-technologyruntimecatalogsnapshot-getbytechnology-system-string"></a>
@@ -3574,6 +5231,13 @@ IReadOnlyList<TechnologyRuntimeSurface> Surfaces { get; }
 IReadOnlyList<TechnologyRuntimeSurface> GetByTechnology(string technologyId)
 ```
 
+Gets the runtime surfaces for a specific technology.
+
+Returns: The runtime surfaces registered for the specified technology.
+
+Parameters:
+- `technologyId`: The technology identifier to resolve.
+
 <a id="namespace-cephalon-engine-transports"></a>
 
 ## Namespace Cephalon.Engine.Transports
@@ -3581,6 +5245,8 @@ IReadOnlyList<TechnologyRuntimeSurface> GetByTechnology(string technologyId)
 <a id="type-cephalon-engine-transports-builtintransports"></a>
 
 ### `BuiltInTransports`
+
+Provides the built-in transport descriptors used by Cephalon app profiles.
 
 #### Declaration
 ```csharp
@@ -3597,6 +5263,18 @@ public static class BuiltInTransports
 IReadOnlyList<TransportDescriptor> All { get; }
 ```
 
+Gets all built-in transport descriptors.
+
+<a id="member-p-cephalon-engine-transports-builtintransports-graphql"></a>
+
+##### `GraphQL`
+
+```csharp
+TransportDescriptor GraphQL { get; }
+```
+
+Gets the built-in GraphQL transport descriptor.
+
 <a id="member-p-cephalon-engine-transports-builtintransports-grpc"></a>
 
 ##### `Grpc`
@@ -3604,6 +5282,8 @@ IReadOnlyList<TransportDescriptor> All { get; }
 ```csharp
 TransportDescriptor Grpc { get; }
 ```
+
+Gets the built-in gRPC transport descriptor.
 
 <a id="member-p-cephalon-engine-transports-builtintransports-jsonrpc"></a>
 
@@ -3613,6 +5293,8 @@ TransportDescriptor Grpc { get; }
 TransportDescriptor JsonRpc { get; }
 ```
 
+Gets the built-in JSON-RPC transport descriptor.
+
 <a id="member-p-cephalon-engine-transports-builtintransports-restapi"></a>
 
 ##### `RestApi`
@@ -3620,6 +5302,8 @@ TransportDescriptor JsonRpc { get; }
 ```csharp
 TransportDescriptor RestApi { get; }
 ```
+
+Gets the built-in REST transport descriptor.
 
 <a id="member-p-cephalon-engine-transports-builtintransports-serversentevents"></a>
 
@@ -3629,6 +5313,8 @@ TransportDescriptor RestApi { get; }
 TransportDescriptor ServerSentEvents { get; }
 ```
 
+Gets the built-in server-sent-events transport descriptor.
+
 <a id="member-p-cephalon-engine-transports-builtintransports-websocket"></a>
 
 ##### `WebSocket`
@@ -3636,6 +5322,8 @@ TransportDescriptor ServerSentEvents { get; }
 ```csharp
 TransportDescriptor WebSocket { get; }
 ```
+
+Gets the built-in WebSocket transport descriptor.
 
 #### Methods
 
@@ -3647,6 +5335,13 @@ TransportDescriptor WebSocket { get; }
 TransportDescriptor Resolve(string value)
 ```
 
+Resolves a transport identifier, display name, or alias.
+
+Returns: The resolved transport descriptor.
+
+Parameters:
+- `value`: The transport identifier, display name, or alias to resolve.
+
 <a id="member-m-cephalon-engine-transports-builtintransports-tryresolve-system-string-cephalon-abstractions-transports-transportdescriptor"></a>
 
 ##### `TryResolve`
@@ -3655,6 +5350,14 @@ TransportDescriptor Resolve(string value)
 bool TryResolve(string value, out TransportDescriptor transport)
 ```
 
+Attempts to resolve a transport identifier, display name, or alias.
+
+Returns: `true` when the transport was resolved; otherwise, `false`.
+
+Parameters:
+- `value`: The transport identifier, display name, or alias to resolve.
+- `transport`: The resolved transport descriptor when the lookup succeeds.
+
 <a id="namespace-cephalon-engine-trust"></a>
 
 ## Namespace Cephalon.Engine.Trust
@@ -3662,6 +5365,8 @@ bool TryResolve(string value, out TransportDescriptor transport)
 <a id="type-cephalon-engine-trust-capabilitypolicydecision"></a>
 
 ### `CapabilityPolicyDecision`
+
+Describes the evaluated trust decision for a single capability.
 
 #### Declaration
 ```csharp
@@ -3678,6 +5383,17 @@ public sealed class CapabilityPolicyDecision
 CapabilityPolicyDecision(string CapabilityKey, string SourceModuleId, string SourcePackageId, CapabilityAccess Access, bool SourceTrusted, bool IsAllowed, string Reason)
 ```
 
+Describes the evaluated trust decision for a single capability.
+
+Parameters:
+- `CapabilityKey`: The capability key that was evaluated.
+- `SourceModuleId`: The module that contributed the capability.
+- `SourcePackageId`: The package that contributed the capability when one is known.
+- `Access`: The effective access mode resolved from policy.
+- `SourceTrusted`: Whether the contributing source is trusted.
+- `IsAllowed`: Whether the capability is allowed under the resolved policy.
+- `Reason`: The human-readable reason for the decision.
+
 #### Properties
 
 <a id="member-p-cephalon-engine-trust-capabilitypolicydecision-access"></a>
@@ -3688,6 +5404,8 @@ CapabilityPolicyDecision(string CapabilityKey, string SourceModuleId, string Sou
 CapabilityAccess Access { get; set; }
 ```
 
+The effective access mode resolved from policy.
+
 <a id="member-p-cephalon-engine-trust-capabilitypolicydecision-capabilitykey"></a>
 
 ##### `CapabilityKey`
@@ -3695,6 +5413,8 @@ CapabilityAccess Access { get; set; }
 ```csharp
 string CapabilityKey { get; set; }
 ```
+
+The capability key that was evaluated.
 
 <a id="member-p-cephalon-engine-trust-capabilitypolicydecision-isallowed"></a>
 
@@ -3704,6 +5424,8 @@ string CapabilityKey { get; set; }
 bool IsAllowed { get; set; }
 ```
 
+Whether the capability is allowed under the resolved policy.
+
 <a id="member-p-cephalon-engine-trust-capabilitypolicydecision-reason"></a>
 
 ##### `Reason`
@@ -3711,6 +5433,8 @@ bool IsAllowed { get; set; }
 ```csharp
 string Reason { get; set; }
 ```
+
+The human-readable reason for the decision.
 
 <a id="member-p-cephalon-engine-trust-capabilitypolicydecision-sourcemoduleid"></a>
 
@@ -3720,6 +5444,8 @@ string Reason { get; set; }
 string SourceModuleId { get; set; }
 ```
 
+The module that contributed the capability.
+
 <a id="member-p-cephalon-engine-trust-capabilitypolicydecision-sourcepackageid"></a>
 
 ##### `SourcePackageId`
@@ -3727,6 +5453,8 @@ string SourceModuleId { get; set; }
 ```csharp
 string SourcePackageId { get; set; }
 ```
+
+The package that contributed the capability when one is known.
 
 <a id="member-p-cephalon-engine-trust-capabilitypolicydecision-sourcetrusted"></a>
 
@@ -3736,9 +5464,13 @@ string SourcePackageId { get; set; }
 bool SourceTrusted { get; set; }
 ```
 
+Whether the contributing source is trusted.
+
 <a id="type-cephalon-engine-trust-capabilitypolicyevaluator"></a>
 
 ### `CapabilityPolicyEvaluator`
+
+Evaluates capability and package trust decisions against the current trust policy snapshot.
 
 #### Declaration
 ```csharp
@@ -3755,6 +5487,11 @@ public sealed class CapabilityPolicyEvaluator
 CapabilityPolicyEvaluator(TrustSnapshot snapshot)
 ```
 
+Initializes a new instance of the `CapabilityPolicyEvaluator` class.
+
+Parameters:
+- `snapshot`: The trust snapshot to evaluate against.
+
 #### Properties
 
 <a id="member-p-cephalon-engine-trust-capabilitypolicyevaluator-snapshot"></a>
@@ -3765,15 +5502,27 @@ CapabilityPolicyEvaluator(TrustSnapshot snapshot)
 TrustSnapshot Snapshot { get; }
 ```
 
+Gets the trust snapshot being evaluated.
+
 #### Methods
 
-<a id="member-m-cephalon-engine-trust-capabilitypolicyevaluator-createsnapshot-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-1-cephalon-engine-manifest-packagemanifest-system-collections-generic-ireadonlylist-1-cephalon-engine-manifest-modulemanifest-system-collections-generic-ireadonlylist-1-cephalon-engine-manifest-capabilitymanifest"></a>
+<a id="member-m-cephalon-engine-trust-capabilitypolicyevaluator-createsnapshot-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-modulemanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-capabilitymanifest"></a>
 
 ##### `CreateSnapshot`
 
 ```csharp
 TrustSnapshot CreateSnapshot(TrustPolicy policy, IReadOnlyList<PackageManifest> packages, IReadOnlyList<ModuleManifest> modules, IReadOnlyList<CapabilityManifest> capabilities)
 ```
+
+Creates a trust snapshot from the supplied policy, packages, modules, and capabilities.
+
+Returns: A computed trust snapshot.
+
+Parameters:
+- `policy`: The trust policy to apply.
+- `packages`: The package manifests visible to the runtime.
+- `modules`: The module manifests visible to the runtime.
+- `capabilities`: The capability manifests visible to the runtime.
 
 <a id="member-m-cephalon-engine-trust-capabilitypolicyevaluator-isallowed-system-string"></a>
 
@@ -3783,6 +5532,13 @@ TrustSnapshot CreateSnapshot(TrustPolicy policy, IReadOnlyList<PackageManifest> 
 bool IsAllowed(string capabilityKey)
 ```
 
+Determines whether a capability is allowed under the current trust policy.
+
+Returns: `true` when the capability is allowed; otherwise, `false`.
+
+Parameters:
+- `capabilityKey`: The capability key to evaluate.
+
 <a id="member-m-cephalon-engine-trust-capabilitypolicyevaluator-trygetdecision-system-string-cephalon-engine-trust-capabilitypolicydecision"></a>
 
 ##### `TryGetDecision`
@@ -3790,6 +5546,14 @@ bool IsAllowed(string capabilityKey)
 ```csharp
 bool TryGetDecision(string capabilityKey, out CapabilityPolicyDecision decision)
 ```
+
+Attempts to resolve the trust decision for a capability.
+
+Returns: `true` when a decision was produced.
+
+Parameters:
+- `capabilityKey`: The capability key to evaluate.
+- `decision`: The resolved trust decision.
 
 <a id="type-cephalon-engine-trust-packagesignaturetrustdecision"></a>
 
@@ -3886,13 +5650,28 @@ public sealed class PackageTrustDecision
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-trust-packagetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-cephalon-engine-trust-packagesignaturetrustdecision-system-boolean-system-string-system-boolean-system-string"></a>
+<a id="member-m-cephalon-engine-trust-packagetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagesignaturetrustdecision-system-boolean-system-string-system-boolean-system-string"></a>
 
 ##### `PackageTrustDecision`
 
 ```csharp
 PackageTrustDecision(string PackageId, string AssemblyName, string Path, string PublisherId, string SignatureKeyId, string SignatureFingerprint, IReadOnlyList<PackageSignatureTrustDecision> Signatures, bool IsSignatureVerified, string SignatureVerificationReason, bool IsTrusted, string Reason)
 ```
+
+Describes the trust outcome for a package after package metadata, signature verification, and host trust rules have been evaluated.
+
+Parameters:
+- `PackageId`: The stable package identifier.
+- `AssemblyName`: The resolved assembly name for the package.
+- `Path`: The resolved assembly path used for the package load.
+- `PublisherId`: The declared publisher identifier, when available.
+- `SignatureKeyId`: The primary signature key identifier, when available.
+- `SignatureFingerprint`: The primary signature fingerprint, when available.
+- `Signatures`: The per-signer trust and verification details declared by the package.
+- `IsSignatureVerified`: Whether at least one declared signature verified successfully.
+- `SignatureVerificationReason`: The aggregate signature verification outcome summary.
+- `IsTrusted`: Whether the package is trusted by the active runtime trust policy.
+- `Reason`: The reason the package was trusted or rejected.
 
 #### Properties
 
@@ -4010,6 +5789,8 @@ The aggregate signature verification outcome summary.
 
 ### `TrustSnapshot`
 
+Captures the effective trust policy together with evaluated package and capability decisions.
+
 #### Declaration
 ```csharp
 public sealed class TrustSnapshot
@@ -4017,13 +5798,20 @@ public sealed class TrustSnapshot
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-trust-trustsnapshot-ctor-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-1-cephalon-engine-trust-packagetrustdecision-system-collections-generic-ireadonlylist-1-cephalon-engine-trust-capabilitypolicydecision"></a>
+<a id="member-m-cephalon-engine-trust-trustsnapshot-ctor-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagetrustdecision-system-collections-generic-ireadonlylist-cephalon-engine-trust-capabilitypolicydecision"></a>
 
 ##### `TrustSnapshot`
 
 ```csharp
 TrustSnapshot(TrustPolicy Policy, IReadOnlyList<PackageTrustDecision> Packages, IReadOnlyList<CapabilityPolicyDecision> Capabilities)
 ```
+
+Captures the effective trust policy together with evaluated package and capability decisions.
+
+Parameters:
+- `Policy`: The policy that produced the trust decisions.
+- `Packages`: The evaluated package trust decisions.
+- `Capabilities`: The evaluated capability trust decisions.
 
 #### Properties
 
@@ -4035,6 +5823,8 @@ TrustSnapshot(TrustPolicy Policy, IReadOnlyList<PackageTrustDecision> Packages, 
 IReadOnlyList<CapabilityPolicyDecision> Capabilities { get; set; }
 ```
 
+The evaluated capability trust decisions.
+
 <a id="member-p-cephalon-engine-trust-trustsnapshot-packages"></a>
 
 ##### `Packages`
@@ -4043,6 +5833,8 @@ IReadOnlyList<CapabilityPolicyDecision> Capabilities { get; set; }
 IReadOnlyList<PackageTrustDecision> Packages { get; set; }
 ```
 
+The evaluated package trust decisions.
+
 <a id="member-p-cephalon-engine-trust-trustsnapshot-policy"></a>
 
 ##### `Policy`
@@ -4050,3 +5842,5 @@ IReadOnlyList<PackageTrustDecision> Packages { get; set; }
 ```csharp
 TrustPolicy Policy { get; set; }
 ```
+
+The policy that produced the trust decisions.

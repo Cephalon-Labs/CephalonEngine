@@ -1,0 +1,58 @@
+<Solution>
+  <Folder Name="/benchmarks/">
+    <Project Path="benchmarks/Cephalon.Benchmarks/Cephalon.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/playground/">
+    <Project Path="playground/Cephalon.Playground/Cephalon.Playground.csproj" />
+    <Project Path="playground/Cephalon.WorkerPlayground/Cephalon.WorkerPlayground.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/Cephalon.ReferenceModule.Operations/Cephalon.ReferenceModule.Operations.csproj" />
+    <Project Path="samples/Cephalon.Sample.Microservice/Cephalon.Sample.Microservice.csproj" />
+    <Project Path="samples/Cephalon.Sample.ModularMonolith/Cephalon.Sample.ModularMonolith.csproj" />
+    <Project Path="samples/Cephalon.Sample.ModularVerticalSlice/Cephalon.Sample.ModularVerticalSlice.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Cephalon.Abstractions/Cephalon.Abstractions.csproj" />
+    <Project Path="src/Cephalon.Agentics/Cephalon.Agentics.csproj" />
+    <Project Path="src/Cephalon.Cli/Cephalon.Cli.csproj" />
+    <Project Path="src/Cephalon.Edge/Cephalon.Edge.csproj" />
+    <Project Path="src/Cephalon.Eventing/Cephalon.Eventing.csproj" />
+    <Project Path="src/Cephalon.AspNetCore.GraphQL/Cephalon.AspNetCore.GraphQL.csproj" />
+    <Project Path="src/Cephalon.AspNetCore.Grpc/Cephalon.AspNetCore.Grpc.csproj" />
+    <Project Path="src/Cephalon.AspNetCore.JsonRpc/Cephalon.AspNetCore.JsonRpc.csproj" />
+    <Project Path="src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj" />
+    <Project Path="src/Cephalon.Engine/Cephalon.Engine.csproj" />
+    <Project Path="src/Cephalon.Observability/Cephalon.Observability.csproj" />
+    <Project Path="src/Cephalon.Observability.CassandraDependencies/Cephalon.Observability.CassandraDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.ClickHouseDependencies/Cephalon.Observability.ClickHouseDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.HttpDependencies/Cephalon.Observability.HttpDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.KafkaDependencies/Cephalon.Observability.KafkaDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.ConsulDependencies/Cephalon.Observability.ConsulDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.ElasticsearchDependencies/Cephalon.Observability.ElasticsearchDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.MemcachedDependencies/Cephalon.Observability.MemcachedDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.MongoDbDependencies/Cephalon.Observability.MongoDbDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.MqttDependencies/Cephalon.Observability.MqttDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.MySqlDependencies/Cephalon.Observability.MySqlDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.NatsDependencies/Cephalon.Observability.NatsDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.Neo4jDependencies/Cephalon.Observability.Neo4jDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.OpenSearchDependencies/Cephalon.Observability.OpenSearchDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.OracleDependencies/Cephalon.Observability.OracleDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.PostgresDependencies/Cephalon.Observability.PostgresDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.RabbitMqDependencies/Cephalon.Observability.RabbitMqDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.RedisDependencies/Cephalon.Observability.RedisDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.SqlServerDependencies/Cephalon.Observability.SqlServerDependencies.csproj" />
+    <Project Path="src/Cephalon.Observability.OpenTelemetry/Cephalon.Observability.OpenTelemetry.csproj" />
+    <Project Path="src/Cephalon.Observability.Serilog/Cephalon.Observability.Serilog.csproj" />
+    <Project Path="src/Cephalon.ReferenceDocs/Cephalon.ReferenceDocs.csproj" />
+    <Project Path="src/Cephalon.Retrieval/Cephalon.Retrieval.csproj" />
+    <Project Path="src/Cephalon.Scaffolding/Cephalon.Scaffolding.csproj" />
+    <Project Path="src/Cephalon.Worker/Cephalon.Worker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Cephalon.Tests/Cephalon.Tests.csproj" />
+  </Folder>
+  <Folder Name="/templates/">
+    <Project Path="templates/Cephalon.TemplatePack/Cephalon.TemplatePack.csproj" />
+  </Folder>
+</Solution>

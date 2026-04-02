@@ -2,8 +2,14 @@ using Cephalon.Abstractions.Patterns;
 
 namespace Cephalon.Engine.Patterns;
 
+/// <summary>
+/// Provides the built-in pattern descriptors used by Cephalon app profiles.
+/// </summary>
 public static class BuiltInPatterns
 {
+    /// <summary>
+    /// Gets the modular-architecture composition pattern.
+    /// </summary>
     public static PatternDescriptor ModularArchitecture { get; } = new(
         id: "modular-architecture",
         displayName: "Modular Architecture",
@@ -11,6 +17,9 @@ public static class BuiltInPatterns
         kind: PatternKind.Composition,
         tags: ["architecture", "modular"]);
 
+    /// <summary>
+    /// Gets the single-host deployment topology pattern.
+    /// </summary>
     public static PatternDescriptor SingleHostTopology { get; } = new(
         id: "single-host-topology",
         displayName: "Single Host Topology",
@@ -19,6 +28,9 @@ public static class BuiltInPatterns
         tags: ["topology", "monolith"],
         conflictsWith: ["microservice-topology"]);
 
+    /// <summary>
+    /// Gets the microservice deployment topology pattern.
+    /// </summary>
     public static PatternDescriptor MicroserviceTopology { get; } = new(
         id: "microservice-topology",
         displayName: "Microservice Topology",
@@ -27,6 +39,9 @@ public static class BuiltInPatterns
         tags: ["topology", "microservice"],
         conflictsWith: ["single-host-topology"]);
 
+    /// <summary>
+    /// Gets the vertical-slice organization pattern.
+    /// </summary>
     public static PatternDescriptor VerticalSliceOrganization { get; } = new(
         id: "vertical-slice-organization",
         displayName: "Vertical Slice Organization",
@@ -35,6 +50,9 @@ public static class BuiltInPatterns
         tags: ["organization", "vertical-slice"],
         conflictsWith: ["module-first-organization"]);
 
+    /// <summary>
+    /// Gets the module-first organization pattern.
+    /// </summary>
     public static PatternDescriptor ModuleFirstOrganization { get; } = new(
         id: "module-first-organization",
         displayName: "Module-First Organization",
@@ -43,6 +61,9 @@ public static class BuiltInPatterns
         tags: ["organization", "module-first"],
         conflictsWith: ["vertical-slice-organization"]);
 
+    /// <summary>
+    /// Gets the shared-foundation pattern.
+    /// </summary>
     public static PatternDescriptor SharedFoundationPattern { get; } = new(
         id: "shared-foundation-pattern",
         displayName: "Shared Foundation Pattern",
@@ -50,6 +71,9 @@ public static class BuiltInPatterns
         kind: PatternKind.Foundation,
         tags: ["foundation", "platform"]);
 
+    /// <summary>
+    /// Gets the strategy design pattern.
+    /// </summary>
     public static PatternDescriptor StrategyPattern { get; } = new(
         id: "strategy-pattern",
         displayName: "Strategy Pattern",
@@ -57,6 +81,9 @@ public static class BuiltInPatterns
         kind: PatternKind.Design,
         tags: ["design-pattern", "behavior"]);
 
+    /// <summary>
+    /// Gets the pipeline design pattern.
+    /// </summary>
     public static PatternDescriptor PipelinePattern { get; } = new(
         id: "pipeline-pattern",
         displayName: "Pipeline Pattern",
@@ -64,6 +91,9 @@ public static class BuiltInPatterns
         kind: PatternKind.Design,
         tags: ["design-pattern", "pipeline"]);
 
+    /// <summary>
+    /// Gets the mediator design pattern.
+    /// </summary>
     public static PatternDescriptor MediatorPattern { get; } = new(
         id: "mediator-pattern",
         displayName: "Mediator Pattern",
@@ -71,6 +101,9 @@ public static class BuiltInPatterns
         kind: PatternKind.Design,
         tags: ["design-pattern", "mediator"]);
 
+    /// <summary>
+    /// Gets the specification design pattern.
+    /// </summary>
     public static PatternDescriptor SpecificationPattern { get; } = new(
         id: "specification-pattern",
         displayName: "Specification Pattern",
@@ -94,8 +127,17 @@ public static class BuiltInPatterns
 
     private static readonly Dictionary<string, PatternDescriptor> Index = CreateIndex();
 
+    /// <summary>
+    /// Gets all built-in pattern descriptors.
+    /// </summary>
     public static IReadOnlyList<PatternDescriptor> All => Items;
 
+    /// <summary>
+    /// Attempts to resolve a pattern identifier, display name, or alias.
+    /// </summary>
+    /// <param name="value">The pattern identifier, display name, or alias to resolve.</param>
+    /// <param name="pattern">The resolved pattern descriptor when the lookup succeeds.</param>
+    /// <returns><see langword="true" /> when the pattern was resolved; otherwise, <see langword="false" />.</returns>
     public static bool TryResolve(string value, out PatternDescriptor pattern)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
@@ -103,6 +145,11 @@ public static class BuiltInPatterns
         return Index.TryGetValue(NormalizeKey(value), out pattern!);
     }
 
+    /// <summary>
+    /// Resolves a pattern identifier, display name, or alias.
+    /// </summary>
+    /// <param name="value">The pattern identifier, display name, or alias to resolve.</param>
+    /// <returns>The resolved pattern descriptor.</returns>
     public static PatternDescriptor Resolve(string value)
     {
         if (TryResolve(value, out var pattern))

@@ -9,14 +9,32 @@ namespace Cephalon.Benchmarks.Support;
 
 internal static class BenchmarkScenarioFactory
 {
-    public static EngineBuilder CreateEngineBuilder()
+    public static void ConfigureEngine(EngineBuilder builder)
     {
-        var builder = new EngineBuilder(new ServiceCollection());
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.UseSettings(CreateSettings());
         builder.AddModule(new BenchmarkExperienceModule());
         builder.AddModule(new BenchmarkOperationsModule());
         builder.AddModule(new BenchmarkDiscoveryModule());
         builder.AddModule(new BenchmarkClockModule());
+    }
+
+    public static void ConfigureAspNetCoreEngine(EngineBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        builder.UseSettings(CreateAspNetCoreSettings());
+        builder.AddModule(new BenchmarkExperienceModule());
+        builder.AddModule(new BenchmarkOperationsModule());
+        builder.AddModule(new BenchmarkDiscoveryModule());
+        builder.AddModule(new BenchmarkClockModule());
+    }
+
+    public static EngineBuilder CreateEngineBuilder()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        ConfigureEngine(builder);
         return builder;
     }
 
@@ -40,5 +58,13 @@ internal static class BenchmarkScenarioFactory
             blueprint: "ModularVerticalSlice",
             patterns: ["StrategyPattern", "PipelinePattern", "MediatorPattern"],
             transports: ["RestApi", "JsonRpc", "Grpc"]);
+    }
+
+    private static EngineSettings CreateAspNetCoreSettings()
+    {
+        return new EngineSettings(
+            blueprint: "ModularVerticalSlice",
+            patterns: ["StrategyPattern", "PipelinePattern", "MediatorPattern"],
+            transports: ["RestApi"]);
     }
 }

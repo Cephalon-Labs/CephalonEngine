@@ -174,6 +174,72 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public async Task RuntimeOperationalStoryTracksLoadedStartedStoppedAndTimeline()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<LifecycleRecorder>();
+        services.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new LifecycleDiscoveryModule());
+            cephalon.AddModule(new LifecyclePlatformModule());
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var runtime = provider.GetRequiredService<IRuntime>();
+
+        await runtime.StartAsync(provider);
+        await runtime.StopAsync();
+
+        var story = runtime.OperationalStory;
+
+        Assert.Equal(RuntimeStatus.Stopped, story.Status.Status);
+        Assert.Empty(story.LoadedPackages);
+        Assert.Equal(2, story.Modules.Count);
+
+        Assert.Contains(story.Modules, module => string.Equals(module.ModuleId, "lifecycle-platform", StringComparison.Ordinal));
+        var platform = story.Modules.First(module => string.Equals(module.ModuleId, "lifecycle-platform", StringComparison.Ordinal));
+        Assert.True(platform.IsLoaded);
+        Assert.True(platform.IsInitialized);
+        Assert.True(platform.IsStopped);
+        Assert.False(platform.IsStarted);
+        Assert.NotNull(platform.LoadedAtUtc);
+        Assert.NotNull(platform.InitializedAtUtc);
+        Assert.NotNull(platform.StartedAtUtc);
+        Assert.NotNull(platform.StoppedAtUtc);
+        Assert.Equal("stop", platform.LastObservedPhase);
+
+        Assert.Contains(
+            story.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.Module &&
+                entry.SubjectId == "lifecycle-platform" &&
+                entry.Phase == "load" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Succeeded);
+        Assert.Contains(
+            story.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.Module &&
+                entry.SubjectId == "lifecycle-platform" &&
+                entry.Phase == "initialize" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Succeeded);
+        Assert.Contains(
+            story.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.Module &&
+                entry.SubjectId == "lifecycle-platform" &&
+                entry.Phase == "start" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Succeeded);
+        Assert.Contains(
+            story.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.Module &&
+                entry.SubjectId == "lifecycle-platform" &&
+                entry.Phase == "stop" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Succeeded);
+        Assert.Contains(
+            story.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.Runtime &&
+                entry.Phase == "stop" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Succeeded);
+    }
+
+    [Fact]
     public void AddCephalonUsesConfigurationWithoutExplicitConfigureCallback()
     {
         var services = new ServiceCollection();
@@ -193,6 +259,7 @@ public sealed class EngineBuilderTests
                 ["Engine:Options:Modules:flaky-start:Enabled"] = "false",
                 ["Engine:Options:Modules:failing-stop:Enabled"] = "false",
                 ["Engine:Options:Modules:stop-observer:Enabled"] = "false",
+                ["Engine:Options:Modules:slow-stop:Enabled"] = "false",
                 ["Engine:Options:Modules:dependency-health:Enabled"] = "false",
                 ["Engine:Options:Modules:throwing-dependency-health:Enabled"] = "false",
                 ["Engine:Options:Modules:restricted:Enabled"] = "false",
@@ -1228,7 +1295,7 @@ public sealed class EngineBuilderTests
         var builder = new EngineBuilder(new ServiceCollection());
         builder.UseSettings(new EngineSettings(
             blueprint: "ModularVerticalSlice",
-            transports: ["JsonRpc", "Grpc"]));
+            transports: ["JsonRpc", "Grpc", "GraphQL"]));
         builder.AddModule(new PlatformTestModule());
         builder.AddModule(new DiscoveryTestModule());
 
@@ -1243,11 +1310,14 @@ public sealed class EngineBuilderTests
             convention.Contains("AddJsonRpcTransport()", StringComparison.Ordinal));
         Assert.Contains(scaffold.Conventions, convention =>
             convention.Contains("AddGrpcTransport()", StringComparison.Ordinal));
+        Assert.Contains(scaffold.Conventions, convention =>
+            convention.Contains("AddGraphQLTransport()", StringComparison.Ordinal));
         Assert.Contains(scaffold.Projects, project =>
             project.Id == "host" &&
             project.Role == ProjectRoles.Host &&
             project.Packages.Contains("Cephalon.AspNetCore", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.Observability", StringComparer.OrdinalIgnoreCase) &&
+            project.Packages.Contains("Cephalon.AspNetCore.GraphQL", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.AspNetCore.JsonRpc", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.AspNetCore.Grpc", StringComparer.OrdinalIgnoreCase));
     }

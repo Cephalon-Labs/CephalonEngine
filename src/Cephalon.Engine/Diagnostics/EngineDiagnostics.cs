@@ -4,16 +4,54 @@ using System.Reflection;
 
 namespace Cephalon.Engine.Diagnostics;
 
+/// <summary>
+/// Defines the stable meter, activity source, and counter names emitted by the engine runtime.
+/// </summary>
 public static class EngineDiagnostics
 {
+    /// <summary>
+    /// Gets the meter name emitted by the engine.
+    /// </summary>
     public const string MeterName = "Cephalon.Engine";
+
+    /// <summary>
+    /// Gets the activity-source name emitted by the engine.
+    /// </summary>
     public const string ActivitySourceName = "Cephalon.Engine";
+
+    /// <summary>
+    /// Gets the activity name used while building the runtime.
+    /// </summary>
     public const string BuildActivityName = "engine.build";
+
+    /// <summary>
+    /// Gets the counter name for completed engine builds.
+    /// </summary>
     public const string EngineBuildCounterName = "cephalon.engine.builds";
+
+    /// <summary>
+    /// Gets the counter name for runtime lifecycle transitions.
+    /// </summary>
     public const string RuntimeTransitionCounterName = "cephalon.runtime.transitions";
+
+    /// <summary>
+    /// Gets the counter name for module lifecycle transitions.
+    /// </summary>
     public const string ModuleTransitionCounterName = "cephalon.module.transitions";
+
+    /// <summary>
+    /// Gets the counter name for runtime lifecycle failures.
+    /// </summary>
     public const string RuntimeFailureCounterName = "cephalon.runtime.failures";
+
+    /// <summary>
+    /// Gets the counter name for module lifecycle failures.
+    /// </summary>
     public const string ModuleFailureCounterName = "cephalon.module.failures";
+
+    /// <summary>
+    /// Gets the counter name for runtime restart attempts.
+    /// </summary>
     public const string RuntimeRestartCounterName = "cephalon.runtime.restarts";
 
     private static readonly string Version = typeof(EngineDiagnostics).Assembly

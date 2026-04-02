@@ -31,13 +31,26 @@ public sealed class DiagnosticsSurface
 
 #### Constructors
 
-<a id="member-m-cephalon-aspnetcore-diagnostics-diagnosticssurface-ctor-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string-cephalon-engine-runtime-runtimehealthreport-cephalon-engine-runtime-runtimehealthreport-system-string-system-string-system-string"></a>
+<a id="member-m-cephalon-aspnetcore-diagnostics-diagnosticssurface-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention-cephalon-engine-runtime-runtimehealthreport-cephalon-engine-runtime-runtimehealthreport-system-string-system-string-system-string"></a>
 
 ##### `DiagnosticsSurface`
 
 ```csharp
-DiagnosticsSurface(string MeterName, string ActivitySourceName, IReadOnlyList<string> Counters, RuntimeHealthReport Liveness, RuntimeHealthReport Readiness, string SummaryPath, string LivenessPath, string ReadinessPath)
+DiagnosticsSurface(string MeterName, string ActivitySourceName, IReadOnlyList<string> Counters, IReadOnlyList<DiagnosticsConvention> Conventions, RuntimeHealthReport Liveness, RuntimeHealthReport Readiness, string SummaryPath, string LivenessPath, string ReadinessPath)
 ```
+
+Describes the operator-facing diagnostics surface exposed by a Cephalon ASP.NET Core host.
+
+Parameters:
+- `MeterName`: The meter name used for engine metrics.
+- `ActivitySourceName`: The activity source name used for engine tracing.
+- `Counters`: The built-in counter names exposed by the engine.
+- `Conventions`: The published diagnostics conventions and event-id catalogs visible to the current host.
+- `Liveness`: The current liveness report.
+- `Readiness`: The current readiness report.
+- `SummaryPath`: The aggregate health endpoint path.
+- `LivenessPath`: The liveness endpoint path.
+- `ReadinessPath`: The readiness endpoint path.
 
 #### Properties
 
@@ -50,6 +63,16 @@ string ActivitySourceName { get; set; }
 ```
 
 The activity source name used for engine tracing.
+
+<a id="member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-conventions"></a>
+
+##### `Conventions`
+
+```csharp
+IReadOnlyList<DiagnosticsConvention> Conventions { get; set; }
+```
+
+The published diagnostics conventions and event-id catalogs visible to the current host.
 
 <a id="member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-counters"></a>
 
@@ -147,6 +170,8 @@ public sealed class ReferenceDocsHostingOptions
 ```csharp
 ReferenceDocsHostingOptions()
 ```
+
+Creates reference-doc hosting options with the default hosted-doc route settings.
 
 #### Fields
 
@@ -405,13 +430,41 @@ Returns: The same builder instance for fluent composition.
 Parameters:
 - `builder`: The ASP.NET Core application builder to extend.
 
-<a id="member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addcephalon-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-1-cephalon-engine-composition-enginebuilder"></a>
+<a id="member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addcephalon-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-cephalon-engine-composition-enginebuilder"></a>
 
 ##### `AddCephalon`
 
 ```csharp
 WebApplicationBuilder AddCephalon(this WebApplicationBuilder builder, Action<EngineBuilder> configure)
 ```
+
+Adds Cephalon to the builder and allows additional code-based engine configuration.
+
+Remarks: This method wires OpenAPI, Scalar-ready document transformers, health checks, hosted runtime startup, and the built-in ASP.NET Core transport mappers before registering the engine itself.
+
+Returns: The same builder instance for fluent composition.
+
+Parameters:
+- `builder`: The ASP.NET Core application builder to extend.
+- `configure`: The callback that configures the underlying engine builder.
+
+<a id="member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addcephalonhttplogging-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions"></a>
+
+##### `AddCephalonHttpLogging`
+
+```csharp
+WebApplicationBuilder AddCephalonHttpLogging(this WebApplicationBuilder builder, Action<HttpRequestResponseLoggingOptions> configure)
+```
+
+Adds Cephalon's HTTP request and response logging options to the ASP.NET Core host.
+
+Remarks: The logging contract is read from `Engine:Observability:HttpLogging` so teams can opt into request/response summaries and bounded body capture without introducing a separate host-specific section.
+
+Returns: The same builder instance for fluent host composition.
+
+Parameters:
+- `builder`: The ASP.NET Core application builder to extend.
+- `configure`: An optional callback that can extend or override the configuration-driven request-logging setup.
 
 <a id="member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addcephalonprojectconfigurations-microsoft-aspnetcore-builder-webapplicationbuilder"></a>
 
@@ -430,13 +483,23 @@ Returns: The same builder instance for fluent composition.
 Parameters:
 - `builder`: The ASP.NET Core application builder to extend.
 
-<a id="member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addreferencedocshosting-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-1-cephalon-aspnetcore-documentation-referencedocshostingoptions"></a>
+<a id="member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addreferencedocshosting-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-cephalon-aspnetcore-documentation-referencedocshostingoptions"></a>
 
 ##### `AddReferenceDocsHosting`
 
 ```csharp
 WebApplicationBuilder AddReferenceDocsHosting(this WebApplicationBuilder builder, Action<ReferenceDocsHostingOptions> configure)
 ```
+
+Adds hosted reference-doc configuration to the ASP.NET Core host.
+
+Remarks: Reference-doc hosting stays in the host layer because it serves already-generated static artifacts such as `browse.html`, `members.md`, and `reference-manifest.json`.
+
+Returns: The same builder instance for fluent composition.
+
+Parameters:
+- `builder`: The ASP.NET Core application builder to extend.
+- `configure`: An optional callback that can extend or override the configuration-driven hosting setup.
 
 <a id="type-cephalon-aspnetcore-hosting-enginewebapplicationextensions"></a>
 
@@ -469,6 +532,101 @@ Returns: The same application instance for fluent host composition.
 
 Parameters:
 - `app`: The ASP.NET Core application to extend.
+
+<a id="type-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions"></a>
+
+### `HttpRequestResponseLoggingOptions`
+
+Configures opt-in HTTP request and response logging for Cephalon ASP.NET Core hosts.
+
+Remarks: These settings are read from `Engine:Observability:HttpLogging` by default. Request and response bodies are captured only for textual content types such as JSON, XML, GraphQL, form payloads, and `text/*` responses, and body capture is truncated to the configured limits.
+
+#### Declaration
+```csharp
+public sealed class HttpRequestResponseLoggingOptions
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-ctor"></a>
+
+##### `HttpRequestResponseLoggingOptions`
+
+```csharp
+HttpRequestResponseLoggingOptions()
+```
+
+Creates request and response logging options with body capture disabled by default.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool Enabled { get; set; }
+```
+
+Gets or sets a value indicating whether the ASP.NET Core host should log request and response summaries.
+
+<a id="member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-logrequestbody"></a>
+
+##### `LogRequestBody`
+
+```csharp
+bool LogRequestBody { get; set; }
+```
+
+Gets or sets a value indicating whether textual request bodies should be logged.
+
+<a id="member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-logresponsebody"></a>
+
+##### `LogResponseBody`
+
+```csharp
+bool LogResponseBody { get; set; }
+```
+
+Gets or sets a value indicating whether textual response bodies should be logged.
+
+<a id="member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-requestbodylimit"></a>
+
+##### `RequestBodyLimit`
+
+```csharp
+int RequestBodyLimit { get; set; }
+```
+
+Gets or sets the maximum number of request-body characters to log before the payload is truncated.
+
+<a id="member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-responsebodylimit"></a>
+
+##### `ResponseBodyLimit`
+
+```csharp
+int ResponseBodyLimit { get; set; }
+```
+
+Gets or sets the maximum number of response-body characters to log before the payload is truncated.
+
+#### Methods
+
+<a id="member-m-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
+
+##### `FromConfiguration`
+
+```csharp
+HttpRequestResponseLoggingOptions FromConfiguration(IConfiguration configuration, string sectionPath)
+```
+
+Binds request and response logging options from configuration.
+
+Returns: The bound request and response logging options.
+
+Parameters:
+- `configuration`: The application configuration root.
+- `sectionPath`: The configuration section path that contains the engine settings. The default is `Engine`.
 
 <a id="type-cephalon-aspnetcore-hosting-itransportroutemapper"></a>
 

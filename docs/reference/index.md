@@ -16,7 +16,7 @@ Quick links:
 ### Core
 
 - [Cephalon.Abstractions](cephalon-abstractions.md): Host-agnostic contracts that module and package authors build against. Contains 9 namespaces and 37 public types. [Browse](browse.html?assembly=Cephalon.Abstractions)
-- [Cephalon.Engine](cephalon-engine.md): Composition, runtime, policy, manifest, and introspection services. Contains 12 namespaces and 44 public types. [Browse](browse.html?assembly=Cephalon.Engine)
+- [Cephalon.Engine](cephalon-engine.md): Composition, runtime, policy, manifest, and introspection services. Contains 12 namespaces and 54 public types. [Browse](browse.html?assembly=Cephalon.Engine)
 
 ### Technology Packs
 
@@ -27,10 +27,31 @@ Quick links:
 
 ### Hosts
 
-- [Cephalon.AspNetCore](cephalon-aspnetcore.md): ASP.NET Core host core, REST surface, docs, health, and runtime endpoints. Contains 8 namespaces and 12 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore)
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md): ASP.NET Core host core, REST surface, docs, health, and runtime endpoints. Contains 8 namespaces and 13 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore)
+- [Cephalon.AspNetCore.GraphQL](cephalon-aspnetcore-graphql.md): GraphQL transport adapter for ASP.NET Core hosts. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore.GraphQL)
 - [Cephalon.AspNetCore.Grpc](cephalon-aspnetcore-grpc.md): gRPC transport adapter and contracts for ASP.NET Core hosts. Contains 3 namespaces and 10 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore.Grpc)
 - [Cephalon.AspNetCore.JsonRpc](cephalon-aspnetcore-jsonrpc.md): JSON-RPC transport adapter for ASP.NET Core hosts. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore.JsonRpc)
 - [Cephalon.Observability](cephalon-observability.md): Operational diagnostics and telemetry conventions for hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability)
+- [Cephalon.Observability.CassandraDependencies](cephalon-observability-cassandradependencies.md): Cassandra dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.CassandraDependencies)
+- [Cephalon.Observability.ClickHouseDependencies](cephalon-observability-clickhousedependencies.md): ClickHouse dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.ClickHouseDependencies)
+- [Cephalon.Observability.ConsulDependencies](cephalon-observability-consuldependencies.md): Consul dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.ConsulDependencies)
+- [Cephalon.Observability.ElasticsearchDependencies](cephalon-observability-elasticsearchdependencies.md): Elasticsearch dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.ElasticsearchDependencies)
+- [Cephalon.Observability.HttpDependencies](cephalon-observability-httpdependencies.md): External HTTP dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.HttpDependencies)
+- [Cephalon.Observability.KafkaDependencies](cephalon-observability-kafkadependencies.md): Kafka dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.KafkaDependencies)
+- [Cephalon.Observability.MemcachedDependencies](cephalon-observability-memcacheddependencies.md): Memcached dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.MemcachedDependencies)
+- [Cephalon.Observability.MongoDbDependencies](cephalon-observability-mongodbdependencies.md): MongoDB dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.MongoDbDependencies)
+- [Cephalon.Observability.MqttDependencies](cephalon-observability-mqttdependencies.md): MQTT dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.MqttDependencies)
+- [Cephalon.Observability.MySqlDependencies](cephalon-observability-mysqldependencies.md): MySQL dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.MySqlDependencies)
+- [Cephalon.Observability.NatsDependencies](cephalon-observability-natsdependencies.md): NATS dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.NatsDependencies)
+- [Cephalon.Observability.Neo4jDependencies](cephalon-observability-neo4jdependencies.md): Neo4j dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.Neo4jDependencies)
+- [Cephalon.Observability.OpenSearchDependencies](cephalon-observability-opensearchdependencies.md): OpenSearch dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.OpenSearchDependencies)
+- [Cephalon.Observability.OpenTelemetry](cephalon-observability-opentelemetry.md): OpenTelemetry OTLP exporter integration for Cephalon hosts. Contains 1 namespaces and 1 public types. [Browse](browse.html?assembly=Cephalon.Observability.OpenTelemetry)
+- [Cephalon.Observability.OracleDependencies](cephalon-observability-oracledependencies.md): Oracle dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.OracleDependencies)
+- [Cephalon.Observability.PostgresDependencies](cephalon-observability-postgresdependencies.md): Postgres dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.PostgresDependencies)
+- [Cephalon.Observability.RabbitMqDependencies](cephalon-observability-rabbitmqdependencies.md): RabbitMQ dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.RabbitMqDependencies)
+- [Cephalon.Observability.RedisDependencies](cephalon-observability-redisdependencies.md): Redis and cache dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.RedisDependencies)
+- [Cephalon.Observability.Serilog](cephalon-observability-serilog.md): Serilog provider integration for Cephalon hosts. Contains 1 namespaces and 1 public types. [Browse](browse.html?assembly=Cephalon.Observability.Serilog)
+- [Cephalon.Observability.SqlServerDependencies](cephalon-observability-sqlserverdependencies.md): SQL Server and Azure SQL dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.SqlServerDependencies)
 - [Cephalon.Worker](cephalon-worker.md): Generic-host worker adapter for non-HTTP runtime execution. Contains 1 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Worker)
 
 ### Tooling

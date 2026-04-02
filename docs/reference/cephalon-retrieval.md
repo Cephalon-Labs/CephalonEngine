@@ -36,6 +36,8 @@ public sealed class RetrievalOptions
 RetrievalOptions()
 ```
 
+Creates retrieval options with the default host-owned features enabled.
+
 #### Properties
 
 <a id="member-p-cephalon-retrieval-configuration-retrievaloptions-collections"></a>
@@ -85,13 +87,21 @@ public static class RetrievalEngineBuilderExtensions
 
 #### Methods
 
-<a id="member-m-cephalon-retrieval-registration-retrievalenginebuilderextensions-addretrieval-cephalon-engine-composition-enginebuilder-system-action-1-cephalon-retrieval-configuration-retrievaloptions"></a>
+<a id="member-m-cephalon-retrieval-registration-retrievalenginebuilderextensions-addretrieval-cephalon-engine-composition-enginebuilder-system-action-cephalon-retrieval-configuration-retrievaloptions"></a>
 
 ##### `AddRetrieval`
 
 ```csharp
 EngineBuilder AddRetrieval(this EngineBuilder builder, Action<RetrievalOptions> configure)
 ```
+
+Adds the retrieval runtime pack to the engine.
+
+Returns: The same engine builder for fluent composition.
+
+Parameters:
+- `builder`: The engine builder to extend.
+- `configure`: An optional callback that configures the host-owned retrieval options.
 
 <a id="namespace-cephalon-retrieval-services"></a>
 
@@ -203,13 +213,21 @@ public sealed class KnowledgeCollectionDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-retrieval-services-knowledgecollectiondescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-1-system-string"></a>
+<a id="member-m-cephalon-retrieval-services-knowledgecollectiondescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string"></a>
 
 ##### `KnowledgeCollectionDescriptor`
 
 ```csharp
 KnowledgeCollectionDescriptor(string id, string displayName, string description, IReadOnlyList<string> tags)
 ```
+
+Creates a new knowledge collection descriptor.
+
+Parameters:
+- `id`: The stable collection identifier.
+- `displayName`: The operator-facing collection name.
+- `description`: The human-readable description of the collection.
+- `tags`: Optional tags that classify the collection.
 
 #### Properties
 

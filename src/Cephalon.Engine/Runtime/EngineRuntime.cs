@@ -9,41 +9,59 @@ using System.Diagnostics.Metrics;
 
 namespace Cephalon.Engine.Runtime;
 
+/// <summary>
+/// Executes module lifecycle transitions and exposes runtime status, manifest, and failure information.
+/// </summary>
 public sealed class EngineRuntime : IRuntime, IDisposable
 {
+    private const int MaxTimelineEntries = 256;
     private static readonly Action<ILogger, string, string, string, int, Exception?> LogRuntimeTransitionMessage =
         LoggerMessage.Define<string, string, string, int>(
             LogLevel.Information,
-            new EventId(2000, nameof(LogRuntimeTransition)),
-            "Runtime phase '{Phase}' completed with status {Status}. Blueprint {BlueprintId}. Modules {ModuleCount}.");
+            new EventId(EngineRuntimeDiagnosticsConventions.RuntimeTransition.Id, EngineRuntimeDiagnosticsConventions.RuntimeTransition.Name),
+            EngineRuntimeDiagnosticsConventions.RuntimeTransition.MessageTemplate);
     private static readonly Action<ILogger, string, string, string, Exception?> LogModuleTransitionMessage =
         LoggerMessage.Define<string, string, string>(
             LogLevel.Information,
-            new EventId(2001, nameof(LogModuleTransition)),
-            "Module '{ModuleId}' completed phase '{Phase}' with version {Version}.");
+            new EventId(EngineRuntimeDiagnosticsConventions.ModuleTransition.Id, EngineRuntimeDiagnosticsConventions.ModuleTransition.Name),
+            EngineRuntimeDiagnosticsConventions.ModuleTransition.MessageTemplate);
     private static readonly Action<ILogger, string, string, Exception> LogRuntimeFailureMessage =
         LoggerMessage.Define<string, string>(
             LogLevel.Error,
-            new EventId(2002, nameof(LogRuntimeFailure)),
-            "Runtime phase '{Phase}' failed while status was {Status}.");
+            new EventId(EngineRuntimeDiagnosticsConventions.RuntimeFailure.Id, EngineRuntimeDiagnosticsConventions.RuntimeFailure.Name),
+            EngineRuntimeDiagnosticsConventions.RuntimeFailure.MessageTemplate);
     private static readonly Action<ILogger, string, string, Exception> LogModuleFailureMessage =
         LoggerMessage.Define<string, string>(
             LogLevel.Error,
-            new EventId(2003, nameof(LogModuleFailure)),
-            "Module '{ModuleId}' failed during phase '{Phase}'.");
+            new EventId(EngineRuntimeDiagnosticsConventions.ModuleFailure.Id, EngineRuntimeDiagnosticsConventions.ModuleFailure.Name),
+            EngineRuntimeDiagnosticsConventions.ModuleFailure.MessageTemplate);
 
     private readonly SemaphoreSlim lifecycleLock = new(1, 1);
+    private readonly object stateGate = new();
     private readonly List<IModule> initializedModules = [];
     private readonly List<IModule> startedModules = [];
+    private readonly Dictionary<string, DateTimeOffset> moduleLoadedAtUtc = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, DateTimeOffset> moduleInitializedAtUtc = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, DateTimeOffset> moduleStartedAtUtc = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, DateTimeOffset> moduleStoppedAtUtc = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, RuntimeFailureInfo> moduleFailures = new(StringComparer.OrdinalIgnoreCase);
+    private readonly List<RuntimeLifecycleEvent> timeline = [];
     private ModuleContext? moduleContext;
     private ILogger? logger;
     private RuntimeStatus status = RuntimeStatus.Created;
     private DateTimeOffset? initializedAtUtc;
     private DateTimeOffset? startedAtUtc;
+    private DateTimeOffset? stoppingAtUtc;
     private DateTimeOffset? stoppedAtUtc;
     private RuntimeFailureInfo? lastFailure;
     private int restartCount;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EngineRuntime" /> class.
+    /// </summary>
+    /// <param name="modules">The modules that participate in runtime lifecycle transitions.</param>
+    /// <param name="manifest">The runtime manifest that describes the built runtime shape.</param>
+    /// <param name="failurePolicy">The failure policy that governs startup, stop, and restart behavior.</param>
     public EngineRuntime(
         IReadOnlyList<IModule> modules,
         RuntimeManifest manifest,
@@ -52,23 +70,100 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         Modules = modules ?? throw new ArgumentNullException(nameof(modules));
         Manifest = manifest ?? throw new ArgumentNullException(nameof(manifest));
         FailurePolicy = failurePolicy ?? throw new ArgumentNullException(nameof(failurePolicy));
+        SeedLoadedStoryFromManifest();
     }
 
+    /// <summary>
+    /// Gets the modules that participate in runtime lifecycle transitions.
+    /// </summary>
     public IReadOnlyList<IModule> Modules { get; }
 
+    /// <summary>
+    /// Gets the runtime manifest that describes the built runtime shape.
+    /// </summary>
     public RuntimeManifest Manifest { get; }
 
+    /// <summary>
+    /// Gets the failure policy that governs startup, stop, and restart behavior.
+    /// </summary>
     public FailurePolicy FailurePolicy { get; }
 
-    public RuntimeStatus Status => status;
+    /// <summary>
+    /// Gets the current lifecycle status.
+    /// </summary>
+    public RuntimeStatus Status
+    {
+        get
+        {
+            lock (stateGate)
+            {
+                return status;
+            }
+        }
+    }
 
-    public RuntimeStatusSnapshot StatusSnapshot =>
-        new(status, initializedAtUtc, startedAtUtc, stoppedAtUtc, restartCount, lastFailure);
+    /// <summary>
+    /// Gets a serialization-friendly snapshot of the current runtime status.
+    /// </summary>
+    public RuntimeStatusSnapshot StatusSnapshot
+    {
+        get
+        {
+            lock (stateGate)
+            {
+                return CreateStatusSnapshotUnsafe();
+            }
+        }
+    }
 
-    public RuntimeFailureInfo? LastFailure => lastFailure;
+    /// <summary>
+    /// Gets the richer operator-facing lifecycle story for the runtime.
+    /// </summary>
+    public RuntimeOperationalStory OperationalStory
+    {
+        get
+        {
+            lock (stateGate)
+            {
+                return CreateOperationalStoryUnsafe();
+            }
+        }
+    }
 
-    public int RestartCount => restartCount;
+    /// <summary>
+    /// Gets the last captured lifecycle failure when one is available.
+    /// </summary>
+    public RuntimeFailureInfo? LastFailure
+    {
+        get
+        {
+            lock (stateGate)
+            {
+                return lastFailure;
+            }
+        }
+    }
 
+    /// <summary>
+    /// Gets the number of completed manual restarts.
+    /// </summary>
+    public int RestartCount
+    {
+        get
+        {
+            lock (stateGate)
+            {
+                return restartCount;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Initializes the runtime and its modules.
+    /// </summary>
+    /// <param name="services">The service provider bound to the runtime lifecycle.</param>
+    /// <param name="cancellationToken">The cancellation token for the initialization operation.</param>
+    /// <returns>A task that completes when initialization finishes.</returns>
     public async Task InitializeAsync(IServiceProvider services, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -92,6 +187,12 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         }
     }
 
+    /// <summary>
+    /// Starts the runtime and its modules.
+    /// </summary>
+    /// <param name="services">The service provider bound to the runtime lifecycle.</param>
+    /// <param name="cancellationToken">The cancellation token for the startup operation.</param>
+    /// <returns>A task that completes when startup finishes.</returns>
     public async Task StartAsync(IServiceProvider services, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -124,6 +225,12 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         }
     }
 
+    /// <summary>
+    /// Restarts the runtime when the current failure policy allows it.
+    /// </summary>
+    /// <param name="services">The service provider bound to the runtime lifecycle.</param>
+    /// <param name="cancellationToken">The cancellation token for the restart operation.</param>
+    /// <returns>A task that completes when the restart finishes.</returns>
     public async Task RestartAsync(IServiceProvider services, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -152,7 +259,10 @@ public sealed class EngineRuntime : IRuntime, IDisposable
                 }
             }
 
-            restartCount++;
+            lock (stateGate)
+            {
+                restartCount++;
+            }
             EngineDiagnostics.RuntimeRestartCounter.Add(1, new TagList
             {
                 { "cephalon.blueprint", Manifest.AppProfile.BlueprintId }
@@ -160,13 +270,19 @@ public sealed class EngineRuntime : IRuntime, IDisposable
 
             if (status == RuntimeStatus.Stopped && initializedModules.Count > 0)
             {
-                status = RuntimeStatus.Initialized;
+                lock (stateGate)
+                {
+                    status = RuntimeStatus.Initialized;
+                }
             }
             else if (status == RuntimeStatus.Failed)
             {
-                status = initializedModules.Count > 0
-                    ? RuntimeStatus.Initialized
-                    : RuntimeStatus.Created;
+                lock (stateGate)
+                {
+                    status = initializedModules.Count > 0
+                        ? RuntimeStatus.Initialized
+                        : RuntimeStatus.Created;
+                }
             }
 
             if (status == RuntimeStatus.Created || initializedAtUtc is null)
@@ -179,6 +295,16 @@ public sealed class EngineRuntime : IRuntime, IDisposable
                 await StartCoreAsync(cancellationToken);
             }
 
+            var restartRecordedAtUtc = DateTimeOffset.UtcNow;
+            RecordLifecycleEvent(
+                RuntimeLifecycleEventScope.Runtime,
+                phase: "restart",
+                outcome: RuntimeLifecycleEventOutcome.Succeeded,
+                runtimeStatus: status,
+                subjectId: "runtime",
+                subjectVersion: Manifest.EngineVersion,
+                message: $"Runtime completed restart with status {status}.",
+                occurredAtUtc: restartRecordedAtUtc);
             LogRuntimeTransition(logger, "restart", status.ToString(), Manifest.AppProfile.BlueprintId, Modules.Count);
         }
         finally
@@ -187,6 +313,11 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         }
     }
 
+    /// <summary>
+    /// Stops started modules and transitions the runtime to a stopped state.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token for the stop operation.</param>
+    /// <returns>A task that completes when shutdown finishes.</returns>
     public async Task StopAsync(CancellationToken cancellationToken = default)
     {
         await lifecycleLock.WaitAsync(cancellationToken);
@@ -194,15 +325,32 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         {
             if (status is RuntimeStatus.Created or RuntimeStatus.Stopped)
             {
-                stoppedAtUtc ??= DateTimeOffset.UtcNow;
-                status = RuntimeStatus.Stopped;
+                lock (stateGate)
+                {
+                    stoppedAtUtc ??= DateTimeOffset.UtcNow;
+                    status = RuntimeStatus.Stopped;
+                }
                 return;
             }
 
             if (status == RuntimeStatus.Initialized)
             {
-                stoppedAtUtc = DateTimeOffset.UtcNow;
-                status = RuntimeStatus.Stopped;
+                var stopRecordedAtUtc = DateTimeOffset.UtcNow;
+                lock (stateGate)
+                {
+                    stoppingAtUtc = stopRecordedAtUtc;
+                    stoppedAtUtc = stopRecordedAtUtc;
+                    status = RuntimeStatus.Stopped;
+                }
+                RecordLifecycleEvent(
+                    RuntimeLifecycleEventScope.Runtime,
+                    phase: "stop",
+                    outcome: RuntimeLifecycleEventOutcome.Succeeded,
+                    runtimeStatus: RuntimeStatus.Stopped,
+                    subjectId: "runtime",
+                    subjectVersion: Manifest.EngineVersion,
+                    message: "Runtime completed stop with status Stopped.",
+                    occurredAtUtc: stopRecordedAtUtc);
                 LogRuntimeTransition(logger, "stop", status.ToString(), Manifest.AppProfile.BlueprintId, Modules.Count);
                 return;
             }
@@ -270,11 +418,21 @@ public sealed class EngineRuntime : IRuntime, IDisposable
             throw new InvalidOperationException(
                 $"Runtime cannot restart after a failure in phase '{lastFailure.Phase}'. Rebuild the runtime instead.");
         }
+
+        if (lastFailure?.RestartAvailableAtUtc is DateTimeOffset restartAvailableAtUtc &&
+            DateTimeOffset.UtcNow < restartAvailableAtUtc)
+        {
+            throw new InvalidOperationException(
+                $"Runtime restart is backed off until '{restartAvailableAtUtc:O}'.");
+        }
     }
 
     private async Task InitializeCoreAsync(CancellationToken cancellationToken)
     {
-        status = RuntimeStatus.Initializing;
+        lock (stateGate)
+        {
+            status = RuntimeStatus.Initializing;
+        }
 
         try
         {
@@ -286,9 +444,22 @@ public sealed class EngineRuntime : IRuntime, IDisposable
                 continueOnFailure: false,
                 cancellationToken);
 
-            initializedAtUtc = DateTimeOffset.UtcNow;
-            lastFailure = null;
-            status = RuntimeStatus.Initialized;
+            var initializeRecordedAtUtc = DateTimeOffset.UtcNow;
+            lock (stateGate)
+            {
+                initializedAtUtc = initializeRecordedAtUtc;
+                lastFailure = null;
+                status = RuntimeStatus.Initialized;
+            }
+            RecordLifecycleEvent(
+                RuntimeLifecycleEventScope.Runtime,
+                phase: "initialize",
+                outcome: RuntimeLifecycleEventOutcome.Succeeded,
+                runtimeStatus: RuntimeStatus.Initialized,
+                subjectId: "runtime",
+                subjectVersion: Manifest.EngineVersion,
+                message: "Runtime completed initialize with status Initialized.",
+                occurredAtUtc: initializeRecordedAtUtc);
             LogRuntimeTransition(logger, "initialize", status.ToString(), Manifest.AppProfile.BlueprintId, Modules.Count);
         }
         catch (Exception exception)
@@ -309,7 +480,10 @@ public sealed class EngineRuntime : IRuntime, IDisposable
 
     private async Task StartCoreAsync(CancellationToken cancellationToken)
     {
-        status = RuntimeStatus.Starting;
+        lock (stateGate)
+        {
+            status = RuntimeStatus.Starting;
+        }
 
         try
         {
@@ -321,10 +495,24 @@ public sealed class EngineRuntime : IRuntime, IDisposable
                 continueOnFailure: false,
                 cancellationToken);
 
-            startedAtUtc = DateTimeOffset.UtcNow;
-            stoppedAtUtc = null;
-            lastFailure = null;
-            status = RuntimeStatus.Started;
+            var startRecordedAtUtc = DateTimeOffset.UtcNow;
+            lock (stateGate)
+            {
+                startedAtUtc = startRecordedAtUtc;
+                stoppingAtUtc = null;
+                stoppedAtUtc = null;
+                lastFailure = null;
+                status = RuntimeStatus.Started;
+            }
+            RecordLifecycleEvent(
+                RuntimeLifecycleEventScope.Runtime,
+                phase: "start",
+                outcome: RuntimeLifecycleEventOutcome.Succeeded,
+                runtimeStatus: RuntimeStatus.Started,
+                subjectId: "runtime",
+                subjectVersion: Manifest.EngineVersion,
+                message: "Runtime completed start with status Started.",
+                occurredAtUtc: startRecordedAtUtc);
             LogRuntimeTransition(logger, "start", status.ToString(), Manifest.AppProfile.BlueprintId, Modules.Count);
         }
         catch (Exception exception)
@@ -347,14 +535,32 @@ public sealed class EngineRuntime : IRuntime, IDisposable
     {
         if (startedModules.Count == 0)
         {
-            stoppedAtUtc = DateTimeOffset.UtcNow;
-            lastFailure = null;
-            status = RuntimeStatus.Stopped;
+            var stopRecordedAtUtc = DateTimeOffset.UtcNow;
+            lock (stateGate)
+            {
+                stoppingAtUtc = stopRecordedAtUtc;
+                stoppedAtUtc = stopRecordedAtUtc;
+                lastFailure = null;
+                status = RuntimeStatus.Stopped;
+            }
+            RecordLifecycleEvent(
+                RuntimeLifecycleEventScope.Runtime,
+                phase: "stop",
+                outcome: RuntimeLifecycleEventOutcome.Succeeded,
+                runtimeStatus: RuntimeStatus.Stopped,
+                subjectId: "runtime",
+                subjectVersion: Manifest.EngineVersion,
+                message: "Runtime completed stop with status Stopped.",
+                occurredAtUtc: stopRecordedAtUtc);
             LogRuntimeTransition(logger, "stop", status.ToString(), Manifest.AppProfile.BlueprintId, Modules.Count);
             return;
         }
 
-        status = RuntimeStatus.Stopping;
+        lock (stateGate)
+        {
+            stoppingAtUtc = DateTimeOffset.UtcNow;
+            status = RuntimeStatus.Stopping;
+        }
 
         try
         {
@@ -362,13 +568,26 @@ public sealed class EngineRuntime : IRuntime, IDisposable
                 phase: "stop",
                 modules: startedModules.AsEnumerable().Reverse().ToArray(),
                 execute: static (lifecycle, context, token) => lifecycle.StopAsync(context, token),
-                onSuccess: UntrackStartedModule,
+                onSuccess: TrackStoppedModule,
                 continueOnFailure: FailurePolicy.StopFailureBehavior == StopFailureBehavior.BestEffortContinue,
                 cancellationToken);
 
-            stoppedAtUtc = DateTimeOffset.UtcNow;
-            lastFailure = null;
-            status = RuntimeStatus.Stopped;
+            var stopRecordedAtUtc = DateTimeOffset.UtcNow;
+            lock (stateGate)
+            {
+                stoppedAtUtc = stopRecordedAtUtc;
+                lastFailure = null;
+                status = RuntimeStatus.Stopped;
+            }
+            RecordLifecycleEvent(
+                RuntimeLifecycleEventScope.Runtime,
+                phase: "stop",
+                outcome: RuntimeLifecycleEventOutcome.Succeeded,
+                runtimeStatus: RuntimeStatus.Stopped,
+                subjectId: "runtime",
+                subjectVersion: Manifest.EngineVersion,
+                message: "Runtime completed stop with status Stopped.",
+                occurredAtUtc: stopRecordedAtUtc);
             LogRuntimeTransition(logger, "stop", status.ToString(), Manifest.AppProfile.BlueprintId, Modules.Count);
         }
         catch (Exception exception)
@@ -391,7 +610,7 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         string phase,
         IEnumerable<IModule> modules,
         Func<IModuleLifecycle, ModuleContext, CancellationToken, Task> execute,
-        Action<IModule> onSuccess,
+        Action<IModule, DateTimeOffset> onSuccess,
         bool continueOnFailure,
         CancellationToken cancellationToken)
     {
@@ -423,8 +642,8 @@ public sealed class EngineRuntime : IRuntime, IDisposable
 
                 try
                 {
-                    await ExecuteLifecycleModuleAsync(module, lifecycle, phase, execute, cancellationToken);
-                    onSuccess(module);
+                    var completedAtUtc = await ExecuteLifecycleModuleAsync(module, lifecycle, phase, execute, cancellationToken);
+                    onSuccess(module, completedAtUtc);
                 }
                 catch (Exception exception)
                 {
@@ -451,7 +670,7 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         }
     }
 
-    private async Task ExecuteLifecycleModuleAsync(
+    private async Task<DateTimeOffset> ExecuteLifecycleModuleAsync(
         IModule module,
         IModuleLifecycle lifecycle,
         string phase,
@@ -476,7 +695,18 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         {
             EngineDiagnostics.ModuleTransitionCounter.Add(1, tags);
             await execute(lifecycle, moduleContext!, cancellationToken);
+            var completedAtUtc = DateTimeOffset.UtcNow;
+            RecordLifecycleEvent(
+                RuntimeLifecycleEventScope.Module,
+                phase,
+                RuntimeLifecycleEventOutcome.Succeeded,
+                runtimeStatus: status,
+                subjectId: module.Descriptor.Id,
+                subjectVersion: moduleVersion,
+                message: $"Module '{module.Descriptor.Id}' completed {phase}.",
+                occurredAtUtc: completedAtUtc);
             LogModuleTransition(logger, module.Descriptor.Id, phase, moduleVersion);
+            return completedAtUtc;
         }
         catch (Exception exception)
         {
@@ -487,6 +717,16 @@ public sealed class EngineRuntime : IRuntime, IDisposable
                 { "cephalon.module.id", module.Descriptor.Id }
             });
             LogModuleFailure(logger, module.Descriptor.Id, phase, exception);
+            RecordLifecycleEvent(
+                RuntimeLifecycleEventScope.Module,
+                phase,
+                RuntimeLifecycleEventOutcome.Failed,
+                runtimeStatus: status,
+                subjectId: module.Descriptor.Id,
+                subjectVersion: moduleVersion,
+                message: $"Module '{module.Descriptor.Id}' failed during {phase}: {exception.Message}",
+                exceptionType: exception.GetType().FullName ?? exception.GetType().Name,
+                occurredAtUtc: DateTimeOffset.UtcNow);
             throw new ModulePhaseException(phase, module.Descriptor.Id, moduleVersion, exception);
         }
     }
@@ -503,29 +743,53 @@ public sealed class EngineRuntime : IRuntime, IDisposable
             FailurePolicy.MaxRestartAttempts != 0 &&
             (lastFailure is null || restartCount < FailurePolicy.MaxRestartAttempts || FailurePolicy.MaxRestartAttempts < 0) &&
             string.Equals(moduleException?.Phase ?? phase, "start", StringComparison.OrdinalIgnoreCase);
+        var occurredAtUtc = DateTimeOffset.UtcNow;
+        var restartAvailableAtUtc = canRestart && FailurePolicy.ManualRestartBackoff > TimeSpan.Zero
+            ? (DateTimeOffset?)(occurredAtUtc + FailurePolicy.ManualRestartBackoff)
+            : null;
 
-        lastFailure = new RuntimeFailureInfo(
+        var failure = new RuntimeFailureInfo(
             Phase: moduleException?.Phase ?? phase,
             ModuleId: moduleException?.ModuleId,
             ModuleVersion: moduleException?.ModuleVersion,
             StatusBeforeFailure: statusBeforeFailure,
             ExceptionType: moduleException?.InnerException?.GetType().FullName ?? exception.GetType().FullName ?? exception.GetType().Name,
             Message: moduleException?.InnerException?.Message ?? exception.Message,
-            OccurredAtUtc: DateTimeOffset.UtcNow,
+            OccurredAtUtc: occurredAtUtc,
             CanRestart: canRestart,
+            RestartAvailableAtUtc: restartAvailableAtUtc,
             StartupFailureBehavior: startupFailureBehavior,
             StopFailureBehavior: stopFailureBehavior);
 
+        lock (stateGate)
+        {
+            lastFailure = failure;
+            if (!string.IsNullOrWhiteSpace(failure.ModuleId))
+            {
+                moduleFailures[failure.ModuleId] = failure;
+            }
+
+            stoppedAtUtc = string.Equals(phase, "stop", StringComparison.OrdinalIgnoreCase)
+                ? occurredAtUtc
+                : stoppedAtUtc;
+            status = RuntimeStatus.Failed;
+        }
+
         EngineDiagnostics.RuntimeFailureCounter.Add(1, new TagList
         {
-            { "cephalon.phase", lastFailure.Phase },
+            { "cephalon.phase", failure.Phase },
             { "cephalon.blueprint", Manifest.AppProfile.BlueprintId }
         });
-
-        stoppedAtUtc = string.Equals(phase, "stop", StringComparison.OrdinalIgnoreCase)
-            ? DateTimeOffset.UtcNow
-            : stoppedAtUtc;
-        status = RuntimeStatus.Failed;
+        RecordLifecycleEvent(
+            RuntimeLifecycleEventScope.Runtime,
+            phase,
+            RuntimeLifecycleEventOutcome.Failed,
+            runtimeStatus: RuntimeStatus.Failed,
+            subjectId: failure.ModuleId ?? "runtime",
+            subjectVersion: failure.ModuleVersion ?? Manifest.EngineVersion,
+            message: $"Runtime failed during {failure.Phase}: {failure.Message}",
+            exceptionType: failure.ExceptionType,
+            occurredAtUtc: occurredAtUtc);
     }
 
     private static ModulePhaseException? UnwrapModuleFailure(Exception exception)
@@ -545,25 +809,157 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         return null;
     }
 
-    private void TrackInitializedModule(IModule module)
+    private RuntimeStatusSnapshot CreateStatusSnapshotUnsafe()
+    {
+        return new(status, initializedAtUtc, startedAtUtc, stoppingAtUtc, stoppedAtUtc, restartCount, lastFailure);
+    }
+
+    private RuntimeOperationalStory CreateOperationalStoryUnsafe()
+    {
+        var timelineSnapshot = timeline.ToArray();
+        var loadedSnapshot = moduleLoadedAtUtc.ToDictionary(static pair => pair.Key, static pair => pair.Value, StringComparer.OrdinalIgnoreCase);
+        var initializedSnapshot = moduleInitializedAtUtc.ToDictionary(static pair => pair.Key, static pair => pair.Value, StringComparer.OrdinalIgnoreCase);
+        var startedSnapshot = moduleStartedAtUtc.ToDictionary(static pair => pair.Key, static pair => pair.Value, StringComparer.OrdinalIgnoreCase);
+        var stoppedSnapshot = moduleStoppedAtUtc.ToDictionary(static pair => pair.Key, static pair => pair.Value, StringComparer.OrdinalIgnoreCase);
+        var failureSnapshot = moduleFailures.ToDictionary(static pair => pair.Key, static pair => pair.Value, StringComparer.OrdinalIgnoreCase);
+
+        var modules = Manifest.Modules
+            .Select(module =>
+            {
+                var lastObserved = timelineSnapshot
+                    .Where(entry => entry.Scope == RuntimeLifecycleEventScope.Module &&
+                        string.Equals(entry.SubjectId, module.Id, StringComparison.OrdinalIgnoreCase))
+                    .OrderByDescending(static entry => entry.OccurredAtUtc)
+                    .FirstOrDefault();
+
+                return new RuntimeModuleLifecycleState(
+                    ModuleId: module.Id,
+                    DisplayName: module.DisplayName,
+                    Version: module.Version,
+                    AssemblyName: module.AssemblyName,
+                    PackageId: module.PackageId,
+                    LoadedAtUtc: loadedSnapshot.TryGetValue(module.Id, out var loadedAtUtc) ? loadedAtUtc : null,
+                    InitializedAtUtc: initializedSnapshot.TryGetValue(module.Id, out var initializedAtUtcValue) ? initializedAtUtcValue : null,
+                    StartedAtUtc: startedSnapshot.TryGetValue(module.Id, out var startedAtUtcValue) ? startedAtUtcValue : null,
+                    StoppedAtUtc: stoppedSnapshot.TryGetValue(module.Id, out var stoppedAtUtcValue) ? stoppedAtUtcValue : null,
+                    LastObservedPhase: lastObserved?.Phase,
+                    LastObservedAtUtc: lastObserved?.OccurredAtUtc,
+                    LastFailure: failureSnapshot.TryGetValue(module.Id, out var failure) ? failure : null);
+            })
+            .ToArray();
+
+        return new RuntimeOperationalStory(
+            GeneratedAtUtc: DateTimeOffset.UtcNow,
+            Status: CreateStatusSnapshotUnsafe(),
+            LoadedPackages: Manifest.Packages,
+            Modules: modules,
+            Timeline: timelineSnapshot);
+    }
+
+    private void SeedLoadedStoryFromManifest()
+    {
+        foreach (var package in Manifest.Packages)
+        {
+            RecordLifecycleEvent(
+                RuntimeLifecycleEventScope.Package,
+                phase: "load",
+                outcome: RuntimeLifecycleEventOutcome.Succeeded,
+                runtimeStatus: RuntimeStatus.Created,
+                subjectId: package.Id,
+                subjectVersion: package.Version,
+                message: $"Package '{package.Id}' loaded via {package.Kind} from {package.SourcePath}.",
+                occurredAtUtc: Manifest.GeneratedAtUtc);
+        }
+
+        foreach (var module in Manifest.Modules)
+        {
+            lock (stateGate)
+            {
+                moduleLoadedAtUtc[module.Id] = Manifest.GeneratedAtUtc;
+            }
+
+            var message = string.IsNullOrWhiteSpace(module.PackageId)
+                ? $"Module '{module.Id}' loaded from assembly {module.AssemblyName}."
+                : $"Module '{module.Id}' loaded from package '{module.PackageId}'.";
+            RecordLifecycleEvent(
+                RuntimeLifecycleEventScope.Module,
+                phase: "load",
+                outcome: RuntimeLifecycleEventOutcome.Succeeded,
+                runtimeStatus: RuntimeStatus.Created,
+                subjectId: module.Id,
+                subjectVersion: module.Version,
+                message: message,
+                occurredAtUtc: Manifest.GeneratedAtUtc);
+        }
+    }
+
+    private void RecordLifecycleEvent(
+        RuntimeLifecycleEventScope scope,
+        string phase,
+        RuntimeLifecycleEventOutcome outcome,
+        RuntimeStatus runtimeStatus,
+        string? subjectId,
+        string? subjectVersion,
+        string message,
+        string? exceptionType = null,
+        DateTimeOffset? occurredAtUtc = null)
+    {
+        lock (stateGate)
+        {
+            timeline.Add(new RuntimeLifecycleEvent(
+                OccurredAtUtc: occurredAtUtc ?? DateTimeOffset.UtcNow,
+                Scope: scope,
+                Phase: phase,
+                Outcome: outcome,
+                RuntimeStatus: runtimeStatus,
+                SubjectId: subjectId,
+                SubjectVersion: subjectVersion,
+                Message: message,
+                ExceptionType: exceptionType));
+
+            if (timeline.Count > MaxTimelineEntries)
+            {
+                timeline.RemoveRange(0, timeline.Count - MaxTimelineEntries);
+            }
+        }
+    }
+
+    private void TrackInitializedModule(IModule module, DateTimeOffset occurredAtUtc)
     {
         if (!initializedModules.Contains(module))
         {
             initializedModules.Add(module);
         }
+
+        lock (stateGate)
+        {
+            moduleInitializedAtUtc[module.Descriptor.Id] = occurredAtUtc;
+            moduleFailures.Remove(module.Descriptor.Id);
+        }
     }
 
-    private void TrackStartedModule(IModule module)
+    private void TrackStartedModule(IModule module, DateTimeOffset occurredAtUtc)
     {
         if (!startedModules.Contains(module))
         {
             startedModules.Add(module);
         }
+
+        lock (stateGate)
+        {
+            moduleStartedAtUtc[module.Descriptor.Id] = occurredAtUtc;
+            moduleFailures.Remove(module.Descriptor.Id);
+        }
     }
 
-    private void UntrackStartedModule(IModule module)
+    private void TrackStoppedModule(IModule module, DateTimeOffset occurredAtUtc)
     {
         startedModules.Remove(module);
+
+        lock (stateGate)
+        {
+            moduleStoppedAtUtc[module.Descriptor.Id] = occurredAtUtc;
+        }
     }
 
     private static void LogRuntimeTransition(
@@ -623,6 +1019,9 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         LogModuleFailureMessage(logger, moduleId, phase, exception);
     }
 
+    /// <summary>
+    /// Releases runtime resources.
+    /// </summary>
     public void Dispose()
     {
         lifecycleLock.Dispose();

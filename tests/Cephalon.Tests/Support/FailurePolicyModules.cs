@@ -180,3 +180,35 @@ internal sealed class StopObserverModule : ModuleBase
         return Task.CompletedTask;
     }
 }
+
+internal sealed class SlowStopModule : ModuleBase
+{
+    private static readonly ModuleDescriptor DescriptorInstance = new(
+        id: "slow-stop",
+        displayName: "Slow Stop",
+        description: "Delays shutdown so liveness-drain windows can be observed in tests.",
+        dependsOn: [typeof(FailurePolicyPlatformModule)],
+        version: "0.1.0");
+
+    public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+    public override Task InitializeAsync(ModuleContext context, CancellationToken cancellationToken)
+    {
+        context.Services.GetRequiredService<FailurePolicyRecorder>().Record("initialize:slow-stop");
+        return Task.CompletedTask;
+    }
+
+    public override Task StartAsync(ModuleContext context, CancellationToken cancellationToken)
+    {
+        context.Services.GetRequiredService<FailurePolicyRecorder>().Record("start:slow-stop");
+        return Task.CompletedTask;
+    }
+
+    public override async Task StopAsync(ModuleContext context, CancellationToken cancellationToken)
+    {
+        var recorder = context.Services.GetRequiredService<FailurePolicyRecorder>();
+        recorder.Record("stop:slow-stop");
+        await Task.Delay(TimeSpan.FromMilliseconds(300), cancellationToken);
+        recorder.Record("stop-complete:slow-stop");
+    }
+}

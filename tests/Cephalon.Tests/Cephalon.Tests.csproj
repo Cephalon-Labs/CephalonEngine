@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Cephalon.AspNetCore.GraphQL\Cephalon.AspNetCore.GraphQL.csproj" />
     <ProjectReference Include="..\..\benchmarks\Cephalon.Benchmarks\Cephalon.Benchmarks.csproj" />
     <ProjectReference Include="..\..\samples\Cephalon.ReferenceModule.Operations\Cephalon.ReferenceModule.Operations.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Agentics\Cephalon.Agentics.csproj" />
@@ -36,6 +38,26 @@
     <ProjectReference Include="..\..\src\Cephalon.Engine\Cephalon.Engine.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Eventing\Cephalon.Eventing.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability\Cephalon.Observability.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.CassandraDependencies\Cephalon.Observability.CassandraDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.ClickHouseDependencies\Cephalon.Observability.ClickHouseDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.HttpDependencies\Cephalon.Observability.HttpDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.KafkaDependencies\Cephalon.Observability.KafkaDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.ConsulDependencies\Cephalon.Observability.ConsulDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.ElasticsearchDependencies\Cephalon.Observability.ElasticsearchDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.MemcachedDependencies\Cephalon.Observability.MemcachedDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.MongoDbDependencies\Cephalon.Observability.MongoDbDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.MqttDependencies\Cephalon.Observability.MqttDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.MySqlDependencies\Cephalon.Observability.MySqlDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.NatsDependencies\Cephalon.Observability.NatsDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.Neo4jDependencies\Cephalon.Observability.Neo4jDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.OpenSearchDependencies\Cephalon.Observability.OpenSearchDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.OracleDependencies\Cephalon.Observability.OracleDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.PostgresDependencies\Cephalon.Observability.PostgresDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.RabbitMqDependencies\Cephalon.Observability.RabbitMqDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.RedisDependencies\Cephalon.Observability.RedisDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.SqlServerDependencies\Cephalon.Observability.SqlServerDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.OpenTelemetry\Cephalon.Observability.OpenTelemetry.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.Serilog\Cephalon.Observability.Serilog.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.ReferenceDocs\Cephalon.ReferenceDocs.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Retrieval\Cephalon.Retrieval.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Scaffolding\Cephalon.Scaffolding.csproj" />

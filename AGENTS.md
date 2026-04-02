@@ -12,6 +12,9 @@ When working in this repository:
 - prefer reusable engine primitives over product-specific shortcuts
 - treat hand-authored `.md` files as the human-facing product and adoption docs for Cephalon
 - treat XML comments on public contracts as the API explanation layer for IntelliSense and external documentation generators
+- keep public XML comments complete enough for DocFX-style API publishing whenever an assembly is part of the supported documentation set
+- keep test projects out of the supported DocFX input set unless we intentionally decide to publish test-harness APIs
+- when scope changes, hidden work appears, or historical planning no longer matches the code, update backlog, roadmap, sprint, phase, estimate, task/sub-task placement, labels, and commit references so tracking stays truthful
 
 ## Architecture rules
 
@@ -20,6 +23,26 @@ When working in this repository:
 - `Cephalon.AspNetCore` is a host adapter, not the core engine
 - `Cephalon.Worker` is the generic-host worker adapter for non-HTTP runtime scenarios
 - `Cephalon.Observability` is the diagnostics companion package for logs, metrics, and tracing conventions
+- `Cephalon.Observability.CassandraDependencies` is the optional Cassandra dependency-health companion package
+- `Cephalon.Observability.ClickHouseDependencies` is the optional ClickHouse dependency-health companion package
+- `Cephalon.Observability.ConsulDependencies` is the optional Consul dependency-health companion package
+- `Cephalon.Observability.ElasticsearchDependencies` is the optional Elasticsearch dependency-health companion package
+- `Cephalon.Observability.HttpDependencies` is the optional external API dependency-health companion package for HTTP-based upstreams
+- `Cephalon.Observability.KafkaDependencies` is the optional Kafka dependency-health companion package
+- `Cephalon.Observability.MemcachedDependencies` is the optional Memcached dependency-health companion package
+- `Cephalon.Observability.MongoDbDependencies` is the optional MongoDB dependency-health companion package
+- `Cephalon.Observability.MqttDependencies` is the optional MQTT dependency-health companion package
+- `Cephalon.Observability.MySqlDependencies` is the optional MySQL dependency-health companion package
+- `Cephalon.Observability.NatsDependencies` is the optional NATS dependency-health companion package
+- `Cephalon.Observability.Neo4jDependencies` is the optional Neo4j dependency-health companion package
+- `Cephalon.Observability.OpenSearchDependencies` is the optional OpenSearch dependency-health companion package
+- `Cephalon.Observability.OracleDependencies` is the optional Oracle dependency-health companion package
+- `Cephalon.Observability.PostgresDependencies` is the optional Postgres dependency-health companion package
+- `Cephalon.Observability.RabbitMqDependencies` is the optional RabbitMQ dependency-health companion package
+- `Cephalon.Observability.RedisDependencies` is the optional Redis and cache dependency-health companion package
+- `Cephalon.Observability.SqlServerDependencies` is the optional SQL Server and Azure SQL dependency-health companion package
+- `Cephalon.Observability.OpenTelemetry` is the optional exporter companion package for OpenTelemetry OTLP host wiring
+- `Cephalon.Observability.Serilog` is the optional logger-provider companion package for Serilog host wiring
 - `Cephalon.Cli` is the user-facing shell for blueprint-driven generation
 - `Cephalon.ReferenceDocs` is the optional repo-local reference-doc publishing tool for XML-comment-driven API output
 - `Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, and `Cephalon.Edge` are the baseline technology companion packages
@@ -41,6 +64,7 @@ When working in this repository:
 - prefer configuration-driven module discovery through `Engine:Discovery:Assemblies` when a host is meant to stay generic
 - prefer `Engine:Discovery:Packages`, `Engine:Discovery:PackageDirectories`, `engine.AddPackageAssembly(...)`, `engine.AddPackageManifest(...)`, or `engine.AddPackageDirectory(...)` when a host needs to load independently shipped module assemblies
 - keep `cephalon.package.json` aligned with the engine package contract: `id`, `version`, `compatibility.minimumEngineVersion`, `compatibility.maximumEngineVersion`, `compatibility.supportedTargetFrameworks`, and optional `integrity.sha256`
+- keep Cephalon package-version and target-framework defaults aligned across `Cephalon.Cli`, `Cephalon.Scaffolding`, `Cephalon.TemplatePack`, starter manifests, samples, and docs examples
 - when provenance matters, keep `cephalon.package.json` aligned with `publisher.id`, publisher display metadata, and either `signature` or `signatures` entries when detached signing is in use
 - prefer `Engine:PackagePolicy` when a host needs to require manifest-driven package loading or stricter package metadata guarantees
 - prefer `Engine:Trust` publisher and signer allow-lists when governance should track who shipped a package rather than only the assembly file itself
@@ -52,6 +76,8 @@ When working in this repository:
 - prefer `ITechnologyRuntimeContributor` when a technology pack needs an introspectable runtime snapshot
 - prefer `ITechnologyRuntimeCatalog` when host or package code needs to read the merged runtime surface set without referencing `Cephalon.Engine` concrete types
 - prefer `IRuntimeIntrospectionSnapshotProvider` and `/engine/snapshot` when host or operator flows need manifest, runtime status, and technology-pack surfaces in one payload
+- prefer `IRuntimeDiagnosticsCatalog`, `/engine/diagnostics`, and `/engine/snapshot` when host or operator flows need the merged diagnostics convention and event-id catalog for active packages
+- prefer `IRuntime.OperationalStory`, `/engine/runtime-story`, and `/engine/snapshot` when host or operator flows need one ordered answer for what loaded, started, failed, and why
 - prefer configuration-driven language selection through `Engine:Localization`, with project code used only to extend or replace it deliberately
 - prefer configuration-driven failure semantics through `Engine:FailurePolicy` instead of ad-hoc host try/catch behavior
 - prefer configuration-driven package and capability governance through `Engine:Trust`
@@ -68,13 +94,18 @@ When working in this repository:
 - keep the merged technology catalog explicit and introspectable; surface available technology profiles through `/engine/technology-catalog`
 - keep active technology-pack runtime surfaces explicit and introspectable; surface them through `/engine/technology-surfaces`
 - keep the broader runtime introspection snapshot explicit and introspectable; surface it through `/engine/snapshot`
+- keep package diagnostics conventions explicit and introspectable; surface them through `IRuntimeDiagnosticsCatalog`, `/engine/diagnostics`, and `/engine/snapshot`
+- keep the runtime lifecycle story explicit and introspectable; surface it through `IRuntime.OperationalStory`, `/engine/runtime-story`, and `/engine/snapshot`
 - keep public engine, companion-pack, host-adapter, and tooling contracts documented with meaningful XML comments so external doc generators and IntelliSense stay useful
+- keep the supported DocFX input set limited to assemblies whose public APIs have complete XML comments
+- keep test-only projects such as `tests/Cephalon.Tests` excluded from generated reference-doc and DocFX publishing scope unless they are deliberately promoted into supported docs input
 - keep hand-authored `.md` guides focused on capability claims, architecture explanation, and adoption guidance instead of auto-generated API listings
 - keep `Cephalon.ReferenceDocs`, `scripts/publish-reference-docs.ps1`, and `docs/reference-docs.md` aligned when XML docs publishing behavior changes, including Markdown indexes and `reference-manifest.json`
 - keep `Cephalon.Cli docs publish`, `docs publish --enable-hosting`, `docs publish --validate-hosting`, `docs publish --open`, `docs enable-hosting`, and `docs validate-hosting` aligned with `Cephalon.ReferenceDocs` and the hosted-reference-docs guidance
 - keep `Cephalon.Cli` package-surface hardening intact: `CliApplication` is the stable public entry point, while command handlers, parsed options, console helpers, and browser launch helpers stay internal
 - keep `Cephalon.ReferenceDocs` package-surface hardening intact: request/generate/write/application types stay public, while assembly-load and browser-render helpers stay internal
 - keep `docs/README.md` aligned as the documentation hub for architecture, operations, planning, hand-authored component guides, and optional generated-reference entry points
+- keep `docs/compatibility.md` aligned as the repository-wide matrix for package, manifest, template, scaffolding, CLI, and hosted-reference-doc compatibility expectations
 - keep `docs/components/README.md` plus per-component docs under `docs/components/` aligned with every shipped `src/Cephalon.*` project
 - when ASP.NET Core hosts serve generated reference docs, prefer the host-level `ReferenceDocs` section and keep `/engine/reference-docs` aligned with the configured route prefix
 - keep scaffolded hosts and `dotnet new` app starters emitting a disabled-by-default `ReferenceDocs` section so teams can turn on hosted docs without rediscovering the contract
@@ -83,6 +114,11 @@ When working in this repository:
 - prefer `Engine:Observability` for startup diagnostics behavior instead of scattering host-specific logging decisions
 - prefer `Engine:Observability:Telemetry` for export guidance instead of ad-hoc host notes
 - let modules and installed packages contribute dependency health through `IDependencyHealthContributor`, but keep the engine itself infrastructure-agnostic
+- keep `Cephalon.Observability.HttpDependencies` protocol-generic: method, headers, auth, timeout, status, body, and TLS expectations can grow there, but provider-aware HTTP semantics should stay in dedicated companion packs
+- keep HTTP-based provider packs such as `Cephalon.Observability.ElasticsearchDependencies` separate when they need endpoint shaping, payload-aware health mapping, or product-specific auth semantics beyond a generic HTTP probe
+- keep `Cephalon.Observability.NatsDependencies` focused on NATS protocol semantics such as `INFO`, `CONNECT`, `PING`/`PONG`, auth, TLS, and cluster reachability; deeper workload semantics should only join deliberately when the package contract stays clearly NATS-native
+- keep logging-provider integration concerns separate from tracing/export concerns: `ILogger` provider wiring such as Serilog can land before cloud-tracing/export work without inventing a new Cephalon logging abstraction
+- keep cloud tracing/export integrations such as OpenTelemetry collector, vendor exporters, and hosted cloud wiring as a later concern when the target cloud/runtime context is explicit
 - selected transports should gate route mapping instead of exposing every protocol by default
 - when `RestApi` is enabled on ASP.NET Core, keep OpenAPI and Scalar docs available for REST endpoints
 - keep REST OpenAPI customization inside `Cephalon.AspNetCore.Transformers`
@@ -95,6 +131,7 @@ When working in this repository:
 - keep generic-host worker startup/shutdown aligned with the same runtime lifecycle guarantees used by ASP.NET Core
 - keep observability conventions additive; engine emits the signals, companion packages shape how hosts surface them
 - keep benchmark guardrails explicit; if hot-path scenarios change, update the benchmark catalog and validation docs intentionally
+- keep `scripts/validate-operational-conventions.ps1`, `scripts/validate-release.ps1`, and the health/export docs aligned when the operational validation contract changes
 - keep `scripts/validate-release.ps1` aligned with the benchmark smoke suite and guardrail validation flow
 - keep `scripts/validate-release.ps1` aligned with benchmark and reference-doc publishing flows
 - keep `.github/workflows/release-validation.yml` aligned with `scripts/validate-release.ps1`; the script stays the source of truth and the workflow should stay thin
@@ -111,6 +148,7 @@ When working in this repository:
 - keep `cephalon-module` and `cephalon-rest-module` aligned with the recommended module package shape in `docs/module-authoring.md`
 - keep `cephalon-module`, `cephalon-rest-module`, and scaffolded module projects emitting `cephalon.package.json` so package discovery flows stay zero-setup
 - keep scaffold package-version output aligned with the repository package catalog when test infrastructure packages change
+- keep template starters, scaffold output, and CLI defaults aligned whenever blueprint, transport, version, target-framework, or docs-hosting contracts change
 - prefer configuration-driven blueprint and pattern selection over hardcoded choices in host startup
 - prefer configuration-driven transport selection over hardcoded protocol choices in host startup
 - prefer configuration-driven module discovery and policy where a sample or host is meant to demonstrate the engine itself
@@ -174,6 +212,62 @@ Current source layout:
 - `src/Cephalon.Worker/Hosting` -> `Cephalon.Worker.Hosting`
 - `src/Cephalon.Observability/Configuration` -> `Cephalon.Observability.Configuration`
 - `src/Cephalon.Observability/Hosting` -> `Cephalon.Observability.Hosting`
+- `src/Cephalon.Observability.CassandraDependencies/Configuration` -> `Cephalon.Observability.CassandraDependencies.Configuration`
+- `src/Cephalon.Observability.CassandraDependencies/Hosting` -> `Cephalon.Observability.CassandraDependencies.Hosting`
+- `src/Cephalon.Observability.CassandraDependencies/Services` -> `Cephalon.Observability.CassandraDependencies.Services`
+- `src/Cephalon.Observability.ConsulDependencies/Configuration` -> `Cephalon.Observability.ConsulDependencies.Configuration`
+- `src/Cephalon.Observability.ConsulDependencies/Hosting` -> `Cephalon.Observability.ConsulDependencies.Hosting`
+- `src/Cephalon.Observability.ConsulDependencies/Services` -> `Cephalon.Observability.ConsulDependencies.Services`
+- `src/Cephalon.Observability.ElasticsearchDependencies/Configuration` -> `Cephalon.Observability.ElasticsearchDependencies.Configuration`
+- `src/Cephalon.Observability.ElasticsearchDependencies/Hosting` -> `Cephalon.Observability.ElasticsearchDependencies.Hosting`
+- `src/Cephalon.Observability.ElasticsearchDependencies/Services` -> `Cephalon.Observability.ElasticsearchDependencies.Services`
+- `src/Cephalon.Observability.HttpDependencies/Configuration` -> `Cephalon.Observability.HttpDependencies.Configuration`
+- `src/Cephalon.Observability.HttpDependencies/Hosting` -> `Cephalon.Observability.HttpDependencies.Hosting`
+- `src/Cephalon.Observability.HttpDependencies/Services` -> `Cephalon.Observability.HttpDependencies.Services`
+- `src/Cephalon.Observability.KafkaDependencies/Configuration` -> `Cephalon.Observability.KafkaDependencies.Configuration`
+- `src/Cephalon.Observability.KafkaDependencies/Hosting` -> `Cephalon.Observability.KafkaDependencies.Hosting`
+- `src/Cephalon.Observability.KafkaDependencies/Services` -> `Cephalon.Observability.KafkaDependencies.Services`
+- `src/Cephalon.Observability.MemcachedDependencies/Configuration` -> `Cephalon.Observability.MemcachedDependencies.Configuration`
+- `src/Cephalon.Observability.MemcachedDependencies/Hosting` -> `Cephalon.Observability.MemcachedDependencies.Hosting`
+- `src/Cephalon.Observability.MemcachedDependencies/Services` -> `Cephalon.Observability.MemcachedDependencies.Services`
+- `src/Cephalon.Observability.ClickHouseDependencies/Configuration` -> `Cephalon.Observability.ClickHouseDependencies.Configuration`
+- `src/Cephalon.Observability.ClickHouseDependencies/Hosting` -> `Cephalon.Observability.ClickHouseDependencies.Hosting`
+- `src/Cephalon.Observability.ClickHouseDependencies/Services` -> `Cephalon.Observability.ClickHouseDependencies.Services`
+- `src/Cephalon.Observability.MongoDbDependencies/Configuration` -> `Cephalon.Observability.MongoDbDependencies.Configuration`
+- `src/Cephalon.Observability.MongoDbDependencies/Hosting` -> `Cephalon.Observability.MongoDbDependencies.Hosting`
+- `src/Cephalon.Observability.MongoDbDependencies/Services` -> `Cephalon.Observability.MongoDbDependencies.Services`
+- `src/Cephalon.Observability.MqttDependencies/Configuration` -> `Cephalon.Observability.MqttDependencies.Configuration`
+- `src/Cephalon.Observability.MqttDependencies/Hosting` -> `Cephalon.Observability.MqttDependencies.Hosting`
+- `src/Cephalon.Observability.MqttDependencies/Services` -> `Cephalon.Observability.MqttDependencies.Services`
+- `src/Cephalon.Observability.MySqlDependencies/Configuration` -> `Cephalon.Observability.MySqlDependencies.Configuration`
+- `src/Cephalon.Observability.MySqlDependencies/Hosting` -> `Cephalon.Observability.MySqlDependencies.Hosting`
+- `src/Cephalon.Observability.MySqlDependencies/Services` -> `Cephalon.Observability.MySqlDependencies.Services`
+- `src/Cephalon.Observability.NatsDependencies/Configuration` -> `Cephalon.Observability.NatsDependencies.Configuration`
+- `src/Cephalon.Observability.NatsDependencies/Hosting` -> `Cephalon.Observability.NatsDependencies.Hosting`
+- `src/Cephalon.Observability.NatsDependencies/Services` -> `Cephalon.Observability.NatsDependencies.Services`
+- `src/Cephalon.Observability.Neo4jDependencies/Configuration` -> `Cephalon.Observability.Neo4jDependencies.Configuration`
+- `src/Cephalon.Observability.Neo4jDependencies/Hosting` -> `Cephalon.Observability.Neo4jDependencies.Hosting`
+- `src/Cephalon.Observability.Neo4jDependencies/Services` -> `Cephalon.Observability.Neo4jDependencies.Services`
+- `src/Cephalon.Observability.OpenSearchDependencies/Configuration` -> `Cephalon.Observability.OpenSearchDependencies.Configuration`
+- `src/Cephalon.Observability.OpenSearchDependencies/Hosting` -> `Cephalon.Observability.OpenSearchDependencies.Hosting`
+- `src/Cephalon.Observability.OpenSearchDependencies/Services` -> `Cephalon.Observability.OpenSearchDependencies.Services`
+- `src/Cephalon.Observability.OracleDependencies/Configuration` -> `Cephalon.Observability.OracleDependencies.Configuration`
+- `src/Cephalon.Observability.OracleDependencies/Hosting` -> `Cephalon.Observability.OracleDependencies.Hosting`
+- `src/Cephalon.Observability.OracleDependencies/Services` -> `Cephalon.Observability.OracleDependencies.Services`
+- `src/Cephalon.Observability.PostgresDependencies/Configuration` -> `Cephalon.Observability.PostgresDependencies.Configuration`
+- `src/Cephalon.Observability.PostgresDependencies/Hosting` -> `Cephalon.Observability.PostgresDependencies.Hosting`
+- `src/Cephalon.Observability.PostgresDependencies/Services` -> `Cephalon.Observability.PostgresDependencies.Services`
+- `src/Cephalon.Observability.RabbitMqDependencies/Configuration` -> `Cephalon.Observability.RabbitMqDependencies.Configuration`
+- `src/Cephalon.Observability.RabbitMqDependencies/Hosting` -> `Cephalon.Observability.RabbitMqDependencies.Hosting`
+- `src/Cephalon.Observability.RabbitMqDependencies/Services` -> `Cephalon.Observability.RabbitMqDependencies.Services`
+- `src/Cephalon.Observability.RedisDependencies/Configuration` -> `Cephalon.Observability.RedisDependencies.Configuration`
+- `src/Cephalon.Observability.RedisDependencies/Hosting` -> `Cephalon.Observability.RedisDependencies.Hosting`
+- `src/Cephalon.Observability.RedisDependencies/Services` -> `Cephalon.Observability.RedisDependencies.Services`
+- `src/Cephalon.Observability.SqlServerDependencies/Configuration` -> `Cephalon.Observability.SqlServerDependencies.Configuration`
+- `src/Cephalon.Observability.SqlServerDependencies/Hosting` -> `Cephalon.Observability.SqlServerDependencies.Hosting`
+- `src/Cephalon.Observability.SqlServerDependencies/Services` -> `Cephalon.Observability.SqlServerDependencies.Services`
+- `src/Cephalon.Observability.OpenTelemetry/Hosting` -> `Cephalon.Observability.OpenTelemetry.Hosting`
+- `src/Cephalon.Observability.Serilog/Hosting` -> `Cephalon.Observability.Serilog.Hosting`
 - `src/Cephalon.Cli/Commands` -> `Cephalon.Cli.Commands`
 - `src/Cephalon.Cli/Console` -> `Cephalon.Cli.Console`
 - `src/Cephalon.ReferenceDocs/Generation` -> `Cephalon.ReferenceDocs.Generation`
@@ -245,6 +339,14 @@ When changing architecture or engine behavior, keep these files in sync if relev
 - `docs/engine-backlog.md`
 - `templates/Cephalon.TemplatePack/PACKAGE.md`
 - `docs/benchmarking.md`
+
+When work is added, cut, or re-scoped during implementation:
+
+- update the relevant backlog and roadmap entries instead of leaving scope drift undocumented
+- move work between phase, sprint, epic, task, or sub-task when the code reality says it belongs elsewhere
+- add or revise estimates when the implementation reveals materially different cost
+- correct historical planning claims when repository state shows a capability was not actually shipped yet
+- keep issue, project, and commit references aligned with the revised plan
 
 ## Key references
 

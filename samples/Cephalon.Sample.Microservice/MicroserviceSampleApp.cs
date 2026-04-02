@@ -8,8 +8,23 @@ using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.Sample.Microservice;
 
+/// <summary>
+/// Builds the microservice sample host used by tests, docs, and local exploration.
+/// </summary>
 public static class MicroserviceSampleApp
 {
+    /// <summary>
+    /// Builds the microservice sample application with the default Cephalon host wiring.
+    /// </summary>
+    /// <param name="args">
+    /// Optional command-line arguments for the sample host.
+    /// </param>
+    /// <param name="configureBuilder">
+    /// Optional hook that can customize the application builder before the host is built.
+    /// </param>
+    /// <returns>
+    /// The configured microservice sample application.
+    /// </returns>
     public static WebApplication Build(
         string[]? args = null,
         Action<WebApplicationBuilder>? configureBuilder = null)

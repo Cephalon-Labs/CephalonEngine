@@ -32,3 +32,10 @@ dotnet new cephalon-rest-module -n Acme.Orders.RestModule
 - The templates mirror the current shipped blueprint set in the repository.
 - For richer customization, `Cephalon.Cli` and `Cephalon.Scaffolding` remain the more expressive generation path.
 - Generated projects assume you will restore Cephalon packages from the feed or local package source you target.
+
+## Compatibility expectations
+
+- keep the template-pack version, starter project target frameworks, and starter `cephalon.package.json` files aligned with the current Cephalon release baseline
+- keep the module starters aligned with the same manifest contract described in `docs/module-authoring.md`
+- when blueprint, transport, version, or docs-hosting behavior changes, keep `Cephalon.TemplatePack`, `Cephalon.Cli`, and `Cephalon.Scaffolding` aligned rather than letting one generation path drift
+- use `docs/compatibility.md` as the maintainer checklist for cross-surface compatibility changes
