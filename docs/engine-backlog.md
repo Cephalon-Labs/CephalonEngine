@@ -237,7 +237,7 @@ Acceptance:
 The active planning wave now moves to phase 2 operational hardening:
 
 - keep the completed gap inventory, shipped OpenTelemetry companion package, and published diagnostics catalog reflected accurately in docs and project tracking
-- keep the shipped Cassandra, ClickHouse, Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Neo4j, OpenSearch, Oracle, Postgres, RabbitMQ, Redis, and SQL Server dependency-health companions reflected accurately in docs and project tracking while broader provider coverage stays explicit
+- keep the shipped Cassandra, ClickHouse, Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Neo4j, OpenSearch, Oracle, Postgres, RabbitMQ, Redis, and SQL Server dependency-health companion baseline reflected accurately in docs and project tracking, with any additional provider packs treated as future adoption-driven expansion work
 - keep the shipped Serilog provider companion package reflected accurately in docs and project tracking while cloud tracing/export integration remains an explicit later follow-through item
 - keep the shipped ASP.NET Core request/response logging, bounded body capture, and trace/log correlation surfaces reflected accurately in docs and project tracking
 - keep the shipped runtime-story surface plus the shipped failure-policy warmup, drain, and restart-backoff semantics reflected accurately in docs and project tracking
@@ -332,7 +332,7 @@ Delivered:
 
 Follow-up later:
 
-- provider-specific dependency health packs on top of the shipped OpenTelemetry companion package
+- adoption-driven provider-specific dependency health packs beyond the shipped Cassandra, ClickHouse, Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Neo4j, OpenSearch, Oracle, Postgres, RabbitMQ, Redis, and SQL Server baseline
 
 ### ENG-021 Benchmark guardrails in validation flow
 

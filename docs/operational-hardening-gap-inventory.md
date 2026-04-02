@@ -64,7 +64,7 @@ Outcome:
 
 - exporter packaging should remain outside `Cephalon.Engine`
 - the repository now ships a reusable companion package instead of leaving exporter wiring to sample-only host code
-- remaining phase-2 work shifts to dependency-health packaging, broader diagnostics conventions, richer operator answers, and deeper health semantics
+- remaining phase-2 work now sits primarily in later cloud tracing/export follow-through once the target cloud/runtime context is explicit, with any extra provider packs or operator refinements treated as adoption-driven expansion work
 
 ### `#87` `ILogger` provider wiring and Serilog host integration
 
@@ -100,9 +100,9 @@ Why this stays separate:
 - cloud tracing/export work is deployment-context-specific
 - deferring it keeps the current operational hardening track focused on reusable host/runtime primitives
 
-### `#33` Provider-specific dependency health packs beyond the baseline contributor model
+### `#33` Baseline provider-specific dependency health companion packages
 
-Current baseline:
+Shipped scope:
 
 - `IDependencyHealthContributor` exists
 - `RuntimeHealthEvaluator` aggregates dependency reports cleanly
@@ -125,17 +125,17 @@ Current baseline:
 - `Cephalon.Observability.RedisDependencies` now provides a reusable provider-specific pack for Redis and cache endpoints, including auth and logical database selection
 - `Cephalon.Observability.SqlServerDependencies` now provides a reusable provider-specific pack for SQL Server and Azure SQL databases, including connection-string or host/database configuration plus configurable health queries and encryption mode selection
 
-Gap:
+Outcome:
 
-- broader provider-specific packs for additional databases and brokers are still missing
-- current shipped provider coverage now includes Cassandra cluster endpoints plus ClickHouse analytics endpoints plus Consul control-plane endpoints plus Elasticsearch cluster endpoints plus external HTTP/API upstreams plus Kafka broker metadata endpoints plus Memcached cache endpoints plus MongoDB document-database endpoints plus MQTT broker endpoints plus MySQL/MariaDB database endpoints plus NATS broker endpoints plus Neo4j graph endpoints plus OpenSearch cluster endpoints plus Oracle database endpoints plus Postgres database endpoints plus RabbitMQ broker endpoints plus Redis/cache endpoints plus SQL Server and Azure SQL endpoints; richer infrastructure-specific packs beyond that baseline are still left to host or module authors
+- the current phase-2 baseline provider set is now shipped across Cassandra cluster endpoints plus ClickHouse analytics endpoints plus Consul control-plane endpoints plus Elasticsearch cluster endpoints plus external HTTP/API upstreams plus Kafka broker metadata endpoints plus Memcached cache endpoints plus MongoDB document-database endpoints plus MQTT broker endpoints plus MySQL/MariaDB database endpoints plus NATS broker endpoints plus Neo4j graph endpoints plus OpenSearch cluster endpoints plus Oracle database endpoints plus Postgres database endpoints plus RabbitMQ broker endpoints plus Redis/cache endpoints plus SQL Server and Azure SQL endpoints
+- additional provider-specific packs can land later as explicit adoption-driven expansion work instead of remaining part of this baseline task
 - `Cephalon.Observability.HttpDependencies` should continue growing along generic HTTP semantics instead of absorbing product-aware response mapping; HTTP-based systems such as Elasticsearch stay in dedicated packs when they need first-class endpoint or payload contracts
 - `Cephalon.Observability.NatsDependencies` can continue growing across NATS-native wire semantics without forcing unrelated workload semantics into the shared broker baseline
 
 Why this stays separate:
 
 - the contributor contract is already good enough
-- the follow-through now widens reusable provider packaging instead of revisiting the engine abstraction
+- future provider-pack additions should stay adoption-driven instead of reopening the current baseline task
 
 ### `#34` Structured diagnostics and event IDs across packages
 
@@ -203,10 +203,10 @@ Why this stays separate:
 Current conclusion from this inventory:
 
 - the existing phase-2 child-task split remains valid, but observability follow-through is clearer when `ILogger` provider integration is tracked separately from cloud tracing/export work
-- the main missing work is broader provider packaging and later cloud tracing/export follow-through on top of a shipped baseline, with cloud tracing/export deliberately deferred until the cloud target is explicit
+- the main missing work is later cloud tracing/export follow-through on top of a shipped provider/logging baseline, with any extra provider packs now treated as future adoption-driven expansion instead of a current phase-2 blocker
 
 Recommended execution sequence remains:
 
 1. `#31` inventory and sequencing
-2. `#33` dependency-health packs on top of the shipped exporter path
-3. `#86` cloud tracing/export follow-through when the target cloud/runtime is explicit
+2. `#86` cloud tracing/export follow-through when the target cloud/runtime is explicit
+3. adoption-driven provider-pack additions only when a concrete infrastructure gap appears

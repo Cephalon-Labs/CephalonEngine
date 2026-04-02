@@ -225,7 +225,7 @@ Exit criteria:
 
 Updated priority order as of `April 2, 2026`:
 
-1. operational hardening follow-through: broader dependency-health packs and operator-facing hardening now that the exporter path is shipped, Cassandra plus ClickHouse plus Consul plus Elasticsearch plus HTTP plus Kafka plus Memcached plus MongoDB plus MQTT plus MySQL plus NATS plus Neo4j plus OpenSearch plus Oracle plus Postgres plus RabbitMQ plus Redis plus SQL Server coverage have landed, the structured diagnostics catalog, runtime-story surface, and failure-policy warmup/drain/backoff semantics are in place, and release validation now calls out the health/export convention suite directly
+1. operational hardening follow-through: operator-facing hardening and later cloud-targeted tracing/export decisions now that the baseline dependency-health companion set is shipped, Cassandra plus ClickHouse plus Consul plus Elasticsearch plus HTTP plus Kafka plus Memcached plus MongoDB plus MQTT plus MySQL plus NATS plus Neo4j plus OpenSearch plus Oracle plus Postgres plus RabbitMQ plus Redis plus SQL Server coverage have landed, the structured diagnostics catalog, runtime-story surface, and failure-policy warmup/drain/backoff semantics are in place, and release validation now calls out the health/export convention suite directly
 2. package/plugin loading
 3. package distribution, provenance, and richer trust follow-through beyond the current baseline
 4. workflow and orchestration primitives

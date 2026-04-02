@@ -366,7 +366,7 @@ Companion adapter packages:
 - richer capability metadata and policy
 - startup hooks and lifecycle events
 - event bus / workflow runtime
-- broader provider-specific dependency-health packs, richer operator-runtime answers, and deeper release-validation guidance on top of the shipped Cassandra, ClickHouse, Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Neo4j, OpenSearch, Oracle, Postgres, RabbitMQ, Redis, SQL Server, and OpenTelemetry observability companions
+- richer operator-runtime answers, cloud-targeted tracing/export follow-through, and any additional provider-specific dependency-health packs only when concrete adoption needs justify expanding beyond the shipped Cassandra, ClickHouse, Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Neo4j, OpenSearch, Oracle, Postgres, RabbitMQ, Redis, SQL Server, and OpenTelemetry observability companions
 - richer parameterized templates and generators driven by scaffold plans
 - richer localization catalogs and package-provided language packs
 - sustained benchmark coverage for hot engine paths
