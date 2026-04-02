@@ -198,6 +198,7 @@ function Get-BacklogPhaseMap {
         "ENG-024" = 3
         "ENG-013" = 4
         "ENG-022" = 5
+        "ENG-029" = 6
     }
 }
 
@@ -269,12 +270,14 @@ function Get-RoadmapIssueSpecs {
         throw "Unable to find roadmap phase 2 in docs/engine-roadmap.md."
     }
 
+    $phase2State = if ((Normalize-Text -Value $phase2.Status).ToLowerInvariant().Contains("complete")) { "closed" } else { "open" }
+
     return @(
         [pscustomobject]@{
             Kind = "Roadmap"
             Title = "Phase 2 operational hardening follow-through"
             ContentBody = $phase2.Body
-            State = "open"
+            State = $phase2State
             PlanningStatus = $phase2.Status
             SyncKey = "roadmap:phase-2"
             PhaseNumber = 2
@@ -703,6 +706,7 @@ function Get-PhaseLabelName {
         3 { return "phase:3-extensibility" }
         4 { return "phase:4-orchestration" }
         5 { return "phase:5-solution-platform" }
+        6 { return "phase:6-cloud-platform" }
         default { return $null }
     }
 }
@@ -717,6 +721,7 @@ function Get-PhaseLabelDescription {
         3 { return "Planning work aligned to Phase 3 extensibility and package loading." }
         4 { return "Planning work aligned to Phase 4 execution and orchestration." }
         5 { return "Planning work aligned to Phase 5 solution-level platform work." }
+        6 { return "Planning work aligned to Phase 6 cloud and platform integrations." }
         default { return "Planning work aligned to a roadmap phase." }
     }
 }
@@ -731,6 +736,7 @@ function Get-PhaseLabelColor {
         3 { return "0e8a16" }
         4 { return "d93f0b" }
         5 { return "b60205" }
+        6 { return "0052cc" }
         default { return "cfd3d7" }
     }
 }
@@ -2584,7 +2590,7 @@ mutation($issueId: ID!, $issueTypeId: ID!) {
     )
 }
 
-function Get-IssueParentNumber {
+function Get-IssueParent {
     param(
         [Parameter(Mandatory = $true)]$RepositoryContext,
         [Parameter(Mandatory = $true)][int]$IssueNumber
@@ -2595,6 +2601,7 @@ query($owner: String!, $name: String!, $number: Int!) {
   repository(owner: $owner, name: $name) {
     issue(number: $number) {
       parent {
+        id
         number
       }
     }
@@ -2612,7 +2619,10 @@ query($owner: String!, $name: String!, $number: Int!) {
         return $null
     }
 
-    return [int]$response.data.repository.issue.parent.number
+    return [pscustomobject]@{
+        Id = $response.data.repository.issue.parent.id
+        Number = [int]$response.data.repository.issue.parent.number
+    }
 }
 
 function Ensure-SubIssueLink {
@@ -2622,9 +2632,34 @@ function Ensure-SubIssueLink {
         [Parameter(Mandatory = $true)]$ChildIssue
     )
 
-    $currentParentNumber = Get-IssueParentNumber -RepositoryContext $RepositoryContext -IssueNumber ([int]$ChildIssue.number)
-    if ($currentParentNumber -eq [int]$ParentIssue.number) {
+    $currentParent = Get-IssueParent -RepositoryContext $RepositoryContext -IssueNumber ([int]$ChildIssue.number)
+    if ($null -ne $currentParent -and $currentParent.Number -eq [int]$ParentIssue.number) {
         return
+    }
+
+    if ($null -ne $currentParent) {
+        $removeMutation = @'
+mutation($issueId: ID!, $subIssueId: ID!) {
+  removeSubIssue(input: {
+    issueId: $issueId,
+    subIssueId: $subIssueId
+  }) {
+    issue {
+      id
+    }
+    subIssue {
+      id
+    }
+  }
+}
+'@
+
+        Invoke-GhNoJson -Arguments @(
+            "api", "graphql",
+            "-f", "issueId=$($currentParent.Id)",
+            "-f", "subIssueId=$($ChildIssue.id)",
+            "-f", "query=$removeMutation"
+        )
     }
 
     $mutation = @'

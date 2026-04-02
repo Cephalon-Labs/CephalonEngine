@@ -176,7 +176,7 @@ Follow-up later:
 
 ## SDK hardening follow-through
 
-Phase 1 SDK hardening is now substantially complete. Current execution focus has moved to phase 2 operational hardening follow-through on the roadmap and project board.
+Phase 1 SDK hardening is now substantially complete. Phase 2 operational hardening has also closed on its shipped baseline, so the next recommended execution focus is phase 3 extensibility and package loading while cloud-targeted export work stays in later phase-6 planning.
 
 ### ENG-005 Engine API and package surface hardening
 
@@ -234,15 +234,14 @@ Acceptance:
 
 ## Current operational focus
 
-The active planning wave now moves to phase 2 operational hardening:
+Phase 2 operational hardening is now substantially complete:
 
-- keep the completed gap inventory, shipped OpenTelemetry companion package, and published diagnostics catalog reflected accurately in docs and project tracking
+- keep the completed gap inventory, shipped OpenTelemetry companion package, shipped Serilog companion package, and published diagnostics catalog reflected accurately in docs and project tracking
 - keep the shipped Cassandra, ClickHouse, Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Neo4j, OpenSearch, Oracle, Postgres, RabbitMQ, Redis, and SQL Server dependency-health companion baseline reflected accurately in docs and project tracking, with any additional provider packs treated as future adoption-driven expansion work
-- keep the shipped Serilog provider companion package reflected accurately in docs and project tracking while cloud tracing/export integration remains an explicit later follow-through item
-- keep the shipped ASP.NET Core request/response logging, bounded body capture, and trace/log correlation surfaces reflected accurately in docs and project tracking
-- keep the shipped runtime-story surface plus the shipped failure-policy warmup, drain, and restart-backoff semantics reflected accurately in docs and project tracking
+- keep the shipped ASP.NET Core request/response logging, bounded body capture, trace/log correlation, runtime-story, and failure-policy warmup/drain/restart-backoff surfaces reflected accurately in docs and project tracking
 - keep the shipped operational release-validation guidance for health and telemetry-export conventions reflected accurately in docs and project tracking
-- keep `docs/operational-hardening-gap-inventory.md` current as the source of truth for what phase-2 gaps are still genuinely open
+- keep cloud-vendor tracing/export follow-through tracked under `ENG-029` instead of leaving it as an implied phase-2 blocker
+- keep `docs/operational-hardening-gap-inventory.md` current as the source of truth for what phase-2 gaps were closed versus what moved into later phases
 
 ### ENG-016 Blueprint sample suite
 
@@ -329,6 +328,7 @@ Delivered:
 - runtime failure and restart counters for telemetry baselines
 - `Engine:Observability:Telemetry` config contract plus startup log guidance
 - `Engine:Observability:HttpLogging` plus opt-in ASP.NET Core request/response logging with bounded body capture and request/trace correlation
+- default sensitive-value redaction across query-string, JSON, form, and header-style plain-text HTTP logging payloads
 
 Follow-up later:
 
@@ -349,6 +349,7 @@ Delivered:
 - composition and runtime benchmarks now prepare configured builders, runtimes, and service providers outside the measured loop so guardrails track `Build()` and lifecycle transition costs directly
 - composition baseline thresholds refreshed to match the prepared-scenario hot path shipped in the release-validation flow
 - ASP.NET Core request logging now has a shipped guardrail scenario that covers correlated request/response body capture over the public host surface
+- the benchmark catalog now also covers strict trust-policy composition plus bounded-truncation and concurrent ASP.NET Core request-logging paths
 
 Follow-up later:
 
@@ -463,6 +464,26 @@ Acceptance:
 - keep suite blueprints composed from existing app-level contracts
 - add reference samples for multi-service Cephalon solutions
 
+## Later cloud and platform integration work
+
+### ENG-029 Cloud-targeted observability companion integrations
+
+Status: later
+Estimate: 34
+
+Why:
+
+- multi-cloud exporter/auth/default guidance for AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and VMware Tanzu is broader than the phase-2 operational baseline that is now shipped
+- this work should stay in companion packages and preserve the shared `ILogger` pipeline plus the cloud-neutral OTLP baseline
+
+Acceptance:
+
+- define the first supported target slice explicitly, whether as one cloud/platform or a deliberately split set of companion packs
+- keep vendor/platform-specific exporter wiring, auth, resource attributes, and hosted defaults outside `Cephalon.Engine` and `Cephalon.Abstractions`
+- keep the shared `ILogger` pipeline and existing `Cephalon.Observability.OpenTelemetry` baseline intact
+- add docs, validation, and planning sync for the supported targets
+- avoid starting implementation on an ambiguous multi-cloud scope without first narrowing the supported target slice
+
 ## Sprint history and next 3 sprints
 
 Historical sprint buckets below are retrospective planning groups used to backfill iteration and estimate metadata for delivered work.
@@ -526,4 +547,5 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 ### Later / not scheduled yet
 
 - ENG-022 `MicroserviceSuite` blueprint
+- ENG-029 Cloud-targeted observability companion integrations
 - ENG-028 repo-wide XML-comment hygiene for test harnesses

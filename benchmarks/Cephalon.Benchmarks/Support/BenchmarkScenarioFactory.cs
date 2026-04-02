@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.AppModel;
+using Cephalon.Abstractions.Capabilities;
 using Cephalon.Engine.AppModel;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
@@ -38,6 +39,13 @@ internal static class BenchmarkScenarioFactory
         return builder;
     }
 
+    public static EngineBuilder CreateStrictTrustEngineBuilder()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        ConfigureStrictTrustEngine(builder);
+        return builder;
+    }
+
     public static AppProfile CreateAppProfile()
     {
         return AppProfileFactory.Create(CreateSettings());
@@ -66,5 +74,28 @@ internal static class BenchmarkScenarioFactory
             blueprint: "ModularVerticalSlice",
             patterns: ["StrategyPattern", "PipelinePattern", "MediatorPattern"],
             transports: ["RestApi"]);
+    }
+
+    private static void ConfigureStrictTrustEngine(EngineBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularVerticalSlice",
+            patterns: ["StrategyPattern", "PipelinePattern", "MediatorPattern"],
+            transports: ["RestApi", "JsonRpc", "Grpc"],
+            trustPolicy: new TrustPolicy(
+                defaultCapabilityAccess: CapabilityAccess.TrustedOnly,
+                trustedAssemblies: ["Cephalon.Engine"],
+                capabilities: new Dictionary<string, CapabilityAccess>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["platform.clock"] = CapabilityAccess.Allowed,
+                    ["discovery.greetings"] = CapabilityAccess.Allowed,
+                    ["experience.portal"] = CapabilityAccess.Denied
+                })));
+        builder.AddModule(new BenchmarkExperienceModule());
+        builder.AddModule(new BenchmarkOperationsModule());
+        builder.AddModule(new BenchmarkDiscoveryModule());
+        builder.AddModule(new BenchmarkClockModule());
     }
 }
