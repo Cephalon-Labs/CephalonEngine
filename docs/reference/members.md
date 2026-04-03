@@ -183,6 +183,9 @@ Browse the published API surface by public member.
 - [AddCephalonNeo4jDependencyHealth](cephalon-observability-neo4jdependencies.md#member-m-cephalon-observability-neo4jdependencies-hosting-neo4jdependencyhealthservicecollectionextensions-addcephalonneo4jdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions): `Methods` on `Neo4jDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.Neo4jDependencies.Hosting` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=AddCephalonNeo4jDependencyHealth&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Hosting&scope=members)
   - Adds Neo4j dependency-health services using configuration as the primary source of probe settings.
   - `IServiceCollection AddCephalonNeo4jDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<Neo4jDependencyHealthOptions> configure)`
+- [AddCephalonNewRelic](cephalon-observability-newrelic.md#member-m-cephalon-observability-newrelic-hosting-newrelichostapplicationbuilderextensions-addcephalonnewrelic-1-0-system-action-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions): `Methods` on `NewRelicHostApplicationBuilderExtensions` in `Cephalon.Observability.NewRelic.Hosting` (`Cephalon.Observability.NewRelic`) [Browse](browse.html?q=AddCephalonNewRelic&assembly=Cephalon.Observability.NewRelic&namespace=Cephalon.Observability.NewRelic.Hosting&scope=members)
+  - Adds New Relic-aware OpenTelemetry registration for the Cephalon engine diagnostics surface.
+  - `TBuilder AddCephalonNewRelic<TBuilder>(this TBuilder builder, Action<NewRelicTelemetryExportOptions> configure)`
 - [AddCephalonObservability](cephalon-observability.md#member-m-cephalon-observability-hosting-observabilityservicecollectionextensions-addcephalonobservability-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-configuration-observabilityoptions): `Methods` on `ObservabilityServiceCollectionExtensions` in `Cephalon.Observability.Hosting` (`Cephalon.Observability`) [Browse](browse.html?q=AddCephalonObservability&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Hosting&scope=members)
   - Adds observability services using code-first configuration.
   - `IServiceCollection AddCephalonObservability(this IServiceCollection services, Action<ObservabilityOptions> configure)`
@@ -1302,6 +1305,9 @@ Browse the published API surface by public member.
 - [Endpoint](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-endpoint): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=Endpoint&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the absolute endpoint that should be probed for this dependency.
   - `string Endpoint { get; set; }`
+- [Endpoint](cephalon-observability-newrelic.md#member-p-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-endpoint): `Properties` on `NewRelicTelemetryExportOptions` in `Cephalon.Observability.NewRelic.Configuration` (`Cephalon.Observability.NewRelic`) [Browse](browse.html?q=Endpoint&assembly=Cephalon.Observability.NewRelic&namespace=Cephalon.Observability.NewRelic.Configuration&scope=members)
+  - Gets or sets the base New Relic OTLP endpoint used for direct ingestion.
+  - `string Endpoint { get; set; }`
 - [Endpoint](cephalon-observability-opensearchdependencies.md#member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-endpoint): `Properties` on `OpenSearchDependencyDefinition` in `Cephalon.Observability.OpenSearchDependencies.Configuration` (`Cephalon.Observability.OpenSearchDependencies`) [Browse](browse.html?q=Endpoint&assembly=Cephalon.Observability.OpenSearchDependencies&namespace=Cephalon.Observability.OpenSearchDependencies.Configuration&scope=members)
   - Gets or sets the absolute OpenSearch base URL or cluster-health endpoint that should be probed.
   - `string Endpoint { get; set; }`
@@ -1557,6 +1563,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability-neo4jdependencies.md#member-m-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `Neo4jDependencyHealthOptions` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
   - Binds Neo4j dependency-health options from configuration.
   - `Neo4jDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-observability-newrelic.md#member-m-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `NewRelicTelemetryExportOptions` in `Cephalon.Observability.NewRelic.Configuration` (`Cephalon.Observability.NewRelic`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.NewRelic&namespace=Cephalon.Observability.NewRelic.Configuration&scope=members)
+  - Binds New Relic telemetry export options from configuration.
+  - `NewRelicTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability.md#member-m-cephalon-observability-configuration-observabilityoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `ObservabilityOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Binds observability options from configuration.
   - `ObservabilityOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -1709,6 +1718,9 @@ Browse the published API surface by public member.
   - `string Headers { get; set; }`
 - [Headers](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-headers): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
   - Gets or sets the raw OTLP headers string added to Kubernetes collector requests.
+  - `string Headers { get; set; }`
+- [Headers](cephalon-observability-newrelic.md#member-p-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-headers): `Properties` on `NewRelicTelemetryExportOptions` in `Cephalon.Observability.NewRelic.Configuration` (`Cephalon.Observability.NewRelic`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.NewRelic&namespace=Cephalon.Observability.NewRelic.Configuration&scope=members)
+  - Gets or sets the raw OTLP headers string used for direct New Relic ingestion.
   - `string Headers { get; set; }`
 - [Headers](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-headers): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Gets or sets the raw OTLP headers string added to OpenShift collector requests.
@@ -2196,6 +2208,9 @@ Browse the published API surface by public member.
 - [LastObservedPhase](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-lastobservedphase): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastObservedPhase&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The last lifecycle phase recorded for the module.
   - `string LastObservedPhase { get; set; }`
+- [LicenseKey](cephalon-observability-newrelic.md#member-p-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-licensekey): `Properties` on `NewRelicTelemetryExportOptions` in `Cephalon.Observability.NewRelic.Configuration` (`Cephalon.Observability.NewRelic`) [Browse](browse.html?q=LicenseKey&assembly=Cephalon.Observability.NewRelic&namespace=Cephalon.Observability.NewRelic.Configuration&scope=members)
+  - Gets or sets the New Relic license key used to build the required `api-key` header when the package should construct OTLP headers from structured settings.
+  - `string LicenseKey { get; set; }`
 - [Liveness](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-liveness): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Liveness&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The current liveness report.
   - `RuntimeHealthReport Liveness { get; set; }`
@@ -2622,6 +2637,9 @@ Browse the published API surface by public member.
 - [Neo4jDependencyHealthOptions](cephalon-observability-neo4jdependencies.md#member-m-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions-ctor): `Constructors` on `Neo4jDependencyHealthOptions` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Neo4jDependencyHealthOptions&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
   - Initializes a new instance of the `Neo4jDependencyHealthOptions` class.
   - `Neo4jDependencyHealthOptions()`
+- [NewRelicTelemetryExportOptions](cephalon-observability-newrelic.md#member-m-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-ctor): `Constructors` on `NewRelicTelemetryExportOptions` in `Cephalon.Observability.NewRelic.Configuration` (`Cephalon.Observability.NewRelic`) [Browse](browse.html?q=NewRelicTelemetryExportOptions&assembly=Cephalon.Observability.NewRelic&namespace=Cephalon.Observability.NewRelic.Configuration&scope=members)
+  - Initializes a new instance of the `NewRelicTelemetryExportOptions` class.
+  - `NewRelicTelemetryExportOptions()`
 - [NodeName](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-nodename): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=NodeName&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
   - Gets or sets the Kubernetes node name to stamp onto exported resources.
   - `string NodeName { get; set; }`
@@ -3102,6 +3120,9 @@ Browse the published API surface by public member.
 - [Region](cephalon-observability-huaweicloud.md#member-p-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions-region): `Properties` on `HuaweiCloudTelemetryExportOptions` in `Cephalon.Observability.HuaweiCloud.Configuration` (`Cephalon.Observability.HuaweiCloud`) [Browse](browse.html?q=Region&assembly=Cephalon.Observability.HuaweiCloud&namespace=Cephalon.Observability.HuaweiCloud.Configuration&scope=members)
   - Gets or sets the Huawei Cloud region to stamp onto exported resources when one should be explicit.
   - `string Region { get; set; }`
+- [Region](cephalon-observability-newrelic.md#member-p-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-region): `Properties` on `NewRelicTelemetryExportOptions` in `Cephalon.Observability.NewRelic.Configuration` (`Cephalon.Observability.NewRelic`) [Browse](browse.html?q=Region&assembly=Cephalon.Observability.NewRelic&namespace=Cephalon.Observability.NewRelic.Configuration&scope=members)
+  - Gets or sets the New Relic OTLP region used when the package derives the direct-ingestion endpoint.
+  - `string Region { get; set; }`
 - [Region](cephalon-observability-oraclecloud.md#member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-region): `Properties` on `OracleCloudTelemetryExportOptions` in `Cephalon.Observability.OracleCloud.Configuration` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=Region&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration&scope=members)
   - Gets or sets the Oracle Cloud region to stamp onto exported resources when one should be explicit.
   - `string Region { get; set; }`
@@ -3496,6 +3517,9 @@ Browse the published API surface by public member.
   - Gets or sets the Oracle service name used in the Easy Connect data source when no full connection string is supplied.
   - `string ServiceName { get; set; }`
 - [ServiceNamespace](cephalon-observability-grafanacloud.md#member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-servicenamespace): `Properties` on `GrafanaCloudTelemetryExportOptions` in `Cephalon.Observability.GrafanaCloud.Configuration` (`Cephalon.Observability.GrafanaCloud`) [Browse](browse.html?q=ServiceNamespace&assembly=Cephalon.Observability.GrafanaCloud&namespace=Cephalon.Observability.GrafanaCloud.Configuration&scope=members)
+  - Gets or sets the optional `service.namespace` resource attribute to stamp onto exported telemetry.
+  - `string ServiceNamespace { get; set; }`
+- [ServiceNamespace](cephalon-observability-newrelic.md#member-p-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-servicenamespace): `Properties` on `NewRelicTelemetryExportOptions` in `Cephalon.Observability.NewRelic.Configuration` (`Cephalon.Observability.NewRelic`) [Browse](browse.html?q=ServiceNamespace&assembly=Cephalon.Observability.NewRelic&namespace=Cephalon.Observability.NewRelic.Configuration&scope=members)
   - Gets or sets the optional `service.namespace` resource attribute to stamp onto exported telemetry.
   - `string ServiceNamespace { get; set; }`
 - [Services](cephalon-engine.md#member-p-cephalon-engine-composition-enginebuilder-services): `Properties` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=Services&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
@@ -4167,6 +4191,9 @@ Browse the published API surface by public member.
 - [UseManagedOpenTelemetryIngestion](cephalon-observability-oraclecloud.md#member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-usemanagedopentelemetryingestion): `Properties` on `OracleCloudTelemetryExportOptions` in `Cephalon.Observability.OracleCloud.Configuration` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=UseManagedOpenTelemetryIngestion&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration&scope=members)
   - Gets or sets a value indicating whether the package should use Oracle Cloud APM managed OpenTelemetry ingestion when no shared collector endpoint is configured.
   - `bool UseManagedOpenTelemetryIngestion { get; set; }`
+- [UseNativeOtlpEndpoint](cephalon-observability-newrelic.md#member-p-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-usenativeotlpendpoint): `Properties` on `NewRelicTelemetryExportOptions` in `Cephalon.Observability.NewRelic.Configuration` (`Cephalon.Observability.NewRelic`) [Browse](browse.html?q=UseNativeOtlpEndpoint&assembly=Cephalon.Observability.NewRelic&namespace=Cephalon.Observability.NewRelic.Configuration&scope=members)
+  - Gets or sets a value indicating whether the package should target the New Relic native OTLP endpoint when no shared collector endpoint is configured.
+  - `bool UseNativeOtlpEndpoint { get; set; }`
 - [UseOptions](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-useoptions-cephalon-engine-configuration-engineoptions): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseOptions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Merges engine option overrides such as module enablement and capability toggles.
   - `EngineBuilder UseOptions(EngineOptions options)`

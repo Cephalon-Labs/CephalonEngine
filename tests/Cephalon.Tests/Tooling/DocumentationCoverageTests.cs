@@ -28,6 +28,7 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.Observability.GrafanaCloud"] = "observability-grafana-cloud.md",
             ["Cephalon.Observability.HttpDependencies"] = "observability-http-dependencies.md",
             ["Cephalon.Observability.HuaweiCloud"] = "observability-huawei-cloud.md",
+            ["Cephalon.Observability.NewRelic"] = "observability-new-relic.md",
             ["Cephalon.Observability.OracleCloud"] = "observability-oracle-cloud.md",
             ["Cephalon.Observability.KafkaDependencies"] = "observability-kafka-dependencies.md",
             ["Cephalon.Observability.Kubernetes"] = "observability-kubernetes.md",

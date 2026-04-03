@@ -192,6 +192,15 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void ObservabilityNewRelicAssemblyExposesOnlyTheDocumentedConfigurationAndRegistrationSurface()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Observability.NewRelic.Hosting.NewRelicHostApplicationBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions),
+            typeof(global::Cephalon.Observability.NewRelic.Hosting.NewRelicHostApplicationBuilderExtensions));
+    }
+
+    [Fact]
     public void ObservabilitySerilogAssemblyExposesOnlyTheDocumentedRegistrationSurface()
     {
         AssertExportedTypes(

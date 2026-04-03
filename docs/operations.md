@@ -980,6 +980,7 @@ Current shipped event-id ranges include:
 - `Cephalon.Observability.HuaweiCloud`: `3112-3112`
 - `Cephalon.Observability.AlibabaCloud`: `3113-3113`
 - `Cephalon.Observability.GrafanaCloud`: `3119-3119`
+- `Cephalon.Observability.NewRelic`: `3154-3154`
 - `Cephalon.Observability.Kubernetes`: `3117-3117`
 - `Cephalon.Observability.OpenShift`: `3114-3114`
 - `Cephalon.Observability.DigitalOcean`: `3115-3115`
@@ -1452,6 +1453,54 @@ Operational notes:
 - `Protocol` can stay on `otlp`, `otlp/grpc`, or `otlp/http`; for HTTP/protobuf the package appends `/v1/traces`, `/v1/metrics`, and `/v1/logs` automatically
 - `ServiceNamespace` lets the package stamp `service.namespace`, while the active host environment still contributes `deployment.environment.name`
 
+## New Relic observability path
+
+`Cephalon.Observability.NewRelic` keeps New Relic native OTLP endpoint wiring and `api-key` authentication guidance in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "Telemetry": {
+        "Provider": "OpenTelemetry",
+        "Protocol": "otlp/http",
+        "ExportLogs": true,
+        "ExportMetrics": true,
+        "ExportTraces": true,
+        "NewRelic": {
+          "UseNativeOtlpEndpoint": true,
+          "Region": "eu",
+          "LicenseKey": "replace-with-newrelic-license-key",
+          "ServiceNamespace": "checkout"
+        }
+      }
+    }
+  }
+}
+```
+
+Host registration example:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonObservability(builder.Configuration);
+builder.AddCephalonNewRelic();
+```
+
+Operational notes:
+
+- the New Relic package is optional and stays outside `Cephalon.Engine`
+- when `Engine:Observability:Telemetry:Endpoint` or `UseSelfHostedDefaults` is configured, the package keeps using the shared collector-oriented OTLP path and only adds explicit resource context
+- when `Engine:Observability:Telemetry:NewRelic:UseNativeOtlpEndpoint` is `true` and no shared endpoint is configured, the package targets either the configured New Relic OTLP endpoint or the documented regional endpoint derived from `Region`
+- direct New Relic mode accepts either `Headers` in standard OTLP `key=value` format or the structured `LicenseKey` value that the package converts into the required `api-key` header
+- `Protocol` can stay on `otlp`, `otlp/grpc`, or `otlp/http`; New Relic currently recommends `otlp/http`, and for HTTP/protobuf the package appends `/v1/traces`, `/v1/metrics`, and `/v1/logs` automatically
+- `Region` can be `us`, `eu`, or `fedramp`; if omitted, the package defaults to the New Relic US OTLP endpoint
+- `ServiceNamespace` lets the package stamp `service.namespace`, while the active host environment still contributes `deployment.environment.name`
+
 ## Alibaba Cloud observability path
 
 `Cephalon.Observability.AlibabaCloud` keeps hosted Alibaba Cloud defaults and an optional managed OpenTelemetry traces/metrics path in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
@@ -1875,6 +1924,7 @@ It executes a curated test suite that validates:
 - Alibaba Cloud-hosted defaults and managed OpenTelemetry traces/metrics through `Cephalon.Observability.AlibabaCloud`
 - AWS-hosted OTLP defaults through `Cephalon.Observability.Aws`
 - Grafana Cloud direct endpoint wiring through `Cephalon.Observability.GrafanaCloud`
+- New Relic native OTLP defaults through `Cephalon.Observability.NewRelic`
 - GCP-hosted defaults through `Cephalon.Observability.Gcp`
 - Huawei Cloud-hosted defaults and managed APM traces through `Cephalon.Observability.HuaweiCloud`
 - Kubernetes in-cluster collector defaults through `Cephalon.Observability.Kubernetes`
