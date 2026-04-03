@@ -288,6 +288,8 @@ Browse the published API surface by public type.
 - [SqlServerDependencyHealthServiceCollectionExtensions](cephalon-observability-sqlserverdependencies.md#type-cephalon-observability-sqlserverdependencies-hosting-sqlserverdependencyhealthservicecollectionextensions): `Cephalon.Observability.SqlServerDependencies.Hosting` in `Cephalon.Observability.SqlServerDependencies` [Browse](browse.html?q=SqlServerDependencyHealthServiceCollectionExtensions&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Hosting)
 - [StartupFailureBehavior](cephalon-engine.md#type-cephalon-engine-configuration-startupfailurebehavior): `Cephalon.Engine.Configuration` in `Cephalon.Engine` [Browse](browse.html?q=StartupFailureBehavior&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
 - [StopFailureBehavior](cephalon-engine.md#type-cephalon-engine-configuration-stopfailurebehavior): `Cephalon.Engine.Configuration` in `Cephalon.Engine` [Browse](browse.html?q=StopFailureBehavior&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+- [SuiteScaffoldPlan](cephalon-abstractions.md#type-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan): `Cephalon.Abstractions.AppModel.Scaffolding` in `Cephalon.Abstractions` [Browse](browse.html?q=SuiteScaffoldPlan&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding)
+- [SuiteScaffoldService](cephalon-abstractions.md#type-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice): `Cephalon.Abstractions.AppModel.Scaffolding` in `Cephalon.Abstractions` [Browse](browse.html?q=SuiteScaffoldService&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding)
 
 ## T
 

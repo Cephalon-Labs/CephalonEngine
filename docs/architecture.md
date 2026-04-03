@@ -146,7 +146,7 @@ Companion adapter packages can extend that host with additional transport surfac
 
 `Cephalon.Observability.Serilog` is the optional logger-provider companion package. It keeps Serilog-specific sink, enricher, and formatting registration outside `Cephalon.Engine` and `Cephalon.Observability` while still flowing engine and module logs through the shared `Microsoft.Extensions.Logging.ILogger` pipeline.
 
-`Cephalon.Scaffolding` is the adoption companion package. It turns `AppProfile.Scaffold` into concrete solution, project, file, and folder output so future CLIs or templates do not need to re-encode blueprint rules.
+`Cephalon.Scaffolding` is the adoption companion package. It turns `AppProfile.Scaffold` into concrete solution, project, file, and folder output so future CLIs or templates do not need to re-encode blueprint rules. `Cephalon.Abstractions.AppModel.Scaffolding` now also carries `SuiteScaffoldPlan` and `SuiteScaffoldService` so later solution-level blueprints can describe shared projects and per-service slots without stretching the current single-app scaffold contract past its intended boundary.
 
 `Cephalon.ReferenceDocs` is the optional reference-publishing companion package. It can turn compiled assemblies plus XML comments into publishable Markdown reference output when the repository wants a browsable API artifact, but the hand-authored `.md` guides under `README.md` and `docs/` remain the primary product and adoption documentation. The stable library surface stays centered on request/generate/write flows, while browser rendering and assembly-load plumbing remain internal implementation details.
 
@@ -363,6 +363,7 @@ Companion adapter packages:
 - runtime localization state is introspectable through `/engine/localization`
 - runtime health semantics are exposed through `/health`, `/health/live`, and `/health/ready`
 - blueprint-driven project shape is introspectable through `AppProfile.Scaffold` and `/engine/scaffold`
+- future suite-level shape is modeled separately through `SuiteScaffoldPlan` and `SuiteScaffoldService` instead of overloading the current app-level scaffold contract
 - the same runtime can be hosted in ASP.NET Core or generic worker hosts without changing module contracts
 - the engine emits built-in metrics and tracing through the `Cephalon.Engine` meter and activity source
 - the host stays thin and pushes behavior into modules

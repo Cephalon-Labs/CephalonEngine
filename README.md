@@ -576,6 +576,8 @@ When operators need the shorter answer to “what loaded, what started, what fai
 
 Blueprint selection now also materializes into a first-class scaffold plan. `AppProfile.Scaffold` and `/engine/scaffold` expose the intended solution shape for the chosen blueprint, including project templates, folder conventions, and host package hints. Transport selection enriches that plan with adapter package guidance such as `Cephalon.AspNetCore.JsonRpc` or `Cephalon.AspNetCore.Grpc` when those transports are enabled.
 
+For future solution-level work, `Cephalon.Abstractions` now also defines `SuiteScaffoldPlan` and `SuiteScaffoldService` so a later `MicroserviceSuite` blueprint can describe shared projects, shared folders, and per-service slots without overloading the single-app `ScaffoldPlan` contract. That keeps today’s app-level runtime/story surfaces stable while still making the suite shape explicit and reusable.
+
 Cephalon now also models `Technology` as a first-class app-model layer. This is where future-facing workload choices such as `AgenticWorkloads`, `EventDrivenIntegration`, `KnowledgeRetrieval`, `RealtimeExperience`, or `EdgeNativeDelivery` belong. They are intentionally separate from architecture patterns and transports so new technology stacks can be composed without bending the meaning of blueprint or pattern selection. The active technology set is visible through `AppProfile.Technologies` and `GET /engine/technologies`.
 
 `Cephalon.Scaffolding` now consumes that same scaffold plan and can render a concrete solution skeleton, including `.slnx`, project files, appsettings, module stubs, and placeholder feature folders. This keeps future CLI/template work anchored to the same runtime contract instead of duplicating blueprint logic elsewhere.

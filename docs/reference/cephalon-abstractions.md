@@ -674,6 +674,246 @@ const string Solution
 
 Identifies a solution-level scaffold scope.
 
+<a id="member-f-cephalon-abstractions-appmodel-scaffolding-scaffoldscopes-suite"></a>
+
+##### `Suite`
+
+```csharp
+const string Suite
+```
+
+Identifies a suite-level scaffold scope.
+
+<a id="type-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan"></a>
+
+### `SuiteScaffoldPlan`
+
+Describes a suite-level scaffold plan for coordinated multi-service Cephalon solutions.
+
+#### Declaration
+```csharp
+public sealed class SuiteScaffoldPlan
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `SuiteScaffoldPlan`
+
+```csharp
+SuiteScaffoldPlan(string id, string displayName, string description, IReadOnlyList<SuiteScaffoldService> services, IReadOnlyList<ScaffoldProject> sharedProjects, IReadOnlyList<ScaffoldFolder> sharedFolders, IReadOnlyList<string> conventions, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a suite-level scaffold plan.
+
+Parameters:
+- `id`: The stable suite-scaffold identifier.
+- `displayName`: The human-readable suite-scaffold name.
+- `description`: The suite-scaffold description.
+- `services`: The service slots emitted by the suite scaffold.
+- `sharedProjects`: The shared projects emitted outside individual services.
+- `sharedFolders`: The shared folders emitted outside individual services.
+- `conventions`: The conventions implied by the suite scaffold.
+- `metadata`: Optional suite-scaffold metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-conventions"></a>
+
+##### `Conventions`
+
+```csharp
+IReadOnlyList<string> Conventions { get; }
+```
+
+Gets the conventions implied by the suite scaffold.
+
+<a id="member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the suite-scaffold description.
+
+<a id="member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the human-readable suite-scaffold name.
+
+<a id="member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable suite-scaffold identifier.
+
+<a id="member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional suite-scaffold metadata.
+
+<a id="member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-services"></a>
+
+##### `Services`
+
+```csharp
+IReadOnlyList<SuiteScaffoldService> Services { get; }
+```
+
+Gets the service slots emitted by the suite scaffold.
+
+<a id="member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-sharedfolders"></a>
+
+##### `SharedFolders`
+
+```csharp
+IReadOnlyList<ScaffoldFolder> SharedFolders { get; }
+```
+
+Gets the shared folders emitted outside individual services.
+
+<a id="member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-sharedprojects"></a>
+
+##### `SharedProjects`
+
+```csharp
+IReadOnlyList<ScaffoldProject> SharedProjects { get; }
+```
+
+Gets the shared projects emitted outside individual services.
+
+<a id="type-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice"></a>
+
+### `SuiteScaffoldService`
+
+Describes one service slot inside a suite-level scaffold plan.
+
+#### Declaration
+```csharp
+public sealed class SuiteScaffoldService
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `SuiteScaffoldService`
+
+```csharp
+SuiteScaffoldService(string id, string displayName, string description, string blueprintId, string nameTemplate, string pathTemplate, IReadOnlyList<string> dependsOn, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a suite-scaffold service description.
+
+Parameters:
+- `id`: The stable service-slot identifier.
+- `displayName`: The human-readable service-slot name.
+- `description`: The service-slot description.
+- `blueprintId`: The app blueprint identifier used for the service.
+- `nameTemplate`: The generated app-name template for the service.
+- `pathTemplate`: The generated root-path template for the service.
+- `dependsOn`: The service or shared-project identifiers this service depends on.
+- `metadata`: Optional service metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-blueprintid"></a>
+
+##### `BlueprintId`
+
+```csharp
+string BlueprintId { get; }
+```
+
+Gets the app blueprint identifier used for the service.
+
+<a id="member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-dependson"></a>
+
+##### `DependsOn`
+
+```csharp
+IReadOnlyList<string> DependsOn { get; }
+```
+
+Gets the service or shared-project identifiers this service depends on.
+
+<a id="member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the service-slot description.
+
+<a id="member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the human-readable service-slot name.
+
+<a id="member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable service-slot identifier.
+
+<a id="member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional service metadata.
+
+<a id="member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-nametemplate"></a>
+
+##### `NameTemplate`
+
+```csharp
+string NameTemplate { get; }
+```
+
+Gets the generated app-name template for the service.
+
+<a id="member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-pathtemplate"></a>
+
+##### `PathTemplate`
+
+```csharp
+string PathTemplate { get; }
+```
+
+Gets the generated root-path template for the service.
+
 <a id="namespace-cephalon-abstractions-capabilities"></a>
 
 ## Namespace Cephalon.Abstractions.Capabilities

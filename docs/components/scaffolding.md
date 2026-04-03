@@ -26,7 +26,7 @@
 
 ## How it fits
 
-This package consumes the same `AppProfile.Scaffold` model exposed by the runtime. It is the shared implementation behind CLI generation and future template or automation workflows.
+This package consumes the same `AppProfile.Scaffold` model exposed by the runtime. It is the shared implementation behind CLI generation and future template or automation workflows. The repository now also carries `SuiteScaffoldPlan` and `SuiteScaffoldService` in `Cephalon.Abstractions` for later solution-level blueprint work, but generator support for that suite contract is intentionally left to the follow-up `ENG-022` composition slice so the current package stays honest about what it renders today.
 
 ## Related docs
 

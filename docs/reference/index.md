@@ -15,7 +15,7 @@ Quick links:
 
 ### Core
 
-- [Cephalon.Abstractions](cephalon-abstractions.md): Host-agnostic contracts that module and package authors build against. Contains 10 namespaces and 47 public types. [Browse](browse.html?assembly=Cephalon.Abstractions)
+- [Cephalon.Abstractions](cephalon-abstractions.md): Host-agnostic contracts that module and package authors build against. Contains 10 namespaces and 49 public types. [Browse](browse.html?assembly=Cephalon.Abstractions)
 - [Cephalon.Engine](cephalon-engine.md): Composition, runtime, policy, manifest, and introspection services. Contains 12 namespaces and 59 public types. [Browse](browse.html?assembly=Cephalon.Engine)
 
 ### Technology Packs

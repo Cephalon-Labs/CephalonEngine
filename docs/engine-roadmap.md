@@ -59,8 +59,8 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Platform Sprint 0`: `ENG-012`
 - `Sprint 1`: delivered `ENG-005`, `ENG-026`, and `ENG-027`, and opened the phase 2 operational gap-inventory track
 - `Sprint 2`: exporter packaging is now part of the shipped phase-2 baseline, Cassandra contact-point health plus ClickHouse analytics health plus Consul control-plane health plus Elasticsearch cluster health plus HTTP external API plus Kafka broker metadata plus Memcached cache plus MongoDB plus MQTT plus MySQL plus NATS plus Neo4j plus OpenSearch plus Oracle plus Postgres plus RabbitMQ plus Redis/cache plus SQL Server dependency-health packaging anchor the provider-specific follow-through, the shared diagnostics/event-id catalog now anchors the structured diagnostics baseline, and release validation now calls out the health/export convention suite explicitly
-- `Sprint 3`: runtime-answers follow-through, the shipped package distribution/provenance and signer-verification follow-through under `ENG-011`, the shipped `ENG-013` execution-graph lifecycle/observability plus hosted-execution convention and agentic orchestration-link follow-through, the shipped `ENG-029` self-hosted OTLP follow-through slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped DigitalOcean collector/defaults slice, the shipped VMware Tanzu proxy/defaults slice, and the shipped downstream Cloudflare/custom-provider authoring slice under `#120`
-- `Later / not scheduled yet`: `ENG-022` and future solution-level expansion work
+- `Sprint 3`: runtime-answers follow-through, the shipped package distribution/provenance and signer-verification follow-through under `ENG-011`, the shipped `ENG-013` execution-graph lifecycle/observability plus hosted-execution convention and agentic orchestration-link follow-through, the shipped `ENG-022` suite-scaffold-shape baseline under `#79`, the shipped `ENG-029` self-hosted OTLP follow-through slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped DigitalOcean collector/defaults slice, the shipped VMware Tanzu proxy/defaults slice, and the shipped downstream Cloudflare/custom-provider authoring slice under `#120`
+- `Later / not scheduled yet`: the remaining `ENG-022` suite-composition, samples, and governance follow-through plus future solution-level expansion work
 
 ## Planning principles
 
@@ -206,13 +206,19 @@ Exit criteria:
 
 ## Phase 5: Solution-level platform
 
-Status: future
+Status: current focus
 
 Goal: support higher-level solution shapes, not only individual Cephalon apps.
 
+Current baseline already in place:
+
+- `SuiteScaffoldPlan` and `SuiteScaffoldService` now define a separate suite-level scaffold contract for shared projects, shared folders, and per-service slots
+- `ScaffoldScopes.Suite` now marks suite-owned shared assets explicitly instead of overloading the current single-app scaffold scopes
+- the first suite-shape validation baseline now fails when service-slot dependencies or shared-folder ownership point at undeclared suite identities
+
 Deliverables:
 
-- `MicroserviceSuite` blueprint
+- `MicroserviceSuite` blueprint composed from the existing app-level `Microservice` scaffold contract
 - solution-level samples for multiple Cephalon services
 - shared governance/convention packages
 - optional gateway or control-plane guidance later
@@ -264,10 +270,10 @@ Exit criteria:
 
 Updated priority order as of `April 3, 2026`:
 
-1. workflow and orchestration follow-through on top of the shipped execution-graph contract
-2. multi-service suite blueprints
-3. cloud and platform integrations, with self-hosted plus Azure Monitor plus AWS plus GCP plus Huawei Cloud plus Alibaba Cloud plus Red Hat OpenShift plus DigitalOcean plus VMware Tanzu shipped, and the downstream Cloudflare/custom-provider guidance slice shipped under `#120` while future first-party additions stay explicit and adoption-driven
-4. broader release automation and package-publishing polish
+1. multi-service suite blueprints on top of the shipped suite-scaffold contract baseline
+2. cloud and platform integrations only when a new explicit adoption target appears beyond the shipped self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and Cloudflare/custom-provider guidance baseline
+3. broader release automation and package-publishing polish
+4. repo-wide XML-comment hygiene for test harnesses only if the repository chooses a stricter test-harness visibility/documentation policy
 
 ## Decision guardrails
 

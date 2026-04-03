@@ -19,6 +19,8 @@
 - `Capabilities/ICapabilityRegistry.cs`
 - `AppModel/AppProfile.cs`
 - `AppModel/Scaffolding/ScaffoldPlan.cs`
+- `AppModel/Scaffolding/SuiteScaffoldPlan.cs`
+- `AppModel/Scaffolding/SuiteScaffoldService.cs`
 - `Health/DependencyHealthReport.cs`
 - `Localization/ILocalizedResourceContributor.cs`
 - `Technologies/ITechnologyRuntimeCatalog.cs`

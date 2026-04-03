@@ -192,6 +192,7 @@ Current shipped shape:
 - `AppBlueprint` defines the built-in project shape and required baseline patterns
 - `AppProfile` captures the selected blueprint, patterns, technologies, transports, and scaffold plan
 - `ScaffoldPlan` captures how that blueprint should turn into projects, folders, conventions, and package hints
+- `SuiteScaffoldPlan` and `SuiteScaffoldService` now capture the later solution-level shape for shared projects plus per-service slots without changing the current app-level runtime contract
 - built-in scaffold plans live under `Cephalon.Engine.AppModel.Scaffolding`
 
 Simplified contract:
@@ -206,6 +207,8 @@ public sealed class AppProfile
     public IReadOnlyList<TransportDescriptor> Transports { get; }
 }
 ```
+
+The current runtime still ships app-level blueprints only. The suite-level scaffold contract is the preparation layer for later `MicroserviceSuite` composition work, not a second active runtime-profile surface yet.
 
 The runtime should support configuration-driven blueprint, pattern, technology, and transport selection, for example:
 
