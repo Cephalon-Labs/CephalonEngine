@@ -15,6 +15,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [Compatibility](compatibility.md)
 - [App models](app-models.md)
 - [Module authoring](module-authoring.md)
+- [Observability provider authoring](observability-provider-authoring.md)
 - [Technology packs](technology-packs.md)
 
 ## Runtime and operations
@@ -26,6 +27,8 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [Reference docs publishing](reference-docs.md)
 
 The component catalog now includes the observability baseline package plus the optional Cassandra dependency-health, ClickHouse dependency-health, Consul dependency-health, Elasticsearch dependency-health, HTTP dependency-health, Kafka dependency-health, Memcached dependency-health, MongoDB dependency-health, MQTT dependency-health, MySQL dependency-health, NATS dependency-health, Neo4j dependency-health, OpenSearch dependency-health, Oracle dependency-health, Postgres dependency-health, RabbitMQ dependency-health, Redis dependency-health, SQL Server dependency-health, OpenTelemetry exporter, and Serilog provider companions so operator-facing docs stay aligned with the shipped host integration paths, diagnostics conventions, runtime-story surface, and release-validation guidance.
+
+Downstream provider and edge-runtime integrations that are not shipped as first-party Cephalon packages should follow the companion-authoring guidance in [Observability provider authoring](observability-provider-authoring.md) so the shared telemetry contract, diagnostics conventions, and planning language stay consistent.
 
 ## Optional generated reference docs
 

@@ -63,6 +63,7 @@ See also: [Docs hub](../README.md)
 - benchmark suite: [Benchmarking](../benchmarking.md)
 - template pack: [README](../../README.md) and `templates/Cephalon.TemplatePack/PACKAGE.md`
 - module authoring: [Module authoring](../module-authoring.md)
+- downstream observability guidance: [Observability provider authoring](../observability-provider-authoring.md)
 
 ## Related docs
 
