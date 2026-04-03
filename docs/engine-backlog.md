@@ -438,14 +438,14 @@ Follow-up later:
 
 ### ENG-013 Workflow and orchestration primitives
 
-Status: later
+Status: done
 Estimate: 5
 
 Why:
 
 - this is the bridge from framework to execution platform
 
-Delivered so far:
+Delivered:
 
 - a first execution-graph contract through `IExecutionGraphContributor`, `ExecutionGraphDescriptor`, and `IExecutionRuntimeCatalog`
 - a first hosted/background execution contract through `IHostedExecutionContributor`, `HostedExecutionDescriptor`, and `IHostedExecutionRuntimeCatalog`
@@ -456,13 +456,11 @@ Delivered so far:
 - execution-graph lifecycle state through `/engine/runtime-story` and `/engine/snapshot`, including operator-visible load, activate, and deactivate transitions
 - hosted/background execution lifecycle state through `/engine/runtime-story` and `/engine/snapshot`, including operator-visible load, activate, and deactivate transitions
 - runtime diagnostics coverage for execution-graph and hosted/background lifecycle transitions through `cephalon.execution-graphs.transitions`, `cephalon.hosted-executions.transitions`, and the `Cephalon.Engine` event-id catalog
+- agentic tool descriptors can now link back to capability keys, execution graphs, and hosted executions through the existing `Cephalon.Agentics` contract
+- `/engine/technology-surfaces` and `/engine/snapshot` now project those linked AI/orchestration surfaces with live runtime-story state
+- invalid agent-tool references to unknown capability keys, execution graphs, or hosted executions now fail when the agentic tool catalog is resolved
 - module-author guidance for publishing workflow and execution-graph descriptors without bypassing the existing module/capability model
 - descriptive hosted/background execution conventions that stay on top of the existing module and Generic Host model instead of introducing a separate engine-owned runner abstraction
-
-Acceptance remaining:
-
-- richer multi-module coordination patterns on top of the shipped execution-graph and hosted-execution baseline
-- AI and orchestration integration points built on the existing module, capability, execution-graph, and runtime-story contracts
 
 ### ENG-022 `MicroserviceSuite` blueprint
 

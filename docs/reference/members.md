@@ -327,9 +327,9 @@ Browse the published API surface by public member.
 - [AgenticWorkloads](cephalon-engine.md#member-p-cephalon-engine-technologies-builtintechnologies-agenticworkloads): `Properties` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=AgenticWorkloads&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
   - Gets the built-in agentic-workloads technology profile.
   - `TechnologyDescriptor AgenticWorkloads { get; }`
-- [AgentToolDescriptor](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttooldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolDescriptor&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+- [AgentToolDescriptor](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttooldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolDescriptor&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Creates a new agent tool descriptor.
-  - `AgentToolDescriptor(string id, string displayName, string description, IReadOnlyList<string> tags)`
+  - `AgentToolDescriptor(string id, string displayName, string description, IReadOnlyList<string> tags, IReadOnlyList<string> capabilityKeys, string executionGraphId, string hostedExecutionId, IReadOnlyDictionary<string, string> metadata)`
 - [Algorithm](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-algorithm): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Algorithm&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared signature algorithm.
   - `string Algorithm { get; }`
@@ -510,6 +510,9 @@ Browse the published API surface by public member.
 - [CapabilityKey](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-capabilitykey): `Properties` on `ExecutionGraphNodeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=CapabilityKey&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the capability key the node intends to drive, when one was declared.
   - `string CapabilityKey { get; }`
+- [CapabilityKeys](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttooldescriptor-capabilitykeys): `Properties` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=CapabilityKeys&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the capability keys that the tool expects to use through the active runtime.
+  - `IReadOnlyList<string> CapabilityKeys { get; }`
 - [CapabilityManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-capabilitymanifest-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CapabilityManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=CapabilityManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Initializes a new instance of the `CapabilityManifest` class.
   - `CapabilityManifest(string key, string displayName, string description, string sourceModuleId, IReadOnlyDictionary<string, string> metadata)`
@@ -1314,6 +1317,9 @@ Browse the published API surface by public member.
 - [ExecutionGraphEdgeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-executiongraphedgedescriptor-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `ExecutionGraphEdgeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionGraphEdgeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Creates a new execution-graph edge descriptor.
   - `ExecutionGraphEdgeDescriptor(string fromNodeId, string toNodeId, string displayName, string condition, IReadOnlyDictionary<string, string> metadata)`
+- [ExecutionGraphId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttooldescriptor-executiongraphid): `Properties` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ExecutionGraphId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the related execution-graph identifier when one is declared.
+  - `string ExecutionGraphId { get; }`
 - [ExecutionGraphId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-executiongraphid): `Properties` on `HostedExecutionDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionGraphId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the related execution-graph identifier when one is declared.
   - `string ExecutionGraphId { get; }`
@@ -1701,6 +1707,9 @@ Browse the published API surface by public member.
 - [HostedExecutionDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-hostedexecutiondescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `HostedExecutionDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=HostedExecutionDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Creates a new hosted execution descriptor.
   - `HostedExecutionDescriptor(string id, string displayName, string description, string sourceModuleId, string kind, string executionGraphId, bool startsWithHost, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
+- [HostedExecutionId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttooldescriptor-hostedexecutionid): `Properties` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=HostedExecutionId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the related hosted-execution identifier when one is declared.
+  - `string HostedExecutionId { get; }`
 - [HostedExecutionId](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehostedexecutionstate-hostedexecutionid): `Properties` on `RuntimeHostedExecutionState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=HostedExecutionId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The stable hosted-execution identifier.
   - `string HostedExecutionId { get; set; }`
@@ -2256,6 +2265,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-agentics.md#member-p-cephalon-agentics-configuration-agenticruntimeoptions-metadata): `Properties` on `AgenticRuntimeOptions` in `Cephalon.Agentics.Configuration` (`Cephalon.Agentics`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Configuration&scope=members)
   - Gets arbitrary metadata that can be attached to the agentic runtime configuration.
   - `IDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttooldescriptor-metadata): `Properties` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets additional operator-facing metadata associated with the tool.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appblueprint-metadata): `Properties` on `AppBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets additional blueprint metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`

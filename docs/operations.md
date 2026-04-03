@@ -1050,6 +1050,17 @@ Current note:
 - hosted executions are descriptive operator-facing conventions on top of the existing Generic Host and module lifecycle model, not a replacement for `IHostedService`, `BackgroundService`, or module-owned runtime hooks
 - invalid hosted-execution ids, unknown source modules, or unknown cross-module execution-graph references fail at build time instead of leaking broken operator data
 
+## Technology surface
+
+`GET /engine/technology-surfaces` exposes the active runtime surfaces projected by selected technology packs.
+
+Current `Cephalon.Agentics` highlights:
+
+- each tool entry still carries the operator-facing tool descriptor
+- linked `capabilityKeys`, `executionGraphId`, and `hostedExecutionId` now flow through the same surface when the tool declares them
+- linked execution-graph and hosted-execution entries also surface the current runtime-story phase and active/inactive state
+- invalid linked capability, execution-graph, or hosted-execution references fail when the agentic tool catalog is resolved instead of leaking broken operator metadata
+
 ## Trust surface
 
 `GET /engine/trust-policy` exposes the effective package and capability trust snapshot:

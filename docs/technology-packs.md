@@ -54,7 +54,10 @@ builder.AddCephalon(engine =>
         options.Tools.Add(new AgentToolDescriptor(
             id: "planner",
             displayName: "Planner",
-            description: "Builds agent plans."));
+            description: "Builds agent plans.",
+            capabilityKeys: ["workflow.approval.request", "workflow.approval.record"],
+            executionGraphId: "approval-flow",
+            hostedExecutionId: "approval-pump"));
     });
 
     engine.AddRetrieval(options =>
@@ -126,6 +129,14 @@ Shipped pack-specific extension points:
 
 Those contributor interfaces are the preferred way for installed modules to add descriptors into a selected technology pack. Project-level code can still replace the final catalog service through DI when it needs full control.
 
+For `Cephalon.Agentics`, `AgentToolDescriptor` can now also link back to:
+
+- published capability keys through `capabilityKeys`
+- one execution graph through `executionGraphId`
+- one hosted execution through `hostedExecutionId`
+
+That keeps AI-facing tool metadata anchored in the same module, capability, execution-graph, hosted-execution, and runtime-story contracts the engine already exposes.
+
 Runtime introspection contract:
 
 - `ITechnologyRuntimeContributor`
@@ -135,7 +146,7 @@ Runtime introspection contract:
 - `IRuntimeIntrospectionSnapshotProvider`
   - engine-level abstraction for reading one operator-facing snapshot that combines the runtime manifest, runtime status, and active technology-pack surfaces
 - `GET /engine/technology-surfaces`
-  - returns the active pack surfaces and the merged entries visible to the runtime after host options and module contributors have both been applied
+  - returns the active pack surfaces and the merged entries visible to the runtime after host options and module contributors have both been applied; agentic tools now also surface linked capability keys plus live execution-graph and hosted-execution state when those links are declared
 - `GET /engine/snapshot`
   - returns the broader runtime introspection snapshot when operators need manifest, runtime status, and technology-pack surfaces in one payload
 

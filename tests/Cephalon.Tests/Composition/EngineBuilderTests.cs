@@ -1454,6 +1454,78 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public async Task AddTechnologyPacksProjectAgenticOrchestrationLinksThroughExistingRuntimeContracts()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                transports: ["WebSocket"],
+                technologies: ["AgenticWorkloads"]));
+            engine.AddAgentics();
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new WorkflowCatalogTestModule("agentic-orchestration"));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var runtime = provider.GetRequiredService<IRuntime>();
+
+        await runtime.StartAsync(provider);
+
+        var technologySurfaces = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var snapshotProvider = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>();
+        var agenticsSurface = Assert.Single(technologySurfaces.GetByTechnology("agentic-workloads"));
+        var orchestrationEntry = Assert.Single(agenticsSurface.Entries, entry => entry.Id == "approval-orchestrator");
+        Assert.Equal("workflow.approval.record,workflow.approval.request", orchestrationEntry.Metadata["capabilityKeys"]);
+        Assert.Equal("Approval decision,Approval request", orchestrationEntry.Metadata["capabilityDisplayNames"]);
+        Assert.Equal("approval-flow", orchestrationEntry.Metadata["executionGraphId"]);
+        Assert.Equal("Approval Flow", orchestrationEntry.Metadata["executionGraphDisplayName"]);
+        Assert.Equal("activate", orchestrationEntry.Metadata["executionGraphPhase"]);
+        Assert.Equal("true", orchestrationEntry.Metadata["executionGraphIsActive"]);
+        Assert.Equal("approval-pump", orchestrationEntry.Metadata["hostedExecutionId"]);
+        Assert.Equal("Approval Pump", orchestrationEntry.Metadata["hostedExecutionDisplayName"]);
+        Assert.Equal("background-service", orchestrationEntry.Metadata["hostedExecutionKind"]);
+        Assert.Equal("activate", orchestrationEntry.Metadata["hostedExecutionPhase"]);
+        Assert.Equal("true", orchestrationEntry.Metadata["hostedExecutionIsActive"]);
+        Assert.Equal("true", orchestrationEntry.Metadata["orchestrationLinked"]);
+
+        var snapshot = snapshotProvider.CreateSnapshot();
+        var snapshotAgenticsSurface = Assert.Single(snapshot.TechnologySurfaces, surface => surface.TechnologyId == "agentic-workloads");
+        Assert.Contains(snapshotAgenticsSurface.Entries, entry => entry.Id == "approval-orchestrator" &&
+            entry.Metadata["executionGraphId"] == "approval-flow" &&
+            entry.Metadata["hostedExecutionId"] == "approval-pump");
+    }
+
+    [Fact]
+    public void AddTechnologyPacksRejectAgentToolsThatReferenceUnknownRuntimeContracts()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                transports: ["WebSocket"],
+                technologies: ["AgenticWorkloads"]));
+            engine.AddAgentics(options =>
+            {
+                options.Tools.Add(new AgentToolDescriptor(
+                    id: "broken-planner",
+                    displayName: "Broken Planner",
+                    description: "References runtime contracts that do not exist.",
+                    capabilityKeys: ["workflow.approval.request"],
+                    executionGraphId: "missing-flow"));
+            });
+            engine.AddModule(new PlatformTestModule());
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var exception = Assert.Throws<InvalidOperationException>(() => provider.GetRequiredService<IAgentToolCatalog>());
+
+        Assert.Contains("unknown capability", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void AddTechnologyPacksStayDormantWhenSelectionsAreInactive()
     {
         var services = new ServiceCollection();
