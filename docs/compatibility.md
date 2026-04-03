@@ -11,7 +11,7 @@ This guide describes the compatibility contract that must stay aligned across Ce
 | Blueprint, pattern, technology, and transport identifiers | the runtime/app-model contracts in `Cephalon.Abstractions` and `Cephalon.Engine` | scaffold plans, CLI parsing/help text, template coverage, samples, and hand-authored docs |
 | Package manifest contract | `cephalon.package.json` plus engine package-loading and policy enforcement | scaffolded module output, template module starters, reference modules, module-authoring docs, operations docs, and trust/package-policy guidance |
 | Reference-doc publishing flow | `Cephalon.ReferenceDocs`, the CLI docs commands, and the host `ReferenceDocs` section | scaffolded host appsettings/readmes, docs-publish command help, hosted docs guidance, and docs examples |
-| Release package-artifact flow | `scripts/publish-package-artifacts.ps1`, `scripts/validate-release.ps1`, and the release-validation workflow | intended packable project set, shared NuGet metadata/readme defaults, CLI tool packaging, release artifact uploads, and package-publishing docs |
+| Release package-artifact flow | `scripts/publish-package-artifacts.ps1`, `scripts/validate-release.ps1`, and the release-validation workflow | intended packable project set, shared NuGet metadata/readme defaults, CLI tool packaging, release checksum/provenance metadata, artifact uploads, and package-publishing docs |
 
 ## Alignment rules
 
@@ -49,6 +49,7 @@ This guide describes the compatibility contract that must stay aligned across Ce
 
 - keep the release package-artifact script aligned with the intended packable surface instead of relying on ambient `dotnet pack` defaults across the whole solution
 - keep shared NuGet metadata, package readme defaults, CLI tool packaging, and release artifact output aligned across shipped packages, the CLI tool package, and the reference module package
+- keep the release checksum/provenance manifest aligned with the actual repository source revision, packed file set, and published checksum sidecar
 - keep the stable `cephalon` command name aligned across `Cephalon.Cli` packaging, docs, and validation coverage whenever the tool install surface changes
 
 ## Repository verification points

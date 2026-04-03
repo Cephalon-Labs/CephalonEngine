@@ -36,6 +36,42 @@ function Get-RepoRelativePath {
     return $relativePath.Replace('\', '/')
 }
 
+function Get-OutputRelativePath {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$RootPath,
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    $rootWithSeparator = [System.IO.Path]::GetFullPath($RootPath).TrimEnd('\') + '\'
+    $rootUri = [System.Uri]::new($rootWithSeparator)
+    $pathUri = [System.Uri]::new([System.IO.Path]::GetFullPath($Path))
+    $relativePath = [System.Uri]::UnescapeDataString($rootUri.MakeRelativeUri($pathUri).ToString())
+    return $relativePath.Replace('\', '/')
+}
+
+function Get-Sha256Hex {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    $stream = [System.IO.File]::OpenRead($Path)
+    try {
+        $sha256 = [System.Security.Cryptography.SHA256]::Create()
+        try {
+            return [System.BitConverter]::ToString($sha256.ComputeHash($stream)).Replace('-', '').ToLowerInvariant()
+        }
+        finally {
+            $sha256.Dispose()
+        }
+    }
+    finally {
+        $stream.Dispose()
+    }
+}
+
 function Invoke-DotNet {
     param(
         [Parameter(Mandatory = $true)]
@@ -46,6 +82,40 @@ function Invoke-DotNet {
     if ($LASTEXITCODE -ne 0) {
         throw "dotnet command failed: dotnet $($Arguments -join ' ')"
     }
+}
+
+function Invoke-Git {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string[]]$Arguments
+    )
+
+    & git @Arguments 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        return $null
+    }
+}
+
+function Get-PackageKind {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ProjectPath
+    )
+
+    $relativePath = Get-RepoRelativePath -Path $ProjectPath
+    if ($relativePath -eq "src/Cephalon.Cli/Cephalon.Cli.csproj") {
+        return "dotnet-tool"
+    }
+
+    if ($relativePath.StartsWith("templates/", [System.StringComparison]::OrdinalIgnoreCase)) {
+        return "template-pack"
+    }
+
+    if ($relativePath.StartsWith("samples/", [System.StringComparison]::OrdinalIgnoreCase)) {
+        return "reference-module"
+    }
+
+    return "library"
 }
 
 function Get-ReleasePackageProjects {
@@ -76,6 +146,8 @@ Get-ChildItem -LiteralPath $resolvedOutputPath -Force | Remove-Item -Recurse -Fo
 
 $artifacts = [System.Collections.Generic.List[object]]::new()
 $projects = Get-ReleasePackageProjects
+$sourceRepository = Invoke-Git -Arguments @("-C", $repoRoot, "remote", "get-url", "origin")
+$sourceRevision = Invoke-Git -Arguments @("-C", $repoRoot, "rev-parse", "HEAD")
 
 Push-Location $repoRoot
 try {
@@ -99,18 +171,37 @@ try {
 
         $artifacts.Add([pscustomobject]@{
             Project = Get-RepoRelativePath -Path $project
-            PackageFiles = @($packageFiles | ForEach-Object { Get-RepoRelativePath -Path $_ })
+            PackageKind = Get-PackageKind -ProjectPath $project
+            PackageFiles = @($packageFiles | ForEach-Object {
+                $fileHash = Get-Sha256Hex -Path $_
+                [pscustomobject]@{
+                    Path = Get-OutputRelativePath -RootPath $resolvedOutputPath -Path $_
+                    FileName = [System.IO.Path]::GetFileName($_)
+                    SizeBytes = [System.IO.FileInfo]::new($_).Length
+                    Sha256 = $fileHash
+                }
+            })
         })
     }
 
     $manifestPath = Join-Path $resolvedOutputPath "package-artifacts-manifest.json"
+    $checksumPath = Join-Path $resolvedOutputPath "package-artifacts.sha256"
     $manifest = [pscustomobject]@{
         GeneratedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
         Configuration = $Configuration
+        SourceRepository = $sourceRepository
+        SourceRevision = $sourceRevision
+        ChecksumFile = Get-OutputRelativePath -RootPath $resolvedOutputPath -Path $checksumPath
         Artifacts = $artifacts
     }
 
-    $manifest | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $manifestPath
+    $manifest | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $manifestPath -Encoding utf8
+
+    $checksumLines = $artifacts |
+        ForEach-Object { $_.PackageFiles } |
+        ForEach-Object { "{0} *{1}" -f $_.Sha256, $_.FileName }
+
+    $checksumLines | Set-Content -LiteralPath $checksumPath -Encoding utf8
 
     Write-Host ""
     Write-Host "Published $($artifacts.Count) package projects to '$resolvedOutputPath'." -ForegroundColor Green
