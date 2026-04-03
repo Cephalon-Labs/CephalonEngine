@@ -8,6 +8,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 - `Cephalon.Abstractions.AppModel`
 - `Cephalon.Abstractions.AppModel.Scaffolding`
 - `Cephalon.Abstractions.Capabilities`
+- `Cephalon.Abstractions.Execution`
 - `Cephalon.Abstractions.Health`
 - `Cephalon.Abstractions.Localization`
 - `Cephalon.Abstractions.Modules`
@@ -816,6 +817,440 @@ Adds a capability to the registry.
 
 Parameters:
 - `capability`: The capability to register.
+
+<a id="namespace-cephalon-abstractions-execution"></a>
+
+## Namespace Cephalon.Abstractions.Execution
+
+<a id="type-cephalon-abstractions-execution-executiongraphdescriptor"></a>
+
+### `ExecutionGraphDescriptor`
+
+Describes one operator-facing execution graph contributed by an active module.
+
+#### Declaration
+```csharp
+public sealed class ExecutionGraphDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-execution-executiongraphdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphnodedescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphedgedescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `ExecutionGraphDescriptor`
+
+```csharp
+ExecutionGraphDescriptor(string id, string displayName, string description, string sourceModuleId, string entryNodeId, IReadOnlyList<ExecutionGraphNodeDescriptor> nodes, IReadOnlyList<ExecutionGraphEdgeDescriptor> edges, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new execution graph descriptor.
+
+Parameters:
+- `id`: The stable execution-graph identifier.
+- `displayName`: The operator-facing execution-graph name.
+- `description`: A human-readable description of the graph.
+- `sourceModuleId`: The module identifier that owns the graph.
+- `entryNodeId`: The node identifier where execution should begin.
+- `nodes`: The nodes that participate in the graph.
+- `edges`: The directed edges that connect the graph nodes.
+- `tags`: Optional descriptive tags associated with the graph.
+- `metadata`: Optional operator-facing metadata associated with the graph.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphdescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable description of the graph.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphdescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing execution-graph name.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphdescriptor-edges"></a>
+
+##### `Edges`
+
+```csharp
+IReadOnlyList<ExecutionGraphEdgeDescriptor> Edges { get; }
+```
+
+Gets the directed edges that connect graph nodes.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphdescriptor-entrynodeid"></a>
+
+##### `EntryNodeId`
+
+```csharp
+string EntryNodeId { get; }
+```
+
+Gets the node identifier where execution should begin.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphdescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable execution-graph identifier.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata associated with the graph.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphdescriptor-nodes"></a>
+
+##### `Nodes`
+
+```csharp
+IReadOnlyList<ExecutionGraphNodeDescriptor> Nodes { get; }
+```
+
+Gets the nodes that participate in the graph.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphdescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the identifier of the module that contributed the graph.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphdescriptor-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets descriptive tags associated with the graph.
+
+<a id="type-cephalon-abstractions-execution-executiongraphedgedescriptor"></a>
+
+### `ExecutionGraphEdgeDescriptor`
+
+Describes one directed edge within an execution graph.
+
+#### Declaration
+```csharp
+public sealed class ExecutionGraphEdgeDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-execution-executiongraphedgedescriptor-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `ExecutionGraphEdgeDescriptor`
+
+```csharp
+ExecutionGraphEdgeDescriptor(string fromNodeId, string toNodeId, string displayName, string condition, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new execution-graph edge descriptor.
+
+Parameters:
+- `fromNodeId`: The source node identifier.
+- `toNodeId`: The destination node identifier.
+- `displayName`: An optional operator-facing label for the edge.
+- `condition`: An optional condition or routing hint associated with the edge.
+- `metadata`: Optional operator-facing metadata associated with the edge.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphedgedescriptor-condition"></a>
+
+##### `Condition`
+
+```csharp
+string Condition { get; }
+```
+
+Gets the optional condition or routing hint for the edge.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphedgedescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the optional operator-facing label for the edge.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphedgedescriptor-fromnodeid"></a>
+
+##### `FromNodeId`
+
+```csharp
+string FromNodeId { get; }
+```
+
+Gets the source node identifier.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphedgedescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing metadata associated with the edge.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphedgedescriptor-tonodeid"></a>
+
+##### `ToNodeId`
+
+```csharp
+string ToNodeId { get; }
+```
+
+Gets the destination node identifier.
+
+<a id="type-cephalon-abstractions-execution-executiongraphnodedescriptor"></a>
+
+### `ExecutionGraphNodeDescriptor`
+
+Describes one node within an execution graph.
+
+#### Declaration
+```csharp
+public sealed class ExecutionGraphNodeDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-execution-executiongraphnodedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `ExecutionGraphNodeDescriptor`
+
+```csharp
+ExecutionGraphNodeDescriptor(string id, string displayName, string description, string kind, string moduleId, string capabilityKey, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new execution-graph node descriptor.
+
+Parameters:
+- `id`: The stable node identifier within the graph.
+- `displayName`: The operator-facing node name.
+- `description`: A human-readable description of the node.
+- `kind`: The node kind, such as `activity`, `decision`, or `wait`.
+- `moduleId`: The module identifier that primarily owns the node, when different from the graph source.
+- `capabilityKey`: The capability key the node intends to drive, when it maps to an existing capability contract.
+- `tags`: Optional descriptive tags associated with the node.
+- `metadata`: Optional operator-facing metadata associated with the node.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-capabilitykey"></a>
+
+##### `CapabilityKey`
+
+```csharp
+string CapabilityKey { get; }
+```
+
+Gets the capability key the node intends to drive, when one was declared.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable description of the node.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing node name.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable node identifier within the graph.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-kind"></a>
+
+##### `Kind`
+
+```csharp
+string Kind { get; }
+```
+
+Gets the node kind.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata associated with the node.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-moduleid"></a>
+
+##### `ModuleId`
+
+```csharp
+string ModuleId { get; }
+```
+
+Gets the module identifier that primarily owns the node, when one was declared.
+
+<a id="member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets descriptive tags associated with the node.
+
+<a id="type-cephalon-abstractions-execution-iexecutiongraphcontributor"></a>
+
+### `IExecutionGraphContributor`
+
+Contributes one or more execution graphs to the active runtime.
+
+#### Declaration
+```csharp
+public interface IExecutionGraphContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-execution-iexecutiongraphcontributor-registerexecutiongraphs-cephalon-abstractions-execution-iexecutiongraphregistry"></a>
+
+##### `RegisterExecutionGraphs`
+
+```csharp
+void RegisterExecutionGraphs(IExecutionGraphRegistry graphs)
+```
+
+Registers one or more execution graphs owned by the contributor.
+
+Parameters:
+- `graphs`: The execution-graph registry receiving graph descriptors.
+
+<a id="type-cephalon-abstractions-execution-iexecutiongraphregistry"></a>
+
+### `IExecutionGraphRegistry`
+
+Receives execution graphs contributed by active modules.
+
+#### Declaration
+```csharp
+public interface IExecutionGraphRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-execution-iexecutiongraphregistry-add-cephalon-abstractions-execution-executiongraphdescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(ExecutionGraphDescriptor graph)
+```
+
+Adds an execution graph to the current runtime composition.
+
+Parameters:
+- `graph`: The execution graph to register.
+
+<a id="type-cephalon-abstractions-execution-iexecutionruntimecatalog"></a>
+
+### `IExecutionRuntimeCatalog`
+
+Exposes the execution graphs visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IExecutionRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-execution-iexecutionruntimecatalog-graphs"></a>
+
+##### `Graphs`
+
+```csharp
+IReadOnlyList<ExecutionGraphDescriptor> Graphs { get; }
+```
+
+Gets all execution graphs visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-execution-iexecutionruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+ExecutionGraphDescriptor GetById(string graphId)
+```
+
+Gets one execution graph by its stable identifier.
+
+Returns: The matching graph, or `null` when it is not active.
+
+Parameters:
+- `graphId`: The execution-graph identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-execution-iexecutionruntimecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<ExecutionGraphDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all execution graphs contributed by the requested module.
+
+Returns: The matching execution graphs, or an empty list when the module contributed none.
+
+Parameters:
+- `sourceModuleId`: The source module identifier to filter by.
 
 <a id="namespace-cephalon-abstractions-health"></a>
 

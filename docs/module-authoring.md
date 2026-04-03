@@ -48,7 +48,19 @@ That keeps the authoring path close to the same module-first ideas used by Cepha
 7. Use `ITechnologyServiceContributor` or `ITechnologyCapabilityContributor` when package services or capabilities should only activate for specific technology profiles.
 8. If the package extends a shipped technology pack, register the pack-specific contributor service in `ConfigureServices(...)` such as `IAgentToolContributor`, `IKnowledgeCollectionContributor`, `IEventChannelContributor`, or `IEdgeNodeContributor`.
 9. Use `ITechnologyRuntimeContributor` when the package or pack needs to expose an operator-facing runtime snapshot through `/engine/technology-surfaces`.
-10. Add transport contribution interfaces only when the package really owns an external surface.
+10. Use `IExecutionGraphContributor` when the package needs to publish operator-facing workflow or execution-graph descriptors through `/engine/execution-graphs` and `/engine/snapshot`.
+11. Add transport contribution interfaces only when the package really owns an external surface.
+
+## Workflow and orchestration descriptors
+
+Packages that need to describe an execution flow can implement `IExecutionGraphContributor` and publish one or more `ExecutionGraphDescriptor` entries.
+
+Current baseline behavior:
+
+- execution graphs are discovered only from active modules, so they stay additive to the existing module model
+- graph nodes can point back to module ids and capability keys instead of inventing a parallel ownership model
+- `/engine/execution-graphs` exposes the standalone catalog, and `/engine/snapshot` carries the same graph descriptors alongside status, diagnostics, and lifecycle data
+- the engine validates graph ids, entry nodes, edges, referenced modules, and referenced capability keys at build time so invalid descriptors fail fast
 
 ## Package manifest contract
 

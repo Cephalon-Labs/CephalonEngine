@@ -356,6 +356,7 @@ Companion adapter packages:
 - runtime package loading is introspectable through `/engine/packages`, including package `kind`, resolved assembly `path`, discovery `sourcePath`, declared version/compatibility, package dependencies, external distribution metadata, provenance metadata, computed checksum, signature verification state, verification source, certificate thumbprints when applicable, and trust reason
 - runtime package provenance is introspectable through `/engine/packages` and `/engine/trust-policy`, including publisher id, signature key id, signer fingerprint, signing-certificate thumbprints, and declared external distribution/provenance hints when the package manifest declared them
 - runtime package governance is introspectable through `/engine/package-policy`
+- runtime execution graphs are introspectable through `IExecutionGraphContributor`, `IExecutionRuntimeCatalog`, `/engine/execution-graphs`, and `/engine/snapshot`
 - runtime technology selection is introspectable through `/engine/technologies`
 - runtime technology catalog is introspectable through `/engine/technology-catalog`
 - runtime dependency health is introspectable through `/engine/dependencies`
@@ -376,7 +377,7 @@ Companion adapter packages:
 
 - richer capability metadata and policy
 - startup hooks and lifecycle events
-- event bus / workflow runtime
+- execution runners, lifecycle events, and event-bus coordination on top of the shipped execution-graph contract
 - richer operator-runtime answers, cloud-targeted tracing/export follow-through, and any additional provider-specific dependency-health packs only when concrete adoption needs justify expanding beyond the shipped Cassandra, ClickHouse, Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Neo4j, OpenSearch, Oracle, Postgres, RabbitMQ, Redis, SQL Server, OpenTelemetry, AWS, and Azure Monitor observability companions
 - richer parameterized templates and generators driven by scaffold plans
 - richer localization catalogs and package-provided language packs

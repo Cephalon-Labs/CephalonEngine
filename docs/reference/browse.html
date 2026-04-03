@@ -103,15 +103,15 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-03T09:57:31.8454479+00:00",
+  "GeneratedAtUtc": "2026-04-03T11:05:51.4933609+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
       "Category": "Core",
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
-      "NamespaceCount": 9,
-      "TypeCount": 37
+      "NamespaceCount": 10,
+      "TypeCount": 43
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -471,6 +471,13 @@
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-capabilities",
       "TypeCount": 3
+    },
+    {
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "namespace-cephalon-abstractions-execution",
+      "TypeCount": 6
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Health",
@@ -2131,6 +2138,51 @@
       }
     },
     {
+      "DisplayName": "ExecutionGraphDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-executiongraphdescriptor",
+      "Declaration": "public sealed class ExecutionGraphDescriptor",
+      "Summary": "Describes one operator-facing execution graph contributed by an active module.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 9,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ExecutionGraphEdgeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-executiongraphedgedescriptor",
+      "Declaration": "public sealed class ExecutionGraphEdgeDescriptor",
+      "Summary": "Describes one directed edge within an execution graph.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ExecutionGraphNodeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-executiongraphnodedescriptor",
+      "Declaration": "public sealed class ExecutionGraphNodeDescriptor",
+      "Summary": "Describes one node within an execution graph.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "FailurePolicy",
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
@@ -2548,6 +2600,51 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IExecutionGraphContributor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-iexecutiongraphcontributor",
+      "Declaration": "public interface IExecutionGraphContributor",
+      "Summary": "Contributes one or more execution graphs to the active runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IExecutionGraphRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-iexecutiongraphregistry",
+      "Declaration": "public interface IExecutionGraphRegistry",
+      "Summary": "Receives execution graphs contributed by active modules.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-iexecutionruntimecatalog",
+      "Declaration": "public interface IExecutionRuntimeCatalog",
+      "Summary": "Exposes the execution graphs visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 2
       }
     },
     {
@@ -4211,7 +4308,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 5,
+        "Properties": 6,
         "Methods": 0
       }
     },
@@ -4881,6 +4978,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-ieventchannelregistry-add-cephalon-eventing-services-eventchanneldescriptor",
       "Signature": "void Add(EventChannelDescriptor channel)",
       "Summary": "Adds an event channel descriptor to the registry."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
+      "DeclaringTypeName": "IExecutionGraphRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-iexecutiongraphregistry-add-cephalon-abstractions-execution-executiongraphdescriptor",
+      "Signature": "void Add(ExecutionGraphDescriptor graph)",
+      "Summary": "Adds an execution graph to the current runtime composition."
     },
     {
       "DisplayName": "Add",
@@ -6544,6 +6652,17 @@
       "Summary": "The capability key that was evaluated."
     },
     {
+      "DisplayName": "CapabilityKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphNodeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-capabilitykey",
+      "Signature": "string CapabilityKey { get; }",
+      "Summary": "Gets the capability key the node intends to drive, when one was declared."
+    },
+    {
       "DisplayName": "CapabilityManifest",
       "Category": "Constructors",
       "DeclaringTypeName": "CapabilityManifest",
@@ -6916,6 +7035,17 @@
       "AnchorId": "member-f-cephalon-abstractions-patterns-patternkind-composition",
       "Signature": "const PatternKind Composition",
       "Summary": "Identifies a composition pattern."
+    },
+    {
+      "DisplayName": "Condition",
+      "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphEdgeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphedgedescriptor-condition",
+      "Signature": "string Condition { get; }",
+      "Summary": "Gets the optional condition or routing hint for the edge."
     },
     {
       "DisplayName": "Configuration",
@@ -8009,6 +8139,28 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphdescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable description of the graph."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphNodeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable description of the node."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "KnowledgeCollectionDescriptor",
       "NamespaceName": "Cephalon.Retrieval.Services",
       "AssemblyName": "Cephalon.Retrieval",
@@ -8416,6 +8568,39 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphdescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing execution-graph name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphEdgeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphedgedescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the optional operator-facing label for the edge."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphNodeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing node name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "HttpDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
@@ -8766,6 +8951,17 @@
       "Summary": "Creates edge runtime options with the default host-owned features enabled."
     },
     {
+      "DisplayName": "Edges",
+      "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphdescriptor-edges",
+      "Signature": "IReadOnlyList\u003CExecutionGraphEdgeDescriptor\u003E Edges { get; }",
+      "Summary": "Gets the directed edges that connect graph nodes."
+    },
+    {
       "DisplayName": "ElasticsearchDependencyDefinition",
       "Category": "Constructors",
       "DeclaringTypeName": "ElasticsearchDependencyDefinition",
@@ -9107,6 +9303,17 @@
       "Summary": "Gets the entries currently projected by this surface."
     },
     {
+      "DisplayName": "EntryNodeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphdescriptor-entrynodeid",
+      "Signature": "string EntryNodeId { get; }",
+      "Summary": "Gets the node identifier where execution should begin."
+    },
+    {
       "DisplayName": "Error",
       "Category": "Fields",
       "DeclaringTypeName": "DiagnosticSeverity",
@@ -9248,6 +9455,50 @@
       "AnchorId": "member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-exchangegreetings-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken",
       "Signature": "AsyncDuplexStreamingCall\u003CHelloRequest, HelloReply\u003E ExchangeGreetings(Metadata headers, DateTime? deadline, CancellationToken cancellationToken)",
       "Summary": "Exchanges greeting messages bidirectionally to validate duplex streaming support."
+    },
+    {
+      "DisplayName": "ExecutionGraphDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ExecutionGraphDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-executiongraphdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphnodedescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphedgedescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "ExecutionGraphDescriptor(string id, string displayName, string description, string sourceModuleId, string entryNodeId, IReadOnlyList\u003CExecutionGraphNodeDescriptor\u003E nodes, IReadOnlyList\u003CExecutionGraphEdgeDescriptor\u003E edges, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new execution graph descriptor."
+    },
+    {
+      "DisplayName": "ExecutionGraphEdgeDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ExecutionGraphEdgeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-executiongraphedgedescriptor-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "ExecutionGraphEdgeDescriptor(string fromNodeId, string toNodeId, string displayName, string condition, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new execution-graph edge descriptor."
+    },
+    {
+      "DisplayName": "ExecutionGraphNodeDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ExecutionGraphNodeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-executiongraphnodedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "ExecutionGraphNodeDescriptor(string id, string displayName, string description, string kind, string moduleId, string capabilityKey, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new execution-graph node descriptor."
+    },
+    {
+      "DisplayName": "ExecutionGraphs",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-executiongraphs",
+      "Signature": "IReadOnlyList\u003CExecutionGraphDescriptor\u003E ExecutionGraphs { get; set; }",
+      "Summary": "The execution graphs contributed by active modules and visible to the runtime at the time the snapshot was created."
     },
     {
       "DisplayName": "ExpectedStatusCodes",
@@ -9921,6 +10172,17 @@
       "Summary": "Creates a manifest-backed package reference."
     },
     {
+      "DisplayName": "FromNodeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphEdgeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphedgedescriptor-fromnodeid",
+      "Signature": "string FromNodeId { get; }",
+      "Summary": "Gets the source node identifier."
+    },
+    {
       "DisplayName": "GcpTelemetryExportOptions",
       "Category": "Constructors",
       "DeclaringTypeName": "GcpTelemetryExportOptions",
@@ -9998,6 +10260,17 @@
       "Summary": "Field number for the \u0022generated_at_utc\u0022 field."
     },
     {
+      "DisplayName": "GetById",
+      "Category": "Methods",
+      "DeclaringTypeName": "IExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-iexecutionruntimecatalog-getbyid-system-string",
+      "Signature": "ExecutionGraphDescriptor GetById(string graphId)",
+      "Summary": "Gets one execution graph by its stable identifier."
+    },
+    {
       "DisplayName": "GetBySource",
       "Category": "Methods",
       "DeclaringTypeName": "IRuntimeDiagnosticsCatalog",
@@ -10007,6 +10280,17 @@
       "AnchorId": "member-m-cephalon-engine-diagnostics-iruntimediagnosticscatalog-getbysource-system-string",
       "Signature": "IReadOnlyList\u003CDiagnosticsConvention\u003E GetBySource(string source)",
       "Summary": "Gets the diagnostics conventions owned by the requested source."
+    },
+    {
+      "DisplayName": "GetBySourceModule",
+      "Category": "Methods",
+      "DeclaringTypeName": "IExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-iexecutionruntimecatalog-getbysourcemodule-system-string",
+      "Signature": "IReadOnlyList\u003CExecutionGraphDescriptor\u003E GetBySourceModule(string sourceModuleId)",
+      "Summary": "Gets all execution graphs contributed by the requested module."
     },
     {
       "DisplayName": "GetByTechnology",
@@ -10073,6 +10357,17 @@
       "AnchorId": "member-p-cephalon-engine-transports-builtintransports-graphql",
       "Signature": "TransportDescriptor GraphQL { get; }",
       "Summary": "Gets the built-in GraphQL transport descriptor."
+    },
+    {
+      "DisplayName": "Graphs",
+      "Category": "Properties",
+      "DeclaringTypeName": "IExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-iexecutionruntimecatalog-graphs",
+      "Signature": "IReadOnlyList\u003CExecutionGraphDescriptor\u003E Graphs { get; }",
+      "Summary": "Gets all execution graphs visible to the current runtime."
     },
     {
       "DisplayName": "Grpc",
@@ -10700,6 +10995,28 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventchanneldescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable channel identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphdescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable execution-graph identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphNodeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable node identifier within the graph."
     },
     {
       "DisplayName": "Id",
@@ -11448,6 +11765,17 @@
       "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-keyspace",
       "Signature": "string Keyspace { get; set; }",
       "Summary": "Gets or sets the optional Cassandra keyspace used when opening the probe session."
+    },
+    {
+      "DisplayName": "Kind",
+      "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphNodeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-kind",
+      "Signature": "string Kind { get; }",
+      "Summary": "Gets the node kind."
     },
     {
       "DisplayName": "Kind",
@@ -12222,6 +12550,39 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphdescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets operator-facing metadata associated with the graph."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphEdgeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphedgedescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional operator-facing metadata associated with the edge."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphNodeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets operator-facing metadata associated with the node."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "ModuleDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Modules",
       "AssemblyName": "Cephalon.Abstractions",
@@ -12596,6 +12957,17 @@
     {
       "DisplayName": "ModuleId",
       "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphNodeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-moduleid",
+      "Signature": "string ModuleId { get; }",
+      "Summary": "Gets the module identifier that primarily owns the node, when one was declared."
+    },
+    {
+      "DisplayName": "ModuleId",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeFailureInfo",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -12966,6 +13338,17 @@
       "AnchorId": "member-p-cephalon-edge-configuration-edgeruntimeoptions-nodes",
       "Signature": "IList\u003CEdgeNodeDescriptor\u003E Nodes { get; }",
       "Summary": "Gets the host-defined edge nodes that should be available to the edge runtime."
+    },
+    {
+      "DisplayName": "Nodes",
+      "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphdescriptor-nodes",
+      "Signature": "IReadOnlyList\u003CExecutionGraphNodeDescriptor\u003E Nodes { get; }",
+      "Summary": "Gets the nodes that participate in the graph."
     },
     {
       "DisplayName": "Nodes",
@@ -14651,6 +15034,17 @@
       "Summary": "Registers one or more knowledge collection descriptors with the supplied registry."
     },
     {
+      "DisplayName": "RegisterExecutionGraphs",
+      "Category": "Methods",
+      "DeclaringTypeName": "IExecutionGraphContributor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-iexecutiongraphcontributor-registerexecutiongraphs-cephalon-abstractions-execution-iexecutiongraphregistry",
+      "Signature": "void RegisterExecutionGraphs(IExecutionGraphRegistry graphs)",
+      "Summary": "Registers one or more execution graphs owned by the contributor."
+    },
+    {
       "DisplayName": "RegisterNodes",
       "Category": "Methods",
       "DeclaringTypeName": "IEdgeNodeContributor",
@@ -15570,8 +15964,8 @@
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention-cephalon-engine-runtime-runtimeoperationalstory",
-      "Signature": "RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList\u003CTechnologyRuntimeSurface\u003E TechnologySurfaces, IReadOnlyList\u003CDiagnosticsConvention\u003E DiagnosticsConventions, RuntimeOperationalStory OperationalStory)",
+      "AnchorId": "member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphdescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention-cephalon-engine-runtime-runtimeoperationalstory",
+      "Signature": "RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList\u003CExecutionGraphDescriptor\u003E ExecutionGraphs, IReadOnlyList\u003CTechnologyRuntimeSurface\u003E TechnologySurfaces, IReadOnlyList\u003CDiagnosticsConvention\u003E DiagnosticsConventions, RuntimeOperationalStory OperationalStory)",
       "Summary": "Combines the main operator-facing runtime views into a single payload."
     },
     {
@@ -16244,6 +16638,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-capabilitypolicydecision-sourcemoduleid",
       "Signature": "string SourceModuleId { get; set; }",
       "Summary": "The module that contributed the capability."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphdescriptor-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the identifier of the module that contributed the graph."
     },
     {
       "DisplayName": "SourcePackageId",
@@ -16941,6 +17346,28 @@
     {
       "DisplayName": "Tags",
       "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphdescriptor-tags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets descriptive tags associated with the graph."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphNodeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-tags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets descriptive tags associated with the node."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
       "DeclaringTypeName": "KnowledgeCollectionDescriptor",
       "NamespaceName": "Cephalon.Retrieval.Services",
       "AssemblyName": "Cephalon.Retrieval",
@@ -17454,6 +17881,17 @@
       "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-token",
       "Signature": "string Token { get; set; }",
       "Summary": "Gets or sets the optional auth token used for token-based NATS authentication."
+    },
+    {
+      "DisplayName": "ToNodeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "ExecutionGraphEdgeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphedgedescriptor-tonodeid",
+      "Signature": "string ToNodeId { get; }",
+      "Summary": "Gets the destination node identifier."
     },
     {
       "DisplayName": "Tools",

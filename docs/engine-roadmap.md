@@ -69,7 +69,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - keep future-facing technology choices additive through explicit technology profiles instead of blueprint explosion
 - treat scaffolding, CLI, and benchmark coverage as part of the engine product, not side tools
 - make every new runtime feature observable, testable, and benchmarkable
-- delay distributed orchestration until package loading, lifecycle, and policy are stronger
+- keep orchestration additive and delay distributed runners until package loading, lifecycle, and policy are strong enough
 
 ## Phase 0: Foundation shipped
 
@@ -178,15 +178,22 @@ Exit criteria:
 
 ## Phase 4: Execution and orchestration model
 
-Status: intentionally deferred until phases 1 to 3 are stronger
+Status: current focus
 
 Goal: expand from a composition engine into a richer execution platform.
 
+Current baseline already in place:
+
+- active modules can now contribute operator-facing execution graphs through `IExecutionGraphContributor`
+- execution graphs are surfaced through `IExecutionRuntimeCatalog`, `/engine/execution-graphs`, and `/engine/snapshot`
+- graph descriptors stay additive to the existing module/capability model through module ids and capability-key references
+- invalid graph ids, entry nodes, edges, module references, and capability references now fail during build instead of leaking broken runtime metadata
+
 Deliverables:
 
+- the first workflow or execution-graph primitive is now shipped as a descriptive runtime contract
 - engine-level background/hosted execution conventions
 - internal engine events for activation and runtime transitions
-- workflow or execution-graph primitives
 - richer multi-module coordination patterns
 - AI/orchestration integration points built on existing contracts
 
@@ -255,7 +262,7 @@ Exit criteria:
 
 Updated priority order as of `April 3, 2026`:
 
-1. workflow and orchestration primitives
+1. workflow and orchestration follow-through on top of the shipped execution-graph contract
 2. multi-service suite blueprints
 3. cloud and platform integrations, with self-hosted plus Azure Monitor plus AWS plus GCP plus Huawei Cloud plus Alibaba Cloud plus Red Hat OpenShift plus DigitalOcean plus VMware Tanzu shipped, and the downstream Cloudflare/custom-provider guidance slice shipped under `#120` while future first-party additions stay explicit and adoption-driven
 4. broader release automation and package-publishing polish

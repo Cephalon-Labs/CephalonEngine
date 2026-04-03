@@ -438,18 +438,25 @@ Follow-up later:
 
 ### ENG-013 Workflow and orchestration primitives
 
-Status: later
-Estimate: 19
+Status: current focus
+Estimate: 14
 
 Why:
 
 - this is the bridge from framework to execution platform
 
-Acceptance:
+Delivered so far:
 
-- define a first execution graph or workflow contract
-- integrate it with lifecycle and observability
-- keep the design additive to the existing module model
+- a first execution-graph contract through `IExecutionGraphContributor`, `ExecutionGraphDescriptor`, and `IExecutionRuntimeCatalog`
+- additive runtime introspection through `/engine/execution-graphs` and `/engine/snapshot`
+- build-time validation for graph ids, nodes, edges, referenced modules, and referenced capability keys
+- module-author guidance for publishing workflow and execution-graph descriptors without bypassing the existing module/capability model
+
+Acceptance remaining:
+
+- integrate workflow execution with lifecycle and observability
+- keep expanding orchestration through additive module-owned contracts instead of a parallel runtime model
+- introduce hosted/background execution conventions and internal engine events only after the descriptive graph baseline proves out
 
 ### ENG-022 `MicroserviceSuite` blueprint
 
@@ -554,7 +561,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 ### Sprint 3
 
-- ENG-013 Workflow and orchestration primitives
+- shipped first execution-graph contract baseline under `ENG-013`
 - shipped package distribution and provenance follow-through beyond the original package-loading baseline
 - ENG-029 self-hosted OTLP collector/runtime-default follow-through plus the shipped Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and Cloudflare/downstream provider authoring guidance slices
 

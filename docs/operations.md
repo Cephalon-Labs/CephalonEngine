@@ -1013,6 +1013,22 @@ This is the quickest way to discover the engine's observability contract without
 
 This is the quickest way to answer the adjacent operational question that `/engine/status`, `/engine/packages`, `/engine/diagnostics`, and `/engine/snapshot` already support in pieces: what loaded, what started, what failed, and why.
 
+## Execution graph surface
+
+`GET /engine/execution-graphs` exposes the operator-facing execution-graph catalog contributed by active modules.
+
+Current payload highlights:
+
+- each graph carries a stable `id`, `displayName`, `description`, `sourceModuleId`, and `entryNodeId`
+- `nodes` can point back to module ids and capability keys so orchestration descriptors stay grounded in the existing runtime contract
+- `edges` expose the directed graph transitions plus optional labels or routing conditions
+- the same execution-graph catalog is also available through `/engine/snapshot` when operators want one merged runtime answer
+
+Current note:
+
+- this is a descriptive orchestration baseline, not a hosted workflow runner yet
+- invalid graph ids, node references, module references, or capability references fail at build time instead of leaking broken operator data
+
 ## Trust surface
 
 `GET /engine/trust-policy` exposes the effective package and capability trust snapshot:

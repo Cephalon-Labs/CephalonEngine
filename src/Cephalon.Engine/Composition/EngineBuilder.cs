@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Capabilities;
+using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Patterns;
 using Cephalon.Abstractions.Technologies;
@@ -7,6 +8,7 @@ using Cephalon.Abstractions.Transports;
 using Cephalon.Engine.AppModel;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Diagnostics;
+using Cephalon.Engine.Execution;
 using Cephalon.Engine.Localization;
 using Cephalon.Engine.Manifest;
 using Cephalon.Engine.Composition.Packages;
@@ -521,11 +523,18 @@ public sealed class EngineBuilder
             var activeModules = ModuleActivation.ApplyOptions(allModules, engineOptions);
             var orderedModules = ModuleOrdering.Order(activeModules);
             var modulesByType = orderedModules.ToDictionary(module => module.GetType());
+            var executionGraphs = new List<ExecutionGraphDescriptor>();
             var capabilities = new CapabilityManifestCollector();
             var technologyRegistry = new TechnologyRegistryAdapter(appProfileBuilder);
             foreach (var module in orderedModules.OfType<ITechnologyContributor>())
             {
                 module.RegisterTechnologies(technologyRegistry);
+            }
+
+            foreach (var module in orderedModules.Where(static module => module is IExecutionGraphContributor))
+            {
+                ((IExecutionGraphContributor)module).RegisterExecutionGraphs(
+                    new ExecutionGraphRegistryAdapter(module.Descriptor.Id, executionGraphs));
             }
 
             var appProfile = appProfileBuilder.Build();
@@ -593,9 +602,17 @@ public sealed class EngineBuilder
             var effectiveCapabilities = configuredCapabilities
                 .Where(capability => allowedCapabilityKeys.Contains(capability.Key))
                 .ToArray();
+            var validatedExecutionGraphs = ExecutionGraphValidation.Validate(
+                executionGraphs,
+                moduleManifests,
+                effectiveCapabilities);
 
             Services.AddSingleton(trustSnapshot);
             Services.AddSingleton<CapabilityPolicyEvaluator>();
+            Services.TryAddSingleton<ExecutionRuntimeCatalogSnapshot>(_ =>
+                new ExecutionRuntimeCatalogSnapshot(validatedExecutionGraphs));
+            Services.TryAddSingleton<IExecutionRuntimeCatalog>(serviceProvider =>
+                serviceProvider.GetRequiredService<ExecutionRuntimeCatalogSnapshot>());
             var manifest = new RuntimeManifest(
                 manifestVersion: RuntimeManifest.CurrentVersion,
                 engineVersion: GetAssemblyVersion(typeof(EngineBuilder).Assembly),
