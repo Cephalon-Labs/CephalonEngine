@@ -176,7 +176,7 @@ Follow-up later:
 
 ## SDK hardening follow-through
 
-Phase 1 SDK hardening is now substantially complete. Phase 2 operational hardening has also closed on its shipped baseline. Phase 3 extensibility and package loading remains the main structural follow-through, while phase 6 now has an `ENG-029` track with the shipped self-hosted OTLP slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped Huawei Cloud fourth-vendor slice, the shipped Alibaba Cloud fifth-vendor slice, and a remaining-provider matrix where Red Hat OpenShift is now the next explicit child while Cloudflare, DigitalOcean, and VMware Tanzu stay later.
+Phase 1 SDK hardening is now substantially complete. Phase 2 operational hardening has also closed on its shipped baseline. Phase 3 extensibility and package loading remains the main structural follow-through, while phase 6 now has an `ENG-029` track with the shipped self-hosted OTLP slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped Huawei Cloud fourth-vendor slice, the shipped Alibaba Cloud fifth-vendor slice, the shipped Red Hat OpenShift platform-first slice, and a remaining-provider matrix where Cloudflare, DigitalOcean, and VMware Tanzu stay later until the next explicit child is chosen.
 
 ### ENG-005 Engine API and package surface hardening
 
@@ -468,19 +468,19 @@ Acceptance:
 
 ### ENG-029 Cloud-targeted observability companion integrations
 
-Status: current focus
+Status: later
 Estimate: 134
 
 Why:
 
-- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, Huawei Cloud, and Alibaba Cloud vendor slices are now shipped, and Red Hat OpenShift is now the next explicit platform-first target under `ENG-029`
+- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, and Red Hat OpenShift slices are now shipped, and the remaining Cloudflare, DigitalOcean, and VMware Tanzu follow-through stays intentionally later until the next explicit child is chosen under `ENG-029`
 - this work should stay in companion packages, preserve the shared `ILogger` pipeline plus the cloud-neutral OTLP baseline, and leave room for downstream developer-authored provider packages
 
 Acceptance:
 
 - keep the shipped self-hosted deployment defaults explicit and reusable instead of burying them inside vendor-specific companion packs
-- keep the shipped Azure Monitor, AWS, GCP, Huawei Cloud, and Alibaba Cloud slices explicit on top of the shared OpenTelemetry baseline
-- land the Red Hat OpenShift companion follow-through as the current next explicit child item instead of reopening one ambiguous remaining-platform scope
+- keep the shipped Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, and Red Hat OpenShift slices explicit on top of the shared OpenTelemetry baseline
+- keep the shipped Red Hat OpenShift companion follow-through explicit instead of rolling it back into one ambiguous remaining-platform scope
 - keep vendor/platform-specific exporter wiring, auth, resource attributes, and hosted defaults outside `Cephalon.Engine` and `Cephalon.Abstractions`
 - keep the shared `ILogger` pipeline and existing `Cephalon.Observability.OpenTelemetry` baseline intact
 - add docs, validation, and planning sync for the supported targets plus the downstream companion-package authoring path
