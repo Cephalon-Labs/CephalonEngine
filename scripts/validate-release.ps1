@@ -3,6 +3,7 @@ param(
     [switch]$SkipTests,
     [switch]$SkipOperationalConventions,
     [switch]$SkipBenchmarks,
+    [switch]$SkipPackages,
     [switch]$SkipReferenceDocs,
     [string[]]$BenchmarkFilters = @(
         "*EngineBuilderBenchmarks*",
@@ -20,8 +21,10 @@ $solutionPath = Join-Path $repoRoot "CephalonEngine.slnx"
 $testsProjectPath = Join-Path $repoRoot "tests\Cephalon.Tests\Cephalon.Tests.csproj"
 $benchmarkProjectPath = Join-Path $repoRoot "benchmarks\Cephalon.Benchmarks\Cephalon.Benchmarks.csproj"
 $referenceDocsScriptPath = Join-Path $repoRoot "scripts\publish-reference-docs.ps1"
+$packageArtifactsScriptPath = Join-Path $repoRoot "scripts\publish-package-artifacts.ps1"
 $operationalConventionsScriptPath = Join-Path $repoRoot "scripts\validate-operational-conventions.ps1"
 $referenceDocsOutputPath = Join-Path $repoRoot "artifacts\reference-docs-release"
+$packageArtifactsOutputPath = Join-Path $repoRoot "artifacts\packages-release"
 
 function Invoke-Step {
     param(
@@ -119,6 +122,21 @@ try {
             }
 
             Invoke-PowerShellScript -Path $referenceDocsScriptPath -Arguments $arguments
+        }
+    }
+
+    if (-not $SkipPackages) {
+        Invoke-Step "Publish package artifacts (Release)" {
+            $arguments = @(
+                "-Configuration", "Release",
+                "-OutputPath", $packageArtifactsOutputPath
+            )
+
+            if (-not $SkipBuild) {
+                $arguments += "-SkipBuild"
+            }
+
+            Invoke-PowerShellScript -Path $packageArtifactsScriptPath -Arguments $arguments
         }
     }
 

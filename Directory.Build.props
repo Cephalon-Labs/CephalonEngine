@@ -7,4 +7,18 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
+
+  <PropertyGroup Condition="$([System.String]::Copy('$(MSBuildProjectName)').StartsWith('Cephalon.'))">
+    <Authors Condition="'$(Authors)' == ''">Cephalon</Authors>
+    <PackageLicenseExpression Condition="'$(PackageLicenseExpression)' == ''">MIT</PackageLicenseExpression>
+    <PackageProjectUrl Condition="'$(PackageProjectUrl)' == ''">https://github.com/Cephalon-Labs/CephalonEngine</PackageProjectUrl>
+    <RepositoryUrl Condition="'$(RepositoryUrl)' == ''">https://github.com/Cephalon-Labs/CephalonEngine</RepositoryUrl>
+    <RepositoryType Condition="'$(RepositoryType)' == ''">git</RepositoryType>
+    <PublishRepositoryUrl Condition="'$(PublishRepositoryUrl)' == ''">true</PublishRepositoryUrl>
+    <PackageReadmeFile Condition="'$(IsPackable)' != 'false' and '$(PackageReadmeFile)' == ''">PACKAGE.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$([System.String]::Copy('$(MSBuildProjectName)').StartsWith('Cephalon.')) and '$(IsPackable)' != 'false' and '$(PackageReadmeFile)' == 'PACKAGE.md' and '$(MSBuildProjectName)' != 'Cephalon.TemplatePack'">
+    <None Include="$(MSBuildThisFileDirectory)docs\package-readme.md" Pack="true" PackagePath="PACKAGE.md" Link="PACKAGE.md" Visible="false" />
+  </ItemGroup>
 </Project>
