@@ -93,6 +93,7 @@ public sealed class EngineDiagnosticsTests
         {
             cephalon.AddModule(new LifecycleDiscoveryModule());
             cephalon.AddModule(new LifecyclePlatformModule());
+            cephalon.AddModule(new WorkflowCatalogTestModule("diagnostics-test"));
         });
 
         using var provider = services.BuildServiceProvider();
@@ -120,6 +121,8 @@ public sealed class EngineDiagnosticsTests
         Assert.Contains(EngineDiagnostics.EngineBuildCounterName, measurementSnapshot);
         Assert.Contains(EngineDiagnostics.RuntimeTransitionCounterName, measurementSnapshot);
         Assert.Contains(EngineDiagnostics.ModuleTransitionCounterName, measurementSnapshot);
+        Assert.Contains(EngineDiagnostics.ExecutionGraphTransitionCounterName, measurementSnapshot);
+        Assert.Contains(EngineDiagnostics.HostedExecutionTransitionCounterName, measurementSnapshot);
     }
 
     [Fact]
@@ -427,6 +430,9 @@ public sealed class EngineDiagnosticsTests
         Assert.Contains(
             catalog.GetBySource("Cephalon.Engine").Single().Events,
             static entry => entry.Id == 2002 && entry.Name == "LogRuntimeFailure");
+        Assert.Contains(
+            catalog.GetBySource("Cephalon.Engine").Single().Events,
+            static entry => entry.Id == 2005 && entry.Name == "LogHostedExecutionTransition");
         Assert.Contains(
             catalog.GetBySource("Cephalon.Observability").Single().Events,
             static entry => entry.Id == 3006 && entry.Name == "DiagnosticsCatalogEntry");

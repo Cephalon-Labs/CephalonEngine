@@ -1713,6 +1713,9 @@ Browse the published API surface by public member.
 - [HostedExecutions](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperationalstory-hostedexecutions): `Properties` on `RuntimeOperationalStory` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=HostedExecutions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the current lifecycle state for each hosted execution visible to the runtime story.
   - `IReadOnlyList<RuntimeHostedExecutionState> HostedExecutions { get; set; }`
+- [HostedExecutionTransitionCounterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-hostedexecutiontransitioncountername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=HostedExecutionTransitionCounterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Gets the counter name for hosted-execution lifecycle transitions.
+  - `const string HostedExecutionTransitionCounterName`
 - [HostedPlatform](cephalon-observability-alibabacloud.md#member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-hostedplatform): `Properties` on `AlibabaCloudTelemetryExportOptions` in `Cephalon.Observability.AlibabaCloud.Configuration` (`Cephalon.Observability.AlibabaCloud`) [Browse](browse.html?q=HostedPlatform&assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Configuration&scope=members)
   - Gets or sets the hosted Alibaba Cloud platform whose default resource attributes should be applied.
   - `string HostedPlatform { get; set; }`

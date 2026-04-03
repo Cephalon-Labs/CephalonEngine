@@ -190,7 +190,7 @@ Current baseline already in place:
 - hosted executions are surfaced through `IHostedExecutionRuntimeCatalog`, `/engine/hosted-executions`, and `/engine/snapshot`
 - execution-graph lifecycle state is now surfaced through `/engine/runtime-story` and `/engine/snapshot`, including load, activate, and deactivate transitions
 - hosted-execution lifecycle state is now surfaced through `/engine/runtime-story` and `/engine/snapshot`, including load, activate, and deactivate transitions
-- execution-graph lifecycle transitions now publish through the shared diagnostics catalog and `cephalon.execution-graphs.transitions`
+- execution-graph and hosted-execution lifecycle transitions now publish through the shared diagnostics catalog plus `cephalon.execution-graphs.transitions` and `cephalon.hosted-executions.transitions`
 - graph descriptors stay additive to the existing module/capability model through module ids and capability-key references
 - hosted-execution descriptors stay additive to the existing module and Generic Host model instead of introducing a separate engine-owned runner
 - invalid graph ids, entry nodes, edges, module references, and capability references now fail during build instead of leaking broken runtime metadata
@@ -198,7 +198,6 @@ Current baseline already in place:
 
 Deliverables:
 
-- internal engine events for activation and runtime transitions
 - richer multi-module coordination patterns
 - AI/orchestration integration points built on existing contracts
 

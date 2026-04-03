@@ -737,11 +737,13 @@ public sealed class AspNetCoreHostingTests
 
         Assert.NotNull(diagnostics);
         Assert.Contains(diagnostics.Counters, counter => counter == "cephalon.execution-graphs.transitions");
+        Assert.Contains(diagnostics.Counters, counter => counter == "cephalon.hosted-executions.transitions");
         var engineConvention = Assert.Single(diagnostics.Conventions, convention => convention.Source == "Cephalon.Engine");
         Assert.Equal(2000, engineConvention.MinimumEventId);
-        Assert.Equal(2004, engineConvention.MaximumEventId);
+        Assert.Equal(2005, engineConvention.MaximumEventId);
         Assert.Contains(engineConvention.Events, entry => entry.Id == 2002 && entry.Name == "LogRuntimeFailure");
         Assert.Contains(engineConvention.Events, entry => entry.Id == 2004 && entry.Name == "LogExecutionGraphTransition");
+        Assert.Contains(engineConvention.Events, entry => entry.Id == 2005 && entry.Name == "LogHostedExecutionTransition");
         var aspNetCoreConvention = Assert.Single(diagnostics.Conventions, convention => convention.Source == "Cephalon.AspNetCore");
         Assert.Equal(3200, aspNetCoreConvention.MinimumEventId);
         Assert.Equal(3204, aspNetCoreConvention.MaximumEventId);
@@ -756,6 +758,9 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains(
             snapshot.DiagnosticsConventions.Single(convention => convention.Source == "Cephalon.Engine").Events,
             entry => entry.Id == 2004);
+        Assert.Contains(
+            snapshot.DiagnosticsConventions.Single(convention => convention.Source == "Cephalon.Engine").Events,
+            entry => entry.Id == 2005);
         Assert.Contains(
             snapshot.DiagnosticsConventions.Single(convention => convention.Source == "Cephalon.AspNetCore").Events,
             entry => entry.Id == 3203);

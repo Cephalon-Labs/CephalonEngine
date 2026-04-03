@@ -965,7 +965,7 @@ Operational notes:
 - `meterName`
 - `activitySourceName`
 - counter names used by the runtime
-- execution-graph transition counters alongside runtime, module, failure, and restart counters
+- execution-graph and hosted-execution transition counters alongside runtime, module, failure, and restart counters
 - published diagnostics conventions and event-id catalogs for the active engine and companion packages
 - the current liveness report
 - the current readiness report
@@ -974,7 +974,7 @@ Operational notes:
 
 Current shipped event-id ranges include:
 
-- `Cephalon.Engine`: `2000-2004`
+- `Cephalon.Engine`: `2000-2005`
 - `Cephalon.Observability`: `3000-3006`
 - `Cephalon.Observability.Gcp`: `3111-3111`
 - `Cephalon.Observability.HuaweiCloud`: `3112-3112`
