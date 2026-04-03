@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-03T21:56:41.9810616+00:00",
+  "GeneratedAtUtc": "2026-04-03T22:32:22.4561259+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -249,6 +249,14 @@
       "FileName": "cephalon-observability-neo4jdependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.NewRelic",
+      "Category": "Hosts",
+      "Description": "New Relic native OTLP endpoint defaults and api-key authentication guidance for Cephalon hosts.",
+      "FileName": "cephalon-observability-newrelic.md",
+      "NamespaceCount": 2,
+      "TypeCount": 2
     },
     {
       "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
@@ -993,6 +1001,20 @@
       "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
       "FileName": "cephalon-observability-neo4jdependencies.md",
       "AnchorId": "namespace-cephalon-observability-neo4jdependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.NewRelic.Configuration",
+      "AssemblyName": "Cephalon.Observability.NewRelic",
+      "FileName": "cephalon-observability-newrelic.md",
+      "AnchorId": "namespace-cephalon-observability-newrelic-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.NewRelic.Hosting",
+      "AssemblyName": "Cephalon.Observability.NewRelic",
+      "FileName": "cephalon-observability-newrelic.md",
+      "AnchorId": "namespace-cephalon-observability-newrelic-hosting",
       "TypeCount": 1
     },
     {
@@ -3616,6 +3638,36 @@
       }
     },
     {
+      "DisplayName": "NewRelicHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.NewRelic.Hosting",
+      "AssemblyName": "Cephalon.Observability.NewRelic",
+      "FileName": "cephalon-observability-newrelic.md",
+      "AnchorId": "type-cephalon-observability-newrelic-hosting-newrelichostapplicationbuilderextensions",
+      "Declaration": "public static class NewRelicHostApplicationBuilderExtensions",
+      "Summary": "Adds New Relic native OTLP endpoint wiring and \u0060api-key\u0060 authentication guidance for Cephalon hosts.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "NewRelicTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.NewRelic.Configuration",
+      "AssemblyName": "Cephalon.Observability.NewRelic",
+      "FileName": "cephalon-observability-newrelic.md",
+      "AnchorId": "type-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions",
+      "Declaration": "public sealed class NewRelicTelemetryExportOptions",
+      "Summary": "Configures New Relic observability defaults on top of the shared Cephalon telemetry contract.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 6,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "ObservabilityOptions",
       "NamespaceName": "Cephalon.Observability.Configuration",
       "AssemblyName": "Cephalon.Observability",
@@ -5735,6 +5787,17 @@
       "AnchorId": "member-m-cephalon-observability-neo4jdependencies-hosting-neo4jdependencyhealthservicecollectionextensions-addcephalonneo4jdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions",
       "Signature": "IServiceCollection AddCephalonNeo4jDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CNeo4jDependencyHealthOptions\u003E configure)",
       "Summary": "Adds Neo4j dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
+      "DisplayName": "AddCephalonNewRelic",
+      "Category": "Methods",
+      "DeclaringTypeName": "NewRelicHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.NewRelic.Hosting",
+      "AssemblyName": "Cephalon.Observability.NewRelic",
+      "FileName": "cephalon-observability-newrelic.md",
+      "AnchorId": "member-m-cephalon-observability-newrelic-hosting-newrelichostapplicationbuilderextensions-addcephalonnewrelic-1-0-system-action-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions",
+      "Signature": "TBuilder AddCephalonNewRelic\u003CTBuilder\u003E(this TBuilder builder, Action\u003CNewRelicTelemetryExportOptions\u003E configure)",
+      "Summary": "Adds New Relic-aware OpenTelemetry registration for the Cephalon engine diagnostics surface."
     },
     {
       "DisplayName": "AddCephalonObservability",
@@ -9798,6 +9861,17 @@
     {
       "DisplayName": "Endpoint",
       "Category": "Properties",
+      "DeclaringTypeName": "NewRelicTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.NewRelic.Configuration",
+      "AssemblyName": "Cephalon.Observability.NewRelic",
+      "FileName": "cephalon-observability-newrelic.md",
+      "AnchorId": "member-p-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-endpoint",
+      "Signature": "string Endpoint { get; set; }",
+      "Summary": "Gets or sets the base New Relic OTLP endpoint used for direct ingestion."
+    },
+    {
+      "DisplayName": "Endpoint",
+      "Category": "Properties",
       "DeclaringTypeName": "OpenSearchDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
@@ -10722,6 +10796,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "NewRelicTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.NewRelic.Configuration",
+      "AssemblyName": "Cephalon.Observability.NewRelic",
+      "FileName": "cephalon-observability-newrelic.md",
+      "AnchorId": "member-m-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "NewRelicTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds New Relic telemetry export options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "ObservabilityOptions",
       "NamespaceName": "Cephalon.Observability.Configuration",
       "AssemblyName": "Cephalon.Observability",
@@ -11257,6 +11342,17 @@
       "AnchorId": "member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-headers",
       "Signature": "string Headers { get; set; }",
       "Summary": "Gets or sets the raw OTLP headers string added to Kubernetes collector requests."
+    },
+    {
+      "DisplayName": "Headers",
+      "Category": "Properties",
+      "DeclaringTypeName": "NewRelicTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.NewRelic.Configuration",
+      "AssemblyName": "Cephalon.Observability.NewRelic",
+      "FileName": "cephalon-observability-newrelic.md",
+      "AnchorId": "member-p-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-headers",
+      "Signature": "string Headers { get; set; }",
+      "Summary": "Gets or sets the raw OTLP headers string used for direct New Relic ingestion."
     },
     {
       "DisplayName": "Headers",
@@ -12997,6 +13093,17 @@
       "Summary": "The last lifecycle phase recorded for the module."
     },
     {
+      "DisplayName": "LicenseKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "NewRelicTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.NewRelic.Configuration",
+      "AssemblyName": "Cephalon.Observability.NewRelic",
+      "FileName": "cephalon-observability-newrelic.md",
+      "AnchorId": "member-p-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-licensekey",
+      "Signature": "string LicenseKey { get; set; }",
+      "Summary": "Gets or sets the New Relic license key used to build the required \u0060api-key\u0060 header when the package should construct OTLP headers from structured settings."
+    },
+    {
       "DisplayName": "Liveness",
       "Category": "Properties",
       "DeclaringTypeName": "DiagnosticsSurface",
@@ -14535,6 +14642,17 @@
       "AnchorId": "member-m-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions-ctor",
       "Signature": "Neo4jDependencyHealthOptions()",
       "Summary": "Initializes a new instance of the \u0060Neo4jDependencyHealthOptions\u0060 class."
+    },
+    {
+      "DisplayName": "NewRelicTelemetryExportOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "NewRelicTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.NewRelic.Configuration",
+      "AssemblyName": "Cephalon.Observability.NewRelic",
+      "FileName": "cephalon-observability-newrelic.md",
+      "AnchorId": "member-m-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-ctor",
+      "Signature": "NewRelicTelemetryExportOptions()",
+      "Summary": "Initializes a new instance of the \u0060NewRelicTelemetryExportOptions\u0060 class."
     },
     {
       "DisplayName": "NodeName",
@@ -16255,6 +16373,17 @@
     {
       "DisplayName": "Region",
       "Category": "Properties",
+      "DeclaringTypeName": "NewRelicTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.NewRelic.Configuration",
+      "AssemblyName": "Cephalon.Observability.NewRelic",
+      "FileName": "cephalon-observability-newrelic.md",
+      "AnchorId": "member-p-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-region",
+      "Signature": "string Region { get; set; }",
+      "Summary": "Gets or sets the New Relic OTLP region used when the package derives the direct-ingestion endpoint."
+    },
+    {
+      "DisplayName": "Region",
+      "Category": "Properties",
       "DeclaringTypeName": "OracleCloudTelemetryExportOptions",
       "NamespaceName": "Cephalon.Observability.OracleCloud.Configuration",
       "AssemblyName": "Cephalon.Observability.OracleCloud",
@@ -17690,6 +17819,17 @@
       "AssemblyName": "Cephalon.Observability.GrafanaCloud",
       "FileName": "cephalon-observability-grafanacloud.md",
       "AnchorId": "member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-servicenamespace",
+      "Signature": "string ServiceNamespace { get; set; }",
+      "Summary": "Gets or sets the optional \u0060service.namespace\u0060 resource attribute to stamp onto exported telemetry."
+    },
+    {
+      "DisplayName": "ServiceNamespace",
+      "Category": "Properties",
+      "DeclaringTypeName": "NewRelicTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.NewRelic.Configuration",
+      "AssemblyName": "Cephalon.Observability.NewRelic",
+      "FileName": "cephalon-observability-newrelic.md",
+      "AnchorId": "member-p-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-servicenamespace",
       "Signature": "string ServiceNamespace { get; set; }",
       "Summary": "Gets or sets the optional \u0060service.namespace\u0060 resource attribute to stamp onto exported telemetry."
     },
@@ -20123,6 +20263,17 @@
       "AnchorId": "member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-usemanagedopentelemetryingestion",
       "Signature": "bool UseManagedOpenTelemetryIngestion { get; set; }",
       "Summary": "Gets or sets a value indicating whether the package should use Oracle Cloud APM managed OpenTelemetry ingestion when no shared collector endpoint is configured."
+    },
+    {
+      "DisplayName": "UseNativeOtlpEndpoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "NewRelicTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.NewRelic.Configuration",
+      "AssemblyName": "Cephalon.Observability.NewRelic",
+      "FileName": "cephalon-observability-newrelic.md",
+      "AnchorId": "member-p-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-usenativeotlpendpoint",
+      "Signature": "bool UseNativeOtlpEndpoint { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the package should target the New Relic native OTLP endpoint when no shared collector endpoint is configured."
     },
     {
       "DisplayName": "UseOptions",

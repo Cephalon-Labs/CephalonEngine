@@ -57,6 +57,7 @@
     <ProjectReference Include="..\..\src\Cephalon.Observability.Gcp\Cephalon.Observability.Gcp.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.GrafanaCloud\Cephalon.Observability.GrafanaCloud.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.HuaweiCloud\Cephalon.Observability.HuaweiCloud.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.NewRelic\Cephalon.Observability.NewRelic.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.OracleCloud\Cephalon.Observability.OracleCloud.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.Kubernetes\Cephalon.Observability.Kubernetes.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.OpenShift\Cephalon.Observability.OpenShift.csproj" />

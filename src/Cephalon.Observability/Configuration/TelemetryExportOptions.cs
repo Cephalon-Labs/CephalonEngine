@@ -12,6 +12,7 @@ namespace Cephalon.Observability.Configuration;
 /// <c>Cephalon.Observability.AlibabaCloud</c>, <c>Cephalon.Observability.Aws</c>, <c>Cephalon.Observability.Gcp</c>,
 /// <c>Cephalon.Observability.DigitalOcean</c>, <c>Cephalon.Observability.GrafanaCloud</c>,
 /// <c>Cephalon.Observability.HuaweiCloud</c>,
+/// <c>Cephalon.Observability.NewRelic</c>,
 /// <c>Cephalon.Observability.OracleCloud</c>, <c>Cephalon.Observability.OpenShift</c>,
 /// <c>Cephalon.Observability.Tanzu</c>, or
 /// <c>Cephalon.Observability.AzureMonitor</c>

@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `April 3, 2026`.
+Backlog status in this document reflects the repository state as of `April 4, 2026`.
 
 ## Completed foundation work
 
@@ -176,7 +176,7 @@ Follow-up later:
 
 ## SDK hardening follow-through
 
-Phase 1 SDK hardening, phase 2 operational hardening, phase 3 extensibility/package loading, and phase 4 execution/orchestration are now substantially complete on their shipped baselines. Phase 5 solution-level platform work is now also substantially complete on its shipped baseline, with the suite-scaffold contract baseline under `#79`, built-in `MicroserviceSuite` composition baseline under `#80`, multi-service suite sample baseline under `#81`, and shared governance plus additive gateway/control-plane guidance baseline under `#82`, while phase 6 keeps the shipped self-hosted OTLP slice, Azure Monitor first-vendor slice, AWS second-vendor slice, GCP third-vendor slice, Huawei Cloud fourth-vendor slice, Alibaba Cloud fifth-vendor slice, Red Hat OpenShift platform-first slice, DigitalOcean collector/defaults slice under `#114`, VMware Tanzu proxy/defaults slice under `#118`, downstream Cloudflare/custom-provider authoring guidance slice under `#120`, and the platform-neutral Kubernetes collector/defaults slice under `#124`, with `#126` now narrowed as the current explicit Grafana Cloud OTLP/header follow-through target.
+Phase 1 SDK hardening, phase 2 operational hardening, phase 3 extensibility/package loading, and phase 4 execution/orchestration are now substantially complete on their shipped baselines. Phase 5 solution-level platform work is now also substantially complete on its shipped baseline, with the suite-scaffold contract baseline under `#79`, built-in `MicroserviceSuite` composition baseline under `#80`, multi-service suite sample baseline under `#81`, and shared governance plus additive gateway/control-plane guidance baseline under `#82`, while phase 6 keeps the shipped self-hosted OTLP slice, Azure Monitor first-vendor slice, AWS second-vendor slice, GCP third-vendor slice, Huawei Cloud fourth-vendor slice, Alibaba Cloud fifth-vendor slice, Red Hat OpenShift platform-first slice, DigitalOcean collector/defaults slice under `#114`, VMware Tanzu proxy/defaults slice under `#118`, downstream Cloudflare/custom-provider authoring guidance slice under `#120`, platform-neutral Kubernetes collector/defaults slice under `#124`, Grafana Cloud OTLP/header slice under `#126`, and New Relic native OTLP/api-key slice under `#127`, with any additional provider packs staying adoption-driven follow-through work.
 
 ### ENG-005 Engine API and package surface hardening
 
@@ -526,12 +526,12 @@ Delivered:
 ### ENG-029 Cloud-targeted observability companion integrations
 
 Status: later
-Estimate: 247
+Estimate: 268
 
 Why:
 
 - the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and platform-neutral Kubernetes slices are now shipped, `#120` has now shipped downstream Cloudflare and custom-provider authoring guidance instead of a misleading first-party Cloudflare exporter package, and `#126` has now shipped the Grafana Cloud first-party follow-through target instead of reopening the remaining provider matrix as one vague task
-- current Grafana Cloud OTLP docs now expose explicit OTLP endpoint wiring plus access-policy-backed auth-header guidance that fits a provider-specific companion package without moving vendor assumptions back into the engine core
+- current New Relic native OTLP docs exposed region-specific OTLP endpoints, the required `api-key` header, and an OTLP/HTTP recommendation that fit a provider-specific companion package without moving vendor assumptions back into the engine core, and that explicit follow-through is now shipped under `#127`
 - current Cloudflare Workers observability docs center Worker-native traces and logs plus exporting OpenTelemetry-compliant traces and logs from Workers to third-party OTLP destinations, with metrics export still unsupported, so a generic Cephalon host-side Cloudflare sink would over-claim the current platform story
 - this work should stay in companion packages, preserve the shared `ILogger` pipeline plus the cloud-neutral OTLP baseline, and leave room for downstream developer-authored provider packages
 
@@ -546,11 +546,12 @@ Acceptance:
 - keep the shipped VMware Tanzu proxy-first follow-through explicit on top of the shared OTLP baseline instead of reopening Cloudflare or pretending the current Tanzu docs describe one generic vendor-direct OTLP exporter path
 - keep the shipped `#120` scope centered on downstream Cloudflare and custom-provider companion authoring guidance until Cloudflare documents a host-side ingestion story that fits Cephalon's .NET runtime model
 - keep the shipped `#126` scope centered on Grafana Cloud OTLP endpoint wiring plus access-policy-backed auth headers on top of the shared OTLP baseline instead of reopening a generic remaining-provider task
+- keep the shipped `#127` scope centered on New Relic native OTLP endpoint wiring plus `api-key`-backed headers and region-aware defaults on top of the shared OTLP baseline instead of reopening a generic remaining-provider task
 - keep vendor/platform-specific exporter wiring, auth, resource attributes, and hosted defaults outside `Cephalon.Engine` and `Cephalon.Abstractions`
 - keep the shared `ILogger` pipeline and existing `Cephalon.Observability.OpenTelemetry` baseline intact
-- add docs, validation, and planning sync for the supported targets plus the downstream companion-package authoring path, including Grafana Cloud OTLP/header guidance and Cloudflare-oriented guidance that stays honest about the current Worker-native export model
+- add docs, validation, and planning sync for the supported targets plus the downstream companion-package authoring path, including shipped Grafana Cloud OTLP/header guidance, shipped New Relic OTLP/api-key guidance, and Cloudflare-oriented guidance that stays honest about the current Worker-native export model
 - avoid shipping a first-party `Cephalon.Observability.Cloudflare` package unless Cloudflare later exposes a documented generic OTLP ingestion story for external hosts
-- keep any provider beyond Grafana Cloud as a later explicit child item instead of reopening the remaining provider matrix as one task
+- keep any provider beyond the shipped New Relic slice as a later explicit child item instead of reopening the remaining provider matrix as one task
 
 ## Sprint history and next 3 sprints
 
@@ -617,4 +618,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - shipped first execution-graph contract baseline plus hosted-execution follow-through under `ENG-013`
 - shipped package distribution and provenance follow-through beyond the original package-loading baseline
 - shipped repo-wide XML-comment hygiene for test harnesses through explicit xUnit visibility rules plus tooling-backed guards under `ENG-028`
-- ENG-029 self-hosted OTLP collector/runtime-default follow-through plus the shipped Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, Kubernetes, and Cloudflare/downstream provider authoring guidance slices
+- ENG-029 self-hosted OTLP collector/runtime-default follow-through plus the shipped Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, Kubernetes, Cloudflare/downstream provider authoring guidance, Grafana Cloud, and New Relic slices

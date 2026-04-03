@@ -1,6 +1,6 @@
 # Operational Hardening Gap Inventory
 
-This document records the current phase-2 operational hardening gap inventory for Cephalon as of `April 3, 2026`.
+This document records the current phase-2 operational hardening gap inventory for Cephalon as of `April 4, 2026`.
 
 It is meant to answer two questions clearly:
 
@@ -64,7 +64,7 @@ Outcome:
 
 - exporter packaging should remain outside `Cephalon.Engine`
 - the repository now ships a reusable companion package instead of leaving exporter wiring to sample-only host code
-- remaining phase-2 work now sits primarily in phase-6 cloud tracing/export follow-through, with the self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, and Red Hat OpenShift slices shipped, `#120` shipped as downstream Cloudflare/custom-provider guidance, and `#126` now narrowed as the current explicit Grafana Cloud follow-through; any extra provider packs, downstream provider companions, or operator refinements stay adoption-driven expansion work
+- remaining phase-2 work now sits primarily in phase-6 cloud tracing/export follow-through, with the self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, and Red Hat OpenShift slices shipped, `#120` shipped as downstream Cloudflare/custom-provider guidance, `#126` shipped as the Grafana Cloud follow-through, and `#127` shipped as the New Relic native OTLP/api-key follow-through; any extra provider packs, downstream provider companions, or operator refinements stay adoption-driven expansion work
 
 ### `#87` `ILogger` provider wiring and Serilog host integration
 
@@ -92,9 +92,9 @@ Current baseline:
 
 Shipped result:
 
-- the original later follow-through expanded into a broader cloud/platform companion track spanning self-hosted collectors and runtimes plus AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, DigitalOcean, Red Hat OpenShift, VMware Tanzu, and Kubernetes, with Cloudflare now narrowed into a downstream/custom-provider guidance follow-through instead of a generic first-party sink package and Grafana Cloud now narrowed as the next explicit first-party target
+- the original later follow-through expanded into a broader cloud/platform companion track spanning self-hosted collectors and runtimes plus AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, DigitalOcean, Red Hat OpenShift, VMware Tanzu, and Kubernetes, with Cloudflare now narrowed into a downstream/custom-provider guidance follow-through instead of a generic first-party sink package, Grafana Cloud now shipped as an explicit first-party target, and New Relic now shipped as the latest explicit first-party target
 - the self-hosted slice is now shipped, `#86` has now shipped Azure Monitor exporter wiring plus hosted Azure defaults as the first explicit vendor-specific child under `ENG-029`, `#95` has now shipped the AWS follow-through as the second explicit vendor-specific child, `#98` has now shipped the GCP follow-through as the third explicit vendor-specific child, and `#102` has now shipped the Huawei Cloud follow-through as the fourth explicit vendor-specific child
-- the Alibaba Cloud slice is now shipped under `#106`, the Red Hat OpenShift slice is now shipped under `#110`, the DigitalOcean slice is now shipped under `#114`, the VMware Tanzu slice is now shipped under `#118`, `#120` has now shipped the remaining Cloudflare follow-through as downstream/custom-provider guidance instead of leaving it folded into one ambiguous first-party package task, `#124` has now shipped the platform-neutral Kubernetes collector/defaults follow-through, `#125` has now shipped the Oracle Cloud managed-ingestion follow-through, and `#126` is now the current explicit Grafana Cloud OTLP/header child
+- the Alibaba Cloud slice is now shipped under `#106`, the Red Hat OpenShift slice is now shipped under `#110`, the DigitalOcean slice is now shipped under `#114`, the VMware Tanzu slice is now shipped under `#118`, `#120` has now shipped the remaining Cloudflare follow-through as downstream/custom-provider guidance instead of leaving it folded into one ambiguous first-party package task, `#124` has now shipped the platform-neutral Kubernetes collector/defaults follow-through, `#125` has now shipped the Oracle Cloud managed-ingestion follow-through, `#126` has now shipped the Grafana Cloud OTLP/header follow-through, and `#127` has now shipped the New Relic native OTLP/api-key follow-through
 
 Why this target stays in phase 6:
 
@@ -273,7 +273,22 @@ Why this target stays in phase 6:
 
 - cloud tracing/export and platform observability work is deployment-context-specific
 - Grafana Cloud-specific OTLP endpoints, auth headers, tenant inputs, resource attributes, and hosted defaults still belong in companion packages rather than the reusable host/runtime primitives shipped in phase 2
-- scoping Grafana Cloud as `#126` keeps the next first-party companion slice explicit without folding it back into Oracle Cloud, Kubernetes, Cloudflare, or downstream custom-provider guidance
+- scoping Grafana Cloud as `#126` kept that OTLP endpoint/auth-header slice explicit without folding it back into Oracle Cloud, Kubernetes, Cloudflare, or downstream custom-provider guidance
+
+### `#127` New Relic OTLP endpoint wiring and api-key guidance on top of the OTLP baseline
+
+Shipped result:
+
+- `Cephalon.Observability.NewRelic` now ships a New Relic companion on top of the shared OTLP baseline, including region-aware direct OTLP endpoint defaults plus `api-key`-backed authentication guidance
+- the shipped self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, OpenShift, DigitalOcean, Tanzu, Kubernetes, and Grafana Cloud slices plus the shipped `#120` downstream Cloudflare/custom-provider guidance still prove the same companion-package model without moving cloud-specific behavior back into `Cephalon.Engine`
+- the shipped New Relic slice keeps the shared collector-first baseline, `UseSelfHostedDefaults`, and the downstream custom-provider story intact instead of forcing every host onto a vendor-direct path
+- the package now supports either raw OTLP `Headers` or a structured `LicenseKey` plus regional endpoint-default flow, while `ServiceNamespace` and the active host environment keep resource context explicit without inventing a new logging abstraction
+
+Why this target stays in phase 6:
+
+- cloud tracing/export and platform observability work is deployment-context-specific
+- New Relic-specific OTLP endpoints, `api-key` headers, tenant-region defaults, and hosted guidance still belong in companion packages rather than the reusable host/runtime primitives shipped in phase 2
+- scoping New Relic as `#127` kept that native OTLP endpoint/api-key slice explicit without folding it back into Grafana Cloud, Oracle Cloud, Kubernetes, Cloudflare, or downstream custom-provider guidance
 
 ### `#33` Baseline provider-specific dependency health companion packages
 
@@ -377,11 +392,11 @@ Why this stays separate:
 
 Current conclusion from this inventory:
 
-- the phase-2 child-task split served its purpose for the shipped baseline; with the self-hosted, Azure, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, Kubernetes, and Cloudflare/downstream guidance slices complete, `#126` can stay explicit as the current Grafana Cloud follow-through target instead of reopening the broader provider matrix
+- the phase-2 child-task split served its purpose for the shipped baseline; with the self-hosted, Azure, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, Kubernetes, Cloudflare/downstream guidance, Grafana Cloud, and New Relic slices complete, any future provider addition can stay explicit instead of reopening the broader provider matrix
 - phase 2 can now be treated as substantially complete on top of a shipped provider/logging/runtime-surface baseline, with any extra provider packs still treated as future adoption-driven expansion
 
 Recommended execution sequence now is:
 
 1. treat phase 2 as complete for the shipped operational baseline
-2. keep `ENG-029` in phase 6 cloud and platform integrations as the current explicit Grafana Cloud follow-through, with any future first-party Cloudflare package still gated on a later explicit child and a clearer platform-side host-ingestion story
-3. keep adoption-driven provider-pack additions separate beyond Grafana Cloud, and keep the downstream companion-package story explicit for teams that need to implement their own provider path
+2. keep `ENG-029` in phase 6 cloud and platform integrations as a `later / Todo` expansion area until another explicit provider or platform target becomes adoption-driven, with any future first-party Cloudflare package still gated on a later explicit child and a clearer platform-side host-ingestion story
+3. keep adoption-driven provider-pack additions separate beyond the shipped New Relic slice, and keep the downstream companion-package story explicit for teams that need to implement their own provider path
