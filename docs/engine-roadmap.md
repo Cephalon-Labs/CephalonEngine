@@ -59,7 +59,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Platform Sprint 0`: `ENG-012`
 - `Sprint 1`: delivered `ENG-005`, `ENG-026`, and `ENG-027`, and opened the phase 2 operational gap-inventory track
 - `Sprint 2`: exporter packaging is now part of the shipped phase-2 baseline, Cassandra contact-point health plus ClickHouse analytics health plus Consul control-plane health plus Elasticsearch cluster health plus HTTP external API plus Kafka broker metadata plus Memcached cache plus MongoDB plus MQTT plus MySQL plus NATS plus Neo4j plus OpenSearch plus Oracle plus Postgres plus RabbitMQ plus Redis/cache plus SQL Server dependency-health packaging anchor the provider-specific follow-through, the shared diagnostics/event-id catalog now anchors the structured diagnostics baseline, and release validation now calls out the health/export convention suite explicitly
-- `Sprint 3`: runtime-answers follow-through, the shipped package distribution/provenance and signer-verification follow-through under `ENG-011`, the shipped `ENG-013` execution-graph lifecycle/observability plus hosted-execution convention and agentic orchestration-link follow-through, the shipped `ENG-022` suite-scaffold-shape baseline under `#79`, the shipped built-in `MicroserviceSuite` composition baseline under `#80`, the shipped multi-service suite sample baseline under `#81`, the shipped suite-governance and additive gateway/control-plane guidance baseline under `#82`, the shipped `ENG-029` self-hosted OTLP follow-through slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped Oracle Cloud managed-ingestion slice, the shipped DigitalOcean collector/defaults slice, the shipped VMware Tanzu proxy/defaults slice, the shipped Kubernetes collector/defaults slice, and the shipped downstream Cloudflare/custom-provider authoring slice under `#120`
+- `Sprint 3`: runtime-answers follow-through, the shipped package distribution/provenance and signer-verification follow-through under `ENG-011`, the shipped `ENG-013` execution-graph lifecycle/observability plus hosted-execution convention and agentic orchestration-link follow-through, the shipped `ENG-022` suite-scaffold-shape baseline under `#79`, the shipped built-in `MicroserviceSuite` composition baseline under `#80`, the shipped multi-service suite sample baseline under `#81`, the shipped suite-governance and additive gateway/control-plane guidance baseline under `#82`, the shipped `ENG-029` self-hosted OTLP follow-through slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped Oracle Cloud managed-ingestion slice, the shipped DigitalOcean collector/defaults slice, the shipped VMware Tanzu proxy/defaults slice, the shipped Kubernetes collector/defaults slice, the shipped downstream Cloudflare/custom-provider authoring slice under `#120`, and the current explicit Grafana Cloud OTLP/header follow-through target under `#126`
 - `Later / not scheduled yet`: future solution-level expansion work
 
 ## Planning principles
@@ -141,7 +141,7 @@ Current inventory:
 
 - `docs/operational-hardening-gap-inventory.md` now records the shipped baseline versus the remaining phase-2 gaps so follow-through work stays grounded in the code that already exists
 - that inventory now includes shipped `Cephalon.Observability.OpenTelemetry` and `Cephalon.Observability.Serilog` companion packages plus shipped `Cephalon.Observability.CassandraDependencies`, `Cephalon.Observability.ClickHouseDependencies`, `Cephalon.Observability.ConsulDependencies`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.Neo4jDependencies`, `Cephalon.Observability.OpenSearchDependencies`, `Cephalon.Observability.OracleDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` companion packages, together with a published runtime diagnostics catalog, runtime-story surface, configurable failure-policy warmup/drain/backoff semantics, opt-in ASP.NET Core request/response body logging with request/trace correlation plus default sensitive-value redaction, explicit release-validation guidance for health/export conventions, and refreshed benchmark guardrails that separate prepared composition/lifecycle hot paths plus strict trust-policy composition plus bounded, correlated, and concurrent ASP.NET Core request-logging paths from benchmark harness setup
-- the remaining cloud-vendor tracing/export follow-through has been re-scoped into phase 6 cloud and platform integrations because the expanded self-hosted plus AWS plus Azure plus GCP plus Huawei Cloud plus Alibaba Cloud plus Oracle Cloud plus DigitalOcean plus Red Hat OpenShift plus VMware Tanzu plus Kubernetes target list, together with the downstream Cloudflare/custom-provider guidance path, is broader than the shipped phase-2 operational baseline
+- the remaining cloud-vendor tracing/export follow-through has been re-scoped into phase 6 cloud and platform integrations because the expanded self-hosted plus AWS plus Azure plus GCP plus Huawei Cloud plus Alibaba Cloud plus Oracle Cloud plus DigitalOcean plus Red Hat OpenShift plus VMware Tanzu plus Kubernetes target list, together with the downstream Cloudflare/custom-provider guidance path and the now-explicit Grafana Cloud OTLP/header follow-through target, is broader than the shipped phase-2 operational baseline
 
 Exit criteria:
 
@@ -233,7 +233,7 @@ Exit criteria:
 
 ## Phase 6: Cloud and platform integrations
 
-Status: later
+Status: current focus
 
 Goal: add deployment-targeted companion integrations without pushing vendor assumptions into the engine core.
 
@@ -243,7 +243,7 @@ Current baseline already in place:
 - the shared `Microsoft.Extensions.Logging.ILogger` pipeline plus `Cephalon.Observability.Serilog`
 - correlated ASP.NET Core request/response logging through `Engine:Observability:HttpLogging`
 - host-agnostic runtime, diagnostics, health, and validation surfaces that later cloud-targeted companions can build on
-- self-hosted collector and runtime defaults plus Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and Kubernetes are now shipped as the first slices on top of the cloud-neutral OTLP baseline, and `#120` has now shipped downstream Cloudflare/custom-provider authoring guidance because current Cloudflare docs center Worker-native telemetry export to third-party OTLP destinations rather than a generic external-host sink
+- self-hosted collector and runtime defaults plus Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and Kubernetes are now shipped as the first slices on top of the cloud-neutral OTLP baseline, `#120` has now shipped downstream Cloudflare/custom-provider authoring guidance because current Cloudflare docs center Worker-native telemetry export to third-party OTLP destinations rather than a generic external-host sink, and `#126` now narrows the next explicit vendor-specific child to Grafana Cloud OTLP endpoint wiring plus access-policy-backed auth headers
 
 Deliverables:
 
@@ -259,6 +259,7 @@ Deliverables:
 - VMware Tanzu companion follow-through is now shipped as the latest proxy-first slice on top of the shared OpenTelemetry baseline, centered on Wavefront proxy handoff and hosted Tanzu defaults instead of a generic vendor-direct OTLP exporter claim
 - Kubernetes companion follow-through is now shipped as the latest platform-neutral collector-first slice on top of the shared OpenTelemetry baseline, centered on in-cluster collector wiring and generic cluster resource defaults instead of a vendor-specific managed exporter claim
 - downstream Cloudflare and custom-provider companion authoring guidance is now shipped under `#120`, keeping the remaining Cloudflare follow-through honest about the current Worker-native export model instead of promising a generic first-party host-side sink
+- Grafana Cloud companion follow-through is now the current explicit OTLP endpoint/auth-header slice on top of the shared OpenTelemetry baseline, centered on direct Grafana Cloud endpoint wiring plus access-policy-backed auth headers while keeping the collector-first path available
 - exporter wiring, auth, resource-attribute conventions, and hosted-runtime defaults that stay inside companion packages instead of `Cephalon.Engine`
 - documentation, validation, and planning guidance that make the supported targets, deployment assumptions, and downstream companion-package authoring path explicit
 - a clear package split whenever different clouds or platforms need distinct companion packs instead of one overloaded abstraction
@@ -275,7 +276,7 @@ Exit criteria:
 
 Updated priority order as of `April 3, 2026`:
 
-1. cloud and platform integrations only when a new explicit adoption target appears beyond the shipped self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, Kubernetes, and Cloudflare/custom-provider guidance baseline
+1. ship the current explicit Grafana Cloud follow-through target under `#126` before reopening broader cloud and platform integrations beyond the shipped self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, Kubernetes, and Cloudflare/custom-provider guidance baseline
 2. broader release automation and package-publishing polish only when an explicit package-distribution, provenance, or install-surface scenario appears beyond the shipped `ENG-030`, `ENG-031`, and `ENG-032` baselines
 3. future solution-level expansion only when an explicit adoption scenario needs it
 
