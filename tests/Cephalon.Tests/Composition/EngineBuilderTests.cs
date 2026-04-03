@@ -24,6 +24,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Cephalon.Tests.Support;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Cephalon.Tests.Composition;
 
@@ -845,6 +846,47 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void BuildVerifiesPackagesSignedWithTrustedCertificateChain()
+    {
+        using var fixture = CreateCertificateSignedPackageFixture();
+
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseTrustPolicy(new TrustPolicy(
+            requireTrustedPackages: true,
+            trustedSignatureCertificates: new Dictionary<string, string>
+            {
+                [fixture.KeyId] = fixture.SigningCertificatePath
+            },
+            trustedSignatureCertificateAuthorities:
+            [
+                fixture.RootCertificatePath
+            ]));
+        builder.AddPackageManifest(fixture.ManifestPath);
+
+        var runtime = builder.Build();
+        var package = Assert.Single(runtime.Manifest.Packages);
+        var trust = builder.Services.BuildServiceProvider().GetRequiredService<CapabilityPolicyEvaluator>().Snapshot;
+
+        Assert.Equal(fixture.KeyId, package.SignatureKeyId);
+        Assert.Equal(fixture.Fingerprint, package.SignatureFingerprint);
+        Assert.Equal(fixture.CertificateThumbprint, package.SignatureCertificateThumbprint);
+        var signature = Assert.Single(package.Signatures);
+        Assert.Equal("trusted-certificate-chain", signature.VerificationSource);
+        Assert.Equal(fixture.CertificateThumbprint, signature.CertificateThumbprint);
+        Assert.True(signature.IsVerified);
+        Assert.True(package.IsSignatureVerified);
+        Assert.Contains("certificate-chain validation", signature.VerificationReason, StringComparison.OrdinalIgnoreCase);
+        Assert.True(package.IsTrusted);
+
+        var trustDecision = Assert.Single(trust.Packages);
+        Assert.Equal(fixture.CertificateThumbprint, trustDecision.SignatureCertificateThumbprint);
+        var trustSignature = Assert.Single(trustDecision.Signatures);
+        Assert.Equal("trusted-certificate-chain", trustSignature.VerificationSource);
+        Assert.Equal(fixture.CertificateThumbprint, trustSignature.CertificateThumbprint);
+        Assert.True(trustSignature.IsVerified);
+    }
+
+    [Fact]
     public void BuildSupportsMultiSignerPackagesAndExposesPerSignerVerification()
     {
         using var fixture = CreateMultiSignedPackageFixture();
@@ -892,6 +934,42 @@ public sealed class EngineBuilderTests
 
         Assert.Contains("signed-operations", exception.Message, StringComparison.Ordinal);
         Assert.Contains("cryptographic signature verification", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildThrowsWhenSigningCertificateChainCannotBeValidated()
+    {
+        using var fixture = CreateCertificateSignedPackageFixture();
+
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseTrustPolicy(new TrustPolicy(
+            trustedSignatureCertificates: new Dictionary<string, string>
+            {
+                [fixture.KeyId] = fixture.SigningCertificatePath
+            }));
+        builder.AddPackageManifest(fixture.ManifestPath);
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("signed-operations", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("trusted signing certificate validation", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void TrustPolicyFromConfigurationReadsCertificateTrustSettings()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Engine:Trust:TrustedSignatureCertificates:cephalon-labs-build"] = "trusted-signing-cert.pem",
+                ["Engine:Trust:TrustedSignatureCertificateAuthorities:0"] = "trusted-root-cert.pem"
+            })
+            .Build();
+
+        var policy = TrustPolicy.FromConfiguration(configuration);
+
+        Assert.Equal("trusted-signing-cert.pem", policy.TrustedSignatureCertificates["cephalon-labs-build"]);
+        Assert.Contains("trusted-root-cert.pem", policy.TrustedSignatureCertificateAuthorities);
     }
 
     [Fact]
@@ -1807,6 +1885,94 @@ public sealed class EngineBuilderTests
         return new MultiSignedPackageFixture(manifestPath, signers);
     }
 
+    private static CertificateSignedPackageFixture CreateCertificateSignedPackageFixture()
+    {
+        var assemblyPath = GetReferenceModuleAssemblyPath();
+        var keyId = "cephalon-labs-signing-cert";
+        var directory = Path.Combine(Path.GetTempPath(), $"cephalon-certificate-signed-package-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(directory);
+
+        using var rootKey = RSA.Create(2048);
+        var rootRequest = new CertificateRequest(
+            "CN=Cephalon Test Root",
+            rootKey,
+            HashAlgorithmName.SHA256,
+            RSASignaturePadding.Pkcs1);
+        rootRequest.CertificateExtensions.Add(new X509BasicConstraintsExtension(true, false, 0, true));
+        rootRequest.CertificateExtensions.Add(new X509SubjectKeyIdentifierExtension(rootRequest.PublicKey, false));
+        using var rootCertificate = rootRequest.CreateSelfSigned(
+            DateTimeOffset.UtcNow.AddDays(-1),
+            DateTimeOffset.UtcNow.AddYears(10));
+
+        using var signingKey = RSA.Create(2048);
+        var signingRequest = new CertificateRequest(
+            "CN=Cephalon Labs Signing",
+            signingKey,
+            HashAlgorithmName.SHA256,
+            RSASignaturePadding.Pkcs1);
+        signingRequest.CertificateExtensions.Add(new X509BasicConstraintsExtension(false, false, 0, true));
+        signingRequest.CertificateExtensions.Add(new X509KeyUsageExtension(X509KeyUsageFlags.DigitalSignature, true));
+        signingRequest.CertificateExtensions.Add(new X509SubjectKeyIdentifierExtension(signingRequest.PublicKey, false));
+        var serialNumber = RandomNumberGenerator.GetBytes(16);
+        using var issuedCertificate = signingRequest.Create(
+            rootCertificate,
+            DateTimeOffset.UtcNow.AddDays(-1),
+            DateTimeOffset.UtcNow.AddYears(2),
+            serialNumber);
+        using var signingCertificateWithKey = issuedCertificate.CopyWithPrivateKey(signingKey);
+
+        var publicKeyBytes = signingKey.ExportSubjectPublicKeyInfo();
+        var fingerprint = Convert.ToHexString(SHA256.HashData(publicKeyBytes)).ToLowerInvariant();
+        var certificateThumbprint = NormalizeCertificateThumbprint(signingCertificateWithKey.Thumbprint);
+
+        var rootCertificatePath = Path.Combine(directory, "trusted-root-cert.pem");
+        File.WriteAllText(rootCertificatePath, rootCertificate.ExportCertificatePem());
+
+        var signingCertificatePath = Path.Combine(directory, "trusted-signing-cert.pem");
+        File.WriteAllText(signingCertificatePath, signingCertificateWithKey.ExportCertificatePem());
+
+        using var assemblyStream = File.OpenRead(assemblyPath);
+        var assemblyHash = SHA256.HashData(assemblyStream);
+        var signatureBytes = signingKey.SignHash(
+            assemblyHash,
+            HashAlgorithmName.SHA256,
+            RSASignaturePadding.Pkcs1);
+
+        var manifestContents =
+            "{\n" +
+            "  \"id\": \"signed-operations\",\n" +
+            "  \"version\": \"1.0.0\",\n" +
+            $"  \"assembly\": \"{EscapeJson(assemblyPath)}\",\n" +
+            "  \"publisher\": {\n" +
+            "    \"id\": \"cephalon-labs\",\n" +
+            "    \"displayName\": \"Cephalon Labs\"\n" +
+            "  },\n" +
+            "  \"signature\": {\n" +
+            "    \"type\": \"detached-signature\",\n" +
+            "    \"signer\": \"Cephalon Labs Build\",\n" +
+            $"    \"keyId\": \"{keyId}\",\n" +
+            $"    \"fingerprint\": \"sha256:{fingerprint}\",\n" +
+            "    \"algorithm\": \"RSA-SHA256\",\n" +
+            $"    \"value\": \"{Convert.ToBase64String(signatureBytes)}\"\n" +
+            "  },\n" +
+            "  \"compatibility\": {\n" +
+            "    \"minimumEngineVersion\": \"1.0.0\",\n" +
+            "    \"supportedTargetFrameworks\": [ \"net10.0\" ]\n" +
+            "  }\n" +
+            "}";
+
+        var manifestPath = Path.Combine(directory, ModulePackageDirectory.DefaultManifestFileName);
+        File.WriteAllText(manifestPath, manifestContents);
+
+        return new CertificateSignedPackageFixture(
+            manifestPath,
+            signingCertificatePath,
+            rootCertificatePath,
+            keyId,
+            fingerprint,
+            certificateThumbprint);
+    }
+
     private static string GetReferenceModuleManifestPath()
     {
         return Path.Combine(GetReferenceModulePackageDirectory(), ModulePackageDirectory.DefaultManifestFileName);
@@ -1874,6 +2040,16 @@ public sealed class EngineBuilderTests
         return Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant();
     }
 
+    private static string NormalizeCertificateThumbprint(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
+
+        return value.Replace(" ", string.Empty, StringComparison.Ordinal).ToLowerInvariant();
+    }
+
     private sealed class SignedPackageFixture : IDisposable
     {
         public SignedPackageFixture(string manifestPath, string publicKeyPath, string keyId, string fingerprint)
@@ -1909,6 +2085,42 @@ public sealed class EngineBuilderTests
         public string ManifestPath { get; }
 
         public IReadOnlyList<SignedKeyFixture> Signers { get; }
+
+        public void Dispose()
+        {
+            DeleteManifestDirectory(ManifestPath);
+        }
+    }
+
+    private sealed class CertificateSignedPackageFixture : IDisposable
+    {
+        public CertificateSignedPackageFixture(
+            string manifestPath,
+            string signingCertificatePath,
+            string rootCertificatePath,
+            string keyId,
+            string fingerprint,
+            string certificateThumbprint)
+        {
+            ManifestPath = manifestPath;
+            SigningCertificatePath = signingCertificatePath;
+            RootCertificatePath = rootCertificatePath;
+            KeyId = keyId;
+            Fingerprint = fingerprint;
+            CertificateThumbprint = certificateThumbprint;
+        }
+
+        public string ManifestPath { get; }
+
+        public string SigningCertificatePath { get; }
+
+        public string RootCertificatePath { get; }
+
+        public string KeyId { get; }
+
+        public string Fingerprint { get; }
+
+        public string CertificateThumbprint { get; }
 
         public void Dispose()
         {

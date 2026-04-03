@@ -9,6 +9,9 @@ namespace Cephalon.Engine.Trust;
 /// <param name="PublisherId">The declared publisher identifier, when available.</param>
 /// <param name="SignatureKeyId">The primary signature key identifier, when available.</param>
 /// <param name="SignatureFingerprint">The primary signature fingerprint, when available.</param>
+/// <param name="SignatureCertificateThumbprint">
+/// The primary signing certificate thumbprint used during verification, when certificate-backed trust was used.
+/// </param>
 /// <param name="Signatures">The per-signer trust and verification details declared by the package.</param>
 /// <param name="IsSignatureVerified">Whether at least one declared signature verified successfully.</param>
 /// <param name="SignatureVerificationReason">The aggregate signature verification outcome summary.</param>
@@ -21,6 +24,7 @@ public sealed record PackageTrustDecision(
     string? PublisherId,
     string? SignatureKeyId,
     string? SignatureFingerprint,
+    string? SignatureCertificateThumbprint,
     IReadOnlyList<PackageSignatureTrustDecision> Signatures,
     bool IsSignatureVerified,
     string SignatureVerificationReason,

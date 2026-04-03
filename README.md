@@ -254,6 +254,12 @@ The engine is configuration-driven. A Cephalon app can choose its base blueprint
       "TrustedSignaturePublicKeys": {
         "cephalon-labs-build": "keys/cephalon-labs-build.public.pem"
       },
+      "TrustedSignatureCertificates": {
+        "cephalon-labs-signing-cert": "keys/cephalon-labs-signing-cert.pem"
+      },
+      "TrustedSignatureCertificateAuthorities": [
+        "keys/cephalon-labs-root.pem"
+      ],
       "AllowedPackageChecksums": {
         "operations": [
           "sha256:3e5d5b9fd0dfb7c60e441d013d7d2a60f41c7b0a0a4fb2d2ad5a9f88d6e7c123"
@@ -376,12 +382,12 @@ The engine validates that metadata when loading package manifests:
 - `compatibility.supportedTargetFrameworks` gates the current runtime target framework
 - `publisher.id` and optional publisher display metadata expose provenance information
 - `signature.keyId`, `signature.fingerprint`, and related signer metadata expose a trustable signing identity for policy and diagnostics
-- when `signature.value` is present and `Engine:Trust:TrustedSignaturePublicKeys` resolves a matching trusted public key, the engine performs detached cryptographic signature verification against the resolved assembly SHA-256 hash
+- when `signature.value` is present and `Engine:Trust` resolves either a matching trusted public key or a trusted signing certificate plus certificate authority chain, the engine performs detached cryptographic signature verification against the resolved assembly SHA-256 hash
 - `integrity.sha256` is optional but, when present, must match the resolved assembly exactly
 - `Engine:PackagePolicy` can require manifest-driven package loading and specific metadata such as version, engine compatibility, target frameworks, publisher id, signer fingerprint, signature key id, signature value, signature verification, or integrity hashes
 - `Engine:Trust` can trust a package by package id, assembly name, cryptographically verified signature, publisher id, signer fingerprint, or checksum allow-list
 
-Current note: the shipped baseline now verifies detached signatures when a package declares `signature.keyId` + `signature.value`, or corresponding entries inside `signatures[]`, and the host configures matching trusted public keys. Packages can declare multiple signers; the runtime surfaces per-signer verification results and accepts the package when at least one required signature verifies under the active policy. Remaining work is the broader distribution story around certificate chains, richer provenance attestations, and external package feeds.
+Current note: the shipped baseline now verifies detached signatures when a package declares `signature.keyId` + `signature.value`, or corresponding entries inside `signatures[]`, and the host configures matching trusted public keys or trusted signing certificates plus certificate authorities. Packages can declare multiple signers; the runtime surfaces per-signer verification results, verification source, and signing-certificate thumbprints when certificate-backed trust is used, and accepts the package when at least one required signature verifies under the active policy. Remaining work is the broader distribution story around richer provenance attestations and external package feeds.
 
 Compatibility expectations across package manifests, scaffold output, CLI defaults, template-pack starters, and hosted reference-doc flows are summarized in `docs/compatibility.md`.
 

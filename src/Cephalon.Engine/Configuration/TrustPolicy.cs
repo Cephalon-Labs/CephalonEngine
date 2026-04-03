@@ -10,7 +10,8 @@ namespace Cephalon.Engine.Configuration;
 /// <para>
 /// <see cref="TrustPolicy" /> is the engine's host-owned trust contract. It decides whether
 /// independently shipped packages must be explicitly trusted, how capability access is resolved,
-/// and which publishers, signer fingerprints, public keys, or assembly checksums are accepted.
+/// and which publishers, signer fingerprints, public keys, signing certificates, or assembly
+/// checksums are accepted.
 /// </para>
 /// <para>
 /// Package-loading decisions use this policy together with package metadata from
@@ -51,6 +52,14 @@ public sealed class TrustPolicy
     /// <param name="trustedSignaturePublicKeys">
     /// Public keys keyed by signing identity or signer fingerprint, used for cryptographic signature verification.
     /// </param>
+    /// <param name="trustedSignatureCertificates">
+    /// Signing certificates keyed by signing identity or signer fingerprint, used for certificate-backed
+    /// cryptographic signature verification.
+    /// </param>
+    /// <param name="trustedSignatureCertificateAuthorities">
+    /// Root or intermediate certificate authorities used to validate configured signing certificates when
+    /// certificate-chain verification is enabled.
+    /// </param>
     /// <param name="capabilities">
     /// Explicit per-capability access overrides keyed by capability key.
     /// </param>
@@ -65,6 +74,8 @@ public sealed class TrustPolicy
         IReadOnlyList<string>? trustedPublishers = null,
         IReadOnlyList<string>? trustedSignerFingerprints = null,
         IReadOnlyDictionary<string, string>? trustedSignaturePublicKeys = null,
+        IReadOnlyDictionary<string, string>? trustedSignatureCertificates = null,
+        IReadOnlyList<string>? trustedSignatureCertificateAuthorities = null,
         IReadOnlyDictionary<string, CapabilityAccess>? capabilities = null,
         IReadOnlyDictionary<string, IReadOnlyList<string>>? allowedPackageChecksums = null)
     {
@@ -75,6 +86,8 @@ public sealed class TrustPolicy
         TrustedPublishers = NormalizeList(trustedPublishers);
         TrustedSignerFingerprints = NormalizeChecksums(trustedSignerFingerprints);
         TrustedSignaturePublicKeys = NormalizeStringDictionary(trustedSignaturePublicKeys);
+        TrustedSignatureCertificates = NormalizeStringDictionary(trustedSignatureCertificates);
+        TrustedSignatureCertificateAuthorities = NormalizeList(trustedSignatureCertificateAuthorities);
         Capabilities = NormalizeRules(capabilities);
         AllowedPackageChecksums = NormalizeChecksumRules(allowedPackageChecksums);
     }
@@ -115,6 +128,16 @@ public sealed class TrustPolicy
     public IReadOnlyDictionary<string, string> TrustedSignaturePublicKeys { get; }
 
     /// <summary>
+    /// Gets the configured trusted signing certificates used for certificate-backed detached-signature verification.
+    /// </summary>
+    public IReadOnlyDictionary<string, string> TrustedSignatureCertificates { get; }
+
+    /// <summary>
+    /// Gets the configured certificate authorities used to validate trusted signing certificate chains.
+    /// </summary>
+    public IReadOnlyList<string> TrustedSignatureCertificateAuthorities { get; }
+
+    /// <summary>
     /// Gets the explicit per-capability access rules.
     /// </summary>
     public IReadOnlyDictionary<string, CapabilityAccess> Capabilities { get; }
@@ -135,6 +158,8 @@ public sealed class TrustPolicy
         TrustedPublishers.Count > 0 ||
         TrustedSignerFingerprints.Count > 0 ||
         TrustedSignaturePublicKeys.Count > 0 ||
+        TrustedSignatureCertificates.Count > 0 ||
+        TrustedSignatureCertificateAuthorities.Count > 0 ||
         Capabilities.Count > 0 ||
         AllowedPackageChecksums.Count > 0;
 
@@ -205,6 +230,18 @@ public sealed class TrustPolicy
             trustedSignaturePublicKeys[pair.Key] = pair.Value;
         }
 
+        var trustedSignatureCertificates = new Dictionary<string, string>(TrustedSignatureCertificates, StringComparer.OrdinalIgnoreCase);
+        foreach (var pair in other.TrustedSignatureCertificates)
+        {
+            trustedSignatureCertificates[pair.Key] = pair.Value;
+        }
+
+        var trustedSignatureCertificateAuthorities = new HashSet<string>(TrustedSignatureCertificateAuthorities, StringComparer.OrdinalIgnoreCase);
+        foreach (var authority in other.TrustedSignatureCertificateAuthorities)
+        {
+            trustedSignatureCertificateAuthorities.Add(authority);
+        }
+
         var capabilities = new Dictionary<string, CapabilityAccess>(Capabilities, StringComparer.OrdinalIgnoreCase);
         foreach (var pair in other.Capabilities)
         {
@@ -237,6 +274,8 @@ public sealed class TrustPolicy
             trustedPublishers: trustedPublishers.ToArray(),
             trustedSignerFingerprints: trustedSignerFingerprints.ToArray(),
             trustedSignaturePublicKeys: trustedSignaturePublicKeys,
+            trustedSignatureCertificates: trustedSignatureCertificates,
+            trustedSignatureCertificateAuthorities: trustedSignatureCertificateAuthorities.ToArray(),
             capabilities: capabilities,
             allowedPackageChecksums: allowedPackageChecksums);
     }
@@ -296,6 +335,21 @@ public sealed class TrustPolicy
                 static child => child.Key.Trim(),
                 static child => child.Value!.Trim(),
                 StringComparer.OrdinalIgnoreCase);
+        var trustedSignatureCertificates = trustSection
+            .GetSection("TrustedSignatureCertificates")
+            .GetChildren()
+            .Where(static child => !string.IsNullOrWhiteSpace(child.Key) && !string.IsNullOrWhiteSpace(child.Value))
+            .ToDictionary(
+                static child => child.Key.Trim(),
+                static child => child.Value!.Trim(),
+                StringComparer.OrdinalIgnoreCase);
+        var trustedSignatureCertificateAuthorities = trustSection
+            .GetSection("TrustedSignatureCertificateAuthorities")
+            .GetChildren()
+            .Select(static child => child.Value)
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Select(static value => value!)
+            .ToArray();
 
         var capabilityRules = new Dictionary<string, CapabilityAccess>(StringComparer.OrdinalIgnoreCase);
         foreach (var capabilitySection in trustSection.GetSection("Capabilities").GetChildren())
@@ -338,6 +392,8 @@ public sealed class TrustPolicy
             trustedPublishers: trustedPublishers,
             trustedSignerFingerprints: trustedSignerFingerprints,
             trustedSignaturePublicKeys: trustedSignaturePublicKeys,
+            trustedSignatureCertificates: trustedSignatureCertificates,
+            trustedSignatureCertificateAuthorities: trustedSignatureCertificateAuthorities,
             capabilities: capabilityRules,
             allowedPackageChecksums: checksumRules);
     }
@@ -390,6 +446,36 @@ public sealed class TrustPolicy
         }
 
         publicKey = string.Empty;
+        return false;
+    }
+
+    internal bool TryResolveTrustedSignatureCertificate(
+        string? keyId,
+        string? signerFingerprint,
+        out string certificate)
+    {
+        if (!string.IsNullOrWhiteSpace(keyId) &&
+            TrustedSignatureCertificates.TryGetValue(keyId.Trim(), out var resolvedCertificate) &&
+            !string.IsNullOrWhiteSpace(resolvedCertificate))
+        {
+            certificate = resolvedCertificate;
+            return true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(signerFingerprint))
+        {
+            var normalizedFingerprint = NormalizeChecksum(signerFingerprint);
+            foreach (var pair in TrustedSignatureCertificates)
+            {
+                if (string.Equals(NormalizeChecksum(pair.Key), normalizedFingerprint, StringComparison.OrdinalIgnoreCase))
+                {
+                    certificate = pair.Value;
+                    return true;
+                }
+            }
+        }
+
+        certificate = string.Empty;
         return false;
     }
 

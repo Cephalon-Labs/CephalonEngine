@@ -6,5 +6,7 @@ internal sealed record PackageSignatureVerificationEntry(
     string? KeyId,
     string? Fingerprint,
     string? Algorithm,
+    string? VerificationSource,
+    string? CertificateThumbprint,
     bool IsVerified,
     string Reason);

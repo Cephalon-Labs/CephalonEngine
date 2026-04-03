@@ -13,7 +13,13 @@ public sealed class PackageSignatureManifest
     /// <param name="keyId">The declared signature key identifier.</param>
     /// <param name="fingerprint">The declared signer fingerprint.</param>
     /// <param name="algorithm">The declared signature algorithm.</param>
-    /// <param name="isVerified">Whether this signature was cryptographically verified.</param>
+    /// <param name="verificationSource">The trust source that verified the signature, when available.</param>
+    /// <param name="certificateThumbprint">
+    /// The thumbprint of the signing certificate used during verification, when certificate-backed trust was used.
+    /// </param>
+    /// <param name="isVerified">
+    /// Whether this signature was cryptographically verified against a trusted public key or signing certificate.
+    /// </param>
     /// <param name="verificationReason">The verification outcome summary for this signature.</param>
     public PackageSignatureManifest(
         string? type,
@@ -21,6 +27,8 @@ public sealed class PackageSignatureManifest
         string? keyId,
         string? fingerprint,
         string? algorithm,
+        string? verificationSource,
+        string? certificateThumbprint,
         bool isVerified,
         string verificationReason)
     {
@@ -29,6 +37,8 @@ public sealed class PackageSignatureManifest
         KeyId = keyId;
         Fingerprint = fingerprint;
         Algorithm = algorithm;
+        VerificationSource = verificationSource;
+        CertificateThumbprint = certificateThumbprint;
         IsVerified = isVerified;
         VerificationReason = verificationReason ?? throw new ArgumentNullException(nameof(verificationReason));
     }
@@ -59,7 +69,17 @@ public sealed class PackageSignatureManifest
     public string? Algorithm { get; }
 
     /// <summary>
-    /// Gets a value indicating whether this signature was cryptographically verified.
+    /// Gets the trust source that verified the signature, when available.
+    /// </summary>
+    public string? VerificationSource { get; }
+
+    /// <summary>
+    /// Gets the signing certificate thumbprint used during verification, when certificate-backed trust was used.
+    /// </summary>
+    public string? CertificateThumbprint { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether this signature was cryptographically verified against a trusted signing identity.
     /// </summary>
     public bool IsVerified { get; }
 

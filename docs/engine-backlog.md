@@ -371,13 +371,13 @@ Delivered:
 - package compatibility and integrity metadata through `cephalon.package.json`
 - `Engine:PackagePolicy` baseline for requiring manifest-driven package loads and stricter package metadata
 - publisher and signer provenance metadata plus trust allow-lists for package governance
-- detached-signature verification against trusted public keys
+- detached-signature verification against trusted public keys and trusted signing certificate chains
 - manifest/runtime introspection through package metadata and `/engine/packages`
 - integration coverage using `Cephalon.ReferenceModule.Operations` as a real package-loaded module
 
 Follow-up later:
 
-- deeper multi-signer or certificate-chain verification and external distribution hooks beyond the current detached-signature baseline
+- external distribution hooks and broader provenance attestations beyond the current signature-verification baseline
 - versioned package distribution guidance outside the repository
 
 ### ENG-023 GitHub Actions release-validation baseline
@@ -413,11 +413,11 @@ Current baseline already in place:
 - package discovery inputs through `Engine:Discovery:Packages`, `Engine:Discovery:PackageDirectories`, and the package builder APIs
 - explicit package load failures for missing manifests, duplicate registrations, integrity mismatches, and dependency-registration gaps
 - manifest-declared compatibility, target-framework, version, and package-dependency validation through `cephalon.package.json`
-- package policy, detached-signature verification, publisher/signer provenance, and trust hooks surfaced through `Engine:PackagePolicy`, `Engine:Trust`, and `/engine/packages`
+- package policy, detached-signature verification through trusted public keys or trusted signing certificate chains, publisher/signer provenance, and trust hooks surfaced through `Engine:PackagePolicy`, `Engine:Trust`, and `/engine/packages`
 
 Follow-up later:
 
-- external distribution, richer signer verification, and broader provenance beyond the current detached-signature baseline
+- external distribution and broader provenance follow-through beyond the current signature-verification baseline
 - versioned package distribution guidance outside the repository
 
 ### ENG-012 Capability permissions and trust policy
@@ -558,11 +558,11 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 ### Sprint 3
 
 - ENG-013 Workflow and orchestration primitives
-- package distribution and trust follow-through beyond the current baseline
+- package distribution and provenance follow-through beyond the current baseline
 - ENG-029 self-hosted OTLP collector/runtime-default follow-through plus the shipped Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and Cloudflare/downstream provider authoring guidance slices
 
 ### Later / not scheduled yet
 
-- ENG-011 external distribution, provenance, and richer signer verification follow-through
+- ENG-011 external distribution and provenance follow-through
 - ENG-022 `MicroserviceSuite` blueprint
 - ENG-028 repo-wide XML-comment hygiene for test harnesses
