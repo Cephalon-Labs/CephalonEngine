@@ -1,6 +1,7 @@
 using Cephalon.AspNetCore.Documentation;
 using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Health;
+using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Localization;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Configuration;
@@ -103,6 +104,15 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonModules");
         engineGroup.MapGet("/packages", (RuntimeManifest manifest) => TypedResults.Ok(manifest.Packages))
             .WithName("GetCephalonPackages");
+        engineGroup.MapGet("/execution-graphs", (IExecutionRuntimeCatalog catalog) => TypedResults.Ok(catalog.Graphs))
+            .WithName("GetCephalonExecutionGraphs");
+        engineGroup.MapGet("/execution-graphs/{graphId}", (string graphId, IExecutionRuntimeCatalog catalog) =>
+            {
+                var graph = catalog.GetById(graphId);
+
+                return graph is null ? Results.NotFound() : Results.Ok(graph);
+            })
+            .WithName("GetCephalonExecutionGraph");
         engineGroup.MapGet("/patterns", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Patterns))
             .WithName("GetCephalonPatterns");
         engineGroup.MapGet("/technologies", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Technologies))

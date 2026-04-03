@@ -163,6 +163,8 @@ When the playground is running, open:
 - `/engine/scaffold`
 - `/engine/modules`
 - `/engine/packages`
+- `/engine/execution-graphs`
+- `/engine/execution-graphs/{graphId}`
 - `/engine/patterns`
 - `/engine/technologies`
 - `/engine/technology-catalog`
@@ -200,6 +202,8 @@ When the playground is running, open:
 ## Design direction
 
 Cephalon is aiming for a future where new capabilities can be delivered as modules instead of rewrites. The engine owns composition, dependency ordering, runtime introspection, and host integration. Product code should be able to plug into that surface without coupling itself to one transport or one monolith.
+
+The first execution-graph baseline now also lets active modules publish operator-facing workflow descriptors through `/engine/execution-graphs` and `/engine/snapshot` without bypassing the existing module and capability model.
 
 The engine is configuration-driven. A Cephalon app can choose its base blueprint, supporting patterns, future-facing technology profiles, and transport surface through the `Engine` section in configuration, while still allowing code-level overrides when needed.
 

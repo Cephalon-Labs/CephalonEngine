@@ -8,6 +8,7 @@ using Cephalon.Engine.Trust;
 using Cephalon.Engine.Transports;
 using Cephalon.Agentics.Registration;
 using Cephalon.Agentics.Services;
+using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Abstractions.AppModel.Scaffolding;
 using Cephalon.Abstractions.Capabilities;
@@ -364,6 +365,47 @@ public sealed class EngineBuilderTests
         Assert.Empty(package.Dependencies);
         Assert.Contains("operations", package.Modules);
         Assert.Equal("reference-operations", operationsModule.PackageId);
+    }
+
+    [Fact]
+    public void BuildCollectsExecutionGraphsFromActiveModules()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.AddModule(new WorkflowCatalogTestModule("builder-test"));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var runtime = provider.GetRequiredService<IRuntime>();
+        var catalog = provider.GetRequiredService<IExecutionRuntimeCatalog>();
+        var graph = Assert.Single(catalog.Graphs);
+
+        Assert.Equal("approval-flow", graph.Id);
+        Assert.Equal("workflow-catalog", graph.SourceModuleId);
+        Assert.Equal("request-review", graph.EntryNodeId);
+        Assert.Equal(3, graph.Nodes.Count);
+        Assert.Equal(2, graph.Edges.Count);
+        Assert.Contains(graph.Nodes, node => node.CapabilityKey == "workflow.approval.request");
+        Assert.Contains(graph.Nodes, node => node.CapabilityKey == "workflow.approval.record");
+        Assert.Equal(graph, catalog.GetById("approval-flow"));
+        Assert.Single(catalog.GetBySourceModule("workflow-catalog"));
+        Assert.Equal("modular-monolith", runtime.Manifest.AppProfile.BlueprintId);
+    }
+
+    [Fact]
+    public void BuildRejectsExecutionGraphsThatReferenceUnknownCapabilities()
+    {
+        var services = new ServiceCollection();
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            services.AddCephalon(engine =>
+            {
+                engine.AddModule(new InvalidWorkflowCapabilityModule(publishInvalidGraph: true));
+            }));
+
+        Assert.Contains("unknown capability", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("workflow.missing", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

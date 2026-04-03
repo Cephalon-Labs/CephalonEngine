@@ -16,6 +16,10 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-capabilities): 3 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities)
 
+## `Cephalon.Abstractions.Execution`
+
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-execution): 6 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution)
+
 ## `Cephalon.Abstractions.Health`
 
 - [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-health): 3 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health)

@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.AppModel.Scaffolding;
+using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Health;
 using Cephalon.Abstractions.Localization;
 using Cephalon.Abstractions.Patterns;
@@ -654,6 +655,49 @@ public sealed class AspNetCoreHostingTests
         var edge = Assert.Single(surfaces, surface => surface.TechnologyId == "edge-native-delivery");
         Assert.Contains(edge.Entries, entry => entry.Id == "storefront-edge");
         Assert.Contains(edge.Entries, entry => entry.Id == "warehouse-edge");
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesExecutionGraphsAcrossEndpointAndSnapshot()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new WorkflowCatalogTestModule("hosting-test"));
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var graphs = await client.GetFromJsonAsync<ExecutionGraphDescriptor[]>("/engine/execution-graphs");
+        var graph = await client.GetFromJsonAsync<ExecutionGraphDescriptor>("/engine/execution-graphs/approval-flow");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(graphs);
+        var approvalFlow = Assert.Single(graphs);
+        Assert.Equal("approval-flow", approvalFlow.Id);
+        Assert.Equal("workflow-catalog", approvalFlow.SourceModuleId);
+        Assert.Equal("request-review", approvalFlow.EntryNodeId);
+        Assert.Equal(3, approvalFlow.Nodes.Count);
+        Assert.Equal(2, approvalFlow.Edges.Count);
+
+        Assert.NotNull(graph);
+        Assert.Equal("Approval Flow", graph.DisplayName);
+        Assert.Contains(graph.Nodes, node => node.CapabilityKey == "workflow.approval.request");
+        Assert.Contains(graph.Nodes, node => node.CapabilityKey == "workflow.approval.record");
+        Assert.Contains(graph.Edges, edge => edge.Condition == "decision == approved");
+
+        Assert.NotNull(snapshot);
+        Assert.Single(snapshot.ExecutionGraphs);
+        Assert.Equal("approval-flow", snapshot.ExecutionGraphs[0].Id);
+        Assert.Contains(snapshot.ExecutionGraphs[0].Nodes, node => node.Id == "complete");
     }
 
     [Fact]

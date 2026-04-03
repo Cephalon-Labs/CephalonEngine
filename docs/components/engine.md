@@ -12,6 +12,7 @@
 - trusted public-key resolution for cryptographic package signature verification across declared signers
 - configuration binding for engine, trust, localization, failure policy, and options
 - runtime lifecycle, failure capture, restart policy, and health evaluation
+- additive execution-graph contracts and runtime execution-graph catalogs
 - manifest generation and runtime introspection snapshots
 - built-in blueprint, pattern, transport, and technology catalogs
 - trust and capability policy evaluation
@@ -23,6 +24,8 @@
 - `Composition/ModuleDiscovery.cs`
 - `Composition/Packages/ModulePackageLoader.cs`
 - `Composition/Packages/PackageDefinitionFile.cs`
+- `Execution/ExecutionGraphValidation.cs`
+- `Execution/ExecutionRuntimeCatalogSnapshot.cs`
 - `Runtime/EngineRuntime.cs`
 - `Runtime/IRuntime.cs`
 - `Runtime/IRuntimeIntrospectionSnapshotProvider.cs`
@@ -49,6 +52,7 @@
 - `Composition/Packages`
 - `Configuration`
 - `Diagnostics`
+- `Execution`
 - `Localization`
 - `Manifest`
 - `Patterns`
@@ -59,7 +63,7 @@
 
 ## How it fits
 
-This package is the host-agnostic center of the framework. ASP.NET Core, worker hosts, CLI, scaffolding, and companion technology packs all consume this runtime model instead of rebuilding engine logic locally. That now includes the runtime diagnostics catalog that publishes stable event-id conventions for the active engine and companion packages, the runtime story contracts that explain what loaded, started, failed, and why in one ordered payload, and the configuration-driven failure-policy windows that let hosts tune readiness warmup, shutdown drain, and manual restart backoff without hardwiring host-specific lifecycle logic.
+This package is the host-agnostic center of the framework. ASP.NET Core, worker hosts, CLI, scaffolding, and companion technology packs all consume this runtime model instead of rebuilding engine logic locally. That now includes the runtime diagnostics catalog that publishes stable event-id conventions for the active engine and companion packages, the runtime story contracts that explain what loaded, started, failed, and why in one ordered payload, the additive execution-graph catalog surfaced through `/engine/execution-graphs` and `/engine/snapshot`, and the configuration-driven failure-policy windows that let hosts tune readiness warmup, shutdown drain, and manual restart backoff without hardwiring host-specific lifecycle logic.
 
 Package loading is also governed here. `cephalon.package.json` compatibility metadata, external distribution and provenance hints, publisher/signature provenance fields, optional integrity hashes, detached signature verification against trusted public keys or trusted signing certificate chains, publisher/signer/checksum-based trust allow-lists, and `/engine/packages` manifest output are all part of the engine contract rather than host-specific behavior.
 

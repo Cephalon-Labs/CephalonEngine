@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.Engine.Manifest;
@@ -9,6 +10,9 @@ namespace Cephalon.Engine.Runtime;
 /// </summary>
 /// <param name="Manifest">The immutable manifest that describes the built runtime shape.</param>
 /// <param name="Status">The current lifecycle status of the runtime.</param>
+/// <param name="ExecutionGraphs">
+/// The execution graphs contributed by active modules and visible to the runtime at the time the snapshot was created.
+/// </param>
 /// <param name="TechnologySurfaces">
 /// The active technology-pack runtime surfaces visible to the runtime at the time the snapshot was created.
 /// </param>
@@ -20,11 +24,13 @@ namespace Cephalon.Engine.Runtime;
 /// </param>
 /// <remarks>
 /// This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime
-/// without issuing separate requests for manifest, status, technology-pack details, diagnostics conventions, and lifecycle story data.
+/// without issuing separate requests for manifest, status, execution-graph details, technology-pack details,
+/// diagnostics conventions, and lifecycle story data.
 /// </remarks>
 public sealed record RuntimeIntrospectionSnapshot(
     RuntimeManifest Manifest,
     RuntimeStatusSnapshot Status,
+    IReadOnlyList<ExecutionGraphDescriptor> ExecutionGraphs,
     IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces,
     IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions,
     RuntimeOperationalStory OperationalStory);
