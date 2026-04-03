@@ -25,6 +25,7 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.Observability.DigitalOcean"] = "observability-digitalocean.md",
             ["Cephalon.Observability.ElasticsearchDependencies"] = "observability-elasticsearch-dependencies.md",
             ["Cephalon.Observability.Gcp"] = "observability-gcp.md",
+            ["Cephalon.Observability.GrafanaCloud"] = "observability-grafana-cloud.md",
             ["Cephalon.Observability.HttpDependencies"] = "observability-http-dependencies.md",
             ["Cephalon.Observability.HuaweiCloud"] = "observability-huawei-cloud.md",
             ["Cephalon.Observability.OracleCloud"] = "observability-oracle-cloud.md",

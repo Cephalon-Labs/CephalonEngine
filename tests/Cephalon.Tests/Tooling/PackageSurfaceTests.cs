@@ -183,6 +183,15 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void ObservabilityGrafanaCloudAssemblyExposesOnlyTheDocumentedConfigurationAndRegistrationSurface()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Observability.GrafanaCloud.Hosting.GrafanaCloudHostApplicationBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions),
+            typeof(global::Cephalon.Observability.GrafanaCloud.Hosting.GrafanaCloudHostApplicationBuilderExtensions));
+    }
+
+    [Fact]
     public void ObservabilitySerilogAssemblyExposesOnlyTheDocumentedRegistrationSurface()
     {
         AssertExportedTypes(

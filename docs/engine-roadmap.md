@@ -233,7 +233,7 @@ Exit criteria:
 
 ## Phase 6: Cloud and platform integrations
 
-Status: current focus
+Status: later
 
 Goal: add deployment-targeted companion integrations without pushing vendor assumptions into the engine core.
 
@@ -243,7 +243,7 @@ Current baseline already in place:
 - the shared `Microsoft.Extensions.Logging.ILogger` pipeline plus `Cephalon.Observability.Serilog`
 - correlated ASP.NET Core request/response logging through `Engine:Observability:HttpLogging`
 - host-agnostic runtime, diagnostics, health, and validation surfaces that later cloud-targeted companions can build on
-- self-hosted collector and runtime defaults plus Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and Kubernetes are now shipped as the first slices on top of the cloud-neutral OTLP baseline, `#120` has now shipped downstream Cloudflare/custom-provider authoring guidance because current Cloudflare docs center Worker-native telemetry export to third-party OTLP destinations rather than a generic external-host sink, and `#126` now narrows the next explicit vendor-specific child to Grafana Cloud OTLP endpoint wiring plus access-policy-backed auth headers
+- self-hosted collector and runtime defaults plus Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and Kubernetes are now shipped as the first slices on top of the cloud-neutral OTLP baseline, `#120` has now shipped downstream Cloudflare/custom-provider authoring guidance because current Cloudflare docs center Worker-native telemetry export to third-party OTLP destinations rather than a generic external-host sink, and `#126` has now shipped Grafana Cloud OTLP endpoint wiring plus access-policy-backed auth headers as the latest explicit vendor-specific child
 
 Deliverables:
 
@@ -259,7 +259,7 @@ Deliverables:
 - VMware Tanzu companion follow-through is now shipped as the latest proxy-first slice on top of the shared OpenTelemetry baseline, centered on Wavefront proxy handoff and hosted Tanzu defaults instead of a generic vendor-direct OTLP exporter claim
 - Kubernetes companion follow-through is now shipped as the latest platform-neutral collector-first slice on top of the shared OpenTelemetry baseline, centered on in-cluster collector wiring and generic cluster resource defaults instead of a vendor-specific managed exporter claim
 - downstream Cloudflare and custom-provider companion authoring guidance is now shipped under `#120`, keeping the remaining Cloudflare follow-through honest about the current Worker-native export model instead of promising a generic first-party host-side sink
-- Grafana Cloud companion follow-through is now the current explicit OTLP endpoint/auth-header slice on top of the shared OpenTelemetry baseline, centered on direct Grafana Cloud endpoint wiring plus access-policy-backed auth headers while keeping the collector-first path available
+- Grafana Cloud companion follow-through is now shipped as the latest explicit OTLP endpoint/auth-header slice on top of the shared OpenTelemetry baseline, centered on direct Grafana Cloud endpoint wiring plus access-policy-backed auth headers while keeping the collector-first path available
 - exporter wiring, auth, resource-attribute conventions, and hosted-runtime defaults that stay inside companion packages instead of `Cephalon.Engine`
 - documentation, validation, and planning guidance that make the supported targets, deployment assumptions, and downstream companion-package authoring path explicit
 - a clear package split whenever different clouds or platforms need distinct companion packs instead of one overloaded abstraction
@@ -274,9 +274,9 @@ Exit criteria:
 
 ## Recommended implementation order
 
-Updated priority order as of `April 3, 2026`:
+Updated priority order as of `April 4, 2026`:
 
-1. ship the current explicit Grafana Cloud follow-through target under `#126` before reopening broader cloud and platform integrations beyond the shipped self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, Kubernetes, and Cloudflare/custom-provider guidance baseline
+1. keep phase 6 in `later / Todo` until another explicit cloud or platform target becomes adoption-driven beyond the shipped self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, Kubernetes, Cloudflare/custom-provider guidance, and Grafana Cloud baseline
 2. broader release automation and package-publishing polish only when an explicit package-distribution, provenance, or install-surface scenario appears beyond the shipped `ENG-030`, `ENG-031`, and `ENG-032` baselines
 3. future solution-level expansion only when an explicit adoption scenario needs it
 

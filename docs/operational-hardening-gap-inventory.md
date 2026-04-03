@@ -261,13 +261,13 @@ Why this target stays in phase 6:
 
 ### `#126` Grafana Cloud OTLP endpoint wiring and access-policy headers on top of the OTLP baseline
 
-Current focus:
+Shipped result:
 
-- hosts can already declare telemetry export intent through `Engine:Observability:Telemetry`, and `Cephalon.Observability.OpenTelemetry` already wires the shared OTLP logs, metrics, and traces baseline
-- the shipped self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, OpenShift, DigitalOcean, Tanzu, and Kubernetes slices plus the shipped `#120` downstream Cloudflare/custom-provider guidance have already proved the companion-package model without moving cloud-specific behavior back into `Cephalon.Engine`
-- current official Grafana Cloud OTLP docs now expose explicit OTLP endpoints plus access-policy-backed auth-header guidance that map cleanly onto a provider-specific companion package without inventing a new logging abstraction or reopening phase 2
-- this slice should keep direct Grafana Cloud endpoint wiring explicit for the documented OTLP path while preserving the shared collector-first baseline, `UseSelfHostedDefaults`, and the downstream custom-provider story for teams that still need their own routing or shaping layer
-- docs, validation, and planning should treat Grafana Cloud as the next explicit first-party target instead of reopening Cloudflare or another generic remaining-provider bucket
+- `Cephalon.Observability.GrafanaCloud` now ships a Grafana Cloud companion on top of the shared OTLP baseline, including explicit direct OTLP endpoint wiring plus access-policy-backed authentication guidance
+- the shipped self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, OpenShift, DigitalOcean, Tanzu, and Kubernetes slices plus the shipped `#120` downstream Cloudflare/custom-provider guidance still prove the same companion-package model without moving cloud-specific behavior back into `Cephalon.Engine`
+- the shipped Grafana Cloud slice keeps the shared collector-first baseline, `UseSelfHostedDefaults`, and the downstream custom-provider story intact instead of forcing every host onto a vendor-direct path
+- the package now supports either raw OTLP `Headers` or a structured `InstanceId` plus `AccessPolicyToken` pair, while `ServiceNamespace` and the active host environment keep resource context explicit without inventing a new logging abstraction
+- docs, validation, and reference-doc publishing now treat Grafana Cloud as a shipped first-party companion package instead of a speculative remaining-provider placeholder
 
 Why this target stays in phase 6:
 

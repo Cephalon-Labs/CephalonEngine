@@ -9,6 +9,9 @@ Browse the published API surface by public member.
 - [Access](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-access): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Access&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The effective access mode resolved from policy.
   - `CapabilityAccess Access { get; set; }`
+- [AccessPolicyToken](cephalon-observability-grafanacloud.md#member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-accesspolicytoken): `Properties` on `GrafanaCloudTelemetryExportOptions` in `Cephalon.Observability.GrafanaCloud.Configuration` (`Cephalon.Observability.GrafanaCloud`) [Browse](browse.html?q=AccessPolicyToken&assembly=Cephalon.Observability.GrafanaCloud&namespace=Cephalon.Observability.GrafanaCloud.Configuration&scope=members)
+  - Gets or sets the Grafana Cloud access-policy token used as the Basic-auth password when the package should build the Authorization header from structured settings.
+  - `string AccessPolicyToken { get; set; }`
 - [AclToken](cephalon-observability-consuldependencies.md#member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-acltoken): `Properties` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=AclToken&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
   - Gets or sets the optional Consul ACL token sent as the `X-Consul-Token` header.
   - `string AclToken { get; set; }`
@@ -120,6 +123,9 @@ Browse the published API surface by public member.
 - [AddCephalonGcp](cephalon-observability-gcp.md#member-m-cephalon-observability-gcp-hosting-gcphostapplicationbuilderextensions-addcephalongcp-1-0-system-action-cephalon-observability-gcp-configuration-gcptelemetryexportoptions): `Methods` on `GcpHostApplicationBuilderExtensions` in `Cephalon.Observability.Gcp.Hosting` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=AddCephalonGcp&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Hosting&scope=members)
   - Adds GCP-aware OpenTelemetry registration for the Cephalon engine diagnostics surface.
   - `TBuilder AddCephalonGcp<TBuilder>(this TBuilder builder, Action<GcpTelemetryExportOptions> configure)`
+- [AddCephalonGrafanaCloud](cephalon-observability-grafanacloud.md#member-m-cephalon-observability-grafanacloud-hosting-grafanacloudhostapplicationbuilderextensions-addcephalongrafanacloud-1-0-system-action-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions): `Methods` on `GrafanaCloudHostApplicationBuilderExtensions` in `Cephalon.Observability.GrafanaCloud.Hosting` (`Cephalon.Observability.GrafanaCloud`) [Browse](browse.html?q=AddCephalonGrafanaCloud&assembly=Cephalon.Observability.GrafanaCloud&namespace=Cephalon.Observability.GrafanaCloud.Hosting&scope=members)
+  - Adds Grafana Cloud-aware OpenTelemetry registration for the Cephalon engine diagnostics surface.
+  - `TBuilder AddCephalonGrafanaCloud<TBuilder>(this TBuilder builder, Action<GrafanaCloudTelemetryExportOptions> configure)`
 - [AddCephalonHttpDependencyHealth](cephalon-observability-httpdependencies.md#member-m-cephalon-observability-httpdependencies-hosting-httpdependencyhealthservicecollectionextensions-addcephalonhttpdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions): `Methods` on `HttpDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.HttpDependencies.Hosting` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=AddCephalonHttpDependencyHealth&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Hosting&scope=members)
   - Adds HTTP dependency-health services using code-first configuration.
   - `IServiceCollection AddCephalonHttpDependencyHealth(this IServiceCollection services, Action<HttpDependencyHealthOptions> configure)`
@@ -1290,6 +1296,9 @@ Browse the published API surface by public member.
 - [Endpoint](cephalon-observability-elasticsearchdependencies.md#member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-endpoint): `Properties` on `ElasticsearchDependencyDefinition` in `Cephalon.Observability.ElasticsearchDependencies.Configuration` (`Cephalon.Observability.ElasticsearchDependencies`) [Browse](browse.html?q=Endpoint&assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Configuration&scope=members)
   - Gets or sets the absolute Elasticsearch base URL or cluster-health endpoint that should be probed.
   - `string Endpoint { get; set; }`
+- [Endpoint](cephalon-observability-grafanacloud.md#member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-endpoint): `Properties` on `GrafanaCloudTelemetryExportOptions` in `Cephalon.Observability.GrafanaCloud.Configuration` (`Cephalon.Observability.GrafanaCloud`) [Browse](browse.html?q=Endpoint&assembly=Cephalon.Observability.GrafanaCloud&namespace=Cephalon.Observability.GrafanaCloud.Configuration&scope=members)
+  - Gets or sets the base Grafana Cloud OTLP endpoint used for direct ingestion.
+  - `string Endpoint { get; set; }`
 - [Endpoint](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-endpoint): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=Endpoint&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the absolute endpoint that should be probed for this dependency.
   - `string Endpoint { get; set; }`
@@ -1506,6 +1515,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability-gcp.md#member-m-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `GcpTelemetryExportOptions` in `Cephalon.Observability.Gcp.Configuration` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Configuration&scope=members)
   - Binds GCP telemetry export options from configuration.
   - `GcpTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-observability-grafanacloud.md#member-m-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `GrafanaCloudTelemetryExportOptions` in `Cephalon.Observability.GrafanaCloud.Configuration` (`Cephalon.Observability.GrafanaCloud`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.GrafanaCloud&namespace=Cephalon.Observability.GrafanaCloud.Configuration&scope=members)
+  - Binds Grafana Cloud telemetry export options from configuration.
+  - `GrafanaCloudTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability-httpdependencies.md#member-m-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `HttpDependencyHealthOptions` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Binds HTTP dependency-health options from configuration.
   - `HttpDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -1647,6 +1659,9 @@ Browse the published API surface by public member.
 - [GetResources](cephalon-engine.md#member-m-cephalon-engine-localization-localizedtextcatalog-getresources-system-string): `Methods` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=GetResources&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
   - Gets the merged resources visible for the specified culture.
   - `IReadOnlyDictionary<string, string> GetResources(string culture)`
+- [GrafanaCloudTelemetryExportOptions](cephalon-observability-grafanacloud.md#member-m-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-ctor): `Constructors` on `GrafanaCloudTelemetryExportOptions` in `Cephalon.Observability.GrafanaCloud.Configuration` (`Cephalon.Observability.GrafanaCloud`) [Browse](browse.html?q=GrafanaCloudTelemetryExportOptions&assembly=Cephalon.Observability.GrafanaCloud&namespace=Cephalon.Observability.GrafanaCloud.Configuration&scope=members)
+  - Initializes a new instance of the `GrafanaCloudTelemetryExportOptions` class.
+  - `GrafanaCloudTelemetryExportOptions()`
 - [GraphId](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-graphid): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=GraphId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The stable execution-graph identifier.
   - `string GraphId { get; set; }`
@@ -1688,6 +1703,9 @@ Browse the published API surface by public member.
   - `bool HasValues { get; }`
 - [Headers](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-headers): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the raw OTLP headers string added to collector requests.
+  - `string Headers { get; set; }`
+- [Headers](cephalon-observability-grafanacloud.md#member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-headers): `Properties` on `GrafanaCloudTelemetryExportOptions` in `Cephalon.Observability.GrafanaCloud.Configuration` (`Cephalon.Observability.GrafanaCloud`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.GrafanaCloud&namespace=Cephalon.Observability.GrafanaCloud.Configuration&scope=members)
+  - Gets or sets the raw OTLP headers string used for direct Grafana Cloud ingestion.
   - `string Headers { get; set; }`
 - [Headers](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-headers): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
   - Gets or sets the raw OTLP headers string added to Kubernetes collector requests.
@@ -1992,6 +2010,9 @@ Browse the published API surface by public member.
 - [Initializing](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-initializing): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Initializing&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime is initializing modules.
   - `const RuntimeStatus Initializing`
+- [InstanceId](cephalon-observability-grafanacloud.md#member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-instanceid): `Properties` on `GrafanaCloudTelemetryExportOptions` in `Cephalon.Observability.GrafanaCloud.Configuration` (`Cephalon.Observability.GrafanaCloud`) [Browse](browse.html?q=InstanceId&assembly=Cephalon.Observability.GrafanaCloud&namespace=Cephalon.Observability.GrafanaCloud.Configuration&scope=members)
+  - Gets or sets the Grafana Cloud instance identifier used as the Basic-auth username when the package should build the Authorization header from structured settings.
+  - `string InstanceId { get; set; }`
 - [Intelligence](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-intelligence): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Intelligence&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Identifies an intelligence-oriented technology.
   - `const TechnologyKind Intelligence`
@@ -3474,6 +3495,9 @@ Browse the published API surface by public member.
 - [ServiceName](cephalon-observability-oracledependencies.md#member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-servicename): `Properties` on `OracleDependencyDefinition` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=ServiceName&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Gets or sets the Oracle service name used in the Easy Connect data source when no full connection string is supplied.
   - `string ServiceName { get; set; }`
+- [ServiceNamespace](cephalon-observability-grafanacloud.md#member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-servicenamespace): `Properties` on `GrafanaCloudTelemetryExportOptions` in `Cephalon.Observability.GrafanaCloud.Configuration` (`Cephalon.Observability.GrafanaCloud`) [Browse](browse.html?q=ServiceNamespace&assembly=Cephalon.Observability.GrafanaCloud&namespace=Cephalon.Observability.GrafanaCloud.Configuration&scope=members)
+  - Gets or sets the optional `service.namespace` resource attribute to stamp onto exported telemetry.
+  - `string ServiceNamespace { get; set; }`
 - [Services](cephalon-engine.md#member-p-cephalon-engine-composition-enginebuilder-services): `Properties` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=Services&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Gets the service collection that the builder mutates while composing the engine.
   - `IServiceCollection Services { get; }`
@@ -4110,6 +4134,9 @@ Browse the published API surface by public member.
 - [UseDefaultAzureCredential](cephalon-observability-azuremonitor.md#member-p-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-usedefaultazurecredential): `Properties` on `AzureMonitorExportOptions` in `Cephalon.Observability.AzureMonitor.Configuration` (`Cephalon.Observability.AzureMonitor`) [Browse](browse.html?q=UseDefaultAzureCredential&assembly=Cephalon.Observability.AzureMonitor&namespace=Cephalon.Observability.AzureMonitor.Configuration&scope=members)
   - Gets or sets a value indicating whether the exporter should authenticate with `DefaultAzureCredential`.
   - `bool UseDefaultAzureCredential { get; set; }`
+- [UseDirectGrafanaCloudEndpoint](cephalon-observability-grafanacloud.md#member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-usedirectgrafanacloudendpoint): `Properties` on `GrafanaCloudTelemetryExportOptions` in `Cephalon.Observability.GrafanaCloud.Configuration` (`Cephalon.Observability.GrafanaCloud`) [Browse](browse.html?q=UseDirectGrafanaCloudEndpoint&assembly=Cephalon.Observability.GrafanaCloud&namespace=Cephalon.Observability.GrafanaCloud.Configuration&scope=members)
+  - Gets or sets a value indicating whether the package should target the Grafana Cloud OTLP endpoint when no shared collector endpoint is configured.
+  - `bool UseDirectGrafanaCloudEndpoint { get; set; }`
 - [UseDropletMetadataDefaults](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-usedropletmetadatadefaults): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=UseDropletMetadataDefaults&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets a value indicating whether the package should query the Droplet metadata service to fill in best-effort `host.id`, `host.name`, and `cloud.region` values when they are missing.
   - `bool UseDropletMetadataDefaults { get; set; }`

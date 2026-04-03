@@ -145,6 +145,7 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.Observability.SqlServerDependencies",
                 "Cephalon.Observability.OracleCloud",
                 "Cephalon.Observability.Kubernetes",
+                "Cephalon.Observability.GrafanaCloud",
                 "Cephalon.Observability.OpenShift",
                 "Cephalon.Observability.Tanzu",
                 "Cephalon.Observability.AzureMonitor",
@@ -217,6 +218,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-sqlserverdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-oraclecloud.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-kubernetes.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-grafanacloud.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-serilog.md");
 
         var manifest = Assert.Single(rendered.Files, file => file.Path == "reference-manifest.json");
@@ -283,6 +285,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.Kubernetes", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.GrafanaCloud", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.Serilog", StringComparison.Ordinal));

@@ -525,12 +525,12 @@ Delivered:
 
 ### ENG-029 Cloud-targeted observability companion integrations
 
-Status: current focus
+Status: later
 Estimate: 247
 
 Why:
 
-- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and platform-neutral Kubernetes slices are now shipped, `#120` has now shipped downstream Cloudflare and custom-provider authoring guidance instead of a misleading first-party Cloudflare exporter package, and `#126` now narrows the next first-party follow-through target to Grafana Cloud instead of reopening the remaining provider matrix as one vague task
+- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and platform-neutral Kubernetes slices are now shipped, `#120` has now shipped downstream Cloudflare and custom-provider authoring guidance instead of a misleading first-party Cloudflare exporter package, and `#126` has now shipped the Grafana Cloud first-party follow-through target instead of reopening the remaining provider matrix as one vague task
 - current Grafana Cloud OTLP docs now expose explicit OTLP endpoint wiring plus access-policy-backed auth-header guidance that fits a provider-specific companion package without moving vendor assumptions back into the engine core
 - current Cloudflare Workers observability docs center Worker-native traces and logs plus exporting OpenTelemetry-compliant traces and logs from Workers to third-party OTLP destinations, with metrics export still unsupported, so a generic Cephalon host-side Cloudflare sink would over-claim the current platform story
 - this work should stay in companion packages, preserve the shared `ILogger` pipeline plus the cloud-neutral OTLP baseline, and leave room for downstream developer-authored provider packages
@@ -545,7 +545,7 @@ Acceptance:
 - keep the shipped Oracle Cloud managed traces/metrics follow-through explicit on top of the shared OTLP baseline instead of folding Oracle Cloud APM-specific data-upload and data-key rules back into Huawei Cloud, Alibaba Cloud, or downstream custom-provider guidance
 - keep the shipped VMware Tanzu proxy-first follow-through explicit on top of the shared OTLP baseline instead of reopening Cloudflare or pretending the current Tanzu docs describe one generic vendor-direct OTLP exporter path
 - keep the shipped `#120` scope centered on downstream Cloudflare and custom-provider companion authoring guidance until Cloudflare documents a host-side ingestion story that fits Cephalon's .NET runtime model
-- keep the current `#126` scope centered on Grafana Cloud OTLP endpoint wiring plus access-policy-backed auth headers on top of the shared OTLP baseline instead of reopening a generic remaining-provider task
+- keep the shipped `#126` scope centered on Grafana Cloud OTLP endpoint wiring plus access-policy-backed auth headers on top of the shared OTLP baseline instead of reopening a generic remaining-provider task
 - keep vendor/platform-specific exporter wiring, auth, resource attributes, and hosted defaults outside `Cephalon.Engine` and `Cephalon.Abstractions`
 - keep the shared `ILogger` pipeline and existing `Cephalon.Observability.OpenTelemetry` baseline intact
 - add docs, validation, and planning sync for the supported targets plus the downstream companion-package authoring path, including Grafana Cloud OTLP/header guidance and Cloudflare-oriented guidance that stays honest about the current Worker-native export model

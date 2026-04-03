@@ -268,6 +268,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Observability.Gcp](cephalon-observability-gcp.md#namespace-cephalon-observability-gcp-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Hosting)
 
+## `Cephalon.Observability.GrafanaCloud.Configuration`
+
+- [Cephalon.Observability.GrafanaCloud](cephalon-observability-grafanacloud.md#namespace-cephalon-observability-grafanacloud-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.GrafanaCloud&namespace=Cephalon.Observability.GrafanaCloud.Configuration)
+
+## `Cephalon.Observability.GrafanaCloud.Hosting`
+
+- [Cephalon.Observability.GrafanaCloud](cephalon-observability-grafanacloud.md#namespace-cephalon-observability-grafanacloud-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.GrafanaCloud&namespace=Cephalon.Observability.GrafanaCloud.Hosting)
+
 ## `Cephalon.Observability.Hosting`
 
 - [Cephalon.Observability](cephalon-observability.md#namespace-cephalon-observability-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability&namespace=Cephalon.Observability.Hosting)
