@@ -64,7 +64,7 @@ Outcome:
 
 - exporter packaging should remain outside `Cephalon.Engine`
 - the repository now ships a reusable companion package instead of leaving exporter wiring to sample-only host code
-- remaining phase-2 work now sits primarily in phase-6 cloud tracing/export follow-through, with the self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, and Red Hat OpenShift slices shipped; any extra provider packs, downstream provider companions, or operator refinements stay adoption-driven expansion work
+- remaining phase-2 work now sits primarily in phase-6 cloud tracing/export follow-through, with the self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, and Red Hat OpenShift slices shipped, `#120` shipped as downstream Cloudflare/custom-provider guidance, and `#126` now narrowed as the current explicit Grafana Cloud follow-through; any extra provider packs, downstream provider companions, or operator refinements stay adoption-driven expansion work
 
 ### `#87` `ILogger` provider wiring and Serilog host integration
 
@@ -92,9 +92,9 @@ Current baseline:
 
 Shipped result:
 
-- the original later follow-through expanded into a broader cloud/platform companion track spanning self-hosted collectors and runtimes plus AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, DigitalOcean, Red Hat OpenShift, VMware Tanzu, and Kubernetes, with Cloudflare now narrowed into a downstream/custom-provider guidance follow-through instead of a generic first-party sink package
+- the original later follow-through expanded into a broader cloud/platform companion track spanning self-hosted collectors and runtimes plus AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, DigitalOcean, Red Hat OpenShift, VMware Tanzu, and Kubernetes, with Cloudflare now narrowed into a downstream/custom-provider guidance follow-through instead of a generic first-party sink package and Grafana Cloud now narrowed as the next explicit first-party target
 - the self-hosted slice is now shipped, `#86` has now shipped Azure Monitor exporter wiring plus hosted Azure defaults as the first explicit vendor-specific child under `ENG-029`, `#95` has now shipped the AWS follow-through as the second explicit vendor-specific child, `#98` has now shipped the GCP follow-through as the third explicit vendor-specific child, and `#102` has now shipped the Huawei Cloud follow-through as the fourth explicit vendor-specific child
-- the Alibaba Cloud slice is now shipped under `#106`, the Red Hat OpenShift slice is now shipped under `#110`, the DigitalOcean slice is now shipped under `#114`, the VMware Tanzu slice is now shipped under `#118`, `#120` has now shipped the remaining Cloudflare follow-through as downstream/custom-provider guidance instead of leaving it folded into one ambiguous first-party package task, `#124` has now shipped the platform-neutral Kubernetes collector/defaults follow-through, and `#125` has now shipped the Oracle Cloud managed-ingestion follow-through
+- the Alibaba Cloud slice is now shipped under `#106`, the Red Hat OpenShift slice is now shipped under `#110`, the DigitalOcean slice is now shipped under `#114`, the VMware Tanzu slice is now shipped under `#118`, `#120` has now shipped the remaining Cloudflare follow-through as downstream/custom-provider guidance instead of leaving it folded into one ambiguous first-party package task, `#124` has now shipped the platform-neutral Kubernetes collector/defaults follow-through, `#125` has now shipped the Oracle Cloud managed-ingestion follow-through, and `#126` is now the current explicit Grafana Cloud OTLP/header child
 
 Why this target stays in phase 6:
 
@@ -259,6 +259,22 @@ Why this target stays in phase 6:
 - Oracle Cloud-specific data-upload endpoints, data-key rules, resource attributes, and hosted defaults still belong in companion packages rather than the reusable host/runtime primitives shipped in phase 2
 - scoping Oracle Cloud as `#125` keeps the Oracle Cloud APM managed-ingestion path explicit without folding it back into the Huawei Cloud, Alibaba Cloud, Kubernetes, or downstream custom-provider slices
 
+### `#126` Grafana Cloud OTLP endpoint wiring and access-policy headers on top of the OTLP baseline
+
+Current focus:
+
+- hosts can already declare telemetry export intent through `Engine:Observability:Telemetry`, and `Cephalon.Observability.OpenTelemetry` already wires the shared OTLP logs, metrics, and traces baseline
+- the shipped self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, OpenShift, DigitalOcean, Tanzu, and Kubernetes slices plus the shipped `#120` downstream Cloudflare/custom-provider guidance have already proved the companion-package model without moving cloud-specific behavior back into `Cephalon.Engine`
+- current official Grafana Cloud OTLP docs now expose explicit OTLP endpoints plus access-policy-backed auth-header guidance that map cleanly onto a provider-specific companion package without inventing a new logging abstraction or reopening phase 2
+- this slice should keep direct Grafana Cloud endpoint wiring explicit for the documented OTLP path while preserving the shared collector-first baseline, `UseSelfHostedDefaults`, and the downstream custom-provider story for teams that still need their own routing or shaping layer
+- docs, validation, and planning should treat Grafana Cloud as the next explicit first-party target instead of reopening Cloudflare or another generic remaining-provider bucket
+
+Why this target stays in phase 6:
+
+- cloud tracing/export and platform observability work is deployment-context-specific
+- Grafana Cloud-specific OTLP endpoints, auth headers, tenant inputs, resource attributes, and hosted defaults still belong in companion packages rather than the reusable host/runtime primitives shipped in phase 2
+- scoping Grafana Cloud as `#126` keeps the next first-party companion slice explicit without folding it back into Oracle Cloud, Kubernetes, Cloudflare, or downstream custom-provider guidance
+
 ### `#33` Baseline provider-specific dependency health companion packages
 
 Shipped scope:
@@ -361,11 +377,11 @@ Why this stays separate:
 
 Current conclusion from this inventory:
 
-- the phase-2 child-task split served its purpose for the shipped baseline; with the self-hosted, Azure, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, Kubernetes, and Cloudflare/downstream guidance slices complete, future phase-6 additions can stay explicit and adoption-driven
+- the phase-2 child-task split served its purpose for the shipped baseline; with the self-hosted, Azure, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, Kubernetes, and Cloudflare/downstream guidance slices complete, `#126` can stay explicit as the current Grafana Cloud follow-through target instead of reopening the broader provider matrix
 - phase 2 can now be treated as substantially complete on top of a shipped provider/logging/runtime-surface baseline, with any extra provider packs still treated as future adoption-driven expansion
 
 Recommended execution sequence now is:
 
 1. treat phase 2 as complete for the shipped operational baseline
-2. keep `ENG-029` in phase 6 cloud and platform integrations as later follow-through again, with any future first-party Cloudflare package gated on a later explicit child and a clearer platform-side host-ingestion story
-3. keep adoption-driven provider-pack additions separate unless a concrete infrastructure gap appears, and keep the downstream companion-package story explicit for teams that need to implement their own provider path
+2. keep `ENG-029` in phase 6 cloud and platform integrations as the current explicit Grafana Cloud follow-through, with any future first-party Cloudflare package still gated on a later explicit child and a clearer platform-side host-ingestion story
+3. keep adoption-driven provider-pack additions separate beyond Grafana Cloud, and keep the downstream companion-package story explicit for teams that need to implement their own provider path
