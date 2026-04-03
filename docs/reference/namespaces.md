@@ -340,6 +340,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Observability.OpenSearchDependencies](cephalon-observability-opensearchdependencies.md#namespace-cephalon-observability-opensearchdependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.OpenSearchDependencies&namespace=Cephalon.Observability.OpenSearchDependencies.Hosting)
 
+## `Cephalon.Observability.OpenShift.Configuration`
+
+- [Cephalon.Observability.OpenShift](cephalon-observability-openshift.md#namespace-cephalon-observability-openshift-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration)
+
+## `Cephalon.Observability.OpenShift.Hosting`
+
+- [Cephalon.Observability.OpenShift](cephalon-observability-openshift.md#namespace-cephalon-observability-openshift-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Hosting)
+
 ## `Cephalon.Observability.OpenTelemetry.Hosting`
 
 - [Cephalon.Observability.OpenTelemetry](cephalon-observability-opentelemetry.md#namespace-cephalon-observability-opentelemetry-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.OpenTelemetry&namespace=Cephalon.Observability.OpenTelemetry.Hosting)
