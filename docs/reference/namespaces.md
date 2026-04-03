@@ -296,6 +296,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Observability.KafkaDependencies](cephalon-observability-kafkadependencies.md#namespace-cephalon-observability-kafkadependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Hosting)
 
+## `Cephalon.Observability.Kubernetes.Configuration`
+
+- [Cephalon.Observability.Kubernetes](cephalon-observability-kubernetes.md#namespace-cephalon-observability-kubernetes-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration)
+
+## `Cephalon.Observability.Kubernetes.Hosting`
+
+- [Cephalon.Observability.Kubernetes](cephalon-observability-kubernetes.md#namespace-cephalon-observability-kubernetes-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Hosting)
+
 ## `Cephalon.Observability.MemcachedDependencies.Configuration`
 
 - [Cephalon.Observability.MemcachedDependencies](cephalon-observability-memcacheddependencies.md#namespace-cephalon-observability-memcacheddependencies-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Configuration)

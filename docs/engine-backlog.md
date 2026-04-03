@@ -176,7 +176,7 @@ Follow-up later:
 
 ## SDK hardening follow-through
 
-Phase 1 SDK hardening, phase 2 operational hardening, phase 3 extensibility/package loading, and phase 4 execution/orchestration are now substantially complete on their shipped baselines. Phase 5 solution-level platform work is now also substantially complete on its shipped baseline, with the suite-scaffold contract baseline under `#79`, built-in `MicroserviceSuite` composition baseline under `#80`, multi-service suite sample baseline under `#81`, and shared governance plus additive gateway/control-plane guidance baseline under `#82`, while phase 6 keeps the shipped self-hosted OTLP slice, Azure Monitor first-vendor slice, AWS second-vendor slice, GCP third-vendor slice, Huawei Cloud fourth-vendor slice, Alibaba Cloud fifth-vendor slice, Red Hat OpenShift platform-first slice, DigitalOcean collector/defaults slice under `#114`, VMware Tanzu proxy/defaults slice under `#118`, and downstream Cloudflare/custom-provider authoring guidance slice under `#120`.
+Phase 1 SDK hardening, phase 2 operational hardening, phase 3 extensibility/package loading, and phase 4 execution/orchestration are now substantially complete on their shipped baselines. Phase 5 solution-level platform work is now also substantially complete on its shipped baseline, with the suite-scaffold contract baseline under `#79`, built-in `MicroserviceSuite` composition baseline under `#80`, multi-service suite sample baseline under `#81`, and shared governance plus additive gateway/control-plane guidance baseline under `#82`, while phase 6 keeps the shipped self-hosted OTLP slice, Azure Monitor first-vendor slice, AWS second-vendor slice, GCP third-vendor slice, Huawei Cloud fourth-vendor slice, Alibaba Cloud fifth-vendor slice, Red Hat OpenShift platform-first slice, DigitalOcean collector/defaults slice under `#114`, VMware Tanzu proxy/defaults slice under `#118`, downstream Cloudflare/custom-provider authoring guidance slice under `#120`, and the platform-neutral Kubernetes collector/defaults slice under `#124`.
 
 ### ENG-005 Engine API and package surface hardening
 
@@ -526,20 +526,21 @@ Delivered:
 ### ENG-029 Cloud-targeted observability companion integrations
 
 Status: later
-Estimate: 184
+Estimate: 205
 
 Why:
 
-- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, and VMware Tanzu slices are now shipped, and `#120` has now shipped downstream Cloudflare and custom-provider authoring guidance instead of a misleading first-party Cloudflare exporter package
+- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and platform-neutral Kubernetes slices are now shipped, and `#120` has now shipped downstream Cloudflare and custom-provider authoring guidance instead of a misleading first-party Cloudflare exporter package
 - current Cloudflare Workers observability docs center Worker-native traces and logs plus exporting OpenTelemetry-compliant traces and logs from Workers to third-party OTLP destinations, with metrics export still unsupported, so a generic Cephalon host-side Cloudflare sink would over-claim the current platform story
 - this work should stay in companion packages, preserve the shared `ILogger` pipeline plus the cloud-neutral OTLP baseline, and leave room for downstream developer-authored provider packages
 
 Acceptance:
 
 - keep the shipped self-hosted deployment defaults explicit and reusable instead of burying them inside vendor-specific companion packs
-- keep the shipped Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and DigitalOcean slices explicit on top of the shared OpenTelemetry baseline
+- keep the shipped Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, and Kubernetes slices explicit on top of the shared OpenTelemetry baseline
 - keep the shipped Red Hat OpenShift and DigitalOcean companion follow-through explicit instead of rolling them back into one ambiguous remaining-platform scope
 - keep the shipped DigitalOcean collector-first follow-through explicit instead of over-claiming a managed DigitalOcean OTLP exporter surface that the current platform docs do not promise
+- keep the shipped Kubernetes collector-first follow-through explicit on top of the shared OTLP baseline instead of folding generic cluster defaults back into OpenShift, DigitalOcean, or downstream custom-provider guidance
 - keep the shipped VMware Tanzu proxy-first follow-through explicit on top of the shared OTLP baseline instead of reopening Cloudflare or pretending the current Tanzu docs describe one generic vendor-direct OTLP exporter path
 - keep the shipped `#120` scope centered on downstream Cloudflare and custom-provider companion authoring guidance until Cloudflare documents a host-side ingestion story that fits Cephalon's .NET runtime model
 - keep vendor/platform-specific exporter wiring, auth, resource attributes, and hosted defaults outside `Cephalon.Engine` and `Cephalon.Abstractions`
@@ -601,6 +602,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-029 Red Hat OpenShift collector wiring and hosted OpenShift defaults on top of the OTLP baseline
 - ENG-029 DigitalOcean collector wiring and hosted DigitalOcean defaults on top of the OTLP baseline
 - ENG-029 VMware Tanzu proxy handoff and hosted Tanzu defaults on top of the OTLP baseline
+- ENG-029 Kubernetes collector wiring and hosted Kubernetes defaults on top of the OTLP baseline
 
 ### Sprint 2
 
@@ -612,4 +614,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - shipped first execution-graph contract baseline plus hosted-execution follow-through under `ENG-013`
 - shipped package distribution and provenance follow-through beyond the original package-loading baseline
 - shipped repo-wide XML-comment hygiene for test harnesses through explicit xUnit visibility rules plus tooling-backed guards under `ENG-028`
-- ENG-029 self-hosted OTLP collector/runtime-default follow-through plus the shipped Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and Cloudflare/downstream provider authoring guidance slices
+- ENG-029 self-hosted OTLP collector/runtime-default follow-through plus the shipped Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, Kubernetes, and Cloudflare/downstream provider authoring guidance slices

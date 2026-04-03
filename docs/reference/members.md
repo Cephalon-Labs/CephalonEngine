@@ -138,6 +138,9 @@ Browse the published API surface by public member.
 - [AddCephalonKafkaDependencyHealth](cephalon-observability-kafkadependencies.md#member-m-cephalon-observability-kafkadependencies-hosting-kafkadependencyhealthservicecollectionextensions-addcephalonkafkadependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions): `Methods` on `KafkaDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.KafkaDependencies.Hosting` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=AddCephalonKafkaDependencyHealth&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Hosting&scope=members)
   - Adds Kafka dependency-health services using configuration as the primary source of probe settings.
   - `IServiceCollection AddCephalonKafkaDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<KafkaDependencyHealthOptions> configure)`
+- [AddCephalonKubernetes](cephalon-observability-kubernetes.md#member-m-cephalon-observability-kubernetes-hosting-kuberneteshostapplicationbuilderextensions-addcephalonkubernetes-1-0-system-action-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions): `Methods` on `KubernetesHostApplicationBuilderExtensions` in `Cephalon.Observability.Kubernetes.Hosting` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=AddCephalonKubernetes&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Hosting&scope=members)
+  - Adds Kubernetes-aware OpenTelemetry registration for the Cephalon engine diagnostics surface.
+  - `TBuilder AddCephalonKubernetes<TBuilder>(this TBuilder builder, Action<KubernetesTelemetryExportOptions> configure)`
 - [AddCephalonMemcachedDependencyHealth](cephalon-observability-memcacheddependencies.md#member-m-cephalon-observability-memcacheddependencies-hosting-memcacheddependencyhealthservicecollectionextensions-addcephalonmemcacheddependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions): `Methods` on `MemcachedDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.MemcachedDependencies.Hosting` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=AddCephalonMemcachedDependencyHealth&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Hosting&scope=members)
   - Adds Memcached dependency-health services using code-first configuration.
   - `IServiceCollection AddCephalonMemcachedDependencyHealth(this IServiceCollection services, Action<MemcachedDependencyHealthOptions> configure)`
@@ -582,6 +585,9 @@ Browse the published API surface by public member.
 - [ClusterName](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-clustername): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=ClusterName&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the Kubernetes cluster name to stamp onto exported resources for DOKS deployments.
   - `string ClusterName { get; set; }`
+- [ClusterName](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-clustername): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=ClusterName&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
+  - Gets or sets the Kubernetes cluster name to stamp onto exported resources.
+  - `string ClusterName { get; set; }`
 - [ClusterName](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-clustername): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=ClusterName&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Gets or sets the Kubernetes cluster name to stamp onto exported resources.
   - `string ClusterName { get; set; }`
@@ -597,11 +603,17 @@ Browse the published API surface by public member.
 - [CollectorNamespace](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-collectornamespace): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=CollectorNamespace&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the collector namespace used to build the in-cluster DOKS collector endpoint.
   - `string CollectorNamespace { get; set; }`
+- [CollectorNamespace](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-collectornamespace): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=CollectorNamespace&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
+  - Gets or sets the collector namespace used to build the in-cluster Kubernetes collector endpoint.
+  - `string CollectorNamespace { get; set; }`
 - [CollectorNamespace](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-collectornamespace): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=CollectorNamespace&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Gets or sets the collector namespace used to build the in-cluster OpenShift collector endpoint.
   - `string CollectorNamespace { get; set; }`
 - [CollectorPort](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-collectorport): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=CollectorPort&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the collector port used for the in-cluster DOKS collector endpoint.
+  - `int? CollectorPort { get; set; }`
+- [CollectorPort](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-collectorport): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=CollectorPort&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
+  - Gets or sets the collector port used for the in-cluster Kubernetes collector endpoint.
   - `int? CollectorPort { get; set; }`
 - [CollectorPort](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-collectorport): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=CollectorPort&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Gets or sets the collector port used for the in-cluster OpenShift collector endpoint.
@@ -609,11 +621,17 @@ Browse the published API surface by public member.
 - [CollectorScheme](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-collectorscheme): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=CollectorScheme&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the URI scheme used for the in-cluster DOKS collector endpoint.
   - `string CollectorScheme { get; set; }`
+- [CollectorScheme](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-collectorscheme): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=CollectorScheme&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
+  - Gets or sets the URI scheme used for the in-cluster Kubernetes collector endpoint.
+  - `string CollectorScheme { get; set; }`
 - [CollectorScheme](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-collectorscheme): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=CollectorScheme&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Gets or sets the URI scheme used for the in-cluster OpenShift collector endpoint.
   - `string CollectorScheme { get; set; }`
 - [CollectorServiceName](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-collectorservicename): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=CollectorServiceName&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the collector service name used to build the in-cluster DOKS collector endpoint.
+  - `string CollectorServiceName { get; set; }`
+- [CollectorServiceName](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-collectorservicename): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=CollectorServiceName&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
+  - Gets or sets the collector service name used to build the in-cluster Kubernetes collector endpoint.
   - `string CollectorServiceName { get; set; }`
 - [CollectorServiceName](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-collectorservicename): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=CollectorServiceName&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Gets or sets the collector service name used to build the in-cluster OpenShift collector endpoint.
@@ -687,6 +705,9 @@ Browse the published API surface by public member.
 - [ContactPoints](cephalon-observability-cassandradependencies.md#member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-contactpoints): `Properties` on `CassandraDependencyDefinition` in `Cephalon.Observability.CassandraDependencies.Configuration` (`Cephalon.Observability.CassandraDependencies`) [Browse](browse.html?q=ContactPoints&assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Configuration&scope=members)
   - Gets or sets the Cassandra contact points used to establish the probe session.
   - `IReadOnlyList<string> ContactPoints { get; set; }`
+- [ContainerName](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-containername): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=ContainerName&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
+  - Gets or sets the container name to stamp onto exported resources.
+  - `string ContainerName { get; set; }`
 - [Contents](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocfile-contents): `Properties` on `ReferenceDocFile` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Contents&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the markdown contents of the file.
   - `string Contents { get; }`
@@ -1491,6 +1512,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability-kafkadependencies.md#member-m-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `KafkaDependencyHealthOptions` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
   - Binds Kafka dependency-health options from configuration.
   - `KafkaDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-observability-kubernetes.md#member-m-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
+  - Binds Kubernetes telemetry export options from configuration.
+  - `KubernetesTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-localizationsettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `LocalizationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads localization settings from configuration.
   - `LocalizationSettings FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -1655,6 +1679,9 @@ Browse the published API surface by public member.
   - `bool HasValues { get; }`
 - [Headers](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-headers): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the raw OTLP headers string added to collector requests.
+  - `string Headers { get; set; }`
+- [Headers](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-headers): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
+  - Gets or sets the raw OTLP headers string added to Kubernetes collector requests.
   - `string Headers { get; set; }`
 - [Headers](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-headers): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Gets or sets the raw OTLP headers string added to OpenShift collector requests.
@@ -2097,6 +2124,9 @@ Browse the published API surface by public member.
 - [KnowledgeRetrieval](cephalon-engine.md#member-p-cephalon-engine-technologies-builtintechnologies-knowledgeretrieval): `Properties` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=KnowledgeRetrieval&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
   - Gets the built-in knowledge-retrieval technology profile.
   - `TechnologyDescriptor KnowledgeRetrieval { get; }`
+- [KubernetesTelemetryExportOptions](cephalon-observability-kubernetes.md#member-m-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-ctor): `Constructors` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=KubernetesTelemetryExportOptions&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
+  - Initializes a new instance of the `KubernetesTelemetryExportOptions` class.
+  - `KubernetesTelemetryExportOptions()`
 
 ## L
 
@@ -2526,6 +2556,9 @@ Browse the published API surface by public member.
 - [Namespace](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-namespace): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=Namespace&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the workload namespace to stamp onto exported resources for DOKS deployments.
   - `string Namespace { get; set; }`
+- [Namespace](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-namespace): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=Namespace&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
+  - Gets or sets the workload namespace to stamp onto exported resources.
+  - `string Namespace { get; set; }`
 - [Namespace](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-namespace): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=Namespace&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Gets or sets the workload namespace to stamp onto exported resources.
   - `string Namespace { get; set; }`
@@ -2553,6 +2586,9 @@ Browse the published API surface by public member.
 - [Neo4jDependencyHealthOptions](cephalon-observability-neo4jdependencies.md#member-m-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions-ctor): `Constructors` on `Neo4jDependencyHealthOptions` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Neo4jDependencyHealthOptions&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
   - Initializes a new instance of the `Neo4jDependencyHealthOptions` class.
   - `Neo4jDependencyHealthOptions()`
+- [NodeName](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-nodename): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=NodeName&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
+  - Gets or sets the Kubernetes node name to stamp onto exported resources.
+  - `string NodeName { get; set; }`
 - [Nodes](cephalon-edge.md#member-p-cephalon-edge-configuration-edgeruntimeoptions-nodes): `Properties` on `EdgeRuntimeOptions` in `Cephalon.Edge.Configuration` (`Cephalon.Edge`) [Browse](browse.html?q=Nodes&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Configuration&scope=members)
   - Gets the host-defined edge nodes that should be available to the edge runtime.
   - `IList<EdgeNodeDescriptor> Nodes { get; }`
@@ -2778,6 +2814,12 @@ Browse the published API surface by public member.
 - [PipelinePattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-pipelinepattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=PipelinePattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the pipeline design pattern.
   - `PatternDescriptor PipelinePattern { get; }`
+- [PodName](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-podname): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=PodName&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
+  - Gets or sets the pod name to stamp onto exported resources.
+  - `string PodName { get; set; }`
+- [PodUid](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-poduid): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=PodUid&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
+  - Gets or sets the pod UID to stamp onto exported resources.
+  - `string PodUid { get; set; }`
 - [Policy](cephalon-engine.md#member-p-cephalon-engine-trust-trustsnapshot-policy): `Properties` on `TrustSnapshot` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Policy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The policy that produced the trust decisions.
   - `TrustPolicy Policy { get; set; }`
@@ -3405,6 +3447,9 @@ Browse the published API surface by public member.
 - [ServerStreaming](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-transportfeatures-serverstreaming): `Fields` on `TransportFeatures` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=ServerStreaming&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Indicates server-streaming interactions are supported.
   - `const TransportFeatures ServerStreaming`
+- [ServiceDnsSuffix](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-servicednssuffix): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=ServiceDnsSuffix&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
+  - Gets or sets the service DNS suffix used to build the in-cluster Kubernetes collector endpoint.
+  - `string ServiceDnsSuffix { get; set; }`
 - [ServiceName](cephalon-observability-oracledependencies.md#member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-servicename): `Properties` on `OracleDependencyDefinition` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=ServiceName&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Gets or sets the Oracle service name used in the Easy Connect data source when no full connection string is supplied.
   - `string ServiceName { get; set; }`
@@ -3918,6 +3963,9 @@ Browse the published API surface by public member.
 - [TrustedCaCertificatePath](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-trustedcacertificatepath): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=TrustedCaCertificatePath&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the filesystem path to a trusted CA bundle used for HTTPS OTLP/HTTP traces and metrics against shared or in-cluster DigitalOcean collectors.
   - `string TrustedCaCertificatePath { get; set; }`
+- [TrustedCaCertificatePath](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-trustedcacertificatepath): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=TrustedCaCertificatePath&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
+  - Gets or sets the filesystem path to a trusted CA bundle used for HTTPS OTLP/HTTP traces and metrics against in-cluster or shared Kubernetes collectors.
+  - `string TrustedCaCertificatePath { get; set; }`
 - [TrustedCaCertificatePath](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-trustedcacertificatepath): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=TrustedCaCertificatePath&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Gets or sets the filesystem path to a trusted CA bundle used for HTTPS OTLP/HTTP traces and metrics against in-cluster or shared OpenShift collectors.
   - `string TrustedCaCertificatePath { get; set; }`
@@ -4049,6 +4097,9 @@ Browse the published API surface by public member.
   - `bool UseGoogleManagedIngestion { get; set; }`
 - [UseInClusterCollectorService](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-useinclustercollectorservice): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=UseInClusterCollectorService&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets a value indicating whether the package should target an in-cluster collector service for DOKS deployments when no shared endpoint is configured.
+  - `bool UseInClusterCollectorService { get; set; }`
+- [UseInClusterCollectorService](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-useinclustercollectorservice): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=UseInClusterCollectorService&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
+  - Gets or sets a value indicating whether the package should target an in-cluster collector service when no shared endpoint is configured.
   - `bool UseInClusterCollectorService { get; set; }`
 - [UseInClusterCollectorService](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-useinclustercollectorservice): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=UseInClusterCollectorService&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Gets or sets a value indicating whether the package should target an in-cluster OpenShift collector service when no shared endpoint is configured.
