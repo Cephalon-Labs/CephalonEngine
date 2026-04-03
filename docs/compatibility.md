@@ -11,7 +11,7 @@ This guide describes the compatibility contract that must stay aligned across Ce
 | Blueprint, pattern, technology, and transport identifiers | the runtime/app-model contracts in `Cephalon.Abstractions` and `Cephalon.Engine` | scaffold plans, CLI parsing/help text, template coverage, samples, and hand-authored docs |
 | Package manifest contract | `cephalon.package.json` plus engine package-loading and policy enforcement | scaffolded module output, template module starters, reference modules, module-authoring docs, operations docs, and trust/package-policy guidance |
 | Reference-doc publishing flow | `Cephalon.ReferenceDocs`, the CLI docs commands, and the host `ReferenceDocs` section | scaffolded host appsettings/readmes, docs-publish command help, hosted docs guidance, and docs examples |
-| Release package-artifact flow | `scripts/publish-package-artifacts.ps1`, `scripts/validate-release.ps1`, and the release-validation workflow | intended packable project set, shared NuGet metadata/readme defaults, release artifact uploads, and package-publishing docs |
+| Release package-artifact flow | `scripts/publish-package-artifacts.ps1`, `scripts/validate-release.ps1`, and the release-validation workflow | intended packable project set, shared NuGet metadata/readme defaults, CLI tool packaging, release artifact uploads, and package-publishing docs |
 
 ## Alignment rules
 
@@ -48,14 +48,15 @@ This guide describes the compatibility contract that must stay aligned across Ce
 ### Package publishing flow
 
 - keep the release package-artifact script aligned with the intended packable surface instead of relying on ambient `dotnet pack` defaults across the whole solution
-- keep shared NuGet metadata, package readme defaults, and release artifact output aligned across shipped packages and the reference module package
-- keep the CLI out of the release package-artifact baseline until dedicated tool packaging is implemented explicitly
+- keep shared NuGet metadata, package readme defaults, CLI tool packaging, and release artifact output aligned across shipped packages, the CLI tool package, and the reference module package
+- keep the stable `cephalon` command name aligned across `Cephalon.Cli` packaging, docs, and validation coverage whenever the tool install surface changes
 
 ## Repository verification points
 
 - `ScaffoldGeneratorTests` verifies scaffolded package versions and generated module manifests
 - `TemplatePackTests` verifies starter coverage, package contents, and emitted module manifest conventions
 - `CliApplicationTests` verifies CLI entry points and end-to-end command behavior for the user-facing shell
+- `PackagePublishingTests` verifies the intended release artifact set, packaged readmes, and the local-install smoke path for the `Cephalon.Cli` tool package
 - `EngineBuilderTests` verifies package-manifest compatibility enforcement such as engine-version and target-framework checks
 - `PackageSurfaceTests` verifies the intended exported surface of the CLI, reference-doc tooling, adapters, scaffolding, and companion packs
 - `TestHarnessSurfaceTests` verifies that `tests/Cephalon.Tests` exports only xUnit test classes plus the explicit reflective transport-contract allow list and keeps XML-document generation disabled

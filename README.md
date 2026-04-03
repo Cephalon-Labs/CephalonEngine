@@ -129,12 +129,15 @@ This keeps config-driven features such as engine settings, OpenAPI, hosted docs,
 ## Quick start
 
 ```powershell
-dotnet build
-dotnet test
-dotnet run --project src/Cephalon.Cli -- --help
-dotnet run --project src/Cephalon.Cli -- docs publish --root .
-dotnet run --project src/Cephalon.Cli -- docs publish --root . --open
-dotnet run --project src/Cephalon.Cli -- docs publish --root . --enable-hosting --appsettings playground/Cephalon.Playground/appsettings.json
+  dotnet build
+  dotnet test
+  dotnet run --project src/Cephalon.Cli -- --help
+  dotnet pack src/Cephalon.Cli/Cephalon.Cli.csproj -c Release -o artifacts/cli-tool
+  dotnet tool install --tool-path .\.tools\cephalon Cephalon.Cli --add-source .\artifacts\cli-tool --ignore-failed-sources --no-cache
+  .\.tools\cephalon\cephalon --help
+  dotnet run --project src/Cephalon.Cli -- docs publish --root .
+  dotnet run --project src/Cephalon.Cli -- docs publish --root . --open
+  dotnet run --project src/Cephalon.Cli -- docs publish --root . --enable-hosting --appsettings playground/Cephalon.Playground/appsettings.json
 dotnet run --project src/Cephalon.Cli -- docs publish --root . --enable-hosting --validate-hosting --appsettings playground/Cephalon.Playground/appsettings.json --host-url https://localhost:7235
 dotnet run --project src/Cephalon.Cli -- docs publish --root . --enable-hosting --appsettings playground/Cephalon.Playground/appsettings.json --open --host-url https://localhost:7235
 dotnet run --project src/Cephalon.Cli -- docs enable-hosting --appsettings playground/Cephalon.Playground/appsettings.json --root .

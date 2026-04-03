@@ -52,10 +52,6 @@ function Get-ReleasePackageProjects {
     $projects = [System.Collections.Generic.List[string]]::new()
 
     foreach ($srcDirectory in Get-ChildItem -Path (Join-Path $repoRoot "src") -Directory -Filter "Cephalon.*" | Sort-Object Name) {
-        if ($srcDirectory.Name -eq "Cephalon.Cli") {
-            continue
-        }
-
         $projectPath = Join-Path $srcDirectory.FullName ($srcDirectory.Name + ".csproj")
         if (Test-Path -LiteralPath $projectPath) {
             $projects.Add($projectPath)

@@ -18,7 +18,7 @@
     <PackageReadmeFile Condition="'$(IsPackable)' != 'false' and '$(PackageReadmeFile)' == ''">PACKAGE.md</PackageReadmeFile>
   </PropertyGroup>
 
-  <ItemGroup Condition="$([System.String]::Copy('$(MSBuildProjectName)').StartsWith('Cephalon.')) and '$(IsPackable)' != 'false' and '$(PackageReadmeFile)' == 'PACKAGE.md' and '$(MSBuildProjectName)' != 'Cephalon.TemplatePack'">
+  <ItemGroup Condition="$([System.String]::Copy('$(MSBuildProjectName)').StartsWith('Cephalon.')) and '$(IsPackable)' != 'false' and '$(PackageReadmeFile)' == 'PACKAGE.md' and '$(MSBuildProjectName)' != 'Cephalon.TemplatePack' and !Exists('$(MSBuildProjectDirectory)\PACKAGE.md')">
     <None Include="$(MSBuildThisFileDirectory)docs\package-readme.md" Pack="true" PackagePath="PACKAGE.md" Link="PACKAGE.md" Visible="false" />
   </ItemGroup>
 </Project>
