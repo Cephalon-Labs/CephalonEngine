@@ -241,6 +241,23 @@ Delivered:
 - `scripts/publish-package-artifacts.ps1` now publishes deterministic release artifacts under `artifacts/packages-release` and emits a manifest of the packaged project set
 - `scripts/validate-release.ps1`, the release-validation workflow, docs, and tooling coverage now all validate the same package-artifact baseline instead of leaving packaging drift implicit
 
+### ENG-031 CLI tool packaging baseline
+
+Status: done
+Estimate: 8
+
+Why:
+
+- `ENG-030` made the intended release artifact set explicit, but it also left `Cephalon.Cli` out on purpose until the repository ships a truthful dedicated install surface instead of a generic library-style nupkg
+- the docs currently center `dotnet run --project src/Cephalon.Cli -- ...`, which is fine for repo contributors but not yet the external adoption path we want to validate and publish as a supported CLI install story
+
+Delivered:
+
+- `Cephalon.Cli` now ships as an explicit `.NET tool` package with the stable `cephalon` command name and a package-specific readme instead of staying outside the release package boundary
+- the release package-artifact flow now includes the CLI tool package alongside the shipped library and template artifacts
+- tooling coverage now validates the packed tool metadata, package contents, and a local install/execute smoke path from the produced `Cephalon.Cli` artifact
+- package-publishing docs, compatibility guidance, and repository usage examples now document the supported CLI install path explicitly instead of centering `dotnet run --project` as the only adoption story
+
 ## Current operational focus
 
 Phase 2 operational hardening is now substantially complete:
