@@ -143,6 +143,7 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.Observability.RabbitMqDependencies",
                 "Cephalon.Observability.RedisDependencies",
                 "Cephalon.Observability.SqlServerDependencies",
+                "Cephalon.Observability.OracleCloud",
                 "Cephalon.Observability.Kubernetes",
                 "Cephalon.Observability.OpenShift",
                 "Cephalon.Observability.Tanzu",
@@ -214,6 +215,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-rabbitmqdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-redisdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-sqlserverdependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-oraclecloud.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-kubernetes.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-serilog.md");
 
@@ -275,6 +277,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.SqlServerDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.OracleCloud", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.Kubernetes", StringComparison.Ordinal));

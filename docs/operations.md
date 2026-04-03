@@ -1350,6 +1350,59 @@ Operational notes:
 - `HostedPlatform` can be `ecs`, `cce`, or `functiongraph`
 - `Region` lets the package stamp `cloud.region` when a deployment wants that value to stay explicit
 
+## Oracle Cloud observability path
+
+`Cephalon.Observability.OracleCloud` keeps hosted Oracle Cloud defaults and an optional Oracle Cloud APM managed traces/metrics path in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "Telemetry": {
+        "Provider": "OpenTelemetry",
+        "Protocol": "otlp/http",
+        "ExportLogs": false,
+        "ExportMetrics": true,
+        "ExportTraces": true,
+        "OracleCloud": {
+          "HostedPlatform": "oke",
+          "Region": "us-ashburn-1",
+          "UseManagedOpenTelemetryIngestion": true,
+          "DataUploadEndpoint": "https://aaaaaaaaaaaaaaaaaaaaaa.apm-agt.us-ashburn-1.oci.oraclecloud.com",
+          "UsePublicTraceDataKey": true,
+          "TraceDataKey": "replace-with-public-or-private-trace-data-key",
+          "MetricsDataKey": "replace-with-private-metrics-data-key"
+        }
+      }
+    }
+  }
+}
+```
+
+Host registration example:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonObservability(builder.Configuration);
+builder.AddCephalonOracleCloud();
+```
+
+Operational notes:
+
+- the Oracle Cloud package is optional and stays outside `Cephalon.Engine`
+- when `Engine:Observability:Telemetry:Endpoint` or `UseSelfHostedDefaults` is configured, the package keeps using the shared collector-oriented OTLP path and only adds hosted Oracle Cloud resource defaults
+- when `Engine:Observability:Telemetry:OracleCloud:UseManagedOpenTelemetryIngestion` is `true` and no shared endpoint is configured, the package builds Oracle Cloud APM OTLP/HTTP traces and metrics endpoints from `DataUploadEndpoint`
+- managed Oracle Cloud APM ingestion requires `Engine:Observability:Telemetry:Protocol` to stay on `otlp/http`
+- direct managed trace ingestion requires `TraceDataKey`; direct managed metrics ingestion requires `MetricsDataKey`
+- `UsePublicTraceDataKey` switches the trace path between Oracle Cloud APM public and private trace-key ingestion; metrics always stay on the private-key path
+- direct Oracle Cloud APM managed ingestion does not re-route logs; keep logs on the shared collector path, Oracle Log Analytics, or another runtime-specific route
+- `HostedPlatform` can be `compute`, `oke`, or `functions`
+- `Region` lets the package stamp `cloud.region` when a deployment wants that value to stay explicit
+
 ## Alibaba Cloud observability path
 
 `Cephalon.Observability.AlibabaCloud` keeps hosted Alibaba Cloud defaults and an optional managed OpenTelemetry traces/metrics path in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.

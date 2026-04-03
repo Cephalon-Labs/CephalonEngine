@@ -372,6 +372,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Observability.OpenTelemetry](cephalon-observability-opentelemetry.md#namespace-cephalon-observability-opentelemetry-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.OpenTelemetry&namespace=Cephalon.Observability.OpenTelemetry.Hosting)
 
+## `Cephalon.Observability.OracleCloud.Configuration`
+
+- [Cephalon.Observability.OracleCloud](cephalon-observability-oraclecloud.md#namespace-cephalon-observability-oraclecloud-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration)
+
+## `Cephalon.Observability.OracleCloud.Hosting`
+
+- [Cephalon.Observability.OracleCloud](cephalon-observability-oraclecloud.md#namespace-cephalon-observability-oraclecloud-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Hosting)
+
 ## `Cephalon.Observability.OracleDependencies.Configuration`
 
 - [Cephalon.Observability.OracleDependencies](cephalon-observability-oracledependencies.md#namespace-cephalon-observability-oracledependencies-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration)

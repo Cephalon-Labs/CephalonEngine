@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-03T19:59:11.7940666+00:00",
+  "GeneratedAtUtc": "2026-04-03T20:39:29.8918762+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -265,6 +265,14 @@
       "FileName": "cephalon-observability-opentelemetry.md",
       "NamespaceCount": 1,
       "TypeCount": 1
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.OracleCloud",
+      "Category": "Hosts",
+      "Description": "Oracle Cloud APM OTLP defaults and managed traces/metrics integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-oraclecloud.md",
+      "NamespaceCount": 2,
+      "TypeCount": 2
     },
     {
       "AssemblyName": "Cephalon.Observability.OracleDependencies",
@@ -998,6 +1006,20 @@
       "AssemblyName": "Cephalon.Observability.OpenTelemetry",
       "FileName": "cephalon-observability-opentelemetry.md",
       "AnchorId": "namespace-cephalon-observability-opentelemetry-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.OracleCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleCloud",
+      "FileName": "cephalon-observability-oraclecloud.md",
+      "AnchorId": "namespace-cephalon-observability-oraclecloud-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.OracleCloud.Hosting",
+      "AssemblyName": "Cephalon.Observability.OracleCloud",
+      "FileName": "cephalon-observability-oraclecloud.md",
+      "AnchorId": "namespace-cephalon-observability-oraclecloud-hosting",
       "TypeCount": 1
     },
     {
@@ -3662,6 +3684,36 @@
       }
     },
     {
+      "DisplayName": "OracleCloudHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.OracleCloud.Hosting",
+      "AssemblyName": "Cephalon.Observability.OracleCloud",
+      "FileName": "cephalon-observability-oraclecloud.md",
+      "AnchorId": "type-cephalon-observability-oraclecloud-hosting-oraclecloudhostapplicationbuilderextensions",
+      "Declaration": "public static class OracleCloudHostApplicationBuilderExtensions",
+      "Summary": "Adds Oracle Cloud-hosted observability defaults and optional Oracle Cloud APM managed ingestion for Cephalon hosts.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "OracleCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OracleCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleCloud",
+      "FileName": "cephalon-observability-oraclecloud.md",
+      "AnchorId": "type-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions",
+      "Declaration": "public sealed class OracleCloudTelemetryExportOptions",
+      "Summary": "Configures Oracle Cloud observability defaults on top of the shared Cephalon telemetry contract.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "OracleDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.OracleDependencies",
@@ -5675,6 +5727,17 @@
       "AnchorId": "member-m-cephalon-observability-opentelemetry-hosting-opentelemetryhostapplicationbuilderextensions-addcephalonopentelemetry-1-0-system-action-cephalon-observability-configuration-telemetryexportoptions",
       "Signature": "TBuilder AddCephalonOpenTelemetry\u003CTBuilder\u003E(this TBuilder builder, Action\u003CTelemetryExportOptions\u003E configure)",
       "Summary": "Adds OpenTelemetry exporter registration for the Cephalon engine diagnostics surface."
+    },
+    {
+      "DisplayName": "AddCephalonOracleCloud",
+      "Category": "Methods",
+      "DeclaringTypeName": "OracleCloudHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.OracleCloud.Hosting",
+      "AssemblyName": "Cephalon.Observability.OracleCloud",
+      "FileName": "cephalon-observability-oraclecloud.md",
+      "AnchorId": "member-m-cephalon-observability-oraclecloud-hosting-oraclecloudhostapplicationbuilderextensions-addcephalonoraclecloud-1-0-system-action-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions",
+      "Signature": "TBuilder AddCephalonOracleCloud\u003CTBuilder\u003E(this TBuilder builder, Action\u003COracleCloudTelemetryExportOptions\u003E configure)",
+      "Summary": "Adds Oracle Cloud-aware OpenTelemetry registration for the Cephalon engine diagnostics surface."
     },
     {
       "DisplayName": "AddCephalonOracleDependencyHealth",
@@ -7809,6 +7872,17 @@
       "AnchorId": "member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-datacenter",
       "Signature": "string Datacenter { get; set; }",
       "Summary": "Gets or sets the optional Consul datacenter name added as the \u0060dc\u0060 query parameter."
+    },
+    {
+      "DisplayName": "DataUploadEndpoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OracleCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleCloud",
+      "FileName": "cephalon-observability-oraclecloud.md",
+      "AnchorId": "member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-datauploadendpoint",
+      "Signature": "string DataUploadEndpoint { get; set; }",
+      "Summary": "Gets or sets the Oracle Cloud APM data upload endpoint used to build direct managed OTLP/HTTP ingestion URLs."
     },
     {
       "DisplayName": "DeactivatedAtUtc",
@@ -10585,6 +10659,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "OracleCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OracleCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleCloud",
+      "FileName": "cephalon-observability-oraclecloud.md",
+      "AnchorId": "member-m-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "OracleCloudTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Oracle Cloud telemetry export options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "OracleDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.OracleDependencies",
@@ -11494,6 +11579,17 @@
       "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-hostedplatform",
       "Signature": "string HostedPlatform { get; set; }",
       "Summary": "Gets or sets the OpenShift deployment target whose hosted defaults should be applied."
+    },
+    {
+      "DisplayName": "HostedPlatform",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OracleCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleCloud",
+      "FileName": "cephalon-observability-oraclecloud.md",
+      "AnchorId": "member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-hostedplatform",
+      "Signature": "string HostedPlatform { get; set; }",
+      "Summary": "Gets or sets the hosted Oracle Cloud platform whose default resource attributes should be applied."
     },
     {
       "DisplayName": "HostedPlatform",
@@ -13674,6 +13770,17 @@
       "Summary": "Gets or sets the HTTP method used for the probe request."
     },
     {
+      "DisplayName": "MetricsDataKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OracleCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleCloud",
+      "FileName": "cephalon-observability-oraclecloud.md",
+      "AnchorId": "member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-metricsdatakey",
+      "Signature": "string MetricsDataKey { get; set; }",
+      "Summary": "Gets or sets the Oracle Cloud APM private metrics data key used for direct managed metrics ingestion."
+    },
+    {
       "DisplayName": "Microservice",
       "Category": "Properties",
       "DeclaringTypeName": "BuiltInBlueprints",
@@ -14464,6 +14571,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-enginesettings-options",
       "Signature": "EngineOptions Options { get; }",
       "Summary": "Gets module and capability option overrides."
+    },
+    {
+      "DisplayName": "OracleCloudTelemetryExportOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "OracleCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OracleCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleCloud",
+      "FileName": "cephalon-observability-oraclecloud.md",
+      "AnchorId": "member-m-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-ctor",
+      "Signature": "OracleCloudTelemetryExportOptions()",
+      "Summary": "Initializes a new instance of the \u0060OracleCloudTelemetryExportOptions\u0060 class."
     },
     {
       "DisplayName": "OracleDependencyDefinition",
@@ -16004,6 +16122,17 @@
       "AnchorId": "member-p-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions-region",
       "Signature": "string Region { get; set; }",
       "Summary": "Gets or sets the Huawei Cloud region to stamp onto exported resources when one should be explicit."
+    },
+    {
+      "DisplayName": "Region",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OracleCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleCloud",
+      "FileName": "cephalon-observability-oraclecloud.md",
+      "AnchorId": "member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-region",
+      "Signature": "string Region { get; set; }",
+      "Summary": "Gets or sets the Oracle Cloud region to stamp onto exported resources when one should be explicit."
     },
     {
       "DisplayName": "RegisterCapabilities",
@@ -19185,6 +19314,17 @@
       "Summary": "The event is useful only for highly detailed trace output."
     },
     {
+      "DisplayName": "TraceDataKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OracleCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleCloud",
+      "FileName": "cephalon-observability-oraclecloud.md",
+      "AnchorId": "member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-tracedatakey",
+      "Signature": "string TraceDataKey { get; set; }",
+      "Summary": "Gets or sets the Oracle Cloud APM trace data key used for direct managed trace ingestion."
+    },
+    {
       "DisplayName": "Traits",
       "Category": "Properties",
       "DeclaringTypeName": "HelloReply",
@@ -19823,6 +19963,17 @@
       "Summary": "Gets or sets a value indicating whether the package should use Alibaba Cloud Managed Service for OpenTelemetry when no shared collector endpoint is configured."
     },
     {
+      "DisplayName": "UseManagedOpenTelemetryIngestion",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OracleCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleCloud",
+      "FileName": "cephalon-observability-oraclecloud.md",
+      "AnchorId": "member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-usemanagedopentelemetryingestion",
+      "Signature": "bool UseManagedOpenTelemetryIngestion { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the package should use Oracle Cloud APM managed OpenTelemetry ingestion when no shared collector endpoint is configured."
+    },
+    {
       "DisplayName": "UseOptions",
       "Category": "Methods",
       "DeclaringTypeName": "EngineBuilder",
@@ -19843,6 +19994,17 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-usepackagepolicy-cephalon-engine-configuration-packagepolicy",
       "Signature": "EngineBuilder UsePackagePolicy(PackagePolicy policy)",
       "Summary": "Replaces the package-governance policy used when loading independently shipped module packages."
+    },
+    {
+      "DisplayName": "UsePublicTraceDataKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OracleCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.OracleCloud",
+      "FileName": "cephalon-observability-oraclecloud.md",
+      "AnchorId": "member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-usepublictracedatakey",
+      "Signature": "bool UsePublicTraceDataKey { get; set; }",
+      "Summary": "Gets or sets a value indicating whether trace ingestion should use the public Oracle Cloud APM data key path instead of the private data key path."
     },
     {
       "DisplayName": "Username",
