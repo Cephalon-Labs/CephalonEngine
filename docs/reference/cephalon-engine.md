@@ -2909,6 +2909,66 @@ string MinimumVersion { get; }
 
 Gets the minimum acceptable version of the required package, when declared.
 
+<a id="type-cephalon-engine-manifest-packagedistributionmanifest"></a>
+
+### `PackageDistributionManifest`
+
+Describes where an independently shipped package is distributed from.
+
+#### Declaration
+```csharp
+public sealed class PackageDistributionManifest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-manifest-packagedistributionmanifest-ctor-system-string-system-string-system-string"></a>
+
+##### `PackageDistributionManifest`
+
+```csharp
+PackageDistributionManifest(string channel, string manifestUri, string packageUri)
+```
+
+Creates a package distribution manifest entry.
+
+Parameters:
+- `channel`: The release channel declared by the package manifest, when available.
+- `manifestUri`: The externally reachable package-manifest URI declared by the package manifest, when available.
+- `packageUri`: The externally reachable package archive or feed URI declared by the package manifest, when available.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-manifest-packagedistributionmanifest-channel"></a>
+
+##### `Channel`
+
+```csharp
+string Channel { get; }
+```
+
+Gets the declared release channel, when available.
+
+<a id="member-p-cephalon-engine-manifest-packagedistributionmanifest-manifesturi"></a>
+
+##### `ManifestUri`
+
+```csharp
+string ManifestUri { get; }
+```
+
+Gets the declared externally reachable package-manifest URI, when available.
+
+<a id="member-p-cephalon-engine-manifest-packagedistributionmanifest-packageuri"></a>
+
+##### `PackageUri`
+
+```csharp
+string PackageUri { get; }
+```
+
+Gets the declared externally reachable package archive or feed URI, when available.
+
 <a id="type-cephalon-engine-manifest-packagemanifest"></a>
 
 ### `PackageManifest`
@@ -2922,12 +2982,12 @@ public sealed class PackageManifest
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-manifest-packagemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagesignaturemanifest-system-boolean-system-string-system-string-system-boolean-system-string"></a>
+<a id="member-m-cephalon-engine-manifest-packagemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-cephalon-engine-manifest-packagedistributionmanifest-cephalon-engine-manifest-packageprovenancemanifest-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagesignaturemanifest-system-boolean-system-string-system-string-system-boolean-system-string"></a>
 
 ##### `PackageManifest`
 
 ```csharp
-PackageManifest(string id, string kind, string assemblyName, string path, string sourcePath, string loadContext, IReadOnlyList<string> modules, string version, string minimumEngineVersion, string maximumEngineVersion, IReadOnlyList<string> supportedTargetFrameworks, string publisherId, string publisherDisplayName, string publisherWebsite, string signatureType, string signatureSigner, string signatureKeyId, string signatureFingerprint, string signatureCertificateThumbprint, string signatureAlgorithm, IReadOnlyList<PackageSignatureManifest> signatures, bool isSignatureVerified, string signatureVerificationReason, string checksumSha256, bool isTrusted, string trustReason)
+PackageManifest(string id, string kind, string assemblyName, string path, string sourcePath, string loadContext, IReadOnlyList<string> modules, string version, string minimumEngineVersion, string maximumEngineVersion, IReadOnlyList<string> supportedTargetFrameworks, string publisherId, string publisherDisplayName, string publisherWebsite, PackageDistributionManifest distribution, PackageProvenanceManifest provenance, string signatureType, string signatureSigner, string signatureKeyId, string signatureFingerprint, string signatureCertificateThumbprint, string signatureAlgorithm, IReadOnlyList<PackageSignatureManifest> signatures, bool isSignatureVerified, string signatureVerificationReason, string checksumSha256, bool isTrusted, string trustReason)
 ```
 
 Creates a new package manifest entry.
@@ -2947,6 +3007,8 @@ Parameters:
 - `publisherId`: The stable publisher identifier declared by the package manifest, when available.
 - `publisherDisplayName`: The publisher display name declared by the package manifest, when available.
 - `publisherWebsite`: The publisher website declared by the package manifest, when available.
+- `distribution`: The external distribution metadata declared by the package manifest, when available.
+- `provenance`: The provenance metadata declared by the package manifest, when available.
 - `signatureType`: The signature metadata type declared by the package manifest, when available.
 - `signatureSigner`: The signer identity declared by the package manifest, when available.
 - `signatureKeyId`: The trusted-key identifier declared by the package manifest, when available.
@@ -2991,6 +3053,16 @@ IReadOnlyList<PackageDependencyManifest> Dependencies { get; set; }
 ```
 
 Gets the package-to-package dependencies declared by the package manifest.
+
+<a id="member-p-cephalon-engine-manifest-packagemanifest-distribution"></a>
+
+##### `Distribution`
+
+```csharp
+PackageDistributionManifest Distribution { get; }
+```
+
+Gets the external distribution metadata declared by the package manifest, when available.
 
 <a id="member-p-cephalon-engine-manifest-packagemanifest-id"></a>
 
@@ -3081,6 +3153,16 @@ string Path { get; }
 ```
 
 Gets the resolved assembly path that the engine loaded.
+
+<a id="member-p-cephalon-engine-manifest-packagemanifest-provenance"></a>
+
+##### `Provenance`
+
+```csharp
+PackageProvenanceManifest Provenance { get; }
+```
+
+Gets the provenance metadata declared by the package manifest, when available.
 
 <a id="member-p-cephalon-engine-manifest-packagemanifest-publisherdisplayname"></a>
 
@@ -3231,6 +3313,77 @@ string Version { get; }
 ```
 
 Gets the package version declared by the package manifest, when available.
+
+<a id="type-cephalon-engine-manifest-packageprovenancemanifest"></a>
+
+### `PackageProvenanceManifest`
+
+Describes provenance metadata declared for an independently shipped package.
+
+#### Declaration
+```csharp
+public sealed class PackageProvenanceManifest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-manifest-packageprovenancemanifest-ctor-system-string-system-string-system-string-system-string"></a>
+
+##### `PackageProvenanceManifest`
+
+```csharp
+PackageProvenanceManifest(string sourceRepository, string sourceRevision, string buildUri, string statementUri)
+```
+
+Creates a package provenance manifest entry.
+
+Parameters:
+- `sourceRepository`: The source repository URI declared by the package manifest, when available.
+- `sourceRevision`: The source revision, tag, or commit identifier declared by the package manifest, when available.
+- `buildUri`: The build or pipeline URI declared by the package manifest, when available.
+- `statementUri`: The provenance statement or attestation URI declared by the package manifest, when available.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-manifest-packageprovenancemanifest-builduri"></a>
+
+##### `BuildUri`
+
+```csharp
+string BuildUri { get; }
+```
+
+Gets the declared build or pipeline URI, when available.
+
+<a id="member-p-cephalon-engine-manifest-packageprovenancemanifest-sourcerepository"></a>
+
+##### `SourceRepository`
+
+```csharp
+string SourceRepository { get; }
+```
+
+Gets the declared source repository URI, when available.
+
+<a id="member-p-cephalon-engine-manifest-packageprovenancemanifest-sourcerevision"></a>
+
+##### `SourceRevision`
+
+```csharp
+string SourceRevision { get; }
+```
+
+Gets the declared source revision, tag, or commit identifier, when available.
+
+<a id="member-p-cephalon-engine-manifest-packageprovenancemanifest-statementuri"></a>
+
+##### `StatementUri`
+
+```csharp
+string StatementUri { get; }
+```
+
+Gets the declared provenance statement or attestation URI, when available.
 
 <a id="type-cephalon-engine-manifest-packagesignaturemanifest"></a>
 

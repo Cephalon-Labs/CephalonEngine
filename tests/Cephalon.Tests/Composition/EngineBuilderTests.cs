@@ -316,6 +316,8 @@ public sealed class EngineBuilderTests
         Assert.Equal("assembly-path", package.Kind);
         Assert.EndsWith("Cephalon.ReferenceModule.Operations.dll", package.Path, StringComparison.OrdinalIgnoreCase);
         Assert.Equal(package.Path, package.SourcePath);
+        Assert.Null(package.Distribution);
+        Assert.Null(package.Provenance);
         Assert.Contains("operations", package.Modules);
         Assert.False(package.IsTrusted);
         Assert.Equal("reference-operations", operationsModule.PackageId);
@@ -342,6 +344,15 @@ public sealed class EngineBuilderTests
         Assert.Contains("net10.0", package.SupportedTargetFrameworks);
         Assert.Equal("cephalon-labs", package.PublisherId);
         Assert.Equal("Cephalon Labs", package.PublisherDisplayName);
+        Assert.NotNull(package.Distribution);
+        Assert.Equal("stable", package.Distribution.Channel);
+        Assert.Equal("https://packages.example.invalid/cephalon/reference-operations/1.0.0/cephalon.package.json", package.Distribution.ManifestUri);
+        Assert.Equal("https://packages.example.invalid/cephalon/reference-operations/1.0.0/Cephalon.ReferenceModule.Operations.zip", package.Distribution.PackageUri);
+        Assert.NotNull(package.Provenance);
+        Assert.Equal("https://github.com/Cephalon-Labs/CephalonEngine", package.Provenance.SourceRepository);
+        Assert.Equal("refs/tags/reference-operations-v1.0.0", package.Provenance.SourceRevision);
+        Assert.Equal("https://builds.example.invalid/cephalon/reference-operations/1.0.0", package.Provenance.BuildUri);
+        Assert.Equal("https://packages.example.invalid/cephalon/reference-operations/1.0.0/provenance.json", package.Provenance.StatementUri);
         Assert.Equal("provenance-manifest", package.SignatureType);
         Assert.Equal("Cephalon Labs Build", package.SignatureSigner);
         Assert.Null(package.SignatureKeyId);
@@ -372,6 +383,10 @@ public sealed class EngineBuilderTests
         Assert.EndsWith("Cephalon.ReferenceModule.Operations.dll", package.Path, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("net10.0", package.SupportedTargetFrameworks);
         Assert.Equal("cephalon-labs", package.PublisherId);
+        Assert.NotNull(package.Distribution);
+        Assert.Equal("stable", package.Distribution.Channel);
+        Assert.NotNull(package.Provenance);
+        Assert.Equal("refs/tags/reference-operations-v1.0.0", package.Provenance.SourceRevision);
         Assert.Null(package.SignatureKeyId);
         Assert.Equal("cephalon-labs-reference-operations", package.SignatureFingerprint);
         Assert.False(package.IsSignatureVerified);

@@ -704,6 +704,19 @@ public sealed class EngineBuilder
             publisherId: package.Request.PublisherId,
             publisherDisplayName: package.Request.PublisherDisplayName,
             publisherWebsite: package.Request.PublisherWebsite,
+            distribution: package.Request.Distribution is null
+                ? null
+                : new PackageDistributionManifest(
+                    channel: package.Request.Distribution.Channel,
+                    manifestUri: package.Request.Distribution.ManifestUri,
+                    packageUri: package.Request.Distribution.PackageUri),
+            provenance: package.Request.Provenance is null
+                ? null
+                : new PackageProvenanceManifest(
+                    sourceRepository: package.Request.Provenance.SourceRepository,
+                    sourceRevision: package.Request.Provenance.SourceRevision,
+                    buildUri: package.Request.Provenance.BuildUri,
+                    statementUri: package.Request.Provenance.StatementUri),
             signatureType: package.Request.SignatureType,
             signatureSigner: package.Request.SignatureSigner,
             signatureKeyId: package.Request.SignatureKeyId,

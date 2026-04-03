@@ -1559,6 +1559,8 @@ note: visible
         Assert.Equal(package.Path, package.SourcePath);
         Assert.False(string.IsNullOrWhiteSpace(package.ChecksumSha256));
         Assert.Null(package.PublisherId);
+        Assert.Null(package.Distribution);
+        Assert.Null(package.Provenance);
         Assert.Null(package.SignatureKeyId);
         Assert.Null(package.SignatureFingerprint);
         Assert.Empty(package.Signatures);
@@ -1603,6 +1605,12 @@ note: visible
         Assert.Contains("net10.0", package.SupportedTargetFrameworks);
         Assert.Equal("cephalon-labs", package.PublisherId);
         Assert.Equal("Cephalon Labs", package.PublisherDisplayName);
+        Assert.NotNull(package.Distribution);
+        Assert.Equal("stable", package.Distribution.Channel);
+        Assert.Equal("https://packages.example.invalid/cephalon/reference-operations/1.0.0/cephalon.package.json", package.Distribution.ManifestUri);
+        Assert.NotNull(package.Provenance);
+        Assert.Equal("https://github.com/Cephalon-Labs/CephalonEngine", package.Provenance.SourceRepository);
+        Assert.Equal("https://packages.example.invalid/cephalon/reference-operations/1.0.0/provenance.json", package.Provenance.StatementUri);
         Assert.Null(package.SignatureKeyId);
         Assert.Equal("cephalon-labs-reference-operations", package.SignatureFingerprint);
         var signature = Assert.Single(package.Signatures);

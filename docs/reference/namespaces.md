@@ -154,7 +154,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Engine.Manifest`
 
-- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-manifest): 6 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest)
+- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-manifest): 8 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest)
 
 ## `Cephalon.Engine.Patterns`
 

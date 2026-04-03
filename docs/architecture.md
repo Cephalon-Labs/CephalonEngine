@@ -302,7 +302,7 @@ Companion adapter packages:
 - engine package-directory discovery can be driven through `Engine:Discovery:PackageDirectories`
 - package manifests should use `version`, `compatibility.minimumEngineVersion`, `compatibility.maximumEngineVersion`, `compatibility.supportedTargetFrameworks`, and optional `integrity.sha256` when independently shipped packages need stronger compatibility or supply-chain signals
 - package manifests can declare package-to-package `dependencies` with optional `minimumVersion` / `maximumVersion` bounds when a package expects another independently shipped package to be present
-- package manifests can also carry `publisher`, `signature`, or `signatures` metadata so trust and operator diagnostics can reason about provenance
+- package manifests can also carry `publisher`, `distribution`, `provenance`, `signature`, or `signatures` metadata so trust and operator diagnostics can reason about provenance
 - package signatures can be cryptographically verified through `signature.keyId`, `signature.value`, or equivalent entries in `signatures[]`, together with `Engine:Trust:TrustedSignaturePublicKeys` or `Engine:Trust:TrustedSignatureCertificates` plus `TrustedSignatureCertificateAuthorities`
 - engine package-governance requirements can be driven through `Engine:PackagePolicy`
 - engine future-tech selection can be driven through `Engine:Technologies`
@@ -353,8 +353,8 @@ Companion adapter packages:
 - runtime diagnostics conventions are introspectable through `IRuntimeDiagnosticsCatalog`, `/engine/diagnostics`, and `/engine/snapshot`
 - runtime lifecycle story is introspectable through `IRuntime.OperationalStory`, `/engine/runtime-story`, and `/engine/snapshot`
 - runtime trust policy is introspectable through `/engine/trust-policy`
-- runtime package loading is introspectable through `/engine/packages`, including package `kind`, resolved assembly `path`, discovery `sourcePath`, declared version/compatibility, package dependencies, computed checksum, signature verification state, verification source, certificate thumbprints when applicable, and trust reason
-- runtime package provenance is introspectable through `/engine/packages` and `/engine/trust-policy`, including publisher id, signature key id, signer fingerprint, and signing-certificate thumbprints when the package manifest declared them
+- runtime package loading is introspectable through `/engine/packages`, including package `kind`, resolved assembly `path`, discovery `sourcePath`, declared version/compatibility, package dependencies, external distribution metadata, provenance metadata, computed checksum, signature verification state, verification source, certificate thumbprints when applicable, and trust reason
+- runtime package provenance is introspectable through `/engine/packages` and `/engine/trust-policy`, including publisher id, signature key id, signer fingerprint, signing-certificate thumbprints, and declared external distribution/provenance hints when the package manifest declared them
 - runtime package governance is introspectable through `/engine/package-policy`
 - runtime technology selection is introspectable through `/engine/technologies`
 - runtime technology catalog is introspectable through `/engine/technology-catalog`

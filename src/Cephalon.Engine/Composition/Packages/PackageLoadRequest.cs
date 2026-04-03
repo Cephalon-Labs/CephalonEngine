@@ -14,6 +14,8 @@ internal sealed class PackageLoadRequest
         string? publisherId = null,
         string? publisherDisplayName = null,
         string? publisherWebsite = null,
+        PackageDistributionLoadRequest? distribution = null,
+        PackageProvenanceLoadRequest? provenance = null,
         string? signatureType = null,
         string? signatureSigner = null,
         string? signatureKeyId = null,
@@ -35,6 +37,8 @@ internal sealed class PackageLoadRequest
         PublisherId = publisherId;
         PublisherDisplayName = publisherDisplayName;
         PublisherWebsite = publisherWebsite;
+        Distribution = distribution;
+        Provenance = provenance;
         Dependencies = dependencies ?? [];
         Signatures = NormalizeSignatures(
             signatures,
@@ -76,6 +80,10 @@ internal sealed class PackageLoadRequest
     public string? PublisherDisplayName { get; }
 
     public string? PublisherWebsite { get; }
+
+    public PackageDistributionLoadRequest? Distribution { get; }
+
+    public PackageProvenanceLoadRequest? Provenance { get; }
 
     public IReadOnlyList<PackageDependencyLoadRequest> Dependencies { get; }
 

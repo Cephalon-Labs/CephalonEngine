@@ -59,7 +59,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Platform Sprint 0`: `ENG-012`
 - `Sprint 1`: delivered `ENG-005`, `ENG-026`, and `ENG-027`, and opened the phase 2 operational gap-inventory track
 - `Sprint 2`: exporter packaging is now part of the shipped phase-2 baseline, Cassandra contact-point health plus ClickHouse analytics health plus Consul control-plane health plus Elasticsearch cluster health plus HTTP external API plus Kafka broker metadata plus Memcached cache plus MongoDB plus MQTT plus MySQL plus NATS plus Neo4j plus OpenSearch plus Oracle plus Postgres plus RabbitMQ plus Redis/cache plus SQL Server dependency-health packaging anchor the provider-specific follow-through, the shared diagnostics/event-id catalog now anchors the structured diagnostics baseline, and release validation now calls out the health/export convention suite explicitly
-- `Sprint 3`: runtime-answers follow-through, package distribution and trust follow-through, `ENG-013` planning readiness, the shipped `ENG-029` self-hosted OTLP follow-through slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped DigitalOcean collector/defaults slice, the shipped VMware Tanzu proxy/defaults slice, and the shipped downstream Cloudflare/custom-provider authoring slice under `#120`
+- `Sprint 3`: runtime-answers follow-through, the shipped package distribution/provenance and signer-verification follow-through under `ENG-011`, `ENG-013` planning readiness, the shipped `ENG-029` self-hosted OTLP follow-through slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped DigitalOcean collector/defaults slice, the shipped VMware Tanzu proxy/defaults slice, and the shipped downstream Cloudflare/custom-provider authoring slice under `#120`
 - `Later / not scheduled yet`: `ENG-022` and future solution-level expansion work
 
 ## Planning principles
@@ -152,7 +152,7 @@ Exit criteria:
 
 ## Phase 3: Extensibility and package loading
 
-Status: later, but on the critical path to becoming a platform
+Status: substantially complete
 
 Goal: let Cephalon load and validate independently shipped module packages.
 
@@ -168,13 +168,8 @@ Current baseline already in place:
 - package trust and capability policy are exposed through `Engine:Trust` and `/engine/trust-policy`
 - package publisher and signer provenance can be declared and evaluated through package manifests and trust allow-lists
 - detached package signatures can be cryptographically verified against trusted public keys or trusted signing certificate chains
-
-Remaining work in this phase is the broader platform story around external distribution and richer package provenance beyond the shipped discovery, dependency validation, compatibility, integrity, detached-signature, multi-signer, public-key, certificate-chain, publisher/signer metadata, checksum, and package-policy baseline.
-
-Remaining follow-through:
-
-- external distribution and versioned package delivery guidance
-- richer provenance attestations and package-feed guidance beyond the current signature-verification baseline
+- package manifests can declare external distribution metadata and provenance metadata that stay visible through `/engine/packages`
+- module-author guidance now covers release-channel, package URI, source revision, build URI, and provenance statement hints for externally distributed packages
 
 Exit criteria:
 
@@ -260,11 +255,10 @@ Exit criteria:
 
 Updated priority order as of `April 3, 2026`:
 
-1. package distribution and provenance follow-through beyond the current baseline
-2. workflow and orchestration primitives
-3. multi-service suite blueprints
-4. cloud and platform integrations, with self-hosted plus Azure Monitor plus AWS plus GCP plus Huawei Cloud plus Alibaba Cloud plus Red Hat OpenShift plus DigitalOcean plus VMware Tanzu shipped, and the downstream Cloudflare/custom-provider guidance slice shipped under `#120` while future first-party additions stay explicit and adoption-driven
-5. broader release automation and package-publishing polish
+1. workflow and orchestration primitives
+2. multi-service suite blueprints
+3. cloud and platform integrations, with self-hosted plus Azure Monitor plus AWS plus GCP plus Huawei Cloud plus Alibaba Cloud plus Red Hat OpenShift plus DigitalOcean plus VMware Tanzu shipped, and the downstream Cloudflare/custom-provider guidance slice shipped under `#120` while future first-party additions stay explicit and adoption-driven
+4. broader release automation and package-publishing polish
 
 ## Decision guardrails
 

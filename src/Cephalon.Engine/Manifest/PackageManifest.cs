@@ -22,6 +22,8 @@ public sealed class PackageManifest
     /// <param name="publisherId">The stable publisher identifier declared by the package manifest, when available.</param>
     /// <param name="publisherDisplayName">The publisher display name declared by the package manifest, when available.</param>
     /// <param name="publisherWebsite">The publisher website declared by the package manifest, when available.</param>
+    /// <param name="distribution">The external distribution metadata declared by the package manifest, when available.</param>
+    /// <param name="provenance">The provenance metadata declared by the package manifest, when available.</param>
     /// <param name="signatureType">The signature metadata type declared by the package manifest, when available.</param>
     /// <param name="signatureSigner">The signer identity declared by the package manifest, when available.</param>
     /// <param name="signatureKeyId">The trusted-key identifier declared by the package manifest, when available.</param>
@@ -53,6 +55,8 @@ public sealed class PackageManifest
         string? publisherId,
         string? publisherDisplayName,
         string? publisherWebsite,
+        PackageDistributionManifest? distribution,
+        PackageProvenanceManifest? provenance,
         string? signatureType,
         string? signatureSigner,
         string? signatureKeyId,
@@ -80,6 +84,8 @@ public sealed class PackageManifest
         PublisherId = publisherId;
         PublisherDisplayName = publisherDisplayName;
         PublisherWebsite = publisherWebsite;
+        Distribution = distribution;
+        Provenance = provenance;
         SignatureType = signatureType;
         SignatureSigner = signatureSigner;
         SignatureKeyId = signatureKeyId;
@@ -163,6 +169,16 @@ public sealed class PackageManifest
     /// Gets the publisher website declared by the package manifest, when available.
     /// </summary>
     public string? PublisherWebsite { get; }
+
+    /// <summary>
+    /// Gets the external distribution metadata declared by the package manifest, when available.
+    /// </summary>
+    public PackageDistributionManifest? Distribution { get; }
+
+    /// <summary>
+    /// Gets the provenance metadata declared by the package manifest, when available.
+    /// </summary>
+    public PackageProvenanceManifest? Provenance { get; }
 
     /// <summary>
     /// Gets the signature metadata type declared by the package manifest, when available.
