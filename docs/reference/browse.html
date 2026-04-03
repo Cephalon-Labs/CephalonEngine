@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-03T13:58:07.0522087+00:00",
+  "GeneratedAtUtc": "2026-04-03T14:27:58.2503911+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 10,
-      "TypeCount": 49
+      "TypeCount": 50
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -175,7 +175,7 @@
       "Description": "Composition, runtime, policy, manifest, and introspection services.",
       "FileName": "cephalon-engine.md",
       "NamespaceCount": 12,
-      "TypeCount": 59
+      "TypeCount": 61
     },
     {
       "AssemblyName": "Cephalon.Eventing",
@@ -456,7 +456,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-appmodel",
-      "TypeCount": 2
+      "TypeCount": 3
     },
     {
       "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
@@ -680,14 +680,14 @@
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
       "AnchorId": "namespace-cephalon-engine-appmodel",
-      "TypeCount": 2
+      "TypeCount": 3
     },
     {
       "NamespaceName": "Cephalon.Engine.AppModel.Scaffolding",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
       "AnchorId": "namespace-cephalon-engine-appmodel-scaffolding",
-      "TypeCount": 1
+      "TypeCount": 2
     },
     {
       "NamespaceName": "Cephalon.Engine.Composition",
@@ -1459,6 +1459,36 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 3,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "BuiltInSuiteBlueprints",
+      "NamespaceName": "Cephalon.Engine.AppModel",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-appmodel-builtinsuiteblueprints",
+      "Declaration": "public static class BuiltInSuiteBlueprints",
+      "Summary": "Provides the built-in Cephalon suite blueprints.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "BuiltInSuiteScaffolds",
+      "NamespaceName": "Cephalon.Engine.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-appmodel-scaffolding-builtinsuitescaffolds",
+      "Declaration": "public static class BuiltInSuiteScaffolds",
+      "Summary": "Provides the built-in suite-scaffold plans that back shipped solution-level Cephalon blueprints.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
         "Methods": 0
       }
     },
@@ -4703,6 +4733,21 @@
       }
     },
     {
+      "DisplayName": "SuiteBlueprint",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-appmodel-suiteblueprint",
+      "Declaration": "public sealed class SuiteBlueprint",
+      "Summary": "Describes a suite-level Cephalon blueprint composed from existing app-level contracts.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "SuiteScaffoldPlan",
       "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
       "AssemblyName": "Cephalon.Abstractions",
@@ -6220,6 +6265,17 @@
       "AnchorId": "member-p-cephalon-engine-patterns-builtinpatterns-all",
       "Signature": "IReadOnlyList\u003CPatternDescriptor\u003E All { get; }",
       "Summary": "Gets all built-in pattern descriptors."
+    },
+    {
+      "DisplayName": "All",
+      "Category": "Properties",
+      "DeclaringTypeName": "BuiltInSuiteBlueprints",
+      "NamespaceName": "Cephalon.Engine.AppModel",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-appmodel-builtinsuiteblueprints-all",
+      "Signature": "IReadOnlyList\u003CSuiteBlueprint\u003E All { get; }",
+      "Summary": "Gets all built-in suite blueprints."
     },
     {
       "DisplayName": "All",
@@ -8479,6 +8535,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "SuiteBlueprint",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-suiteblueprint-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the suite-blueprint description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "SuiteScaffoldPlan",
       "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
       "AssemblyName": "Cephalon.Abstractions",
@@ -9124,6 +9191,17 @@
       "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-displayname",
       "Signature": "string DisplayName { get; set; }",
       "Summary": "Gets or sets the human-readable dependency name shown to operators."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SuiteBlueprint",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-suiteblueprint-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the human-readable suite-blueprint name."
     },
     {
       "DisplayName": "DisplayName",
@@ -11823,6 +11901,17 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "SuiteBlueprint",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-suiteblueprint-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable suite-blueprint identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "SuiteScaffoldPlan",
       "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
       "AssemblyName": "Cephalon.Abstractions",
@@ -13418,6 +13507,17 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "SuiteBlueprint",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-suiteblueprint-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets additional suite-blueprint metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "SuiteScaffoldPlan",
       "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
       "AssemblyName": "Cephalon.Abstractions",
@@ -13535,6 +13635,28 @@
       "AnchorId": "member-p-cephalon-engine-appmodel-scaffolding-builtinscaffolds-microservice",
       "Signature": "ScaffoldPlan Microservice { get; }",
       "Summary": "Gets the scaffold plan for the microservice blueprint."
+    },
+    {
+      "DisplayName": "MicroserviceSuite",
+      "Category": "Properties",
+      "DeclaringTypeName": "BuiltInSuiteBlueprints",
+      "NamespaceName": "Cephalon.Engine.AppModel",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-appmodel-builtinsuiteblueprints-microservicesuite",
+      "Signature": "SuiteBlueprint MicroserviceSuite { get; }",
+      "Summary": "Gets the built-in microservice-suite blueprint."
+    },
+    {
+      "DisplayName": "MicroserviceSuite",
+      "Category": "Properties",
+      "DeclaringTypeName": "BuiltInSuiteScaffolds",
+      "NamespaceName": "Cephalon.Engine.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-appmodel-scaffolding-builtinsuitescaffolds-microservicesuite",
+      "Signature": "SuiteScaffoldPlan MicroserviceSuite { get; }",
+      "Summary": "Gets the suite scaffold for the microservice-suite blueprint."
     },
     {
       "DisplayName": "MicroserviceTopology",
@@ -16421,6 +16543,17 @@
     {
       "DisplayName": "Resolve",
       "Category": "Methods",
+      "DeclaringTypeName": "BuiltInSuiteBlueprints",
+      "NamespaceName": "Cephalon.Engine.AppModel",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-appmodel-builtinsuiteblueprints-resolve-system-string",
+      "Signature": "SuiteBlueprint Resolve(string value)",
+      "Summary": "Resolves a suite blueprint identifier, display name, or alias."
+    },
+    {
+      "DisplayName": "Resolve",
+      "Category": "Methods",
       "DeclaringTypeName": "BuiltInTechnologies",
       "NamespaceName": "Cephalon.Engine.Technologies",
       "AssemblyName": "Cephalon.Engine",
@@ -16978,6 +17111,17 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-appprofile-scaffold",
       "Signature": "ScaffoldPlan Scaffold { get; }",
       "Summary": "Gets the scaffold plan associated with the app shape, when one is defined."
+    },
+    {
+      "DisplayName": "Scaffold",
+      "Category": "Properties",
+      "DeclaringTypeName": "SuiteBlueprint",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-suiteblueprint-scaffold",
+      "Signature": "SuiteScaffoldPlan Scaffold { get; }",
+      "Summary": "Gets the suite-scaffold plan associated with the suite blueprint."
     },
     {
       "DisplayName": "ScaffoldFolder",
@@ -18157,6 +18301,17 @@
       "Summary": "Identifies a suite-level scaffold scope."
     },
     {
+      "DisplayName": "SuiteBlueprint",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SuiteBlueprint",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-appmodel-suiteblueprint-ctor-system-string-system-string-system-string-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "SuiteBlueprint(string id, string displayName, string description, SuiteScaffoldPlan scaffold, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a suite blueprint."
+    },
+    {
       "DisplayName": "SuiteScaffoldPlan",
       "Category": "Constructors",
       "DeclaringTypeName": "SuiteScaffoldPlan",
@@ -19288,6 +19443,17 @@
       "AnchorId": "member-m-cephalon-engine-patterns-builtinpatterns-tryresolve-system-string-cephalon-abstractions-patterns-patterndescriptor",
       "Signature": "bool TryResolve(string value, out PatternDescriptor pattern)",
       "Summary": "Attempts to resolve a pattern identifier, display name, or alias."
+    },
+    {
+      "DisplayName": "TryResolve",
+      "Category": "Methods",
+      "DeclaringTypeName": "BuiltInSuiteBlueprints",
+      "NamespaceName": "Cephalon.Engine.AppModel",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-appmodel-builtinsuiteblueprints-tryresolve-system-string-cephalon-abstractions-appmodel-suiteblueprint",
+      "Signature": "bool TryResolve(string value, out SuiteBlueprint blueprint)",
+      "Summary": "Attempts to resolve a suite blueprint identifier, display name, or alias."
     },
     {
       "DisplayName": "TryResolve",

@@ -252,6 +252,88 @@ IReadOnlyList<TransportDescriptor> Transports { get; }
 
 Gets the selected transports.
 
+<a id="type-cephalon-abstractions-appmodel-suiteblueprint"></a>
+
+### `SuiteBlueprint`
+
+Describes a suite-level Cephalon blueprint composed from existing app-level contracts.
+
+#### Declaration
+```csharp
+public sealed class SuiteBlueprint
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-suiteblueprint-ctor-system-string-system-string-system-string-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `SuiteBlueprint`
+
+```csharp
+SuiteBlueprint(string id, string displayName, string description, SuiteScaffoldPlan scaffold, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a suite blueprint.
+
+Parameters:
+- `id`: The stable suite-blueprint identifier.
+- `displayName`: The human-readable suite-blueprint name.
+- `description`: The suite-blueprint description.
+- `scaffold`: The suite-scaffold plan associated with the suite blueprint.
+- `metadata`: Optional suite-blueprint metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-suiteblueprint-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the suite-blueprint description.
+
+<a id="member-p-cephalon-abstractions-appmodel-suiteblueprint-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the human-readable suite-blueprint name.
+
+<a id="member-p-cephalon-abstractions-appmodel-suiteblueprint-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable suite-blueprint identifier.
+
+<a id="member-p-cephalon-abstractions-appmodel-suiteblueprint-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets additional suite-blueprint metadata.
+
+<a id="member-p-cephalon-abstractions-appmodel-suiteblueprint-scaffold"></a>
+
+##### `Scaffold`
+
+```csharp
+SuiteScaffoldPlan Scaffold { get; }
+```
+
+Gets the suite-scaffold plan associated with the suite blueprint.
+
 <a id="namespace-cephalon-abstractions-appmodel-scaffolding"></a>
 
 ## Namespace Cephalon.Abstractions.AppModel.Scaffolding

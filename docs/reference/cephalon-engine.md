@@ -136,6 +136,72 @@ Parameters:
 - `value`: The blueprint identifier, display name, or alias to resolve.
 - `blueprint`: The resolved blueprint when the lookup succeeds.
 
+<a id="type-cephalon-engine-appmodel-builtinsuiteblueprints"></a>
+
+### `BuiltInSuiteBlueprints`
+
+Provides the built-in Cephalon suite blueprints.
+
+#### Declaration
+```csharp
+public static class BuiltInSuiteBlueprints
+```
+
+#### Properties
+
+<a id="member-p-cephalon-engine-appmodel-builtinsuiteblueprints-all"></a>
+
+##### `All`
+
+```csharp
+IReadOnlyList<SuiteBlueprint> All { get; }
+```
+
+Gets all built-in suite blueprints.
+
+<a id="member-p-cephalon-engine-appmodel-builtinsuiteblueprints-microservicesuite"></a>
+
+##### `MicroserviceSuite`
+
+```csharp
+SuiteBlueprint MicroserviceSuite { get; }
+```
+
+Gets the built-in microservice-suite blueprint.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-appmodel-builtinsuiteblueprints-resolve-system-string"></a>
+
+##### `Resolve`
+
+```csharp
+SuiteBlueprint Resolve(string value)
+```
+
+Resolves a suite blueprint identifier, display name, or alias.
+
+Returns: The resolved suite blueprint.
+
+Parameters:
+- `value`: The suite blueprint identifier, display name, or alias to resolve.
+
+<a id="member-m-cephalon-engine-appmodel-builtinsuiteblueprints-tryresolve-system-string-cephalon-abstractions-appmodel-suiteblueprint"></a>
+
+##### `TryResolve`
+
+```csharp
+bool TryResolve(string value, out SuiteBlueprint blueprint)
+```
+
+Attempts to resolve a suite blueprint identifier, display name, or alias.
+
+Returns: `true` when the suite blueprint was resolved; otherwise, `false`.
+
+Parameters:
+- `value`: The suite blueprint identifier, display name, or alias to resolve.
+- `blueprint`: The resolved suite blueprint when the lookup succeeds.
+
 <a id="namespace-cephalon-engine-appmodel-scaffolding"></a>
 
 ## Namespace Cephalon.Engine.AppModel.Scaffolding
@@ -182,6 +248,29 @@ ScaffoldPlan ModularVerticalSlice { get; }
 ```
 
 Gets the scaffold plan for the modular-vertical-slice blueprint.
+
+<a id="type-cephalon-engine-appmodel-scaffolding-builtinsuitescaffolds"></a>
+
+### `BuiltInSuiteScaffolds`
+
+Provides the built-in suite-scaffold plans that back shipped solution-level Cephalon blueprints.
+
+#### Declaration
+```csharp
+public static class BuiltInSuiteScaffolds
+```
+
+#### Properties
+
+<a id="member-p-cephalon-engine-appmodel-scaffolding-builtinsuitescaffolds-microservicesuite"></a>
+
+##### `MicroserviceSuite`
+
+```csharp
+SuiteScaffoldPlan MicroserviceSuite { get; }
+```
+
+Gets the suite scaffold for the microservice-suite blueprint.
 
 <a id="namespace-cephalon-engine-composition"></a>
 

@@ -190,10 +190,11 @@ The engine now models these choices as first-class runtime objects, not as plain
 Current shipped shape:
 
 - `AppBlueprint` defines the built-in project shape and required baseline patterns
+- `SuiteBlueprint` defines the built-in suite-level project shape when Cephalon needs a coordinated multi-service blueprint
 - `AppProfile` captures the selected blueprint, patterns, technologies, transports, and scaffold plan
 - `ScaffoldPlan` captures how that blueprint should turn into projects, folders, conventions, and package hints
-- `SuiteScaffoldPlan` and `SuiteScaffoldService` now capture the later solution-level shape for shared projects plus per-service slots without changing the current app-level runtime contract
-- built-in scaffold plans live under `Cephalon.Engine.AppModel.Scaffolding`
+- `SuiteScaffoldPlan` and `SuiteScaffoldService` now capture the solution-level shape for shared projects plus per-service slots without changing the current app-level runtime contract
+- built-in scaffold plans live under `Cephalon.Engine.AppModel.Scaffolding`, and built-in suite blueprints now live under `Cephalon.Engine.AppModel`
 
 Simplified contract:
 
@@ -208,7 +209,7 @@ public sealed class AppProfile
 }
 ```
 
-The current runtime still ships app-level blueprints only. The suite-level scaffold contract is the preparation layer for later `MicroserviceSuite` composition work, not a second active runtime-profile surface yet.
+The current runtime still resolves app-level `AppProfile` objects only. The suite layer is now modeled separately through `SuiteBlueprint`, with the built-in `MicroserviceSuite` blueprint composing repeatable service slots from the shipped `Microservice` scaffold contract instead of redefining service internals at the suite layer.
 
 The runtime should support configuration-driven blueprint, pattern, technology, and transport selection, for example:
 

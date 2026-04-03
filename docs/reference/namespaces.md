@@ -6,7 +6,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.AppModel`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-appmodel): 2 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-appmodel): 3 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel)
 
 ## `Cephalon.Abstractions.AppModel.Scaffolding`
 
@@ -134,11 +134,11 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Engine.AppModel`
 
-- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-appmodel): 2 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel)
+- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-appmodel): 3 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel)
 
 ## `Cephalon.Engine.AppModel.Scaffolding`
 
-- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-appmodel-scaffolding): 1 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel.Scaffolding)
+- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-appmodel-scaffolding): 2 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel.Scaffolding)
 
 ## `Cephalon.Engine.Composition`
 
