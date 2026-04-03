@@ -978,6 +978,7 @@ Current shipped event-id ranges include:
 - `Cephalon.Observability.Gcp`: `3111-3111`
 - `Cephalon.Observability.HuaweiCloud`: `3112-3112`
 - `Cephalon.Observability.AlibabaCloud`: `3113-3113`
+- `Cephalon.Observability.OpenShift`: `3114-3114`
 - `Cephalon.Observability.CassandraDependencies`: `3146-3147`
 - `Cephalon.Observability.ConsulDependencies`: `3142-3143`
 - `Cephalon.Observability.ElasticsearchDependencies`: `3138-3139`
@@ -1128,7 +1129,7 @@ Operational notes:
 - when `UseSelfHostedDefaults` is `true` and `Endpoint` is omitted, the package falls back to `http://localhost:4317` for `otlp` / `otlp/grpc` or `http://localhost:4318` for `otlp/http`
 - when `otlp/http` is selected, the package appends `/v1/logs`, `/v1/metrics`, and `/v1/traces` automatically from the configured base endpoint
 - the self-hosted path also adds `deployment.environment.name` from the active host environment alongside the existing service-name and service-version resource defaults
-- downstream companion packages should reuse this same contract instead of introducing a second Cephalon telemetry abstraction; that is the intended path for Cloudflare, DigitalOcean, OpenShift, Tanzu, or internal-provider integrations
+- downstream companion packages should reuse this same contract instead of introducing a second Cephalon telemetry abstraction; that is the intended path for Cloudflare, DigitalOcean, Tanzu, or internal-provider integrations
 
 ## AWS observability path
 
@@ -1325,6 +1326,57 @@ Operational notes:
 - `HostedPlatform` can be `ecs`, `fc`, `functioncompute`, or `openshift`
 - `Region` lets the package stamp `cloud.region` when a deployment wants that value to stay explicit
 
+## OpenShift observability path
+
+`Cephalon.Observability.OpenShift` keeps OpenShift collector discovery, trust material, and hosted cluster defaults in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "Telemetry": {
+        "Provider": "OpenTelemetry",
+        "Protocol": "otlp/http",
+        "ExportLogs": true,
+        "ExportMetrics": true,
+        "ExportTraces": true,
+        "OpenShift": {
+          "HostedPlatform": "openshift",
+          "ClusterName": "prod-cluster",
+          "Namespace": "payments",
+          "UseInClusterCollectorService": true,
+          "CollectorServiceName": "otel-collector",
+          "CollectorNamespace": "observability"
+        }
+      }
+    }
+  }
+}
+```
+
+Host registration example:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonObservability(builder.Configuration);
+builder.AddCephalonOpenShift();
+```
+
+Operational notes:
+
+- the OpenShift package is optional and stays outside `Cephalon.Engine`
+- when `Engine:Observability:Telemetry:Endpoint` or `UseSelfHostedDefaults` is configured, the package keeps using the shared collector-oriented OTLP path and only adds OpenShift resource defaults
+- when `Engine:Observability:Telemetry:OpenShift:UseInClusterCollectorService` is `true` and no shared endpoint is configured, the package targets `http(s)://{service}.{namespace}.svc.cluster.local:{port}`
+- `HostedPlatform` can be `openshift`, `aro`, or `rosa`
+- `ClusterName`, `Namespace`, `POD_NAMESPACE`, and `HOSTNAME` let the package stamp `k8s.cluster.name`, `k8s.namespace.name`, `service.namespace`, and `k8s.pod.name`; `aro` and `rosa` also stamp `cloud.provider`
+- `TrustedCaCertificatePath` can be used for HTTPS OTLP/HTTP traces and metrics when an in-cluster collector, route, or gateway uses a cluster-local CA bundle
+- the current OpenTelemetry logging exporter does not support custom `HttpClientFactory` wiring for HTTP, so configurations that need `TrustedCaCertificatePath` for OTLP/HTTP logs are rejected early instead of being treated as supported
+- `Headers` lets the package pass raw OTLP header values through to the target collector or gateway when a route expects explicit headers
+
 ## Azure Monitor exporter path
 
 `Cephalon.Observability.AzureMonitor` keeps Azure Monitor / Application Insights export wiring in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
@@ -1486,6 +1538,7 @@ It executes a curated test suite that validates:
 - AWS-hosted OTLP defaults through `Cephalon.Observability.Aws`
 - GCP-hosted defaults through `Cephalon.Observability.Gcp`
 - Huawei Cloud-hosted defaults and managed APM traces through `Cephalon.Observability.HuaweiCloud`
+- OpenShift in-cluster collector defaults through `Cephalon.Observability.OpenShift`
 - OTLP exporter wiring through `Cephalon.Observability.OpenTelemetry`, including the explicit self-hosted collector-default path
 
 `.\scripts\validate-release.ps1` now runs that focused suite by default in addition to the broader repo test, benchmark, and reference-doc flow.
