@@ -10,12 +10,12 @@ namespace Cephalon.Observability.Configuration;
 /// protocol, endpoint, and enabled signals without forcing exporter dependencies into the engine core.
 /// Companion packages such as <c>Cephalon.Observability.OpenTelemetry</c>,
 /// <c>Cephalon.Observability.AlibabaCloud</c>, <c>Cephalon.Observability.Aws</c>, <c>Cephalon.Observability.Gcp</c>,
-/// <c>Cephalon.Observability.HuaweiCloud</c>, <c>Cephalon.Observability.OpenShift</c>, or
-/// <c>Cephalon.Observability.AzureMonitor</c>
+/// <c>Cephalon.Observability.DigitalOcean</c>, <c>Cephalon.Observability.HuaweiCloud</c>,
+/// <c>Cephalon.Observability.OpenShift</c>, or <c>Cephalon.Observability.AzureMonitor</c>
 /// can interpret the same contract when a host wants a supported export path, including the explicit
 /// self-hosted collector defaults that remain outside <c>Cephalon.Engine</c>. The same contract is
-/// also intended for developer-authored provider packages that need to layer Cloudflare, DigitalOcean,
-/// VMware Tanzu, or other deployment-targeted auth, resource attributes, and hosted defaults
+/// also intended for developer-authored provider packages that need to layer Cloudflare, VMware Tanzu,
+/// or other deployment-targeted auth, resource attributes, and hosted defaults
 /// on top of the existing <c>ILogger</c> pipeline.
 /// </remarks>
 public sealed class TelemetryExportOptions
