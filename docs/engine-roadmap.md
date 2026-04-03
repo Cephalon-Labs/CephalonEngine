@@ -119,7 +119,7 @@ Exit criteria:
 
 Current note:
 
-- the supported phase-1 adoption baseline is now shipped across public-surface hardening, GraphQL transport delivery, compatibility guidance, DocFX-ready XML comments, the explicit test-harness visibility policy that keeps shared helpers internal while leaving only framework-required xUnit classes and a narrow reflective transport-contract exception public in `tests/Cephalon.Tests`, the release package-artifact baseline that defines the intended shipped NuGet/template surface explicitly, and a dedicated `.NET tool` install surface for `Cephalon.Cli`
+- the supported phase-1 adoption baseline is now shipped across public-surface hardening, GraphQL transport delivery, compatibility guidance, DocFX-ready XML comments, the explicit test-harness visibility policy that keeps shared helpers internal while leaving only framework-required xUnit classes and a narrow reflective transport-contract exception public in `tests/Cephalon.Tests`, the release package-artifact baseline that defines the intended shipped NuGet/template surface explicitly, the shipped checksum/provenance manifest follow-through under `ENG-032`, and a dedicated `.NET tool` install surface for `Cephalon.Cli`
 
 ## Phase 2: Operational hardening
 
@@ -274,7 +274,7 @@ Exit criteria:
 Updated priority order as of `April 3, 2026`:
 
 1. cloud and platform integrations only when a new explicit adoption target appears beyond the shipped self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and Cloudflare/custom-provider guidance baseline
-2. broader release automation and package-publishing polish only when an explicit package-distribution, provenance, or install-surface scenario appears beyond the shipped `ENG-030` package-artifact baseline and `ENG-031` CLI tool packaging baseline
+2. broader release automation and package-publishing polish only when an explicit package-distribution, provenance, or install-surface scenario appears beyond the shipped `ENG-030`, `ENG-031`, and `ENG-032` baselines
 3. future solution-level expansion only when an explicit adoption scenario needs it
 
 ## Decision guardrails

@@ -135,6 +135,7 @@ This keeps config-driven features such as engine settings, OpenAPI, hosted docs,
   dotnet pack src/Cephalon.Cli/Cephalon.Cli.csproj -c Release -o artifacts/cli-tool
   dotnet tool install --tool-path .\.tools\cephalon Cephalon.Cli --add-source .\artifacts\cli-tool --ignore-failed-sources --no-cache
   .\.tools\cephalon\cephalon --help
+  .\scripts\publish-package-artifacts.ps1 -SkipBuild
   dotnet run --project src/Cephalon.Cli -- docs publish --root .
   dotnet run --project src/Cephalon.Cli -- docs publish --root . --open
   dotnet run --project src/Cephalon.Cli -- docs publish --root . --enable-hosting --appsettings playground/Cephalon.Playground/appsettings.json

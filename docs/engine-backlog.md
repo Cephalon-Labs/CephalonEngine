@@ -258,6 +258,18 @@ Delivered:
 - tooling coverage now validates the packed tool metadata, package contents, and a local install/execute smoke path from the produced `Cephalon.Cli` artifact
 - package-publishing docs, compatibility guidance, and repository usage examples now document the supported CLI install path explicitly instead of centering `dotnet run --project` as the only adoption story
 
+### ENG-032 Release package provenance manifest baseline
+
+Status: done
+Estimate: 5
+
+Delivered:
+
+- the published release package-artifact manifest now carries top-level `SourceRepository` and `SourceRevision` fields so downstream automation can tie package sets back to the repository revision that produced them
+- each packed project now publishes `PackageKind` plus per-file `Path`, `FileName`, `SizeBytes`, and `Sha256` metadata instead of leaving checksum verification to ad-hoc file inspection
+- the release flow now emits `package-artifacts.sha256` alongside `package-artifacts-manifest.json` so operators can verify package files without parsing JSON
+- package-publishing guidance, compatibility notes, and tooling coverage were updated so the shipped release-artifact contract stays explicit and truthful
+
 ## Current operational focus
 
 Phase 2 operational hardening is now substantially complete:

@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using System.Text.Json.Nodes;
 using Cephalon.Tests.Support;
 
 namespace Cephalon.Tests.Tooling;
@@ -20,7 +21,9 @@ public sealed class PackagePublishingTests
                 $"-ExecutionPolicy Bypass -File \"{scriptPath}\" -Configuration {GetCurrentBuildConfiguration()} -OutputPath \"{outputPath}\" -SkipBuild",
                 workingDirectory: Path.GetDirectoryName(scriptPath)!);
 
-            Assert.Equal(0, result.ExitCode);
+            Assert.True(
+                result.ExitCode == 0,
+                $"publish-package-artifacts.ps1 failed with exit code {result.ExitCode}.{Environment.NewLine}Output:{Environment.NewLine}{result.Output}{Environment.NewLine}Error:{Environment.NewLine}{result.Error}");
 
             var packageFiles = Directory.GetFiles(outputPath, "*.nupkg", SearchOption.TopDirectoryOnly)
                 .Select(Path.GetFileName)
@@ -41,6 +44,34 @@ public sealed class PackagePublishingTests
 
             var manifestPath = Path.Combine(outputPath, "package-artifacts-manifest.json");
             Assert.True(File.Exists(manifestPath));
+            var checksumPath = Path.Combine(outputPath, "package-artifacts.sha256");
+            Assert.True(File.Exists(checksumPath));
+
+            var manifest = JsonNode.Parse(File.ReadAllText(manifestPath));
+            var manifestObject = Assert.IsType<JsonObject>(manifest);
+            Assert.False(string.IsNullOrWhiteSpace(manifestObject["SourceRepository"]?.GetValue<string>()));
+            Assert.False(string.IsNullOrWhiteSpace(manifestObject["SourceRevision"]?.GetValue<string>()));
+            Assert.Equal("package-artifacts.sha256", manifestObject["ChecksumFile"]?.GetValue<string>());
+
+            var artifacts = Assert.IsType<JsonArray>(manifestObject["Artifacts"]);
+            var cliArtifact = artifacts
+                .Select(node => Assert.IsType<JsonObject>(node))
+                .Single(artifact => artifact["Project"]?.GetValue<string>() == "src/Cephalon.Cli/Cephalon.Cli.csproj");
+
+            Assert.Equal("dotnet-tool", cliArtifact["PackageKind"]?.GetValue<string>());
+
+            var cliPackageFile = Assert.IsType<JsonArray>(cliArtifact["PackageFiles"])
+                .Select(node => Assert.IsType<JsonObject>(node))
+                .Single(file => file["FileName"]?.GetValue<string>() is string name && name.StartsWith("Cephalon.Cli.", StringComparison.Ordinal));
+
+            Assert.Equal(cliPackageFile["FileName"]?.GetValue<string>(), cliPackageFile["Path"]?.GetValue<string>());
+            var cliPackagePath = Path.Combine(outputPath, cliPackageFile["FileName"]!.GetValue<string>());
+            var expectedCliHash = ComputeSha256(cliPackagePath);
+            Assert.Equal(expectedCliHash, cliPackageFile["Sha256"]?.GetValue<string>());
+            Assert.True(cliPackageFile["SizeBytes"]!.GetValue<long>() > 0);
+
+            var checksumContents = File.ReadAllText(checksumPath);
+            Assert.Contains($"{expectedCliHash} *{Path.GetFileName(cliPackagePath)}", checksumContents, StringComparison.Ordinal);
 
             var abstractionsPackagePath = Directory.GetFiles(outputPath, "Cephalon.Abstractions.*.nupkg", SearchOption.TopDirectoryOnly)
                 .Single(path => !path.EndsWith(".symbols.nupkg", StringComparison.OrdinalIgnoreCase));
@@ -164,6 +195,13 @@ public sealed class PackagePublishingTests
         process.WaitForExit();
 
         return new ProcessResult(process.ExitCode, output, error);
+    }
+
+    private static string ComputeSha256(string path)
+    {
+        using var stream = File.OpenRead(path);
+        using var sha256 = System.Security.Cryptography.SHA256.Create();
+        return Convert.ToHexString(sha256.ComputeHash(stream)).ToLowerInvariant();
     }
 
     private sealed record ProcessResult(int ExitCode, string Output, string Error);

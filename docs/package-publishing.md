@@ -69,7 +69,14 @@ dotnet tool install --tool-path .\.tools\cephalon Cephalon.Cli `
 The publish script writes package artifacts to `artifacts/packages-release/` by default:
 
 - `.nupkg` package files for the intended release-pack surface, including the `Cephalon.Cli` tool package
-- `package-artifacts-manifest.json` with the packed project list and produced artifacts
+- `package-artifacts-manifest.json` with the packed project list, package kinds, package file sizes, SHA-256 checksums, and top-level source repository/revision provenance hints
+- `package-artifacts.sha256` with one checksum line per produced package artifact for consumers that want file verification without parsing JSON
+
+The JSON manifest now carries:
+
+- `SourceRepository` and `SourceRevision` for the release source that produced the package set
+- `PackageKind` per packed project such as `library`, `dotnet-tool`, `template-pack`, or `reference-module`
+- `PackageFiles` entries with `Path`, `FileName`, `SizeBytes`, and `Sha256`
 
 ## Release validation
 
@@ -89,4 +96,5 @@ The GitHub Actions release-validation workflow uploads `artifacts/packages-relea
 - keep benchmarks, playgrounds, and sample-only libraries out of the release package set unless they are deliberately promoted
 - keep shared package metadata and any package-specific readmes aligned with the actual release surface
 - keep the stable `cephalon` tool command name aligned across CLI packaging, docs, and validation coverage
+- keep release checksum/provenance metadata aligned with the actual repository source revision and package file set
 - keep package-publishing docs, the publish script, and release-validation automation aligned when the package boundary changes
