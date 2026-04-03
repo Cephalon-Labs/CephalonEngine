@@ -1562,6 +1562,7 @@ note: visible
         Assert.Null(package.SignatureKeyId);
         Assert.Null(package.SignatureFingerprint);
         Assert.Empty(package.Signatures);
+        Assert.Empty(package.Dependencies);
         Assert.False(package.IsSignatureVerified);
         Assert.Equal("Package did not declare a cryptographic signature.", package.SignatureVerificationReason);
         Assert.Contains("operations", package.Modules);
@@ -1609,6 +1610,7 @@ note: visible
         Assert.False(signature.IsVerified);
         Assert.False(package.IsSignatureVerified);
         Assert.Contains("no signature value", package.SignatureVerificationReason, StringComparison.OrdinalIgnoreCase);
+        Assert.Empty(package.Dependencies);
         Assert.Contains("operations", package.Modules);
         Assert.Contains("Operations module is running.", operationsStatus, StringComparison.Ordinal);
     }

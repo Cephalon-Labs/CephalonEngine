@@ -722,7 +722,15 @@ public sealed class EngineBuilder
             signatureVerificationReason: package.SignatureVerification.Reason,
             checksumSha256: package.ChecksumSha256,
             isTrusted: isTrusted,
-            trustReason: trustReason);
+            trustReason: trustReason)
+        {
+            Dependencies = package.Request.Dependencies
+                .Select(static dependency => new PackageDependencyManifest(
+                    id: dependency.Id,
+                    minimumVersion: dependency.MinimumVersion,
+                    maximumVersion: dependency.MaximumVersion))
+                .ToArray()
+        };
     }
 
     private static (bool IsTrusted, string Reason) ResolvePackageTrust(

@@ -2827,6 +2827,66 @@ string Version { get; }
 
 Gets the effective version reported for the module.
 
+<a id="type-cephalon-engine-manifest-packagedependencymanifest"></a>
+
+### `PackageDependencyManifest`
+
+Describes a package-to-package dependency declared by a loaded Cephalon package.
+
+#### Declaration
+```csharp
+public sealed class PackageDependencyManifest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-manifest-packagedependencymanifest-ctor-system-string-system-string-system-string"></a>
+
+##### `PackageDependencyManifest`
+
+```csharp
+PackageDependencyManifest(string id, string minimumVersion, string maximumVersion)
+```
+
+Creates a new package dependency manifest entry.
+
+Parameters:
+- `id`: The stable identifier of the required package.
+- `minimumVersion`: The minimum acceptable version of the required package, when declared.
+- `maximumVersion`: The maximum acceptable version of the required package, when declared.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-manifest-packagedependencymanifest-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable identifier of the required package.
+
+<a id="member-p-cephalon-engine-manifest-packagedependencymanifest-maximumversion"></a>
+
+##### `MaximumVersion`
+
+```csharp
+string MaximumVersion { get; }
+```
+
+Gets the maximum acceptable version of the required package, when declared.
+
+<a id="member-p-cephalon-engine-manifest-packagedependencymanifest-minimumversion"></a>
+
+##### `MinimumVersion`
+
+```csharp
+string MinimumVersion { get; }
+```
+
+Gets the minimum acceptable version of the required package, when declared.
+
 <a id="type-cephalon-engine-manifest-packagemanifest"></a>
 
 ### `PackageManifest`
@@ -2898,6 +2958,16 @@ string ChecksumSha256 { get; }
 ```
 
 Gets the computed SHA-256 checksum of the resolved package assembly.
+
+<a id="member-p-cephalon-engine-manifest-packagemanifest-dependencies"></a>
+
+##### `Dependencies`
+
+```csharp
+IReadOnlyList<PackageDependencyManifest> Dependencies { get; set; }
+```
+
+Gets the package-to-package dependencies declared by the package manifest.
 
 <a id="member-p-cephalon-engine-manifest-packagemanifest-id"></a>
 

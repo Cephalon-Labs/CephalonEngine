@@ -816,6 +816,9 @@ Browse the published API surface by public member.
 - [Dependencies](cephalon-observability-oracledependencies.md#member-p-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions-dependencies): `Properties` on `OracleDependencyHealthOptions` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Gets or sets the configured Oracle dependencies that should contribute to runtime health.
   - `IReadOnlyList<OracleDependencyDefinition> Dependencies { get; set; }`
+- [Dependencies](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-dependencies): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the package-to-package dependencies declared by the package manifest.
+  - `IReadOnlyList<PackageDependencyManifest> Dependencies { get; set; }`
 - [Dependencies](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-dependencies): `Properties` on `PostgresDependencyHealthOptions` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the configured Postgres dependencies that should contribute to runtime health.
   - `IReadOnlyList<PostgresDependencyDefinition> Dependencies { get; set; }`
@@ -1671,6 +1674,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-observability-oracledependencies.md#member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-id): `Properties` on `OracleDependencyDefinition` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
   - `string Id { get; set; }`
+- [Id](cephalon-engine.md#member-p-cephalon-engine-manifest-packagedependencymanifest-id): `Properties` on `PackageDependencyManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the stable identifier of the required package.
+  - `string Id { get; }`
 - [Id](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-id): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the stable package identifier.
   - `string Id { get; }`
@@ -1992,6 +1998,9 @@ Browse the published API surface by public member.
 - [MaximumEventId](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticsconvention-maximumeventid): `Properties` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=MaximumEventId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Gets the largest event id published by this convention.
   - `int? MaximumEventId { get; }`
+- [MaximumVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-packagedependencymanifest-maximumversion): `Properties` on `PackageDependencyManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=MaximumVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the maximum acceptable version of the required package, when declared.
+  - `string MaximumVersion { get; }`
 - [MaxRestartAttempts](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-maxrestartattempts): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxRestartAttempts&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the maximum number of manual restarts.
   - `int MaxRestartAttempts { get; }`
@@ -2106,6 +2115,9 @@ Browse the published API surface by public member.
 - [MinimumEventId](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticsconvention-minimumeventid): `Properties` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=MinimumEventId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Gets the smallest event id published by this convention.
   - `int? MinimumEventId { get; }`
+- [MinimumVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-packagedependencymanifest-minimumversion): `Properties` on `PackageDependencyManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=MinimumVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the minimum acceptable version of the required package, when declared.
+  - `string MinimumVersion { get; }`
 - [ModularArchitecture](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-modulararchitecture): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=ModularArchitecture&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the modular-architecture composition pattern.
   - `PatternDescriptor ModularArchitecture { get; }`
@@ -2310,6 +2322,9 @@ Browse the published API surface by public member.
 - [Package](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimelifecycleeventscope-package): `Fields` on `RuntimeLifecycleEventScope` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Package&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The event belongs to package loading and package-origin visibility.
   - `const RuntimeLifecycleEventScope Package`
+- [PackageDependencyManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-packagedependencymanifest-ctor-system-string-system-string-system-string): `Constructors` on `PackageDependencyManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=PackageDependencyManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Creates a new package dependency manifest entry.
+  - `PackageDependencyManifest(string id, string minimumVersion, string maximumVersion)`
 - [PackageDirectories](cephalon-engine.md#member-p-cephalon-engine-configuration-modulediscoverysettings-packagedirectories): `Properties` on `ModuleDiscoverySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=PackageDirectories&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets package directories to scan for manifests.
   - `IReadOnlyList<ModulePackageDirectory> PackageDirectories { get; }`

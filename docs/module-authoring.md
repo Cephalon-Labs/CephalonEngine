@@ -79,6 +79,13 @@ Baseline example:
     "maximumEngineVersion": "2.0.0",
     "supportedTargetFrameworks": ["net10.0"]
   },
+  "dependencies": [
+    {
+      "id": "shared-foundation",
+      "minimumVersion": "1.0.0",
+      "maximumVersion": "2.0.0"
+    }
+  ],
   "integrity": {
     "sha256": "sha256:3e5d5b9fd0dfb7c60e441d013d7d2a60f41c7b0a0a4fb2d2ad5a9f88d6e7c123"
   }
@@ -94,6 +101,8 @@ Current behavior:
 - `compatibility.minimumEngineVersion` blocks older engine versions from loading the package
 - `compatibility.maximumEngineVersion` is optional but useful when a package intentionally caps support
 - `compatibility.supportedTargetFrameworks` blocks mismatched runtime target frameworks
+- `dependencies` is optional, but when declared each entry should reference the stable `id` of another package and can add `minimumVersion` / `maximumVersion` bounds for versioned package dependencies
+- version-bounded dependency entries require the referenced package to declare its own `version`
 - `publisher.id` should stay stable across releases if operators or trust policy use publisher-level allow-lists
 - `signature.keyId` or `signatures[].keyId` should stay stable across releases if hosts map trusted public keys by signing identity
 - `signature.fingerprint` or `signatures[].fingerprint` identifies the signing key and is surfaced through diagnostics and trust snapshots
@@ -200,7 +209,7 @@ builder.AddCephalon(engine =>
 });
 ```
 
-`/engine/packages` exposes the package-loading snapshot the runtime resolved, including the package `kind`, resolved assembly `path`, original `sourcePath`, declared `version`, compatibility fields, publisher/signature provenance metadata, the top-level signature summary fields kept for backward compatibility, the per-signer `signatures` collection, cryptographic verification status, computed `checksumSha256`, and the current `trustReason`. `/engine/modules` continues to show the active module set after policy and ordering have been applied. `/engine/technology-catalog` shows the technology profiles available after built-in, package, and project contributions have been merged. `/engine/technology-surfaces` shows the active runtime surfaces exposed by installed technology packs after host options and module contributors have both been applied, while `/engine/technology-surfaces/{technologyId}` narrows that view to a single selected technology profile. In code, the same merged surface set is available through `ITechnologyRuntimeCatalog`, and the broader operator-facing runtime snapshot is available through `IRuntimeIntrospectionSnapshotProvider` or `GET /engine/snapshot`.
+`/engine/packages` exposes the package-loading snapshot the runtime resolved, including the package `kind`, resolved assembly `path`, original `sourcePath`, declared `version`, compatibility fields, declared package `dependencies`, publisher/signature provenance metadata, the top-level signature summary fields kept for backward compatibility, the per-signer `signatures` collection, cryptographic verification status, computed `checksumSha256`, and the current `trustReason`. `/engine/modules` continues to show the active module set after policy and ordering have been applied. `/engine/technology-catalog` shows the technology profiles available after built-in, package, and project contributions have been merged. `/engine/technology-surfaces` shows the active runtime surfaces exposed by installed technology packs after host options and module contributors have both been applied, while `/engine/technology-surfaces/{technologyId}` narrows that view to a single selected technology profile. In code, the same merged surface set is available through `ITechnologyRuntimeCatalog`, and the broader operator-facing runtime snapshot is available through `IRuntimeIntrospectionSnapshotProvider` or `GET /engine/snapshot`.
 
 ## What the reference package demonstrates
 

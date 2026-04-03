@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-03T07:22:11.5070755+00:00",
+  "GeneratedAtUtc": "2026-04-03T08:58:47.8307086+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -72,7 +72,7 @@
       "Description": "Composition, runtime, policy, manifest, and introspection services.",
       "FileName": "cephalon-engine.md",
       "NamespaceCount": 12,
-      "TypeCount": 54
+      "TypeCount": 55
     },
     {
       "AssemblyName": "Cephalon.Eventing",
@@ -612,7 +612,7 @@
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
       "AnchorId": "namespace-cephalon-engine-manifest",
-      "TypeCount": 5
+      "TypeCount": 6
     },
     {
       "NamespaceName": "Cephalon.Engine.Patterns",
@@ -3468,6 +3468,21 @@
       }
     },
     {
+      "DisplayName": "PackageDependencyManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-manifest-packagedependencymanifest",
+      "Declaration": "public sealed class PackageDependencyManifest",
+      "Summary": "Describes a package-to-package dependency declared by a loaded Cephalon package.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "PackageManifest",
       "NamespaceName": "Cephalon.Engine.Manifest",
       "AssemblyName": "Cephalon.Engine",
@@ -3478,7 +3493,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 25,
+        "Properties": 26,
         "Methods": 0
       }
     },
@@ -7564,6 +7579,17 @@
     {
       "DisplayName": "Dependencies",
       "Category": "Properties",
+      "DeclaringTypeName": "PackageManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-manifest-packagemanifest-dependencies",
+      "Signature": "IReadOnlyList\u003CPackageDependencyManifest\u003E Dependencies { get; set; }",
+      "Summary": "Gets the package-to-package dependencies declared by the package manifest."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -10644,6 +10670,17 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "PackageDependencyManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-manifest-packagedependencymanifest-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable identifier of the required package."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "PackageManifest",
       "NamespaceName": "Cephalon.Engine.Manifest",
       "AssemblyName": "Cephalon.Engine",
@@ -11775,6 +11812,17 @@
       "Summary": "Gets the largest event id published by this convention."
     },
     {
+      "DisplayName": "MaximumVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageDependencyManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-manifest-packagedependencymanifest-maximumversion",
+      "Signature": "string MaximumVersion { get; }",
+      "Summary": "Gets the maximum acceptable version of the required package, when declared."
+    },
+    {
       "DisplayName": "MaxRestartAttempts",
       "Category": "Properties",
       "DeclaringTypeName": "FailurePolicy",
@@ -12191,6 +12239,17 @@
       "AnchorId": "member-p-cephalon-engine-diagnostics-diagnosticsconvention-minimumeventid",
       "Signature": "int? MinimumEventId { get; }",
       "Summary": "Gets the smallest event id published by this convention."
+    },
+    {
+      "DisplayName": "MinimumVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageDependencyManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-manifest-packagedependencymanifest-minimumversion",
+      "Signature": "string MinimumVersion { get; }",
+      "Summary": "Gets the minimum acceptable version of the required package, when declared."
     },
     {
       "DisplayName": "ModularArchitecture",
@@ -12906,6 +12965,17 @@
       "AnchorId": "member-f-cephalon-engine-runtime-runtimelifecycleeventscope-package",
       "Signature": "const RuntimeLifecycleEventScope Package",
       "Summary": "The event belongs to package loading and package-origin visibility."
+    },
+    {
+      "DisplayName": "PackageDependencyManifest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "PackageDependencyManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-manifest-packagedependencymanifest-ctor-system-string-system-string-system-string",
+      "Signature": "PackageDependencyManifest(string id, string minimumVersion, string maximumVersion)",
+      "Summary": "Creates a new package dependency manifest entry."
     },
     {
       "DisplayName": "PackageDirectories",
