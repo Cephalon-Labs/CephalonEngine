@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-02T20:35:24.2194493+00:00",
+  "GeneratedAtUtc": "2026-04-03T04:34:01.567174+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -336,6 +336,14 @@
       "FileName": "cephalon-observability-opensearchdependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "Category": "Hosts",
+      "Description": "Red Hat OpenShift collector defaults and hosted OTLP integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-openshift.md",
+      "NamespaceCount": 2,
+      "TypeCount": 2
     },
     {
       "AssemblyName": "Cephalon.Observability.OpenTelemetry",
@@ -1013,6 +1021,20 @@
       "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
       "FileName": "cephalon-observability-opensearchdependencies.md",
       "AnchorId": "namespace-cephalon-observability-opensearchdependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "FileName": "cephalon-observability-openshift.md",
+      "AnchorId": "namespace-cephalon-observability-openshift-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.OpenShift.Hosting",
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "FileName": "cephalon-observability-openshift.md",
+      "AnchorId": "namespace-cephalon-observability-openshift-hosting",
       "TypeCount": 1
     },
     {
@@ -3385,6 +3407,36 @@
       }
     },
     {
+      "DisplayName": "OpenShiftHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.OpenShift.Hosting",
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "FileName": "cephalon-observability-openshift.md",
+      "AnchorId": "type-cephalon-observability-openshift-hosting-openshifthostapplicationbuilderextensions",
+      "Declaration": "public static class OpenShiftHostApplicationBuilderExtensions",
+      "Summary": "Adds Red Hat OpenShift-hosted observability defaults and in-cluster collector wiring for Cephalon hosts.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "OpenShiftTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "FileName": "cephalon-observability-openshift.md",
+      "AnchorId": "type-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions",
+      "Declaration": "public sealed class OpenShiftTelemetryExportOptions",
+      "Summary": "Configures Red Hat OpenShift observability defaults on top of the shared Cephalon telemetry contract.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 10,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "OpenTelemetryHostApplicationBuilderExtensions",
       "NamespaceName": "Cephalon.Observability.OpenTelemetry.Hosting",
       "AssemblyName": "Cephalon.Observability.OpenTelemetry",
@@ -5177,6 +5229,17 @@
       "Summary": "Adds OpenSearch dependency-health services using configuration as the primary source of probe settings."
     },
     {
+      "DisplayName": "AddCephalonOpenShift",
+      "Category": "Methods",
+      "DeclaringTypeName": "OpenShiftHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.OpenShift.Hosting",
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "FileName": "cephalon-observability-openshift.md",
+      "AnchorId": "member-m-cephalon-observability-openshift-hosting-openshifthostapplicationbuilderextensions-addcephalonopenshift-1-0-system-action-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions",
+      "Signature": "TBuilder AddCephalonOpenShift\u003CTBuilder\u003E(this TBuilder builder, Action\u003COpenShiftTelemetryExportOptions\u003E configure)",
+      "Summary": "Adds OpenShift-aware OpenTelemetry registration for the Cephalon engine diagnostics surface."
+    },
+    {
       "DisplayName": "AddCephalonOpenTelemetry",
       "Category": "Methods",
       "DeclaringTypeName": "OpenTelemetryHostApplicationBuilderExtensions",
@@ -6464,6 +6527,17 @@
       "Summary": "Indicates client-streaming interactions are supported."
     },
     {
+      "DisplayName": "ClusterName",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "FileName": "cephalon-observability-openshift.md",
+      "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-clustername",
+      "Signature": "string ClusterName { get; set; }",
+      "Summary": "Gets or sets the Kubernetes cluster name to stamp onto exported resources."
+    },
+    {
       "DisplayName": "Collections",
       "Category": "Properties",
       "DeclaringTypeName": "IKnowledgeCatalog",
@@ -6484,6 +6558,50 @@
       "AnchorId": "member-p-cephalon-retrieval-configuration-retrievaloptions-collections",
       "Signature": "IList\u003CKnowledgeCollectionDescriptor\u003E Collections { get; }",
       "Summary": "Gets the host-defined knowledge collections that should be available to the retrieval runtime."
+    },
+    {
+      "DisplayName": "CollectorNamespace",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "FileName": "cephalon-observability-openshift.md",
+      "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-collectornamespace",
+      "Signature": "string CollectorNamespace { get; set; }",
+      "Summary": "Gets or sets the collector namespace used to build the in-cluster OpenShift collector endpoint."
+    },
+    {
+      "DisplayName": "CollectorPort",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "FileName": "cephalon-observability-openshift.md",
+      "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-collectorport",
+      "Signature": "int? CollectorPort { get; set; }",
+      "Summary": "Gets or sets the collector port used for the in-cluster OpenShift collector endpoint."
+    },
+    {
+      "DisplayName": "CollectorScheme",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "FileName": "cephalon-observability-openshift.md",
+      "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-collectorscheme",
+      "Signature": "string CollectorScheme { get; set; }",
+      "Summary": "Gets or sets the URI scheme used for the in-cluster OpenShift collector endpoint."
+    },
+    {
+      "DisplayName": "CollectorServiceName",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "FileName": "cephalon-observability-openshift.md",
+      "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-collectorservicename",
+      "Signature": "string CollectorServiceName { get; set; }",
+      "Summary": "Gets or sets the collector service name used to build the in-cluster OpenShift collector endpoint."
     },
     {
       "DisplayName": "Composition",
@@ -9315,6 +9433,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "FileName": "cephalon-observability-openshift.md",
+      "AnchorId": "member-m-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "OpenShiftTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds OpenShift telemetry export options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "OracleDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.OracleDependencies",
@@ -9665,6 +9794,17 @@
       "Summary": "Gets a value indicating whether the policy differs from the default baseline."
     },
     {
+      "DisplayName": "Headers",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "FileName": "cephalon-observability-openshift.md",
+      "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-headers",
+      "Signature": "string Headers { get; set; }",
+      "Summary": "Gets or sets the raw OTLP headers string added to OpenShift collector requests."
+    },
+    {
       "DisplayName": "HealthCommand",
       "Category": "Properties",
       "DeclaringTypeName": "MongoDbDependencyDefinition",
@@ -9971,6 +10111,17 @@
       "AnchorId": "member-p-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions-hostedplatform",
       "Signature": "string HostedPlatform { get; set; }",
       "Summary": "Gets or sets the hosted Huawei Cloud platform whose default resource attributes should be applied."
+    },
+    {
+      "DisplayName": "HostedPlatform",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "FileName": "cephalon-observability-openshift.md",
+      "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-hostedplatform",
+      "Signature": "string HostedPlatform { get; set; }",
+      "Summary": "Gets or sets the OpenShift deployment target whose hosted defaults should be applied."
     },
     {
       "DisplayName": "HttpDependencyDefinition",
@@ -12228,6 +12379,17 @@
       "Summary": "Field number for the \u0022name\u0022 field."
     },
     {
+      "DisplayName": "Namespace",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "FileName": "cephalon-observability-openshift.md",
+      "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-namespace",
+      "Signature": "string Namespace { get; set; }",
+      "Summary": "Gets or sets the workload namespace to stamp onto exported resources."
+    },
+    {
       "DisplayName": "NamespaceIndexPath",
       "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocsSurface",
@@ -12380,6 +12542,17 @@
       "AnchorId": "member-m-cephalon-observability-opensearchdependencies-configuration-opensearchdependencyhealthoptions-ctor",
       "Signature": "OpenSearchDependencyHealthOptions()",
       "Summary": "Initializes a new instance of the \u0060OpenSearchDependencyHealthOptions\u0060 class."
+    },
+    {
+      "DisplayName": "OpenShiftTelemetryExportOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "FileName": "cephalon-observability-openshift.md",
+      "AnchorId": "member-m-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-ctor",
+      "Signature": "OpenShiftTelemetryExportOptions()",
+      "Summary": "Initializes a new instance of the \u0060OpenShiftTelemetryExportOptions\u0060 class."
     },
     {
       "DisplayName": "OperationalStory",
@@ -16727,6 +16900,17 @@
       "Summary": "Gets the trusted assembly-name allow-list."
     },
     {
+      "DisplayName": "TrustedCaCertificatePath",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "FileName": "cephalon-observability-openshift.md",
+      "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-trustedcacertificatepath",
+      "Signature": "string TrustedCaCertificatePath { get; set; }",
+      "Summary": "Gets or sets the filesystem path to a trusted CA bundle used for HTTPS OTLP/HTTP traces and metrics against in-cluster or shared OpenShift collectors."
+    },
+    {
       "DisplayName": "TrustedOnly",
       "Category": "Fields",
       "DeclaringTypeName": "CapabilityAccess",
@@ -17121,6 +17305,17 @@
       "AnchorId": "member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-usegooglemanagedingestion",
       "Signature": "bool UseGoogleManagedIngestion { get; set; }",
       "Summary": "Gets or sets a value indicating whether the package should use Google-managed OTLP ingestion for traces and metrics when no shared collector endpoint is configured."
+    },
+    {
+      "DisplayName": "UseInClusterCollectorService",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
+      "AssemblyName": "Cephalon.Observability.OpenShift",
+      "FileName": "cephalon-observability-openshift.md",
+      "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-useinclustercollectorservice",
+      "Signature": "bool UseInClusterCollectorService { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the package should target an in-cluster OpenShift collector service when no shared endpoint is configured."
     },
     {
       "DisplayName": "UseLocalization",

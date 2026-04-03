@@ -171,6 +171,9 @@ Browse the published API surface by public member.
 - [AddCephalonOpenSearchDependencyHealth](cephalon-observability-opensearchdependencies.md#member-m-cephalon-observability-opensearchdependencies-hosting-opensearchdependencyhealthservicecollectionextensions-addcephalonopensearchdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-opensearchdependencies-configuration-opensearchdependencyhealthoptions): `Methods` on `OpenSearchDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.OpenSearchDependencies.Hosting` (`Cephalon.Observability.OpenSearchDependencies`) [Browse](browse.html?q=AddCephalonOpenSearchDependencyHealth&assembly=Cephalon.Observability.OpenSearchDependencies&namespace=Cephalon.Observability.OpenSearchDependencies.Hosting&scope=members)
   - Adds OpenSearch dependency-health services using configuration as the primary source of probe settings.
   - `IServiceCollection AddCephalonOpenSearchDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<OpenSearchDependencyHealthOptions> configure)`
+- [AddCephalonOpenShift](cephalon-observability-openshift.md#member-m-cephalon-observability-openshift-hosting-openshifthostapplicationbuilderextensions-addcephalonopenshift-1-0-system-action-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions): `Methods` on `OpenShiftHostApplicationBuilderExtensions` in `Cephalon.Observability.OpenShift.Hosting` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=AddCephalonOpenShift&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Hosting&scope=members)
+  - Adds OpenShift-aware OpenTelemetry registration for the Cephalon engine diagnostics surface.
+  - `TBuilder AddCephalonOpenShift<TBuilder>(this TBuilder builder, Action<OpenShiftTelemetryExportOptions> configure)`
 - [AddCephalonOpenTelemetry](cephalon-observability-opentelemetry.md#member-m-cephalon-observability-opentelemetry-hosting-opentelemetryhostapplicationbuilderextensions-addcephalonopentelemetry-1-0-system-action-cephalon-observability-configuration-telemetryexportoptions): `Methods` on `OpenTelemetryHostApplicationBuilderExtensions` in `Cephalon.Observability.OpenTelemetry.Hosting` (`Cephalon.Observability.OpenTelemetry`) [Browse](browse.html?q=AddCephalonOpenTelemetry&assembly=Cephalon.Observability.OpenTelemetry&namespace=Cephalon.Observability.OpenTelemetry.Hosting&scope=members)
   - Adds OpenTelemetry exporter registration for the Cephalon engine diagnostics surface.
   - `TBuilder AddCephalonOpenTelemetry<TBuilder>(this TBuilder builder, Action<TelemetryExportOptions> configure)`
@@ -528,12 +531,27 @@ Browse the published API surface by public member.
 - [ClientStreaming](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-transportfeatures-clientstreaming): `Fields` on `TransportFeatures` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=ClientStreaming&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Indicates client-streaming interactions are supported.
   - `const TransportFeatures ClientStreaming`
+- [ClusterName](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-clustername): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=ClusterName&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
+  - Gets or sets the Kubernetes cluster name to stamp onto exported resources.
+  - `string ClusterName { get; set; }`
 - [Collections](cephalon-retrieval.md#member-p-cephalon-retrieval-services-iknowledgecatalog-collections): `Properties` on `IKnowledgeCatalog` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Collections&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets the effective collection set after host options and module contributors have both been applied.
   - `IReadOnlyList<KnowledgeCollectionDescriptor> Collections { get; }`
 - [Collections](cephalon-retrieval.md#member-p-cephalon-retrieval-configuration-retrievaloptions-collections): `Properties` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=Collections&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
   - Gets the host-defined knowledge collections that should be available to the retrieval runtime.
   - `IList<KnowledgeCollectionDescriptor> Collections { get; }`
+- [CollectorNamespace](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-collectornamespace): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=CollectorNamespace&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
+  - Gets or sets the collector namespace used to build the in-cluster OpenShift collector endpoint.
+  - `string CollectorNamespace { get; set; }`
+- [CollectorPort](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-collectorport): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=CollectorPort&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
+  - Gets or sets the collector port used for the in-cluster OpenShift collector endpoint.
+  - `int? CollectorPort { get; set; }`
+- [CollectorScheme](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-collectorscheme): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=CollectorScheme&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
+  - Gets or sets the URI scheme used for the in-cluster OpenShift collector endpoint.
+  - `string CollectorScheme { get; set; }`
+- [CollectorServiceName](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-collectorservicename): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=CollectorServiceName&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
+  - Gets or sets the collector service name used to build the in-cluster OpenShift collector endpoint.
+  - `string CollectorServiceName { get; set; }`
 - [Composition](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-patternkind-composition): `Fields` on `PatternKind` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Composition&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Identifies a composition pattern.
   - `const PatternKind Composition`
@@ -1314,6 +1332,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability-opensearchdependencies.md#member-m-cephalon-observability-opensearchdependencies-configuration-opensearchdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `OpenSearchDependencyHealthOptions` in `Cephalon.Observability.OpenSearchDependencies.Configuration` (`Cephalon.Observability.OpenSearchDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.OpenSearchDependencies&namespace=Cephalon.Observability.OpenSearchDependencies.Configuration&scope=members)
   - Binds OpenSearch dependency-health options from configuration.
   - `OpenSearchDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-observability-openshift.md#member-m-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
+  - Binds OpenShift telemetry export options from configuration.
+  - `OpenShiftTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability-oracledependencies.md#member-m-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `OracleDependencyHealthOptions` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Binds Oracle dependency-health options from configuration.
   - `OracleDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -1416,6 +1437,9 @@ Browse the published API surface by public member.
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-trustpolicy-hasvalues): `Properties` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether the policy differs from the default baseline.
   - `bool HasValues { get; }`
+- [Headers](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-headers): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
+  - Gets or sets the raw OTLP headers string added to OpenShift collector requests.
+  - `string Headers { get; set; }`
 - [HealthCommand](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-healthcommand): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=HealthCommand&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the MongoDB database command executed to verify the dependency.
   - `string HealthCommand { get; set; }`
@@ -1499,6 +1523,9 @@ Browse the published API surface by public member.
   - `string HostedPlatform { get; set; }`
 - [HostedPlatform](cephalon-observability-huaweicloud.md#member-p-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions-hostedplatform): `Properties` on `HuaweiCloudTelemetryExportOptions` in `Cephalon.Observability.HuaweiCloud.Configuration` (`Cephalon.Observability.HuaweiCloud`) [Browse](browse.html?q=HostedPlatform&assembly=Cephalon.Observability.HuaweiCloud&namespace=Cephalon.Observability.HuaweiCloud.Configuration&scope=members)
   - Gets or sets the hosted Huawei Cloud platform whose default resource attributes should be applied.
+  - `string HostedPlatform { get; set; }`
+- [HostedPlatform](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-hostedplatform): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=HostedPlatform&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
+  - Gets or sets the OpenShift deployment target whose hosted defaults should be applied.
   - `string HostedPlatform { get; set; }`
 - [HttpDependencyDefinition](cephalon-observability-httpdependencies.md#member-m-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-ctor): `Constructors` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=HttpDependencyDefinition&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Initializes a new instance of the `HttpDependencyDefinition` class.
@@ -2133,6 +2160,9 @@ Browse the published API surface by public member.
 - [NameFieldNumber](cephalon-aspnetcore-grpc.md#member-f-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-namefieldnumber): `Fields` on `HelloRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=NameFieldNumber&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Field number for the "name" field.
   - `const int NameFieldNumber`
+- [Namespace](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-namespace): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=Namespace&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
+  - Gets or sets the workload namespace to stamp onto exported resources.
+  - `string Namespace { get; set; }`
 - [NamespaceIndexPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-namespaceindexpath): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=NamespaceIndexPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The hosted path to the namespace index.
   - `string NamespaceIndexPath { get; set; }`
@@ -2178,6 +2208,9 @@ Browse the published API surface by public member.
 - [OpenSearchDependencyHealthOptions](cephalon-observability-opensearchdependencies.md#member-m-cephalon-observability-opensearchdependencies-configuration-opensearchdependencyhealthoptions-ctor): `Constructors` on `OpenSearchDependencyHealthOptions` in `Cephalon.Observability.OpenSearchDependencies.Configuration` (`Cephalon.Observability.OpenSearchDependencies`) [Browse](browse.html?q=OpenSearchDependencyHealthOptions&assembly=Cephalon.Observability.OpenSearchDependencies&namespace=Cephalon.Observability.OpenSearchDependencies.Configuration&scope=members)
   - Initializes a new instance of the `OpenSearchDependencyHealthOptions` class.
   - `OpenSearchDependencyHealthOptions()`
+- [OpenShiftTelemetryExportOptions](cephalon-observability-openshift.md#member-m-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-ctor): `Constructors` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=OpenShiftTelemetryExportOptions&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
+  - Initializes a new instance of the `OpenShiftTelemetryExportOptions` class.
+  - `OpenShiftTelemetryExportOptions()`
 - [OperationalStory](cephalon-engine.md#member-p-cephalon-engine-runtime-engineruntime-operationalstory): `Properties` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=OperationalStory&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the richer operator-facing lifecycle story for the runtime.
   - `RuntimeOperationalStory OperationalStory { get; }`
@@ -3378,6 +3411,9 @@ Browse the published API surface by public member.
 - [TrustedAssemblies](cephalon-engine.md#member-p-cephalon-engine-configuration-trustpolicy-trustedassemblies): `Properties` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TrustedAssemblies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the trusted assembly-name allow-list.
   - `IReadOnlyList<string> TrustedAssemblies { get; }`
+- [TrustedCaCertificatePath](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-trustedcacertificatepath): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=TrustedCaCertificatePath&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
+  - Gets or sets the filesystem path to a trusted CA bundle used for HTTPS OTLP/HTTP traces and metrics against in-cluster or shared OpenShift collectors.
+  - `string TrustedCaCertificatePath { get; set; }`
 - [TrustedOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-capabilities-capabilityaccess-trustedonly): `Fields` on `CapabilityAccess` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=TrustedOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
   - Indicates the capability can be used only by trusted modules or packages.
   - `const CapabilityAccess TrustedOnly`
@@ -3489,6 +3525,9 @@ Browse the published API surface by public member.
 - [UseGoogleManagedIngestion](cephalon-observability-gcp.md#member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-usegooglemanagedingestion): `Properties` on `GcpTelemetryExportOptions` in `Cephalon.Observability.Gcp.Configuration` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=UseGoogleManagedIngestion&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Configuration&scope=members)
   - Gets or sets a value indicating whether the package should use Google-managed OTLP ingestion for traces and metrics when no shared collector endpoint is configured.
   - `bool UseGoogleManagedIngestion { get; set; }`
+- [UseInClusterCollectorService](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-useinclustercollectorservice): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=UseInClusterCollectorService&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
+  - Gets or sets a value indicating whether the package should target an in-cluster OpenShift collector service when no shared endpoint is configured.
+  - `bool UseInClusterCollectorService { get; set; }`
 - [UseLocalization](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-uselocalization-cephalon-engine-configuration-localizationsettings): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseLocalization&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Merges localization settings into the current builder state.
   - `EngineBuilder UseLocalization(LocalizationSettings settings)`
