@@ -394,6 +394,31 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void BuildCollectsHostedExecutionsFromActiveModules()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.AddModule(new WorkflowCatalogTestModule("builder-hosted-test"));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var runtime = provider.GetRequiredService<IRuntime>();
+        var catalog = provider.GetRequiredService<IHostedExecutionRuntimeCatalog>();
+        var hostedExecution = Assert.Single(catalog.HostedExecutions);
+
+        Assert.Equal("approval-pump", hostedExecution.Id);
+        Assert.Equal("workflow-catalog", hostedExecution.SourceModuleId);
+        Assert.Equal("background-service", hostedExecution.Kind);
+        Assert.Equal("approval-flow", hostedExecution.ExecutionGraphId);
+        Assert.True(hostedExecution.StartsWithHost);
+        Assert.Equal(hostedExecution, catalog.GetById("approval-pump"));
+        Assert.Single(catalog.GetBySourceModule("workflow-catalog"));
+        Assert.Single(catalog.GetByExecutionGraph("approval-flow"));
+        Assert.Equal("modular-monolith", runtime.Manifest.AppProfile.BlueprintId);
+    }
+
+    [Fact]
     public async Task RuntimeOperationalStoryTracksExecutionGraphsAcrossLifecycleTransitions()
     {
         var services = new ServiceCollection();
@@ -452,6 +477,66 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public async Task RuntimeOperationalStoryTracksHostedExecutionsAcrossLifecycleTransitions()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.AddModule(new WorkflowCatalogTestModule("hosted-story-test"));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var runtime = provider.GetRequiredService<IRuntime>();
+
+        await runtime.StartAsync(provider);
+
+        var startedStory = runtime.OperationalStory;
+        var activeHostedExecution = Assert.Single(startedStory.HostedExecutions);
+
+        Assert.Equal("approval-pump", activeHostedExecution.HostedExecutionId);
+        Assert.Equal("workflow-catalog", activeHostedExecution.SourceModuleId);
+        Assert.Equal("1.0.0", activeHostedExecution.SourceModuleVersion);
+        Assert.Equal("background-service", activeHostedExecution.Kind);
+        Assert.Equal("approval-flow", activeHostedExecution.ExecutionGraphId);
+        Assert.True(activeHostedExecution.StartsWithHost);
+        Assert.True(activeHostedExecution.IsLoaded);
+        Assert.True(activeHostedExecution.IsActive);
+        Assert.False(activeHostedExecution.IsDeactivated);
+        Assert.NotNull(activeHostedExecution.LoadedAtUtc);
+        Assert.NotNull(activeHostedExecution.ActivatedAtUtc);
+        Assert.Null(activeHostedExecution.DeactivatedAtUtc);
+        Assert.Equal("activate", activeHostedExecution.LastObservedPhase);
+        Assert.Contains(
+            startedStory.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.HostedExecution &&
+                entry.SubjectId == "approval-pump" &&
+                entry.Phase == "load" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Succeeded);
+        Assert.Contains(
+            startedStory.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.HostedExecution &&
+                entry.SubjectId == "approval-pump" &&
+                entry.Phase == "activate" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Succeeded);
+
+        await runtime.StopAsync();
+
+        var stoppedStory = runtime.OperationalStory;
+        var stoppedHostedExecution = Assert.Single(stoppedStory.HostedExecutions);
+
+        Assert.False(stoppedHostedExecution.IsActive);
+        Assert.True(stoppedHostedExecution.IsDeactivated);
+        Assert.NotNull(stoppedHostedExecution.DeactivatedAtUtc);
+        Assert.Equal("deactivate", stoppedHostedExecution.LastObservedPhase);
+        Assert.Contains(
+            stoppedStory.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.HostedExecution &&
+                entry.SubjectId == "approval-pump" &&
+                entry.Phase == "deactivate" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Succeeded);
+    }
+
+    [Fact]
     public void BuildRejectsExecutionGraphsThatReferenceUnknownCapabilities()
     {
         var services = new ServiceCollection();
@@ -464,6 +549,21 @@ public sealed class EngineBuilderTests
 
         Assert.Contains("unknown capability", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("workflow.missing", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildRejectsHostedExecutionsThatReferenceUnknownExecutionGraphs()
+    {
+        var services = new ServiceCollection();
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            services.AddCephalon(engine =>
+            {
+                engine.AddModule(new InvalidHostedExecutionModule(publishInvalidHostedExecution: true));
+            }));
+
+        Assert.Contains("unknown execution graph", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("missing-graph", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

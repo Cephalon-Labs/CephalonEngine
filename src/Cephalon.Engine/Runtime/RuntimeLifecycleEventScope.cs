@@ -23,5 +23,10 @@ public enum RuntimeLifecycleEventScope
     /// <summary>
     /// The event belongs to execution-graph visibility and active lifecycle transitions.
     /// </summary>
-    ExecutionGraph = 3
+    ExecutionGraph = 3,
+
+    /// <summary>
+    /// The event belongs to hosted-execution visibility and host-managed activation conventions.
+    /// </summary>
+    HostedExecution = 4
 }

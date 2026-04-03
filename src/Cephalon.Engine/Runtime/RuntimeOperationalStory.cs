@@ -9,7 +9,7 @@ namespace Cephalon.Engine.Runtime;
 /// <param name="Status">The current runtime lifecycle status snapshot.</param>
 /// <param name="LoadedPackages">The packages currently visible to the runtime story.</param>
 /// <param name="Modules">The current lifecycle state for each loaded module.</param>
-/// <param name="Timeline">The ordered lifecycle narrative for package load, execution-graph transitions, module transitions, runtime transitions, and failures.</param>
+/// <param name="Timeline">The ordered lifecycle narrative for package load, execution-graph transitions, hosted-execution transitions, module transitions, runtime transitions, and failures.</param>
 public sealed record RuntimeOperationalStory(
     DateTimeOffset GeneratedAtUtc,
     RuntimeStatusSnapshot Status,
@@ -21,4 +21,9 @@ public sealed record RuntimeOperationalStory(
     /// Gets the current lifecycle state for each execution graph visible to the runtime story.
     /// </summary>
     public IReadOnlyList<RuntimeExecutionGraphState> ExecutionGraphs { get; init; } = [];
+
+    /// <summary>
+    /// Gets the current lifecycle state for each hosted execution visible to the runtime story.
+    /// </summary>
+    public IReadOnlyList<RuntimeHostedExecutionState> HostedExecutions { get; init; } = [];
 }

@@ -145,4 +145,31 @@ public sealed class WorkerHostingTests
 
         await host.StopAsync();
     }
+
+    [Fact]
+    public async Task AddCephalonSurfacesHostedExecutionLifecycleWithinGenericHost()
+    {
+        var builder = Host.CreateApplicationBuilder();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new WorkflowCatalogTestModule("worker-hosted-test"));
+        });
+
+        using var host = builder.Build();
+        var runtime = host.Services.GetRequiredService<IRuntime>();
+
+        await host.StartAsync();
+
+        var startedHostedExecution = Assert.Single(runtime.OperationalStory.HostedExecutions);
+        Assert.Equal("approval-pump", startedHostedExecution.HostedExecutionId);
+        Assert.True(startedHostedExecution.IsActive);
+        Assert.Equal("approval-flow", startedHostedExecution.ExecutionGraphId);
+
+        await host.StopAsync();
+
+        var stoppedHostedExecution = Assert.Single(runtime.OperationalStory.HostedExecutions);
+        Assert.True(stoppedHostedExecution.IsDeactivated);
+        Assert.False(stoppedHostedExecution.IsActive);
+    }
 }

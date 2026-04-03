@@ -439,7 +439,7 @@ Follow-up later:
 ### ENG-013 Workflow and orchestration primitives
 
 Status: later
-Estimate: 11
+Estimate: 8
 
 Why:
 
@@ -448,16 +448,21 @@ Why:
 Delivered so far:
 
 - a first execution-graph contract through `IExecutionGraphContributor`, `ExecutionGraphDescriptor`, and `IExecutionRuntimeCatalog`
+- a first hosted/background execution contract through `IHostedExecutionContributor`, `HostedExecutionDescriptor`, and `IHostedExecutionRuntimeCatalog`
 - additive runtime introspection through `/engine/execution-graphs` and `/engine/snapshot`
+- additive hosted/background introspection through `/engine/hosted-executions` and `/engine/snapshot`
 - build-time validation for graph ids, nodes, edges, referenced modules, and referenced capability keys
+- build-time validation for hosted-execution ids, source modules, and referenced execution graphs
 - execution-graph lifecycle state through `/engine/runtime-story` and `/engine/snapshot`, including operator-visible load, activate, and deactivate transitions
+- hosted/background execution lifecycle state through `/engine/runtime-story` and `/engine/snapshot`, including operator-visible load, activate, and deactivate transitions
 - runtime diagnostics coverage for execution-graph lifecycle transitions through `cephalon.execution-graphs.transitions` and the `Cephalon.Engine` event-id catalog
 - module-author guidance for publishing workflow and execution-graph descriptors without bypassing the existing module/capability model
+- descriptive hosted/background execution conventions that stay on top of the existing module and Generic Host model instead of introducing a separate engine-owned runner abstraction
 
 Acceptance remaining:
 
-- introduce hosted/background execution conventions and internal engine events only after the descriptive graph baseline proves out
 - internal engine events for orchestration activation and richer runtime transitions beyond the shipped diagnostics/timeline baseline
+- richer multi-module coordination patterns on top of the shipped execution-graph and hosted-execution baseline
 - AI and orchestration integration points built on the existing module, capability, execution-graph, and runtime-story contracts
 
 ### ENG-022 `MicroserviceSuite` blueprint
@@ -563,7 +568,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 ### Sprint 3
 
-- shipped first execution-graph contract baseline under `ENG-013`
+- shipped first execution-graph contract baseline plus hosted-execution follow-through under `ENG-013`
 - shipped package distribution and provenance follow-through beyond the original package-loading baseline
 - ENG-029 self-hosted OTLP collector/runtime-default follow-through plus the shipped Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and Cloudflare/downstream provider authoring guidance slices
 
