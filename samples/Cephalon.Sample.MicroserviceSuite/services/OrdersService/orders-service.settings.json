@@ -1,0 +1,16 @@
+{
+  "Engine": {
+    "Blueprint": "Microservice",
+    "Discovery": {
+      "Assemblies": [
+        "Cephalon.Sample.MicroserviceSuite.OrdersService"
+      ]
+    },
+    "Transports": [
+      "RestApi"
+    ]
+  },
+  "OpenApi": {
+    "Title": "Cephalon Microservice Suite - Orders Service"
+  }
+}
