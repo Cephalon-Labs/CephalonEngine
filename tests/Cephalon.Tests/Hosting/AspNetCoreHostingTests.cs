@@ -585,6 +585,7 @@ public sealed class AspNetCoreHostingTests
         {
             cephalon.AddModule(new PlatformTestModule());
             cephalon.AddModule(new TechnologyPackContributionModule());
+            cephalon.AddModule(new WorkflowCatalogTestModule("hosting-agentics"));
             cephalon.AddAgentics(options =>
             {
                 options.Tools.Add(new AgentToolDescriptor(
@@ -639,11 +640,28 @@ public sealed class AspNetCoreHostingTests
         var agentics = Assert.Single(surfaces, surface => surface.TechnologyId == "agentic-workloads");
         Assert.Contains(agentics.Entries, entry => entry.Id == "planner");
         Assert.Contains(agentics.Entries, entry => entry.Id == "analyst");
+        var approvalOrchestrator = Assert.Single(agentics.Entries, entry => entry.Id == "approval-orchestrator");
+        Assert.Equal("approval-flow", approvalOrchestrator.Metadata["executionGraphId"]);
+        Assert.Equal("Approval Flow", approvalOrchestrator.Metadata["executionGraphDisplayName"]);
+        Assert.Equal("activate", approvalOrchestrator.Metadata["executionGraphPhase"]);
+        Assert.Equal("true", approvalOrchestrator.Metadata["executionGraphIsActive"]);
+        Assert.Equal("approval-pump", approvalOrchestrator.Metadata["hostedExecutionId"]);
+        Assert.Equal("Approval Pump", approvalOrchestrator.Metadata["hostedExecutionDisplayName"]);
+        Assert.Equal("background-service", approvalOrchestrator.Metadata["hostedExecutionKind"]);
+        Assert.Equal("activate", approvalOrchestrator.Metadata["hostedExecutionPhase"]);
+        Assert.Equal("true", approvalOrchestrator.Metadata["hostedExecutionIsActive"]);
+        Assert.Equal("workflow.approval.record,workflow.approval.request", approvalOrchestrator.Metadata["capabilityKeys"]);
+        Assert.Equal("Approval decision,Approval request", approvalOrchestrator.Metadata["capabilityDisplayNames"]);
+        Assert.Equal("true", approvalOrchestrator.Metadata["orchestrationLinked"]);
 
         var eventing = Assert.Single(surfaces, surface => surface.TechnologyId == "event-driven-integration");
         Assert.Contains(eventing.Entries, entry => entry.Id == "orders");
         Assert.Contains(eventing.Entries, entry => entry.Id == "audit");
         Assert.Equal("event-channels", eventingSurfaces[0].SurfaceId);
+        Assert.Contains(
+            snapshot.TechnologySurfaces.Single(surface => surface.TechnologyId == "agentic-workloads").Entries,
+            entry => entry.Id == "approval-orchestrator" &&
+                entry.Metadata["hostedExecutionId"] == "approval-pump");
         Assert.Contains(
             snapshot.TechnologySurfaces.Single(surface => surface.TechnologyId == "event-driven-integration").Entries,
             entry => entry.Id == "audit");

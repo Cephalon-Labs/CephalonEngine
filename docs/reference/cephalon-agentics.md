@@ -132,12 +132,12 @@ public sealed class AgentToolDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-agentics-services-agenttooldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+<a id="member-m-cephalon-agentics-services-agenttooldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `AgentToolDescriptor`
 
 ```csharp
-AgentToolDescriptor(string id, string displayName, string description, IReadOnlyList<string> tags)
+AgentToolDescriptor(string id, string displayName, string description, IReadOnlyList<string> tags, IReadOnlyList<string> capabilityKeys, string executionGraphId, string hostedExecutionId, IReadOnlyDictionary<string, string> metadata)
 ```
 
 Creates a new agent tool descriptor.
@@ -147,8 +147,22 @@ Parameters:
 - `displayName`: The operator-facing tool name.
 - `description`: The human-readable description of the tool.
 - `tags`: Optional tags that classify the tool.
+- `capabilityKeys`: Optional capability keys that the tool expects to use through the active runtime.
+- `executionGraphId`: The related execution-graph identifier when the tool coordinates a published orchestration flow.
+- `hostedExecutionId`: The related hosted-execution identifier when the tool coordinates one host-managed background surface.
+- `metadata`: Optional operator-facing metadata that should flow through the runtime surface.
 
 #### Properties
+
+<a id="member-p-cephalon-agentics-services-agenttooldescriptor-capabilitykeys"></a>
+
+##### `CapabilityKeys`
+
+```csharp
+IReadOnlyList<string> CapabilityKeys { get; }
+```
+
+Gets the capability keys that the tool expects to use through the active runtime.
 
 <a id="member-p-cephalon-agentics-services-agenttooldescriptor-description"></a>
 
@@ -170,6 +184,26 @@ string DisplayName { get; }
 
 Gets the operator-facing display name for the tool.
 
+<a id="member-p-cephalon-agentics-services-agenttooldescriptor-executiongraphid"></a>
+
+##### `ExecutionGraphId`
+
+```csharp
+string ExecutionGraphId { get; }
+```
+
+Gets the related execution-graph identifier when one is declared.
+
+<a id="member-p-cephalon-agentics-services-agenttooldescriptor-hostedexecutionid"></a>
+
+##### `HostedExecutionId`
+
+```csharp
+string HostedExecutionId { get; }
+```
+
+Gets the related hosted-execution identifier when one is declared.
+
 <a id="member-p-cephalon-agentics-services-agenttooldescriptor-id"></a>
 
 ##### `Id`
@@ -179,6 +213,16 @@ string Id { get; }
 ```
 
 Gets the stable tool identifier.
+
+<a id="member-p-cephalon-agentics-services-agenttooldescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets additional operator-facing metadata associated with the tool.
 
 <a id="member-p-cephalon-agentics-services-agenttooldescriptor-tags"></a>
 

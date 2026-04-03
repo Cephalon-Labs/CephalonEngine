@@ -56,6 +56,7 @@ That keeps the authoring path close to the same module-first ideas used by Cepha
 
 Packages that need to describe an execution flow can implement `IExecutionGraphContributor` and publish one or more `ExecutionGraphDescriptor` entries.
 Packages that need to describe operator-facing host-managed background work can also implement `IHostedExecutionContributor` and publish one or more `HostedExecutionDescriptor` entries.
+Packages that extend `Cephalon.Agentics` can keep agent tools grounded in those same runtime contracts by declaring `capabilityKeys`, `executionGraphId`, or `hostedExecutionId` on `AgentToolDescriptor` instead of inventing a separate AI-specific orchestration registry.
 
 Current baseline behavior:
 
@@ -65,6 +66,8 @@ Current baseline behavior:
 - `/engine/runtime-story` now carries the operator-facing lifecycle state for each execution graph, including load, activate, and deactivate timestamps
 - `/engine/hosted-executions` exposes the hosted/background catalog, `/engine/snapshot` carries the same hosted descriptors, and `/engine/runtime-story` now carries hosted-execution load, activate, and deactivate timestamps
 - hosted executions can link back to one execution graph through `executionGraphId`, but they stay descriptive and operator-facing instead of introducing a separate Cephalon runner abstraction
+- `Cephalon.Agentics` can now project agent-tool links to capability keys, execution graphs, and hosted executions through `/engine/technology-surfaces` and `/engine/snapshot`
+- invalid agent-tool references to unknown capability keys, execution graphs, or hosted executions now fail when the agentic runtime catalog is resolved
 - the engine validates hosted-execution ids, source modules, and referenced execution graphs at build time so invalid hosted descriptors fail fast
 - the engine validates graph ids, entry nodes, edges, referenced modules, and referenced capability keys at build time so invalid descriptors fail fast
 

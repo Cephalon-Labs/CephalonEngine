@@ -1,3 +1,4 @@
+using Cephalon.Agentics.Services;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Modules;
@@ -5,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Support;
 
-internal sealed class WorkflowCatalogTestModule : ModuleBase, IExecutionGraphContributor, IHostedExecutionContributor
+internal sealed class WorkflowCatalogTestModule : ModuleBase, IExecutionGraphContributor, IHostedExecutionContributor, IAgentToolContributor
 {
     private readonly bool enabled;
 
@@ -35,6 +36,10 @@ internal sealed class WorkflowCatalogTestModule : ModuleBase, IExecutionGraphCon
 
     public override void ConfigureServices(IServiceCollection services)
     {
+        if (enabled)
+        {
+            services.AddSingleton<IAgentToolContributor>(this);
+        }
     }
 
     public override void RegisterCapabilities(ICapabilityRegistry capabilities)
@@ -133,6 +138,28 @@ internal sealed class WorkflowCatalogTestModule : ModuleBase, IExecutionGraphCon
             {
                 ["owner"] = "workflow-catalog",
                 ["surface"] = "approval-pump"
+            }));
+    }
+
+    public void RegisterTools(IAgentToolRegistry tools)
+    {
+        if (!enabled)
+        {
+            return;
+        }
+
+        tools.Add(new AgentToolDescriptor(
+            id: "approval-orchestrator",
+            displayName: "Approval Orchestrator",
+            description: "Coordinates the approval flow through the published execution graph and hosted execution surfaces.",
+            tags: ["agentics", "approval", "workflow"],
+            capabilityKeys: ["workflow.approval.request", "workflow.approval.record"],
+            executionGraphId: "approval-flow",
+            hostedExecutionId: "approval-pump",
+            metadata: new Dictionary<string, string>
+            {
+                ["owner"] = "workflow-catalog",
+                ["surface"] = "approval-orchestrator"
             }));
     }
 }

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-03T12:57:46.6796245+00:00",
+  "GeneratedAtUtc": "2026-04-03T13:31:29.1918515+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -1278,7 +1278,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 4,
+        "Properties": 8,
         "Methods": 0
       }
     },
@@ -6143,8 +6143,8 @@
       "NamespaceName": "Cephalon.Agentics.Services",
       "AssemblyName": "Cephalon.Agentics",
       "FileName": "cephalon-agentics.md",
-      "AnchorId": "member-m-cephalon-agentics-services-agenttooldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string",
-      "Signature": "AgentToolDescriptor(string id, string displayName, string description, IReadOnlyList\u003Cstring\u003E tags)",
+      "AnchorId": "member-m-cephalon-agentics-services-agenttooldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AgentToolDescriptor(string id, string displayName, string description, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyList\u003Cstring\u003E capabilityKeys, string executionGraphId, string hostedExecutionId, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a new agent tool descriptor."
     },
     {
@@ -6784,6 +6784,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-capabilitykey",
       "Signature": "string CapabilityKey { get; }",
       "Summary": "Gets the capability key the node intends to drive, when one was declared."
+    },
+    {
+      "DisplayName": "CapabilityKeys",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolDescriptor",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttooldescriptor-capabilitykeys",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CapabilityKeys { get; }",
+      "Summary": "Gets the capability keys that the tool expects to use through the active runtime."
     },
     {
       "DisplayName": "CapabilityManifest",
@@ -9714,6 +9725,17 @@
     {
       "DisplayName": "ExecutionGraphId",
       "Category": "Properties",
+      "DeclaringTypeName": "AgentToolDescriptor",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttooldescriptor-executiongraphid",
+      "Signature": "string ExecutionGraphId { get; }",
+      "Summary": "Gets the related execution-graph identifier when one is declared."
+    },
+    {
+      "DisplayName": "ExecutionGraphId",
+      "Category": "Properties",
       "DeclaringTypeName": "HostedExecutionDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -11096,6 +11118,17 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-hostedexecutiondescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "HostedExecutionDescriptor(string id, string displayName, string description, string sourceModuleId, string kind, string executionGraphId, bool startsWithHost, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a new hosted execution descriptor."
+    },
+    {
+      "DisplayName": "HostedExecutionId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolDescriptor",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttooldescriptor-hostedexecutionid",
+      "Signature": "string HostedExecutionId { get; }",
+      "Summary": "Gets the related hosted-execution identifier when one is declared."
     },
     {
       "DisplayName": "HostedExecutionId",
@@ -13076,6 +13109,17 @@
       "AnchorId": "member-p-cephalon-agentics-configuration-agenticruntimeoptions-metadata",
       "Signature": "IDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets arbitrary metadata that can be attached to the agentic runtime configuration."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolDescriptor",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-services-agenttooldescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets additional operator-facing metadata associated with the tool."
     },
     {
       "DisplayName": "Metadata",
