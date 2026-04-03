@@ -6,6 +6,7 @@ These samples are adoption-quality blueprint examples.
 - `Cephalon.Sample.ModularMonolith`: module-first organization inside one ASP.NET Core host
 - `Cephalon.Sample.ModularVerticalSlice`: feature-slice organization inside a bounded module
 - `Cephalon.Sample.Microservice`: service-boundary example with explicit contracts
+- `Cephalon.Sample.MicroserviceSuite`: coordinated multi-service sample with a shared foundation project plus separate catalog and orders services
 
 These are intentionally different from `playground/`.
 

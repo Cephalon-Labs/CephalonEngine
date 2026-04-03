@@ -36,7 +36,7 @@ Supported direction:
 
 - `SingleHost`
 - `Microservice`
-- `MicroserviceSuite` later
+- `MicroserviceSuite`
 
 ### 3. Feature organization
 
@@ -174,14 +174,15 @@ A higher-level solution template, not just one app.
 
 Shape:
 
-- multiple Cephalon services
-- shared foundation packages
+- multiple Cephalon services composed from the existing `Microservice` blueprint
+- a shared foundation project for suite-level contracts and conventions
 - optional gateway/control-plane pieces later
 
 Use when:
 
 - multiple services are intentionally designed together
 - platform governance and conventions matter across services
+- teams want a reference sample that keeps each service on the shipped `Microservice` host wiring while sharing one suite foundation
 
 ## Engine contract today
 
@@ -347,8 +348,9 @@ Module authoring now has a parallel starter path too:
 - `ModularMonolith`
 - `ModularVerticalSlice`
 - `Microservice`
+- `MicroserviceSuite`
 
-Hold `MicroserviceSuite` until packaging, discovery, and worker/host conventions are more mature.
+`MicroserviceSuite` is now available as a suite-level blueprint that composes repeatable service slots from the shipped `Microservice` scaffold contract. The reference sample lives under `samples/Cephalon.Sample.MicroserviceSuite`, while governance packages and optional gateway/control-plane guidance still stay in later follow-through.
 
 ## Suggested configuration
 
@@ -377,10 +379,11 @@ Use the `Engine` section as the primary source of truth for blueprint, pattern, 
 
 ## Recommendation for Cephalon v1
 
-For v1, support only:
+For v1, support:
 
 - `ModularMonolith`
 - `ModularVerticalSlice`
 - `Microservice`
+- `MicroserviceSuite`
 
-That is enough to prove the model cleanly without pretending every pattern is a first-class runtime concern on day one.
+That is enough to prove the model cleanly across single-app and multi-service shapes without pretending every pattern is a first-class runtime concern on day one.

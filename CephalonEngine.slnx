@@ -9,6 +9,9 @@
   <Folder Name="/samples/">
     <Project Path="samples/Cephalon.ReferenceModule.Operations/Cephalon.ReferenceModule.Operations.csproj" />
     <Project Path="samples/Cephalon.Sample.Microservice/Cephalon.Sample.Microservice.csproj" />
+    <Project Path="samples/Cephalon.Sample.MicroserviceSuite/shared/Cephalon.Sample.MicroserviceSuite.Shared.Foundation/Cephalon.Sample.MicroserviceSuite.Shared.Foundation.csproj" />
+    <Project Path="samples/Cephalon.Sample.MicroserviceSuite/services/CatalogService/Cephalon.Sample.MicroserviceSuite.CatalogService.csproj" />
+    <Project Path="samples/Cephalon.Sample.MicroserviceSuite/services/OrdersService/Cephalon.Sample.MicroserviceSuite.OrdersService.csproj" />
     <Project Path="samples/Cephalon.Sample.ModularMonolith/Cephalon.Sample.ModularMonolith.csproj" />
     <Project Path="samples/Cephalon.Sample.ModularVerticalSlice/Cephalon.Sample.ModularVerticalSlice.csproj" />
   </Folder>

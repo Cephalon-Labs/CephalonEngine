@@ -26,7 +26,7 @@
 
 ## How it fits
 
-This package consumes the same `AppProfile.Scaffold` model exposed by the runtime. It is the shared implementation behind CLI generation and future template or automation workflows. The repository now also carries `SuiteBlueprint`, `SuiteScaffoldPlan`, and `SuiteScaffoldService` for solution-level blueprint work, and `Cephalon.Engine` now defines a built-in `MicroserviceSuite` composition baseline on top of the existing `Microservice` app scaffold. Generator support for rendering that suite blueprint still stays in the follow-up sample/composition slices so this package remains honest about what it renders today.
+This package consumes the same `AppProfile.Scaffold` model exposed by the runtime. It is the shared implementation behind CLI generation and future template or automation workflows. The repository now also carries `SuiteBlueprint`, `SuiteScaffoldPlan`, and `SuiteScaffoldService` for solution-level blueprint work, and `Cephalon.Engine` now defines a built-in `MicroserviceSuite` composition baseline on top of the existing `Microservice` app scaffold. The reference sample suite is now shipped under `samples/Cephalon.Sample.MicroserviceSuite`, while generator support for rendering that suite blueprint still stays in later suite-generator follow-through so this package remains honest about what it renders today.
 
 ## Related docs
 

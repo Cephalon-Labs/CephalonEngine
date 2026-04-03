@@ -71,6 +71,9 @@
     <ProjectReference Include="..\..\src\Cephalon.Scaffolding\Cephalon.Scaffolding.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Worker\Cephalon.Worker.csproj" />
     <ProjectReference Include="..\..\samples\Cephalon.Sample.Microservice\Cephalon.Sample.Microservice.csproj" />
+    <ProjectReference Include="..\..\samples\Cephalon.Sample.MicroserviceSuite\shared\Cephalon.Sample.MicroserviceSuite.Shared.Foundation\Cephalon.Sample.MicroserviceSuite.Shared.Foundation.csproj" />
+    <ProjectReference Include="..\..\samples\Cephalon.Sample.MicroserviceSuite\services\CatalogService\Cephalon.Sample.MicroserviceSuite.CatalogService.csproj" />
+    <ProjectReference Include="..\..\samples\Cephalon.Sample.MicroserviceSuite\services\OrdersService\Cephalon.Sample.MicroserviceSuite.OrdersService.csproj" />
     <ProjectReference Include="..\..\samples\Cephalon.Sample.ModularMonolith\Cephalon.Sample.ModularMonolith.csproj" />
     <ProjectReference Include="..\..\samples\Cephalon.Sample.ModularVerticalSlice\Cephalon.Sample.ModularVerticalSlice.csproj" />
   </ItemGroup>

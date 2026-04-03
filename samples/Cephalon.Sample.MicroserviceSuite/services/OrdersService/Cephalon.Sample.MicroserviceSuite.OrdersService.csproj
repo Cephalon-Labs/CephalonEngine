@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Description>Orders-service sample for the Cephalon MicroserviceSuite blueprint.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\src\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Cephalon.Observability\Cephalon.Observability.csproj" />
+    <ProjectReference Include="..\..\shared\Cephalon.Sample.MicroserviceSuite.Shared.Foundation\Cephalon.Sample.MicroserviceSuite.Shared.Foundation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="orders-service.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
