@@ -1048,6 +1048,7 @@ Current payload highlights:
 - `kind`, `path`, and `sourcePath` explain how the package was discovered
 - `version` comes from `cephalon.package.json` when the package was manifest-driven
 - `minimumEngineVersion`, `maximumEngineVersion`, and `supportedTargetFrameworks` expose compatibility intent
+- `dependencies` exposes any package-to-package requirements declared by the package manifest, including optional minimum and maximum version bounds
 - `publisherId`, `publisherDisplayName`, `signatureKeyId`, and `signatureFingerprint` expose the primary package provenance summary kept for backward compatibility
 - `signatures` exposes per-signer provenance and per-signer verification details when a package declares multiple signers
 - `isSignatureVerified` and `signatureVerificationReason` explain the aggregate detached-signature verification outcome for the package

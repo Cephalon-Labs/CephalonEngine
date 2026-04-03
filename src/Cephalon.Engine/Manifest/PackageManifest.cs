@@ -211,4 +211,9 @@ public sealed class PackageManifest
     /// Gets the reason the package is trusted or not trusted by the current trust policy.
     /// </summary>
     public string TrustReason { get; }
+
+    /// <summary>
+    /// Gets the package-to-package dependencies declared by the package manifest.
+    /// </summary>
+    public IReadOnlyList<PackageDependencyManifest> Dependencies { get; init; } = [];
 }

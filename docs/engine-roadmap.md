@@ -162,21 +162,19 @@ Current baseline already in place:
 - package manifests can be declared through `Engine:Discovery:Packages`
 - package directories can be scanned through `Engine:Discovery:PackageDirectories`
 - package metadata can be governed through `Engine:PackagePolicy`
+- package manifests can declare package-to-package dependencies with version bounds
 - package-loaded modules flow through the same runtime/module contracts
 - package load results are exposed through `/engine/packages` and manifest v2 metadata
 - package trust and capability policy are exposed through `Engine:Trust` and `/engine/trust-policy`
 - package publisher and signer provenance can be declared and evaluated through package manifests and trust allow-lists
 - detached package signatures can be cryptographically verified against trusted public keys
 
-Remaining work in this phase is the broader platform story around external distribution, multi-signer/certificate-chain verification, and richer package provenance beyond the shipped compatibility, integrity, detached-signature, publisher/signer metadata, checksum, and package-policy baseline.
+Remaining work in this phase is the broader platform story around external distribution, multi-signer/certificate-chain verification, and richer package provenance beyond the shipped discovery, dependency validation, compatibility, integrity, detached-signature, publisher/signer metadata, checksum, and package-policy baseline.
 
-Deliverables:
+Remaining follow-through:
 
-- package/plugin discovery model
-- compatibility checks for module packages
-- explicit load failure diagnostics
-- version and dependency validation rules
-- trust and policy hooks for loaded packages
+- external distribution and versioned package delivery guidance
+- richer signer verification and provenance beyond the current detached-signature baseline
 
 Exit criteria:
 
@@ -262,12 +260,11 @@ Exit criteria:
 
 Updated priority order as of `April 3, 2026`:
 
-1. package/plugin loading
-2. package distribution, provenance, and richer trust follow-through beyond the current baseline
-3. workflow and orchestration primitives
-4. multi-service suite blueprints
-5. cloud and platform integrations, with self-hosted plus Azure Monitor plus AWS plus GCP plus Huawei Cloud plus Alibaba Cloud plus Red Hat OpenShift plus DigitalOcean plus VMware Tanzu shipped, and the downstream Cloudflare/custom-provider guidance slice shipped under `#120` while future first-party additions stay explicit and adoption-driven
-6. broader release automation and package-publishing polish
+1. package distribution, provenance, and richer trust follow-through beyond the current baseline
+2. workflow and orchestration primitives
+3. multi-service suite blueprints
+4. cloud and platform integrations, with self-hosted plus Azure Monitor plus AWS plus GCP plus Huawei Cloud plus Alibaba Cloud plus Red Hat OpenShift plus DigitalOcean plus VMware Tanzu shipped, and the downstream Cloudflare/custom-provider guidance slice shipped under `#120` while future first-party additions stay explicit and adoption-driven
+5. broader release automation and package-publishing polish
 
 ## Decision guardrails
 

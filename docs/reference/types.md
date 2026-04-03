@@ -207,6 +207,7 @@ Browse the published API surface by public type.
 
 ## P
 
+- [PackageDependencyManifest](cephalon-engine.md#type-cephalon-engine-manifest-packagedependencymanifest): `Cephalon.Engine.Manifest` in `Cephalon.Engine` [Browse](browse.html?q=PackageDependencyManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest)
 - [PackageManifest](cephalon-engine.md#type-cephalon-engine-manifest-packagemanifest): `Cephalon.Engine.Manifest` in `Cephalon.Engine` [Browse](browse.html?q=PackageManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest)
 - [PackagePolicy](cephalon-engine.md#type-cephalon-engine-configuration-packagepolicy): `Cephalon.Engine.Configuration` in `Cephalon.Engine` [Browse](browse.html?q=PackagePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
 - [PackageSignatureManifest](cephalon-engine.md#type-cephalon-engine-manifest-packagesignaturemanifest): `Cephalon.Engine.Manifest` in `Cephalon.Engine` [Browse](browse.html?q=PackageSignatureManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest)

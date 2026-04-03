@@ -402,18 +402,23 @@ Follow-up later:
 ### ENG-011 Package and plugin loading
 
 Status: later
-Estimate: 19
+Estimate: 5
 
 Why:
 
 - Cephalon becomes a platform when modules are distributable independently
 
-Acceptance:
+Current baseline already in place:
 
-- define package discovery inputs
-- verify compatibility and dependency requirements
-- make load failures explicit and diagnosable
-- support policy and trust hooks
+- package discovery inputs through `Engine:Discovery:Packages`, `Engine:Discovery:PackageDirectories`, and the package builder APIs
+- explicit package load failures for missing manifests, duplicate registrations, integrity mismatches, and dependency-registration gaps
+- manifest-declared compatibility, target-framework, version, and package-dependency validation through `cephalon.package.json`
+- package policy, detached-signature verification, publisher/signer provenance, and trust hooks surfaced through `Engine:PackagePolicy`, `Engine:Trust`, and `/engine/packages`
+
+Follow-up later:
+
+- external distribution, richer signer verification, and broader provenance beyond the current detached-signature baseline
+- versioned package distribution guidance outside the repository
 
 ### ENG-012 Capability permissions and trust policy
 
@@ -547,7 +552,6 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 ### Sprint 2
 
-- ENG-011 Package and plugin loading
 - operational hardening follow-through after the shipped health, telemetry, and CI baselines
 - shipped OpenTelemetry companion packaging plus Cassandra contact-point health plus ClickHouse analytics health plus Consul control-plane health plus Elasticsearch cluster health plus HTTP external API, Kafka broker metadata, Memcached cache, MongoDB document database, MQTT broker, MySQL database, NATS broker, Neo4j graph database, OpenSearch cluster health, Oracle database, Postgres database, RabbitMQ broker, Redis/cache, and SQL Server dependency-health companions, together with the shared diagnostics/event-id catalog for active packages, opt-in ASP.NET Core request/response logging with trace correlation, and explicit release-validation guidance for health/export conventions
 
@@ -559,5 +563,6 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 ### Later / not scheduled yet
 
+- ENG-011 external distribution, provenance, and richer signer verification follow-through
 - ENG-022 `MicroserviceSuite` blueprint
 - ENG-028 repo-wide XML-comment hygiene for test harnesses

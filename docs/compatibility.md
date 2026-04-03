@@ -24,7 +24,7 @@ This guide describes the compatibility contract that must stay aligned across Ce
 
 - module packages should emit `version`, `compatibility.minimumEngineVersion`, and `compatibility.supportedTargetFrameworks` at minimum
 - use `compatibility.maximumEngineVersion` only when support is intentionally capped
-- keep `cephalon.package.json` examples aligned with runtime enforcement in `/engine/packages`, `Engine:PackagePolicy`, and `Engine:Trust`
+- keep `cephalon.package.json` examples aligned with runtime enforcement in `/engine/packages`, `Engine:PackagePolicy`, and `Engine:Trust`, including any declared package `dependencies`
 - keep starter manifests aligned with the module author's actual assembly target framework and the engine version they intend to support
 
 ### Generation surfaces

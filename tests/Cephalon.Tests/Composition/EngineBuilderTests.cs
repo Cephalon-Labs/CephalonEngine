@@ -349,6 +349,7 @@ public sealed class EngineBuilderTests
         Assert.False(package.IsSignatureVerified);
         Assert.Contains("no signature value", package.SignatureVerificationReason, StringComparison.OrdinalIgnoreCase);
         Assert.False(string.IsNullOrWhiteSpace(package.ChecksumSha256));
+        Assert.Empty(package.Dependencies);
         Assert.Contains("operations", package.Modules);
         Assert.Equal("reference-operations", operationsModule.PackageId);
     }
@@ -374,7 +375,165 @@ public sealed class EngineBuilderTests
         Assert.Equal("cephalon-labs-reference-operations", package.SignatureFingerprint);
         Assert.False(package.IsSignatureVerified);
         Assert.Contains("no signature value", package.SignatureVerificationReason, StringComparison.OrdinalIgnoreCase);
+        Assert.Empty(package.Dependencies);
         Assert.Contains("operations", package.Modules);
+    }
+
+    [Fact]
+    public void BuildExposesPackageDependencyRequirementsFromManifestPackages()
+    {
+        var dependencyManifestPath = CreateTemporaryManifest(
+            """
+            {
+              "id": "reference-support",
+              "version": "2.0.0",
+              "assembly": "__PACKAGE_ASSEMBLY__",
+              "dependencies": [
+                {
+                  "id": "reference-operations",
+                  "minimumVersion": "1.0.0",
+                  "maximumVersion": "1.0.0"
+                }
+              ],
+              "compatibility": {
+                "minimumEngineVersion": "1.0.0"
+              }
+            }
+            """);
+
+        try
+        {
+            var builder = new EngineBuilder(new ServiceCollection());
+            builder.AddPackageManifest(GetReferenceModuleManifestPath());
+            builder.AddPackageManifest(dependencyManifestPath);
+
+            var runtime = builder.Build();
+            var dependencyPackage = Assert.Single(runtime.Manifest.Packages, static package => package.Id == "reference-support");
+            var dependency = Assert.Single(dependencyPackage.Dependencies);
+
+            Assert.Equal("reference-operations", dependency.Id);
+            Assert.Equal("1.0.0", dependency.MinimumVersion);
+            Assert.Equal("1.0.0", dependency.MaximumVersion);
+        }
+        finally
+        {
+            DeleteManifestDirectory(dependencyManifestPath);
+        }
+    }
+
+    [Fact]
+    public void BuildThrowsWhenPackageDependencyIsMissing()
+    {
+        var manifestPath = CreateTemporaryManifest(
+            """
+            {
+              "id": "reference-support",
+              "version": "2.0.0",
+              "assembly": "__PACKAGE_ASSEMBLY__",
+              "dependencies": [
+                {
+                  "id": "reference-operations"
+                }
+              ],
+              "compatibility": {
+                "minimumEngineVersion": "1.0.0"
+              }
+            }
+            """);
+
+        try
+        {
+            var builder = new EngineBuilder(new ServiceCollection());
+            builder.AddPackageManifest(manifestPath);
+
+            var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+            Assert.Contains("reference-support", exception.Message, StringComparison.Ordinal);
+            Assert.Contains("reference-operations", exception.Message, StringComparison.Ordinal);
+            Assert.Contains("not registered", exception.Message, StringComparison.OrdinalIgnoreCase);
+        }
+        finally
+        {
+            DeleteManifestDirectory(manifestPath);
+        }
+    }
+
+    [Fact]
+    public void BuildThrowsWhenPackageDependencyVersionDoesNotSatisfyRequirement()
+    {
+        var manifestPath = CreateTemporaryManifest(
+            """
+            {
+              "id": "reference-support",
+              "version": "2.0.0",
+              "assembly": "__PACKAGE_ASSEMBLY__",
+              "dependencies": [
+                {
+                  "id": "reference-operations",
+                  "minimumVersion": "2.0.0"
+                }
+              ],
+              "compatibility": {
+                "minimumEngineVersion": "1.0.0"
+              }
+            }
+            """);
+
+        try
+        {
+            var builder = new EngineBuilder(new ServiceCollection());
+            builder.AddPackageManifest(GetReferenceModuleManifestPath());
+            builder.AddPackageManifest(manifestPath);
+
+            var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+            Assert.Contains("reference-support", exception.Message, StringComparison.Ordinal);
+            Assert.Contains("reference-operations", exception.Message, StringComparison.Ordinal);
+            Assert.Contains("2.0.0", exception.Message, StringComparison.Ordinal);
+        }
+        finally
+        {
+            DeleteManifestDirectory(manifestPath);
+        }
+    }
+
+    [Fact]
+    public void BuildThrowsWhenVersionedPackageDependencyTargetsAssemblyPathPackageWithoutVersion()
+    {
+        var manifestPath = CreateTemporaryManifest(
+            """
+            {
+              "id": "reference-support",
+              "version": "2.0.0",
+              "assembly": "__PACKAGE_ASSEMBLY__",
+              "dependencies": [
+                {
+                  "id": "reference-operations",
+                  "minimumVersion": "1.0.0"
+                }
+              ],
+              "compatibility": {
+                "minimumEngineVersion": "1.0.0"
+              }
+            }
+            """);
+
+        try
+        {
+            var builder = new EngineBuilder(new ServiceCollection());
+            builder.AddPackageAssembly(GetReferenceModuleAssemblyPath(), id: "reference-operations");
+            builder.AddPackageManifest(manifestPath);
+
+            var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+            Assert.Contains("reference-support", exception.Message, StringComparison.Ordinal);
+            Assert.Contains("reference-operations", exception.Message, StringComparison.Ordinal);
+            Assert.Contains("did not declare 'version'", exception.Message, StringComparison.Ordinal);
+        }
+        finally
+        {
+            DeleteManifestDirectory(manifestPath);
+        }
     }
 
     [Fact]
@@ -1653,6 +1812,17 @@ public sealed class EngineBuilderTests
         return Path.Combine(GetReferenceModulePackageDirectory(), ModulePackageDirectory.DefaultManifestFileName);
     }
 
+    private static string GetAdditionalPackageAssemblyPath()
+    {
+        return RepositoryPaths.GetFile(
+            "samples",
+            "Cephalon.Sample.ModularMonolith",
+            "bin",
+            "Release",
+            "net10.0",
+            "Cephalon.Sample.ModularMonolith.dll");
+    }
+
     private static string GetReferenceModulePackageDirectory()
     {
         var directory = Path.GetDirectoryName(GetReferenceModuleAssemblyPath());
@@ -1673,7 +1843,11 @@ public sealed class EngineBuilderTests
         var manifestContents = manifestTemplate.Replace(
             "__ASSEMBLY__",
             EscapeJson(GetReferenceModuleAssemblyPath()),
-            StringComparison.Ordinal);
+            StringComparison.Ordinal)
+            .Replace(
+                "__PACKAGE_ASSEMBLY__",
+                EscapeJson(GetAdditionalPackageAssemblyPath()),
+                StringComparison.Ordinal);
         File.WriteAllText(manifestPath, manifestContents);
 
         return manifestPath;
