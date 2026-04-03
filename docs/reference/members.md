@@ -195,6 +195,9 @@ Browse the published API surface by public member.
 - [AddCephalonOpenTelemetry](cephalon-observability-opentelemetry.md#member-m-cephalon-observability-opentelemetry-hosting-opentelemetryhostapplicationbuilderextensions-addcephalonopentelemetry-1-0-system-action-cephalon-observability-configuration-telemetryexportoptions): `Methods` on `OpenTelemetryHostApplicationBuilderExtensions` in `Cephalon.Observability.OpenTelemetry.Hosting` (`Cephalon.Observability.OpenTelemetry`) [Browse](browse.html?q=AddCephalonOpenTelemetry&assembly=Cephalon.Observability.OpenTelemetry&namespace=Cephalon.Observability.OpenTelemetry.Hosting&scope=members)
   - Adds OpenTelemetry exporter registration for the Cephalon engine diagnostics surface.
   - `TBuilder AddCephalonOpenTelemetry<TBuilder>(this TBuilder builder, Action<TelemetryExportOptions> configure)`
+- [AddCephalonOracleCloud](cephalon-observability-oraclecloud.md#member-m-cephalon-observability-oraclecloud-hosting-oraclecloudhostapplicationbuilderextensions-addcephalonoraclecloud-1-0-system-action-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions): `Methods` on `OracleCloudHostApplicationBuilderExtensions` in `Cephalon.Observability.OracleCloud.Hosting` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=AddCephalonOracleCloud&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Hosting&scope=members)
+  - Adds Oracle Cloud-aware OpenTelemetry registration for the Cephalon engine diagnostics surface.
+  - `TBuilder AddCephalonOracleCloud<TBuilder>(this TBuilder builder, Action<OracleCloudTelemetryExportOptions> configure)`
 - [AddCephalonOracleDependencyHealth](cephalon-observability-oracledependencies.md#member-m-cephalon-observability-oracledependencies-hosting-oracledependencyhealthservicecollectionextensions-addcephalonoracledependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions): `Methods` on `OracleDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.OracleDependencies.Hosting` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=AddCephalonOracleDependencyHealth&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Hosting&scope=members)
   - Adds Oracle dependency-health services using code-first configuration.
   - `IServiceCollection AddCephalonOracleDependencyHealth(this IServiceCollection services, Action<OracleDependencyHealthOptions> configure)`
@@ -786,6 +789,9 @@ Browse the published API surface by public member.
 - [Datacenter](cephalon-observability-consuldependencies.md#member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-datacenter): `Properties` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=Datacenter&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
   - Gets or sets the optional Consul datacenter name added as the `dc` query parameter.
   - `string Datacenter { get; set; }`
+- [DataUploadEndpoint](cephalon-observability-oraclecloud.md#member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-datauploadendpoint): `Properties` on `OracleCloudTelemetryExportOptions` in `Cephalon.Observability.OracleCloud.Configuration` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=DataUploadEndpoint&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration&scope=members)
+  - Gets or sets the Oracle Cloud APM data upload endpoint used to build direct managed OTLP/HTTP ingestion URLs.
+  - `string DataUploadEndpoint { get; set; }`
 - [DeactivatedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-deactivatedatutc): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DeactivatedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when the graph most recently became inactive because the runtime stopped.
   - `DateTimeOffset? DeactivatedAtUtc { get; set; }`
@@ -1548,6 +1554,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability-openshift.md#member-m-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Binds OpenShift telemetry export options from configuration.
   - `OpenShiftTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-observability-oraclecloud.md#member-m-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `OracleCloudTelemetryExportOptions` in `Cephalon.Observability.OracleCloud.Configuration` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration&scope=members)
+  - Binds Oracle Cloud telemetry export options from configuration.
+  - `OracleCloudTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability-oracledependencies.md#member-m-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `OracleDependencyHealthOptions` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Binds Oracle dependency-health options from configuration.
   - `OracleDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -1802,6 +1811,9 @@ Browse the published API surface by public member.
   - `string HostedPlatform { get; set; }`
 - [HostedPlatform](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-hostedplatform): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=HostedPlatform&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Gets or sets the OpenShift deployment target whose hosted defaults should be applied.
+  - `string HostedPlatform { get; set; }`
+- [HostedPlatform](cephalon-observability-oraclecloud.md#member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-hostedplatform): `Properties` on `OracleCloudTelemetryExportOptions` in `Cephalon.Observability.OracleCloud.Configuration` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=HostedPlatform&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration&scope=members)
+  - Gets or sets the hosted Oracle Cloud platform whose default resource attributes should be applied.
   - `string HostedPlatform { get; set; }`
 - [HostedPlatform](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-hostedplatform): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=HostedPlatform&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
   - Gets or sets the VMware Tanzu deployment target whose hosted defaults should be applied.
@@ -2412,6 +2424,9 @@ Browse the published API surface by public member.
 - [Method](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-method): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=Method&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the HTTP method used for the probe request.
   - `string Method { get; set; }`
+- [MetricsDataKey](cephalon-observability-oraclecloud.md#member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-metricsdatakey): `Properties` on `OracleCloudTelemetryExportOptions` in `Cephalon.Observability.OracleCloud.Configuration` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=MetricsDataKey&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration&scope=members)
+  - Gets or sets the Oracle Cloud APM private metrics data key used for direct managed metrics ingestion.
+  - `string MetricsDataKey { get; set; }`
 - [Microservice](cephalon-engine.md#member-p-cephalon-engine-appmodel-builtinblueprints-microservice): `Properties` on `BuiltInBlueprints` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=Microservice&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
   - Gets the built-in microservice blueprint.
   - `AppBlueprint Microservice { get; }`
@@ -2634,6 +2649,9 @@ Browse the published API surface by public member.
 - [Options](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-options): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Options&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets module and capability option overrides.
   - `EngineOptions Options { get; }`
+- [OracleCloudTelemetryExportOptions](cephalon-observability-oraclecloud.md#member-m-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-ctor): `Constructors` on `OracleCloudTelemetryExportOptions` in `Cephalon.Observability.OracleCloud.Configuration` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=OracleCloudTelemetryExportOptions&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration&scope=members)
+  - Initializes a new instance of the `OracleCloudTelemetryExportOptions` class.
+  - `OracleCloudTelemetryExportOptions()`
 - [OracleDependencyDefinition](cephalon-observability-oracledependencies.md#member-m-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-ctor): `Constructors` on `OracleDependencyDefinition` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=OracleDependencyDefinition&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Initializes a new instance of the `OracleDependencyDefinition` class.
   - `OracleDependencyDefinition()`
@@ -3062,6 +3080,9 @@ Browse the published API surface by public member.
   - `string Region { get; set; }`
 - [Region](cephalon-observability-huaweicloud.md#member-p-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions-region): `Properties` on `HuaweiCloudTelemetryExportOptions` in `Cephalon.Observability.HuaweiCloud.Configuration` (`Cephalon.Observability.HuaweiCloud`) [Browse](browse.html?q=Region&assembly=Cephalon.Observability.HuaweiCloud&namespace=Cephalon.Observability.HuaweiCloud.Configuration&scope=members)
   - Gets or sets the Huawei Cloud region to stamp onto exported resources when one should be explicit.
+  - `string Region { get; set; }`
+- [Region](cephalon-observability-oraclecloud.md#member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-region): `Properties` on `OracleCloudTelemetryExportOptions` in `Cephalon.Observability.OracleCloud.Configuration` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=Region&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration&scope=members)
+  - Gets or sets the Oracle Cloud region to stamp onto exported resources when one should be explicit.
   - `string Region { get; set; }`
 - [RegisterCapabilities](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-imodule-registercapabilities-cephalon-abstractions-capabilities-icapabilityregistry): `Methods` on `IModule` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterCapabilities&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Registers capabilities exposed by the module.
@@ -3936,6 +3957,9 @@ Browse the published API surface by public member.
 - [Trace](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-trace): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Trace&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The event is useful only for highly detailed trace output.
   - `const DiagnosticSeverity Trace`
+- [TraceDataKey](cephalon-observability-oraclecloud.md#member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-tracedatakey): `Properties` on `OracleCloudTelemetryExportOptions` in `Cephalon.Observability.OracleCloud.Configuration` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=TraceDataKey&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration&scope=members)
+  - Gets or sets the Oracle Cloud APM trace data key used for direct managed trace ingestion.
+  - `string TraceDataKey { get; set; }`
 - [Traits](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-traits): `Properties` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Traits&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Additional traits or descriptors associated with the generated greeting.
   - `RepeatedField<string> Traits { get; }`
@@ -4113,12 +4137,18 @@ Browse the published API surface by public member.
 - [UseManagedOpenTelemetryIngestion](cephalon-observability-alibabacloud.md#member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-usemanagedopentelemetryingestion): `Properties` on `AlibabaCloudTelemetryExportOptions` in `Cephalon.Observability.AlibabaCloud.Configuration` (`Cephalon.Observability.AlibabaCloud`) [Browse](browse.html?q=UseManagedOpenTelemetryIngestion&assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Configuration&scope=members)
   - Gets or sets a value indicating whether the package should use Alibaba Cloud Managed Service for OpenTelemetry when no shared collector endpoint is configured.
   - `bool UseManagedOpenTelemetryIngestion { get; set; }`
+- [UseManagedOpenTelemetryIngestion](cephalon-observability-oraclecloud.md#member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-usemanagedopentelemetryingestion): `Properties` on `OracleCloudTelemetryExportOptions` in `Cephalon.Observability.OracleCloud.Configuration` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=UseManagedOpenTelemetryIngestion&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration&scope=members)
+  - Gets or sets a value indicating whether the package should use Oracle Cloud APM managed OpenTelemetry ingestion when no shared collector endpoint is configured.
+  - `bool UseManagedOpenTelemetryIngestion { get; set; }`
 - [UseOptions](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-useoptions-cephalon-engine-configuration-engineoptions): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseOptions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Merges engine option overrides such as module enablement and capability toggles.
   - `EngineBuilder UseOptions(EngineOptions options)`
 - [UsePackagePolicy](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-usepackagepolicy-cephalon-engine-configuration-packagepolicy): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UsePackagePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Replaces the package-governance policy used when loading independently shipped module packages.
   - `EngineBuilder UsePackagePolicy(PackagePolicy policy)`
+- [UsePublicTraceDataKey](cephalon-observability-oraclecloud.md#member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-usepublictracedatakey): `Properties` on `OracleCloudTelemetryExportOptions` in `Cephalon.Observability.OracleCloud.Configuration` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=UsePublicTraceDataKey&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration&scope=members)
+  - Gets or sets a value indicating whether trace ingestion should use the public Oracle Cloud APM data key path instead of the private data key path.
+  - `bool UsePublicTraceDataKey { get; set; }`
 - [Username](cephalon-observability-cassandradependencies.md#member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-username): `Properties` on `CassandraDependencyDefinition` in `Cephalon.Observability.CassandraDependencies.Configuration` (`Cephalon.Observability.CassandraDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Configuration&scope=members)
   - Gets or sets the optional user name used for authentication.
   - `string Username { get; set; }`

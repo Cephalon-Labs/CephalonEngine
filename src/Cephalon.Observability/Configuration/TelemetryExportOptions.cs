@@ -11,7 +11,8 @@ namespace Cephalon.Observability.Configuration;
 /// Companion packages such as <c>Cephalon.Observability.OpenTelemetry</c>,
 /// <c>Cephalon.Observability.AlibabaCloud</c>, <c>Cephalon.Observability.Aws</c>, <c>Cephalon.Observability.Gcp</c>,
 /// <c>Cephalon.Observability.DigitalOcean</c>, <c>Cephalon.Observability.HuaweiCloud</c>,
-/// <c>Cephalon.Observability.OpenShift</c>, <c>Cephalon.Observability.Tanzu</c>, or
+/// <c>Cephalon.Observability.OracleCloud</c>, <c>Cephalon.Observability.OpenShift</c>,
+/// <c>Cephalon.Observability.Tanzu</c>, or
 /// <c>Cephalon.Observability.AzureMonitor</c>
 /// can interpret the same contract when a host wants a supported export path, including the explicit
 /// self-hosted collector defaults that remain outside <c>Cephalon.Engine</c>. The same contract is

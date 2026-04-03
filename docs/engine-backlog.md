@@ -526,21 +526,22 @@ Delivered:
 ### ENG-029 Cloud-targeted observability companion integrations
 
 Status: later
-Estimate: 205
+Estimate: 226
 
 Why:
 
-- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and platform-neutral Kubernetes slices are now shipped, and `#120` has now shipped downstream Cloudflare and custom-provider authoring guidance instead of a misleading first-party Cloudflare exporter package
+- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and platform-neutral Kubernetes slices are now shipped, and `#120` has now shipped downstream Cloudflare and custom-provider authoring guidance instead of a misleading first-party Cloudflare exporter package
 - current Cloudflare Workers observability docs center Worker-native traces and logs plus exporting OpenTelemetry-compliant traces and logs from Workers to third-party OTLP destinations, with metrics export still unsupported, so a generic Cephalon host-side Cloudflare sink would over-claim the current platform story
 - this work should stay in companion packages, preserve the shared `ILogger` pipeline plus the cloud-neutral OTLP baseline, and leave room for downstream developer-authored provider packages
 
 Acceptance:
 
 - keep the shipped self-hosted deployment defaults explicit and reusable instead of burying them inside vendor-specific companion packs
-- keep the shipped Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, and Kubernetes slices explicit on top of the shared OpenTelemetry baseline
+- keep the shipped Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, and Kubernetes slices explicit on top of the shared OpenTelemetry baseline
 - keep the shipped Red Hat OpenShift and DigitalOcean companion follow-through explicit instead of rolling them back into one ambiguous remaining-platform scope
 - keep the shipped DigitalOcean collector-first follow-through explicit instead of over-claiming a managed DigitalOcean OTLP exporter surface that the current platform docs do not promise
 - keep the shipped Kubernetes collector-first follow-through explicit on top of the shared OTLP baseline instead of folding generic cluster defaults back into OpenShift, DigitalOcean, or downstream custom-provider guidance
+- keep the shipped Oracle Cloud managed traces/metrics follow-through explicit on top of the shared OTLP baseline instead of folding Oracle Cloud APM-specific data-upload and data-key rules back into Huawei Cloud, Alibaba Cloud, or downstream custom-provider guidance
 - keep the shipped VMware Tanzu proxy-first follow-through explicit on top of the shared OTLP baseline instead of reopening Cloudflare or pretending the current Tanzu docs describe one generic vendor-direct OTLP exporter path
 - keep the shipped `#120` scope centered on downstream Cloudflare and custom-provider companion authoring guidance until Cloudflare documents a host-side ingestion story that fits Cephalon's .NET runtime model
 - keep vendor/platform-specific exporter wiring, auth, resource attributes, and hosted defaults outside `Cephalon.Engine` and `Cephalon.Abstractions`

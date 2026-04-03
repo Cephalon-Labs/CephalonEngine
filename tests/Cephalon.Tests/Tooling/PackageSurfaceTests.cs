@@ -174,6 +174,15 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void ObservabilityOracleCloudAssemblyExposesOnlyTheDocumentedConfigurationAndRegistrationSurface()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Observability.OracleCloud.Hosting.OracleCloudHostApplicationBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions),
+            typeof(global::Cephalon.Observability.OracleCloud.Hosting.OracleCloudHostApplicationBuilderExtensions));
+    }
+
+    [Fact]
     public void ObservabilitySerilogAssemblyExposesOnlyTheDocumentedRegistrationSurface()
     {
         AssertExportedTypes(
