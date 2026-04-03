@@ -46,6 +46,7 @@
     <Project Path="src/Cephalon.Observability.AlibabaCloud/Cephalon.Observability.AlibabaCloud.csproj" />
     <Project Path="src/Cephalon.Observability.Aws/Cephalon.Observability.Aws.csproj" />
     <Project Path="src/Cephalon.Observability.AzureMonitor/Cephalon.Observability.AzureMonitor.csproj" />
+    <Project Path="src/Cephalon.Observability.DigitalOcean/Cephalon.Observability.DigitalOcean.csproj" />
     <Project Path="src/Cephalon.Observability.Serilog/Cephalon.Observability.Serilog.csproj" />
     <Project Path="src/Cephalon.Observability.Gcp/Cephalon.Observability.Gcp.csproj" />
     <Project Path="src/Cephalon.Observability.HuaweiCloud/Cephalon.Observability.HuaweiCloud.csproj" />

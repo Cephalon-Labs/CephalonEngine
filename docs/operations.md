@@ -1129,7 +1129,7 @@ Operational notes:
 - when `UseSelfHostedDefaults` is `true` and `Endpoint` is omitted, the package falls back to `http://localhost:4317` for `otlp` / `otlp/grpc` or `http://localhost:4318` for `otlp/http`
 - when `otlp/http` is selected, the package appends `/v1/logs`, `/v1/metrics`, and `/v1/traces` automatically from the configured base endpoint
 - the self-hosted path also adds `deployment.environment.name` from the active host environment alongside the existing service-name and service-version resource defaults
-- downstream companion packages should reuse this same contract instead of introducing a second Cephalon telemetry abstraction; that is the intended path for Cloudflare, DigitalOcean, Tanzu, or internal-provider integrations
+- downstream companion packages should reuse this same contract instead of introducing a second Cephalon telemetry abstraction; that is the intended path for Cloudflare, Tanzu, or internal-provider integrations
 
 ## AWS observability path
 
@@ -1376,6 +1376,60 @@ Operational notes:
 - `TrustedCaCertificatePath` can be used for HTTPS OTLP/HTTP traces and metrics when an in-cluster collector, route, or gateway uses a cluster-local CA bundle
 - the current OpenTelemetry logging exporter does not support custom `HttpClientFactory` wiring for HTTP, so configurations that need `TrustedCaCertificatePath` for OTLP/HTTP logs are rejected early instead of being treated as supported
 - `Headers` lets the package pass raw OTLP header values through to the target collector or gateway when a route expects explicit headers
+
+## DigitalOcean observability path
+
+`Cephalon.Observability.DigitalOcean` keeps DigitalOcean collector defaults, best-effort Droplet metadata, and hosted runtime guidance in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "Telemetry": {
+        "Provider": "OpenTelemetry",
+        "Protocol": "otlp/http",
+        "ExportLogs": true,
+        "ExportMetrics": true,
+        "ExportTraces": true,
+        "DigitalOcean": {
+          "HostedPlatform": "doks",
+          "Region": "sgp1",
+          "ClusterName": "prod-cluster",
+          "Namespace": "payments",
+          "UseInClusterCollectorService": true,
+          "CollectorServiceName": "otel-collector",
+          "CollectorNamespace": "observability"
+        }
+      }
+    }
+  }
+}
+```
+
+Host registration example:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonObservability(builder.Configuration);
+builder.AddCephalonDigitalOcean();
+```
+
+Operational notes:
+
+- the DigitalOcean package is optional and stays outside `Cephalon.Engine`
+- when `Engine:Observability:Telemetry:Endpoint` or `UseSelfHostedDefaults` is configured, the package keeps using the shared collector-oriented OTLP path and only adds DigitalOcean resource defaults
+- when `Engine:Observability:Telemetry:DigitalOcean:UseInClusterCollectorService` is `true` and no shared endpoint is configured, the package targets `http(s)://{service}.{namespace}.svc.cluster.local:{port}` for DOKS deployments
+- `HostedPlatform` can be `droplet`, `doks`, or `app-platform`
+- `UseDropletMetadataDefaults` turns on a short best-effort call to the Droplet metadata service so the package can fill `host.id`, `host.name`, and `cloud.region` when they were not configured directly
+- App Platform context stays explicit: set `AppId` and `AppUrl` directly, or bind `${APP_ID}` and `${APP_URL}` into runtime environment variables with those names if you want the package to pick them up automatically
+- `ClusterName`, `Namespace`, `POD_NAMESPACE`, and `HOSTNAME` let the package stamp `k8s.cluster.name`, `k8s.namespace.name`, `service.namespace`, and `k8s.pod.name` for DOKS workloads
+- `TrustedCaCertificatePath` can be used for HTTPS OTLP/HTTP traces and metrics when a shared or in-cluster collector uses a non-system CA bundle
+- the current OpenTelemetry logging exporter does not support custom `HttpClientFactory` wiring for HTTP, so configurations that need `TrustedCaCertificatePath` for OTLP/HTTP logs are rejected early instead of being treated as supported
+- there is no first-party DigitalOcean managed OTLP endpoint in this package; use the shared collector path, self-hosted defaults, or a self-managed gateway instead of treating this companion as a vendor-direct exporter
 
 ## Azure Monitor exporter path
 

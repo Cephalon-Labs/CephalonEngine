@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Description>DigitalOcean collector defaults and hosted observability guidance for Cephalon hosts.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cephalon.Engine\Cephalon.Engine.csproj" />
+    <ProjectReference Include="..\Cephalon.Observability\Cephalon.Observability.csproj" />
+  </ItemGroup>
+</Project>
