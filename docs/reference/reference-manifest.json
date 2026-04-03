@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-03T11:54:36.1335651+00:00",
+  "GeneratedAtUtc": "2026-04-03T12:29:00.6067517+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 10,
-      "TypeCount": 43
+      "TypeCount": 47
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -72,7 +72,7 @@
       "Description": "Composition, runtime, policy, manifest, and introspection services.",
       "FileName": "cephalon-engine.md",
       "NamespaceCount": 12,
-      "TypeCount": 58
+      "TypeCount": 59
     },
     {
       "AssemblyName": "Cephalon.Eventing",
@@ -374,7 +374,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-execution",
-      "TypeCount": 6
+      "TypeCount": 10
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Health",
@@ -633,7 +633,7 @@
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
       "AnchorId": "namespace-cephalon-engine-runtime",
-      "TypeCount": 16
+      "TypeCount": 17
     },
     {
       "NamespaceName": "Cephalon.Engine.Technologies",
@@ -2215,6 +2215,21 @@
       }
     },
     {
+      "DisplayName": "HostedExecutionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-hostedexecutiondescriptor",
+      "Declaration": "public sealed class HostedExecutionDescriptor",
+      "Summary": "Describes one operator-facing hosted or background execution surface contributed by an active module.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 9,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "HttpDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
@@ -2572,6 +2587,51 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IHostedExecutionContributor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-ihostedexecutioncontributor",
+      "Declaration": "public interface IHostedExecutionContributor",
+      "Summary": "Contributes one or more hosted or background execution descriptors to the active runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IHostedExecutionRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-ihostedexecutionregistry",
+      "Declaration": "public interface IHostedExecutionRegistry",
+      "Summary": "Receives hosted-execution descriptors contributed by active modules.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IHostedExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-ihostedexecutionruntimecatalog",
+      "Declaration": "public interface IHostedExecutionRuntimeCatalog",
+      "Summary": "Exposes the hosted executions visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 3
       }
     },
     {
@@ -4210,6 +4270,21 @@
       }
     },
     {
+      "DisplayName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-runtime-runtimehostedexecutionstate",
+      "Declaration": "public sealed class RuntimeHostedExecutionState",
+      "Summary": "Describes the current operator-facing lifecycle state for one hosted execution visible to the runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 16,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "RuntimeIntrospectionSnapshot",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -4220,7 +4295,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 6,
+        "Properties": 7,
         "Methods": 0
       }
     },
@@ -4264,7 +4339,7 @@
       "Summary": "Identifies which runtime surface produced one operator-facing lifecycle event.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 4,
+        "Fields": 5,
         "Properties": 0,
         "Methods": 0
       }
@@ -4310,7 +4385,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 6,
+        "Properties": 7,
         "Methods": 0
       }
     },
@@ -4815,6 +4890,17 @@
       "Summary": "The UTC timestamp when the graph most recently became active with the runtime."
     },
     {
+      "DisplayName": "ActivatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-activatedatutc",
+      "Signature": "DateTimeOffset? ActivatedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the hosted execution most recently became active with the runtime."
+    },
+    {
       "DisplayName": "ActiveWindow",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeHealthReport",
@@ -4912,6 +4998,17 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-iexecutiongraphregistry-add-cephalon-abstractions-execution-executiongraphdescriptor",
       "Signature": "void Add(ExecutionGraphDescriptor graph)",
       "Summary": "Adds an execution graph to the current runtime composition."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
+      "DeclaringTypeName": "IHostedExecutionRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-ihostedexecutionregistry-add-cephalon-abstractions-execution-hostedexecutiondescriptor",
+      "Signature": "void Add(HostedExecutionDescriptor hostedExecution)",
+      "Summary": "Adds a hosted execution to the current runtime composition."
     },
     {
       "DisplayName": "Add",
@@ -7477,6 +7574,17 @@
       "Summary": "The UTC timestamp when the graph most recently became inactive because the runtime stopped."
     },
     {
+      "DisplayName": "DeactivatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-deactivatedatutc",
+      "Signature": "DateTimeOffset? DeactivatedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the hosted execution most recently became inactive because the runtime stopped."
+    },
+    {
       "DisplayName": "Debug",
       "Category": "Fields",
       "DeclaringTypeName": "DiagnosticSeverity",
@@ -8095,6 +8203,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "HostedExecutionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable description of the hosted execution."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "KnowledgeCollectionDescriptor",
       "NamespaceName": "Cephalon.Retrieval.Services",
       "AssemblyName": "Cephalon.Retrieval",
@@ -8157,6 +8276,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimehealthreport-description",
       "Signature": "string Description { get; set; }",
       "Summary": "A human-readable description of the evaluated state."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-description",
+      "Signature": "string Description { get; set; }",
+      "Summary": "The operator-facing hosted-execution description when one was published."
     },
     {
       "DisplayName": "Description",
@@ -8546,6 +8676,17 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "HostedExecutionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing hosted-execution name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "HttpDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
@@ -8740,6 +8881,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-displayname",
       "Signature": "string DisplayName { get; set; }",
       "Summary": "The operator-facing execution-graph display name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "The operator-facing hosted-execution display name."
     },
     {
       "DisplayName": "DisplayName",
@@ -9221,8 +9373,8 @@
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphdescriptor",
-      "Signature": "EngineRuntime(IReadOnlyList\u003CIModule\u003E modules, RuntimeManifest manifest, FailurePolicy failurePolicy, IReadOnlyList\u003CExecutionGraphDescriptor\u003E executionGraphs)",
+      "AnchorId": "member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphdescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-hostedexecutiondescriptor",
+      "Signature": "EngineRuntime(IReadOnlyList\u003CIModule\u003E modules, RuntimeManifest manifest, FailurePolicy failurePolicy, IReadOnlyList\u003CExecutionGraphDescriptor\u003E executionGraphs, IReadOnlyList\u003CHostedExecutionDescriptor\u003E hostedExecutions)",
       "Summary": "Initializes a new instance of the \u0060EngineRuntime\u0060 class."
     },
     {
@@ -9455,6 +9607,28 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-executiongraphedgedescriptor-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "ExecutionGraphEdgeDescriptor(string fromNodeId, string toNodeId, string displayName, string condition, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a new execution-graph edge descriptor."
+    },
+    {
+      "DisplayName": "ExecutionGraphId",
+      "Category": "Properties",
+      "DeclaringTypeName": "HostedExecutionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-executiongraphid",
+      "Signature": "string ExecutionGraphId { get; }",
+      "Summary": "Gets the related execution-graph identifier when one is declared."
+    },
+    {
+      "DisplayName": "ExecutionGraphId",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-executiongraphid",
+      "Signature": "string ExecutionGraphId { get; set; }",
+      "Summary": "The related execution-graph identifier when one was declared."
     },
     {
       "DisplayName": "ExecutionGraphNodeDescriptor",
@@ -10260,6 +10434,17 @@
       "Summary": "Field number for the \u0022generated_at_utc\u0022 field."
     },
     {
+      "DisplayName": "GetByExecutionGraph",
+      "Category": "Methods",
+      "DeclaringTypeName": "IHostedExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-getbyexecutiongraph-system-string",
+      "Signature": "IReadOnlyList\u003CHostedExecutionDescriptor\u003E GetByExecutionGraph(string executionGraphId)",
+      "Summary": "Gets all hosted executions linked to one execution graph."
+    },
+    {
       "DisplayName": "GetById",
       "Category": "Methods",
       "DeclaringTypeName": "IExecutionRuntimeCatalog",
@@ -10269,6 +10454,17 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-iexecutionruntimecatalog-getbyid-system-string",
       "Signature": "ExecutionGraphDescriptor GetById(string graphId)",
       "Summary": "Gets one execution graph by its stable identifier."
+    },
+    {
+      "DisplayName": "GetById",
+      "Category": "Methods",
+      "DeclaringTypeName": "IHostedExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-getbyid-system-string",
+      "Signature": "HostedExecutionDescriptor GetById(string hostedExecutionId)",
+      "Summary": "Gets one hosted execution by its stable identifier."
     },
     {
       "DisplayName": "GetBySource",
@@ -10291,6 +10487,17 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-iexecutionruntimecatalog-getbysourcemodule-system-string",
       "Signature": "IReadOnlyList\u003CExecutionGraphDescriptor\u003E GetBySourceModule(string sourceModuleId)",
       "Summary": "Gets all execution graphs contributed by the requested module."
+    },
+    {
+      "DisplayName": "GetBySourceModule",
+      "Category": "Methods",
+      "DeclaringTypeName": "IHostedExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-getbysourcemodule-system-string",
+      "Signature": "IReadOnlyList\u003CHostedExecutionDescriptor\u003E GetBySourceModule(string sourceModuleId)",
+      "Summary": "Gets all hosted executions contributed by the requested module."
     },
     {
       "DisplayName": "GetByTechnology",
@@ -10766,6 +10973,72 @@
       "Summary": "Gets or sets the SQL Server host name or IP address to probe when no full connection string is supplied."
     },
     {
+      "DisplayName": "HostedExecution",
+      "Category": "Fields",
+      "DeclaringTypeName": "RuntimeLifecycleEventScope",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-f-cephalon-engine-runtime-runtimelifecycleeventscope-hostedexecution",
+      "Signature": "const RuntimeLifecycleEventScope HostedExecution",
+      "Summary": "The event belongs to hosted-execution visibility and host-managed activation conventions."
+    },
+    {
+      "DisplayName": "HostedExecutionDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "HostedExecutionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-hostedexecutiondescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "HostedExecutionDescriptor(string id, string displayName, string description, string sourceModuleId, string kind, string executionGraphId, bool startsWithHost, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new hosted execution descriptor."
+    },
+    {
+      "DisplayName": "HostedExecutionId",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-hostedexecutionid",
+      "Signature": "string HostedExecutionId { get; set; }",
+      "Summary": "The stable hosted-execution identifier."
+    },
+    {
+      "DisplayName": "HostedExecutions",
+      "Category": "Properties",
+      "DeclaringTypeName": "IHostedExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-hostedexecutions",
+      "Signature": "IReadOnlyList\u003CHostedExecutionDescriptor\u003E HostedExecutions { get; }",
+      "Summary": "Gets all hosted executions visible to the current runtime."
+    },
+    {
+      "DisplayName": "HostedExecutions",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-hostedexecutions",
+      "Signature": "IReadOnlyList\u003CHostedExecutionDescriptor\u003E HostedExecutions { get; set; }",
+      "Summary": "Gets the hosted executions contributed by active modules and visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "HostedExecutions",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeOperationalStory",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperationalstory-hostedexecutions",
+      "Signature": "IReadOnlyList\u003CRuntimeHostedExecutionState\u003E HostedExecutions { get; set; }",
+      "Summary": "Gets the current lifecycle state for each hosted execution visible to the runtime story."
+    },
+    {
       "DisplayName": "HostedPlatform",
       "Category": "Properties",
       "DeclaringTypeName": "AlibabaCloudTelemetryExportOptions",
@@ -11028,6 +11301,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable node identifier within the graph."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "HostedExecutionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable hosted-execution identifier."
     },
     {
       "DisplayName": "Id",
@@ -11459,6 +11743,17 @@
       "Summary": "Gets a value indicating whether the execution graph is currently active with the runtime."
     },
     {
+      "DisplayName": "IsActive",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-isactive",
+      "Signature": "bool IsActive { get; }",
+      "Summary": "Gets a value indicating whether the hosted execution is currently active with the runtime host."
+    },
+    {
       "DisplayName": "IsAllowed",
       "Category": "Properties",
       "DeclaringTypeName": "CapabilityPolicyDecision",
@@ -11525,6 +11820,17 @@
       "Summary": "Gets a value indicating whether the execution graph most recently observed a deactivation event."
     },
     {
+      "DisplayName": "IsDeactivated",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-isdeactivated",
+      "Signature": "bool IsDeactivated { get; }",
+      "Summary": "Gets a value indicating whether the hosted execution most recently observed a deactivation event."
+    },
+    {
       "DisplayName": "IsHealthy",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeHealthReport",
@@ -11556,6 +11862,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-isloaded",
       "Signature": "bool IsLoaded { get; }",
       "Summary": "Gets a value indicating whether the execution graph is visible to the runtime story."
+    },
+    {
+      "DisplayName": "IsLoaded",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-isloaded",
+      "Signature": "bool IsLoaded { get; }",
+      "Summary": "Gets a value indicating whether the hosted execution is visible to the runtime story."
     },
     {
       "DisplayName": "IsLoaded",
@@ -11824,6 +12141,17 @@
     {
       "DisplayName": "Kind",
       "Category": "Properties",
+      "DeclaringTypeName": "HostedExecutionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-kind",
+      "Signature": "string Kind { get; }",
+      "Summary": "Gets the operator-facing hosted-execution kind."
+    },
+    {
+      "DisplayName": "Kind",
+      "Category": "Properties",
       "DeclaringTypeName": "ModulePackageReference",
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
@@ -11853,6 +12181,17 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-patterndescriptor-kind",
       "Signature": "PatternKind Kind { get; }",
       "Summary": "Gets the category of the pattern."
+    },
+    {
+      "DisplayName": "Kind",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-kind",
+      "Signature": "string Kind { get; set; }",
+      "Summary": "The operator-facing hosted-execution kind."
     },
     {
       "DisplayName": "Kind",
@@ -11956,6 +12295,17 @@
     {
       "DisplayName": "LastObservedAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-lastobservedatutc",
+      "Signature": "DateTimeOffset? LastObservedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the last lifecycle phase was recorded."
+    },
+    {
+      "DisplayName": "LastObservedAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeModuleLifecycleState",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -11974,6 +12324,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-lastobservedphase",
       "Signature": "string LastObservedPhase { get; set; }",
       "Summary": "The last lifecycle phase recorded for the execution graph."
+    },
+    {
+      "DisplayName": "LastObservedPhase",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-lastobservedphase",
+      "Signature": "string LastObservedPhase { get; set; }",
+      "Summary": "The last lifecycle phase recorded for the hosted execution."
     },
     {
       "DisplayName": "LastObservedPhase",
@@ -12029,6 +12390,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-loadedatutc",
       "Signature": "DateTimeOffset? LoadedAtUtc { get; set; }",
       "Summary": "The UTC timestamp when the graph became visible to the built runtime story."
+    },
+    {
+      "DisplayName": "LoadedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-loadedatutc",
+      "Signature": "DateTimeOffset? LoadedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the hosted execution became visible to the built runtime story."
     },
     {
       "DisplayName": "LoadedAtUtc",
@@ -12656,6 +13028,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets operator-facing metadata associated with the node."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "HostedExecutionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets operator-facing metadata associated with the hosted execution."
     },
     {
       "DisplayName": "Metadata",
@@ -13546,7 +13929,7 @@
       "FileName": "cephalon-engine.md",
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-operationalstory",
       "Signature": "RuntimeOperationalStory OperationalStory { get; set; }",
-      "Summary": "The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, module state, and the ordered runtime timeline."
+      "Summary": "The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, hosted-execution state, module state, and the ordered runtime timeline."
     },
     {
       "DisplayName": "Options",
@@ -15122,6 +15505,17 @@
       "Summary": "Registers one or more execution graphs owned by the contributor."
     },
     {
+      "DisplayName": "RegisterHostedExecutions",
+      "Category": "Methods",
+      "DeclaringTypeName": "IHostedExecutionContributor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-ihostedexecutioncontributor-registerhostedexecutions-cephalon-abstractions-execution-ihostedexecutionregistry",
+      "Signature": "void RegisterHostedExecutions(IHostedExecutionRegistry hostedExecutions)",
+      "Summary": "Registers one or more hosted execution descriptors owned by the contributor."
+    },
+    {
       "DisplayName": "RegisterNodes",
       "Category": "Methods",
       "DeclaringTypeName": "IEdgeNodeContributor",
@@ -16046,6 +16440,17 @@
       "Summary": "Captures the health result for a runtime liveness or readiness probe."
     },
     {
+      "DisplayName": "RuntimeHostedExecutionState",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-runtime-runtimehostedexecutionstate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-nullable-system-datetimeoffset",
+      "Signature": "RuntimeHostedExecutionState(string HostedExecutionId, string DisplayName, string Description, string SourceModuleId, string SourceModuleVersion, string Kind, string ExecutionGraphId, bool StartsWithHost, DateTimeOffset? LoadedAtUtc, DateTimeOffset? ActivatedAtUtc, DateTimeOffset? DeactivatedAtUtc, string LastObservedPhase, DateTimeOffset? LastObservedAtUtc)",
+      "Summary": "Describes the current operator-facing lifecycle state for one hosted execution visible to the runtime."
+    },
+    {
       "DisplayName": "RuntimeIntrospectionSnapshot",
       "Category": "Constructors",
       "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
@@ -16741,6 +17146,17 @@
     {
       "DisplayName": "SourceModuleId",
       "Category": "Properties",
+      "DeclaringTypeName": "HostedExecutionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the identifier of the module that contributed the hosted execution."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeExecutionGraphState",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -16750,6 +17166,17 @@
       "Summary": "The module that contributed the execution graph."
     },
     {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; set; }",
+      "Summary": "The module that contributed the hosted execution."
+    },
+    {
       "DisplayName": "SourceModuleVersion",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeExecutionGraphState",
@@ -16757,6 +17184,17 @@
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-sourcemoduleversion",
+      "Signature": "string SourceModuleVersion { get; set; }",
+      "Summary": "The effective version of the source module when available."
+    },
+    {
+      "DisplayName": "SourceModuleVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-sourcemoduleversion",
       "Signature": "string SourceModuleVersion { get; set; }",
       "Summary": "The effective version of the source module when available."
     },
@@ -16968,6 +17406,28 @@
       "AnchorId": "member-f-cephalon-engine-runtime-runtimestatus-starting",
       "Signature": "const RuntimeStatus Starting",
       "Summary": "The runtime is starting modules."
+    },
+    {
+      "DisplayName": "StartsWithHost",
+      "Category": "Properties",
+      "DeclaringTypeName": "HostedExecutionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-startswithhost",
+      "Signature": "bool StartsWithHost { get; }",
+      "Summary": "Gets a value indicating whether the hosted execution is expected to become active when the runtime host starts."
+    },
+    {
+      "DisplayName": "StartsWithHost",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeHostedExecutionState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-startswithhost",
+      "Signature": "bool StartsWithHost { get; set; }",
+      "Summary": "A value indicating whether the hosted execution is expected to become active when the runtime host starts."
     },
     {
       "DisplayName": "StartupFailureBehavior",
@@ -17297,7 +17757,7 @@
       "FileName": "cephalon-engine.md",
       "AnchorId": "member-p-cephalon-engine-runtime-runtimelifecycleevent-subjectid",
       "Signature": "string SubjectId { get; set; }",
-      "Summary": "The runtime, module, package, or execution-graph identifier associated with the event when available."
+      "Summary": "The runtime, module, package, execution-graph, or hosted-execution identifier associated with the event when available."
     },
     {
       "DisplayName": "SubjectVersion",
@@ -17474,6 +17934,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-tags",
       "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
       "Summary": "Gets descriptive tags associated with the node."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
+      "DeclaringTypeName": "HostedExecutionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-tags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets descriptive tags associated with the hosted execution."
     },
     {
       "DisplayName": "Tags",
@@ -17759,7 +18230,7 @@
       "FileName": "cephalon-engine.md",
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperationalstory-timeline",
       "Signature": "IReadOnlyList\u003CRuntimeLifecycleEvent\u003E Timeline { get; set; }",
-      "Summary": "The ordered lifecycle narrative for package load, execution-graph transitions, module transitions, runtime transitions, and failures."
+      "Summary": "The ordered lifecycle narrative for package load, execution-graph transitions, hosted-execution transitions, module transitions, runtime transitions, and failures."
     },
     {
       "DisplayName": "TimeoutSeconds",

@@ -49,11 +49,13 @@ That keeps the authoring path close to the same module-first ideas used by Cepha
 8. If the package extends a shipped technology pack, register the pack-specific contributor service in `ConfigureServices(...)` such as `IAgentToolContributor`, `IKnowledgeCollectionContributor`, `IEventChannelContributor`, or `IEdgeNodeContributor`.
 9. Use `ITechnologyRuntimeContributor` when the package or pack needs to expose an operator-facing runtime snapshot through `/engine/technology-surfaces`.
 10. Use `IExecutionGraphContributor` when the package needs to publish operator-facing workflow or execution-graph descriptors through `/engine/execution-graphs` and `/engine/snapshot`.
-11. Add transport contribution interfaces only when the package really owns an external surface.
+11. Use `IHostedExecutionContributor` when the package needs to publish operator-facing hosted or background execution descriptors through `/engine/hosted-executions`, `/engine/runtime-story`, and `/engine/snapshot`.
+12. Add transport contribution interfaces only when the package really owns an external surface.
 
 ## Workflow and orchestration descriptors
 
 Packages that need to describe an execution flow can implement `IExecutionGraphContributor` and publish one or more `ExecutionGraphDescriptor` entries.
+Packages that need to describe operator-facing host-managed background work can also implement `IHostedExecutionContributor` and publish one or more `HostedExecutionDescriptor` entries.
 
 Current baseline behavior:
 
@@ -61,6 +63,9 @@ Current baseline behavior:
 - graph nodes can point back to module ids and capability keys instead of inventing a parallel ownership model
 - `/engine/execution-graphs` exposes the standalone catalog, and `/engine/snapshot` carries the same graph descriptors alongside status, diagnostics, and lifecycle data
 - `/engine/runtime-story` now carries the operator-facing lifecycle state for each execution graph, including load, activate, and deactivate timestamps
+- `/engine/hosted-executions` exposes the hosted/background catalog, `/engine/snapshot` carries the same hosted descriptors, and `/engine/runtime-story` now carries hosted-execution load, activate, and deactivate timestamps
+- hosted executions can link back to one execution graph through `executionGraphId`, but they stay descriptive and operator-facing instead of introducing a separate Cephalon runner abstraction
+- the engine validates hosted-execution ids, source modules, and referenced execution graphs at build time so invalid hosted descriptors fail fast
 - the engine validates graph ids, entry nodes, edges, referenced modules, and referenced capability keys at build time so invalid descriptors fail fast
 
 ## Package manifest contract

@@ -1010,10 +1010,11 @@ This is the quickest way to discover the engine's observability contract without
 - the current runtime status and last failure context
 - loaded package metadata for the active runtime
 - per-execution-graph lifecycle state, including loaded, active, and deactivated timestamps
+- per-hosted-execution lifecycle state, including loaded, active, and deactivated timestamps
 - per-module lifecycle state, including loaded, initialized, started, and stopped timestamps
-- an ordered timeline for package load, execution-graph transitions, module transitions, runtime transitions, restart attempts, and failures
+- an ordered timeline for package load, execution-graph transitions, hosted-execution transitions, module transitions, runtime transitions, restart attempts, and failures
 
-This is the quickest way to answer the adjacent operational question that `/engine/status`, `/engine/packages`, `/engine/diagnostics`, and `/engine/snapshot` already support in pieces: what loaded, what started, what failed, and why.
+This is the quickest way to answer the adjacent operational question that `/engine/status`, `/engine/packages`, `/engine/hosted-executions`, `/engine/diagnostics`, and `/engine/snapshot` already support in pieces: what loaded, what started, what failed, and why.
 
 ## Execution graph surface
 
@@ -1031,6 +1032,23 @@ Current note:
 
 - this is a descriptive orchestration baseline, not a hosted workflow runner yet
 - invalid graph ids, node references, module references, or capability references fail at build time instead of leaking broken operator data
+
+## Hosted execution surface
+
+`GET /engine/hosted-executions` exposes the operator-facing hosted or background execution catalog contributed by active modules.
+
+Current payload highlights:
+
+- each hosted execution carries a stable `id`, `displayName`, `description`, `sourceModuleId`, and `kind`
+- `executionGraphId` can point back to one execution graph when the hosted/background surface drives a published workflow directly
+- `startsWithHost` makes the intended host lifecycle relationship explicit for operators without inventing a separate engine-owned runner abstraction
+- the same hosted-execution catalog is also available through `/engine/snapshot` when operators want one merged runtime answer
+- `/engine/runtime-story` now shows when each hosted execution became load-visible, active, or inactive with the runtime lifecycle
+
+Current note:
+
+- hosted executions are descriptive operator-facing conventions on top of the existing Generic Host and module lifecycle model, not a replacement for `IHostedService`, `BackgroundService`, or module-owned runtime hooks
+- invalid hosted-execution ids, unknown source modules, or unknown cross-module execution-graph references fail at build time instead of leaking broken operator data
 
 ## Trust surface
 

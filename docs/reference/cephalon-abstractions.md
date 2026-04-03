@@ -1145,6 +1145,132 @@ IReadOnlyList<string> Tags { get; }
 
 Gets descriptive tags associated with the node.
 
+<a id="type-cephalon-abstractions-execution-hostedexecutiondescriptor"></a>
+
+### `HostedExecutionDescriptor`
+
+Describes one operator-facing hosted or background execution surface contributed by an active module.
+
+#### Declaration
+```csharp
+public sealed class HostedExecutionDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-execution-hostedexecutiondescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `HostedExecutionDescriptor`
+
+```csharp
+HostedExecutionDescriptor(string id, string displayName, string description, string sourceModuleId, string kind, string executionGraphId, bool startsWithHost, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new hosted execution descriptor.
+
+Parameters:
+- `id`: The stable hosted-execution identifier.
+- `displayName`: The operator-facing hosted-execution name.
+- `description`: A human-readable description of the hosted execution.
+- `sourceModuleId`: The module identifier that owns the hosted execution.
+- `kind`: The operator-facing hosted-execution kind such as `background-service`, `timer`, or `listener`.
+- `executionGraphId`: The related execution-graph identifier when this hosted execution drives one graph directly.
+- `startsWithHost`: A value indicating whether the hosted execution is expected to become active when the runtime host starts.
+- `tags`: Optional descriptive tags associated with the hosted execution.
+- `metadata`: Optional operator-facing metadata associated with the hosted execution.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable description of the hosted execution.
+
+<a id="member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing hosted-execution name.
+
+<a id="member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-executiongraphid"></a>
+
+##### `ExecutionGraphId`
+
+```csharp
+string ExecutionGraphId { get; }
+```
+
+Gets the related execution-graph identifier when one is declared.
+
+<a id="member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable hosted-execution identifier.
+
+<a id="member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-kind"></a>
+
+##### `Kind`
+
+```csharp
+string Kind { get; }
+```
+
+Gets the operator-facing hosted-execution kind.
+
+<a id="member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata associated with the hosted execution.
+
+<a id="member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the identifier of the module that contributed the hosted execution.
+
+<a id="member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-startswithhost"></a>
+
+##### `StartsWithHost`
+
+```csharp
+bool StartsWithHost { get; }
+```
+
+Gets a value indicating whether the hosted execution is expected to become active when the runtime host starts.
+
+<a id="member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets descriptive tags associated with the hosted execution.
+
 <a id="type-cephalon-abstractions-execution-iexecutiongraphcontributor"></a>
 
 ### `IExecutionGraphContributor`
@@ -1248,6 +1374,128 @@ IReadOnlyList<ExecutionGraphDescriptor> GetBySourceModule(string sourceModuleId)
 Gets all execution graphs contributed by the requested module.
 
 Returns: The matching execution graphs, or an empty list when the module contributed none.
+
+Parameters:
+- `sourceModuleId`: The source module identifier to filter by.
+
+<a id="type-cephalon-abstractions-execution-ihostedexecutioncontributor"></a>
+
+### `IHostedExecutionContributor`
+
+Contributes one or more hosted or background execution descriptors to the active runtime.
+
+#### Declaration
+```csharp
+public interface IHostedExecutionContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-execution-ihostedexecutioncontributor-registerhostedexecutions-cephalon-abstractions-execution-ihostedexecutionregistry"></a>
+
+##### `RegisterHostedExecutions`
+
+```csharp
+void RegisterHostedExecutions(IHostedExecutionRegistry hostedExecutions)
+```
+
+Registers one or more hosted execution descriptors owned by the contributor.
+
+Parameters:
+- `hostedExecutions`: The hosted-execution registry receiving hosted-execution descriptors.
+
+<a id="type-cephalon-abstractions-execution-ihostedexecutionregistry"></a>
+
+### `IHostedExecutionRegistry`
+
+Receives hosted-execution descriptors contributed by active modules.
+
+#### Declaration
+```csharp
+public interface IHostedExecutionRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-execution-ihostedexecutionregistry-add-cephalon-abstractions-execution-hostedexecutiondescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(HostedExecutionDescriptor hostedExecution)
+```
+
+Adds a hosted execution to the current runtime composition.
+
+Parameters:
+- `hostedExecution`: The hosted execution to register.
+
+<a id="type-cephalon-abstractions-execution-ihostedexecutionruntimecatalog"></a>
+
+### `IHostedExecutionRuntimeCatalog`
+
+Exposes the hosted executions visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IHostedExecutionRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-hostedexecutions"></a>
+
+##### `HostedExecutions`
+
+```csharp
+IReadOnlyList<HostedExecutionDescriptor> HostedExecutions { get; }
+```
+
+Gets all hosted executions visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-getbyexecutiongraph-system-string"></a>
+
+##### `GetByExecutionGraph`
+
+```csharp
+IReadOnlyList<HostedExecutionDescriptor> GetByExecutionGraph(string executionGraphId)
+```
+
+Gets all hosted executions linked to one execution graph.
+
+Returns: The matching hosted executions, or an empty list when none link to that graph.
+
+Parameters:
+- `executionGraphId`: The execution-graph identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+HostedExecutionDescriptor GetById(string hostedExecutionId)
+```
+
+Gets one hosted execution by its stable identifier.
+
+Returns: The matching hosted execution, or `null` when it is not active.
+
+Parameters:
+- `hostedExecutionId`: The hosted-execution identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<HostedExecutionDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all hosted executions contributed by the requested module.
+
+Returns: The matching hosted executions, or an empty list when the module contributed none.
 
 Parameters:
 - `sourceModuleId`: The source module identifier to filter by.

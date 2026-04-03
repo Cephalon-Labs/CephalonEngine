@@ -7,6 +7,7 @@ namespace Cephalon.Engine.Runtime;
 internal sealed class RuntimeIntrospectionSnapshotProvider(
     IRuntime runtime,
     IExecutionRuntimeCatalog executionRuntimeCatalog,
+    IHostedExecutionRuntimeCatalog hostedExecutionRuntimeCatalog,
     ITechnologyRuntimeCatalog technologyRuntimeCatalog,
     IRuntimeDiagnosticsCatalog diagnosticsCatalog) : IRuntimeIntrospectionSnapshotProvider
 {
@@ -18,6 +19,9 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             executionRuntimeCatalog.Graphs,
             technologyRuntimeCatalog.Surfaces,
             diagnosticsCatalog.Conventions,
-            runtime.OperationalStory);
+            runtime.OperationalStory)
+        {
+            HostedExecutions = hostedExecutionRuntimeCatalog.HostedExecutions
+        };
     }
 }

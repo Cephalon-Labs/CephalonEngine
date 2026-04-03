@@ -104,6 +104,15 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonModules");
         engineGroup.MapGet("/packages", (RuntimeManifest manifest) => TypedResults.Ok(manifest.Packages))
             .WithName("GetCephalonPackages");
+        engineGroup.MapGet("/hosted-executions", (IHostedExecutionRuntimeCatalog catalog) => TypedResults.Ok(catalog.HostedExecutions))
+            .WithName("GetCephalonHostedExecutions");
+        engineGroup.MapGet("/hosted-executions/{hostedExecutionId}", (string hostedExecutionId, IHostedExecutionRuntimeCatalog catalog) =>
+            {
+                var hostedExecution = catalog.GetById(hostedExecutionId);
+
+                return hostedExecution is null ? Results.NotFound() : Results.Ok(hostedExecution);
+            })
+            .WithName("GetCephalonHostedExecution");
         engineGroup.MapGet("/execution-graphs", (IExecutionRuntimeCatalog catalog) => TypedResults.Ok(catalog.Graphs))
             .WithName("GetCephalonExecutionGraphs");
         engineGroup.MapGet("/execution-graphs/{graphId}", (string graphId, IExecutionRuntimeCatalog catalog) =>

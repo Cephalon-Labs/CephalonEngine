@@ -59,7 +59,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Platform Sprint 0`: `ENG-012`
 - `Sprint 1`: delivered `ENG-005`, `ENG-026`, and `ENG-027`, and opened the phase 2 operational gap-inventory track
 - `Sprint 2`: exporter packaging is now part of the shipped phase-2 baseline, Cassandra contact-point health plus ClickHouse analytics health plus Consul control-plane health plus Elasticsearch cluster health plus HTTP external API plus Kafka broker metadata plus Memcached cache plus MongoDB plus MQTT plus MySQL plus NATS plus Neo4j plus OpenSearch plus Oracle plus Postgres plus RabbitMQ plus Redis/cache plus SQL Server dependency-health packaging anchor the provider-specific follow-through, the shared diagnostics/event-id catalog now anchors the structured diagnostics baseline, and release validation now calls out the health/export convention suite explicitly
-- `Sprint 3`: runtime-answers follow-through, the shipped package distribution/provenance and signer-verification follow-through under `ENG-011`, the shipped `ENG-013` execution-graph lifecycle/observability follow-through, the shipped `ENG-029` self-hosted OTLP follow-through slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped DigitalOcean collector/defaults slice, the shipped VMware Tanzu proxy/defaults slice, and the shipped downstream Cloudflare/custom-provider authoring slice under `#120`
+- `Sprint 3`: runtime-answers follow-through, the shipped package distribution/provenance and signer-verification follow-through under `ENG-011`, the shipped `ENG-013` execution-graph lifecycle/observability plus hosted-execution convention follow-through, the shipped `ENG-029` self-hosted OTLP follow-through slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped DigitalOcean collector/defaults slice, the shipped VMware Tanzu proxy/defaults slice, and the shipped downstream Cloudflare/custom-provider authoring slice under `#120`
 - `Later / not scheduled yet`: `ENG-022` and future solution-level expansion work
 
 ## Planning principles
@@ -185,15 +185,19 @@ Goal: expand from a composition engine into a richer execution platform.
 Current baseline already in place:
 
 - active modules can now contribute operator-facing execution graphs through `IExecutionGraphContributor`
+- active modules can now contribute operator-facing hosted executions through `IHostedExecutionContributor`
 - execution graphs are surfaced through `IExecutionRuntimeCatalog`, `/engine/execution-graphs`, and `/engine/snapshot`
+- hosted executions are surfaced through `IHostedExecutionRuntimeCatalog`, `/engine/hosted-executions`, and `/engine/snapshot`
 - execution-graph lifecycle state is now surfaced through `/engine/runtime-story` and `/engine/snapshot`, including load, activate, and deactivate transitions
+- hosted-execution lifecycle state is now surfaced through `/engine/runtime-story` and `/engine/snapshot`, including load, activate, and deactivate transitions
 - execution-graph lifecycle transitions now publish through the shared diagnostics catalog and `cephalon.execution-graphs.transitions`
 - graph descriptors stay additive to the existing module/capability model through module ids and capability-key references
+- hosted-execution descriptors stay additive to the existing module and Generic Host model instead of introducing a separate engine-owned runner
 - invalid graph ids, entry nodes, edges, module references, and capability references now fail during build instead of leaking broken runtime metadata
+- invalid hosted-execution ids, source-module references, and cross-module execution-graph references now fail during build instead of leaking broken runtime metadata
 
 Deliverables:
 
-- engine-level background/hosted execution conventions
 - internal engine events for activation and runtime transitions
 - richer multi-module coordination patterns
 - AI/orchestration integration points built on existing contracts

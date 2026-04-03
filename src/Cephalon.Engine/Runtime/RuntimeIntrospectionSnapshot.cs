@@ -20,11 +20,11 @@ namespace Cephalon.Engine.Runtime;
 /// The diagnostics conventions and published event-id catalogs visible to the runtime at the time the snapshot was created.
 /// </param>
 /// <param name="OperationalStory">
-/// The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, module state, and the ordered runtime timeline.
+/// The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, hosted-execution state, module state, and the ordered runtime timeline.
 /// </param>
 /// <remarks>
 /// This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime
-/// without issuing separate requests for manifest, status, execution-graph details, technology-pack details,
+/// without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details,
 /// diagnostics conventions, and lifecycle story data.
 /// </remarks>
 public sealed record RuntimeIntrospectionSnapshot(
@@ -33,4 +33,10 @@ public sealed record RuntimeIntrospectionSnapshot(
     IReadOnlyList<ExecutionGraphDescriptor> ExecutionGraphs,
     IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces,
     IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions,
-    RuntimeOperationalStory OperationalStory);
+    RuntimeOperationalStory OperationalStory)
+{
+    /// <summary>
+    /// Gets the hosted executions contributed by active modules and visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<HostedExecutionDescriptor> HostedExecutions { get; init; } = [];
+}

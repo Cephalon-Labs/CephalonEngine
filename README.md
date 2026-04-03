@@ -165,6 +165,8 @@ When the playground is running, open:
 - `/engine/packages`
 - `/engine/execution-graphs`
 - `/engine/execution-graphs/{graphId}`
+- `/engine/hosted-executions`
+- `/engine/hosted-executions/{hostedExecutionId}`
 - `/engine/patterns`
 - `/engine/technologies`
 - `/engine/technology-catalog`
@@ -203,7 +205,7 @@ When the playground is running, open:
 
 Cephalon is aiming for a future where new capabilities can be delivered as modules instead of rewrites. The engine owns composition, dependency ordering, runtime introspection, and host integration. Product code should be able to plug into that surface without coupling itself to one transport or one monolith.
 
-The first execution-graph baseline now also lets active modules publish operator-facing workflow descriptors through `/engine/execution-graphs` and `/engine/snapshot`, while `/engine/runtime-story` and `/engine/diagnostics` now surface the lifecycle and observability side of those descriptors without bypassing the existing module and capability model.
+The first execution-and-hosted baseline now lets active modules publish operator-facing workflow descriptors through `/engine/execution-graphs` plus operator-facing background or hosted descriptors through `/engine/hosted-executions`, with `/engine/snapshot` carrying both catalogs in one payload. `/engine/runtime-story` now surfaces the lifecycle side of those descriptors without bypassing the existing module and capability model, while the hosted-execution contract stays descriptive instead of introducing a separate Cephalon workflow runner.
 
 The engine is configuration-driven. A Cephalon app can choose its base blueprint, supporting patterns, future-facing technology profiles, and transport surface through the `Engine` section in configuration, while still allowing code-level overrides when needed.
 
@@ -564,9 +566,9 @@ That gives Cephalon a predictable precedence chain:
 4. `engine.AddLanguageResources(...)`
 5. project-owned DI replacement of `LocalizationSettings` or `ILocalizedTextCatalog`
 
-`/engine` continues to expose manifest v2 data, and `/engine/manifest` is now the explicit alias for that contract. The manifest includes the schema version, engine version, per-module version and metadata, capability source-module mapping, and explicit package load metadata for modules that came from assembly paths, manifest files, or configured package directories. When operators need that manifest plus the current runtime status and active technology-pack surfaces in a single payload, `GET /engine/snapshot` and `IRuntimeIntrospectionSnapshotProvider` are now the preferred integration point.
+`/engine` continues to expose manifest v2 data, and `/engine/manifest` is now the explicit alias for that contract. The manifest includes the schema version, engine version, per-module version and metadata, capability source-module mapping, and explicit package load metadata for modules that came from assembly paths, manifest files, or configured package directories. When operators need that manifest plus the current runtime status, active execution-graph and hosted-execution catalogs, and active technology-pack surfaces in a single payload, `GET /engine/snapshot` and `IRuntimeIntrospectionSnapshotProvider` are now the preferred integration point.
 
-When operators need the shorter answer to “what loaded, what started, what failed, and why?”, `GET /engine/runtime-story` now exposes loaded packages, per-execution-graph and per-module lifecycle state, and an ordered runtime timeline in one host-agnostic contract that also folds into `GET /engine/snapshot`.
+When operators need the shorter answer to “what loaded, what started, what failed, and why?”, `GET /engine/runtime-story` now exposes loaded packages, per-execution-graph, per-hosted-execution, and per-module lifecycle state, plus an ordered runtime timeline in one host-agnostic contract that also folds into `GET /engine/snapshot`.
 
 `Engine:PackagePolicy` is now the baseline governance surface for package metadata and discovery rules. It can disallow raw DLL-path package loads and require `version`, engine compatibility fields, target framework declarations, publisher ids, signer fingerprints, or `integrity.sha256` before a package is allowed to load.
 

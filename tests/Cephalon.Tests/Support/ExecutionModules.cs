@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Support;
 
-internal sealed class WorkflowCatalogTestModule : ModuleBase, IExecutionGraphContributor
+internal sealed class WorkflowCatalogTestModule : ModuleBase, IExecutionGraphContributor, IHostedExecutionContributor
 {
     private readonly bool enabled;
 
@@ -18,7 +18,7 @@ internal sealed class WorkflowCatalogTestModule : ModuleBase, IExecutionGraphCon
         metadata: new Dictionary<string, string>
         {
             ["layer"] = "platform",
-            ["surface"] = "execution-graphs"
+            ["surface"] = "execution-catalog"
         });
 
     public override ModuleDescriptor Descriptor => DescriptorInstance;
@@ -112,6 +112,29 @@ internal sealed class WorkflowCatalogTestModule : ModuleBase, IExecutionGraphCon
                 ["owner"] = "workflow-catalog"
             }));
     }
+
+    public void RegisterHostedExecutions(IHostedExecutionRegistry hostedExecutions)
+    {
+        if (!enabled)
+        {
+            return;
+        }
+
+        hostedExecutions.Add(new HostedExecutionDescriptor(
+            id: "approval-pump",
+            displayName: "Approval Pump",
+            description: "Runs the approval flow as host-managed background work.",
+            sourceModuleId: Descriptor.Id,
+            kind: "background-service",
+            executionGraphId: "approval-flow",
+            startsWithHost: true,
+            tags: ["background", "hosted"],
+            metadata: new Dictionary<string, string>
+            {
+                ["owner"] = "workflow-catalog",
+                ["surface"] = "approval-pump"
+            }));
+    }
 }
 
 internal sealed class InvalidWorkflowCapabilityModule : ModuleBase, IExecutionGraphContributor
@@ -167,5 +190,52 @@ internal sealed class InvalidWorkflowCapabilityModule : ModuleBase, IExecutionGr
                     moduleId: Descriptor.Id,
                     capabilityKey: "workflow.missing")
             ]));
+    }
+}
+
+internal sealed class InvalidHostedExecutionModule : ModuleBase, IHostedExecutionContributor
+{
+    private readonly bool publishInvalidHostedExecution;
+
+    private static readonly ModuleDescriptor DescriptorInstance = new(
+        id: "invalid-hosted-execution",
+        displayName: "Invalid Hosted Execution",
+        description: "Publishes an invalid hosted execution for validation tests.",
+        tags: ["workflow", "invalid", "hosted"],
+        version: "1.0.0");
+
+    public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+    public InvalidHostedExecutionModule(bool publishInvalidHostedExecution)
+    {
+        this.publishInvalidHostedExecution = publishInvalidHostedExecution;
+    }
+
+    public InvalidHostedExecutionModule()
+    {
+    }
+
+    public override void ConfigureServices(IServiceCollection services)
+    {
+    }
+
+    public override void RegisterCapabilities(ICapabilityRegistry capabilities)
+    {
+    }
+
+    public void RegisterHostedExecutions(IHostedExecutionRegistry hostedExecutions)
+    {
+        if (!publishInvalidHostedExecution)
+        {
+            return;
+        }
+
+        hostedExecutions.Add(new HostedExecutionDescriptor(
+            id: "invalid-pump",
+            displayName: "Invalid Pump",
+            description: "References an execution graph that does not exist.",
+            sourceModuleId: Descriptor.Id,
+            kind: "background-service",
+            executionGraphId: "missing-graph"));
     }
 }

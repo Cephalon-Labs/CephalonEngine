@@ -3816,12 +3816,12 @@ public sealed class EngineRuntime
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphdescriptor"></a>
+<a id="member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphdescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-hostedexecutiondescriptor"></a>
 
 ##### `EngineRuntime`
 
 ```csharp
-EngineRuntime(IReadOnlyList<IModule> modules, RuntimeManifest manifest, FailurePolicy failurePolicy, IReadOnlyList<ExecutionGraphDescriptor> executionGraphs)
+EngineRuntime(IReadOnlyList<IModule> modules, RuntimeManifest manifest, FailurePolicy failurePolicy, IReadOnlyList<ExecutionGraphDescriptor> executionGraphs, IReadOnlyList<HostedExecutionDescriptor> hostedExecutions)
 ```
 
 Initializes a new instance of the `EngineRuntime` class.
@@ -3831,6 +3831,7 @@ Parameters:
 - `manifest`: The runtime manifest that describes the built runtime shape.
 - `failurePolicy`: The failure policy that governs startup, stop, and restart behavior.
 - `executionGraphs`: The execution graphs visible to the runtime story and diagnostics surface.
+- `hostedExecutions`: The hosted executions visible to the runtime story and operator-facing introspection surfaces.
 
 #### Properties
 
@@ -4736,13 +4737,213 @@ const RuntimeHealthState Unhealthy
 
 The runtime is not healthy enough to serve traffic.
 
+<a id="type-cephalon-engine-runtime-runtimehostedexecutionstate"></a>
+
+### `RuntimeHostedExecutionState`
+
+Describes the current operator-facing lifecycle state for one hosted execution visible to the runtime.
+
+#### Declaration
+```csharp
+public sealed class RuntimeHostedExecutionState
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-runtime-runtimehostedexecutionstate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-nullable-system-datetimeoffset"></a>
+
+##### `RuntimeHostedExecutionState`
+
+```csharp
+RuntimeHostedExecutionState(string HostedExecutionId, string DisplayName, string Description, string SourceModuleId, string SourceModuleVersion, string Kind, string ExecutionGraphId, bool StartsWithHost, DateTimeOffset? LoadedAtUtc, DateTimeOffset? ActivatedAtUtc, DateTimeOffset? DeactivatedAtUtc, string LastObservedPhase, DateTimeOffset? LastObservedAtUtc)
+```
+
+Describes the current operator-facing lifecycle state for one hosted execution visible to the runtime.
+
+Parameters:
+- `HostedExecutionId`: The stable hosted-execution identifier.
+- `DisplayName`: The operator-facing hosted-execution display name.
+- `Description`: The operator-facing hosted-execution description when one was published.
+- `SourceModuleId`: The module that contributed the hosted execution.
+- `SourceModuleVersion`: The effective version of the source module when available.
+- `Kind`: The operator-facing hosted-execution kind.
+- `ExecutionGraphId`: The related execution-graph identifier when one was declared.
+- `StartsWithHost`: A value indicating whether the hosted execution is expected to become active when the runtime host starts.
+- `LoadedAtUtc`: The UTC timestamp when the hosted execution became visible to the built runtime story.
+- `ActivatedAtUtc`: The UTC timestamp when the hosted execution most recently became active with the runtime.
+- `DeactivatedAtUtc`: The UTC timestamp when the hosted execution most recently became inactive because the runtime stopped.
+- `LastObservedPhase`: The last lifecycle phase recorded for the hosted execution.
+- `LastObservedAtUtc`: The UTC timestamp when the last lifecycle phase was recorded.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimehostedexecutionstate-activatedatutc"></a>
+
+##### `ActivatedAtUtc`
+
+```csharp
+DateTimeOffset? ActivatedAtUtc { get; set; }
+```
+
+The UTC timestamp when the hosted execution most recently became active with the runtime.
+
+<a id="member-p-cephalon-engine-runtime-runtimehostedexecutionstate-deactivatedatutc"></a>
+
+##### `DeactivatedAtUtc`
+
+```csharp
+DateTimeOffset? DeactivatedAtUtc { get; set; }
+```
+
+The UTC timestamp when the hosted execution most recently became inactive because the runtime stopped.
+
+<a id="member-p-cephalon-engine-runtime-runtimehostedexecutionstate-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; set; }
+```
+
+The operator-facing hosted-execution description when one was published.
+
+<a id="member-p-cephalon-engine-runtime-runtimehostedexecutionstate-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; set; }
+```
+
+The operator-facing hosted-execution display name.
+
+<a id="member-p-cephalon-engine-runtime-runtimehostedexecutionstate-executiongraphid"></a>
+
+##### `ExecutionGraphId`
+
+```csharp
+string ExecutionGraphId { get; set; }
+```
+
+The related execution-graph identifier when one was declared.
+
+<a id="member-p-cephalon-engine-runtime-runtimehostedexecutionstate-hostedexecutionid"></a>
+
+##### `HostedExecutionId`
+
+```csharp
+string HostedExecutionId { get; set; }
+```
+
+The stable hosted-execution identifier.
+
+<a id="member-p-cephalon-engine-runtime-runtimehostedexecutionstate-isactive"></a>
+
+##### `IsActive`
+
+```csharp
+bool IsActive { get; }
+```
+
+Gets a value indicating whether the hosted execution is currently active with the runtime host.
+
+<a id="member-p-cephalon-engine-runtime-runtimehostedexecutionstate-isdeactivated"></a>
+
+##### `IsDeactivated`
+
+```csharp
+bool IsDeactivated { get; }
+```
+
+Gets a value indicating whether the hosted execution most recently observed a deactivation event.
+
+<a id="member-p-cephalon-engine-runtime-runtimehostedexecutionstate-isloaded"></a>
+
+##### `IsLoaded`
+
+```csharp
+bool IsLoaded { get; }
+```
+
+Gets a value indicating whether the hosted execution is visible to the runtime story.
+
+<a id="member-p-cephalon-engine-runtime-runtimehostedexecutionstate-kind"></a>
+
+##### `Kind`
+
+```csharp
+string Kind { get; set; }
+```
+
+The operator-facing hosted-execution kind.
+
+<a id="member-p-cephalon-engine-runtime-runtimehostedexecutionstate-lastobservedatutc"></a>
+
+##### `LastObservedAtUtc`
+
+```csharp
+DateTimeOffset? LastObservedAtUtc { get; set; }
+```
+
+The UTC timestamp when the last lifecycle phase was recorded.
+
+<a id="member-p-cephalon-engine-runtime-runtimehostedexecutionstate-lastobservedphase"></a>
+
+##### `LastObservedPhase`
+
+```csharp
+string LastObservedPhase { get; set; }
+```
+
+The last lifecycle phase recorded for the hosted execution.
+
+<a id="member-p-cephalon-engine-runtime-runtimehostedexecutionstate-loadedatutc"></a>
+
+##### `LoadedAtUtc`
+
+```csharp
+DateTimeOffset? LoadedAtUtc { get; set; }
+```
+
+The UTC timestamp when the hosted execution became visible to the built runtime story.
+
+<a id="member-p-cephalon-engine-runtime-runtimehostedexecutionstate-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; set; }
+```
+
+The module that contributed the hosted execution.
+
+<a id="member-p-cephalon-engine-runtime-runtimehostedexecutionstate-sourcemoduleversion"></a>
+
+##### `SourceModuleVersion`
+
+```csharp
+string SourceModuleVersion { get; set; }
+```
+
+The effective version of the source module when available.
+
+<a id="member-p-cephalon-engine-runtime-runtimehostedexecutionstate-startswithhost"></a>
+
+##### `StartsWithHost`
+
+```csharp
+bool StartsWithHost { get; set; }
+```
+
+A value indicating whether the hosted execution is expected to become active when the runtime host starts.
+
 <a id="type-cephalon-engine-runtime-runtimeintrospectionsnapshot"></a>
 
 ### `RuntimeIntrospectionSnapshot`
 
 Combines the main operator-facing runtime views into a single payload.
 
-Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, technology-pack details, diagnostics conventions, and lifecycle story data.
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, and lifecycle story data.
 
 #### Declaration
 ```csharp
@@ -4761,7 +4962,7 @@ RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Sta
 
 Combines the main operator-facing runtime views into a single payload.
 
-Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, technology-pack details, diagnostics conventions, and lifecycle story data.
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, and lifecycle story data.
 
 Parameters:
 - `Manifest`: The immutable manifest that describes the built runtime shape.
@@ -4769,7 +4970,7 @@ Parameters:
 - `ExecutionGraphs`: The execution graphs contributed by active modules and visible to the runtime at the time the snapshot was created.
 - `TechnologySurfaces`: The active technology-pack runtime surfaces visible to the runtime at the time the snapshot was created.
 - `DiagnosticsConventions`: The diagnostics conventions and published event-id catalogs visible to the runtime at the time the snapshot was created.
-- `OperationalStory`: The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, module state, and the ordered runtime timeline.
+- `OperationalStory`: The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, hosted-execution state, module state, and the ordered runtime timeline.
 
 #### Properties
 
@@ -4793,6 +4994,16 @@ IReadOnlyList<ExecutionGraphDescriptor> ExecutionGraphs { get; set; }
 
 The execution graphs contributed by active modules and visible to the runtime at the time the snapshot was created.
 
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-hostedexecutions"></a>
+
+##### `HostedExecutions`
+
+```csharp
+IReadOnlyList<HostedExecutionDescriptor> HostedExecutions { get; set; }
+```
+
+Gets the hosted executions contributed by active modules and visible to the runtime at the time the snapshot was created.
+
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-manifest"></a>
 
 ##### `Manifest`
@@ -4811,7 +5022,7 @@ The immutable manifest that describes the built runtime shape.
 RuntimeOperationalStory OperationalStory { get; set; }
 ```
 
-The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, module state, and the ordered runtime timeline.
+The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, hosted-execution state, module state, and the ordered runtime timeline.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-status"></a>
 
@@ -4862,7 +5073,7 @@ Parameters:
 - `Phase`: The lifecycle phase or story phase, such as `load`, `initialize`, `start`, `stop`, or `restart`.
 - `Outcome`: The completion outcome for the event.
 - `RuntimeStatus`: The runtime status visible when the event was recorded.
-- `SubjectId`: The runtime, module, package, or execution-graph identifier associated with the event when available.
+- `SubjectId`: The runtime, module, package, execution-graph, or hosted-execution identifier associated with the event when available.
 - `SubjectVersion`: The version associated with the event subject when available.
 - `Message`: The operator-facing narrative for the event.
 - `ExceptionType`: The exception type captured for failed events when available.
@@ -4947,7 +5158,7 @@ The runtime surface that emitted the event.
 string SubjectId { get; set; }
 ```
 
-The runtime, module, package, or execution-graph identifier associated with the event when available.
+The runtime, module, package, execution-graph, or hosted-execution identifier associated with the event when available.
 
 <a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-subjectversion"></a>
 
@@ -5014,6 +5225,16 @@ const RuntimeLifecycleEventScope ExecutionGraph
 ```
 
 The event belongs to execution-graph visibility and active lifecycle transitions.
+
+<a id="member-f-cephalon-engine-runtime-runtimelifecycleeventscope-hostedexecution"></a>
+
+##### `HostedExecution`
+
+```csharp
+const RuntimeLifecycleEventScope HostedExecution
+```
+
+The event belongs to hosted-execution visibility and host-managed activation conventions.
 
 <a id="member-f-cephalon-engine-runtime-runtimelifecycleeventscope-module"></a>
 
@@ -5272,7 +5493,7 @@ Parameters:
 - `Status`: The current runtime lifecycle status snapshot.
 - `LoadedPackages`: The packages currently visible to the runtime story.
 - `Modules`: The current lifecycle state for each loaded module.
-- `Timeline`: The ordered lifecycle narrative for package load, execution-graph transitions, module transitions, runtime transitions, and failures.
+- `Timeline`: The ordered lifecycle narrative for package load, execution-graph transitions, hosted-execution transitions, module transitions, runtime transitions, and failures.
 
 #### Properties
 
@@ -5295,6 +5516,16 @@ DateTimeOffset GeneratedAtUtc { get; set; }
 ```
 
 The UTC timestamp when the story snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperationalstory-hostedexecutions"></a>
+
+##### `HostedExecutions`
+
+```csharp
+IReadOnlyList<RuntimeHostedExecutionState> HostedExecutions { get; set; }
+```
+
+Gets the current lifecycle state for each hosted execution visible to the runtime story.
 
 <a id="member-p-cephalon-engine-runtime-runtimeoperationalstory-loadedpackages"></a>
 
@@ -5334,7 +5565,7 @@ The current runtime lifecycle status snapshot.
 IReadOnlyList<RuntimeLifecycleEvent> Timeline { get; set; }
 ```
 
-The ordered lifecycle narrative for package load, execution-graph transitions, module transitions, runtime transitions, and failures.
+The ordered lifecycle narrative for package load, execution-graph transitions, hosted-execution transitions, module transitions, runtime transitions, and failures.
 
 <a id="type-cephalon-engine-runtime-runtimestatus"></a>
 

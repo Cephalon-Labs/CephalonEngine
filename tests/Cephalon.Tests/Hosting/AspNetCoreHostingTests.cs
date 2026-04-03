@@ -676,9 +676,21 @@ public sealed class AspNetCoreHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
+        var hostedExecutions = await client.GetFromJsonAsync<HostedExecutionDescriptor[]>("/engine/hosted-executions");
+        var hostedExecution = await client.GetFromJsonAsync<HostedExecutionDescriptor>("/engine/hosted-executions/approval-pump");
         var graphs = await client.GetFromJsonAsync<ExecutionGraphDescriptor[]>("/engine/execution-graphs");
         var graph = await client.GetFromJsonAsync<ExecutionGraphDescriptor>("/engine/execution-graphs/approval-flow");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(hostedExecutions);
+        var approvalPump = Assert.Single(hostedExecutions);
+        Assert.Equal("approval-pump", approvalPump.Id);
+        Assert.Equal("workflow-catalog", approvalPump.SourceModuleId);
+        Assert.Equal("background-service", approvalPump.Kind);
+        Assert.Equal("approval-flow", approvalPump.ExecutionGraphId);
+        Assert.True(approvalPump.StartsWithHost);
+        Assert.NotNull(hostedExecution);
+        Assert.Equal("Approval Pump", hostedExecution.DisplayName);
 
         Assert.NotNull(graphs);
         var approvalFlow = Assert.Single(graphs);
@@ -695,6 +707,8 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains(graph.Edges, edge => edge.Condition == "decision == approved");
 
         Assert.NotNull(snapshot);
+        Assert.Single(snapshot.HostedExecutions);
+        Assert.Equal("approval-pump", snapshot.HostedExecutions[0].Id);
         Assert.Single(snapshot.ExecutionGraphs);
         Assert.Equal("approval-flow", snapshot.ExecutionGraphs[0].Id);
         Assert.Contains(snapshot.ExecutionGraphs[0].Nodes, node => node.Id == "complete");
@@ -1132,6 +1146,12 @@ note: visible
         Assert.True(platform.IsInitialized);
         Assert.True(platform.IsStarted);
         Assert.False(platform.IsStopped);
+        var approvalPump = Assert.Single(story.HostedExecutions, execution => execution.HostedExecutionId == "approval-pump");
+        Assert.True(approvalPump.IsLoaded);
+        Assert.True(approvalPump.IsActive);
+        Assert.False(approvalPump.IsDeactivated);
+        Assert.Equal("workflow-catalog", approvalPump.SourceModuleId);
+        Assert.Equal("approval-flow", approvalPump.ExecutionGraphId);
         var approvalFlow = Assert.Single(story.ExecutionGraphs, graph => graph.GraphId == "approval-flow");
         Assert.True(approvalFlow.IsLoaded);
         Assert.True(approvalFlow.IsActive);
@@ -1149,9 +1169,16 @@ note: visible
                 entry.SubjectId == "approval-flow" &&
                 entry.Phase == "activate" &&
                 entry.Outcome == RuntimeLifecycleEventOutcome.Succeeded);
+        Assert.Contains(
+            story.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.HostedExecution &&
+                entry.SubjectId == "approval-pump" &&
+                entry.Phase == "activate" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Succeeded);
 
         Assert.NotNull(snapshot);
         Assert.Equal(RuntimeStatus.Started, snapshot.OperationalStory.Status.Status);
+        Assert.Contains(snapshot.OperationalStory.HostedExecutions, execution => execution.HostedExecutionId == "approval-pump" && execution.IsActive);
         Assert.Contains(snapshot.OperationalStory.Modules, module => module.ModuleId == "platform" && module.IsStarted);
         Assert.Contains(snapshot.OperationalStory.ExecutionGraphs, graph => graph.GraphId == "approval-flow" && graph.IsActive);
         Assert.Contains(

@@ -524,6 +524,7 @@ public sealed class EngineBuilder
             var orderedModules = ModuleOrdering.Order(activeModules);
             var modulesByType = orderedModules.ToDictionary(module => module.GetType());
             var executionGraphs = new List<ExecutionGraphDescriptor>();
+            var hostedExecutions = new List<HostedExecutionDescriptor>();
             var capabilities = new CapabilityManifestCollector();
             var technologyRegistry = new TechnologyRegistryAdapter(appProfileBuilder);
             foreach (var module in orderedModules.OfType<ITechnologyContributor>())
@@ -535,6 +536,12 @@ public sealed class EngineBuilder
             {
                 ((IExecutionGraphContributor)module).RegisterExecutionGraphs(
                     new ExecutionGraphRegistryAdapter(module.Descriptor.Id, executionGraphs));
+            }
+
+            foreach (var module in orderedModules.Where(static module => module is IHostedExecutionContributor))
+            {
+                ((IHostedExecutionContributor)module).RegisterHostedExecutions(
+                    new HostedExecutionRegistryAdapter(module.Descriptor.Id, hostedExecutions));
             }
 
             var appProfile = appProfileBuilder.Build();
@@ -606,6 +613,10 @@ public sealed class EngineBuilder
                 executionGraphs,
                 moduleManifests,
                 effectiveCapabilities);
+            var validatedHostedExecutions = HostedExecutionValidation.Validate(
+                hostedExecutions,
+                moduleManifests,
+                validatedExecutionGraphs);
 
             Services.AddSingleton(trustSnapshot);
             Services.AddSingleton<CapabilityPolicyEvaluator>();
@@ -613,6 +624,10 @@ public sealed class EngineBuilder
                 new ExecutionRuntimeCatalogSnapshot(validatedExecutionGraphs));
             Services.TryAddSingleton<IExecutionRuntimeCatalog>(serviceProvider =>
                 serviceProvider.GetRequiredService<ExecutionRuntimeCatalogSnapshot>());
+            Services.TryAddSingleton<HostedExecutionRuntimeCatalogSnapshot>(_ =>
+                new HostedExecutionRuntimeCatalogSnapshot(validatedHostedExecutions));
+            Services.TryAddSingleton<IHostedExecutionRuntimeCatalog>(serviceProvider =>
+                serviceProvider.GetRequiredService<HostedExecutionRuntimeCatalogSnapshot>());
             var manifest = new RuntimeManifest(
                 manifestVersion: RuntimeManifest.CurrentVersion,
                 engineVersion: GetAssemblyVersion(typeof(EngineBuilder).Assembly),
@@ -634,7 +649,7 @@ public sealed class EngineBuilder
             };
             EngineDiagnostics.EngineBuildCounter.Add(1, buildTags);
 
-            return new EngineRuntime(orderedModules, manifest, failurePolicy, validatedExecutionGraphs);
+            return new EngineRuntime(orderedModules, manifest, failurePolicy, validatedExecutionGraphs, validatedHostedExecutions);
         }
         catch (Exception exception)
         {
