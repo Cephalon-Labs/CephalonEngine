@@ -1133,6 +1133,26 @@ Operational notes:
 - the self-hosted path also adds `deployment.environment.name` from the active host environment alongside the existing service-name and service-version resource defaults
 - downstream companion packages should reuse this same contract instead of introducing a second Cephalon telemetry abstraction; that is the intended path for Cloudflare or internal-provider integrations
 
+## Downstream provider authoring path
+
+Downstream provider packages should build on top of the same `Engine:Observability:Telemetry` contract instead of creating a second Cephalon telemetry abstraction.
+
+Recommended authoring pattern:
+
+- bind `ObservabilityOptions.FromConfiguration(builder.Configuration).Telemetry` first
+- bind provider-specific settings from `Engine:Observability:Telemetry:{ProviderName}`
+- keep provider-specific exporter, auth, trust, and hosted-default logic inside the downstream package
+- publish a startup summary through `IHostedService` and a diagnostics convention through `IDiagnosticsConventionContributor`
+- reject unsupported protocol or signal combinations explicitly instead of silently dropping signals
+
+Cloudflare note:
+
+- current Cloudflare Workers observability docs focus on Worker-native traces and logs plus exporting OpenTelemetry-compliant traces and logs from Workers to third-party OTLP destinations
+- that current path does not yet describe a generic OTLP ingestion target for external Cephalon hosts, and metrics export is still not part of that Worker export story
+- until Cloudflare documents a reusable host-side ingestion path that fits Cephalon's runtime model, treat Cloudflare as downstream authoring guidance rather than a first-party `Cephalon.Observability.Cloudflare` package
+
+See [Observability provider authoring](observability-provider-authoring.md) for the recommended package shape and example extension-method pattern.
+
 ## AWS observability path
 
 `Cephalon.Observability.Aws` keeps AWS-specific propagation, AWS SDK instrumentation, and hosted AWS resource defaults in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
