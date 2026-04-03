@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
     <Description>Shared governance guidance package for the Cephalon microservice-suite sample.</Description>
   </PropertyGroup>
 

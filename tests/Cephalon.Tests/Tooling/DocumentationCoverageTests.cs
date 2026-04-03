@@ -16,11 +16,17 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.Engine"] = "engine.md",
             ["Cephalon.Eventing"] = "eventing.md",
             ["Cephalon.Observability"] = "observability.md",
+            ["Cephalon.Observability.AlibabaCloud"] = "observability-alibaba-cloud.md",
+            ["Cephalon.Observability.Aws"] = "observability-aws.md",
+            ["Cephalon.Observability.AzureMonitor"] = "observability-azure-monitor.md",
             ["Cephalon.Observability.CassandraDependencies"] = "observability-cassandra-dependencies.md",
             ["Cephalon.Observability.ClickHouseDependencies"] = "observability-clickhouse-dependencies.md",
             ["Cephalon.Observability.ConsulDependencies"] = "observability-consul-dependencies.md",
+            ["Cephalon.Observability.DigitalOcean"] = "observability-digitalocean.md",
             ["Cephalon.Observability.ElasticsearchDependencies"] = "observability-elasticsearch-dependencies.md",
+            ["Cephalon.Observability.Gcp"] = "observability-gcp.md",
             ["Cephalon.Observability.HttpDependencies"] = "observability-http-dependencies.md",
+            ["Cephalon.Observability.HuaweiCloud"] = "observability-huawei-cloud.md",
             ["Cephalon.Observability.KafkaDependencies"] = "observability-kafka-dependencies.md",
             ["Cephalon.Observability.MemcachedDependencies"] = "observability-memcached-dependencies.md",
             ["Cephalon.Observability.MongoDbDependencies"] = "observability-mongodb-dependencies.md",
@@ -29,11 +35,13 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.Observability.NatsDependencies"] = "observability-nats-dependencies.md",
             ["Cephalon.Observability.Neo4jDependencies"] = "observability-neo4j-dependencies.md",
             ["Cephalon.Observability.OpenSearchDependencies"] = "observability-opensearch-dependencies.md",
+            ["Cephalon.Observability.OpenShift"] = "observability-openshift.md",
             ["Cephalon.Observability.OracleDependencies"] = "observability-oracle-dependencies.md",
             ["Cephalon.Observability.PostgresDependencies"] = "observability-postgres-dependencies.md",
             ["Cephalon.Observability.RabbitMqDependencies"] = "observability-rabbitmq-dependencies.md",
             ["Cephalon.Observability.RedisDependencies"] = "observability-redis-dependencies.md",
             ["Cephalon.Observability.SqlServerDependencies"] = "observability-sqlserver-dependencies.md",
+            ["Cephalon.Observability.Tanzu"] = "observability-tanzu.md",
             ["Cephalon.Observability.OpenTelemetry"] = "observability-opentelemetry.md",
             ["Cephalon.Observability.Serilog"] = "observability-serilog.md",
             ["Cephalon.ReferenceDocs"] = "reference-docs.md",
@@ -87,6 +95,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("[Component catalog](components/README.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("[App models](app-models.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("[Module authoring](module-authoring.md)", docsReadme, StringComparison.Ordinal);
+        Assert.Contains("[Package publishing](package-publishing.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("[Technology packs](technology-packs.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("[Operations](operations.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("[Runtime failure policy](runtime-failure-policy.md)", docsReadme, StringComparison.Ordinal);

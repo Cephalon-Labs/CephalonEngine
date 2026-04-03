@@ -11,6 +11,7 @@ This guide describes the compatibility contract that must stay aligned across Ce
 | Blueprint, pattern, technology, and transport identifiers | the runtime/app-model contracts in `Cephalon.Abstractions` and `Cephalon.Engine` | scaffold plans, CLI parsing/help text, template coverage, samples, and hand-authored docs |
 | Package manifest contract | `cephalon.package.json` plus engine package-loading and policy enforcement | scaffolded module output, template module starters, reference modules, module-authoring docs, operations docs, and trust/package-policy guidance |
 | Reference-doc publishing flow | `Cephalon.ReferenceDocs`, the CLI docs commands, and the host `ReferenceDocs` section | scaffolded host appsettings/readmes, docs-publish command help, hosted docs guidance, and docs examples |
+| Release package-artifact flow | `scripts/publish-package-artifacts.ps1`, `scripts/validate-release.ps1`, and the release-validation workflow | intended packable project set, shared NuGet metadata/readme defaults, release artifact uploads, and package-publishing docs |
 
 ## Alignment rules
 
@@ -43,6 +44,12 @@ This guide describes the compatibility contract that must stay aligned across Ce
 - keep the CLI docs commands, the publish script, scaffolded `ReferenceDocs` config, and hosted-reference docs guidance aligned when publishing behavior changes
 - keep tests outside the supported reference-doc/DocFX input set unless we intentionally promote them into published documentation scope
 - keep shared test-harness types internal while the test project stays outside the supported published docs set, leaving only framework-required xUnit classes and rare reflective transport-contract exceptions public
+
+### Package publishing flow
+
+- keep the release package-artifact script aligned with the intended packable surface instead of relying on ambient `dotnet pack` defaults across the whole solution
+- keep shared NuGet metadata, package readme defaults, and release artifact output aligned across shipped packages and the reference module package
+- keep the CLI out of the release package-artifact baseline until dedicated tool packaging is implemented explicitly
 
 ## Repository verification points
 

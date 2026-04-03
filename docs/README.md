@@ -16,6 +16,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [App models](app-models.md)
 - [Module authoring](module-authoring.md)
 - [Observability provider authoring](observability-provider-authoring.md)
+- [Package publishing](package-publishing.md)
 - [Technology packs](technology-packs.md)
 
 ## Runtime and operations

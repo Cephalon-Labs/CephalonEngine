@@ -224,6 +224,23 @@ Delivered:
 - tooling coverage now locks that policy by asserting the test assembly exports only xUnit test classes plus the explicit allow-listed transport contract exception and that XML-document generation stays disabled for the test project
 - reference-doc and compatibility guidance now state the test-harness policy explicitly so the supported DocFX/reference-doc boundary stays limited to shipped packages and intentionally promoted samples
 
+### ENG-030 Release package artifact baseline
+
+Status: done
+Estimate: 8
+
+Why:
+
+- the repo now validates build, test, benchmarks, and reference docs, but it still lacks an explicit release-pack baseline for the NuGet and template artifacts we actually intend to ship
+- `dotnet pack` currently drifts across benchmarks, playgrounds, sample-only libraries, and CLI/tooling surfaces without a repo-owned definition of the intended package boundary
+
+Delivered:
+
+- the intended release packable surface is now explicit: shipped `src/Cephalon.*` packages plus the reference module and template pack, with benchmarks, playgrounds, sample-only libraries, and the unfinished CLI install surface excluded by default
+- shared NuGet metadata and a repo-owned package readme baseline now flow through `Directory.Build.props` so shipped packages publish with consistent authorship, repository, license, and readme metadata
+- `scripts/publish-package-artifacts.ps1` now publishes deterministic release artifacts under `artifacts/packages-release` and emits a manifest of the packaged project set
+- `scripts/validate-release.ps1`, the release-validation workflow, docs, and tooling coverage now all validate the same package-artifact baseline instead of leaving packaging drift implicit
+
 ## Current operational focus
 
 Phase 2 operational hardening is now substantially complete:
