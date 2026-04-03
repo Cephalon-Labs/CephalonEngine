@@ -60,7 +60,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 1`: delivered `ENG-005`, `ENG-026`, and `ENG-027`, and opened the phase 2 operational gap-inventory track
 - `Sprint 2`: exporter packaging is now part of the shipped phase-2 baseline, Cassandra contact-point health plus ClickHouse analytics health plus Consul control-plane health plus Elasticsearch cluster health plus HTTP external API plus Kafka broker metadata plus Memcached cache plus MongoDB plus MQTT plus MySQL plus NATS plus Neo4j plus OpenSearch plus Oracle plus Postgres plus RabbitMQ plus Redis/cache plus SQL Server dependency-health packaging anchor the provider-specific follow-through, the shared diagnostics/event-id catalog now anchors the structured diagnostics baseline, and release validation now calls out the health/export convention suite explicitly
 - `Sprint 3`: runtime-answers follow-through, the shipped package distribution/provenance and signer-verification follow-through under `ENG-011`, the shipped `ENG-013` execution-graph lifecycle/observability plus hosted-execution convention and agentic orchestration-link follow-through, the shipped `ENG-022` suite-scaffold-shape baseline under `#79`, the shipped built-in `MicroserviceSuite` composition baseline under `#80`, the shipped multi-service suite sample baseline under `#81`, the shipped suite-governance and additive gateway/control-plane guidance baseline under `#82`, the shipped `ENG-029` self-hosted OTLP follow-through slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped DigitalOcean collector/defaults slice, the shipped VMware Tanzu proxy/defaults slice, and the shipped downstream Cloudflare/custom-provider authoring slice under `#120`
-- `Later / not scheduled yet`: future solution-level expansion work plus repo-wide XML-comment hygiene for test harnesses
+- `Later / not scheduled yet`: future solution-level expansion work
 
 ## Planning principles
 
@@ -119,8 +119,7 @@ Exit criteria:
 
 Current note:
 
-- the supported phase-1 adoption baseline is now shipped across public-surface hardening, GraphQL transport delivery, compatibility guidance, and DocFX-ready XML comments
-- `ENG-028` remains an intentional later hygiene item instead of a blocker for phase-1 exit
+- the supported phase-1 adoption baseline is now shipped across public-surface hardening, GraphQL transport delivery, compatibility guidance, DocFX-ready XML comments, and the explicit test-harness visibility policy that keeps shared helpers internal while leaving only framework-required xUnit classes and a narrow reflective transport-contract exception public in `tests/Cephalon.Tests`
 
 ## Phase 2: Operational hardening
 
@@ -276,7 +275,7 @@ Updated priority order as of `April 3, 2026`:
 
 1. cloud and platform integrations only when a new explicit adoption target appears beyond the shipped self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and Cloudflare/custom-provider guidance baseline
 2. broader release automation and package-publishing polish
-3. repo-wide XML-comment hygiene for test harnesses only if the repository chooses a stricter test-harness visibility/documentation policy
+3. future solution-level expansion only when an explicit adoption scenario needs it
 
 ## Decision guardrails
 
