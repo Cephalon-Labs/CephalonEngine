@@ -342,6 +342,9 @@ Browse the published API surface by public member.
 - [All](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-all): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=All&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets all built-in pattern descriptors.
   - `IReadOnlyList<PatternDescriptor> All { get; }`
+- [All](cephalon-engine.md#member-p-cephalon-engine-appmodel-builtinsuiteblueprints-all): `Properties` on `BuiltInSuiteBlueprints` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=All&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Gets all built-in suite blueprints.
+  - `IReadOnlyList<SuiteBlueprint> All { get; }`
 - [All](cephalon-engine.md#member-p-cephalon-engine-technologies-builtintechnologies-all): `Properties` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=All&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
   - Gets all built-in technology descriptors.
   - `IReadOnlyList<TechnologyDescriptor> All { get; }`
@@ -966,6 +969,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-description): `Properties` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the scaffold-plan description.
   - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-suiteblueprint-description): `Properties` on `SuiteBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the suite-blueprint description.
+  - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-description): `Properties` on `SuiteScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the suite-scaffold description.
   - `string Description { get; }`
@@ -1143,6 +1149,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-displayname): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the human-readable dependency name shown to operators.
   - `string DisplayName { get; set; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-suiteblueprint-displayname): `Properties` on `SuiteBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the human-readable suite-blueprint name.
+  - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-displayname): `Properties` on `SuiteScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the human-readable suite-scaffold name.
   - `string DisplayName { get; }`
@@ -1893,6 +1902,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-id): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
   - `string Id { get; set; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-suiteblueprint-id): `Properties` on `SuiteBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the stable suite-blueprint identifier.
+  - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-id): `Properties` on `SuiteScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the stable suite-scaffold identifier.
   - `string Id { get; }`
@@ -2340,6 +2352,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-metadata): `Properties` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets optional project metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-suiteblueprint-metadata): `Properties` on `SuiteBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets additional suite-blueprint metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-metadata): `Properties` on `SuiteScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets optional suite-scaffold metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -2373,6 +2388,12 @@ Browse the published API surface by public member.
 - [Microservice](cephalon-engine.md#member-p-cephalon-engine-appmodel-scaffolding-builtinscaffolds-microservice): `Properties` on `BuiltInScaffolds` in `Cephalon.Engine.AppModel.Scaffolding` (`Cephalon.Engine`) [Browse](browse.html?q=Microservice&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel.Scaffolding&scope=members)
   - Gets the scaffold plan for the microservice blueprint.
   - `ScaffoldPlan Microservice { get; }`
+- [MicroserviceSuite](cephalon-engine.md#member-p-cephalon-engine-appmodel-builtinsuiteblueprints-microservicesuite): `Properties` on `BuiltInSuiteBlueprints` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=MicroserviceSuite&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Gets the built-in microservice-suite blueprint.
+  - `SuiteBlueprint MicroserviceSuite { get; }`
+- [MicroserviceSuite](cephalon-engine.md#member-p-cephalon-engine-appmodel-scaffolding-builtinsuitescaffolds-microservicesuite): `Properties` on `BuiltInSuiteScaffolds` in `Cephalon.Engine.AppModel.Scaffolding` (`Cephalon.Engine`) [Browse](browse.html?q=MicroserviceSuite&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel.Scaffolding&scope=members)
+  - Gets the suite scaffold for the microservice-suite blueprint.
+  - `SuiteScaffoldPlan MicroserviceSuite { get; }`
 - [MicroserviceTopology](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-microservicetopology): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=MicroserviceTopology&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the microservice deployment topology pattern.
   - `PatternDescriptor MicroserviceTopology { get; }`
@@ -3174,6 +3195,9 @@ Browse the published API surface by public member.
 - [Resolve](cephalon-engine.md#member-m-cephalon-engine-patterns-builtinpatterns-resolve-system-string): `Methods` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=Resolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Resolves a pattern identifier, display name, or alias.
   - `PatternDescriptor Resolve(string value)`
+- [Resolve](cephalon-engine.md#member-m-cephalon-engine-appmodel-builtinsuiteblueprints-resolve-system-string): `Methods` on `BuiltInSuiteBlueprints` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=Resolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Resolves a suite blueprint identifier, display name, or alias.
+  - `SuiteBlueprint Resolve(string value)`
 - [Resolve](cephalon-engine.md#member-m-cephalon-engine-technologies-builtintechnologies-resolve-system-string): `Methods` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=Resolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
   - Resolves a technology identifier, display name, or alias.
   - `TechnologyDescriptor Resolve(string value)`
@@ -3330,6 +3354,9 @@ Browse the published API surface by public member.
 - [Scaffold](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-scaffold): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Scaffold&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the scaffold plan associated with the app shape, when one is defined.
   - `ScaffoldPlan Scaffold { get; }`
+- [Scaffold](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-suiteblueprint-scaffold): `Properties` on `SuiteBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Scaffold&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the suite-scaffold plan associated with the suite blueprint.
+  - `SuiteScaffoldPlan Scaffold { get; }`
 - [ScaffoldFolder](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `ScaffoldFolder` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=ScaffoldFolder&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Creates a scaffold-folder description.
   - `ScaffoldFolder(string pathTemplate, string purpose, string scope, string projectId, IReadOnlyDictionary<string, string> metadata)`
@@ -3651,6 +3678,9 @@ Browse the published API surface by public member.
 - [Suite](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-scaffoldscopes-suite): `Fields` on `ScaffoldScopes` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Suite&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies a suite-level scaffold scope.
   - `const string Suite`
+- [SuiteBlueprint](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-suiteblueprint-ctor-system-string-system-string-system-string-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `SuiteBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=SuiteBlueprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Creates a suite blueprint.
+  - `SuiteBlueprint(string id, string displayName, string description, SuiteScaffoldPlan scaffold, IReadOnlyDictionary<string, string> metadata)`
 - [SuiteScaffoldPlan](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `SuiteScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=SuiteScaffoldPlan&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Creates a suite-level scaffold plan.
   - `SuiteScaffoldPlan(string id, string displayName, string description, IReadOnlyList<SuiteScaffoldService> services, IReadOnlyList<ScaffoldProject> sharedProjects, IReadOnlyList<ScaffoldFolder> sharedFolders, IReadOnlyList<string> conventions, IReadOnlyDictionary<string, string> metadata)`
@@ -3963,6 +3993,9 @@ Browse the published API surface by public member.
 - [TryResolve](cephalon-engine.md#member-m-cephalon-engine-patterns-builtinpatterns-tryresolve-system-string-cephalon-abstractions-patterns-patterndescriptor): `Methods` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=TryResolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Attempts to resolve a pattern identifier, display name, or alias.
   - `bool TryResolve(string value, out PatternDescriptor pattern)`
+- [TryResolve](cephalon-engine.md#member-m-cephalon-engine-appmodel-builtinsuiteblueprints-tryresolve-system-string-cephalon-abstractions-appmodel-suiteblueprint): `Methods` on `BuiltInSuiteBlueprints` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=TryResolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Attempts to resolve a suite blueprint identifier, display name, or alias.
+  - `bool TryResolve(string value, out SuiteBlueprint blueprint)`
 - [TryResolve](cephalon-engine.md#member-m-cephalon-engine-technologies-builtintechnologies-tryresolve-system-string-cephalon-abstractions-technologies-technologydescriptor): `Methods` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=TryResolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
   - Attempts to resolve a technology identifier, display name, or alias.
   - `bool TryResolve(string value, out TechnologyDescriptor technology)`

@@ -18,6 +18,7 @@
 - `Capabilities/Capability.cs`
 - `Capabilities/ICapabilityRegistry.cs`
 - `AppModel/AppProfile.cs`
+- `AppModel/SuiteBlueprint.cs`
 - `AppModel/Scaffolding/ScaffoldPlan.cs`
 - `AppModel/Scaffolding/SuiteScaffoldPlan.cs`
 - `AppModel/Scaffolding/SuiteScaffoldService.cs`

@@ -176,7 +176,7 @@ Follow-up later:
 
 ## SDK hardening follow-through
 
-Phase 1 SDK hardening, phase 2 operational hardening, phase 3 extensibility/package loading, and phase 4 execution/orchestration are now substantially complete on their shipped baselines. Phase 5 solution-level platform work is now the current structural follow-through, starting with the shipped suite-scaffold contract baseline under `#79`, while phase 6 keeps the shipped self-hosted OTLP slice, Azure Monitor first-vendor slice, AWS second-vendor slice, GCP third-vendor slice, Huawei Cloud fourth-vendor slice, Alibaba Cloud fifth-vendor slice, Red Hat OpenShift platform-first slice, DigitalOcean collector/defaults slice under `#114`, VMware Tanzu proxy/defaults slice under `#118`, and downstream Cloudflare/custom-provider authoring guidance slice under `#120`.
+Phase 1 SDK hardening, phase 2 operational hardening, phase 3 extensibility/package loading, and phase 4 execution/orchestration are now substantially complete on their shipped baselines. Phase 5 solution-level platform work is now the current structural follow-through, starting with the shipped suite-scaffold contract baseline under `#79` plus the shipped built-in `MicroserviceSuite` composition baseline under `#80`, while phase 6 keeps the shipped self-hosted OTLP slice, Azure Monitor first-vendor slice, AWS second-vendor slice, GCP third-vendor slice, Huawei Cloud fourth-vendor slice, Alibaba Cloud fifth-vendor slice, Red Hat OpenShift platform-first slice, DigitalOcean collector/defaults slice under `#114`, VMware Tanzu proxy/defaults slice under `#118`, and downstream Cloudflare/custom-provider authoring guidance slice under `#120`.
 
 ### ENG-005 Engine API and package surface hardening
 
@@ -465,7 +465,7 @@ Delivered:
 ### ENG-022 `MicroserviceSuite` blueprint
 
 Status: current focus
-Estimate: 7
+Estimate: 5
 
 Why:
 
@@ -476,10 +476,11 @@ Delivered:
 - public suite-scaffold contracts through `SuiteScaffoldPlan`, `SuiteScaffoldService`, and `ScaffoldScopes.Suite`
 - explicit separation between shared suite projects/folders and per-service slots so future multi-service blueprints do not overload the current single-app `ScaffoldPlan`
 - validation that suite services can only depend on declared shared projects or other declared service slots
+- a built-in `MicroserviceSuite` blueprint through `SuiteBlueprint` and `BuiltInSuiteBlueprints`
+- suite shared-foundation and repeatable service-slot defaults composed from the shipped `Microservice` scaffold contract instead of redefining host, contracts, and module project shapes a second time
 
 Acceptance remaining:
 
-- keep suite blueprints composed from existing app-level contracts
 - add reference samples for multi-service Cephalon solutions
 - add shared governance packages and keep optional gateway/control-plane guidance additive to the suite contract instead of folding them into the first shape baseline
 
