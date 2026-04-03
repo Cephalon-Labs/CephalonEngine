@@ -979,6 +979,7 @@ Current shipped event-id ranges include:
 - `Cephalon.Observability.Gcp`: `3111-3111`
 - `Cephalon.Observability.HuaweiCloud`: `3112-3112`
 - `Cephalon.Observability.AlibabaCloud`: `3113-3113`
+- `Cephalon.Observability.GrafanaCloud`: `3119-3119`
 - `Cephalon.Observability.Kubernetes`: `3117-3117`
 - `Cephalon.Observability.OpenShift`: `3114-3114`
 - `Cephalon.Observability.DigitalOcean`: `3115-3115`
@@ -1403,6 +1404,54 @@ Operational notes:
 - `HostedPlatform` can be `compute`, `oke`, or `functions`
 - `Region` lets the package stamp `cloud.region` when a deployment wants that value to stay explicit
 
+## Grafana Cloud observability path
+
+`Cephalon.Observability.GrafanaCloud` keeps Grafana Cloud OTLP endpoint wiring and access-policy authentication guidance in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "Telemetry": {
+        "Provider": "OpenTelemetry",
+        "Protocol": "otlp/http",
+        "ExportLogs": true,
+        "ExportMetrics": true,
+        "ExportTraces": true,
+        "GrafanaCloud": {
+          "UseDirectGrafanaCloudEndpoint": true,
+          "Endpoint": "https://otlp-gateway-prod-us-central-0.grafana.net/otlp",
+          "InstanceId": "replace-with-grafana-cloud-instance-id",
+          "AccessPolicyToken": "replace-with-grafana-cloud-access-policy-token",
+          "ServiceNamespace": "checkout"
+        }
+      }
+    }
+  }
+}
+```
+
+Host registration example:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonObservability(builder.Configuration);
+builder.AddCephalonGrafanaCloud();
+```
+
+Operational notes:
+
+- the Grafana Cloud package is optional and stays outside `Cephalon.Engine`
+- when `Engine:Observability:Telemetry:Endpoint` or `UseSelfHostedDefaults` is configured, the package keeps using the shared collector-oriented OTLP path and only adds Grafana-friendly resource context
+- when `Engine:Observability:Telemetry:GrafanaCloud:UseDirectGrafanaCloudEndpoint` is `true` and no shared endpoint is configured, the package targets the configured Grafana Cloud OTLP endpoint directly
+- direct Grafana Cloud mode accepts either `Headers` in standard OTLP `key=value` format or the structured `InstanceId` plus `AccessPolicyToken` pair that the package converts into a Basic `Authorization` header
+- `Protocol` can stay on `otlp`, `otlp/grpc`, or `otlp/http`; for HTTP/protobuf the package appends `/v1/traces`, `/v1/metrics`, and `/v1/logs` automatically
+- `ServiceNamespace` lets the package stamp `service.namespace`, while the active host environment still contributes `deployment.environment.name`
+
 ## Alibaba Cloud observability path
 
 `Cephalon.Observability.AlibabaCloud` keeps hosted Alibaba Cloud defaults and an optional managed OpenTelemetry traces/metrics path in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
@@ -1825,6 +1874,7 @@ It executes a curated test suite that validates:
 - Serilog provider wiring through `Cephalon.Observability.Serilog`
 - Alibaba Cloud-hosted defaults and managed OpenTelemetry traces/metrics through `Cephalon.Observability.AlibabaCloud`
 - AWS-hosted OTLP defaults through `Cephalon.Observability.Aws`
+- Grafana Cloud direct endpoint wiring through `Cephalon.Observability.GrafanaCloud`
 - GCP-hosted defaults through `Cephalon.Observability.Gcp`
 - Huawei Cloud-hosted defaults and managed APM traces through `Cephalon.Observability.HuaweiCloud`
 - Kubernetes in-cluster collector defaults through `Cephalon.Observability.Kubernetes`

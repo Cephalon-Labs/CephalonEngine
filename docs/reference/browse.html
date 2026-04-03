@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-03T20:39:29.8918762+00:00",
+  "GeneratedAtUtc": "2026-04-03T21:56:41.9810616+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -262,6 +262,14 @@
       "Category": "Hosts",
       "Description": "GCP OTLP defaults and Google-managed traces/metrics integration for Cephalon hosts.",
       "FileName": "cephalon-observability-gcp.md",
+      "NamespaceCount": 2,
+      "TypeCount": 2
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.GrafanaCloud",
+      "Category": "Hosts",
+      "Description": "Grafana Cloud OTLP endpoint defaults and access-policy authentication guidance for Cephalon hosts.",
+      "FileName": "cephalon-observability-grafanacloud.md",
       "NamespaceCount": 2,
       "TypeCount": 2
     },
@@ -927,6 +935,20 @@
       "AssemblyName": "Cephalon.Observability.Gcp",
       "FileName": "cephalon-observability-gcp.md",
       "AnchorId": "namespace-cephalon-observability-gcp-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.GrafanaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.GrafanaCloud",
+      "FileName": "cephalon-observability-grafanacloud.md",
+      "AnchorId": "namespace-cephalon-observability-grafanacloud-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.GrafanaCloud.Hosting",
+      "AssemblyName": "Cephalon.Observability.GrafanaCloud",
+      "FileName": "cephalon-observability-grafanacloud.md",
+      "AnchorId": "namespace-cephalon-observability-grafanacloud-hosting",
       "TypeCount": 1
     },
     {
@@ -2313,6 +2335,36 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 5,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "GrafanaCloudHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.GrafanaCloud.Hosting",
+      "AssemblyName": "Cephalon.Observability.GrafanaCloud",
+      "FileName": "cephalon-observability-grafanacloud.md",
+      "AnchorId": "type-cephalon-observability-grafanacloud-hosting-grafanacloudhostapplicationbuilderextensions",
+      "Declaration": "public static class GrafanaCloudHostApplicationBuilderExtensions",
+      "Summary": "Adds Grafana Cloud OTLP endpoint wiring and access-policy authentication guidance for Cephalon hosts.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "GrafanaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.GrafanaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.GrafanaCloud",
+      "FileName": "cephalon-observability-grafanacloud.md",
+      "AnchorId": "type-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions",
+      "Declaration": "public sealed class GrafanaCloudTelemetryExportOptions",
+      "Summary": "Configures Grafana Cloud observability defaults on top of the shared Cephalon telemetry contract.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 6,
         "Methods": 1
       }
     },
@@ -5150,6 +5202,17 @@
       "Summary": "The effective access mode resolved from policy."
     },
     {
+      "DisplayName": "AccessPolicyToken",
+      "Category": "Properties",
+      "DeclaringTypeName": "GrafanaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.GrafanaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.GrafanaCloud",
+      "FileName": "cephalon-observability-grafanacloud.md",
+      "AnchorId": "member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-accesspolicytoken",
+      "Signature": "string AccessPolicyToken { get; set; }",
+      "Summary": "Gets or sets the Grafana Cloud access-policy token used as the Basic-auth password when the package should build the Authorization header from structured settings."
+    },
+    {
       "DisplayName": "AclToken",
       "Category": "Properties",
       "DeclaringTypeName": "ConsulDependencyDefinition",
@@ -5555,6 +5618,17 @@
       "AnchorId": "member-m-cephalon-observability-gcp-hosting-gcphostapplicationbuilderextensions-addcephalongcp-1-0-system-action-cephalon-observability-gcp-configuration-gcptelemetryexportoptions",
       "Signature": "TBuilder AddCephalonGcp\u003CTBuilder\u003E(this TBuilder builder, Action\u003CGcpTelemetryExportOptions\u003E configure)",
       "Summary": "Adds GCP-aware OpenTelemetry registration for the Cephalon engine diagnostics surface."
+    },
+    {
+      "DisplayName": "AddCephalonGrafanaCloud",
+      "Category": "Methods",
+      "DeclaringTypeName": "GrafanaCloudHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.GrafanaCloud.Hosting",
+      "AssemblyName": "Cephalon.Observability.GrafanaCloud",
+      "FileName": "cephalon-observability-grafanacloud.md",
+      "AnchorId": "member-m-cephalon-observability-grafanacloud-hosting-grafanacloudhostapplicationbuilderextensions-addcephalongrafanacloud-1-0-system-action-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions",
+      "Signature": "TBuilder AddCephalonGrafanaCloud\u003CTBuilder\u003E(this TBuilder builder, Action\u003CGrafanaCloudTelemetryExportOptions\u003E configure)",
+      "Summary": "Adds Grafana Cloud-aware OpenTelemetry registration for the Cephalon engine diagnostics surface."
     },
     {
       "DisplayName": "AddCephalonHttpDependencyHealth",
@@ -9805,6 +9879,17 @@
     {
       "DisplayName": "Endpoint",
       "Category": "Properties",
+      "DeclaringTypeName": "GrafanaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.GrafanaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.GrafanaCloud",
+      "FileName": "cephalon-observability-grafanacloud.md",
+      "AnchorId": "member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-endpoint",
+      "Signature": "string Endpoint { get; set; }",
+      "Summary": "Gets or sets the base Grafana Cloud OTLP endpoint used for direct ingestion."
+    },
+    {
+      "DisplayName": "Endpoint",
+      "Category": "Properties",
       "DeclaringTypeName": "HttpDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
@@ -10586,6 +10671,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "GrafanaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.GrafanaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.GrafanaCloud",
+      "FileName": "cephalon-observability-grafanacloud.md",
+      "AnchorId": "member-m-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "GrafanaCloudTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Grafana Cloud telemetry export options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "HttpDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.HttpDependencies",
@@ -11090,6 +11186,17 @@
       "Summary": "Gets the merged resources visible for the specified culture."
     },
     {
+      "DisplayName": "GrafanaCloudTelemetryExportOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "GrafanaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.GrafanaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.GrafanaCloud",
+      "FileName": "cephalon-observability-grafanacloud.md",
+      "AnchorId": "member-m-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-ctor",
+      "Signature": "GrafanaCloudTelemetryExportOptions()",
+      "Summary": "Initializes a new instance of the \u0060GrafanaCloudTelemetryExportOptions\u0060 class."
+    },
+    {
       "DisplayName": "GraphId",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeExecutionGraphState",
@@ -11231,6 +11338,17 @@
       "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-headers",
       "Signature": "string Headers { get; set; }",
       "Summary": "Gets or sets the raw OTLP headers string added to collector requests."
+    },
+    {
+      "DisplayName": "Headers",
+      "Category": "Properties",
+      "DeclaringTypeName": "GrafanaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.GrafanaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.GrafanaCloud",
+      "FileName": "cephalon-observability-grafanacloud.md",
+      "AnchorId": "member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-headers",
+      "Signature": "string Headers { get; set; }",
+      "Summary": "Gets or sets the raw OTLP headers string used for direct Grafana Cloud ingestion."
     },
     {
       "DisplayName": "Headers",
@@ -12331,6 +12449,17 @@
       "AnchorId": "member-f-cephalon-engine-runtime-runtimestatus-initializing",
       "Signature": "const RuntimeStatus Initializing",
       "Summary": "The runtime is initializing modules."
+    },
+    {
+      "DisplayName": "InstanceId",
+      "Category": "Properties",
+      "DeclaringTypeName": "GrafanaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.GrafanaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.GrafanaCloud",
+      "FileName": "cephalon-observability-grafanacloud.md",
+      "AnchorId": "member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-instanceid",
+      "Signature": "string InstanceId { get; set; }",
+      "Summary": "Gets or sets the Grafana Cloud instance identifier used as the Basic-auth username when the package should build the Authorization header from structured settings."
     },
     {
       "DisplayName": "Intelligence",
@@ -17657,6 +17786,17 @@
       "Summary": "Gets or sets the Oracle service name used in the Easy Connect data source when no full connection string is supplied."
     },
     {
+      "DisplayName": "ServiceNamespace",
+      "Category": "Properties",
+      "DeclaringTypeName": "GrafanaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.GrafanaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.GrafanaCloud",
+      "FileName": "cephalon-observability-grafanacloud.md",
+      "AnchorId": "member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-servicenamespace",
+      "Signature": "string ServiceNamespace { get; set; }",
+      "Summary": "Gets or sets the optional \u0060service.namespace\u0060 resource attribute to stamp onto exported telemetry."
+    },
+    {
       "DisplayName": "Services",
       "Category": "Properties",
       "DeclaringTypeName": "EngineBuilder",
@@ -19965,6 +20105,17 @@
       "AnchorId": "member-p-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-usedefaultazurecredential",
       "Signature": "bool UseDefaultAzureCredential { get; set; }",
       "Summary": "Gets or sets a value indicating whether the exporter should authenticate with \u0060DefaultAzureCredential\u0060."
+    },
+    {
+      "DisplayName": "UseDirectGrafanaCloudEndpoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "GrafanaCloudTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.GrafanaCloud.Configuration",
+      "AssemblyName": "Cephalon.Observability.GrafanaCloud",
+      "FileName": "cephalon-observability-grafanacloud.md",
+      "AnchorId": "member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-usedirectgrafanacloudendpoint",
+      "Signature": "bool UseDirectGrafanaCloudEndpoint { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the package should target the Grafana Cloud OTLP endpoint when no shared collector endpoint is configured."
     },
     {
       "DisplayName": "UseDropletMetadataDefaults",

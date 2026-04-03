@@ -18,6 +18,8 @@ param(
         "FullyQualifiedName~Cephalon.Tests.Hosting.AzureMonitorHostingTests.AddCephalonAzureMonitorLogsHostedPlatformSummaryWhenConfigured",
         "FullyQualifiedName~Cephalon.Tests.Hosting.DigitalOceanHostingTests.AddCephalonDigitalOceanRegistersWhenInClusterCollectorServiceIsConfigured",
         "FullyQualifiedName~Cephalon.Tests.Hosting.DigitalOceanHostingTests.AddCephalonDigitalOceanLogsHostedPlatformSummaryWhenConfigured",
+        "FullyQualifiedName~Cephalon.Tests.Hosting.GrafanaCloudHostingTests.AddCephalonGrafanaCloudRegistersWhenDirectEndpointAndHeadersAreConfigured",
+        "FullyQualifiedName~Cephalon.Tests.Hosting.GrafanaCloudHostingTests.AddCephalonGrafanaCloudLogsSummaryWhenAccessPolicyAuthenticationIsConfigured",
         "FullyQualifiedName~Cephalon.Tests.Hosting.GcpHostingTests.AddCephalonGcpRegistersWhenGoogleManagedIngestionIsEnabled",
         "FullyQualifiedName~Cephalon.Tests.Hosting.GcpHostingTests.AddCephalonGcpLogsHostedPlatformSummaryWhenConfigured",
         "FullyQualifiedName~Cephalon.Tests.Hosting.HuaweiCloudHostingTests.AddCephalonHuaweiCloudRegistersWhenManagedTraceIngestionIsEnabled",
@@ -56,7 +58,7 @@ function Invoke-DotNet {
 $filterExpression = $TestFilters -join "|"
 
 Write-Host "Validating Cephalon operational health and telemetry-export conventions..." -ForegroundColor Cyan
-Write-Host "Focused suite covers ASP.NET Core health routes, worker-host health parity, observability startup guidance, Serilog provider wiring, Alibaba Cloud managed ingestion, AWS hosted defaults, Azure Monitor exporter wiring, DigitalOcean collector defaults, GCP managed-ingestion defaults, Huawei Cloud managed traces, Oracle Cloud managed traces and metrics, Kubernetes in-cluster collector defaults, OpenShift in-cluster collector defaults, Tanzu proxy trace handoff defaults, and OTLP exporter wiring." -ForegroundColor DarkCyan
+Write-Host "Focused suite covers ASP.NET Core health routes, worker-host health parity, observability startup guidance, Serilog provider wiring, Alibaba Cloud managed ingestion, AWS hosted defaults, Azure Monitor exporter wiring, DigitalOcean collector defaults, Grafana Cloud direct endpoint wiring, GCP managed-ingestion defaults, Huawei Cloud managed traces, Oracle Cloud managed traces and metrics, Kubernetes in-cluster collector defaults, OpenShift in-cluster collector defaults, Tanzu proxy trace handoff defaults, and OTLP exporter wiring." -ForegroundColor DarkCyan
 
 Push-Location $repoRoot
 try {

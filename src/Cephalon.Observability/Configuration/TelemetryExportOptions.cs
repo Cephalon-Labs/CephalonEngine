@@ -10,7 +10,8 @@ namespace Cephalon.Observability.Configuration;
 /// protocol, endpoint, and enabled signals without forcing exporter dependencies into the engine core.
 /// Companion packages such as <c>Cephalon.Observability.OpenTelemetry</c>,
 /// <c>Cephalon.Observability.AlibabaCloud</c>, <c>Cephalon.Observability.Aws</c>, <c>Cephalon.Observability.Gcp</c>,
-/// <c>Cephalon.Observability.DigitalOcean</c>, <c>Cephalon.Observability.HuaweiCloud</c>,
+/// <c>Cephalon.Observability.DigitalOcean</c>, <c>Cephalon.Observability.GrafanaCloud</c>,
+/// <c>Cephalon.Observability.HuaweiCloud</c>,
 /// <c>Cephalon.Observability.OracleCloud</c>, <c>Cephalon.Observability.OpenShift</c>,
 /// <c>Cephalon.Observability.Tanzu</c>, or
 /// <c>Cephalon.Observability.AzureMonitor</c>
