@@ -979,6 +979,7 @@ Current shipped event-id ranges include:
 - `Cephalon.Observability.Gcp`: `3111-3111`
 - `Cephalon.Observability.HuaweiCloud`: `3112-3112`
 - `Cephalon.Observability.AlibabaCloud`: `3113-3113`
+- `Cephalon.Observability.Kubernetes`: `3117-3117`
 - `Cephalon.Observability.OpenShift`: `3114-3114`
 - `Cephalon.Observability.DigitalOcean`: `3115-3115`
 - `Cephalon.Observability.Tanzu`: `3116-3116`
@@ -1450,6 +1451,60 @@ Operational notes:
 - the current OpenTelemetry logging exporter does not support custom `HttpClientFactory` wiring for HTTP, so configurations that need `TrustedCaCertificatePath` for OTLP/HTTP logs are rejected early instead of being treated as supported
 - `Headers` lets the package pass raw OTLP header values through to the target collector or gateway when a route expects explicit headers
 
+## Kubernetes observability path
+
+`Cephalon.Observability.Kubernetes` keeps platform-neutral Kubernetes collector discovery, cluster-local trust material, and Kubernetes resource defaults in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "Telemetry": {
+        "Provider": "OpenTelemetry",
+        "Protocol": "otlp/http",
+        "ExportLogs": true,
+        "ExportMetrics": true,
+        "ExportTraces": true,
+        "Kubernetes": {
+          "ClusterName": "prod-cluster",
+          "Namespace": "payments",
+          "PodName": "payments-api-5799c",
+          "NodeName": "node-a",
+          "ContainerName": "api",
+          "UseInClusterCollectorService": true,
+          "CollectorServiceName": "otel-collector",
+          "CollectorNamespace": "observability"
+        }
+      }
+    }
+  }
+}
+```
+
+Host registration example:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonObservability(builder.Configuration);
+builder.AddCephalonKubernetes();
+```
+
+Operational notes:
+
+- the Kubernetes package is optional and stays outside `Cephalon.Engine`
+- when `Engine:Observability:Telemetry:Endpoint` or `UseSelfHostedDefaults` is configured, the package keeps using the shared collector-oriented OTLP path and only adds Kubernetes resource defaults
+- when `Engine:Observability:Telemetry:Kubernetes:UseInClusterCollectorService` is `true` and no shared endpoint is configured, the package targets `http(s)://{service}.{namespace}.{serviceDnsSuffix}:{port}`
+- `ClusterName`, `Namespace`, `PodName`, `PodUid`, `NodeName`, and `ContainerName` keep generic Kubernetes resource attributes explicit without forcing teams into a vendor-specific companion package
+- `POD_NAMESPACE`, `POD_NAME`, `HOSTNAME`, `POD_UID`, `NODE_NAME`, and `CONTAINER_NAME` can fill those same resource attributes when the deployment already injects them through the Kubernetes downward API or runtime environment
+- `ServiceDnsSuffix` defaults to `svc.cluster.local` and stays configurable for clusters that use a non-default service DNS suffix
+- `TrustedCaCertificatePath` can be used for HTTPS OTLP/HTTP traces and metrics when an in-cluster collector, gateway, or route uses a cluster-local CA bundle
+- the current OpenTelemetry logging exporter does not support custom `HttpClientFactory` wiring for HTTP, so configurations that need `TrustedCaCertificatePath` for OTLP/HTTP logs are rejected early instead of being treated as supported
+- use this package for generic or self-managed Kubernetes clusters; if a deployment also needs provider-specific propagation, managed-ingestion, or hosted defaults, pair the shared telemetry contract with a more specific companion package instead
+
 ## DigitalOcean observability path
 
 `Cephalon.Observability.DigitalOcean` keeps DigitalOcean collector defaults, best-effort Droplet metadata, and hosted runtime guidance in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
@@ -1719,6 +1774,7 @@ It executes a curated test suite that validates:
 - AWS-hosted OTLP defaults through `Cephalon.Observability.Aws`
 - GCP-hosted defaults through `Cephalon.Observability.Gcp`
 - Huawei Cloud-hosted defaults and managed APM traces through `Cephalon.Observability.HuaweiCloud`
+- Kubernetes in-cluster collector defaults through `Cephalon.Observability.Kubernetes`
 - OpenShift in-cluster collector defaults through `Cephalon.Observability.OpenShift`
 - Tanzu proxy trace handoff defaults through `Cephalon.Observability.Tanzu`
 - OTLP exporter wiring through `Cephalon.Observability.OpenTelemetry`, including the explicit self-hosted collector-default path

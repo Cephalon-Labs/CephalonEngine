@@ -143,6 +143,10 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.Observability.RabbitMqDependencies",
                 "Cephalon.Observability.RedisDependencies",
                 "Cephalon.Observability.SqlServerDependencies",
+                "Cephalon.Observability.Kubernetes",
+                "Cephalon.Observability.OpenShift",
+                "Cephalon.Observability.Tanzu",
+                "Cephalon.Observability.AzureMonitor",
                 "Cephalon.Observability.OpenTelemetry",
                 "Cephalon.Observability.Serilog",
                 "Cephalon.ReferenceDocs",
@@ -210,6 +214,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-rabbitmqdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-redisdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-sqlserverdependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-kubernetes.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-serilog.md");
 
         var manifest = Assert.Single(rendered.Files, file => file.Path == "reference-manifest.json");
@@ -270,6 +275,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.SqlServerDependencies", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.Kubernetes", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.Serilog", StringComparison.Ordinal));

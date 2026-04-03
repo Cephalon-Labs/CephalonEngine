@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-03T15:21:07.830777+00:00",
+  "GeneratedAtUtc": "2026-04-03T19:59:11.7940666+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -288,6 +288,14 @@
       "FileName": "cephalon-observability-kafkadependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "Category": "Hosts",
+      "Description": "Platform-neutral Kubernetes collector defaults and hosted resource integration for Cephalon hosts.",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "NamespaceCount": 2,
+      "TypeCount": 2
     },
     {
       "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
@@ -960,6 +968,20 @@
       "AssemblyName": "Cephalon.Observability.KafkaDependencies",
       "FileName": "cephalon-observability-kafkadependencies.md",
       "AnchorId": "namespace-cephalon-observability-kafkadependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "namespace-cephalon-observability-kubernetes-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Hosting",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "namespace-cephalon-observability-kubernetes-hosting",
       "TypeCount": 1
     },
     {
@@ -3170,6 +3192,36 @@
         "Fields": 0,
         "Properties": 4,
         "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "KubernetesHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Hosting",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "type-cephalon-observability-kubernetes-hosting-kuberneteshostapplicationbuilderextensions",
+      "Declaration": "public static class KubernetesHostApplicationBuilderExtensions",
+      "Summary": "Adds Kubernetes-hosted observability defaults and in-cluster collector wiring for Cephalon hosts.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "KubernetesTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "type-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions",
+      "Declaration": "public sealed class KubernetesTelemetryExportOptions",
+      "Summary": "Configures Kubernetes observability defaults on top of the shared Cephalon telemetry contract.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 14,
+        "Methods": 1
       }
     },
     {
@@ -5519,6 +5571,17 @@
       "Summary": "Adds Kafka dependency-health services using configuration as the primary source of probe settings."
     },
     {
+      "DisplayName": "AddCephalonKubernetes",
+      "Category": "Methods",
+      "DeclaringTypeName": "KubernetesHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Hosting",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "member-m-cephalon-observability-kubernetes-hosting-kuberneteshostapplicationbuilderextensions-addcephalonkubernetes-1-0-system-action-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions",
+      "Signature": "TBuilder AddCephalonKubernetes\u003CTBuilder\u003E(this TBuilder builder, Action\u003CKubernetesTelemetryExportOptions\u003E configure)",
+      "Summary": "Adds Kubernetes-aware OpenTelemetry registration for the Cephalon engine diagnostics surface."
+    },
+    {
       "DisplayName": "AddCephalonMemcachedDependencyHealth",
       "Category": "Methods",
       "DeclaringTypeName": "MemcachedDependencyHealthServiceCollectionExtensions",
@@ -7127,6 +7190,17 @@
     {
       "DisplayName": "ClusterName",
       "Category": "Properties",
+      "DeclaringTypeName": "KubernetesTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-clustername",
+      "Signature": "string ClusterName { get; set; }",
+      "Summary": "Gets or sets the Kubernetes cluster name to stamp onto exported resources."
+    },
+    {
+      "DisplayName": "ClusterName",
+      "Category": "Properties",
       "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
       "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
       "AssemblyName": "Cephalon.Observability.OpenShift",
@@ -7182,6 +7256,17 @@
     {
       "DisplayName": "CollectorNamespace",
       "Category": "Properties",
+      "DeclaringTypeName": "KubernetesTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-collectornamespace",
+      "Signature": "string CollectorNamespace { get; set; }",
+      "Summary": "Gets or sets the collector namespace used to build the in-cluster Kubernetes collector endpoint."
+    },
+    {
+      "DisplayName": "CollectorNamespace",
+      "Category": "Properties",
       "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
       "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
       "AssemblyName": "Cephalon.Observability.OpenShift",
@@ -7200,6 +7285,17 @@
       "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-collectorport",
       "Signature": "int? CollectorPort { get; set; }",
       "Summary": "Gets or sets the collector port used for the in-cluster DOKS collector endpoint."
+    },
+    {
+      "DisplayName": "CollectorPort",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-collectorport",
+      "Signature": "int? CollectorPort { get; set; }",
+      "Summary": "Gets or sets the collector port used for the in-cluster Kubernetes collector endpoint."
     },
     {
       "DisplayName": "CollectorPort",
@@ -7226,6 +7322,17 @@
     {
       "DisplayName": "CollectorScheme",
       "Category": "Properties",
+      "DeclaringTypeName": "KubernetesTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-collectorscheme",
+      "Signature": "string CollectorScheme { get; set; }",
+      "Summary": "Gets or sets the URI scheme used for the in-cluster Kubernetes collector endpoint."
+    },
+    {
+      "DisplayName": "CollectorScheme",
+      "Category": "Properties",
       "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
       "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
       "AssemblyName": "Cephalon.Observability.OpenShift",
@@ -7244,6 +7351,17 @@
       "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-collectorservicename",
       "Signature": "string CollectorServiceName { get; set; }",
       "Summary": "Gets or sets the collector service name used to build the in-cluster DOKS collector endpoint."
+    },
+    {
+      "DisplayName": "CollectorServiceName",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-collectorservicename",
+      "Signature": "string CollectorServiceName { get; set; }",
+      "Summary": "Gets or sets the collector service name used to build the in-cluster Kubernetes collector endpoint."
     },
     {
       "DisplayName": "CollectorServiceName",
@@ -7508,6 +7626,17 @@
       "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-contactpoints",
       "Signature": "IReadOnlyList\u003Cstring\u003E ContactPoints { get; set; }",
       "Summary": "Gets or sets the Cassandra contact points used to establish the probe session."
+    },
+    {
+      "DisplayName": "ContainerName",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-containername",
+      "Signature": "string ContainerName { get; set; }",
+      "Summary": "Gets or sets the container name to stamp onto exported resources."
     },
     {
       "DisplayName": "Contents",
@@ -10427,6 +10556,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "KubernetesTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "member-m-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "KubernetesTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Kubernetes telemetry export options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "LocalizationSettings",
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
@@ -11006,6 +11146,17 @@
       "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-headers",
       "Signature": "string Headers { get; set; }",
       "Summary": "Gets or sets the raw OTLP headers string added to collector requests."
+    },
+    {
+      "DisplayName": "Headers",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-headers",
+      "Signature": "string Headers { get; set; }",
+      "Summary": "Gets or sets the raw OTLP headers string added to Kubernetes collector requests."
     },
     {
       "DisplayName": "Headers",
@@ -12592,6 +12743,17 @@
       "Summary": "Gets the built-in knowledge-retrieval technology profile."
     },
     {
+      "DisplayName": "KubernetesTelemetryExportOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "KubernetesTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "member-m-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-ctor",
+      "Signature": "KubernetesTelemetryExportOptions()",
+      "Summary": "Initializes a new instance of the \u0060KubernetesTelemetryExportOptions\u0060 class."
+    },
+    {
       "DisplayName": "LastFailure",
       "Category": "Properties",
       "DeclaringTypeName": "EngineRuntime",
@@ -14134,6 +14296,17 @@
     {
       "DisplayName": "Namespace",
       "Category": "Properties",
+      "DeclaringTypeName": "KubernetesTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-namespace",
+      "Signature": "string Namespace { get; set; }",
+      "Summary": "Gets or sets the workload namespace to stamp onto exported resources."
+    },
+    {
+      "DisplayName": "Namespace",
+      "Category": "Properties",
       "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
       "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
       "AssemblyName": "Cephalon.Observability.OpenShift",
@@ -14229,6 +14402,17 @@
       "AnchorId": "member-m-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions-ctor",
       "Signature": "Neo4jDependencyHealthOptions()",
       "Summary": "Initializes a new instance of the \u0060Neo4jDependencyHealthOptions\u0060 class."
+    },
+    {
+      "DisplayName": "NodeName",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-nodename",
+      "Signature": "string NodeName { get; set; }",
+      "Summary": "Gets or sets the Kubernetes node name to stamp onto exported resources."
     },
     {
       "DisplayName": "Nodes",
@@ -15032,6 +15216,28 @@
       "AnchorId": "member-p-cephalon-engine-patterns-builtinpatterns-pipelinepattern",
       "Signature": "PatternDescriptor PipelinePattern { get; }",
       "Summary": "Gets the pipeline design pattern."
+    },
+    {
+      "DisplayName": "PodName",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-podname",
+      "Signature": "string PodName { get; set; }",
+      "Summary": "Gets or sets the pod name to stamp onto exported resources."
+    },
+    {
+      "DisplayName": "PodUid",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-poduid",
+      "Signature": "string PodUid { get; set; }",
+      "Summary": "Gets or sets the pod UID to stamp onto exported resources."
     },
     {
       "DisplayName": "Policy",
@@ -17300,6 +17506,17 @@
       "Summary": "Indicates server-streaming interactions are supported."
     },
     {
+      "DisplayName": "ServiceDnsSuffix",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-servicednssuffix",
+      "Signature": "string ServiceDnsSuffix { get; set; }",
+      "Summary": "Gets or sets the service DNS suffix used to build the in-cluster Kubernetes collector endpoint."
+    },
+    {
       "DisplayName": "ServiceName",
       "Category": "Properties",
       "DeclaringTypeName": "OracleDependencyDefinition",
@@ -19172,6 +19389,17 @@
     {
       "DisplayName": "TrustedCaCertificatePath",
       "Category": "Properties",
+      "DeclaringTypeName": "KubernetesTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-trustedcacertificatepath",
+      "Signature": "string TrustedCaCertificatePath { get; set; }",
+      "Summary": "Gets or sets the filesystem path to a trusted CA bundle used for HTTPS OTLP/HTTP traces and metrics against in-cluster or shared Kubernetes collectors."
+    },
+    {
+      "DisplayName": "TrustedCaCertificatePath",
+      "Category": "Properties",
       "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
       "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
       "AssemblyName": "Cephalon.Observability.OpenShift",
@@ -19641,6 +19869,17 @@
       "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-useinclustercollectorservice",
       "Signature": "bool UseInClusterCollectorService { get; set; }",
       "Summary": "Gets or sets a value indicating whether the package should target an in-cluster collector service for DOKS deployments when no shared endpoint is configured."
+    },
+    {
+      "DisplayName": "UseInClusterCollectorService",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Kubernetes.Configuration",
+      "AssemblyName": "Cephalon.Observability.Kubernetes",
+      "FileName": "cephalon-observability-kubernetes.md",
+      "AnchorId": "member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-useinclustercollectorservice",
+      "Signature": "bool UseInClusterCollectorService { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the package should target an in-cluster collector service when no shared endpoint is configured."
     },
     {
       "DisplayName": "UseInClusterCollectorService",
