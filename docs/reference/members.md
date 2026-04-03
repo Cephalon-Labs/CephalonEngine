@@ -222,6 +222,9 @@ Browse the published API surface by public member.
 - [AddCephalonSqlServerDependencyHealth](cephalon-observability-sqlserverdependencies.md#member-m-cephalon-observability-sqlserverdependencies-hosting-sqlserverdependencyhealthservicecollectionextensions-addcephalonsqlserverdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions): `Methods` on `SqlServerDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.SqlServerDependencies.Hosting` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=AddCephalonSqlServerDependencyHealth&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Hosting&scope=members)
   - Adds SQL Server dependency-health services using configuration as the primary source of probe settings.
   - `IServiceCollection AddCephalonSqlServerDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<SqlServerDependencyHealthOptions> configure)`
+- [AddCephalonTanzu](cephalon-observability-tanzu.md#member-m-cephalon-observability-tanzu-hosting-tanzuhostapplicationbuilderextensions-addcephalontanzu-1-0-system-action-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions): `Methods` on `TanzuHostApplicationBuilderExtensions` in `Cephalon.Observability.Tanzu.Hosting` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=AddCephalonTanzu&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Hosting&scope=members)
+  - Adds Tanzu-aware OpenTelemetry registration for the Cephalon engine diagnostics surface.
+  - `TBuilder AddCephalonTanzu<TBuilder>(this TBuilder builder, Action<TanzuTelemetryExportOptions> configure)`
 - [AddCephalonWorker](cephalon-worker.md#member-m-cephalon-worker-hosting-workerservicecollectionextensions-addcephalonworker-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-engine-composition-enginebuilder): `Methods` on `WorkerServiceCollectionExtensions` in `Cephalon.Worker.Hosting` (`Cephalon.Worker`) [Browse](browse.html?q=AddCephalonWorker&assembly=Cephalon.Worker&namespace=Cephalon.Worker.Hosting&scope=members)
   - Adds Cephalon worker hosting using code-first engine configuration.
   - `IServiceCollection AddCephalonWorker(this IServiceCollection services, Action<EngineBuilder> configure)`
@@ -544,6 +547,9 @@ Browse the published API surface by public member.
   - Gets or sets the Kubernetes cluster name to stamp onto exported resources for DOKS deployments.
   - `string ClusterName { get; set; }`
 - [ClusterName](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-clustername): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=ClusterName&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
+  - Gets or sets the Kubernetes cluster name to stamp onto exported resources.
+  - `string ClusterName { get; set; }`
+- [ClusterName](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-clustername): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=ClusterName&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
   - Gets or sets the Kubernetes cluster name to stamp onto exported resources.
   - `string ClusterName { get; set; }`
 - [Collections](cephalon-retrieval.md#member-p-cephalon-retrieval-services-iknowledgecatalog-collections): `Properties` on `IKnowledgeCatalog` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Collections&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
@@ -1392,6 +1398,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability-sqlserverdependencies.md#member-m-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `SqlServerDependencyHealthOptions` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Binds SQL Server dependency-health options from configuration.
   - `SqlServerDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-observability-tanzu.md#member-m-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
+  - Binds Tanzu telemetry export options from configuration.
+  - `TanzuTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-trustpolicy-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads a trust policy from configuration.
   - `TrustPolicy FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -1478,6 +1487,9 @@ Browse the published API surface by public member.
   - `string Headers { get; set; }`
 - [Headers](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-headers): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Gets or sets the raw OTLP headers string added to OpenShift collector requests.
+  - `string Headers { get; set; }`
+- [Headers](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-headers): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
+  - Gets or sets the raw OTLP headers string added to Tanzu proxy or shared collector requests.
   - `string Headers { get; set; }`
 - [HealthCommand](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-healthcommand): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=HealthCommand&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the MongoDB database command executed to verify the dependency.
@@ -1568,6 +1580,9 @@ Browse the published API surface by public member.
   - `string HostedPlatform { get; set; }`
 - [HostedPlatform](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-hostedplatform): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=HostedPlatform&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Gets or sets the OpenShift deployment target whose hosted defaults should be applied.
+  - `string HostedPlatform { get; set; }`
+- [HostedPlatform](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-hostedplatform): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=HostedPlatform&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
+  - Gets or sets the VMware Tanzu deployment target whose hosted defaults should be applied.
   - `string HostedPlatform { get; set; }`
 - [HttpDependencyDefinition](cephalon-observability-httpdependencies.md#member-m-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-ctor): `Constructors` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=HttpDependencyDefinition&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Initializes a new instance of the `HttpDependencyDefinition` class.
@@ -2211,6 +2226,9 @@ Browse the published API surface by public member.
 - [Namespace](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-namespace): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=Namespace&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Gets or sets the workload namespace to stamp onto exported resources.
   - `string Namespace { get; set; }`
+- [Namespace](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-namespace): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=Namespace&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
+  - Gets or sets the workload namespace to stamp onto exported resources.
+  - `string Namespace { get; set; }`
 - [NamespaceIndexPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-namespaceindexpath): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=NamespaceIndexPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The hosted path to the namespace index.
   - `string NamespaceIndexPath { get; set; }`
@@ -2517,6 +2535,21 @@ Browse the published API surface by public member.
 - [Provider](cephalon-observability.md#member-p-cephalon-observability-configuration-telemetryexportoptions-provider): `Properties` on `TelemetryExportOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=Provider&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Gets or sets the telemetry provider name, such as `OpenTelemetry`.
   - `string Provider { get; set; }`
+- [ProxyNamespace](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-proxynamespace): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=ProxyNamespace&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
+  - Gets or sets the proxy namespace used to build the in-cluster Tanzu proxy endpoint.
+  - `string ProxyNamespace { get; set; }`
+- [ProxyPath](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-proxypath): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=ProxyPath&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
+  - Gets or sets the optional base path used for the in-cluster Tanzu proxy endpoint.
+  - `string ProxyPath { get; set; }`
+- [ProxyPort](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-proxyport): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=ProxyPort&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
+  - Gets or sets the proxy port used for the in-cluster Tanzu proxy endpoint.
+  - `int? ProxyPort { get; set; }`
+- [ProxyScheme](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-proxyscheme): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=ProxyScheme&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
+  - Gets or sets the URI scheme used for the in-cluster Tanzu proxy endpoint.
+  - `string ProxyScheme { get; set; }`
+- [ProxyServiceName](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-proxyservicename): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=ProxyServiceName&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
+  - Gets or sets the proxy service name used to build the in-cluster Tanzu proxy endpoint.
+  - `string ProxyServiceName { get; set; }`
 - [PublisherDisplayName](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-publisherdisplayname): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=PublisherDisplayName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the publisher display name declared by the package manifest, when available.
   - `string PublisherDisplayName { get; }`
@@ -3306,6 +3339,9 @@ Browse the published API surface by public member.
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-transportdescriptor-tags): `Properties` on `TransportDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the tags associated with the transport.
   - `IReadOnlyList<string> Tags { get; }`
+- [TanzuTelemetryExportOptions](cephalon-observability-tanzu.md#member-m-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-ctor): `Constructors` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=TanzuTelemetryExportOptions&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
+  - Initializes a new instance of the `TanzuTelemetryExportOptions` class.
+  - `TanzuTelemetryExportOptions()`
 - [TargetFramework](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-targetframework): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=TargetFramework&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the target framework to read from.
   - `string TargetFramework { get; }`
@@ -3468,6 +3504,9 @@ Browse the published API surface by public member.
 - [TrustedCaCertificatePath](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-trustedcacertificatepath): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=TrustedCaCertificatePath&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Gets or sets the filesystem path to a trusted CA bundle used for HTTPS OTLP/HTTP traces and metrics against in-cluster or shared OpenShift collectors.
   - `string TrustedCaCertificatePath { get; set; }`
+- [TrustedCaCertificatePath](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-trustedcacertificatepath): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=TrustedCaCertificatePath&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
+  - Gets or sets the filesystem path to a trusted CA bundle used for HTTPS OTLP/HTTP traces and metrics against shared collectors or Tanzu proxy endpoints.
+  - `string TrustedCaCertificatePath { get; set; }`
 - [TrustedOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-capabilities-capabilityaccess-trustedonly): `Fields` on `CapabilityAccess` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=TrustedOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
   - Indicates the capability can be used only by trusted modules or packages.
   - `const CapabilityAccess TrustedOnly`
@@ -3588,6 +3627,9 @@ Browse the published API surface by public member.
 - [UseInClusterCollectorService](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-useinclustercollectorservice): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=UseInClusterCollectorService&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Gets or sets a value indicating whether the package should target an in-cluster OpenShift collector service when no shared endpoint is configured.
   - `bool UseInClusterCollectorService { get; set; }`
+- [UseInClusterProxyService](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-useinclusterproxyservice): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=UseInClusterProxyService&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
+  - Gets or sets a value indicating whether the package should target an in-cluster Tanzu proxy service for trace handoff when no shared endpoint is configured.
+  - `bool UseInClusterProxyService { get; set; }`
 - [UseLocalization](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-uselocalization-cephalon-engine-configuration-localizationsettings): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseLocalization&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Merges localization settings into the current builder state.
   - `EngineBuilder UseLocalization(LocalizationSettings settings)`

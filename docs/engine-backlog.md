@@ -176,7 +176,7 @@ Follow-up later:
 
 ## SDK hardening follow-through
 
-Phase 1 SDK hardening is now substantially complete. Phase 2 operational hardening has also closed on its shipped baseline. Phase 3 extensibility and package loading remains the main structural follow-through, while phase 6 now has an `ENG-029` track with the shipped self-hosted OTLP slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped Huawei Cloud fourth-vendor slice, the shipped Alibaba Cloud fifth-vendor slice, the shipped Red Hat OpenShift platform-first slice, the shipped DigitalOcean collector/defaults slice under `#114`, the current VMware Tanzu proxy/defaults slice under `#118`, and Cloudflare kept later until the following explicit child is chosen.
+Phase 1 SDK hardening is now substantially complete. Phase 2 operational hardening has also closed on its shipped baseline. Phase 3 extensibility and package loading remains the main structural follow-through, while phase 6 now has an `ENG-029` track with the shipped self-hosted OTLP slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped Huawei Cloud fourth-vendor slice, the shipped Alibaba Cloud fifth-vendor slice, the shipped Red Hat OpenShift platform-first slice, the shipped DigitalOcean collector/defaults slice under `#114`, the shipped VMware Tanzu proxy/defaults slice under `#118`, and Cloudflare kept later until the following explicit child is chosen.
 
 ### ENG-005 Engine API and package surface hardening
 
@@ -468,12 +468,12 @@ Acceptance:
 
 ### ENG-029 Cloud-targeted observability companion integrations
 
-Status: current focus
+Status: later
 Estimate: 176
 
 Why:
 
-- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and DigitalOcean slices are now shipped, `#118` now narrows the next explicit child to VMware Tanzu proxy handoff and hosted defaults, and Cloudflare stays intentionally later until the following child is chosen under `ENG-029`
+- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, and VMware Tanzu slices are now shipped, and Cloudflare stays intentionally later until the following child is chosen under `ENG-029`
 - this work should stay in companion packages, preserve the shared `ILogger` pipeline plus the cloud-neutral OTLP baseline, and leave room for downstream developer-authored provider packages
 
 Acceptance:
@@ -482,7 +482,7 @@ Acceptance:
 - keep the shipped Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and DigitalOcean slices explicit on top of the shared OpenTelemetry baseline
 - keep the shipped Red Hat OpenShift and DigitalOcean companion follow-through explicit instead of rolling them back into one ambiguous remaining-platform scope
 - keep the shipped DigitalOcean collector-first follow-through explicit instead of over-claiming a managed DigitalOcean OTLP exporter surface that the current platform docs do not promise
-- keep `#118` scoped to VMware Tanzu proxy handoff and hosted defaults on top of the shared OTLP baseline instead of reopening Cloudflare or pretending the current Tanzu docs describe one generic vendor-direct OTLP exporter path
+- keep the shipped VMware Tanzu proxy-first follow-through explicit on top of the shared OTLP baseline instead of reopening Cloudflare or pretending the current Tanzu docs describe one generic vendor-direct OTLP exporter path
 - keep vendor/platform-specific exporter wiring, auth, resource attributes, and hosted defaults outside `Cephalon.Engine` and `Cephalon.Abstractions`
 - keep the shared `ILogger` pipeline and existing `Cephalon.Observability.OpenTelemetry` baseline intact
 - add docs, validation, and planning sync for the supported targets plus the downstream companion-package authoring path
@@ -541,6 +541,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-029 Alibaba Cloud observability exporter wiring and hosted Alibaba Cloud defaults on top of the OTLP baseline
 - ENG-029 Red Hat OpenShift collector wiring and hosted OpenShift defaults on top of the OTLP baseline
 - ENG-029 DigitalOcean collector wiring and hosted DigitalOcean defaults on top of the OTLP baseline
+- ENG-029 VMware Tanzu proxy handoff and hosted Tanzu defaults on top of the OTLP baseline
 
 ### Sprint 2
 

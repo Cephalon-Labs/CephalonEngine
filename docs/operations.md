@@ -979,6 +979,8 @@ Current shipped event-id ranges include:
 - `Cephalon.Observability.HuaweiCloud`: `3112-3112`
 - `Cephalon.Observability.AlibabaCloud`: `3113-3113`
 - `Cephalon.Observability.OpenShift`: `3114-3114`
+- `Cephalon.Observability.DigitalOcean`: `3115-3115`
+- `Cephalon.Observability.Tanzu`: `3116-3116`
 - `Cephalon.Observability.CassandraDependencies`: `3146-3147`
 - `Cephalon.Observability.ConsulDependencies`: `3142-3143`
 - `Cephalon.Observability.ElasticsearchDependencies`: `3138-3139`
@@ -1129,7 +1131,7 @@ Operational notes:
 - when `UseSelfHostedDefaults` is `true` and `Endpoint` is omitted, the package falls back to `http://localhost:4317` for `otlp` / `otlp/grpc` or `http://localhost:4318` for `otlp/http`
 - when `otlp/http` is selected, the package appends `/v1/logs`, `/v1/metrics`, and `/v1/traces` automatically from the configured base endpoint
 - the self-hosted path also adds `deployment.environment.name` from the active host environment alongside the existing service-name and service-version resource defaults
-- downstream companion packages should reuse this same contract instead of introducing a second Cephalon telemetry abstraction; that is the intended path for Cloudflare, Tanzu, or internal-provider integrations
+- downstream companion packages should reuse this same contract instead of introducing a second Cephalon telemetry abstraction; that is the intended path for Cloudflare or internal-provider integrations
 
 ## AWS observability path
 
@@ -1431,6 +1433,60 @@ Operational notes:
 - the current OpenTelemetry logging exporter does not support custom `HttpClientFactory` wiring for HTTP, so configurations that need `TrustedCaCertificatePath` for OTLP/HTTP logs are rejected early instead of being treated as supported
 - there is no first-party DigitalOcean managed OTLP endpoint in this package; use the shared collector path, self-hosted defaults, or a self-managed gateway instead of treating this companion as a vendor-direct exporter
 
+## Tanzu observability path
+
+`Cephalon.Observability.Tanzu` keeps Tanzu-specific hosted defaults and trace-focused proxy handoff in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
+
+Example:
+
+```json
+{
+  "Engine": {
+    "Observability": {
+      "Telemetry": {
+        "Provider": "OpenTelemetry",
+        "Protocol": "otlp/http",
+        "ExportLogs": false,
+        "ExportMetrics": false,
+        "ExportTraces": true,
+        "Tanzu": {
+          "HostedPlatform": "tap",
+          "ClusterName": "prod-cluster",
+          "Namespace": "payments",
+          "UseInClusterProxyService": true,
+          "ProxyServiceName": "wavefront-proxy",
+          "ProxyNamespace": "observability",
+          "ProxyPort": 4318
+        }
+      }
+    }
+  }
+}
+```
+
+Host registration example:
+
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.AddCephalon();
+builder.Services.AddCephalonObservability(builder.Configuration);
+builder.AddCephalonTanzu();
+```
+
+Operational notes:
+
+- the Tanzu package is optional and stays outside `Cephalon.Engine`
+- when `Engine:Observability:Telemetry:Endpoint` or `UseSelfHostedDefaults` is configured, the package keeps using the shared collector-oriented OTLP path and only adds Tanzu resource defaults
+- when `Engine:Observability:Telemetry:Tanzu:UseInClusterProxyService` is `true` and no shared endpoint is configured, the package targets `http(s)://{service}.{namespace}.svc.cluster.local:{port}` for trace-focused proxy handoff
+- `HostedPlatform` can be `tkg`, `tkgi`, or `tap`
+- `ClusterName`, `Namespace`, `POD_NAMESPACE`, and `HOSTNAME` let the package stamp `k8s.cluster.name`, `k8s.namespace.name`, `service.namespace`, and `k8s.pod.name`; the hosted-platform selection also stamps `cloud.provider=vmware` plus a package-specific `cloud.platform`
+- `ProxyPort` stays required on purpose so the proxy handoff path remains explicit instead of pretending the current Tanzu docs expose one generic vendor-wide OTLP port
+- `ProxyPath` lets teams keep an explicit base path when the proxy or route is mounted away from `/`
+- `TrustedCaCertificatePath` can be used for HTTPS OTLP/HTTP traces and metrics when a shared collector, gateway, or Tanzu proxy route uses a non-system CA bundle
+- the current OpenTelemetry logging exporter does not support custom `HttpClientFactory` wiring for HTTP, so configurations that need `TrustedCaCertificatePath` for OTLP/HTTP logs are rejected early instead of being treated as supported
+- the first-party Tanzu proxy handoff mode intentionally supports traces only; keep logs and metrics on the shared collector path or the explicit self-hosted defaults instead of treating this companion as a generic managed exporter
+
 ## Azure Monitor exporter path
 
 `Cephalon.Observability.AzureMonitor` keeps Azure Monitor / Application Insights export wiring in a dedicated companion package on top of the same shared `Engine:Observability:Telemetry` contract.
@@ -1593,6 +1649,7 @@ It executes a curated test suite that validates:
 - GCP-hosted defaults through `Cephalon.Observability.Gcp`
 - Huawei Cloud-hosted defaults and managed APM traces through `Cephalon.Observability.HuaweiCloud`
 - OpenShift in-cluster collector defaults through `Cephalon.Observability.OpenShift`
+- Tanzu proxy trace handoff defaults through `Cephalon.Observability.Tanzu`
 - OTLP exporter wiring through `Cephalon.Observability.OpenTelemetry`, including the explicit self-hosted collector-default path
 
 `.\scripts\validate-release.ps1` now runs that focused suite by default in addition to the broader repo test, benchmark, and reference-doc flow.

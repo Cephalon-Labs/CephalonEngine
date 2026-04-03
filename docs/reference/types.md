@@ -276,6 +276,8 @@ Browse the published API surface by public type.
 
 ## T
 
+- [TanzuHostApplicationBuilderExtensions](cephalon-observability-tanzu.md#type-cephalon-observability-tanzu-hosting-tanzuhostapplicationbuilderextensions): `Cephalon.Observability.Tanzu.Hosting` in `Cephalon.Observability.Tanzu` [Browse](browse.html?q=TanzuHostApplicationBuilderExtensions&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Hosting)
+- [TanzuTelemetryExportOptions](cephalon-observability-tanzu.md#type-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions): `Cephalon.Observability.Tanzu.Configuration` in `Cephalon.Observability.Tanzu` [Browse](browse.html?q=TanzuTelemetryExportOptions&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration)
 - [TechnologyCatalogSnapshot](cephalon-engine.md#type-cephalon-engine-technologies-technologycatalogsnapshot): `Cephalon.Engine.Technologies` in `Cephalon.Engine` [Browse](browse.html?q=TechnologyCatalogSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies)
 - [TechnologyDescriptor](cephalon-abstractions.md#type-cephalon-abstractions-technologies-technologydescriptor): `Cephalon.Abstractions.Technologies` in `Cephalon.Abstractions` [Browse](browse.html?q=TechnologyDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies)
 - [TechnologyKind](cephalon-abstractions.md#type-cephalon-abstractions-technologies-technologykind): `Cephalon.Abstractions.Technologies` in `Cephalon.Abstractions` [Browse](browse.html?q=TechnologyKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies)
