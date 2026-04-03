@@ -59,8 +59,8 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Platform Sprint 0`: `ENG-012`
 - `Sprint 1`: delivered `ENG-005`, `ENG-026`, and `ENG-027`, and opened the phase 2 operational gap-inventory track
 - `Sprint 2`: exporter packaging is now part of the shipped phase-2 baseline, Cassandra contact-point health plus ClickHouse analytics health plus Consul control-plane health plus Elasticsearch cluster health plus HTTP external API plus Kafka broker metadata plus Memcached cache plus MongoDB plus MQTT plus MySQL plus NATS plus Neo4j plus OpenSearch plus Oracle plus Postgres plus RabbitMQ plus Redis/cache plus SQL Server dependency-health packaging anchor the provider-specific follow-through, the shared diagnostics/event-id catalog now anchors the structured diagnostics baseline, and release validation now calls out the health/export convention suite explicitly
-- `Sprint 3`: runtime-answers follow-through, the shipped package distribution/provenance and signer-verification follow-through under `ENG-011`, the shipped `ENG-013` execution-graph lifecycle/observability plus hosted-execution convention and agentic orchestration-link follow-through, the shipped `ENG-022` suite-scaffold-shape baseline under `#79`, the shipped built-in `MicroserviceSuite` composition baseline under `#80`, the shipped multi-service suite sample baseline under `#81`, the shipped `ENG-029` self-hosted OTLP follow-through slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped DigitalOcean collector/defaults slice, the shipped VMware Tanzu proxy/defaults slice, and the shipped downstream Cloudflare/custom-provider authoring slice under `#120`
-- `Later / not scheduled yet`: the remaining `ENG-022` governance/gateway follow-through plus future solution-level expansion work
+- `Sprint 3`: runtime-answers follow-through, the shipped package distribution/provenance and signer-verification follow-through under `ENG-011`, the shipped `ENG-013` execution-graph lifecycle/observability plus hosted-execution convention and agentic orchestration-link follow-through, the shipped `ENG-022` suite-scaffold-shape baseline under `#79`, the shipped built-in `MicroserviceSuite` composition baseline under `#80`, the shipped multi-service suite sample baseline under `#81`, the shipped suite-governance and additive gateway/control-plane guidance baseline under `#82`, the shipped `ENG-029` self-hosted OTLP follow-through slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped DigitalOcean collector/defaults slice, the shipped VMware Tanzu proxy/defaults slice, and the shipped downstream Cloudflare/custom-provider authoring slice under `#120`
+- `Later / not scheduled yet`: future solution-level expansion work plus repo-wide XML-comment hygiene for test harnesses
 
 ## Planning principles
 
@@ -206,7 +206,7 @@ Exit criteria:
 
 ## Phase 5: Solution-level platform
 
-Status: later
+Status: substantially complete
 
 Goal: support higher-level solution shapes, not only individual Cephalon apps.
 
@@ -218,13 +218,14 @@ Current baseline already in place:
 - `SuiteBlueprint` and `BuiltInSuiteBlueprints` now define a built-in `MicroserviceSuite` blueprint that composes repeatable service slots from the existing `Microservice` app blueprint
 - suite shared-foundation defaults now reuse the shipped `Microservice` foundation template and package hints instead of defining a second disconnected service-level project shape
 - `samples/Cephalon.Sample.MicroserviceSuite` now demonstrates a shared foundation project plus separate catalog and orders services on top of the existing `Microservice` host wiring
+- `shared/Cephalon.Sample.MicroserviceSuite.Governance` now demonstrates a shared governance package that keeps optional gateway/control-plane guidance additive to the suite sample instead of folding it into the engine or suite contract
 
 Deliverables:
 
 - `MicroserviceSuite` blueprint composed from the existing app-level `Microservice` scaffold contract is now shipped
 - solution-level samples for multiple Cephalon services are now shipped
-- shared governance/convention packages
-- optional gateway or control-plane guidance later
+- shared governance/convention packages are now shipped in the suite sample baseline
+- optional gateway or control-plane guidance is now documented as an additive sample-level layer rather than a required suite-contract feature
 
 Exit criteria:
 
@@ -273,10 +274,9 @@ Exit criteria:
 
 Updated priority order as of `April 3, 2026`:
 
-1. shared governance packages and optional gateway/control-plane guidance when solution-level adoption needs follow-through beyond the shipped `MicroserviceSuite` composition and sample baselines
-2. cloud and platform integrations only when a new explicit adoption target appears beyond the shipped self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and Cloudflare/custom-provider guidance baseline
-3. broader release automation and package-publishing polish
-4. repo-wide XML-comment hygiene for test harnesses only if the repository chooses a stricter test-harness visibility/documentation policy
+1. cloud and platform integrations only when a new explicit adoption target appears beyond the shipped self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and Cloudflare/custom-provider guidance baseline
+2. broader release automation and package-publishing polish
+3. repo-wide XML-comment hygiene for test harnesses only if the repository chooses a stricter test-harness visibility/documentation policy
 
 ## Decision guardrails
 

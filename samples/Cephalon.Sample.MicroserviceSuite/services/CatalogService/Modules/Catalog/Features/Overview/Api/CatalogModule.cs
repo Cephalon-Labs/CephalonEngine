@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
 using Cephalon.AspNetCore.Modules;
+using Cephalon.Sample.MicroserviceSuite.CatalogService.Modules.Catalog.Features.Governance.Application;
 using Cephalon.Sample.MicroserviceSuite.CatalogService.Modules.Catalog.Features.Overview.Application;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -34,6 +35,7 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<CatalogOverviewApplicationService>();
+        services.AddSingleton<CatalogGovernanceApplicationService>();
     }
 
     /// <summary>
@@ -48,6 +50,10 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
             key: "catalog.overview",
             displayName: "Catalog overview",
             description: "Exposes the shared suite-level catalog overview contract."));
+        capabilities.Add(new Capability(
+            key: "catalog.governance-guidance",
+            displayName: "Catalog governance guidance",
+            description: "Exposes additive gateway and control-plane guidance for the catalog service."));
     }
 
     /// <summary>
@@ -60,6 +66,8 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
     {
         var group = endpoints.MapGroup("/catalog");
         group.MapGet("/overview", (CatalogOverviewApplicationService service) =>
+            TypedResults.Ok(service.Build()));
+        group.MapGet("/governance", (CatalogGovernanceApplicationService service) =>
             TypedResults.Ok(service.Build()));
     }
 }

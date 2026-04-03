@@ -2,6 +2,7 @@ using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
 using Cephalon.AspNetCore.Modules;
 using Cephalon.Sample.MicroserviceSuite.OrdersService.Modules.Orders.Features.Coordination.Application;
+using Cephalon.Sample.MicroserviceSuite.OrdersService.Modules.Orders.Features.Governance.Application;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,6 +35,7 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<OrderCoordinationApplicationService>();
+        services.AddSingleton<OrdersGovernanceApplicationService>();
     }
 
     /// <summary>
@@ -48,6 +50,10 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
             key: "orders.coordination",
             displayName: "Orders coordination",
             description: "Exposes the shared suite-level order-coordination contract."));
+        capabilities.Add(new Capability(
+            key: "orders.governance-guidance",
+            displayName: "Orders governance guidance",
+            description: "Exposes additive gateway and control-plane guidance for the orders service."));
     }
 
     /// <summary>
@@ -61,5 +67,7 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
         var group = endpoints.MapGroup("/orders");
         group.MapGet("/coordination/{orderId?}", (string? orderId, string? fulfillmentRegion, OrderCoordinationApplicationService service) =>
             TypedResults.Ok(service.Build(orderId, fulfillmentRegion)));
+        group.MapGet("/governance", (OrdersGovernanceApplicationService service) =>
+            TypedResults.Ok(service.Build()));
     }
 }

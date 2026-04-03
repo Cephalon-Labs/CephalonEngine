@@ -176,7 +176,8 @@ Shape:
 
 - multiple Cephalon services composed from the existing `Microservice` blueprint
 - a shared foundation project for suite-level contracts and conventions
-- optional gateway/control-plane pieces later
+- a shared governance package for suite-level policy and additive gateway/control-plane guidance
+- optional gateway/control-plane pieces can layer on later without changing the suite contract
 
 Use when:
 
@@ -350,7 +351,7 @@ Module authoring now has a parallel starter path too:
 - `Microservice`
 - `MicroserviceSuite`
 
-`MicroserviceSuite` is now available as a suite-level blueprint that composes repeatable service slots from the shipped `Microservice` scaffold contract. The reference sample lives under `samples/Cephalon.Sample.MicroserviceSuite`, while governance packages and optional gateway/control-plane guidance still stay in later follow-through.
+`MicroserviceSuite` is now available as a suite-level blueprint that composes repeatable service slots from the shipped `Microservice` scaffold contract. The reference sample lives under `samples/Cephalon.Sample.MicroserviceSuite`, now includes a shared governance package, and documents additive optional gateway/control-plane guidance without turning those layers into required suite-contract pieces.
 
 ## Suggested configuration
 
