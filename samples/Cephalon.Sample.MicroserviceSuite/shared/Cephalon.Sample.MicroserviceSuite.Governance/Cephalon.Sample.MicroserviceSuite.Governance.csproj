@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Description>Shared governance guidance package for the Cephalon microservice-suite sample.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cephalon.Sample.MicroserviceSuite.Shared.Foundation\Cephalon.Sample.MicroserviceSuite.Shared.Foundation.csproj" />
+  </ItemGroup>
+</Project>

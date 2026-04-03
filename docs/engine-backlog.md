@@ -176,7 +176,7 @@ Follow-up later:
 
 ## SDK hardening follow-through
 
-Phase 1 SDK hardening, phase 2 operational hardening, phase 3 extensibility/package loading, and phase 4 execution/orchestration are now substantially complete on their shipped baselines. Phase 5 solution-level platform work now has its shipped suite-scaffold contract baseline under `#79`, shipped built-in `MicroserviceSuite` composition baseline under `#80`, and shipped multi-service suite sample baseline under `#81`; the remaining governance/gateway follow-through stays later under `#82`, while phase 6 keeps the shipped self-hosted OTLP slice, Azure Monitor first-vendor slice, AWS second-vendor slice, GCP third-vendor slice, Huawei Cloud fourth-vendor slice, Alibaba Cloud fifth-vendor slice, Red Hat OpenShift platform-first slice, DigitalOcean collector/defaults slice under `#114`, VMware Tanzu proxy/defaults slice under `#118`, and downstream Cloudflare/custom-provider authoring guidance slice under `#120`.
+Phase 1 SDK hardening, phase 2 operational hardening, phase 3 extensibility/package loading, and phase 4 execution/orchestration are now substantially complete on their shipped baselines. Phase 5 solution-level platform work is now also substantially complete on its shipped baseline, with the suite-scaffold contract baseline under `#79`, built-in `MicroserviceSuite` composition baseline under `#80`, multi-service suite sample baseline under `#81`, and shared governance plus additive gateway/control-plane guidance baseline under `#82`, while phase 6 keeps the shipped self-hosted OTLP slice, Azure Monitor first-vendor slice, AWS second-vendor slice, GCP third-vendor slice, Huawei Cloud fourth-vendor slice, Alibaba Cloud fifth-vendor slice, Red Hat OpenShift platform-first slice, DigitalOcean collector/defaults slice under `#114`, VMware Tanzu proxy/defaults slice under `#118`, and downstream Cloudflare/custom-provider authoring guidance slice under `#120`.
 
 ### ENG-005 Engine API and package surface hardening
 
@@ -464,7 +464,7 @@ Delivered:
 
 ### ENG-022 `MicroserviceSuite` blueprint
 
-Status: later
+Status: done
 Estimate: 2
 
 Why:
@@ -480,10 +480,8 @@ Delivered:
 - suite shared-foundation and repeatable service-slot defaults composed from the shipped `Microservice` scaffold contract instead of redefining host, contracts, and module project shapes a second time
 - a reference `Cephalon.Sample.MicroserviceSuite` sample with a shared foundation project plus separate catalog and orders microservice hosts
 - smoke coverage proving both suite services boot, stay on the shipped `Microservice` blueprint, and surface shared suite conventions through their runtime endpoints
-
-Acceptance remaining:
-
-- add shared governance packages and keep optional gateway/control-plane guidance additive to the suite contract instead of folding them into the first shape baseline
+- a shared `Cephalon.Sample.MicroserviceSuite.Governance` package that keeps suite-level governance guidance outside the engine core and outside any one service host
+- additive gateway and control-plane guidance that stays sample-level and consumes the existing `/engine/*` runtime surfaces instead of inventing a new engine-owned coordinator
 
 ## Current cloud and platform integration work
 
@@ -579,5 +577,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 ### Later / not scheduled yet
 
-- ENG-022 `MicroserviceSuite` governance/gateway follow-through
 - ENG-028 repo-wide XML-comment hygiene for test harnesses
