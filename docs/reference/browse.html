@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-03T04:34:01.567174+00:00",
+  "GeneratedAtUtc": "2026-04-03T05:48:02.8483555+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -240,6 +240,14 @@
       "FileName": "cephalon-observability-consuldependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "Category": "Hosts",
+      "Description": "DigitalOcean collector defaults, hosted resource integration, and Droplet metadata guidance for Cephalon hosts.",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "NamespaceCount": 2,
+      "TypeCount": 2
     },
     {
       "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
@@ -846,6 +854,20 @@
       "AssemblyName": "Cephalon.Observability.ConsulDependencies",
       "FileName": "cephalon-observability-consuldependencies.md",
       "AnchorId": "namespace-cephalon-observability-consuldependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "namespace-cephalon-observability-digitalocean-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Hosting",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "namespace-cephalon-observability-digitalocean-hosting",
       "TypeCount": 1
     },
     {
@@ -1739,6 +1761,36 @@
         "Fields": 0,
         "Properties": 9,
         "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "DigitalOceanHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Hosting",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "type-cephalon-observability-digitalocean-hosting-digitaloceanhostapplicationbuilderextensions",
+      "Declaration": "public static class DigitalOceanHostApplicationBuilderExtensions",
+      "Summary": "Adds DigitalOcean-hosted observability defaults and collector wiring for Cephalon hosts.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "type-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions",
+      "Declaration": "public sealed class DigitalOceanTelemetryExportOptions",
+      "Summary": "Configures DigitalOcean observability defaults on top of the shared Cephalon telemetry contract.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 17,
+        "Methods": 1
       }
     },
     {
@@ -4954,6 +5006,17 @@
       "Summary": "Adds Consul dependency-health services using configuration as the primary source of probe settings."
     },
     {
+      "DisplayName": "AddCephalonDigitalOcean",
+      "Category": "Methods",
+      "DeclaringTypeName": "DigitalOceanHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Hosting",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-m-cephalon-observability-digitalocean-hosting-digitaloceanhostapplicationbuilderextensions-addcephalondigitalocean-1-0-system-action-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions",
+      "Signature": "TBuilder AddCephalonDigitalOcean\u003CTBuilder\u003E(this TBuilder builder, Action\u003CDigitalOceanTelemetryExportOptions\u003E configure)",
+      "Summary": "Adds DigitalOcean-aware OpenTelemetry registration for the Cephalon engine diagnostics surface."
+    },
+    {
       "DisplayName": "AddCephalonElasticsearchDependencyHealth",
       "Category": "Methods",
       "DeclaringTypeName": "ElasticsearchDependencyHealthServiceCollectionExtensions",
@@ -5922,6 +5985,17 @@
       "Summary": "Creates a blueprint with optional scaffold metadata."
     },
     {
+      "DisplayName": "AppId",
+      "Category": "Properties",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-appid",
+      "Signature": "string AppId { get; set; }",
+      "Summary": "Gets or sets the App Platform application identifier to stamp onto exported resources."
+    },
+    {
       "DisplayName": "AppName",
       "Category": "Properties",
       "DeclaringTypeName": "ScaffoldRequest",
@@ -5975,6 +6049,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-runtimemanifest-appprofile",
       "Signature": "AppProfile AppProfile { get; }",
       "Summary": "Gets the resolved application profile, including blueprint, patterns, transports, technologies, and any scaffold guidance."
+    },
+    {
+      "DisplayName": "AppUrl",
+      "Category": "Properties",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-appurl",
+      "Signature": "string AppUrl { get; set; }",
+      "Summary": "Gets or sets the App Platform public URL to stamp onto exported resources."
     },
     {
       "DisplayName": "Assemblies",
@@ -6529,6 +6614,17 @@
     {
       "DisplayName": "ClusterName",
       "Category": "Properties",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-clustername",
+      "Signature": "string ClusterName { get; set; }",
+      "Summary": "Gets or sets the Kubernetes cluster name to stamp onto exported resources for DOKS deployments."
+    },
+    {
+      "DisplayName": "ClusterName",
+      "Category": "Properties",
       "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
       "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
       "AssemblyName": "Cephalon.Observability.OpenShift",
@@ -6562,6 +6658,17 @@
     {
       "DisplayName": "CollectorNamespace",
       "Category": "Properties",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-collectornamespace",
+      "Signature": "string CollectorNamespace { get; set; }",
+      "Summary": "Gets or sets the collector namespace used to build the in-cluster DOKS collector endpoint."
+    },
+    {
+      "DisplayName": "CollectorNamespace",
+      "Category": "Properties",
       "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
       "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
       "AssemblyName": "Cephalon.Observability.OpenShift",
@@ -6569,6 +6676,17 @@
       "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-collectornamespace",
       "Signature": "string CollectorNamespace { get; set; }",
       "Summary": "Gets or sets the collector namespace used to build the in-cluster OpenShift collector endpoint."
+    },
+    {
+      "DisplayName": "CollectorPort",
+      "Category": "Properties",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-collectorport",
+      "Signature": "int? CollectorPort { get; set; }",
+      "Summary": "Gets or sets the collector port used for the in-cluster DOKS collector endpoint."
     },
     {
       "DisplayName": "CollectorPort",
@@ -6584,6 +6702,17 @@
     {
       "DisplayName": "CollectorScheme",
       "Category": "Properties",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-collectorscheme",
+      "Signature": "string CollectorScheme { get; set; }",
+      "Summary": "Gets or sets the URI scheme used for the in-cluster DOKS collector endpoint."
+    },
+    {
+      "DisplayName": "CollectorScheme",
+      "Category": "Properties",
       "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
       "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
       "AssemblyName": "Cephalon.Observability.OpenShift",
@@ -6591,6 +6720,17 @@
       "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-collectorscheme",
       "Signature": "string CollectorScheme { get; set; }",
       "Summary": "Gets or sets the URI scheme used for the in-cluster OpenShift collector endpoint."
+    },
+    {
+      "DisplayName": "CollectorServiceName",
+      "Category": "Properties",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-collectorservicename",
+      "Signature": "string CollectorServiceName { get; set; }",
+      "Summary": "Gets or sets the collector service name used to build the in-cluster DOKS collector endpoint."
     },
     {
       "DisplayName": "CollectorServiceName",
@@ -7902,6 +8042,17 @@
       "Summary": "Describes the operator-facing diagnostics surface exposed by a Cephalon ASP.NET Core host."
     },
     {
+      "DisplayName": "DigitalOceanTelemetryExportOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-m-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-ctor",
+      "Signature": "DigitalOceanTelemetryExportOptions()",
+      "Summary": "Initializes a new instance of the \u0060DigitalOceanTelemetryExportOptions\u0060 class."
+    },
+    {
       "DisplayName": "DirectConnection",
       "Category": "Properties",
       "DeclaringTypeName": "MongoDbDependencyDefinition",
@@ -8362,6 +8513,28 @@
       "AnchorId": "member-m-cephalon-engine-runtime-engineruntime-dispose",
       "Signature": "void Dispose()",
       "Summary": "Releases runtime resources."
+    },
+    {
+      "DisplayName": "DropletId",
+      "Category": "Properties",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-dropletid",
+      "Signature": "string DropletId { get; set; }",
+      "Summary": "Gets or sets the Droplet identifier to stamp onto exported resources."
+    },
+    {
+      "DisplayName": "DropletMetadataEndpoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-dropletmetadataendpoint",
+      "Signature": "string DropletMetadataEndpoint { get; set; }",
+      "Summary": "Gets or sets the base URI of the Droplet metadata-service endpoint."
     },
     {
       "DisplayName": "DuplexStreaming",
@@ -9224,6 +9397,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-m-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "DigitalOceanTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds DigitalOcean telemetry export options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "ElasticsearchDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
@@ -9796,6 +9980,17 @@
     {
       "DisplayName": "Headers",
       "Category": "Properties",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-headers",
+      "Signature": "string Headers { get; set; }",
+      "Summary": "Gets or sets the raw OTLP headers string added to collector requests."
+    },
+    {
+      "DisplayName": "Headers",
+      "Category": "Properties",
       "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
       "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
       "AssemblyName": "Cephalon.Observability.OpenShift",
@@ -10089,6 +10284,17 @@
       "AnchorId": "member-p-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-hostedplatform",
       "Signature": "string HostedPlatform { get; set; }",
       "Summary": "Gets or sets the hosted Azure platform whose default resource attributes should be applied."
+    },
+    {
+      "DisplayName": "HostedPlatform",
+      "Category": "Properties",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-hostedplatform",
+      "Signature": "string HostedPlatform { get; set; }",
+      "Summary": "Gets or sets the DigitalOcean deployment target whose hosted defaults should be applied."
     },
     {
       "DisplayName": "HostedPlatform",
@@ -11884,6 +12090,17 @@
       "Summary": "Gets optional transport metadata."
     },
     {
+      "DisplayName": "MetadataTimeoutMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-metadatatimeoutmilliseconds",
+      "Signature": "int? MetadataTimeoutMilliseconds { get; set; }",
+      "Summary": "Gets or sets the timeout, in milliseconds, used for Droplet metadata-service lookups."
+    },
+    {
       "DisplayName": "MeterName",
       "Category": "Properties",
       "DeclaringTypeName": "DiagnosticsSurface",
@@ -12377,6 +12594,17 @@
       "AnchorId": "member-f-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-namefieldnumber",
       "Signature": "const int NameFieldNumber",
       "Summary": "Field number for the \u0022name\u0022 field."
+    },
+    {
+      "DisplayName": "Namespace",
+      "Category": "Properties",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-namespace",
+      "Signature": "string Namespace { get; set; }",
+      "Summary": "Gets or sets the workload namespace to stamp onto exported resources for DOKS deployments."
     },
     {
       "DisplayName": "Namespace",
@@ -13972,6 +14200,17 @@
       "AnchorId": "member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-region",
       "Signature": "string Region { get; set; }",
       "Summary": "Gets or sets the Alibaba Cloud region to stamp onto exported resources when one should be explicit."
+    },
+    {
+      "DisplayName": "Region",
+      "Category": "Properties",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-region",
+      "Signature": "string Region { get; set; }",
+      "Summary": "Gets or sets the DigitalOcean region slug to stamp onto exported resources."
     },
     {
       "DisplayName": "Region",
@@ -16902,6 +17141,17 @@
     {
       "DisplayName": "TrustedCaCertificatePath",
       "Category": "Properties",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-trustedcacertificatepath",
+      "Signature": "string TrustedCaCertificatePath { get; set; }",
+      "Summary": "Gets or sets the filesystem path to a trusted CA bundle used for HTTPS OTLP/HTTP traces and metrics against shared or in-cluster DigitalOcean collectors."
+    },
+    {
+      "DisplayName": "TrustedCaCertificatePath",
+      "Category": "Properties",
       "DeclaringTypeName": "OpenShiftTelemetryExportOptions",
       "NamespaceName": "Cephalon.Observability.OpenShift.Configuration",
       "AssemblyName": "Cephalon.Observability.OpenShift",
@@ -17285,6 +17535,17 @@
       "Summary": "Gets or sets a value indicating whether the exporter should authenticate with \u0060DefaultAzureCredential\u0060."
     },
     {
+      "DisplayName": "UseDropletMetadataDefaults",
+      "Category": "Properties",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-usedropletmetadatadefaults",
+      "Signature": "bool UseDropletMetadataDefaults { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the package should query the Droplet metadata service to fill in best-effort \u0060host.id\u0060, \u0060host.name\u0060, and \u0060cloud.region\u0060 values when they are missing."
+    },
+    {
       "DisplayName": "UseFailurePolicy",
       "Category": "Methods",
       "DeclaringTypeName": "EngineBuilder",
@@ -17305,6 +17566,17 @@
       "AnchorId": "member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-usegooglemanagedingestion",
       "Signature": "bool UseGoogleManagedIngestion { get; set; }",
       "Summary": "Gets or sets a value indicating whether the package should use Google-managed OTLP ingestion for traces and metrics when no shared collector endpoint is configured."
+    },
+    {
+      "DisplayName": "UseInClusterCollectorService",
+      "Category": "Properties",
+      "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
+      "AssemblyName": "Cephalon.Observability.DigitalOcean",
+      "FileName": "cephalon-observability-digitalocean.md",
+      "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-useinclustercollectorservice",
+      "Signature": "bool UseInClusterCollectorService { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the package should target an in-cluster collector service for DOKS deployments when no shared endpoint is configured."
     },
     {
       "DisplayName": "UseInClusterCollectorService",
