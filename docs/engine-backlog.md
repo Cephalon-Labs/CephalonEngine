@@ -439,7 +439,7 @@ Follow-up later:
 ### ENG-013 Workflow and orchestration primitives
 
 Status: later
-Estimate: 8
+Estimate: 5
 
 Why:
 
@@ -455,13 +455,12 @@ Delivered so far:
 - build-time validation for hosted-execution ids, source modules, and referenced execution graphs
 - execution-graph lifecycle state through `/engine/runtime-story` and `/engine/snapshot`, including operator-visible load, activate, and deactivate transitions
 - hosted/background execution lifecycle state through `/engine/runtime-story` and `/engine/snapshot`, including operator-visible load, activate, and deactivate transitions
-- runtime diagnostics coverage for execution-graph lifecycle transitions through `cephalon.execution-graphs.transitions` and the `Cephalon.Engine` event-id catalog
+- runtime diagnostics coverage for execution-graph and hosted/background lifecycle transitions through `cephalon.execution-graphs.transitions`, `cephalon.hosted-executions.transitions`, and the `Cephalon.Engine` event-id catalog
 - module-author guidance for publishing workflow and execution-graph descriptors without bypassing the existing module/capability model
 - descriptive hosted/background execution conventions that stay on top of the existing module and Generic Host model instead of introducing a separate engine-owned runner abstraction
 
 Acceptance remaining:
 
-- internal engine events for orchestration activation and richer runtime transitions beyond the shipped diagnostics/timeline baseline
 - richer multi-module coordination patterns on top of the shipped execution-graph and hosted-execution baseline
 - AI and orchestration integration points built on the existing module, capability, execution-graph, and runtime-story contracts
 

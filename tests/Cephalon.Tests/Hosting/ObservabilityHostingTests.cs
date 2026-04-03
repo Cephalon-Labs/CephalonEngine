@@ -27,6 +27,7 @@ public sealed class ObservabilityHostingTests
         {
             cephalon.AddModule(new PlatformTestModule());
             cephalon.AddModule(new DiscoveryTestModule());
+            cephalon.AddModule(new WorkflowCatalogTestModule("observability-test"));
         });
         builder.Services.AddCephalonObservability(builder.Configuration);
 
@@ -56,7 +57,7 @@ public sealed class ObservabilityHostingTests
         Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 3006 &&
             entry.Message.Contains("Cephalon.Engine", StringComparison.Ordinal) &&
-            entry.Message.Contains("2000-2004", StringComparison.Ordinal));
+            entry.Message.Contains("2000-2005", StringComparison.Ordinal));
         Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 3006 &&
             entry.Message.Contains("Cephalon.Observability", StringComparison.Ordinal) &&
@@ -64,6 +65,10 @@ public sealed class ObservabilityHostingTests
         Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 2000 &&
             entry.Message.Contains("Runtime phase 'start' completed", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 2005 &&
+            entry.Message.Contains("approval-pump", StringComparison.Ordinal) &&
+            entry.Message.Contains("phase 'activate'", StringComparison.Ordinal));
     }
 
     [Fact]

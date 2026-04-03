@@ -2382,6 +2382,16 @@ const string ExecutionGraphTransitionCounterName
 
 Gets the counter name for execution-graph lifecycle transitions.
 
+<a id="member-f-cephalon-engine-diagnostics-enginediagnostics-hostedexecutiontransitioncountername"></a>
+
+##### `HostedExecutionTransitionCounterName`
+
+```csharp
+const string HostedExecutionTransitionCounterName
+```
+
+Gets the counter name for hosted-execution lifecycle transitions.
+
 <a id="member-f-cephalon-engine-diagnostics-enginediagnostics-metername"></a>
 
 ##### `MeterName`

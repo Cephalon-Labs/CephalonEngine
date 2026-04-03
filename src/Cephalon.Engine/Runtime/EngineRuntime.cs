@@ -31,6 +31,11 @@ public sealed class EngineRuntime : IRuntime, IDisposable
             LogLevel.Information,
             new EventId(EngineRuntimeDiagnosticsConventions.ExecutionGraphTransition.Id, EngineRuntimeDiagnosticsConventions.ExecutionGraphTransition.Name),
             EngineRuntimeDiagnosticsConventions.ExecutionGraphTransition.MessageTemplate);
+    private static readonly Action<ILogger, string, string, string, string, string, string, Exception?> LogHostedExecutionTransitionMessage =
+        LoggerMessage.Define<string, string, string, string, string, string>(
+            LogLevel.Information,
+            new EventId(EngineRuntimeDiagnosticsConventions.HostedExecutionTransition.Id, EngineRuntimeDiagnosticsConventions.HostedExecutionTransition.Name),
+            EngineRuntimeDiagnosticsConventions.HostedExecutionTransition.MessageTemplate);
     private static readonly Action<ILogger, string, string, Exception> LogRuntimeFailureMessage =
         LoggerMessage.Define<string, string>(
             LogLevel.Error,
@@ -1201,6 +1206,14 @@ public sealed class EngineRuntime : IRuntime, IDisposable
             }
         }
 
+        EngineDiagnostics.HostedExecutionTransitionCounter.Add(1, new TagList
+        {
+            { "cephalon.phase", phase },
+            { "cephalon.hosted-execution.id", hostedExecution.Id },
+            { "cephalon.hosted-execution.kind", hostedExecution.Kind },
+            { "cephalon.execution-graph.id", hostedExecution.ExecutionGraphId },
+            { "cephalon.module.id", hostedExecution.SourceModuleId }
+        });
         RecordLifecycleEvent(
             RuntimeLifecycleEventScope.HostedExecution,
             phase: phase,
@@ -1210,6 +1223,14 @@ public sealed class EngineRuntime : IRuntime, IDisposable
             subjectVersion: TryGetSourceModuleVersion(hostedExecution.SourceModuleId),
             message: message,
             occurredAtUtc: occurredAtUtc);
+        LogHostedExecutionTransition(
+            logger,
+            hostedExecution.Id,
+            phase,
+            hostedExecution.SourceModuleId,
+            hostedExecution.Kind,
+            hostedExecution.ExecutionGraphId ?? "(none)",
+            runtimeStatus.ToString());
     }
 
     private static void LogRuntimeTransition(
@@ -1254,6 +1275,23 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         }
 
         LogExecutionGraphTransitionMessage(logger, graphId, phase, sourceModuleId, status, null);
+    }
+
+    private static void LogHostedExecutionTransition(
+        ILogger? logger,
+        string hostedExecutionId,
+        string phase,
+        string sourceModuleId,
+        string kind,
+        string executionGraphId,
+        string status)
+    {
+        if (logger is null || !logger.IsEnabled(LogLevel.Information))
+        {
+            return;
+        }
+
+        LogHostedExecutionTransitionMessage(logger, hostedExecutionId, phase, sourceModuleId, kind, executionGraphId, status, null);
     }
 
     private static void LogRuntimeFailure(
