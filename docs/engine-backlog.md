@@ -176,7 +176,7 @@ Follow-up later:
 
 ## SDK hardening follow-through
 
-Phase 1 SDK hardening is now substantially complete. Phase 2 operational hardening has also closed on its shipped baseline. Phase 3 extensibility and package loading remains the main structural follow-through, while phase 6 now has an `ENG-029` track with the shipped self-hosted OTLP slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped Huawei Cloud fourth-vendor slice, the shipped Alibaba Cloud fifth-vendor slice, the shipped Red Hat OpenShift platform-first slice, and a remaining-provider matrix where Cloudflare, DigitalOcean, and VMware Tanzu stay later until the next explicit child is chosen.
+Phase 1 SDK hardening is now substantially complete. Phase 2 operational hardening has also closed on its shipped baseline. Phase 3 extensibility and package loading remains the main structural follow-through, while phase 6 now has an `ENG-029` track with the shipped self-hosted OTLP slice, the shipped Azure Monitor first-vendor slice, the shipped AWS second-vendor slice, the shipped GCP third-vendor slice, the shipped Huawei Cloud fourth-vendor slice, the shipped Alibaba Cloud fifth-vendor slice, the shipped Red Hat OpenShift platform-first slice, the current DigitalOcean collector/defaults slice under `#114`, and a remaining-provider matrix where Cloudflare and VMware Tanzu stay later until the next explicit child is chosen.
 
 ### ENG-005 Engine API and package surface hardening
 
@@ -464,16 +464,16 @@ Acceptance:
 - keep suite blueprints composed from existing app-level contracts
 - add reference samples for multi-service Cephalon solutions
 
-## Later cloud and platform integration work
+## Current cloud and platform integration work
 
 ### ENG-029 Cloud-targeted observability companion integrations
 
-Status: later
-Estimate: 134
+Status: current focus
+Estimate: 155
 
 Why:
 
-- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, and Red Hat OpenShift slices are now shipped, and the remaining Cloudflare, DigitalOcean, and VMware Tanzu follow-through stays intentionally later until the next explicit child is chosen under `ENG-029`
+- the self-hosted OTLP collector/runtime-default slice plus the Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, and Red Hat OpenShift slices are now shipped, `#114` now narrows the next explicit child to DigitalOcean collector wiring and hosted defaults, and Cloudflare plus VMware Tanzu stay intentionally later until the following child is chosen under `ENG-029`
 - this work should stay in companion packages, preserve the shared `ILogger` pipeline plus the cloud-neutral OTLP baseline, and leave room for downstream developer-authored provider packages
 
 Acceptance:
@@ -481,10 +481,11 @@ Acceptance:
 - keep the shipped self-hosted deployment defaults explicit and reusable instead of burying them inside vendor-specific companion packs
 - keep the shipped Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, and Red Hat OpenShift slices explicit on top of the shared OpenTelemetry baseline
 - keep the shipped Red Hat OpenShift companion follow-through explicit instead of rolling it back into one ambiguous remaining-platform scope
+- keep `#114` scoped to DigitalOcean collector wiring and hosted defaults on top of the shared OTLP baseline instead of over-claiming a managed DigitalOcean OTLP exporter surface that the current platform docs do not promise
 - keep vendor/platform-specific exporter wiring, auth, resource attributes, and hosted defaults outside `Cephalon.Engine` and `Cephalon.Abstractions`
 - keep the shared `ILogger` pipeline and existing `Cephalon.Observability.OpenTelemetry` baseline intact
 - add docs, validation, and planning sync for the supported targets plus the downstream companion-package authoring path
-- keep the remaining Cloudflare, DigitalOcean, and VMware Tanzu follow-through narrowed into explicit child items under `ENG-029` before implementation starts instead of reopening one ambiguous multi-cloud scope
+- keep the remaining Cloudflare and VMware Tanzu follow-through narrowed into explicit child items under `ENG-029` before implementation starts instead of reopening one ambiguous multi-cloud scope
 - avoid starting implementation on any new vendor/platform target without first narrowing it explicitly
 
 ## Sprint history and next 3 sprints
@@ -538,6 +539,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-029 Huawei Cloud observability exporter wiring and hosted Huawei Cloud defaults on top of the OTLP baseline
 - ENG-029 Alibaba Cloud observability exporter wiring and hosted Alibaba Cloud defaults on top of the OTLP baseline
 - ENG-029 Red Hat OpenShift collector wiring and hosted OpenShift defaults on top of the OTLP baseline
+- ENG-029 DigitalOcean collector wiring and hosted DigitalOcean defaults on top of the OTLP baseline
 
 ### Sprint 2
 
