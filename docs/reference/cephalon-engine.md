@@ -1865,7 +1865,7 @@ Stop shutdown immediately and rethrow the failure.
 
 Defines package-trust and capability-governance rules for a Cephalon runtime.
 
-Remarks: `TrustPolicy` is the engine's host-owned trust contract. It decides whether independently shipped packages must be explicitly trusted, how capability access is resolved, and which publishers, signer fingerprints, public keys, or assembly checksums are accepted.
+Remarks: `TrustPolicy` is the engine's host-owned trust contract. It decides whether independently shipped packages must be explicitly trusted, how capability access is resolved, and which publishers, signer fingerprints, public keys, signing certificates, or assembly checksums are accepted.
 
 Package-loading decisions use this policy together with package metadata from `cephalon.package.json`, cryptographic signature verification results, and the active package policy. Capability access decisions then flow into runtime introspection and optional HTTP request-time enforcement through the ASP.NET Core host adapters.
 
@@ -1876,12 +1876,12 @@ public sealed class TrustPolicy
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-trustpolicy-ctor-system-boolean-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlydictionary-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+<a id="member-m-cephalon-engine-configuration-trustpolicy-ctor-system-boolean-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlydictionary-system-string-system-collections-generic-ireadonlylist-system-string"></a>
 
 ##### `TrustPolicy`
 
 ```csharp
-TrustPolicy(bool requireTrustedPackages, CapabilityAccess defaultCapabilityAccess, IReadOnlyList<string> trustedPackages, IReadOnlyList<string> trustedAssemblies, IReadOnlyList<string> trustedPublishers, IReadOnlyList<string> trustedSignerFingerprints, IReadOnlyDictionary<string, string> trustedSignaturePublicKeys, IReadOnlyDictionary<string, CapabilityAccess> capabilities, IReadOnlyDictionary<string, IReadOnlyList<string>> allowedPackageChecksums)
+TrustPolicy(bool requireTrustedPackages, CapabilityAccess defaultCapabilityAccess, IReadOnlyList<string> trustedPackages, IReadOnlyList<string> trustedAssemblies, IReadOnlyList<string> trustedPublishers, IReadOnlyList<string> trustedSignerFingerprints, IReadOnlyDictionary<string, string> trustedSignaturePublicKeys, IReadOnlyDictionary<string, string> trustedSignatureCertificates, IReadOnlyList<string> trustedSignatureCertificateAuthorities, IReadOnlyDictionary<string, CapabilityAccess> capabilities, IReadOnlyDictionary<string, IReadOnlyList<string>> allowedPackageChecksums)
 ```
 
 Creates a trust policy.
@@ -1894,6 +1894,8 @@ Parameters:
 - `trustedPublishers`: Stable publisher identifiers that should be treated as trusted for independently shipped packages.
 - `trustedSignerFingerprints`: Signer fingerprints that should be treated as trusted for detached-signature provenance checks.
 - `trustedSignaturePublicKeys`: Public keys keyed by signing identity or signer fingerprint, used for cryptographic signature verification.
+- `trustedSignatureCertificates`: Signing certificates keyed by signing identity or signer fingerprint, used for certificate-backed cryptographic signature verification.
+- `trustedSignatureCertificateAuthorities`: Root or intermediate certificate authorities used to validate configured signing certificates when certificate-chain verification is enabled.
 - `capabilities`: Explicit per-capability access overrides keyed by capability key.
 - `allowedPackageChecksums`: Explicit package checksum allow-lists keyed by package identifier.
 
@@ -1988,6 +1990,26 @@ IReadOnlyList<string> TrustedPublishers { get; }
 ```
 
 Gets the trusted publisher identifier allow-list.
+
+<a id="member-p-cephalon-engine-configuration-trustpolicy-trustedsignaturecertificateauthorities"></a>
+
+##### `TrustedSignatureCertificateAuthorities`
+
+```csharp
+IReadOnlyList<string> TrustedSignatureCertificateAuthorities { get; }
+```
+
+Gets the configured certificate authorities used to validate trusted signing certificate chains.
+
+<a id="member-p-cephalon-engine-configuration-trustpolicy-trustedsignaturecertificates"></a>
+
+##### `TrustedSignatureCertificates`
+
+```csharp
+IReadOnlyDictionary<string, string> TrustedSignatureCertificates { get; }
+```
+
+Gets the configured trusted signing certificates used for certificate-backed detached-signature verification.
 
 <a id="member-p-cephalon-engine-configuration-trustpolicy-trustedsignaturepublickeys"></a>
 
@@ -2900,12 +2922,12 @@ public sealed class PackageManifest
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-manifest-packagemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagesignaturemanifest-system-boolean-system-string-system-string-system-boolean-system-string"></a>
+<a id="member-m-cephalon-engine-manifest-packagemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagesignaturemanifest-system-boolean-system-string-system-string-system-boolean-system-string"></a>
 
 ##### `PackageManifest`
 
 ```csharp
-PackageManifest(string id, string kind, string assemblyName, string path, string sourcePath, string loadContext, IReadOnlyList<string> modules, string version, string minimumEngineVersion, string maximumEngineVersion, IReadOnlyList<string> supportedTargetFrameworks, string publisherId, string publisherDisplayName, string publisherWebsite, string signatureType, string signatureSigner, string signatureKeyId, string signatureFingerprint, string signatureAlgorithm, IReadOnlyList<PackageSignatureManifest> signatures, bool isSignatureVerified, string signatureVerificationReason, string checksumSha256, bool isTrusted, string trustReason)
+PackageManifest(string id, string kind, string assemblyName, string path, string sourcePath, string loadContext, IReadOnlyList<string> modules, string version, string minimumEngineVersion, string maximumEngineVersion, IReadOnlyList<string> supportedTargetFrameworks, string publisherId, string publisherDisplayName, string publisherWebsite, string signatureType, string signatureSigner, string signatureKeyId, string signatureFingerprint, string signatureCertificateThumbprint, string signatureAlgorithm, IReadOnlyList<PackageSignatureManifest> signatures, bool isSignatureVerified, string signatureVerificationReason, string checksumSha256, bool isTrusted, string trustReason)
 ```
 
 Creates a new package manifest entry.
@@ -2929,9 +2951,10 @@ Parameters:
 - `signatureSigner`: The signer identity declared by the package manifest, when available.
 - `signatureKeyId`: The trusted-key identifier declared by the package manifest, when available.
 - `signatureFingerprint`: The signer fingerprint declared by the package manifest, when available.
+- `signatureCertificateThumbprint`: The primary signing certificate thumbprint used during verification, when certificate-backed trust was used.
 - `signatureAlgorithm`: The signature algorithm declared by the package manifest, when available.
 - `signatures`: The declared package signatures and their individual verification outcomes.
-- `isSignatureVerified`: Whether the package signature was cryptographically verified against a trusted public key.
+- `isSignatureVerified`: Whether the package signature was cryptographically verified against a trusted public key or signing certificate.
 - `signatureVerificationReason`: The verification outcome summary for the package signature.
 - `checksumSha256`: The computed SHA-256 checksum of the resolved package assembly.
 - `isTrusted`: Whether the package is trusted by the current trust policy.
@@ -2987,7 +3010,7 @@ Gets the stable package identifier.
 bool IsSignatureVerified { get; }
 ```
 
-Gets a value indicating whether the package signature was cryptographically verified.
+Gets a value indicating whether the package signature was cryptographically verified against a trusted signing identity.
 
 <a id="member-p-cephalon-engine-manifest-packagemanifest-istrusted"></a>
 
@@ -3098,6 +3121,16 @@ string SignatureAlgorithm { get; }
 ```
 
 Gets the signature algorithm declared by the package manifest, when available.
+
+<a id="member-p-cephalon-engine-manifest-packagemanifest-signaturecertificatethumbprint"></a>
+
+##### `SignatureCertificateThumbprint`
+
+```csharp
+string SignatureCertificateThumbprint { get; }
+```
+
+Gets the primary signing certificate thumbprint used during verification, when certificate-backed trust was used.
 
 <a id="member-p-cephalon-engine-manifest-packagemanifest-signaturefingerprint"></a>
 
@@ -3212,12 +3245,12 @@ public sealed class PackageSignatureManifest
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-manifest-packagesignaturemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-boolean-system-string"></a>
+<a id="member-m-cephalon-engine-manifest-packagesignaturemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-string"></a>
 
 ##### `PackageSignatureManifest`
 
 ```csharp
-PackageSignatureManifest(string type, string signer, string keyId, string fingerprint, string algorithm, bool isVerified, string verificationReason)
+PackageSignatureManifest(string type, string signer, string keyId, string fingerprint, string algorithm, string verificationSource, string certificateThumbprint, bool isVerified, string verificationReason)
 ```
 
 Creates a package signature manifest entry.
@@ -3228,7 +3261,9 @@ Parameters:
 - `keyId`: The declared signature key identifier.
 - `fingerprint`: The declared signer fingerprint.
 - `algorithm`: The declared signature algorithm.
-- `isVerified`: Whether this signature was cryptographically verified.
+- `verificationSource`: The trust source that verified the signature, when available.
+- `certificateThumbprint`: The thumbprint of the signing certificate used during verification, when certificate-backed trust was used.
+- `isVerified`: Whether this signature was cryptographically verified against a trusted public key or signing certificate.
 - `verificationReason`: The verification outcome summary for this signature.
 
 #### Properties
@@ -3242,6 +3277,16 @@ string Algorithm { get; }
 ```
 
 Gets the declared signature algorithm.
+
+<a id="member-p-cephalon-engine-manifest-packagesignaturemanifest-certificatethumbprint"></a>
+
+##### `CertificateThumbprint`
+
+```csharp
+string CertificateThumbprint { get; }
+```
+
+Gets the signing certificate thumbprint used during verification, when certificate-backed trust was used.
 
 <a id="member-p-cephalon-engine-manifest-packagesignaturemanifest-fingerprint"></a>
 
@@ -3261,7 +3306,7 @@ Gets the declared signer fingerprint.
 bool IsVerified { get; }
 ```
 
-Gets a value indicating whether this signature was cryptographically verified.
+Gets a value indicating whether this signature was cryptographically verified against a trusted signing identity.
 
 <a id="member-p-cephalon-engine-manifest-packagesignaturemanifest-keyid"></a>
 
@@ -3302,6 +3347,16 @@ string VerificationReason { get; }
 ```
 
 Gets the verification outcome summary for this signature.
+
+<a id="member-p-cephalon-engine-manifest-packagesignaturemanifest-verificationsource"></a>
+
+##### `VerificationSource`
+
+```csharp
+string VerificationSource { get; }
+```
+
+Gets the trust source that verified the signature, when available.
 
 <a id="type-cephalon-engine-manifest-runtimemanifest"></a>
 
@@ -5638,12 +5693,12 @@ public sealed class PackageSignatureTrustDecision
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-trust-packagesignaturetrustdecision-ctor-system-string-system-string-system-string-system-boolean-system-string"></a>
+<a id="member-m-cephalon-engine-trust-packagesignaturetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-boolean-system-string"></a>
 
 ##### `PackageSignatureTrustDecision`
 
 ```csharp
-PackageSignatureTrustDecision(string Signer, string KeyId, string Fingerprint, bool IsVerified, string Reason)
+PackageSignatureTrustDecision(string Signer, string KeyId, string Fingerprint, string VerificationSource, string CertificateThumbprint, bool IsVerified, string Reason)
 ```
 
 Describes the trust and verification outcome for a single package signature.
@@ -5652,10 +5707,22 @@ Parameters:
 - `Signer`: The declared signer identity, when available.
 - `KeyId`: The declared signing-key identifier, when available.
 - `Fingerprint`: The declared signer fingerprint, when available.
-- `IsVerified`: Whether this signature verified successfully against a trusted public key.
+- `VerificationSource`: The trust source that verified the signature, when available.
+- `CertificateThumbprint`: The signing certificate thumbprint used during verification, when certificate-backed trust was used.
+- `IsVerified`: Whether this signature verified successfully against a trusted public key or trusted signing certificate.
 - `Reason`: The verification outcome or failure reason for this signature.
 
 #### Properties
+
+<a id="member-p-cephalon-engine-trust-packagesignaturetrustdecision-certificatethumbprint"></a>
+
+##### `CertificateThumbprint`
+
+```csharp
+string CertificateThumbprint { get; set; }
+```
+
+The signing certificate thumbprint used during verification, when certificate-backed trust was used.
 
 <a id="member-p-cephalon-engine-trust-packagesignaturetrustdecision-fingerprint"></a>
 
@@ -5675,7 +5742,7 @@ The declared signer fingerprint, when available.
 bool IsVerified { get; set; }
 ```
 
-Whether this signature verified successfully against a trusted public key.
+Whether this signature verified successfully against a trusted public key or trusted signing certificate.
 
 <a id="member-p-cephalon-engine-trust-packagesignaturetrustdecision-keyid"></a>
 
@@ -5707,6 +5774,16 @@ string Signer { get; set; }
 
 The declared signer identity, when available.
 
+<a id="member-p-cephalon-engine-trust-packagesignaturetrustdecision-verificationsource"></a>
+
+##### `VerificationSource`
+
+```csharp
+string VerificationSource { get; set; }
+```
+
+The trust source that verified the signature, when available.
+
 <a id="type-cephalon-engine-trust-packagetrustdecision"></a>
 
 ### `PackageTrustDecision`
@@ -5720,12 +5797,12 @@ public sealed class PackageTrustDecision
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-trust-packagetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagesignaturetrustdecision-system-boolean-system-string-system-boolean-system-string"></a>
+<a id="member-m-cephalon-engine-trust-packagetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagesignaturetrustdecision-system-boolean-system-string-system-boolean-system-string"></a>
 
 ##### `PackageTrustDecision`
 
 ```csharp
-PackageTrustDecision(string PackageId, string AssemblyName, string Path, string PublisherId, string SignatureKeyId, string SignatureFingerprint, IReadOnlyList<PackageSignatureTrustDecision> Signatures, bool IsSignatureVerified, string SignatureVerificationReason, bool IsTrusted, string Reason)
+PackageTrustDecision(string PackageId, string AssemblyName, string Path, string PublisherId, string SignatureKeyId, string SignatureFingerprint, string SignatureCertificateThumbprint, IReadOnlyList<PackageSignatureTrustDecision> Signatures, bool IsSignatureVerified, string SignatureVerificationReason, bool IsTrusted, string Reason)
 ```
 
 Describes the trust outcome for a package after package metadata, signature verification, and host trust rules have been evaluated.
@@ -5737,6 +5814,7 @@ Parameters:
 - `PublisherId`: The declared publisher identifier, when available.
 - `SignatureKeyId`: The primary signature key identifier, when available.
 - `SignatureFingerprint`: The primary signature fingerprint, when available.
+- `SignatureCertificateThumbprint`: The primary signing certificate thumbprint used during verification, when certificate-backed trust was used.
 - `Signatures`: The per-signer trust and verification details declared by the package.
 - `IsSignatureVerified`: Whether at least one declared signature verified successfully.
 - `SignatureVerificationReason`: The aggregate signature verification outcome summary.
@@ -5814,6 +5892,16 @@ string Reason { get; set; }
 ```
 
 The reason the package was trusted or rejected.
+
+<a id="member-p-cephalon-engine-trust-packagetrustdecision-signaturecertificatethumbprint"></a>
+
+##### `SignatureCertificateThumbprint`
+
+```csharp
+string SignatureCertificateThumbprint { get; set; }
+```
+
+The primary signing certificate thumbprint used during verification, when certificate-backed trust was used.
 
 <a id="member-p-cephalon-engine-trust-packagetrustdecision-signaturefingerprint"></a>
 

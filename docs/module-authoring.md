@@ -104,9 +104,10 @@ Current behavior:
 - `dependencies` is optional, but when declared each entry should reference the stable `id` of another package and can add `minimumVersion` / `maximumVersion` bounds for versioned package dependencies
 - version-bounded dependency entries require the referenced package to declare its own `version`
 - `publisher.id` should stay stable across releases if operators or trust policy use publisher-level allow-lists
-- `signature.keyId` or `signatures[].keyId` should stay stable across releases if hosts map trusted public keys by signing identity
+- `signature.keyId` or `signatures[].keyId` should stay stable across releases if hosts map trusted public keys or trusted signing certificates by signing identity
 - `signature.fingerprint` or `signatures[].fingerprint` identifies the signing key and is surfaced through diagnostics and trust snapshots
 - `signature.value` or `signatures[].value` is optional until a host requires cryptographic verification, but when present it should be a detached signature over the resolved assembly SHA-256 hash
+- hosts that want certificate-backed trust can pair `Engine:Trust:TrustedSignatureCertificates` with `Engine:Trust:TrustedSignatureCertificateAuthorities` so package signatures verify against an explicit signing certificate chain instead of only a raw public-key mapping
 - `integrity.sha256` is optional, but when present the resolved assembly must match it exactly
 
 For scaffolded modules and `dotnet new` starters, Cephalon now emits this manifest automatically with the current package version and target framework baseline.
@@ -209,7 +210,7 @@ builder.AddCephalon(engine =>
 });
 ```
 
-`/engine/packages` exposes the package-loading snapshot the runtime resolved, including the package `kind`, resolved assembly `path`, original `sourcePath`, declared `version`, compatibility fields, declared package `dependencies`, publisher/signature provenance metadata, the top-level signature summary fields kept for backward compatibility, the per-signer `signatures` collection, cryptographic verification status, computed `checksumSha256`, and the current `trustReason`. `/engine/modules` continues to show the active module set after policy and ordering have been applied. `/engine/technology-catalog` shows the technology profiles available after built-in, package, and project contributions have been merged. `/engine/technology-surfaces` shows the active runtime surfaces exposed by installed technology packs after host options and module contributors have both been applied, while `/engine/technology-surfaces/{technologyId}` narrows that view to a single selected technology profile. In code, the same merged surface set is available through `ITechnologyRuntimeCatalog`, and the broader operator-facing runtime snapshot is available through `IRuntimeIntrospectionSnapshotProvider` or `GET /engine/snapshot`.
+`/engine/packages` exposes the package-loading snapshot the runtime resolved, including the package `kind`, resolved assembly `path`, original `sourcePath`, declared `version`, compatibility fields, declared package `dependencies`, publisher/signature provenance metadata, the top-level signature summary fields kept for backward compatibility, the per-signer `signatures` collection, per-signer `verificationSource` and `certificateThumbprint` details when certificate-backed trust is used, cryptographic verification status, computed `checksumSha256`, and the current `trustReason`. `/engine/modules` continues to show the active module set after policy and ordering have been applied. `/engine/technology-catalog` shows the technology profiles available after built-in, package, and project contributions have been merged. `/engine/technology-surfaces` shows the active runtime surfaces exposed by installed technology packs after host options and module contributors have both been applied, while `/engine/technology-surfaces/{technologyId}` narrows that view to a single selected technology profile. In code, the same merged surface set is available through `ITechnologyRuntimeCatalog`, and the broader operator-facing runtime snapshot is available through `IRuntimeIntrospectionSnapshotProvider` or `GET /engine/snapshot`.
 
 ## What the reference package demonstrates
 
@@ -251,6 +252,12 @@ For independently distributed packages, trust can combine signing keys and check
       ],
       "TrustedSignaturePublicKeys": {
         "cephalon-labs-build": "keys/cephalon-labs-build.public.pem"
+      },
+      "TrustedSignatureCertificates": {
+        "cephalon-labs-signing-cert": "keys/cephalon-labs-signing-cert.pem"
+      },
+      "TrustedSignatureCertificateAuthorities": [
+        "keys/cephalon-labs-root.pem"
       },
       "AllowedPackageChecksums": {
         "operations": [

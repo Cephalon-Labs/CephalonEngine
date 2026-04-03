@@ -516,6 +516,12 @@ Browse the published API surface by public member.
 - [CephalonPackageVersion](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-scaffoldrequest-cephalonpackageversion): `Properties` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=CephalonPackageVersion&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the Cephalon package version written into the scaffold.
   - `string CephalonPackageVersion { get; }`
+- [CertificateThumbprint](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-certificatethumbprint): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=CertificateThumbprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the signing certificate thumbprint used during verification, when certificate-backed trust was used.
+  - `string CertificateThumbprint { get; }`
+- [CertificateThumbprint](cephalon-engine.md#member-p-cephalon-engine-trust-packagesignaturetrustdecision-certificatethumbprint): `Properties` on `PackageSignatureTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=CertificateThumbprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - The signing certificate thumbprint used during verification, when certificate-backed trust was used.
+  - `string CertificateThumbprint { get; set; }`
 - [Channels](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-channels): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=Channels&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Gets the host-defined event channels that should be available to the eventing runtime.
   - `IList<EventChannelDescriptor> Channels { get; }`
@@ -1780,7 +1786,7 @@ Browse the published API surface by public member.
   - Determines whether a technology is selected.
   - `bool IsSelected(string value)`
 - [IsSignatureVerified](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-issignatureverified): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=IsSignatureVerified&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
-  - Gets a value indicating whether the package signature was cryptographically verified.
+  - Gets a value indicating whether the package signature was cryptographically verified against a trusted signing identity.
   - `bool IsSignatureVerified { get; }`
 - [IsSignatureVerified](cephalon-engine.md#member-p-cephalon-engine-trust-packagetrustdecision-issignatureverified): `Properties` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=IsSignatureVerified&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Whether at least one declared signature verified successfully.
@@ -1801,10 +1807,10 @@ Browse the published API surface by public member.
   - Whether the package is trusted by the active runtime trust policy.
   - `bool IsTrusted { get; set; }`
 - [IsVerified](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-isverified): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=IsVerified&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
-  - Gets a value indicating whether this signature was cryptographically verified.
+  - Gets a value indicating whether this signature was cryptographically verified against a trusted signing identity.
   - `bool IsVerified { get; }`
 - [IsVerified](cephalon-engine.md#member-p-cephalon-engine-trust-packagesignaturetrustdecision-isverified): `Properties` on `PackageSignatureTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=IsVerified&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
-  - Whether this signature verified successfully against a trusted public key.
+  - Whether this signature verified successfully against a trusted public key or trusted signing certificate.
   - `bool IsVerified { get; set; }`
 
 ## J
@@ -2340,9 +2346,9 @@ Browse the published API surface by public member.
 - [PackageId](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-packageid): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=PackageId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The package that supplied the module when package loading was used.
   - `string PackageId { get; set; }`
-- [PackageManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-packagemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagesignaturemanifest-system-boolean-system-string-system-string-system-boolean-system-string): `Constructors` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=PackageManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+- [PackageManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-packagemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagesignaturemanifest-system-boolean-system-string-system-string-system-boolean-system-string): `Constructors` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=PackageManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Creates a new package manifest entry.
-  - `PackageManifest(string id, string kind, string assemblyName, string path, string sourcePath, string loadContext, IReadOnlyList<string> modules, string version, string minimumEngineVersion, string maximumEngineVersion, IReadOnlyList<string> supportedTargetFrameworks, string publisherId, string publisherDisplayName, string publisherWebsite, string signatureType, string signatureSigner, string signatureKeyId, string signatureFingerprint, string signatureAlgorithm, IReadOnlyList<PackageSignatureManifest> signatures, bool isSignatureVerified, string signatureVerificationReason, string checksumSha256, bool isTrusted, string trustReason)`
+  - `PackageManifest(string id, string kind, string assemblyName, string path, string sourcePath, string loadContext, IReadOnlyList<string> modules, string version, string minimumEngineVersion, string maximumEngineVersion, IReadOnlyList<string> supportedTargetFrameworks, string publisherId, string publisherDisplayName, string publisherWebsite, string signatureType, string signatureSigner, string signatureKeyId, string signatureFingerprint, string signatureCertificateThumbprint, string signatureAlgorithm, IReadOnlyList<PackageSignatureManifest> signatures, bool isSignatureVerified, string signatureVerificationReason, string checksumSha256, bool isTrusted, string trustReason)`
 - [PackagePolicy](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-packagepolicy): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=PackagePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets package metadata and integrity policy values.
   - `PackagePolicy PackagePolicy { get; }`
@@ -2364,15 +2370,15 @@ Browse the published API surface by public member.
 - [Packages](cephalon-engine.md#member-p-cephalon-engine-trust-trustsnapshot-packages): `Properties` on `TrustSnapshot` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Packages&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The evaluated package trust decisions.
   - `IReadOnlyList<PackageTrustDecision> Packages { get; set; }`
-- [PackageSignatureManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-packagesignaturemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-boolean-system-string): `Constructors` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=PackageSignatureManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+- [PackageSignatureManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-packagesignaturemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-string): `Constructors` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=PackageSignatureManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Creates a package signature manifest entry.
-  - `PackageSignatureManifest(string type, string signer, string keyId, string fingerprint, string algorithm, bool isVerified, string verificationReason)`
-- [PackageSignatureTrustDecision](cephalon-engine.md#member-m-cephalon-engine-trust-packagesignaturetrustdecision-ctor-system-string-system-string-system-string-system-boolean-system-string): `Constructors` on `PackageSignatureTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=PackageSignatureTrustDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - `PackageSignatureManifest(string type, string signer, string keyId, string fingerprint, string algorithm, string verificationSource, string certificateThumbprint, bool isVerified, string verificationReason)`
+- [PackageSignatureTrustDecision](cephalon-engine.md#member-m-cephalon-engine-trust-packagesignaturetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-boolean-system-string): `Constructors` on `PackageSignatureTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=PackageSignatureTrustDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Describes the trust and verification outcome for a single package signature.
-  - `PackageSignatureTrustDecision(string Signer, string KeyId, string Fingerprint, bool IsVerified, string Reason)`
-- [PackageTrustDecision](cephalon-engine.md#member-m-cephalon-engine-trust-packagetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagesignaturetrustdecision-system-boolean-system-string-system-boolean-system-string): `Constructors` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=PackageTrustDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - `PackageSignatureTrustDecision(string Signer, string KeyId, string Fingerprint, string VerificationSource, string CertificateThumbprint, bool IsVerified, string Reason)`
+- [PackageTrustDecision](cephalon-engine.md#member-m-cephalon-engine-trust-packagetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagesignaturetrustdecision-system-boolean-system-string-system-boolean-system-string): `Constructors` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=PackageTrustDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Describes the trust outcome for a package after package metadata, signature verification, and host trust rules have been evaluated.
-  - `PackageTrustDecision(string PackageId, string AssemblyName, string Path, string PublisherId, string SignatureKeyId, string SignatureFingerprint, IReadOnlyList<PackageSignatureTrustDecision> Signatures, bool IsSignatureVerified, string SignatureVerificationReason, bool IsTrusted, string Reason)`
+  - `PackageTrustDecision(string PackageId, string AssemblyName, string Path, string PublisherId, string SignatureKeyId, string SignatureFingerprint, string SignatureCertificateThumbprint, IReadOnlyList<PackageSignatureTrustDecision> Signatures, bool IsSignatureVerified, string SignatureVerificationReason, bool IsTrusted, string Reason)`
 - [Password](cephalon-observability-cassandradependencies.md#member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-password): `Properties` on `CassandraDependencyDefinition` in `Cephalon.Observability.CassandraDependencies.Configuration` (`Cephalon.Observability.CassandraDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Configuration&scope=members)
   - Gets or sets the optional password used for authentication.
   - `string Password { get; set; }`
@@ -3096,6 +3102,12 @@ Browse the published API surface by public member.
 - [SignatureAlgorithm](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-signaturealgorithm): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=SignatureAlgorithm&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the signature algorithm declared by the package manifest, when available.
   - `string SignatureAlgorithm { get; }`
+- [SignatureCertificateThumbprint](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-signaturecertificatethumbprint): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=SignatureCertificateThumbprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the primary signing certificate thumbprint used during verification, when certificate-backed trust was used.
+  - `string SignatureCertificateThumbprint { get; }`
+- [SignatureCertificateThumbprint](cephalon-engine.md#member-p-cephalon-engine-trust-packagetrustdecision-signaturecertificatethumbprint): `Properties` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=SignatureCertificateThumbprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - The primary signing certificate thumbprint used during verification, when certificate-backed trust was used.
+  - `string SignatureCertificateThumbprint { get; set; }`
 - [SignatureFingerprint](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-signaturefingerprint): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=SignatureFingerprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the signer fingerprint declared by the package manifest, when available.
   - `string SignatureFingerprint { get; }`
@@ -3531,6 +3543,12 @@ Browse the published API surface by public member.
 - [TrustedPublishers](cephalon-engine.md#member-p-cephalon-engine-configuration-trustpolicy-trustedpublishers): `Properties` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TrustedPublishers&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the trusted publisher identifier allow-list.
   - `IReadOnlyList<string> TrustedPublishers { get; }`
+- [TrustedSignatureCertificateAuthorities](cephalon-engine.md#member-p-cephalon-engine-configuration-trustpolicy-trustedsignaturecertificateauthorities): `Properties` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TrustedSignatureCertificateAuthorities&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the configured certificate authorities used to validate trusted signing certificate chains.
+  - `IReadOnlyList<string> TrustedSignatureCertificateAuthorities { get; }`
+- [TrustedSignatureCertificates](cephalon-engine.md#member-p-cephalon-engine-configuration-trustpolicy-trustedsignaturecertificates): `Properties` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TrustedSignatureCertificates&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the configured trusted signing certificates used for certificate-backed detached-signature verification.
+  - `IReadOnlyDictionary<string, string> TrustedSignatureCertificates { get; }`
 - [TrustedSignaturePublicKeys](cephalon-engine.md#member-p-cephalon-engine-configuration-trustpolicy-trustedsignaturepublickeys): `Properties` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TrustedSignaturePublicKeys&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the configured trusted public keys used for detached-signature verification.
   - `IReadOnlyDictionary<string, string> TrustedSignaturePublicKeys { get; }`
@@ -3540,9 +3558,9 @@ Browse the published API surface by public member.
 - [TrustPolicy](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-trustpolicy): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TrustPolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets capability and package trust policy values.
   - `TrustPolicy TrustPolicy { get; }`
-- [TrustPolicy](cephalon-engine.md#member-m-cephalon-engine-configuration-trustpolicy-ctor-system-boolean-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlydictionary-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TrustPolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+- [TrustPolicy](cephalon-engine.md#member-m-cephalon-engine-configuration-trustpolicy-ctor-system-boolean-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlydictionary-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TrustPolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Creates a trust policy.
-  - `TrustPolicy(bool requireTrustedPackages, CapabilityAccess defaultCapabilityAccess, IReadOnlyList<string> trustedPackages, IReadOnlyList<string> trustedAssemblies, IReadOnlyList<string> trustedPublishers, IReadOnlyList<string> trustedSignerFingerprints, IReadOnlyDictionary<string, string> trustedSignaturePublicKeys, IReadOnlyDictionary<string, CapabilityAccess> capabilities, IReadOnlyDictionary<string, IReadOnlyList<string>> allowedPackageChecksums)`
+  - `TrustPolicy(bool requireTrustedPackages, CapabilityAccess defaultCapabilityAccess, IReadOnlyList<string> trustedPackages, IReadOnlyList<string> trustedAssemblies, IReadOnlyList<string> trustedPublishers, IReadOnlyList<string> trustedSignerFingerprints, IReadOnlyDictionary<string, string> trustedSignaturePublicKeys, IReadOnlyDictionary<string, string> trustedSignatureCertificates, IReadOnlyList<string> trustedSignatureCertificateAuthorities, IReadOnlyDictionary<string, CapabilityAccess> capabilities, IReadOnlyDictionary<string, IReadOnlyList<string>> allowedPackageChecksums)`
 - [TrustReason](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-trustreason): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=TrustReason&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the reason the package is trusted or not trusted by the current trust policy.
   - `string TrustReason { get; }`
@@ -3735,6 +3753,12 @@ Browse the published API surface by public member.
 - [VerificationReason](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-verificationreason): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=VerificationReason&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the verification outcome summary for this signature.
   - `string VerificationReason { get; }`
+- [VerificationSource](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-verificationsource): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=VerificationSource&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the trust source that verified the signature, when available.
+  - `string VerificationSource { get; }`
+- [VerificationSource](cephalon-engine.md#member-p-cephalon-engine-trust-packagesignaturetrustdecision-verificationsource): `Properties` on `PackageSignatureTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=VerificationSource&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - The trust source that verified the signature, when available.
+  - `string VerificationSource { get; set; }`
 - [Version](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-version): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Version&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Gets the declared module version, when one is available.
   - `string Version { get; }`

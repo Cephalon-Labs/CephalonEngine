@@ -26,9 +26,14 @@ public sealed class PackageManifest
     /// <param name="signatureSigner">The signer identity declared by the package manifest, when available.</param>
     /// <param name="signatureKeyId">The trusted-key identifier declared by the package manifest, when available.</param>
     /// <param name="signatureFingerprint">The signer fingerprint declared by the package manifest, when available.</param>
+    /// <param name="signatureCertificateThumbprint">
+    /// The primary signing certificate thumbprint used during verification, when certificate-backed trust was used.
+    /// </param>
     /// <param name="signatureAlgorithm">The signature algorithm declared by the package manifest, when available.</param>
     /// <param name="signatures">The declared package signatures and their individual verification outcomes.</param>
-    /// <param name="isSignatureVerified">Whether the package signature was cryptographically verified against a trusted public key.</param>
+    /// <param name="isSignatureVerified">
+    /// Whether the package signature was cryptographically verified against a trusted public key or signing certificate.
+    /// </param>
     /// <param name="signatureVerificationReason">The verification outcome summary for the package signature.</param>
     /// <param name="checksumSha256">The computed SHA-256 checksum of the resolved package assembly.</param>
     /// <param name="isTrusted">Whether the package is trusted by the current trust policy.</param>
@@ -52,6 +57,7 @@ public sealed class PackageManifest
         string? signatureSigner,
         string? signatureKeyId,
         string? signatureFingerprint,
+        string? signatureCertificateThumbprint,
         string? signatureAlgorithm,
         IReadOnlyList<PackageSignatureManifest>? signatures,
         bool isSignatureVerified,
@@ -78,6 +84,7 @@ public sealed class PackageManifest
         SignatureSigner = signatureSigner;
         SignatureKeyId = signatureKeyId;
         SignatureFingerprint = signatureFingerprint;
+        SignatureCertificateThumbprint = signatureCertificateThumbprint;
         SignatureAlgorithm = signatureAlgorithm;
         Signatures = signatures ?? [];
         IsSignatureVerified = isSignatureVerified;
@@ -178,6 +185,11 @@ public sealed class PackageManifest
     public string? SignatureFingerprint { get; }
 
     /// <summary>
+    /// Gets the primary signing certificate thumbprint used during verification, when certificate-backed trust was used.
+    /// </summary>
+    public string? SignatureCertificateThumbprint { get; }
+
+    /// <summary>
     /// Gets the signature algorithm declared by the package manifest, when available.
     /// </summary>
     public string? SignatureAlgorithm { get; }
@@ -188,7 +200,7 @@ public sealed class PackageManifest
     public IReadOnlyList<PackageSignatureManifest> Signatures { get; }
 
     /// <summary>
-    /// Gets a value indicating whether the package signature was cryptographically verified.
+    /// Gets a value indicating whether the package signature was cryptographically verified against a trusted signing identity.
     /// </summary>
     public bool IsSignatureVerified { get; }
 

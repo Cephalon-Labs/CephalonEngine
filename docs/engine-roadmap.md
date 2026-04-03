@@ -167,14 +167,14 @@ Current baseline already in place:
 - package load results are exposed through `/engine/packages` and manifest v2 metadata
 - package trust and capability policy are exposed through `Engine:Trust` and `/engine/trust-policy`
 - package publisher and signer provenance can be declared and evaluated through package manifests and trust allow-lists
-- detached package signatures can be cryptographically verified against trusted public keys
+- detached package signatures can be cryptographically verified against trusted public keys or trusted signing certificate chains
 
-Remaining work in this phase is the broader platform story around external distribution, multi-signer/certificate-chain verification, and richer package provenance beyond the shipped discovery, dependency validation, compatibility, integrity, detached-signature, publisher/signer metadata, checksum, and package-policy baseline.
+Remaining work in this phase is the broader platform story around external distribution and richer package provenance beyond the shipped discovery, dependency validation, compatibility, integrity, detached-signature, multi-signer, public-key, certificate-chain, publisher/signer metadata, checksum, and package-policy baseline.
 
 Remaining follow-through:
 
 - external distribution and versioned package delivery guidance
-- richer signer verification and provenance beyond the current detached-signature baseline
+- richer provenance attestations and package-feed guidance beyond the current signature-verification baseline
 
 Exit criteria:
 
@@ -260,7 +260,7 @@ Exit criteria:
 
 Updated priority order as of `April 3, 2026`:
 
-1. package distribution, provenance, and richer trust follow-through beyond the current baseline
+1. package distribution and provenance follow-through beyond the current baseline
 2. workflow and orchestration primitives
 3. multi-service suite blueprints
 4. cloud and platform integrations, with self-hosted plus Azure Monitor plus AWS plus GCP plus Huawei Cloud plus Alibaba Cloud plus Red Hat OpenShift plus DigitalOcean plus VMware Tanzu shipped, and the downstream Cloudflare/custom-provider guidance slice shipped under `#120` while future first-party additions stay explicit and adoption-driven

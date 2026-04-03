@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-03T08:58:47.8307086+00:00",
+  "GeneratedAtUtc": "2026-04-03T09:36:36.3606426+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -3493,7 +3493,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 26,
+        "Properties": 27,
         "Methods": 0
       }
     },
@@ -3523,7 +3523,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 7,
+        "Properties": 9,
         "Methods": 0
       }
     },
@@ -3538,7 +3538,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 5,
+        "Properties": 7,
         "Methods": 0
       }
     },
@@ -3553,7 +3553,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 11,
+        "Properties": 12,
         "Methods": 0
       }
     },
@@ -4573,7 +4573,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 11,
+        "Properties": 13,
         "Methods": 3
       }
     },
@@ -6486,6 +6486,28 @@
       "AnchorId": "member-p-cephalon-scaffolding-generation-scaffoldrequest-cephalonpackageversion",
       "Signature": "string CephalonPackageVersion { get; }",
       "Summary": "Gets the Cephalon package version written into the scaffold."
+    },
+    {
+      "DisplayName": "CertificateThumbprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageSignatureManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-manifest-packagesignaturemanifest-certificatethumbprint",
+      "Signature": "string CertificateThumbprint { get; }",
+      "Summary": "Gets the signing certificate thumbprint used during verification, when certificate-backed trust was used."
+    },
+    {
+      "DisplayName": "CertificateThumbprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageSignatureTrustDecision",
+      "NamespaceName": "Cephalon.Engine.Trust",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-trust-packagesignaturetrustdecision-certificatethumbprint",
+      "Signature": "string CertificateThumbprint { get; set; }",
+      "Summary": "The signing certificate thumbprint used during verification, when certificate-backed trust was used."
     },
     {
       "DisplayName": "Channels",
@@ -11061,7 +11083,7 @@
       "FileName": "cephalon-engine.md",
       "AnchorId": "member-p-cephalon-engine-manifest-packagemanifest-issignatureverified",
       "Signature": "bool IsSignatureVerified { get; }",
-      "Summary": "Gets a value indicating whether the package signature was cryptographically verified."
+      "Summary": "Gets a value indicating whether the package signature was cryptographically verified against a trusted signing identity."
     },
     {
       "DisplayName": "IsSignatureVerified",
@@ -11138,7 +11160,7 @@
       "FileName": "cephalon-engine.md",
       "AnchorId": "member-p-cephalon-engine-manifest-packagesignaturemanifest-isverified",
       "Signature": "bool IsVerified { get; }",
-      "Summary": "Gets a value indicating whether this signature was cryptographically verified."
+      "Summary": "Gets a value indicating whether this signature was cryptographically verified against a trusted signing identity."
     },
     {
       "DisplayName": "IsVerified",
@@ -11149,7 +11171,7 @@
       "FileName": "cephalon-engine.md",
       "AnchorId": "member-p-cephalon-engine-trust-packagesignaturetrustdecision-isverified",
       "Signature": "bool IsVerified { get; set; }",
-      "Summary": "Whether this signature verified successfully against a trusted public key."
+      "Summary": "Whether this signature verified successfully against a trusted public key or trusted signing certificate."
     },
     {
       "DisplayName": "JsonRpc",
@@ -13039,8 +13061,8 @@
       "NamespaceName": "Cephalon.Engine.Manifest",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-manifest-packagemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagesignaturemanifest-system-boolean-system-string-system-string-system-boolean-system-string",
-      "Signature": "PackageManifest(string id, string kind, string assemblyName, string path, string sourcePath, string loadContext, IReadOnlyList\u003Cstring\u003E modules, string version, string minimumEngineVersion, string maximumEngineVersion, IReadOnlyList\u003Cstring\u003E supportedTargetFrameworks, string publisherId, string publisherDisplayName, string publisherWebsite, string signatureType, string signatureSigner, string signatureKeyId, string signatureFingerprint, string signatureAlgorithm, IReadOnlyList\u003CPackageSignatureManifest\u003E signatures, bool isSignatureVerified, string signatureVerificationReason, string checksumSha256, bool isTrusted, string trustReason)",
+      "AnchorId": "member-m-cephalon-engine-manifest-packagemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagesignaturemanifest-system-boolean-system-string-system-string-system-boolean-system-string",
+      "Signature": "PackageManifest(string id, string kind, string assemblyName, string path, string sourcePath, string loadContext, IReadOnlyList\u003Cstring\u003E modules, string version, string minimumEngineVersion, string maximumEngineVersion, IReadOnlyList\u003Cstring\u003E supportedTargetFrameworks, string publisherId, string publisherDisplayName, string publisherWebsite, string signatureType, string signatureSigner, string signatureKeyId, string signatureFingerprint, string signatureCertificateThumbprint, string signatureAlgorithm, IReadOnlyList\u003CPackageSignatureManifest\u003E signatures, bool isSignatureVerified, string signatureVerificationReason, string checksumSha256, bool isTrusted, string trustReason)",
       "Summary": "Creates a new package manifest entry."
     },
     {
@@ -13127,8 +13149,8 @@
       "NamespaceName": "Cephalon.Engine.Manifest",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-manifest-packagesignaturemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-boolean-system-string",
-      "Signature": "PackageSignatureManifest(string type, string signer, string keyId, string fingerprint, string algorithm, bool isVerified, string verificationReason)",
+      "AnchorId": "member-m-cephalon-engine-manifest-packagesignaturemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-string",
+      "Signature": "PackageSignatureManifest(string type, string signer, string keyId, string fingerprint, string algorithm, string verificationSource, string certificateThumbprint, bool isVerified, string verificationReason)",
       "Summary": "Creates a package signature manifest entry."
     },
     {
@@ -13138,8 +13160,8 @@
       "NamespaceName": "Cephalon.Engine.Trust",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-trust-packagesignaturetrustdecision-ctor-system-string-system-string-system-string-system-boolean-system-string",
-      "Signature": "PackageSignatureTrustDecision(string Signer, string KeyId, string Fingerprint, bool IsVerified, string Reason)",
+      "AnchorId": "member-m-cephalon-engine-trust-packagesignaturetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-boolean-system-string",
+      "Signature": "PackageSignatureTrustDecision(string Signer, string KeyId, string Fingerprint, string VerificationSource, string CertificateThumbprint, bool IsVerified, string Reason)",
       "Summary": "Describes the trust and verification outcome for a single package signature."
     },
     {
@@ -13149,8 +13171,8 @@
       "NamespaceName": "Cephalon.Engine.Trust",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-trust-packagetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagesignaturetrustdecision-system-boolean-system-string-system-boolean-system-string",
-      "Signature": "PackageTrustDecision(string PackageId, string AssemblyName, string Path, string PublisherId, string SignatureKeyId, string SignatureFingerprint, IReadOnlyList\u003CPackageSignatureTrustDecision\u003E Signatures, bool IsSignatureVerified, string SignatureVerificationReason, bool IsTrusted, string Reason)",
+      "AnchorId": "member-m-cephalon-engine-trust-packagetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagesignaturetrustdecision-system-boolean-system-string-system-boolean-system-string",
+      "Signature": "PackageTrustDecision(string PackageId, string AssemblyName, string Path, string PublisherId, string SignatureKeyId, string SignatureFingerprint, string SignatureCertificateThumbprint, IReadOnlyList\u003CPackageSignatureTrustDecision\u003E Signatures, bool IsSignatureVerified, string SignatureVerificationReason, bool IsTrusted, string Reason)",
       "Summary": "Describes the trust outcome for a package after package metadata, signature verification, and host trust rules have been evaluated."
     },
     {
@@ -15772,6 +15794,28 @@
       "Summary": "Gets the signature algorithm declared by the package manifest, when available."
     },
     {
+      "DisplayName": "SignatureCertificateThumbprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-manifest-packagemanifest-signaturecertificatethumbprint",
+      "Signature": "string SignatureCertificateThumbprint { get; }",
+      "Summary": "Gets the primary signing certificate thumbprint used during verification, when certificate-backed trust was used."
+    },
+    {
+      "DisplayName": "SignatureCertificateThumbprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageTrustDecision",
+      "NamespaceName": "Cephalon.Engine.Trust",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-trust-packagetrustdecision-signaturecertificatethumbprint",
+      "Signature": "string SignatureCertificateThumbprint { get; set; }",
+      "Summary": "The primary signing certificate thumbprint used during verification, when certificate-backed trust was used."
+    },
+    {
       "DisplayName": "SignatureFingerprint",
       "Category": "Properties",
       "DeclaringTypeName": "PackageManifest",
@@ -17356,6 +17400,28 @@
       "Summary": "Gets the trusted publisher identifier allow-list."
     },
     {
+      "DisplayName": "TrustedSignatureCertificateAuthorities",
+      "Category": "Properties",
+      "DeclaringTypeName": "TrustPolicy",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-trustpolicy-trustedsignaturecertificateauthorities",
+      "Signature": "IReadOnlyList\u003Cstring\u003E TrustedSignatureCertificateAuthorities { get; }",
+      "Summary": "Gets the configured certificate authorities used to validate trusted signing certificate chains."
+    },
+    {
+      "DisplayName": "TrustedSignatureCertificates",
+      "Category": "Properties",
+      "DeclaringTypeName": "TrustPolicy",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-trustpolicy-trustedsignaturecertificates",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E TrustedSignatureCertificates { get; }",
+      "Summary": "Gets the configured trusted signing certificates used for certificate-backed detached-signature verification."
+    },
+    {
       "DisplayName": "TrustedSignaturePublicKeys",
       "Category": "Properties",
       "DeclaringTypeName": "TrustPolicy",
@@ -17395,8 +17461,8 @@
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-configuration-trustpolicy-ctor-system-boolean-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlydictionary-system-string-system-collections-generic-ireadonlylist-system-string",
-      "Signature": "TrustPolicy(bool requireTrustedPackages, CapabilityAccess defaultCapabilityAccess, IReadOnlyList\u003Cstring\u003E trustedPackages, IReadOnlyList\u003Cstring\u003E trustedAssemblies, IReadOnlyList\u003Cstring\u003E trustedPublishers, IReadOnlyList\u003Cstring\u003E trustedSignerFingerprints, IReadOnlyDictionary\u003Cstring, string\u003E trustedSignaturePublicKeys, IReadOnlyDictionary\u003Cstring, CapabilityAccess\u003E capabilities, IReadOnlyDictionary\u003Cstring, IReadOnlyList\u003Cstring\u003E\u003E allowedPackageChecksums)",
+      "AnchorId": "member-m-cephalon-engine-configuration-trustpolicy-ctor-system-boolean-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-cephalon-abstractions-capabilities-capabilityaccess-system-collections-generic-ireadonlydictionary-system-string-system-collections-generic-ireadonlylist-system-string",
+      "Signature": "TrustPolicy(bool requireTrustedPackages, CapabilityAccess defaultCapabilityAccess, IReadOnlyList\u003Cstring\u003E trustedPackages, IReadOnlyList\u003Cstring\u003E trustedAssemblies, IReadOnlyList\u003Cstring\u003E trustedPublishers, IReadOnlyList\u003Cstring\u003E trustedSignerFingerprints, IReadOnlyDictionary\u003Cstring, string\u003E trustedSignaturePublicKeys, IReadOnlyDictionary\u003Cstring, string\u003E trustedSignatureCertificates, IReadOnlyList\u003Cstring\u003E trustedSignatureCertificateAuthorities, IReadOnlyDictionary\u003Cstring, CapabilityAccess\u003E capabilities, IReadOnlyDictionary\u003Cstring, IReadOnlyList\u003Cstring\u003E\u003E allowedPackageChecksums)",
       "Summary": "Creates a trust policy."
     },
     {
@@ -18080,6 +18146,28 @@
       "AnchorId": "member-p-cephalon-engine-manifest-packagesignaturemanifest-verificationreason",
       "Signature": "string VerificationReason { get; }",
       "Summary": "Gets the verification outcome summary for this signature."
+    },
+    {
+      "DisplayName": "VerificationSource",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageSignatureManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-manifest-packagesignaturemanifest-verificationsource",
+      "Signature": "string VerificationSource { get; }",
+      "Summary": "Gets the trust source that verified the signature, when available."
+    },
+    {
+      "DisplayName": "VerificationSource",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageSignatureTrustDecision",
+      "NamespaceName": "Cephalon.Engine.Trust",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-trust-packagesignaturetrustdecision-verificationsource",
+      "Signature": "string VerificationSource { get; set; }",
+      "Summary": "The trust source that verified the signature, when available."
     },
     {
       "DisplayName": "Version",

@@ -114,11 +114,14 @@ public sealed class CapabilityPolicyEvaluator
                 PublisherId: package.PublisherId,
                 SignatureKeyId: package.SignatureKeyId,
                 SignatureFingerprint: package.SignatureFingerprint,
+                SignatureCertificateThumbprint: package.SignatureCertificateThumbprint,
                 Signatures: package.Signatures
                     .Select(static signature => new PackageSignatureTrustDecision(
                         Signer: signature.Signer,
                         KeyId: signature.KeyId,
                         Fingerprint: signature.Fingerprint,
+                        VerificationSource: signature.VerificationSource,
+                        CertificateThumbprint: signature.CertificateThumbprint,
                         IsVerified: signature.IsVerified,
                         Reason: signature.VerificationReason))
                     .ToArray(),

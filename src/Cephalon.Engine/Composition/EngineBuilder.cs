@@ -679,6 +679,7 @@ public sealed class EngineBuilder
     {
         var packageId = GetPackageId(package);
         var assemblyName = package.Assembly.GetName().Name ?? package.Assembly.ManifestModule.Name;
+        var primarySignatureCertificateThumbprint = GetPrimarySignatureCertificateThumbprint(package.SignatureVerification.Signatures);
         var (isTrusted, trustReason) = ResolvePackageTrust(
             packageId,
             assemblyName,
@@ -707,6 +708,7 @@ public sealed class EngineBuilder
             signatureSigner: package.Request.SignatureSigner,
             signatureKeyId: package.Request.SignatureKeyId,
             signatureFingerprint: package.Request.SignatureFingerprint,
+            signatureCertificateThumbprint: primarySignatureCertificateThumbprint,
             signatureAlgorithm: package.Request.SignatureAlgorithm,
             signatures: package.SignatureVerification.Signatures
                 .Select(static signature => new PackageSignatureManifest(
@@ -715,6 +717,8 @@ public sealed class EngineBuilder
                     keyId: signature.KeyId,
                     fingerprint: signature.Fingerprint,
                     algorithm: signature.Algorithm,
+                    verificationSource: signature.VerificationSource,
+                    certificateThumbprint: signature.CertificateThumbprint,
                     isVerified: signature.IsVerified,
                     verificationReason: signature.Reason))
                 .ToArray(),
@@ -773,6 +777,29 @@ public sealed class EngineBuilder
         }
 
         return (false, "Package is not trusted by the current trust policy.");
+    }
+
+    private static string? GetPrimarySignatureCertificateThumbprint(
+        IReadOnlyList<PackageSignatureVerificationEntry> signatures)
+    {
+        for (var index = 0; index < signatures.Count; index++)
+        {
+            if (signatures[index].IsVerified &&
+                !string.IsNullOrWhiteSpace(signatures[index].CertificateThumbprint))
+            {
+                return signatures[index].CertificateThumbprint;
+            }
+        }
+
+        for (var index = 0; index < signatures.Count; index++)
+        {
+            if (!string.IsNullOrWhiteSpace(signatures[index].CertificateThumbprint))
+            {
+                return signatures[index].CertificateThumbprint;
+            }
+        }
+
+        return null;
     }
 
     private static string GetPackageId(LoadedPackage package)
