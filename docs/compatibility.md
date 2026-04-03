@@ -42,6 +42,7 @@ This guide describes the compatibility contract that must stay aligned across Ce
 - XML comments on supported public APIs are the common source for IntelliSense, `Cephalon.ReferenceDocs`, and DocFX-style publishing
 - keep the CLI docs commands, the publish script, scaffolded `ReferenceDocs` config, and hosted-reference docs guidance aligned when publishing behavior changes
 - keep tests outside the supported reference-doc/DocFX input set unless we intentionally promote them into published documentation scope
+- keep shared test-harness types internal while the test project stays outside the supported published docs set, leaving only framework-required xUnit classes and rare reflective transport-contract exceptions public
 
 ## Repository verification points
 
@@ -50,6 +51,7 @@ This guide describes the compatibility contract that must stay aligned across Ce
 - `CliApplicationTests` verifies CLI entry points and end-to-end command behavior for the user-facing shell
 - `EngineBuilderTests` verifies package-manifest compatibility enforcement such as engine-version and target-framework checks
 - `PackageSurfaceTests` verifies the intended exported surface of the CLI, reference-doc tooling, adapters, scaffolding, and companion packs
+- `TestHarnessSurfaceTests` verifies that `tests/Cephalon.Tests` exports only xUnit test classes plus the explicit reflective transport-contract allow list and keeps XML-document generation disabled
 
 ## Maintainer checklist
 

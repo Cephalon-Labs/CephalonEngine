@@ -41,7 +41,7 @@ Current enforced baseline:
 Current follow-up boundary:
 
 - `samples/`, `benchmarks/`, and reference-module packages are expected to carry the same XML-comment completeness before we include them in the supported published docs set
-- test projects such as `tests/Cephalon.Tests` are intentionally outside the DocFX/reference-doc publishing boundary unless we explicitly choose to publish test-harness APIs later
+- test projects such as `tests/Cephalon.Tests` are intentionally outside the DocFX/reference-doc publishing boundary, and the shared test harness now keeps only framework-required xUnit classes plus a narrow reflective transport-contract exception public while helpers stay internal so test-only APIs do not drift into the published surface accidentally
 
 ## Hosted surface
 
@@ -169,6 +169,7 @@ The browser UI can switch between type search and member search, while the JSON 
 - keep XML comments meaningful on all public contracts so external doc tools and IntelliSense remain accurate
 - keep the DocFX input set aligned with the assemblies covered by XML-comment completeness checks
 - keep test projects excluded from the generated reference-doc and DocFX publishing set unless they are intentionally promoted into documentation scope
+- keep shared test-harness types internal and leave only framework-required xUnit classes plus rare reflective transport-contract exceptions public while the test project remains outside the supported published docs set
 - keep hand-authored guide docs in `README.md` and `docs/` focused on capability explanation and adoption guidance
 - regenerate `docs/reference/` after changing public API docs
 - keep `artifacts/reference-docs-release/` as pipeline output, not as hand-edited source content

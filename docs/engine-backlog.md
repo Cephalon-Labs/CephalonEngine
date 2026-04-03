@@ -213,24 +213,16 @@ Delivered:
 - supported DocFX/reference-doc boundary documented explicitly for shipped packages, samples, benchmarks, and reference modules
 - `tests/Cephalon.Tests` excluded from generated docs scope so test-only fixtures do not blur supported documentation input
 
-Follow-up later:
-
-- keep repo-wide XML-comment hygiene for test harnesses as a separate explicit choice instead of silently expanding published docs scope
-
 ### ENG-028 Repo-wide XML-comment hygiene for test harnesses
 
-Status: later
+Status: done
 Estimate: 6
 
-Why:
+Delivered:
 
-- a fully repo-wide CS1591-clean build would still require a separate decision on whether public test fixtures should become internal, documented, or excluded by convention
-
-Acceptance:
-
-- decide whether public xUnit fixtures and shared test helpers should stay public or become internal where safe
-- if repo-wide XML-comment enforcement beyond the published docs set becomes a goal, make the test-harness policy explicit and tooling-backed
-- avoid letting test-only visibility choices blur the supported DocFX/reference-doc publishing boundary
+- `tests/Cephalon.Tests` now keeps shared test-harness types internal where safe while leaving only framework-required xUnit classes and a small reflective transport-contract exception public
+- tooling coverage now locks that policy by asserting the test assembly exports only xUnit test classes plus the explicit allow-listed transport contract exception and that XML-document generation stays disabled for the test project
+- reference-doc and compatibility guidance now state the test-harness policy explicitly so the supported DocFX/reference-doc boundary stays limited to shipped packages and intentionally promoted samples
 
 ## Current operational focus
 
@@ -573,8 +565,5 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 - shipped first execution-graph contract baseline plus hosted-execution follow-through under `ENG-013`
 - shipped package distribution and provenance follow-through beyond the original package-loading baseline
+- shipped repo-wide XML-comment hygiene for test harnesses through explicit xUnit visibility rules plus tooling-backed guards under `ENG-028`
 - ENG-029 self-hosted OTLP collector/runtime-default follow-through plus the shipped Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and Cloudflare/downstream provider authoring guidance slices
-
-### Later / not scheduled yet
-
-- ENG-028 repo-wide XML-comment hygiene for test harnesses

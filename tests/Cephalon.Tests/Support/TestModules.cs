@@ -205,7 +205,7 @@ internal sealed class DiscoveryTestModule : ModuleBase, IEndpointModule, IGraphQ
     }
 }
 
-public interface ITestClock
+internal interface ITestClock
 {
     DateTimeOffset GetUtcNow();
 }
@@ -220,7 +220,7 @@ internal sealed class FixedClock : ITestClock
     }
 }
 
-public sealed class TestGreetingComposer
+internal sealed class TestGreetingComposer
 {
     private readonly ITestClock clock;
 
@@ -240,7 +240,7 @@ public sealed class TestGreetingComposer
     }
 }
 
-public sealed class DiscoveryGraphQLQueries
+internal sealed class DiscoveryGraphQLQueries
 {
     public static void Configure(IObjectTypeDescriptor descriptor)
     {
