@@ -401,24 +401,21 @@ Follow-up later:
 
 ### ENG-011 Package and plugin loading
 
-Status: later
+Status: done
 Estimate: 5
 
 Why:
 
 - Cephalon becomes a platform when modules are distributable independently
 
-Current baseline already in place:
+Delivered:
 
 - package discovery inputs through `Engine:Discovery:Packages`, `Engine:Discovery:PackageDirectories`, and the package builder APIs
 - explicit package load failures for missing manifests, duplicate registrations, integrity mismatches, and dependency-registration gaps
 - manifest-declared compatibility, target-framework, version, and package-dependency validation through `cephalon.package.json`
 - package policy, detached-signature verification through trusted public keys or trusted signing certificate chains, publisher/signer provenance, and trust hooks surfaced through `Engine:PackagePolicy`, `Engine:Trust`, and `/engine/packages`
-
-Follow-up later:
-
-- external distribution and broader provenance follow-through beyond the current signature-verification baseline
-- versioned package distribution guidance outside the repository
+- external package distribution metadata and provenance metadata surfaced through `distribution`, `provenance`, and `/engine/packages`
+- authoring guidance for externally distributed packages, including release-channel, package URI, source revision, build URI, and provenance statement hints
 
 ### ENG-012 Capability permissions and trust policy
 
@@ -558,11 +555,10 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 ### Sprint 3
 
 - ENG-013 Workflow and orchestration primitives
-- package distribution and provenance follow-through beyond the current baseline
+- shipped package distribution and provenance follow-through beyond the original package-loading baseline
 - ENG-029 self-hosted OTLP collector/runtime-default follow-through plus the shipped Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, and Cloudflare/downstream provider authoring guidance slices
 
 ### Later / not scheduled yet
 
-- ENG-011 external distribution and provenance follow-through
 - ENG-022 `MicroserviceSuite` blueprint
 - ENG-028 repo-wide XML-comment hygiene for test harnesses

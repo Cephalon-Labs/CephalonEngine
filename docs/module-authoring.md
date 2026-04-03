@@ -66,6 +66,17 @@ Baseline example:
     "displayName": "Cephalon Labs",
     "website": "https://example.invalid/cephalon-labs"
   },
+  "distribution": {
+    "channel": "stable",
+    "manifestUri": "https://packages.example.invalid/cephalon/operations/1.0.0/cephalon.package.json",
+    "packageUri": "https://packages.example.invalid/cephalon/operations/1.0.0/Cephalon.ReferenceModule.Operations.zip"
+  },
+  "provenance": {
+    "sourceRepository": "https://github.com/Cephalon-Labs/CephalonEngine",
+    "sourceRevision": "refs/tags/operations-v1.0.0",
+    "buildUri": "https://builds.example.invalid/cephalon/operations/1.0.0",
+    "statementUri": "https://packages.example.invalid/cephalon/operations/1.0.0/provenance.json"
+  },
   "signature": {
     "type": "detached-signature",
     "signer": "Cephalon Labs Build",
@@ -104,6 +115,10 @@ Current behavior:
 - `dependencies` is optional, but when declared each entry should reference the stable `id` of another package and can add `minimumVersion` / `maximumVersion` bounds for versioned package dependencies
 - version-bounded dependency entries require the referenced package to declare its own `version`
 - `publisher.id` should stay stable across releases if operators or trust policy use publisher-level allow-lists
+- `distribution.channel` should stay stable enough to distinguish release lanes such as `stable`, `preview`, or `internal`
+- `distribution.manifestUri` and `distribution.packageUri` should point to the externally reachable locations operators actually use once the package leaves the repo
+- `provenance.sourceRepository` and `provenance.sourceRevision` should line up with the release source you intend operators to audit
+- `provenance.buildUri` and `provenance.statementUri` are optional, but they are the right place to point operators to CI evidence or an attestation document
 - `signature.keyId` or `signatures[].keyId` should stay stable across releases if hosts map trusted public keys or trusted signing certificates by signing identity
 - `signature.fingerprint` or `signatures[].fingerprint` identifies the signing key and is surfaced through diagnostics and trust snapshots
 - `signature.value` or `signatures[].value` is optional until a host requires cryptographic verification, but when present it should be a detached signature over the resolved assembly SHA-256 hash
@@ -111,6 +126,23 @@ Current behavior:
 - `integrity.sha256` is optional, but when present the resolved assembly must match it exactly
 
 For scaffolded modules and `dotnet new` starters, Cephalon now emits this manifest automatically with the current package version and target framework baseline.
+
+## External distribution guidance
+
+When a package is meant to leave the repository, keep the distribution and provenance hints in `cephalon.package.json` truthful enough for operators to answer three questions quickly:
+
+- where should this package be fetched from now
+- which source revision produced it
+- where is the build or provenance evidence that backs this artifact
+
+Recommended baseline:
+
+- set `distribution.channel` to the release lane you actually publish, such as `stable`, `preview`, or `internal`
+- set `distribution.manifestUri` to the externally reachable manifest location when you publish manifests alongside package artifacts
+- set `distribution.packageUri` to the archive, NuGet-like feed entry, or artifact page operators use to fetch the package
+- set `provenance.sourceRepository` to the canonical source repository URI
+- set `provenance.sourceRevision` to a tag, commit SHA, or release ref that unambiguously identifies the shipped source
+- set `provenance.buildUri` and `provenance.statementUri` when you have CI/build evidence or a provenance/attestation document to point at
 
 ## Compatibility checklist
 
@@ -210,7 +242,7 @@ builder.AddCephalon(engine =>
 });
 ```
 
-`/engine/packages` exposes the package-loading snapshot the runtime resolved, including the package `kind`, resolved assembly `path`, original `sourcePath`, declared `version`, compatibility fields, declared package `dependencies`, publisher/signature provenance metadata, the top-level signature summary fields kept for backward compatibility, the per-signer `signatures` collection, per-signer `verificationSource` and `certificateThumbprint` details when certificate-backed trust is used, cryptographic verification status, computed `checksumSha256`, and the current `trustReason`. `/engine/modules` continues to show the active module set after policy and ordering have been applied. `/engine/technology-catalog` shows the technology profiles available after built-in, package, and project contributions have been merged. `/engine/technology-surfaces` shows the active runtime surfaces exposed by installed technology packs after host options and module contributors have both been applied, while `/engine/technology-surfaces/{technologyId}` narrows that view to a single selected technology profile. In code, the same merged surface set is available through `ITechnologyRuntimeCatalog`, and the broader operator-facing runtime snapshot is available through `IRuntimeIntrospectionSnapshotProvider` or `GET /engine/snapshot`.
+`/engine/packages` exposes the package-loading snapshot the runtime resolved, including the package `kind`, resolved assembly `path`, original `sourcePath`, declared `version`, compatibility fields, declared package `dependencies`, external `distribution` metadata, `provenance` metadata, publisher/signature provenance metadata, the top-level signature summary fields kept for backward compatibility, the per-signer `signatures` collection, per-signer `verificationSource` and `certificateThumbprint` details when certificate-backed trust is used, cryptographic verification status, computed `checksumSha256`, and the current `trustReason`. `/engine/modules` continues to show the active module set after policy and ordering have been applied. `/engine/technology-catalog` shows the technology profiles available after built-in, package, and project contributions have been merged. `/engine/technology-surfaces` shows the active runtime surfaces exposed by installed technology packs after host options and module contributors have both been applied, while `/engine/technology-surfaces/{technologyId}` narrows that view to a single selected technology profile. In code, the same merged surface set is available through `ITechnologyRuntimeCatalog`, and the broader operator-facing runtime snapshot is available through `IRuntimeIntrospectionSnapshotProvider` or `GET /engine/snapshot`.
 
 ## What the reference package demonstrates
 

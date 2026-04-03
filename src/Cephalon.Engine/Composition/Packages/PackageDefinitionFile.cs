@@ -28,6 +28,12 @@ internal sealed class PackageDefinitionFile
     [JsonPropertyName("publisher")]
     public PackagePublisherDefinition? Publisher { get; init; }
 
+    [JsonPropertyName("distribution")]
+    public PackageDistributionDefinition? Distribution { get; init; }
+
+    [JsonPropertyName("provenance")]
+    public PackageProvenanceDefinition? Provenance { get; init; }
+
     [JsonPropertyName("dependencies")]
     public PackageDependencyDefinition[]? Dependencies { get; init; }
 
@@ -107,6 +113,49 @@ internal sealed class PackageDefinitionFile
         return string.IsNullOrWhiteSpace(Publisher?.Website)
             ? null
             : Publisher.Website.Trim();
+    }
+
+    public PackageDistributionLoadRequest? ResolveDistribution()
+    {
+        if (Distribution is null)
+        {
+            return null;
+        }
+
+        var channel = NormalizeString(Distribution.Channel);
+        var manifestUri = NormalizeString(Distribution.ManifestUri);
+        var packageUri = NormalizeString(Distribution.PackageUri);
+
+        return channel is null && manifestUri is null && packageUri is null
+            ? null
+            : new PackageDistributionLoadRequest(
+                Channel: channel,
+                ManifestUri: manifestUri,
+                PackageUri: packageUri);
+    }
+
+    public PackageProvenanceLoadRequest? ResolveProvenance()
+    {
+        if (Provenance is null)
+        {
+            return null;
+        }
+
+        var sourceRepository = NormalizeString(Provenance.SourceRepository);
+        var sourceRevision = NormalizeString(Provenance.SourceRevision);
+        var buildUri = NormalizeString(Provenance.BuildUri);
+        var statementUri = NormalizeString(Provenance.StatementUri);
+
+        return sourceRepository is null &&
+            sourceRevision is null &&
+            buildUri is null &&
+            statementUri is null
+            ? null
+            : new PackageProvenanceLoadRequest(
+                SourceRepository: sourceRepository,
+                SourceRevision: sourceRevision,
+                BuildUri: buildUri,
+                StatementUri: statementUri);
     }
 
     public PackageDependencyLoadRequest[] ResolveDependencies()
@@ -254,6 +303,33 @@ internal sealed class PackageDefinitionFile
         }
     }
 
+    internal sealed class PackageDistributionDefinition
+    {
+        [JsonPropertyName("channel")]
+        public string? Channel { get; init; }
+
+        [JsonPropertyName("manifestUri")]
+        public string? ManifestUri { get; init; }
+
+        [JsonPropertyName("packageUri")]
+        public string? PackageUri { get; init; }
+    }
+
+    internal sealed class PackageProvenanceDefinition
+    {
+        [JsonPropertyName("sourceRepository")]
+        public string? SourceRepository { get; init; }
+
+        [JsonPropertyName("sourceRevision")]
+        public string? SourceRevision { get; init; }
+
+        [JsonPropertyName("buildUri")]
+        public string? BuildUri { get; init; }
+
+        [JsonPropertyName("statementUri")]
+        public string? StatementUri { get; init; }
+    }
+
     internal sealed class PackageSignatureDefinition
     {
         [JsonPropertyName("type")]
@@ -273,5 +349,10 @@ internal sealed class PackageDefinitionFile
 
         [JsonPropertyName("value")]
         public string? Value { get; init; }
+    }
+
+    private static string? NormalizeString(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
     }
 }

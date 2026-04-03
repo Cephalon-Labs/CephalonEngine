@@ -357,6 +357,17 @@ builder.AddCephalon(engine =>
     "displayName": "Cephalon Labs",
     "website": "https://example.invalid/cephalon-labs"
   },
+  "distribution": {
+    "channel": "stable",
+    "manifestUri": "https://packages.example.invalid/cephalon/operations/1.0.0/cephalon.package.json",
+    "packageUri": "https://packages.example.invalid/cephalon/operations/1.0.0/Cephalon.ReferenceModule.Operations.zip"
+  },
+  "provenance": {
+    "sourceRepository": "https://github.com/Cephalon-Labs/CephalonEngine",
+    "sourceRevision": "refs/tags/operations-v1.0.0",
+    "buildUri": "https://builds.example.invalid/cephalon/operations/1.0.0",
+    "statementUri": "https://packages.example.invalid/cephalon/operations/1.0.0/provenance.json"
+  },
   "signature": {
     "type": "detached-signature",
     "signer": "Cephalon Labs Build",
@@ -381,13 +392,15 @@ The engine validates that metadata when loading package manifests:
 - `compatibility.minimumEngineVersion` and `compatibility.maximumEngineVersion` gate the current engine version
 - `compatibility.supportedTargetFrameworks` gates the current runtime target framework
 - `publisher.id` and optional publisher display metadata expose provenance information
+- `distribution` can describe the public release channel plus where operators should fetch the manifest or packaged artifact from outside the repo
+- `provenance` can describe the source repository, source revision, build URI, and provenance statement or attestation URI
 - `signature.keyId`, `signature.fingerprint`, and related signer metadata expose a trustable signing identity for policy and diagnostics
 - when `signature.value` is present and `Engine:Trust` resolves either a matching trusted public key or a trusted signing certificate plus certificate authority chain, the engine performs detached cryptographic signature verification against the resolved assembly SHA-256 hash
 - `integrity.sha256` is optional but, when present, must match the resolved assembly exactly
 - `Engine:PackagePolicy` can require manifest-driven package loading and specific metadata such as version, engine compatibility, target frameworks, publisher id, signer fingerprint, signature key id, signature value, signature verification, or integrity hashes
 - `Engine:Trust` can trust a package by package id, assembly name, cryptographically verified signature, publisher id, signer fingerprint, or checksum allow-list
 
-Current note: the shipped baseline now verifies detached signatures when a package declares `signature.keyId` + `signature.value`, or corresponding entries inside `signatures[]`, and the host configures matching trusted public keys or trusted signing certificates plus certificate authorities. Packages can declare multiple signers; the runtime surfaces per-signer verification results, verification source, and signing-certificate thumbprints when certificate-backed trust is used, and accepts the package when at least one required signature verifies under the active policy. Remaining work is the broader distribution story around richer provenance attestations and external package feeds.
+Current note: the shipped baseline now verifies detached signatures when a package declares `signature.keyId` + `signature.value`, or corresponding entries inside `signatures[]`, and the host configures matching trusted public keys or trusted signing certificates plus certificate authorities. Packages can declare multiple signers; the runtime surfaces per-signer verification results, verification source, signing-certificate thumbprints, and external distribution/provenance metadata when that data is declared in `cephalon.package.json`.
 
 Compatibility expectations across package manifests, scaffold output, CLI defaults, template-pack starters, and hosted reference-doc flows are summarized in `docs/compatibility.md`.
 

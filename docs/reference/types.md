@@ -208,8 +208,10 @@ Browse the published API surface by public type.
 ## P
 
 - [PackageDependencyManifest](cephalon-engine.md#type-cephalon-engine-manifest-packagedependencymanifest): `Cephalon.Engine.Manifest` in `Cephalon.Engine` [Browse](browse.html?q=PackageDependencyManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest)
+- [PackageDistributionManifest](cephalon-engine.md#type-cephalon-engine-manifest-packagedistributionmanifest): `Cephalon.Engine.Manifest` in `Cephalon.Engine` [Browse](browse.html?q=PackageDistributionManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest)
 - [PackageManifest](cephalon-engine.md#type-cephalon-engine-manifest-packagemanifest): `Cephalon.Engine.Manifest` in `Cephalon.Engine` [Browse](browse.html?q=PackageManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest)
 - [PackagePolicy](cephalon-engine.md#type-cephalon-engine-configuration-packagepolicy): `Cephalon.Engine.Configuration` in `Cephalon.Engine` [Browse](browse.html?q=PackagePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+- [PackageProvenanceManifest](cephalon-engine.md#type-cephalon-engine-manifest-packageprovenancemanifest): `Cephalon.Engine.Manifest` in `Cephalon.Engine` [Browse](browse.html?q=PackageProvenanceManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest)
 - [PackageSignatureManifest](cephalon-engine.md#type-cephalon-engine-manifest-packagesignaturemanifest): `Cephalon.Engine.Manifest` in `Cephalon.Engine` [Browse](browse.html?q=PackageSignatureManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest)
 - [PackageSignatureTrustDecision](cephalon-engine.md#type-cephalon-engine-trust-packagesignaturetrustdecision): `Cephalon.Engine.Trust` in `Cephalon.Engine` [Browse](browse.html?q=PackageSignatureTrustDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust)
 - [PackageTrustDecision](cephalon-engine.md#type-cephalon-engine-trust-packagetrustdecision): `Cephalon.Engine.Trust` in `Cephalon.Engine` [Browse](browse.html?q=PackageTrustDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust)

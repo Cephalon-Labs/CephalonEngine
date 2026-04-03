@@ -468,6 +468,9 @@ Browse the published API surface by public member.
 - [BuildActivityName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-buildactivityname): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=BuildActivityName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Gets the activity name used while building the runtime.
   - `const string BuildActivityName`
+- [BuildUri](cephalon-engine.md#member-p-cephalon-engine-manifest-packageprovenancemanifest-builduri): `Properties` on `PackageProvenanceManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=BuildUri&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the declared build or pipeline URI, when available.
+  - `string BuildUri { get; }`
 
 ## C
 
@@ -522,6 +525,9 @@ Browse the published API surface by public member.
 - [CertificateThumbprint](cephalon-engine.md#member-p-cephalon-engine-trust-packagesignaturetrustdecision-certificatethumbprint): `Properties` on `PackageSignatureTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=CertificateThumbprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The signing certificate thumbprint used during verification, when certificate-backed trust was used.
   - `string CertificateThumbprint { get; set; }`
+- [Channel](cephalon-engine.md#member-p-cephalon-engine-manifest-packagedistributionmanifest-channel): `Properties` on `PackageDistributionManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Channel&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the declared release channel, when available.
+  - `string Channel { get; }`
 - [Channels](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-channels): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=Channels&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Gets the host-defined event channels that should be available to the eventing runtime.
   - `IList<EventChannelDescriptor> Channels { get; }`
@@ -1077,6 +1083,9 @@ Browse the published API surface by public member.
 - [Dispose](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-dispose): `Methods` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Dispose&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Releases runtime resources.
   - `void Dispose()`
+- [Distribution](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-distribution): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Distribution&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the external distribution metadata declared by the package manifest, when available.
+  - `PackageDistributionManifest Distribution { get; }`
 - [DropletId](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-dropletid): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=DropletId&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the Droplet identifier to stamp onto exported resources.
   - `string DropletId { get; set; }`
@@ -1968,6 +1977,9 @@ Browse the published API surface by public member.
 - [ManifestPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-manifestpath): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ManifestPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The hosted path to the machine-readable manifest.
   - `string ManifestPath { get; set; }`
+- [ManifestUri](cephalon-engine.md#member-p-cephalon-engine-manifest-packagedistributionmanifest-manifesturi): `Properties` on `PackageDistributionManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=ManifestUri&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the declared externally reachable package-manifest URI, when available.
+  - `string ManifestUri { get; }`
 - [ManifestVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-runtimemanifest-manifestversion): `Properties` on `RuntimeManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=ManifestVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the manifest schema version.
   - `string ManifestVersion { get; }`
@@ -2334,6 +2346,9 @@ Browse the published API surface by public member.
 - [PackageDirectories](cephalon-engine.md#member-p-cephalon-engine-configuration-modulediscoverysettings-packagedirectories): `Properties` on `ModuleDiscoverySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=PackageDirectories&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets package directories to scan for manifests.
   - `IReadOnlyList<ModulePackageDirectory> PackageDirectories { get; }`
+- [PackageDistributionManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-packagedistributionmanifest-ctor-system-string-system-string-system-string): `Constructors` on `PackageDistributionManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=PackageDistributionManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Creates a package distribution manifest entry.
+  - `PackageDistributionManifest(string channel, string manifestUri, string packageUri)`
 - [PackageHints](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-packagehints): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=PackageHints&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the companion-package hints associated with the technology.
   - `IReadOnlyList<string> PackageHints { get; }`
@@ -2346,15 +2361,18 @@ Browse the published API surface by public member.
 - [PackageId](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-packageid): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=PackageId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The package that supplied the module when package loading was used.
   - `string PackageId { get; set; }`
-- [PackageManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-packagemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagesignaturemanifest-system-boolean-system-string-system-string-system-boolean-system-string): `Constructors` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=PackageManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+- [PackageManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-packagemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-cephalon-engine-manifest-packagedistributionmanifest-cephalon-engine-manifest-packageprovenancemanifest-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagesignaturemanifest-system-boolean-system-string-system-string-system-boolean-system-string): `Constructors` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=PackageManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Creates a new package manifest entry.
-  - `PackageManifest(string id, string kind, string assemblyName, string path, string sourcePath, string loadContext, IReadOnlyList<string> modules, string version, string minimumEngineVersion, string maximumEngineVersion, IReadOnlyList<string> supportedTargetFrameworks, string publisherId, string publisherDisplayName, string publisherWebsite, string signatureType, string signatureSigner, string signatureKeyId, string signatureFingerprint, string signatureCertificateThumbprint, string signatureAlgorithm, IReadOnlyList<PackageSignatureManifest> signatures, bool isSignatureVerified, string signatureVerificationReason, string checksumSha256, bool isTrusted, string trustReason)`
+  - `PackageManifest(string id, string kind, string assemblyName, string path, string sourcePath, string loadContext, IReadOnlyList<string> modules, string version, string minimumEngineVersion, string maximumEngineVersion, IReadOnlyList<string> supportedTargetFrameworks, string publisherId, string publisherDisplayName, string publisherWebsite, PackageDistributionManifest distribution, PackageProvenanceManifest provenance, string signatureType, string signatureSigner, string signatureKeyId, string signatureFingerprint, string signatureCertificateThumbprint, string signatureAlgorithm, IReadOnlyList<PackageSignatureManifest> signatures, bool isSignatureVerified, string signatureVerificationReason, string checksumSha256, bool isTrusted, string trustReason)`
 - [PackagePolicy](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-packagepolicy): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=PackagePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets package metadata and integrity policy values.
   - `PackagePolicy PackagePolicy { get; }`
 - [PackagePolicy](cephalon-engine.md#member-m-cephalon-engine-configuration-packagepolicy-ctor-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean): `Constructors` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=PackagePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Creates a package policy.
   - `PackagePolicy(bool allowAssemblyPathPackages, bool requireVersion, bool requireMinimumEngineVersion, bool requireMaximumEngineVersion, bool requireSupportedTargetFrameworks, bool requirePublisherId, bool requireSignatureFingerprint, bool requireSignatureKeyId, bool requireSignatureValue, bool requireSignatureVerification, bool requireIntegritySha256)`
+- [PackageProvenanceManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-packageprovenancemanifest-ctor-system-string-system-string-system-string-system-string): `Constructors` on `PackageProvenanceManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=PackageProvenanceManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Creates a package provenance manifest entry.
+  - `PackageProvenanceManifest(string sourceRepository, string sourceRevision, string buildUri, string statementUri)`
 - [Packages](cephalon-engine.md#member-p-cephalon-engine-configuration-modulediscoverysettings-packages): `Properties` on `ModuleDiscoverySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Packages&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets explicit package references to load.
   - `IReadOnlyList<ModulePackageReference> Packages { get; }`
@@ -2379,6 +2397,9 @@ Browse the published API surface by public member.
 - [PackageTrustDecision](cephalon-engine.md#member-m-cephalon-engine-trust-packagetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagesignaturetrustdecision-system-boolean-system-string-system-boolean-system-string): `Constructors` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=PackageTrustDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Describes the trust outcome for a package after package metadata, signature verification, and host trust rules have been evaluated.
   - `PackageTrustDecision(string PackageId, string AssemblyName, string Path, string PublisherId, string SignatureKeyId, string SignatureFingerprint, string SignatureCertificateThumbprint, IReadOnlyList<PackageSignatureTrustDecision> Signatures, bool IsSignatureVerified, string SignatureVerificationReason, bool IsTrusted, string Reason)`
+- [PackageUri](cephalon-engine.md#member-p-cephalon-engine-manifest-packagedistributionmanifest-packageuri): `Properties` on `PackageDistributionManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=PackageUri&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the declared externally reachable package archive or feed URI, when available.
+  - `string PackageUri { get; }`
 - [Password](cephalon-observability-cassandradependencies.md#member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-password): `Properties` on `CassandraDependencyDefinition` in `Cephalon.Observability.CassandraDependencies.Configuration` (`Cephalon.Observability.CassandraDependencies`) [Browse](browse.html?q=Password&assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Configuration&scope=members)
   - Gets or sets the optional password used for authentication.
   - `string Password { get; set; }`
@@ -2553,6 +2574,9 @@ Browse the published API surface by public member.
 - [Protocol](cephalon-observability.md#member-p-cephalon-observability-configuration-telemetryexportoptions-protocol): `Properties` on `TelemetryExportOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=Protocol&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Gets or sets the telemetry transport protocol, such as `otlp`, `otlp/grpc`, or `otlp/http`.
   - `string Protocol { get; set; }`
+- [Provenance](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-provenance): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Provenance&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the provenance metadata declared by the package manifest, when available.
+  - `PackageProvenanceManifest Provenance { get; }`
 - [Provider](cephalon-observability.md#member-p-cephalon-observability-configuration-telemetryexportoptions-provider): `Properties` on `TelemetryExportOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=Provider&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Gets or sets the telemetry provider name, such as `OpenTelemetry`.
   - `string Provider { get; set; }`
@@ -3174,6 +3198,12 @@ Browse the published API surface by public member.
 - [SourceProjectId](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedproject-sourceprojectid): `Properties` on `RenderedProject` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=SourceProjectId&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the source scaffold project identifier that produced this instance.
   - `string SourceProjectId { get; }`
+- [SourceRepository](cephalon-engine.md#member-p-cephalon-engine-manifest-packageprovenancemanifest-sourcerepository): `Properties` on `PackageProvenanceManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=SourceRepository&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the declared source repository URI, when available.
+  - `string SourceRepository { get; }`
+- [SourceRevision](cephalon-engine.md#member-p-cephalon-engine-manifest-packageprovenancemanifest-sourcerevision): `Properties` on `PackageProvenanceManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=SourceRevision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the declared source revision, tag, or commit identifier, when available.
+  - `string SourceRevision { get; }`
 - [SourceTrusted](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-sourcetrusted): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=SourceTrusted&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Whether the contributing source is trusted.
   - `bool SourceTrusted { get; set; }`
@@ -3231,6 +3261,9 @@ Browse the published API surface by public member.
 - [State](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-state): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=State&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The evaluated runtime health state.
   - `RuntimeHealthState State { get; set; }`
+- [StatementUri](cephalon-engine.md#member-p-cephalon-engine-manifest-packageprovenancemanifest-statementuri): `Properties` on `PackageProvenanceManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=StatementUri&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
+  - Gets the declared provenance statement or attestation URI, when available.
+  - `string StatementUri { get; }`
 - [Status](cephalon-engine.md#member-p-cephalon-engine-runtime-engineruntime-status): `Properties` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Status&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the current lifecycle status.
   - `RuntimeStatus Status { get; }`

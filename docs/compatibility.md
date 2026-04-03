@@ -25,6 +25,7 @@ This guide describes the compatibility contract that must stay aligned across Ce
 - module packages should emit `version`, `compatibility.minimumEngineVersion`, and `compatibility.supportedTargetFrameworks` at minimum
 - use `compatibility.maximumEngineVersion` only when support is intentionally capped
 - keep `cephalon.package.json` examples aligned with runtime enforcement in `/engine/packages`, `Engine:PackagePolicy`, and `Engine:Trust`, including any declared package `dependencies`
+- when a package is published externally, keep `distribution` and `provenance` metadata aligned with the real release channel, artifact location, source revision, and provenance evidence you shipped
 - keep trust-policy examples aligned with the shipped signature-verification paths, including `TrustedSignaturePublicKeys`, `TrustedSignatureCertificates`, `TrustedSignatureCertificateAuthorities`, and the runtime `verificationSource` / `certificateThumbprint` fields surfaced through `/engine/packages`
 - keep starter manifests aligned with the module author's actual assembly target framework and the engine version they intend to support
 

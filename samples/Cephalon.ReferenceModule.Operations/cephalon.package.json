@@ -7,6 +7,17 @@
     "displayName": "Cephalon Labs",
     "website": "https://example.invalid/cephalon-labs"
   },
+  "distribution": {
+    "channel": "stable",
+    "manifestUri": "https://packages.example.invalid/cephalon/reference-operations/1.0.0/cephalon.package.json",
+    "packageUri": "https://packages.example.invalid/cephalon/reference-operations/1.0.0/Cephalon.ReferenceModule.Operations.zip"
+  },
+  "provenance": {
+    "sourceRepository": "https://github.com/Cephalon-Labs/CephalonEngine",
+    "sourceRevision": "refs/tags/reference-operations-v1.0.0",
+    "buildUri": "https://builds.example.invalid/cephalon/reference-operations/1.0.0",
+    "statementUri": "https://packages.example.invalid/cephalon/reference-operations/1.0.0/provenance.json"
+  },
   "signature": {
     "type": "provenance-manifest",
     "signer": "Cephalon Labs Build",

@@ -161,6 +161,8 @@ internal static class ModulePackageLoader
             publisherId: definition.ResolvePublisherId(),
             publisherDisplayName: definition.ResolvePublisherDisplayName(),
             publisherWebsite: definition.ResolvePublisherWebsite(),
+            distribution: definition.ResolveDistribution(),
+            provenance: definition.ResolveProvenance(),
             dependencies: definition.ResolveDependencies(),
             signatures: signatures,
             expectedSha256: NormalizeChecksum(definition.ResolveSha256()));

@@ -1049,6 +1049,8 @@ Current payload highlights:
 - `version` comes from `cephalon.package.json` when the package was manifest-driven
 - `minimumEngineVersion`, `maximumEngineVersion`, and `supportedTargetFrameworks` expose compatibility intent
 - `dependencies` exposes any package-to-package requirements declared by the package manifest, including optional minimum and maximum version bounds
+- `distribution` exposes the declared external release channel plus manifest/package fetch hints
+- `provenance` exposes the declared source repository, source revision, build URI, and provenance statement URI
 - `publisherId`, `publisherDisplayName`, `signatureKeyId`, `signatureFingerprint`, and `signatureCertificateThumbprint` expose the primary package provenance summary kept for backward compatibility
 - `signatures` exposes per-signer provenance plus per-signer verification details such as `verificationSource` and certificate thumbprints when a package declares multiple signers
 - `isSignatureVerified` and `signatureVerificationReason` explain the aggregate detached-signature verification outcome for the package

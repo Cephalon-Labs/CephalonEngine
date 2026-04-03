@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-03T09:36:36.3606426+00:00",
+  "GeneratedAtUtc": "2026-04-03T09:57:31.8454479+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -175,7 +175,7 @@
       "Description": "Composition, runtime, policy, manifest, and introspection services.",
       "FileName": "cephalon-engine.md",
       "NamespaceCount": 12,
-      "TypeCount": 55
+      "TypeCount": 57
     },
     {
       "AssemblyName": "Cephalon.Eventing",
@@ -715,7 +715,7 @@
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
       "AnchorId": "namespace-cephalon-engine-manifest",
-      "TypeCount": 6
+      "TypeCount": 8
     },
     {
       "NamespaceName": "Cephalon.Engine.Patterns",
@@ -3586,6 +3586,21 @@
       }
     },
     {
+      "DisplayName": "PackageDistributionManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-manifest-packagedistributionmanifest",
+      "Declaration": "public sealed class PackageDistributionManifest",
+      "Summary": "Describes where an independently shipped package is distributed from.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "PackageManifest",
       "NamespaceName": "Cephalon.Engine.Manifest",
       "AssemblyName": "Cephalon.Engine",
@@ -3596,7 +3611,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 27,
+        "Properties": 29,
         "Methods": 0
       }
     },
@@ -3613,6 +3628,21 @@
         "Fields": 0,
         "Properties": 13,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "PackageProvenanceManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-manifest-packageprovenancemanifest",
+      "Declaration": "public sealed class PackageProvenanceManifest",
+      "Summary": "Describes provenance metadata declared for an independently shipped package.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 4,
+        "Methods": 0
       }
     },
     {
@@ -6426,6 +6456,17 @@
       "Summary": "Gets the activity name used while building the runtime."
     },
     {
+      "DisplayName": "BuildUri",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageProvenanceManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-manifest-packageprovenancemanifest-builduri",
+      "Signature": "string BuildUri { get; }",
+      "Summary": "Gets the declared build or pipeline URI, when available."
+    },
+    {
       "DisplayName": "CanRestart",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeFailureInfo",
@@ -6611,6 +6652,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-packagesignaturetrustdecision-certificatethumbprint",
       "Signature": "string CertificateThumbprint { get; set; }",
       "Summary": "The signing certificate thumbprint used during verification, when certificate-backed trust was used."
+    },
+    {
+      "DisplayName": "Channel",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageDistributionManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-manifest-packagedistributionmanifest-channel",
+      "Signature": "string Channel { get; }",
+      "Summary": "Gets the declared release channel, when available."
     },
     {
       "DisplayName": "Channels",
@@ -8635,6 +8687,17 @@
       "AnchorId": "member-m-cephalon-engine-runtime-engineruntime-dispose",
       "Signature": "void Dispose()",
       "Summary": "Releases runtime resources."
+    },
+    {
+      "DisplayName": "Distribution",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-manifest-packagemanifest-distribution",
+      "Signature": "PackageDistributionManifest Distribution { get; }",
+      "Summary": "Gets the external distribution metadata declared by the package manifest, when available."
     },
     {
       "DisplayName": "DropletId",
@@ -11805,6 +11868,17 @@
       "Summary": "The hosted path to the machine-readable manifest."
     },
     {
+      "DisplayName": "ManifestUri",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageDistributionManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-manifest-packagedistributionmanifest-manifesturi",
+      "Signature": "string ManifestUri { get; }",
+      "Summary": "Gets the declared externally reachable package-manifest URI, when available."
+    },
+    {
       "DisplayName": "ManifestVersion",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeManifest",
@@ -13114,6 +13188,17 @@
       "Summary": "Gets package directories to scan for manifests."
     },
     {
+      "DisplayName": "PackageDistributionManifest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "PackageDistributionManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-manifest-packagedistributionmanifest-ctor-system-string-system-string-system-string",
+      "Signature": "PackageDistributionManifest(string channel, string manifestUri, string packageUri)",
+      "Summary": "Creates a package distribution manifest entry."
+    },
+    {
       "DisplayName": "PackageHints",
       "Category": "Properties",
       "DeclaringTypeName": "TechnologyDescriptor",
@@ -13164,8 +13249,8 @@
       "NamespaceName": "Cephalon.Engine.Manifest",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-manifest-packagemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagesignaturemanifest-system-boolean-system-string-system-string-system-boolean-system-string",
-      "Signature": "PackageManifest(string id, string kind, string assemblyName, string path, string sourcePath, string loadContext, IReadOnlyList\u003Cstring\u003E modules, string version, string minimumEngineVersion, string maximumEngineVersion, IReadOnlyList\u003Cstring\u003E supportedTargetFrameworks, string publisherId, string publisherDisplayName, string publisherWebsite, string signatureType, string signatureSigner, string signatureKeyId, string signatureFingerprint, string signatureCertificateThumbprint, string signatureAlgorithm, IReadOnlyList\u003CPackageSignatureManifest\u003E signatures, bool isSignatureVerified, string signatureVerificationReason, string checksumSha256, bool isTrusted, string trustReason)",
+      "AnchorId": "member-m-cephalon-engine-manifest-packagemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-cephalon-engine-manifest-packagedistributionmanifest-cephalon-engine-manifest-packageprovenancemanifest-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagesignaturemanifest-system-boolean-system-string-system-string-system-boolean-system-string",
+      "Signature": "PackageManifest(string id, string kind, string assemblyName, string path, string sourcePath, string loadContext, IReadOnlyList\u003Cstring\u003E modules, string version, string minimumEngineVersion, string maximumEngineVersion, IReadOnlyList\u003Cstring\u003E supportedTargetFrameworks, string publisherId, string publisherDisplayName, string publisherWebsite, PackageDistributionManifest distribution, PackageProvenanceManifest provenance, string signatureType, string signatureSigner, string signatureKeyId, string signatureFingerprint, string signatureCertificateThumbprint, string signatureAlgorithm, IReadOnlyList\u003CPackageSignatureManifest\u003E signatures, bool isSignatureVerified, string signatureVerificationReason, string checksumSha256, bool isTrusted, string trustReason)",
       "Summary": "Creates a new package manifest entry."
     },
     {
@@ -13189,6 +13274,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-packagepolicy-ctor-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean",
       "Signature": "PackagePolicy(bool allowAssemblyPathPackages, bool requireVersion, bool requireMinimumEngineVersion, bool requireMaximumEngineVersion, bool requireSupportedTargetFrameworks, bool requirePublisherId, bool requireSignatureFingerprint, bool requireSignatureKeyId, bool requireSignatureValue, bool requireSignatureVerification, bool requireIntegritySha256)",
       "Summary": "Creates a package policy."
+    },
+    {
+      "DisplayName": "PackageProvenanceManifest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "PackageProvenanceManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-manifest-packageprovenancemanifest-ctor-system-string-system-string-system-string-system-string",
+      "Signature": "PackageProvenanceManifest(string sourceRepository, string sourceRevision, string buildUri, string statementUri)",
+      "Summary": "Creates a package provenance manifest entry."
     },
     {
       "DisplayName": "Packages",
@@ -13277,6 +13373,17 @@
       "AnchorId": "member-m-cephalon-engine-trust-packagetrustdecision-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagesignaturetrustdecision-system-boolean-system-string-system-boolean-system-string",
       "Signature": "PackageTrustDecision(string PackageId, string AssemblyName, string Path, string PublisherId, string SignatureKeyId, string SignatureFingerprint, string SignatureCertificateThumbprint, IReadOnlyList\u003CPackageSignatureTrustDecision\u003E Signatures, bool IsSignatureVerified, string SignatureVerificationReason, bool IsTrusted, string Reason)",
       "Summary": "Describes the trust outcome for a package after package metadata, signature verification, and host trust rules have been evaluated."
+    },
+    {
+      "DisplayName": "PackageUri",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageDistributionManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-manifest-packagedistributionmanifest-packageuri",
+      "Signature": "string PackageUri { get; }",
+      "Summary": "Gets the declared externally reachable package archive or feed URI, when available."
     },
     {
       "DisplayName": "Password",
@@ -13915,6 +14022,17 @@
       "AnchorId": "member-p-cephalon-observability-configuration-telemetryexportoptions-protocol",
       "Signature": "string Protocol { get; set; }",
       "Summary": "Gets or sets the telemetry transport protocol, such as \u0060otlp\u0060, \u0060otlp/grpc\u0060, or \u0060otlp/http\u0060."
+    },
+    {
+      "DisplayName": "Provenance",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-manifest-packagemanifest-provenance",
+      "Signature": "PackageProvenanceManifest Provenance { get; }",
+      "Summary": "Gets the provenance metadata declared by the package manifest, when available."
     },
     {
       "DisplayName": "Provider",
@@ -16161,6 +16279,28 @@
       "Summary": "Gets the source scaffold project identifier that produced this instance."
     },
     {
+      "DisplayName": "SourceRepository",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageProvenanceManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-manifest-packageprovenancemanifest-sourcerepository",
+      "Signature": "string SourceRepository { get; }",
+      "Summary": "Gets the declared source repository URI, when available."
+    },
+    {
+      "DisplayName": "SourceRevision",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageProvenanceManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-manifest-packageprovenancemanifest-sourcerevision",
+      "Signature": "string SourceRevision { get; }",
+      "Summary": "Gets the declared source revision, tag, or commit identifier, when available."
+    },
+    {
       "DisplayName": "SourceTrusted",
       "Category": "Properties",
       "DeclaringTypeName": "CapabilityPolicyDecision",
@@ -16368,6 +16508,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimehealthreport-state",
       "Signature": "RuntimeHealthState State { get; set; }",
       "Summary": "The evaluated runtime health state."
+    },
+    {
+      "DisplayName": "StatementUri",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageProvenanceManifest",
+      "NamespaceName": "Cephalon.Engine.Manifest",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-manifest-packageprovenancemanifest-statementuri",
+      "Signature": "string StatementUri { get; }",
+      "Summary": "Gets the declared provenance statement or attestation URI, when available."
     },
     {
       "DisplayName": "Status",
