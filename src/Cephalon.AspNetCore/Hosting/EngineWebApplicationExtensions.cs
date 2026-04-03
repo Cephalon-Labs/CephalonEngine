@@ -154,6 +154,7 @@ public static class EngineWebApplicationExtensions
                     EngineDiagnostics.EngineBuildCounterName,
                     EngineDiagnostics.RuntimeTransitionCounterName,
                     EngineDiagnostics.ModuleTransitionCounterName,
+                    EngineDiagnostics.ExecutionGraphTransitionCounterName,
                     EngineDiagnostics.RuntimeFailureCounterName,
                     EngineDiagnostics.ModuleFailureCounterName,
                     EngineDiagnostics.RuntimeRestartCounterName

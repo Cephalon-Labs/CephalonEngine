@@ -2372,6 +2372,16 @@ const string EngineBuildCounterName
 
 Gets the counter name for completed engine builds.
 
+<a id="member-f-cephalon-engine-diagnostics-enginediagnostics-executiongraphtransitioncountername"></a>
+
+##### `ExecutionGraphTransitionCounterName`
+
+```csharp
+const string ExecutionGraphTransitionCounterName
+```
+
+Gets the counter name for execution-graph lifecycle transitions.
+
 <a id="member-f-cephalon-engine-diagnostics-enginediagnostics-metername"></a>
 
 ##### `MeterName`
@@ -3806,12 +3816,12 @@ public sealed class EngineRuntime
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy"></a>
+<a id="member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphdescriptor"></a>
 
 ##### `EngineRuntime`
 
 ```csharp
-EngineRuntime(IReadOnlyList<IModule> modules, RuntimeManifest manifest, FailurePolicy failurePolicy)
+EngineRuntime(IReadOnlyList<IModule> modules, RuntimeManifest manifest, FailurePolicy failurePolicy, IReadOnlyList<ExecutionGraphDescriptor> executionGraphs)
 ```
 
 Initializes a new instance of the `EngineRuntime` class.
@@ -3820,6 +3830,7 @@ Parameters:
 - `modules`: The modules that participate in runtime lifecycle transitions.
 - `manifest`: The runtime manifest that describes the built runtime shape.
 - `failurePolicy`: The failure policy that governs startup, stop, and restart behavior.
+- `executionGraphs`: The execution graphs visible to the runtime story and diagnostics surface.
 
 #### Properties
 
@@ -4154,6 +4165,184 @@ RuntimeIntrospectionSnapshot CreateSnapshot()
 Creates a new runtime introspection snapshot from the current engine state.
 
 Returns: The composed runtime snapshot.
+
+<a id="type-cephalon-engine-runtime-runtimeexecutiongraphstate"></a>
+
+### `RuntimeExecutionGraphState`
+
+Describes the current operator-facing lifecycle state for one execution graph visible to the runtime.
+
+#### Declaration
+```csharp
+public sealed class RuntimeExecutionGraphState
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-runtime-runtimeexecutiongraphstate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-nullable-system-datetimeoffset"></a>
+
+##### `RuntimeExecutionGraphState`
+
+```csharp
+RuntimeExecutionGraphState(string GraphId, string DisplayName, string Description, string SourceModuleId, string SourceModuleVersion, string EntryNodeId, DateTimeOffset? LoadedAtUtc, DateTimeOffset? ActivatedAtUtc, DateTimeOffset? DeactivatedAtUtc, string LastObservedPhase, DateTimeOffset? LastObservedAtUtc)
+```
+
+Describes the current operator-facing lifecycle state for one execution graph visible to the runtime.
+
+Parameters:
+- `GraphId`: The stable execution-graph identifier.
+- `DisplayName`: The operator-facing execution-graph display name.
+- `Description`: The operator-facing execution-graph description when one was published.
+- `SourceModuleId`: The module that contributed the execution graph.
+- `SourceModuleVersion`: The effective version of the source module when available.
+- `EntryNodeId`: The entry node used when the graph begins execution.
+- `LoadedAtUtc`: The UTC timestamp when the graph became visible to the built runtime story.
+- `ActivatedAtUtc`: The UTC timestamp when the graph most recently became active with the runtime.
+- `DeactivatedAtUtc`: The UTC timestamp when the graph most recently became inactive because the runtime stopped.
+- `LastObservedPhase`: The last lifecycle phase recorded for the execution graph.
+- `LastObservedAtUtc`: The UTC timestamp when the last lifecycle phase was recorded.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-activatedatutc"></a>
+
+##### `ActivatedAtUtc`
+
+```csharp
+DateTimeOffset? ActivatedAtUtc { get; set; }
+```
+
+The UTC timestamp when the graph most recently became active with the runtime.
+
+<a id="member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-deactivatedatutc"></a>
+
+##### `DeactivatedAtUtc`
+
+```csharp
+DateTimeOffset? DeactivatedAtUtc { get; set; }
+```
+
+The UTC timestamp when the graph most recently became inactive because the runtime stopped.
+
+<a id="member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; set; }
+```
+
+The operator-facing execution-graph description when one was published.
+
+<a id="member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; set; }
+```
+
+The operator-facing execution-graph display name.
+
+<a id="member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-entrynodeid"></a>
+
+##### `EntryNodeId`
+
+```csharp
+string EntryNodeId { get; set; }
+```
+
+The entry node used when the graph begins execution.
+
+<a id="member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-graphid"></a>
+
+##### `GraphId`
+
+```csharp
+string GraphId { get; set; }
+```
+
+The stable execution-graph identifier.
+
+<a id="member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-isactive"></a>
+
+##### `IsActive`
+
+```csharp
+bool IsActive { get; }
+```
+
+Gets a value indicating whether the execution graph is currently active with the runtime.
+
+<a id="member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-isdeactivated"></a>
+
+##### `IsDeactivated`
+
+```csharp
+bool IsDeactivated { get; }
+```
+
+Gets a value indicating whether the execution graph most recently observed a deactivation event.
+
+<a id="member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-isloaded"></a>
+
+##### `IsLoaded`
+
+```csharp
+bool IsLoaded { get; }
+```
+
+Gets a value indicating whether the execution graph is visible to the runtime story.
+
+<a id="member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-lastobservedatutc"></a>
+
+##### `LastObservedAtUtc`
+
+```csharp
+DateTimeOffset? LastObservedAtUtc { get; set; }
+```
+
+The UTC timestamp when the last lifecycle phase was recorded.
+
+<a id="member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-lastobservedphase"></a>
+
+##### `LastObservedPhase`
+
+```csharp
+string LastObservedPhase { get; set; }
+```
+
+The last lifecycle phase recorded for the execution graph.
+
+<a id="member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-loadedatutc"></a>
+
+##### `LoadedAtUtc`
+
+```csharp
+DateTimeOffset? LoadedAtUtc { get; set; }
+```
+
+The UTC timestamp when the graph became visible to the built runtime story.
+
+<a id="member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; set; }
+```
+
+The module that contributed the execution graph.
+
+<a id="member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-sourcemoduleversion"></a>
+
+##### `SourceModuleVersion`
+
+```csharp
+string SourceModuleVersion { get; set; }
+```
+
+The effective version of the source module when available.
 
 <a id="type-cephalon-engine-runtime-runtimefailureinfo"></a>
 
@@ -4580,7 +4769,7 @@ Parameters:
 - `ExecutionGraphs`: The execution graphs contributed by active modules and visible to the runtime at the time the snapshot was created.
 - `TechnologySurfaces`: The active technology-pack runtime surfaces visible to the runtime at the time the snapshot was created.
 - `DiagnosticsConventions`: The diagnostics conventions and published event-id catalogs visible to the runtime at the time the snapshot was created.
-- `OperationalStory`: The richer operator-facing lifecycle story that combines loaded packages, module state, and the ordered runtime timeline.
+- `OperationalStory`: The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, module state, and the ordered runtime timeline.
 
 #### Properties
 
@@ -4622,7 +4811,7 @@ The immutable manifest that describes the built runtime shape.
 RuntimeOperationalStory OperationalStory { get; set; }
 ```
 
-The richer operator-facing lifecycle story that combines loaded packages, module state, and the ordered runtime timeline.
+The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, module state, and the ordered runtime timeline.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-status"></a>
 
@@ -4673,7 +4862,7 @@ Parameters:
 - `Phase`: The lifecycle phase or story phase, such as `load`, `initialize`, `start`, `stop`, or `restart`.
 - `Outcome`: The completion outcome for the event.
 - `RuntimeStatus`: The runtime status visible when the event was recorded.
-- `SubjectId`: The runtime, module, or package identifier associated with the event when available.
+- `SubjectId`: The runtime, module, package, or execution-graph identifier associated with the event when available.
 - `SubjectVersion`: The version associated with the event subject when available.
 - `Message`: The operator-facing narrative for the event.
 - `ExceptionType`: The exception type captured for failed events when available.
@@ -4758,7 +4947,7 @@ The runtime surface that emitted the event.
 string SubjectId { get; set; }
 ```
 
-The runtime, module, or package identifier associated with the event when available.
+The runtime, module, package, or execution-graph identifier associated with the event when available.
 
 <a id="member-p-cephalon-engine-runtime-runtimelifecycleevent-subjectversion"></a>
 
@@ -4815,6 +5004,16 @@ public enum RuntimeLifecycleEventScope
 ```
 
 #### Fields
+
+<a id="member-f-cephalon-engine-runtime-runtimelifecycleeventscope-executiongraph"></a>
+
+##### `ExecutionGraph`
+
+```csharp
+const RuntimeLifecycleEventScope ExecutionGraph
+```
+
+The event belongs to execution-graph visibility and active lifecycle transitions.
 
 <a id="member-f-cephalon-engine-runtime-runtimelifecycleeventscope-module"></a>
 
@@ -5073,9 +5272,19 @@ Parameters:
 - `Status`: The current runtime lifecycle status snapshot.
 - `LoadedPackages`: The packages currently visible to the runtime story.
 - `Modules`: The current lifecycle state for each loaded module.
-- `Timeline`: The ordered lifecycle narrative for package load, module transitions, runtime transitions, and failures.
+- `Timeline`: The ordered lifecycle narrative for package load, execution-graph transitions, module transitions, runtime transitions, and failures.
 
 #### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperationalstory-executiongraphs"></a>
+
+##### `ExecutionGraphs`
+
+```csharp
+IReadOnlyList<RuntimeExecutionGraphState> ExecutionGraphs { get; set; }
+```
+
+Gets the current lifecycle state for each execution graph visible to the runtime story.
 
 <a id="member-p-cephalon-engine-runtime-runtimeoperationalstory-generatedatutc"></a>
 
@@ -5125,7 +5334,7 @@ The current runtime lifecycle status snapshot.
 IReadOnlyList<RuntimeLifecycleEvent> Timeline { get; set; }
 ```
 
-The ordered lifecycle narrative for package load, module transitions, runtime transitions, and failures.
+The ordered lifecycle narrative for package load, execution-graph transitions, module transitions, runtime transitions, and failures.
 
 <a id="type-cephalon-engine-runtime-runtimestatus"></a>
 

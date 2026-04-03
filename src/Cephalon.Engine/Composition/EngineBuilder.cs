@@ -634,7 +634,7 @@ public sealed class EngineBuilder
             };
             EngineDiagnostics.EngineBuildCounter.Add(1, buildTags);
 
-            return new EngineRuntime(orderedModules, manifest, failurePolicy);
+            return new EngineRuntime(orderedModules, manifest, failurePolicy, validatedExecutionGraphs);
         }
         catch (Exception exception)
         {

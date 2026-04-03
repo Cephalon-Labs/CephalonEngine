@@ -722,10 +722,12 @@ public sealed class AspNetCoreHostingTests
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
         Assert.NotNull(diagnostics);
+        Assert.Contains(diagnostics.Counters, counter => counter == "cephalon.execution-graphs.transitions");
         var engineConvention = Assert.Single(diagnostics.Conventions, convention => convention.Source == "Cephalon.Engine");
         Assert.Equal(2000, engineConvention.MinimumEventId);
-        Assert.Equal(2003, engineConvention.MaximumEventId);
+        Assert.Equal(2004, engineConvention.MaximumEventId);
         Assert.Contains(engineConvention.Events, entry => entry.Id == 2002 && entry.Name == "LogRuntimeFailure");
+        Assert.Contains(engineConvention.Events, entry => entry.Id == 2004 && entry.Name == "LogExecutionGraphTransition");
         var aspNetCoreConvention = Assert.Single(diagnostics.Conventions, convention => convention.Source == "Cephalon.AspNetCore");
         Assert.Equal(3200, aspNetCoreConvention.MinimumEventId);
         Assert.Equal(3204, aspNetCoreConvention.MaximumEventId);
@@ -737,6 +739,9 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains(
             snapshot.DiagnosticsConventions.Single(convention => convention.Source == "Cephalon.Engine").Events,
             entry => entry.Id == 2002);
+        Assert.Contains(
+            snapshot.DiagnosticsConventions.Single(convention => convention.Source == "Cephalon.Engine").Events,
+            entry => entry.Id == 2004);
         Assert.Contains(
             snapshot.DiagnosticsConventions.Single(convention => convention.Source == "Cephalon.AspNetCore").Events,
             entry => entry.Id == 3203);
@@ -1107,6 +1112,7 @@ note: visible
         builder.AddCephalon(engine =>
         {
             engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new WorkflowCatalogTestModule("hosting-runtime-story"));
         });
 
         await using var app = builder.Build();
@@ -1120,21 +1126,34 @@ note: visible
 
         Assert.NotNull(story);
         Assert.Equal(RuntimeStatus.Started, story.Status.Status);
-        Assert.Single(story.Modules);
+        Assert.Equal(2, story.Modules.Count);
         var platform = Assert.Single(story.Modules, module => module.ModuleId == "platform");
         Assert.True(platform.IsLoaded);
         Assert.True(platform.IsInitialized);
         Assert.True(platform.IsStarted);
         Assert.False(platform.IsStopped);
+        var approvalFlow = Assert.Single(story.ExecutionGraphs, graph => graph.GraphId == "approval-flow");
+        Assert.True(approvalFlow.IsLoaded);
+        Assert.True(approvalFlow.IsActive);
+        Assert.False(approvalFlow.IsDeactivated);
+        Assert.Equal("workflow-catalog", approvalFlow.SourceModuleId);
+        Assert.Equal("1.0.0", approvalFlow.SourceModuleVersion);
         Assert.Contains(
             story.Timeline,
             entry => entry.Scope == RuntimeLifecycleEventScope.Runtime &&
                 entry.Phase == "start" &&
                 entry.Outcome == RuntimeLifecycleEventOutcome.Succeeded);
+        Assert.Contains(
+            story.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.ExecutionGraph &&
+                entry.SubjectId == "approval-flow" &&
+                entry.Phase == "activate" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Succeeded);
 
         Assert.NotNull(snapshot);
         Assert.Equal(RuntimeStatus.Started, snapshot.OperationalStory.Status.Status);
         Assert.Contains(snapshot.OperationalStory.Modules, module => module.ModuleId == "platform" && module.IsStarted);
+        Assert.Contains(snapshot.OperationalStory.ExecutionGraphs, graph => graph.GraphId == "approval-flow" && graph.IsActive);
         Assert.Contains(
             snapshot.OperationalStory.Timeline,
             entry => entry.Scope == RuntimeLifecycleEventScope.Module &&

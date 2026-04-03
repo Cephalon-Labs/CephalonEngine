@@ -56,7 +56,7 @@ public sealed class ObservabilityHostingTests
         Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 3006 &&
             entry.Message.Contains("Cephalon.Engine", StringComparison.Ordinal) &&
-            entry.Message.Contains("2000-2003", StringComparison.Ordinal));
+            entry.Message.Contains("2000-2004", StringComparison.Ordinal));
         Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 3006 &&
             entry.Message.Contains("Cephalon.Observability", StringComparison.Ordinal) &&
