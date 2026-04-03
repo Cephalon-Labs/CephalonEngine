@@ -394,6 +394,64 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public async Task RuntimeOperationalStoryTracksExecutionGraphsAcrossLifecycleTransitions()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.AddModule(new WorkflowCatalogTestModule("story-test"));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var runtime = provider.GetRequiredService<IRuntime>();
+
+        await runtime.StartAsync(provider);
+
+        var startedStory = runtime.OperationalStory;
+        var activeGraph = Assert.Single(startedStory.ExecutionGraphs);
+
+        Assert.Equal("approval-flow", activeGraph.GraphId);
+        Assert.Equal("workflow-catalog", activeGraph.SourceModuleId);
+        Assert.Equal("1.0.0", activeGraph.SourceModuleVersion);
+        Assert.Equal("request-review", activeGraph.EntryNodeId);
+        Assert.True(activeGraph.IsLoaded);
+        Assert.True(activeGraph.IsActive);
+        Assert.False(activeGraph.IsDeactivated);
+        Assert.NotNull(activeGraph.LoadedAtUtc);
+        Assert.NotNull(activeGraph.ActivatedAtUtc);
+        Assert.Null(activeGraph.DeactivatedAtUtc);
+        Assert.Equal("activate", activeGraph.LastObservedPhase);
+        Assert.Contains(
+            startedStory.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.ExecutionGraph &&
+                entry.SubjectId == "approval-flow" &&
+                entry.Phase == "load" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Succeeded);
+        Assert.Contains(
+            startedStory.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.ExecutionGraph &&
+                entry.SubjectId == "approval-flow" &&
+                entry.Phase == "activate" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Succeeded);
+
+        await runtime.StopAsync();
+
+        var stoppedStory = runtime.OperationalStory;
+        var stoppedGraph = Assert.Single(stoppedStory.ExecutionGraphs);
+
+        Assert.False(stoppedGraph.IsActive);
+        Assert.True(stoppedGraph.IsDeactivated);
+        Assert.NotNull(stoppedGraph.DeactivatedAtUtc);
+        Assert.Equal("deactivate", stoppedGraph.LastObservedPhase);
+        Assert.Contains(
+            stoppedStory.Timeline,
+            entry => entry.Scope == RuntimeLifecycleEventScope.ExecutionGraph &&
+                entry.SubjectId == "approval-flow" &&
+                entry.Phase == "deactivate" &&
+                entry.Outcome == RuntimeLifecycleEventOutcome.Succeeded);
+    }
+
+    [Fact]
     public void BuildRejectsExecutionGraphsThatReferenceUnknownCapabilities()
     {
         var services = new ServiceCollection();

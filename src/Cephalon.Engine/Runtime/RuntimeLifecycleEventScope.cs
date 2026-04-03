@@ -18,5 +18,10 @@ public enum RuntimeLifecycleEventScope
     /// <summary>
     /// The event belongs to package loading and package-origin visibility.
     /// </summary>
-    Package = 2
+    Package = 2,
+
+    /// <summary>
+    /// The event belongs to execution-graph visibility and active lifecycle transitions.
+    /// </summary>
+    ExecutionGraph = 3
 }

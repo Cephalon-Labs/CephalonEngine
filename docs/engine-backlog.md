@@ -438,8 +438,8 @@ Follow-up later:
 
 ### ENG-013 Workflow and orchestration primitives
 
-Status: current focus
-Estimate: 14
+Status: later
+Estimate: 11
 
 Why:
 
@@ -450,13 +450,15 @@ Delivered so far:
 - a first execution-graph contract through `IExecutionGraphContributor`, `ExecutionGraphDescriptor`, and `IExecutionRuntimeCatalog`
 - additive runtime introspection through `/engine/execution-graphs` and `/engine/snapshot`
 - build-time validation for graph ids, nodes, edges, referenced modules, and referenced capability keys
+- execution-graph lifecycle state through `/engine/runtime-story` and `/engine/snapshot`, including operator-visible load, activate, and deactivate transitions
+- runtime diagnostics coverage for execution-graph lifecycle transitions through `cephalon.execution-graphs.transitions` and the `Cephalon.Engine` event-id catalog
 - module-author guidance for publishing workflow and execution-graph descriptors without bypassing the existing module/capability model
 
 Acceptance remaining:
 
-- integrate workflow execution with lifecycle and observability
-- keep expanding orchestration through additive module-owned contracts instead of a parallel runtime model
 - introduce hosted/background execution conventions and internal engine events only after the descriptive graph baseline proves out
+- internal engine events for orchestration activation and richer runtime transitions beyond the shipped diagnostics/timeline baseline
+- AI and orchestration integration points built on the existing module, capability, execution-graph, and runtime-story contracts
 
 ### ENG-022 `MicroserviceSuite` blueprint
 

@@ -20,7 +20,7 @@ namespace Cephalon.Engine.Runtime;
 /// The diagnostics conventions and published event-id catalogs visible to the runtime at the time the snapshot was created.
 /// </param>
 /// <param name="OperationalStory">
-/// The richer operator-facing lifecycle story that combines loaded packages, module state, and the ordered runtime timeline.
+/// The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, module state, and the ordered runtime timeline.
 /// </param>
 /// <remarks>
 /// This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime

@@ -60,6 +60,7 @@ Current baseline behavior:
 - execution graphs are discovered only from active modules, so they stay additive to the existing module model
 - graph nodes can point back to module ids and capability keys instead of inventing a parallel ownership model
 - `/engine/execution-graphs` exposes the standalone catalog, and `/engine/snapshot` carries the same graph descriptors alongside status, diagnostics, and lifecycle data
+- `/engine/runtime-story` now carries the operator-facing lifecycle state for each execution graph, including load, activate, and deactivate timestamps
 - the engine validates graph ids, entry nodes, edges, referenced modules, and referenced capability keys at build time so invalid descriptors fail fast
 
 ## Package manifest contract

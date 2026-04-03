@@ -965,6 +965,7 @@ Operational notes:
 - `meterName`
 - `activitySourceName`
 - counter names used by the runtime
+- execution-graph transition counters alongside runtime, module, failure, and restart counters
 - published diagnostics conventions and event-id catalogs for the active engine and companion packages
 - the current liveness report
 - the current readiness report
@@ -973,7 +974,7 @@ Operational notes:
 
 Current shipped event-id ranges include:
 
-- `Cephalon.Engine`: `2000-2003`
+- `Cephalon.Engine`: `2000-2004`
 - `Cephalon.Observability`: `3000-3006`
 - `Cephalon.Observability.Gcp`: `3111-3111`
 - `Cephalon.Observability.HuaweiCloud`: `3112-3112`
@@ -1008,8 +1009,9 @@ This is the quickest way to discover the engine's observability contract without
 
 - the current runtime status and last failure context
 - loaded package metadata for the active runtime
+- per-execution-graph lifecycle state, including loaded, active, and deactivated timestamps
 - per-module lifecycle state, including loaded, initialized, started, and stopped timestamps
-- an ordered timeline for package load, module transitions, runtime transitions, restart attempts, and failures
+- an ordered timeline for package load, execution-graph transitions, module transitions, runtime transitions, restart attempts, and failures
 
 This is the quickest way to answer the adjacent operational question that `/engine/status`, `/engine/packages`, `/engine/diagnostics`, and `/engine/snapshot` already support in pieces: what loaded, what started, what failed, and why.
 
@@ -1023,6 +1025,7 @@ Current payload highlights:
 - `nodes` can point back to module ids and capability keys so orchestration descriptors stay grounded in the existing runtime contract
 - `edges` expose the directed graph transitions plus optional labels or routing conditions
 - the same execution-graph catalog is also available through `/engine/snapshot` when operators want one merged runtime answer
+- `/engine/runtime-story` now shows when each graph became load-visible, active, or inactive with the runtime lifecycle
 
 Current note:
 

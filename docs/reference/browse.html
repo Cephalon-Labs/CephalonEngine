@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-03T11:05:51.4933609+00:00",
+  "GeneratedAtUtc": "2026-04-03T11:54:36.1335651+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -175,7 +175,7 @@
       "Description": "Composition, runtime, policy, manifest, and introspection services.",
       "FileName": "cephalon-engine.md",
       "NamespaceCount": 12,
-      "TypeCount": 57
+      "TypeCount": 58
     },
     {
       "AssemblyName": "Cephalon.Eventing",
@@ -736,7 +736,7 @@
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
       "AnchorId": "namespace-cephalon-engine-runtime",
-      "TypeCount": 15
+      "TypeCount": 16
     },
     {
       "NamespaceName": "Cephalon.Engine.Technologies",
@@ -1997,7 +1997,7 @@
       "Summary": "Defines the stable meter, activity source, and counter names emitted by the engine runtime.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 9,
+        "Fields": 10,
         "Properties": 0,
         "Methods": 0
       }
@@ -4238,6 +4238,21 @@
       }
     },
     {
+      "DisplayName": "RuntimeExecutionGraphState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-runtime-runtimeexecutiongraphstate",
+      "Declaration": "public sealed class RuntimeExecutionGraphState",
+      "Summary": "Describes the current operator-facing lifecycle state for one execution graph visible to the runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 14,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "RuntimeFailureInfo",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -4352,7 +4367,7 @@
       "Summary": "Identifies which runtime surface produced one operator-facing lifecycle event.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 3,
+        "Fields": 4,
         "Properties": 0,
         "Methods": 0
       }
@@ -4398,7 +4413,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 5,
+        "Properties": 6,
         "Methods": 0
       }
     },
@@ -4890,6 +4905,17 @@
       "AnchorId": "member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-acltoken",
       "Signature": "string AclToken { get; set; }",
       "Summary": "Gets or sets the optional Consul ACL token sent as the \u0060X-Consul-Token\u0060 header."
+    },
+    {
+      "DisplayName": "ActivatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeExecutionGraphState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-activatedatutc",
+      "Signature": "DateTimeOffset? ActivatedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the graph most recently became active with the runtime."
     },
     {
       "DisplayName": "ActiveWindow",
@@ -7543,6 +7569,17 @@
       "Summary": "Gets or sets the optional Consul datacenter name added as the \u0060dc\u0060 query parameter."
     },
     {
+      "DisplayName": "DeactivatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeExecutionGraphState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-deactivatedatutc",
+      "Signature": "DateTimeOffset? DeactivatedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the graph most recently became inactive because the runtime stopped."
+    },
+    {
       "DisplayName": "Debug",
       "Category": "Fields",
       "DeclaringTypeName": "DiagnosticSeverity",
@@ -8205,6 +8242,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "RuntimeExecutionGraphState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-description",
+      "Signature": "string Description { get; set; }",
+      "Summary": "The operator-facing execution-graph description when one was published."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeHealthReport",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -8788,6 +8836,17 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "RuntimeExecutionGraphState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "The operator-facing execution-graph display name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeModuleLifecycleState",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -9265,8 +9324,8 @@
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy",
-      "Signature": "EngineRuntime(IReadOnlyList\u003CIModule\u003E modules, RuntimeManifest manifest, FailurePolicy failurePolicy)",
+      "AnchorId": "member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphdescriptor",
+      "Signature": "EngineRuntime(IReadOnlyList\u003CIModule\u003E modules, RuntimeManifest manifest, FailurePolicy failurePolicy, IReadOnlyList\u003CExecutionGraphDescriptor\u003E executionGraphs)",
       "Summary": "Initializes a new instance of the \u0060EngineRuntime\u0060 class."
     },
     {
@@ -9312,6 +9371,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphdescriptor-entrynodeid",
       "Signature": "string EntryNodeId { get; }",
       "Summary": "Gets the node identifier where execution should begin."
+    },
+    {
+      "DisplayName": "EntryNodeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeExecutionGraphState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-entrynodeid",
+      "Signature": "string EntryNodeId { get; set; }",
+      "Summary": "The entry node used when the graph begins execution."
     },
     {
       "DisplayName": "Error",
@@ -9457,6 +9527,17 @@
       "Summary": "Exchanges greeting messages bidirectionally to validate duplex streaming support."
     },
     {
+      "DisplayName": "ExecutionGraph",
+      "Category": "Fields",
+      "DeclaringTypeName": "RuntimeLifecycleEventScope",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-f-cephalon-engine-runtime-runtimelifecycleeventscope-executiongraph",
+      "Signature": "const RuntimeLifecycleEventScope ExecutionGraph",
+      "Summary": "The event belongs to execution-graph visibility and active lifecycle transitions."
+    },
+    {
       "DisplayName": "ExecutionGraphDescriptor",
       "Category": "Constructors",
       "DeclaringTypeName": "ExecutionGraphDescriptor",
@@ -9499,6 +9580,28 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-executiongraphs",
       "Signature": "IReadOnlyList\u003CExecutionGraphDescriptor\u003E ExecutionGraphs { get; set; }",
       "Summary": "The execution graphs contributed by active modules and visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "ExecutionGraphs",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeOperationalStory",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperationalstory-executiongraphs",
+      "Signature": "IReadOnlyList\u003CRuntimeExecutionGraphState\u003E ExecutionGraphs { get; set; }",
+      "Summary": "Gets the current lifecycle state for each execution graph visible to the runtime story."
+    },
+    {
+      "DisplayName": "ExecutionGraphTransitionCounterName",
+      "Category": "Fields",
+      "DeclaringTypeName": "EngineDiagnostics",
+      "NamespaceName": "Cephalon.Engine.Diagnostics",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-f-cephalon-engine-diagnostics-enginediagnostics-executiongraphtransitioncountername",
+      "Signature": "const string ExecutionGraphTransitionCounterName",
+      "Summary": "Gets the counter name for execution-graph lifecycle transitions."
     },
     {
       "DisplayName": "ExpectedStatusCodes",
@@ -10346,6 +10449,17 @@
       "AnchorId": "member-m-cephalon-engine-localization-localizedtextcatalog-getresources-system-string",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E GetResources(string culture)",
       "Summary": "Gets the merged resources visible for the specified culture."
+    },
+    {
+      "DisplayName": "GraphId",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeExecutionGraphState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-graphid",
+      "Signature": "string GraphId { get; set; }",
+      "Summary": "The stable execution-graph identifier."
     },
     {
       "DisplayName": "GraphQL",
@@ -11437,6 +11551,17 @@
       "Summary": "Identifies an intelligence-oriented technology."
     },
     {
+      "DisplayName": "IsActive",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeExecutionGraphState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-isactive",
+      "Signature": "bool IsActive { get; }",
+      "Summary": "Gets a value indicating whether the execution graph is currently active with the runtime."
+    },
+    {
       "DisplayName": "IsAllowed",
       "Category": "Properties",
       "DeclaringTypeName": "CapabilityPolicyDecision",
@@ -11492,6 +11617,17 @@
       "Summary": "Determines whether a capability is enabled under the current option set."
     },
     {
+      "DisplayName": "IsDeactivated",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeExecutionGraphState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-isdeactivated",
+      "Signature": "bool IsDeactivated { get; }",
+      "Summary": "Gets a value indicating whether the execution graph most recently observed a deactivation event."
+    },
+    {
       "DisplayName": "IsHealthy",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeHealthReport",
@@ -11512,6 +11648,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isinitialized",
       "Signature": "bool IsInitialized { get; }",
       "Summary": "Gets a value indicating whether the module completed initialization successfully."
+    },
+    {
+      "DisplayName": "IsLoaded",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeExecutionGraphState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-isloaded",
+      "Signature": "bool IsLoaded { get; }",
+      "Summary": "Gets a value indicating whether the execution graph is visible to the runtime story."
     },
     {
       "DisplayName": "IsLoaded",
@@ -11901,6 +12048,17 @@
     {
       "DisplayName": "LastObservedAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "RuntimeExecutionGraphState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-lastobservedatutc",
+      "Signature": "DateTimeOffset? LastObservedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the last lifecycle phase was recorded."
+    },
+    {
+      "DisplayName": "LastObservedAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeModuleLifecycleState",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -11908,6 +12066,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-lastobservedatutc",
       "Signature": "DateTimeOffset? LastObservedAtUtc { get; set; }",
       "Summary": "The UTC timestamp when the last lifecycle phase was recorded for the module."
+    },
+    {
+      "DisplayName": "LastObservedPhase",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeExecutionGraphState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-lastobservedphase",
+      "Signature": "string LastObservedPhase { get; set; }",
+      "Summary": "The last lifecycle phase recorded for the execution graph."
     },
     {
       "DisplayName": "LastObservedPhase",
@@ -11952,6 +12121,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-packagemanifest-loadcontext",
       "Signature": "string LoadContext { get; }",
       "Summary": "Gets the assembly load context name used for the package."
+    },
+    {
+      "DisplayName": "LoadedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeExecutionGraphState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-loadedatutc",
+      "Signature": "DateTimeOffset? LoadedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the graph became visible to the built runtime story."
     },
     {
       "DisplayName": "LoadedAtUtc",
@@ -13469,7 +13649,7 @@
       "FileName": "cephalon-engine.md",
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-operationalstory",
       "Signature": "RuntimeOperationalStory OperationalStory { get; set; }",
-      "Summary": "The richer operator-facing lifecycle story that combines loaded packages, module state, and the ordered runtime timeline."
+      "Summary": "The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, module state, and the ordered runtime timeline."
     },
     {
       "DisplayName": "Options",
@@ -15914,6 +16094,17 @@
       "Summary": "The event belongs to the overall runtime lifecycle."
     },
     {
+      "DisplayName": "RuntimeExecutionGraphState",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RuntimeExecutionGraphState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-runtime-runtimeexecutiongraphstate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-nullable-system-datetimeoffset",
+      "Signature": "RuntimeExecutionGraphState(string GraphId, string DisplayName, string Description, string SourceModuleId, string SourceModuleVersion, string EntryNodeId, DateTimeOffset? LoadedAtUtc, DateTimeOffset? ActivatedAtUtc, DateTimeOffset? DeactivatedAtUtc, string LastObservedPhase, DateTimeOffset? LastObservedAtUtc)",
+      "Summary": "Describes the current operator-facing lifecycle state for one execution graph visible to the runtime."
+    },
+    {
       "DisplayName": "RuntimeFailureCounterName",
       "Category": "Fields",
       "DeclaringTypeName": "EngineDiagnostics",
@@ -16651,6 +16842,28 @@
       "Summary": "Gets the identifier of the module that contributed the graph."
     },
     {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeExecutionGraphState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; set; }",
+      "Summary": "The module that contributed the execution graph."
+    },
+    {
+      "DisplayName": "SourceModuleVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeExecutionGraphState",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-sourcemoduleversion",
+      "Signature": "string SourceModuleVersion { get; set; }",
+      "Summary": "The effective version of the source module when available."
+    },
+    {
       "DisplayName": "SourcePackageId",
       "Category": "Properties",
       "DeclaringTypeName": "CapabilityPolicyDecision",
@@ -17187,7 +17400,7 @@
       "FileName": "cephalon-engine.md",
       "AnchorId": "member-p-cephalon-engine-runtime-runtimelifecycleevent-subjectid",
       "Signature": "string SubjectId { get; set; }",
-      "Summary": "The runtime, module, or package identifier associated with the event when available."
+      "Summary": "The runtime, module, package, or execution-graph identifier associated with the event when available."
     },
     {
       "DisplayName": "SubjectVersion",
@@ -17649,7 +17862,7 @@
       "FileName": "cephalon-engine.md",
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperationalstory-timeline",
       "Signature": "IReadOnlyList\u003CRuntimeLifecycleEvent\u003E Timeline { get; set; }",
-      "Summary": "The ordered lifecycle narrative for package load, module transitions, runtime transitions, and failures."
+      "Summary": "The ordered lifecycle narrative for package load, execution-graph transitions, module transitions, runtime transitions, and failures."
     },
     {
       "DisplayName": "TimeoutSeconds",

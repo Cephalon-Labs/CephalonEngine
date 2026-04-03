@@ -12,6 +12,9 @@ Browse the published API surface by public member.
 - [AclToken](cephalon-observability-consuldependencies.md#member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-acltoken): `Properties` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=AclToken&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
   - Gets or sets the optional Consul ACL token sent as the `X-Consul-Token` header.
   - `string AclToken { get; set; }`
+- [ActivatedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-activatedatutc): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ActivatedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The UTC timestamp when the graph most recently became active with the runtime.
+  - `DateTimeOffset? ActivatedAtUtc { get; set; }`
 - [ActiveWindow](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-activewindow): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ActiveWindow&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The active policy-driven lifecycle window, such as startup warmup, shutdown drain, or restart backoff.
   - `string ActiveWindow { get; set; }`
@@ -744,6 +747,9 @@ Browse the published API surface by public member.
 - [Datacenter](cephalon-observability-consuldependencies.md#member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-datacenter): `Properties` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=Datacenter&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
   - Gets or sets the optional Consul datacenter name added as the `dc` query parameter.
   - `string Datacenter { get; set; }`
+- [DeactivatedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-deactivatedatutc): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DeactivatedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The UTC timestamp when the graph most recently became inactive because the runtime stopped.
+  - `DateTimeOffset? DeactivatedAtUtc { get; set; }`
 - [Debug](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-debug): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Debug&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The event is intended for debug-oriented diagnostics.
   - `const DiagnosticSeverity Debug`
@@ -924,6 +930,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-description): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the pattern description.
   - `string Description { get; }`
+- [Description](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-description): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The operator-facing execution-graph description when one was published.
+  - `string Description { get; set; }`
 - [Description](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-description): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - A human-readable description of the evaluated state.
   - `string Description { get; set; }`
@@ -1083,6 +1092,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-observability-redisdependencies.md#member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-displayname): `Properties` on `RedisDependencyDefinition` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
   - Gets or sets the human-readable dependency name shown to operators.
   - `string DisplayName { get; set; }`
+- [DisplayName](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-displayname): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The operator-facing execution-graph display name.
+  - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-displayname): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The operator-facing module display name.
   - `string DisplayName { get; set; }`
@@ -1215,9 +1227,9 @@ Browse the published API surface by public member.
 - [EngineOptions](cephalon-engine.md#member-m-cephalon-engine-configuration-engineoptions-ctor-system-collections-generic-ireadonlydictionary-system-string-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-boolean): `Constructors` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EngineOptions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `EngineOptions` class.
   - `EngineOptions(IReadOnlyDictionary<string, bool> modules, IReadOnlyDictionary<string, bool> capabilities)`
-- [EngineRuntime](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy): `Constructors` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EngineRuntime&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+- [EngineRuntime](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphdescriptor): `Constructors` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EngineRuntime&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Initializes a new instance of the `EngineRuntime` class.
-  - `EngineRuntime(IReadOnlyList<IModule> modules, RuntimeManifest manifest, FailurePolicy failurePolicy)`
+  - `EngineRuntime(IReadOnlyList<IModule> modules, RuntimeManifest manifest, FailurePolicy failurePolicy, IReadOnlyList<ExecutionGraphDescriptor> executionGraphs)`
 - [EngineSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy): `Constructors` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EngineSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `EngineSettings` class.
   - `EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy)`
@@ -1230,6 +1242,9 @@ Browse the published API surface by public member.
 - [EntryNodeId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphdescriptor-entrynodeid): `Properties` on `ExecutionGraphDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=EntryNodeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the node identifier where execution should begin.
   - `string EntryNodeId { get; }`
+- [EntryNodeId](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-entrynodeid): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EntryNodeId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The entry node used when the graph begins execution.
+  - `string EntryNodeId { get; set; }`
 - [Error](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-error): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Error&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The event indicates an error condition.
   - `const DiagnosticSeverity Error`
@@ -1269,6 +1284,9 @@ Browse the published API surface by public member.
 - [ExchangeGreetings](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-exchangegreetings-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken): `Methods` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=ExchangeGreetings&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Exchanges greeting messages bidirectionally to validate duplex streaming support.
   - `AsyncDuplexStreamingCall<HelloRequest, HelloReply> ExchangeGreetings(Metadata headers, DateTime? deadline, CancellationToken cancellationToken)`
+- [ExecutionGraph](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimelifecycleeventscope-executiongraph): `Fields` on `RuntimeLifecycleEventScope` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ExecutionGraph&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The event belongs to execution-graph visibility and active lifecycle transitions.
+  - `const RuntimeLifecycleEventScope ExecutionGraph`
 - [ExecutionGraphDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-executiongraphdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphnodedescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphedgedescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `ExecutionGraphDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionGraphDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Creates a new execution graph descriptor.
   - `ExecutionGraphDescriptor(string id, string displayName, string description, string sourceModuleId, string entryNodeId, IReadOnlyList<ExecutionGraphNodeDescriptor> nodes, IReadOnlyList<ExecutionGraphEdgeDescriptor> edges, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
@@ -1281,6 +1299,12 @@ Browse the published API surface by public member.
 - [ExecutionGraphs](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-executiongraphs): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ExecutionGraphs&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The execution graphs contributed by active modules and visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<ExecutionGraphDescriptor> ExecutionGraphs { get; set; }`
+- [ExecutionGraphs](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperationalstory-executiongraphs): `Properties` on `RuntimeOperationalStory` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ExecutionGraphs&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the current lifecycle state for each execution graph visible to the runtime story.
+  - `IReadOnlyList<RuntimeExecutionGraphState> ExecutionGraphs { get; set; }`
+- [ExecutionGraphTransitionCounterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-executiongraphtransitioncountername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=ExecutionGraphTransitionCounterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
+  - Gets the counter name for execution-graph lifecycle transitions.
+  - `const string ExecutionGraphTransitionCounterName`
 - [ExpectedStatusCodes](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-expectedstatuscodes): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=ExpectedStatusCodes&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the explicit HTTP status codes that should be treated as healthy.
   - `IReadOnlyList<int> ExpectedStatusCodes { get; set; }`
@@ -1518,6 +1542,9 @@ Browse the published API surface by public member.
 - [GetResources](cephalon-engine.md#member-m-cephalon-engine-localization-localizedtextcatalog-getresources-system-string): `Methods` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=GetResources&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
   - Gets the merged resources visible for the specified culture.
   - `IReadOnlyDictionary<string, string> GetResources(string culture)`
+- [GraphId](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-graphid): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=GraphId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The stable execution-graph identifier.
+  - `string GraphId { get; set; }`
 - [GraphQL](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-graphql): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=GraphQL&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
   - Gets the built-in GraphQL transport descriptor.
   - `TransportDescriptor GraphQL { get; }`
@@ -1821,6 +1848,9 @@ Browse the published API surface by public member.
 - [Intelligence](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-intelligence): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Intelligence&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Identifies an intelligence-oriented technology.
   - `const TechnologyKind Intelligence`
+- [IsActive](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-isactive): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=IsActive&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets a value indicating whether the execution graph is currently active with the runtime.
+  - `bool IsActive { get; }`
 - [IsAllowed](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-isallowed): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=IsAllowed&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Whether the capability is allowed under the resolved policy.
   - `bool IsAllowed { get; set; }`
@@ -1836,12 +1866,18 @@ Browse the published API surface by public member.
 - [IsCapabilityEnabled](cephalon-engine.md#member-m-cephalon-engine-configuration-engineoptions-iscapabilityenabled-system-string): `Methods` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IsCapabilityEnabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Determines whether a capability is enabled under the current option set.
   - `bool IsCapabilityEnabled(string capabilityKey)`
+- [IsDeactivated](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-isdeactivated): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=IsDeactivated&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets a value indicating whether the execution graph most recently observed a deactivation event.
+  - `bool IsDeactivated { get; }`
 - [IsHealthy](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-ishealthy): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=IsHealthy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets a value indicating whether the report represents a healthy state.
   - `bool IsHealthy { get; }`
 - [IsInitialized](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isinitialized): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=IsInitialized&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets a value indicating whether the module completed initialization successfully.
   - `bool IsInitialized { get; }`
+- [IsLoaded](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-isloaded): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=IsLoaded&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets a value indicating whether the execution graph is visible to the runtime story.
+  - `bool IsLoaded { get; }`
 - [IsLoaded](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isloaded): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=IsLoaded&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets a value indicating whether the module is present in the built runtime.
   - `bool IsLoaded { get; }`
@@ -1956,9 +1992,15 @@ Browse the published API surface by public member.
 - [LastFailure](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-lastfailure): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastFailure&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The last captured failure, if the runtime has faulted.
   - `RuntimeFailureInfo LastFailure { get; set; }`
+- [LastObservedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-lastobservedatutc): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The UTC timestamp when the last lifecycle phase was recorded.
+  - `DateTimeOffset? LastObservedAtUtc { get; set; }`
 - [LastObservedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-lastobservedatutc): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when the last lifecycle phase was recorded for the module.
   - `DateTimeOffset? LastObservedAtUtc { get; set; }`
+- [LastObservedPhase](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-lastobservedphase): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastObservedPhase&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The last lifecycle phase recorded for the execution graph.
+  - `string LastObservedPhase { get; set; }`
 - [LastObservedPhase](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-lastobservedphase): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastObservedPhase&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The last lifecycle phase recorded for the module.
   - `string LastObservedPhase { get; set; }`
@@ -1971,6 +2013,9 @@ Browse the published API surface by public member.
 - [LoadContext](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-loadcontext): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=LoadContext&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the assembly load context name used for the package.
   - `string LoadContext { get; }`
+- [LoadedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-loadedatutc): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LoadedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The UTC timestamp when the graph became visible to the built runtime story.
+  - `DateTimeOffset? LoadedAtUtc { get; set; }`
 - [LoadedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-loadedatutc): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LoadedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when the module became part of the built runtime story.
   - `DateTimeOffset? LoadedAtUtc { get; set; }`
@@ -2392,7 +2437,7 @@ Browse the published API surface by public member.
   - Gets the richer operator-facing runtime story that explains what loaded, started, failed, and why.
   - `RuntimeOperationalStory OperationalStory { get; }`
 - [OperationalStory](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-operationalstory): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=OperationalStory&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
-  - The richer operator-facing lifecycle story that combines loaded packages, module state, and the ordered runtime timeline.
+  - The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, module state, and the ordered runtime timeline.
   - `RuntimeOperationalStory OperationalStory { get; set; }`
 - [Options](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-options): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Options&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets module and capability option overrides.
@@ -3069,6 +3114,9 @@ Browse the published API surface by public member.
 - [Runtime](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimelifecycleeventscope-runtime): `Fields` on `RuntimeLifecycleEventScope` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Runtime&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The event belongs to the overall runtime lifecycle.
   - `const RuntimeLifecycleEventScope Runtime`
+- [RuntimeExecutionGraphState](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimeexecutiongraphstate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-nullable-system-datetimeoffset): `Constructors` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeExecutionGraphState&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Describes the current operator-facing lifecycle state for one execution graph visible to the runtime.
+  - `RuntimeExecutionGraphState(string GraphId, string DisplayName, string Description, string SourceModuleId, string SourceModuleVersion, string EntryNodeId, DateTimeOffset? LoadedAtUtc, DateTimeOffset? ActivatedAtUtc, DateTimeOffset? DeactivatedAtUtc, string LastObservedPhase, DateTimeOffset? LastObservedAtUtc)`
 - [RuntimeFailureCounterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-runtimefailurecountername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeFailureCounterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Gets the counter name for runtime lifecycle failures.
   - `const string RuntimeFailureCounterName`
@@ -3273,6 +3321,12 @@ Browse the published API surface by public member.
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphdescriptor-sourcemoduleid): `Properties` on `ExecutionGraphDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the identifier of the module that contributed the graph.
   - `string SourceModuleId { get; }`
+- [SourceModuleId](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-sourcemoduleid): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The module that contributed the execution graph.
+  - `string SourceModuleId { get; set; }`
+- [SourceModuleVersion](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-sourcemoduleversion): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=SourceModuleVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - The effective version of the source module when available.
+  - `string SourceModuleVersion { get; set; }`
 - [SourcePackageId](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-sourcepackageid): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=SourcePackageId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The package that contributed the capability when one is known.
   - `string SourcePackageId { get; set; }`
@@ -3418,7 +3472,7 @@ Browse the published API surface by public member.
   - Streams the host principles that describe the Cephalon runtime shape.
   - `AsyncServerStreamingCall<PrincipleReply> StreamPrinciples(PrinciplesRequest request, Metadata headers, DateTime? deadline, CancellationToken cancellationToken)`
 - [SubjectId](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimelifecycleevent-subjectid): `Properties` on `RuntimeLifecycleEvent` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=SubjectId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
-  - The runtime, module, or package identifier associated with the event when available.
+  - The runtime, module, package, or execution-graph identifier associated with the event when available.
   - `string SubjectId { get; set; }`
 - [SubjectVersion](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimelifecycleevent-subjectversion): `Properties` on `RuntimeLifecycleEvent` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=SubjectVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The version associated with the event subject when available.
@@ -3547,7 +3601,7 @@ Browse the published API surface by public member.
   - Identifies a test project.
   - `const string Tests`
 - [Timeline](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperationalstory-timeline): `Properties` on `RuntimeOperationalStory` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Timeline&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
-  - The ordered lifecycle narrative for package load, module transitions, runtime transitions, and failures.
+  - The ordered lifecycle narrative for package load, execution-graph transitions, module transitions, runtime transitions, and failures.
   - `IReadOnlyList<RuntimeLifecycleEvent> Timeline { get; set; }`
 - [TimeoutSeconds](cephalon-observability-cassandradependencies.md#member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-timeoutseconds): `Properties` on `CassandraDependencyDefinition` in `Cephalon.Observability.CassandraDependencies.Configuration` (`Cephalon.Observability.CassandraDependencies`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Configuration&scope=members)
   - Gets or sets the per-probe timeout in seconds.

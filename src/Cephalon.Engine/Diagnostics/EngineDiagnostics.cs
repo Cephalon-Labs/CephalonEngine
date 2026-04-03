@@ -40,6 +40,11 @@ public static class EngineDiagnostics
     public const string ModuleTransitionCounterName = "cephalon.module.transitions";
 
     /// <summary>
+    /// Gets the counter name for execution-graph lifecycle transitions.
+    /// </summary>
+    public const string ExecutionGraphTransitionCounterName = "cephalon.execution-graphs.transitions";
+
+    /// <summary>
     /// Gets the counter name for runtime lifecycle failures.
     /// </summary>
     public const string RuntimeFailureCounterName = "cephalon.runtime.failures";
@@ -74,6 +79,10 @@ public static class EngineDiagnostics
         ModuleTransitionCounterName,
         unit: "transitions",
         description: "Counts module lifecycle transitions.");
+    internal static readonly Counter<long> ExecutionGraphTransitionCounter = Meter.CreateCounter<long>(
+        ExecutionGraphTransitionCounterName,
+        unit: "transitions",
+        description: "Counts execution-graph lifecycle transitions.");
     internal static readonly Counter<long> RuntimeFailureCounter = Meter.CreateCounter<long>(
         RuntimeFailureCounterName,
         unit: "failures",

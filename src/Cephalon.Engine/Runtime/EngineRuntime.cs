@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Diagnostics;
@@ -25,6 +26,11 @@ public sealed class EngineRuntime : IRuntime, IDisposable
             LogLevel.Information,
             new EventId(EngineRuntimeDiagnosticsConventions.ModuleTransition.Id, EngineRuntimeDiagnosticsConventions.ModuleTransition.Name),
             EngineRuntimeDiagnosticsConventions.ModuleTransition.MessageTemplate);
+    private static readonly Action<ILogger, string, string, string, string, Exception?> LogExecutionGraphTransitionMessage =
+        LoggerMessage.Define<string, string, string, string>(
+            LogLevel.Information,
+            new EventId(EngineRuntimeDiagnosticsConventions.ExecutionGraphTransition.Id, EngineRuntimeDiagnosticsConventions.ExecutionGraphTransition.Name),
+            EngineRuntimeDiagnosticsConventions.ExecutionGraphTransition.MessageTemplate);
     private static readonly Action<ILogger, string, string, Exception> LogRuntimeFailureMessage =
         LoggerMessage.Define<string, string>(
             LogLevel.Error,
@@ -38,12 +44,17 @@ public sealed class EngineRuntime : IRuntime, IDisposable
 
     private readonly SemaphoreSlim lifecycleLock = new(1, 1);
     private readonly object stateGate = new();
+    private readonly IReadOnlyList<ExecutionGraphDescriptor> executionGraphs;
     private readonly List<IModule> initializedModules = [];
     private readonly List<IModule> startedModules = [];
+    private readonly Dictionary<string, string?> moduleVersionsById;
     private readonly Dictionary<string, DateTimeOffset> moduleLoadedAtUtc = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, DateTimeOffset> moduleInitializedAtUtc = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, DateTimeOffset> moduleStartedAtUtc = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, DateTimeOffset> moduleStoppedAtUtc = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, DateTimeOffset> executionGraphLoadedAtUtc = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, DateTimeOffset> executionGraphActivatedAtUtc = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, DateTimeOffset> executionGraphDeactivatedAtUtc = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, RuntimeFailureInfo> moduleFailures = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<RuntimeLifecycleEvent> timeline = [];
     private ModuleContext? moduleContext;
@@ -62,14 +73,21 @@ public sealed class EngineRuntime : IRuntime, IDisposable
     /// <param name="modules">The modules that participate in runtime lifecycle transitions.</param>
     /// <param name="manifest">The runtime manifest that describes the built runtime shape.</param>
     /// <param name="failurePolicy">The failure policy that governs startup, stop, and restart behavior.</param>
+    /// <param name="executionGraphs">The execution graphs visible to the runtime story and diagnostics surface.</param>
     public EngineRuntime(
         IReadOnlyList<IModule> modules,
         RuntimeManifest manifest,
-        FailurePolicy failurePolicy)
+        FailurePolicy failurePolicy,
+        IReadOnlyList<ExecutionGraphDescriptor>? executionGraphs = null)
     {
         Modules = modules ?? throw new ArgumentNullException(nameof(modules));
         Manifest = manifest ?? throw new ArgumentNullException(nameof(manifest));
         FailurePolicy = failurePolicy ?? throw new ArgumentNullException(nameof(failurePolicy));
+        this.executionGraphs = executionGraphs?.ToArray() ?? [];
+        moduleVersionsById = Manifest.Modules.ToDictionary(
+            static module => module.Id,
+            static module => (string?)module.Version,
+            StringComparer.OrdinalIgnoreCase);
         SeedLoadedStoryFromManifest();
     }
 
@@ -513,6 +531,7 @@ public sealed class EngineRuntime : IRuntime, IDisposable
                 subjectVersion: Manifest.EngineVersion,
                 message: "Runtime completed start with status Started.",
                 occurredAtUtc: startRecordedAtUtc);
+            ActivateExecutionGraphs(startRecordedAtUtc);
             LogRuntimeTransition(logger, "start", status.ToString(), Manifest.AppProfile.BlueprintId, Modules.Count);
         }
         catch (Exception exception)
@@ -552,6 +571,7 @@ public sealed class EngineRuntime : IRuntime, IDisposable
                 subjectVersion: Manifest.EngineVersion,
                 message: "Runtime completed stop with status Stopped.",
                 occurredAtUtc: stopRecordedAtUtc);
+            DeactivateExecutionGraphs(stopRecordedAtUtc);
             LogRuntimeTransition(logger, "stop", status.ToString(), Manifest.AppProfile.BlueprintId, Modules.Count);
             return;
         }
@@ -588,6 +608,7 @@ public sealed class EngineRuntime : IRuntime, IDisposable
                 subjectVersion: Manifest.EngineVersion,
                 message: "Runtime completed stop with status Stopped.",
                 occurredAtUtc: stopRecordedAtUtc);
+            DeactivateExecutionGraphs(stopRecordedAtUtc);
             LogRuntimeTransition(logger, "stop", status.ToString(), Manifest.AppProfile.BlueprintId, Modules.Count);
         }
         catch (Exception exception)
@@ -821,6 +842,9 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         var initializedSnapshot = moduleInitializedAtUtc.ToDictionary(static pair => pair.Key, static pair => pair.Value, StringComparer.OrdinalIgnoreCase);
         var startedSnapshot = moduleStartedAtUtc.ToDictionary(static pair => pair.Key, static pair => pair.Value, StringComparer.OrdinalIgnoreCase);
         var stoppedSnapshot = moduleStoppedAtUtc.ToDictionary(static pair => pair.Key, static pair => pair.Value, StringComparer.OrdinalIgnoreCase);
+        var graphLoadedSnapshot = executionGraphLoadedAtUtc.ToDictionary(static pair => pair.Key, static pair => pair.Value, StringComparer.OrdinalIgnoreCase);
+        var graphActivatedSnapshot = executionGraphActivatedAtUtc.ToDictionary(static pair => pair.Key, static pair => pair.Value, StringComparer.OrdinalIgnoreCase);
+        var graphDeactivatedSnapshot = executionGraphDeactivatedAtUtc.ToDictionary(static pair => pair.Key, static pair => pair.Value, StringComparer.OrdinalIgnoreCase);
         var failureSnapshot = moduleFailures.ToDictionary(static pair => pair.Key, static pair => pair.Value, StringComparer.OrdinalIgnoreCase);
 
         var modules = Manifest.Modules
@@ -848,12 +872,39 @@ public sealed class EngineRuntime : IRuntime, IDisposable
             })
             .ToArray();
 
+        var graphs = executionGraphs
+            .Select(graph =>
+            {
+                var lastObserved = timelineSnapshot
+                    .Where(entry => entry.Scope == RuntimeLifecycleEventScope.ExecutionGraph &&
+                        string.Equals(entry.SubjectId, graph.Id, StringComparison.OrdinalIgnoreCase))
+                    .OrderByDescending(static entry => entry.OccurredAtUtc)
+                    .FirstOrDefault();
+
+                return new RuntimeExecutionGraphState(
+                    GraphId: graph.Id,
+                    DisplayName: graph.DisplayName,
+                    Description: graph.Description,
+                    SourceModuleId: graph.SourceModuleId,
+                    SourceModuleVersion: TryGetSourceModuleVersion(graph.SourceModuleId),
+                    EntryNodeId: graph.EntryNodeId,
+                    LoadedAtUtc: graphLoadedSnapshot.TryGetValue(graph.Id, out var graphLoadedAtUtcValue) ? graphLoadedAtUtcValue : null,
+                    ActivatedAtUtc: graphActivatedSnapshot.TryGetValue(graph.Id, out var activatedAtUtcValue) ? activatedAtUtcValue : null,
+                    DeactivatedAtUtc: graphDeactivatedSnapshot.TryGetValue(graph.Id, out var deactivatedAtUtcValue) ? deactivatedAtUtcValue : null,
+                    LastObservedPhase: lastObserved?.Phase,
+                    LastObservedAtUtc: lastObserved?.OccurredAtUtc);
+            })
+            .ToArray();
+
         return new RuntimeOperationalStory(
             GeneratedAtUtc: DateTimeOffset.UtcNow,
             Status: CreateStatusSnapshotUnsafe(),
             LoadedPackages: Manifest.Packages,
             Modules: modules,
-            Timeline: timelineSnapshot);
+            Timeline: timelineSnapshot)
+        {
+            ExecutionGraphs = graphs
+        };
     }
 
     private void SeedLoadedStoryFromManifest()
@@ -890,6 +941,16 @@ public sealed class EngineRuntime : IRuntime, IDisposable
                 subjectVersion: module.Version,
                 message: message,
                 occurredAtUtc: Manifest.GeneratedAtUtc);
+        }
+
+        foreach (var graph in executionGraphs)
+        {
+            RecordExecutionGraphTransition(
+                graph,
+                phase: "load",
+                runtimeStatus: RuntimeStatus.Created,
+                occurredAtUtc: Manifest.GeneratedAtUtc,
+                message: $"Execution graph '{graph.Id}' loaded from module '{graph.SourceModuleId}'.");
         }
     }
 
@@ -962,6 +1023,85 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         }
     }
 
+    private void ActivateExecutionGraphs(DateTimeOffset occurredAtUtc)
+    {
+        foreach (var graph in executionGraphs)
+        {
+            RecordExecutionGraphTransition(
+                graph,
+                phase: "activate",
+                runtimeStatus: RuntimeStatus.Started,
+                occurredAtUtc: occurredAtUtc,
+                message: $"Execution graph '{graph.Id}' became active from module '{graph.SourceModuleId}'.");
+        }
+    }
+
+    private void DeactivateExecutionGraphs(DateTimeOffset occurredAtUtc)
+    {
+        foreach (var graph in executionGraphs)
+        {
+            RecordExecutionGraphTransition(
+                graph,
+                phase: "deactivate",
+                runtimeStatus: RuntimeStatus.Stopped,
+                occurredAtUtc: occurredAtUtc,
+                message: $"Execution graph '{graph.Id}' became inactive because the runtime stopped.");
+        }
+    }
+
+    private void RecordExecutionGraphTransition(
+        ExecutionGraphDescriptor graph,
+        string phase,
+        RuntimeStatus runtimeStatus,
+        DateTimeOffset occurredAtUtc,
+        string message)
+    {
+        lock (stateGate)
+        {
+            if (string.Equals(phase, "load", StringComparison.OrdinalIgnoreCase))
+            {
+                executionGraphLoadedAtUtc[graph.Id] = occurredAtUtc;
+            }
+            else if (string.Equals(phase, "activate", StringComparison.OrdinalIgnoreCase))
+            {
+                executionGraphActivatedAtUtc[graph.Id] = occurredAtUtc;
+            }
+            else if (string.Equals(phase, "deactivate", StringComparison.OrdinalIgnoreCase))
+            {
+                executionGraphDeactivatedAtUtc[graph.Id] = occurredAtUtc;
+            }
+        }
+
+        EngineDiagnostics.ExecutionGraphTransitionCounter.Add(1, new TagList
+        {
+            { "cephalon.phase", phase },
+            { "cephalon.execution-graph.id", graph.Id },
+            { "cephalon.module.id", graph.SourceModuleId }
+        });
+        RecordLifecycleEvent(
+            RuntimeLifecycleEventScope.ExecutionGraph,
+            phase: phase,
+            outcome: RuntimeLifecycleEventOutcome.Succeeded,
+            runtimeStatus: runtimeStatus,
+            subjectId: graph.Id,
+            subjectVersion: TryGetSourceModuleVersion(graph.SourceModuleId),
+            message: message,
+            occurredAtUtc: occurredAtUtc);
+        LogExecutionGraphTransition(logger, graph.Id, phase, graph.SourceModuleId, runtimeStatus.ToString());
+    }
+
+    private string? TryGetSourceModuleVersion(string sourceModuleId)
+    {
+        if (string.IsNullOrWhiteSpace(sourceModuleId))
+        {
+            return null;
+        }
+
+        return moduleVersionsById.TryGetValue(sourceModuleId, out var version)
+            ? version
+            : null;
+    }
+
     private static void LogRuntimeTransition(
         ILogger? logger,
         string phase,
@@ -989,6 +1129,21 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         }
 
         LogModuleTransitionMessage(logger, moduleId, phase, version, null);
+    }
+
+    private static void LogExecutionGraphTransition(
+        ILogger? logger,
+        string graphId,
+        string phase,
+        string sourceModuleId,
+        string status)
+    {
+        if (logger is null || !logger.IsEnabled(LogLevel.Information))
+        {
+            return;
+        }
+
+        LogExecutionGraphTransitionMessage(logger, graphId, phase, sourceModuleId, status, null);
     }
 
     private static void LogRuntimeFailure(
