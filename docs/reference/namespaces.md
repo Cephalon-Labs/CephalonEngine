@@ -404,6 +404,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Observability.SqlServerDependencies](cephalon-observability-sqlserverdependencies.md#namespace-cephalon-observability-sqlserverdependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Hosting)
 
+## `Cephalon.Observability.Tanzu.Configuration`
+
+- [Cephalon.Observability.Tanzu](cephalon-observability-tanzu.md#namespace-cephalon-observability-tanzu-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration)
+
+## `Cephalon.Observability.Tanzu.Hosting`
+
+- [Cephalon.Observability.Tanzu](cephalon-observability-tanzu.md#namespace-cephalon-observability-tanzu-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Hosting)
+
 ## `Cephalon.ReferenceDocs`
 
 - [Cephalon.ReferenceDocs](cephalon-referencedocs.md#namespace-cephalon-referencedocs): 1 public types [Browse](browse.html?assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs)

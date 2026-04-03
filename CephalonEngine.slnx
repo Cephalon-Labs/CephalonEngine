@@ -51,6 +51,7 @@
     <Project Path="src/Cephalon.Observability.Gcp/Cephalon.Observability.Gcp.csproj" />
     <Project Path="src/Cephalon.Observability.HuaweiCloud/Cephalon.Observability.HuaweiCloud.csproj" />
     <Project Path="src/Cephalon.Observability.OpenShift/Cephalon.Observability.OpenShift.csproj" />
+    <Project Path="src/Cephalon.Observability.Tanzu/Cephalon.Observability.Tanzu.csproj" />
     <Project Path="src/Cephalon.ReferenceDocs/Cephalon.ReferenceDocs.csproj" />
     <Project Path="src/Cephalon.Retrieval/Cephalon.Retrieval.csproj" />
     <Project Path="src/Cephalon.Scaffolding/Cephalon.Scaffolding.csproj" />

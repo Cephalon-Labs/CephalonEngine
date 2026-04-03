@@ -59,6 +59,7 @@ Quick links:
 - [Cephalon.Observability.RedisDependencies](cephalon-observability-redisdependencies.md): Redis and cache dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.RedisDependencies)
 - [Cephalon.Observability.Serilog](cephalon-observability-serilog.md): Serilog provider integration for Cephalon hosts. Contains 1 namespaces and 1 public types. [Browse](browse.html?assembly=Cephalon.Observability.Serilog)
 - [Cephalon.Observability.SqlServerDependencies](cephalon-observability-sqlserverdependencies.md): SQL Server and Azure SQL dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.SqlServerDependencies)
+- [Cephalon.Observability.Tanzu](cephalon-observability-tanzu.md): VMware Tanzu proxy handoff and hosted OTLP integration guidance for Cephalon hosts. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Observability.Tanzu)
 - [Cephalon.Worker](cephalon-worker.md): Generic-host worker adapter for non-HTTP runtime execution. Contains 1 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Worker)
 
 ### Tooling

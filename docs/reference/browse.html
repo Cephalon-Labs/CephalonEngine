@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-03T05:48:02.8483555+00:00",
+  "GeneratedAtUtc": "2026-04-03T07:22:11.5070755+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -408,6 +408,14 @@
       "FileName": "cephalon-observability-sqlserverdependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "Category": "Hosts",
+      "Description": "VMware Tanzu proxy handoff and hosted OTLP integration guidance for Cephalon hosts.",
+      "FileName": "cephalon-observability-tanzu.md",
+      "NamespaceCount": 2,
+      "TypeCount": 2
     },
     {
       "AssemblyName": "Cephalon.ReferenceDocs",
@@ -1141,6 +1149,20 @@
       "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
       "FileName": "cephalon-observability-sqlserverdependencies.md",
       "AnchorId": "namespace-cephalon-observability-sqlserverdependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.Tanzu.Configuration",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "namespace-cephalon-observability-tanzu-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.Tanzu.Hosting",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "namespace-cephalon-observability-tanzu-hosting",
       "TypeCount": 1
     },
     {
@@ -4449,6 +4471,36 @@
       }
     },
     {
+      "DisplayName": "TanzuHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.Tanzu.Hosting",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "type-cephalon-observability-tanzu-hosting-tanzuhostapplicationbuilderextensions",
+      "Declaration": "public static class TanzuHostApplicationBuilderExtensions",
+      "Summary": "Adds VMware Tanzu-hosted observability defaults and proxy handoff wiring for Cephalon hosts.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "TanzuTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Tanzu.Configuration",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "type-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions",
+      "Declaration": "public sealed class TanzuTelemetryExportOptions",
+      "Summary": "Configures VMware Tanzu observability defaults on top of the shared Cephalon telemetry contract.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 11,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "TechnologyCatalogSnapshot",
       "NamespaceName": "Cephalon.Engine.Technologies",
       "AssemblyName": "Cephalon.Engine",
@@ -5466,6 +5518,17 @@
       "AnchorId": "member-m-cephalon-observability-sqlserverdependencies-hosting-sqlserverdependencyhealthservicecollectionextensions-addcephalonsqlserverdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions",
       "Signature": "IServiceCollection AddCephalonSqlServerDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CSqlServerDependencyHealthOptions\u003E configure)",
       "Summary": "Adds SQL Server dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
+      "DisplayName": "AddCephalonTanzu",
+      "Category": "Methods",
+      "DeclaringTypeName": "TanzuHostApplicationBuilderExtensions",
+      "NamespaceName": "Cephalon.Observability.Tanzu.Hosting",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "member-m-cephalon-observability-tanzu-hosting-tanzuhostapplicationbuilderextensions-addcephalontanzu-1-0-system-action-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions",
+      "Signature": "TBuilder AddCephalonTanzu\u003CTBuilder\u003E(this TBuilder builder, Action\u003CTanzuTelemetryExportOptions\u003E configure)",
+      "Summary": "Adds Tanzu-aware OpenTelemetry registration for the Cephalon engine diagnostics surface."
     },
     {
       "DisplayName": "AddCephalonWorker",
@@ -6630,6 +6693,17 @@
       "AssemblyName": "Cephalon.Observability.OpenShift",
       "FileName": "cephalon-observability-openshift.md",
       "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-clustername",
+      "Signature": "string ClusterName { get; set; }",
+      "Summary": "Gets or sets the Kubernetes cluster name to stamp onto exported resources."
+    },
+    {
+      "DisplayName": "ClusterName",
+      "Category": "Properties",
+      "DeclaringTypeName": "TanzuTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Tanzu.Configuration",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-clustername",
       "Signature": "string ClusterName { get; set; }",
       "Summary": "Gets or sets the Kubernetes cluster name to stamp onto exported resources."
     },
@@ -9705,6 +9779,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "TanzuTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Tanzu.Configuration",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "member-m-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "TanzuTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Tanzu telemetry export options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "TrustPolicy",
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
@@ -9998,6 +10083,17 @@
       "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-headers",
       "Signature": "string Headers { get; set; }",
       "Summary": "Gets or sets the raw OTLP headers string added to OpenShift collector requests."
+    },
+    {
+      "DisplayName": "Headers",
+      "Category": "Properties",
+      "DeclaringTypeName": "TanzuTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Tanzu.Configuration",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-headers",
+      "Signature": "string Headers { get; set; }",
+      "Summary": "Gets or sets the raw OTLP headers string added to Tanzu proxy or shared collector requests."
     },
     {
       "DisplayName": "HealthCommand",
@@ -10328,6 +10424,17 @@
       "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-hostedplatform",
       "Signature": "string HostedPlatform { get; set; }",
       "Summary": "Gets or sets the OpenShift deployment target whose hosted defaults should be applied."
+    },
+    {
+      "DisplayName": "HostedPlatform",
+      "Category": "Properties",
+      "DeclaringTypeName": "TanzuTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Tanzu.Configuration",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-hostedplatform",
+      "Signature": "string HostedPlatform { get; set; }",
+      "Summary": "Gets or sets the VMware Tanzu deployment target whose hosted defaults should be applied."
     },
     {
       "DisplayName": "HttpDependencyDefinition",
@@ -12618,6 +12725,17 @@
       "Summary": "Gets or sets the workload namespace to stamp onto exported resources."
     },
     {
+      "DisplayName": "Namespace",
+      "Category": "Properties",
+      "DeclaringTypeName": "TanzuTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Tanzu.Configuration",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-namespace",
+      "Signature": "string Namespace { get; set; }",
+      "Summary": "Gets or sets the workload namespace to stamp onto exported resources."
+    },
+    {
       "DisplayName": "NamespaceIndexPath",
       "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocsSurface",
@@ -13716,6 +13834,61 @@
       "AnchorId": "member-p-cephalon-observability-configuration-telemetryexportoptions-provider",
       "Signature": "string Provider { get; set; }",
       "Summary": "Gets or sets the telemetry provider name, such as \u0060OpenTelemetry\u0060."
+    },
+    {
+      "DisplayName": "ProxyNamespace",
+      "Category": "Properties",
+      "DeclaringTypeName": "TanzuTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Tanzu.Configuration",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-proxynamespace",
+      "Signature": "string ProxyNamespace { get; set; }",
+      "Summary": "Gets or sets the proxy namespace used to build the in-cluster Tanzu proxy endpoint."
+    },
+    {
+      "DisplayName": "ProxyPath",
+      "Category": "Properties",
+      "DeclaringTypeName": "TanzuTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Tanzu.Configuration",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-proxypath",
+      "Signature": "string ProxyPath { get; set; }",
+      "Summary": "Gets or sets the optional base path used for the in-cluster Tanzu proxy endpoint."
+    },
+    {
+      "DisplayName": "ProxyPort",
+      "Category": "Properties",
+      "DeclaringTypeName": "TanzuTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Tanzu.Configuration",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-proxyport",
+      "Signature": "int? ProxyPort { get; set; }",
+      "Summary": "Gets or sets the proxy port used for the in-cluster Tanzu proxy endpoint."
+    },
+    {
+      "DisplayName": "ProxyScheme",
+      "Category": "Properties",
+      "DeclaringTypeName": "TanzuTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Tanzu.Configuration",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-proxyscheme",
+      "Signature": "string ProxyScheme { get; set; }",
+      "Summary": "Gets or sets the URI scheme used for the in-cluster Tanzu proxy endpoint."
+    },
+    {
+      "DisplayName": "ProxyServiceName",
+      "Category": "Properties",
+      "DeclaringTypeName": "TanzuTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Tanzu.Configuration",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-proxyservicename",
+      "Signature": "string ProxyServiceName { get; set; }",
+      "Summary": "Gets or sets the proxy service name used to build the in-cluster Tanzu proxy endpoint."
     },
     {
       "DisplayName": "PublisherDisplayName",
@@ -16567,6 +16740,17 @@
       "Summary": "Gets the tags associated with the transport."
     },
     {
+      "DisplayName": "TanzuTelemetryExportOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TanzuTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Tanzu.Configuration",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "member-m-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-ctor",
+      "Signature": "TanzuTelemetryExportOptions()",
+      "Summary": "Initializes a new instance of the \u0060TanzuTelemetryExportOptions\u0060 class."
+    },
+    {
       "DisplayName": "TargetFramework",
       "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocsRequest",
@@ -17161,6 +17345,17 @@
       "Summary": "Gets or sets the filesystem path to a trusted CA bundle used for HTTPS OTLP/HTTP traces and metrics against in-cluster or shared OpenShift collectors."
     },
     {
+      "DisplayName": "TrustedCaCertificatePath",
+      "Category": "Properties",
+      "DeclaringTypeName": "TanzuTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Tanzu.Configuration",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-trustedcacertificatepath",
+      "Signature": "string TrustedCaCertificatePath { get; set; }",
+      "Summary": "Gets or sets the filesystem path to a trusted CA bundle used for HTTPS OTLP/HTTP traces and metrics against shared collectors or Tanzu proxy endpoints."
+    },
+    {
       "DisplayName": "TrustedOnly",
       "Category": "Fields",
       "DeclaringTypeName": "CapabilityAccess",
@@ -17588,6 +17783,17 @@
       "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-useinclustercollectorservice",
       "Signature": "bool UseInClusterCollectorService { get; set; }",
       "Summary": "Gets or sets a value indicating whether the package should target an in-cluster OpenShift collector service when no shared endpoint is configured."
+    },
+    {
+      "DisplayName": "UseInClusterProxyService",
+      "Category": "Properties",
+      "DeclaringTypeName": "TanzuTelemetryExportOptions",
+      "NamespaceName": "Cephalon.Observability.Tanzu.Configuration",
+      "AssemblyName": "Cephalon.Observability.Tanzu",
+      "FileName": "cephalon-observability-tanzu.md",
+      "AnchorId": "member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-useinclusterproxyservice",
+      "Signature": "bool UseInClusterProxyService { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the package should target an in-cluster Tanzu proxy service for trace handoff when no shared endpoint is configured."
     },
     {
       "DisplayName": "UseLocalization",

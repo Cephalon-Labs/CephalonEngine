@@ -94,7 +94,7 @@ Shipped result:
 
 - the original later follow-through expanded into a broader cloud/platform companion track spanning self-hosted collectors and runtimes plus AWS, Azure, GCP, Huawei Cloud, Alibaba Cloud, Cloudflare, DigitalOcean, Red Hat OpenShift, and VMware Tanzu
 - the self-hosted slice is now shipped, `#86` has now shipped Azure Monitor exporter wiring plus hosted Azure defaults as the first explicit vendor-specific child under `ENG-029`, `#95` has now shipped the AWS follow-through as the second explicit vendor-specific child, `#98` has now shipped the GCP follow-through as the third explicit vendor-specific child, and `#102` has now shipped the Huawei Cloud follow-through as the fourth explicit vendor-specific child
-- the Alibaba Cloud slice is now shipped under `#106`, the Red Hat OpenShift slice is now shipped under `#110`, the DigitalOcean slice is now shipped under `#114`, `#118` now narrows VMware Tanzu as the current follow-up target, and Cloudflare remains later instead of staying folded into one ambiguous task
+- the Alibaba Cloud slice is now shipped under `#106`, the Red Hat OpenShift slice is now shipped under `#110`, the DigitalOcean slice is now shipped under `#114`, the VMware Tanzu slice is now shipped under `#118`, and Cloudflare remains later instead of staying folded into one ambiguous task
 
 Why this target stays in phase 6:
 
@@ -108,7 +108,7 @@ Shipped result:
 
 - `Cephalon.Observability.Aws` now ships AWS-specific companion wiring on top of the shared OpenTelemetry baseline, including X-Ray-compatible trace IDs and propagation, AWS SDK instrumentation, and hosted defaults for the supported AWS runtimes
 - the AWS slice keeps cloud-specific behavior in companion packages instead of moving it back into `Cephalon.Engine`
-- the GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and DigitalOcean slices have now shipped alongside the Azure and AWS slices, `#118` now narrows VMware Tanzu as the current follow-up target, and Cloudflare remains later
+- the GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, and VMware Tanzu slices have now shipped alongside the Azure and AWS slices, and Cloudflare remains later
 
 Why this target stays in phase 6:
 
@@ -125,7 +125,7 @@ Shipped result:
 - the shipped OTLP baseline now includes ASP.NET Core server instrumentation so exported traces can correlate with Cephalon request logging
 - `Cephalon.Observability.Gcp` now ships GCP-specific companion wiring on top of the shared OpenTelemetry baseline, including hosted GCP defaults plus an optional Google-managed traces/metrics path
 - the shipped self-hosted, Azure Monitor, AWS, GCP, and Huawei Cloud slices keep cloud-specific behavior in companion packages instead of moving it back into `Cephalon.Engine`
-- the Alibaba Cloud slice is now shipped under `#106`, the Red Hat OpenShift slice is now shipped under `#110`, the DigitalOcean slice is now shipped under `#114`, `#118` now narrows VMware Tanzu as the current follow-up target, and Cloudflare remains later
+- the Alibaba Cloud slice is now shipped under `#106`, the Red Hat OpenShift slice is now shipped under `#110`, the DigitalOcean slice is now shipped under `#114`, the VMware Tanzu slice is now shipped under `#118`, and Cloudflare remains later
 
 Why this target stays in phase 6:
 
@@ -141,7 +141,7 @@ Shipped result:
 - the shipped self-hosted, Azure Monitor, AWS, and GCP slices proved the companion-package model and kept cloud-specific behavior outside `Cephalon.Engine`, and `Cephalon.Observability.HuaweiCloud` now extends that same pattern for Huawei Cloud
 - the Huawei Cloud package now supports hosted defaults for ECS, CCE, and FunctionGraph plus an opt-in direct Huawei Cloud APM trace-ingestion path that uses the required `Authentication` header without inventing a new logging abstraction or reopening phase 2
 - the shipped Huawei Cloud slice keeps logs and metrics on the shared collector-oriented path while making the direct managed APM route trace-only, which keeps the contract truthful to the documented Huawei Cloud path instead of over-claiming broader managed-signal support
-- the Alibaba Cloud slice is now shipped under `#106`, the Red Hat OpenShift slice is now shipped under `#110`, the DigitalOcean slice is now shipped under `#114`, `#118` now narrows VMware Tanzu as the current follow-up target, and Cloudflare remains later follow-up work
+- the Alibaba Cloud slice is now shipped under `#106`, the Red Hat OpenShift slice is now shipped under `#110`, the DigitalOcean slice is now shipped under `#114`, the VMware Tanzu slice is now shipped under `#118`, and Cloudflare remains later follow-up work
 
 Why this target stays in phase 6:
 
@@ -198,12 +198,13 @@ Why this target stays in phase 6:
 
 ### `#118` VMware Tanzu proxy handoff and hosted Tanzu defaults on top of the OTLP baseline
 
-Current target:
+Shipped result:
 
-- hosts can already declare telemetry export intent through `Engine:Observability:Telemetry`, and `Cephalon.Observability.OpenTelemetry` already wires the shared OTLP logs, metrics, and traces baseline
-- the shipped self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and DigitalOcean slices proved the companion-package model and kept cloud-specific behavior outside `Cephalon.Engine`, and `#118` now narrows the next explicit child to a VMware Tanzu proxy/defaults package instead of reopening the remaining-provider bucket
-- current Tanzu Observability and Tanzu Kubernetes Grid docs center on a Wavefront proxy plus Kubernetes collector/operator path, with OpenTelemetry applications handing data to the proxy instead of one generic vendor-direct OTLP backend story
-- the Tanzu slice should add hosted defaults and proxy handoff conventions for Cephalon deployments on VMware Tanzu without inventing a new logging abstraction, without pretending the current docs promise a simpler generic managed-exporter path, and without reopening Cloudflare into the same task
+- `Cephalon.Observability.Tanzu` now ships Tanzu-specific companion wiring on top of the shared OpenTelemetry baseline, including shared OTLP endpoint reuse, `UseSelfHostedDefaults`, and explicit in-cluster proxy-service discovery for trace-focused handoff
+- the Tanzu slice keeps cloud-specific behavior in companion packages instead of moving it back into `Cephalon.Engine`
+- the package now supports hosted defaults for TKG, TKGI, and TAP plus optional OTLP headers, optional HTTPS trusted-CA bundle handling, and explicit proxy base-path/service discovery without inventing a new logging abstraction
+- the shipped Tanzu slice keeps the shared OTLP path intact for logs and metrics, makes the in-cluster proxy handoff path trace-only, and avoids pretending the current Tanzu docs promise one generic managed OTLP exporter path for every signal
+- docs, validation, and reference-doc publishing now treat VMware Tanzu as a shipped first-party companion package, while the downstream companion-package authoring path stays explicit for later providers
 
 Why this target stays in phase 6:
 
@@ -313,11 +314,11 @@ Why this stays separate:
 
 Current conclusion from this inventory:
 
-- the phase-2 child-task split served its purpose for the shipped baseline; with the self-hosted, Azure, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, and DigitalOcean slices complete, `#118` now narrows VMware Tanzu as the current explicit `ENG-029` child while Cloudflare remains later
+- the phase-2 child-task split served its purpose for the shipped baseline; with the self-hosted, Azure, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, and VMware Tanzu slices complete, Cloudflare remains later follow-through work
 - phase 2 can now be treated as substantially complete on top of a shipped provider/logging/runtime-surface baseline, with any extra provider packs still treated as future adoption-driven expansion
 
 Recommended execution sequence now is:
 
 1. treat phase 2 as complete for the shipped operational baseline
-2. keep `ENG-029` in phase 6 cloud and platform integrations as current VMware Tanzu-focused work under `#118`, while Cloudflare stays later until it is narrowed into its own explicit child item
+2. keep `ENG-029` in phase 6 cloud and platform integrations as later follow-through until Cloudflare is narrowed into its own explicit child item
 3. keep adoption-driven provider-pack additions separate unless a concrete infrastructure gap appears, and keep the downstream companion-package story explicit for teams that need to implement their own provider path
