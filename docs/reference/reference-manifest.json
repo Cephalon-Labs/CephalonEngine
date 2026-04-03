@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-03T13:31:29.1918515+00:00",
+  "GeneratedAtUtc": "2026-04-03T13:58:07.0522087+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 10,
-      "TypeCount": 47
+      "TypeCount": 49
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -360,7 +360,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-appmodel-scaffolding",
-      "TypeCount": 5
+      "TypeCount": 7
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Capabilities",
@@ -4504,7 +4504,7 @@
       "Summary": "Defines the canonical scaffold-scope identifiers used by scaffold plans.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 3,
+        "Fields": 4,
         "Properties": 0,
         "Methods": 0
       }
@@ -4596,6 +4596,36 @@
         "Constructors": 0,
         "Fields": 2,
         "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "SuiteScaffoldPlan",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan",
+      "Declaration": "public sealed class SuiteScaffoldPlan",
+      "Summary": "Describes a suite-level scaffold plan for coordinated multi-service Cephalon solutions.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "SuiteScaffoldService",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice",
+      "Declaration": "public sealed class SuiteScaffoldService",
+      "Summary": "Describes one service slot inside a suite-level scaffold plan.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
         "Methods": 0
       }
     },
@@ -6540,6 +6570,17 @@
       "Summary": "Gets the selected blueprint identifier."
     },
     {
+      "DisplayName": "BlueprintId",
+      "Category": "Properties",
+      "DeclaringTypeName": "SuiteScaffoldService",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-blueprintid",
+      "Signature": "string BlueprintId { get; }",
+      "Summary": "Gets the app blueprint identifier used for the service."
+    },
+    {
       "DisplayName": "BootstrapServers",
       "Category": "Properties",
       "DeclaringTypeName": "KafkaDependencyDefinition",
@@ -7376,6 +7417,17 @@
       "Summary": "Gets the conventions implied by the scaffold."
     },
     {
+      "DisplayName": "Conventions",
+      "Category": "Properties",
+      "DeclaringTypeName": "SuiteScaffoldPlan",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-conventions",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Conventions { get; }",
+      "Summary": "Gets the conventions implied by the suite scaffold."
+    },
+    {
       "DisplayName": "Counters",
       "Category": "Properties",
       "DeclaringTypeName": "DiagnosticsSurface",
@@ -8047,6 +8099,17 @@
       "Summary": "Gets the project identifiers this project depends on."
     },
     {
+      "DisplayName": "DependsOn",
+      "Category": "Properties",
+      "DeclaringTypeName": "SuiteScaffoldService",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-dependson",
+      "Signature": "IReadOnlyList\u003Cstring\u003E DependsOn { get; }",
+      "Summary": "Gets the service or shared-project identifiers this service depends on."
+    },
+    {
       "DisplayName": "Deployment",
       "Category": "Fields",
       "DeclaringTypeName": "PatternKind",
@@ -8309,6 +8372,28 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets the scaffold-plan description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "SuiteScaffoldPlan",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the suite-scaffold description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "SuiteScaffoldService",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the service-slot description."
     },
     {
       "DisplayName": "Description",
@@ -8936,6 +9021,28 @@
       "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-displayname",
       "Signature": "string DisplayName { get; set; }",
       "Summary": "Gets or sets the human-readable dependency name shown to operators."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SuiteScaffoldPlan",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the human-readable suite-scaffold name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SuiteScaffoldService",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the human-readable service-slot name."
     },
     {
       "DisplayName": "DisplayName",
@@ -11613,6 +11720,28 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "SuiteScaffoldPlan",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable suite-scaffold identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "SuiteScaffoldService",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable service-slot identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "TechnologyDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -13186,6 +13315,28 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "SuiteScaffoldPlan",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional suite-scaffold metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "SuiteScaffoldService",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional service metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "TechnologyDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -13798,6 +13949,17 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-nametemplate",
       "Signature": "string NameTemplate { get; }",
       "Summary": "Gets the project-name template."
+    },
+    {
+      "DisplayName": "NameTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "SuiteScaffoldService",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-nametemplate",
+      "Signature": "string NameTemplate { get; }",
+      "Summary": "Gets the generated app-name template for the service."
     },
     {
       "DisplayName": "NatsDependencyDefinition",
@@ -14557,6 +14719,17 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-pathtemplate",
       "Signature": "string PathTemplate { get; }",
       "Summary": "Gets the project-path template."
+    },
+    {
+      "DisplayName": "PathTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "SuiteScaffoldService",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-pathtemplate",
+      "Signature": "string PathTemplate { get; }",
+      "Summary": "Gets the generated root-path template for the service."
     },
     {
       "DisplayName": "PatternDescriptor",
@@ -16913,6 +17086,17 @@
       "Summary": "Gets the root service provider for the runtime."
     },
     {
+      "DisplayName": "Services",
+      "Category": "Properties",
+      "DeclaringTypeName": "SuiteScaffoldPlan",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-services",
+      "Signature": "IReadOnlyList\u003CSuiteScaffoldService\u003E Services { get; }",
+      "Summary": "Gets the service slots emitted by the suite scaffold."
+    },
+    {
       "DisplayName": "Severity",
       "Category": "Properties",
       "DeclaringTypeName": "DiagnosticEventDefinition",
@@ -16924,6 +17108,17 @@
       "Summary": "The intended severity for the event."
     },
     {
+      "DisplayName": "SharedFolders",
+      "Category": "Properties",
+      "DeclaringTypeName": "SuiteScaffoldPlan",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-sharedfolders",
+      "Signature": "IReadOnlyList\u003CScaffoldFolder\u003E SharedFolders { get; }",
+      "Summary": "Gets the shared folders emitted outside individual services."
+    },
+    {
       "DisplayName": "SharedFoundationPattern",
       "Category": "Properties",
       "DeclaringTypeName": "BuiltInPatterns",
@@ -16933,6 +17128,17 @@
       "AnchorId": "member-p-cephalon-engine-patterns-builtinpatterns-sharedfoundationpattern",
       "Signature": "PatternDescriptor SharedFoundationPattern { get; }",
       "Summary": "Gets the shared-foundation pattern."
+    },
+    {
+      "DisplayName": "SharedProjects",
+      "Category": "Properties",
+      "DeclaringTypeName": "SuiteScaffoldPlan",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-sharedprojects",
+      "Signature": "IReadOnlyList\u003CScaffoldProject\u003E SharedProjects { get; }",
+      "Summary": "Gets the shared projects emitted outside individual services."
     },
     {
       "DisplayName": "ShutdownLivenessGracePeriod",
@@ -17835,6 +18041,39 @@
       "AnchorId": "member-f-cephalon-engine-runtime-runtimelifecycleeventoutcome-succeeded",
       "Signature": "const RuntimeLifecycleEventOutcome Succeeded",
       "Summary": "The lifecycle event completed successfully."
+    },
+    {
+      "DisplayName": "Suite",
+      "Category": "Fields",
+      "DeclaringTypeName": "ScaffoldScopes",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-appmodel-scaffolding-scaffoldscopes-suite",
+      "Signature": "const string Suite",
+      "Summary": "Identifies a suite-level scaffold scope."
+    },
+    {
+      "DisplayName": "SuiteScaffoldPlan",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SuiteScaffoldPlan",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "SuiteScaffoldPlan(string id, string displayName, string description, IReadOnlyList\u003CSuiteScaffoldService\u003E services, IReadOnlyList\u003CScaffoldProject\u003E sharedProjects, IReadOnlyList\u003CScaffoldFolder\u003E sharedFolders, IReadOnlyList\u003Cstring\u003E conventions, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a suite-level scaffold plan."
+    },
+    {
+      "DisplayName": "SuiteScaffoldService",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SuiteScaffoldService",
+      "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-appmodel-scaffolding-suitescaffoldservice-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "SuiteScaffoldService(string id, string displayName, string description, string blueprintId, string nameTemplate, string pathTemplate, IReadOnlyList\u003Cstring\u003E dependsOn, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a suite-scaffold service description."
     },
     {
       "DisplayName": "SummaryPath",

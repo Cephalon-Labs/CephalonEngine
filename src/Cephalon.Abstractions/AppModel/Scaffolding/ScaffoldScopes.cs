@@ -6,6 +6,11 @@ namespace Cephalon.Abstractions.AppModel.Scaffolding;
 public static class ScaffoldScopes
 {
     /// <summary>
+    /// Identifies a suite-level scaffold scope.
+    /// </summary>
+    public const string Suite = "suite";
+
+    /// <summary>
     /// Identifies a solution-level scaffold scope.
     /// </summary>
     public const string Solution = "solution";
