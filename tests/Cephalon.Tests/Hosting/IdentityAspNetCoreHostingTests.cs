@@ -8,6 +8,7 @@ using Cephalon.Identity.AspNetCore.Transports.Rest;
 using Cephalon.Identity.Registration;
 using Cephalon.Tests.Support;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -93,6 +94,31 @@ public sealed class IdentityAspNetCoreHostingTests
             Assert.NotNull(payload);
             Assert.Equal("Authorization denied", payload.Title);
             Assert.Contains("tenant boundary", payload.Detail!, StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
+    [Fact]
+    public async Task RequireCephalonAuthorizationRespectsAllowAnonymousOnChildEndpointsInsideProtectedGroups()
+    {
+        var app = await CreateAppAsync(configureRoutes: webApplication =>
+        {
+            var group = webApplication.MapGroup("/tenants/{tenantId}/documents")
+                .RequireCephalonAuthorization("tenant-boundary", resourceType: "document");
+
+            group.MapGet("/public", () => TypedResults.Ok(new { ok = true }))
+                .WithMetadata(new AllowAnonymousAttribute());
+            group.MapGet("/{id}/{classification}", () => TypedResults.Ok(new { ok = true }));
+        });
+
+        await using (app)
+        {
+            var client = app.GetTestClient();
+
+            var publicResponse = await client.GetAsync("/tenants/tenant-001/documents/public");
+            Assert.Equal(HttpStatusCode.OK, publicResponse.StatusCode);
+
+            var privateResponse = await client.GetAsync("/tenants/tenant-001/documents/doc-001/internal");
+            Assert.Equal(HttpStatusCode.Unauthorized, privateResponse.StatusCode);
         }
     }
 

@@ -154,6 +154,11 @@ public static class IdentityEndpointConventionBuilderExtensions
         return async invocationContext =>
         {
             var httpContext = invocationContext.HttpContext;
+            if (httpContext.GetEndpoint()?.Metadata.GetMetadata<IAllowAnonymous>() is not null)
+            {
+                return await next(invocationContext);
+            }
+
             var services = httpContext.RequestServices;
             var requestFactory = services.GetRequiredService<HttpContextAuthorizationRequestFactory>();
             var evaluator = services.GetRequiredService<Cephalon.Abstractions.Authorization.IAuthorizationEvaluator>();
