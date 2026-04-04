@@ -1758,6 +1758,9 @@ Browse the published API surface by public member.
 - [EnableIngestion](cephalon-retrieval.md#member-p-cephalon-retrieval-configuration-retrievaloptions-enableingestion): `Properties` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=EnableIngestion&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
   - Gets or sets a value indicating whether ingestion features are enabled.
   - `bool EnableIngestion { get; set; }`
+- [EnableInMemoryWriter](cephalon-audit.md#member-p-cephalon-audit-configuration-auditruntimeoptions-enableinmemorywriter): `Properties` on `AuditRuntimeOptions` in `Cephalon.Audit.Configuration` (`Cephalon.Audit`) [Browse](browse.html?q=EnableInMemoryWriter&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Configuration&scope=members)
+  - Gets or sets a value indicating whether the built-in in-memory audit writer should remain active.
+  - `bool EnableInMemoryWriter { get; set; }`
 - [EnableLambdaContextExtraction](cephalon-observability-aws.md#member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-enablelambdacontextextraction): `Properties` on `AwsTelemetryExportOptions` in `Cephalon.Observability.Aws.Configuration` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=EnableLambdaContextExtraction&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Configuration&scope=members)
   - Gets or sets a value indicating whether Lambda context extraction should be configured when the hosted platform is `lambda`.
   - `bool EnableLambdaContextExtraction { get; set; }`
@@ -5913,6 +5916,9 @@ Browse the published API surface by public member.
 - [WebSocket](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-websocket): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=WebSocket&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
   - Gets the built-in WebSocket transport descriptor.
   - `TransportDescriptor WebSocket { get; }`
+- [WithCephalonAuthenticationSchemes](cephalon-identity-aspnetcore.md#member-m-cephalon-identity-aspnetcore-transports-rest-identityendpointconventionbuilderextensions-withcephalonauthenticationschemes-1-0-system-string): `Methods` on `IdentityEndpointConventionBuilderExtensions` in `Cephalon.Identity.AspNetCore.Transports.Rest` (`Cephalon.Identity.AspNetCore`) [Browse](browse.html?q=WithCephalonAuthenticationSchemes&assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Transports.Rest&scope=members)
+  - Declares the ASP.NET Core authentication schemes that should own challenge and forbid responses for an endpoint or route group.
+  - `TBuilder WithCephalonAuthenticationSchemes<TBuilder>(this TBuilder builder, string[] authenticationSchemes)`
 - [WolverineEventingOptions](cephalon-eventing-wolverine.md#member-m-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-ctor): `Constructors` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=WolverineEventingOptions&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
   - Initializes a new instance of the `WolverineEventingOptions` class.
   - `WolverineEventingOptions()`

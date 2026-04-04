@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-04T19:38:49.9358468+00:00",
+  "GeneratedAtUtc": "2026-04-04T20:29:01.7816412+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -1807,7 +1807,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 1,
+        "Properties": 2,
         "Methods": 1
       }
     },
@@ -3683,7 +3683,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
-        "Methods": 2
+        "Methods": 3
       }
     },
     {
@@ -13517,6 +13517,17 @@
       "AnchorId": "member-p-cephalon-retrieval-configuration-retrievaloptions-enableingestion",
       "Signature": "bool EnableIngestion { get; set; }",
       "Summary": "Gets or sets a value indicating whether ingestion features are enabled."
+    },
+    {
+      "DisplayName": "EnableInMemoryWriter",
+      "Category": "Properties",
+      "DeclaringTypeName": "AuditRuntimeOptions",
+      "NamespaceName": "Cephalon.Audit.Configuration",
+      "AssemblyName": "Cephalon.Audit",
+      "FileName": "cephalon-audit.md",
+      "AnchorId": "member-p-cephalon-audit-configuration-auditruntimeoptions-enableinmemorywriter",
+      "Signature": "bool EnableInMemoryWriter { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the built-in in-memory audit writer should remain active."
     },
     {
       "DisplayName": "EnableLambdaContextExtraction",
@@ -28554,6 +28565,17 @@
       "AnchorId": "member-p-cephalon-engine-transports-builtintransports-websocket",
       "Signature": "TransportDescriptor WebSocket { get; }",
       "Summary": "Gets the built-in WebSocket transport descriptor."
+    },
+    {
+      "DisplayName": "WithCephalonAuthenticationSchemes",
+      "Category": "Methods",
+      "DeclaringTypeName": "IdentityEndpointConventionBuilderExtensions",
+      "NamespaceName": "Cephalon.Identity.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.Identity.AspNetCore",
+      "FileName": "cephalon-identity-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-identity-aspnetcore-transports-rest-identityendpointconventionbuilderextensions-withcephalonauthenticationschemes-1-0-system-string",
+      "Signature": "TBuilder WithCephalonAuthenticationSchemes\u003CTBuilder\u003E(this TBuilder builder, string[] authenticationSchemes)",
+      "Summary": "Declares the ASP.NET Core authentication schemes that should own challenge and forbid responses for an endpoint or route group."
     },
     {
       "DisplayName": "WolverineEventingOptions",

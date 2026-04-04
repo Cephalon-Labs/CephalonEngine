@@ -7,6 +7,7 @@
 - low-ceremony audit recording through `IAuditRecorder`
 - ambient actor resolution through `IAuditActorAccessor`
 - a default in-memory audit writer baseline for local and starter scenarios
+- config-driven control over whether the built-in in-memory writer stays active, with runtime audit-store answers that now stay aligned with that choice
 - stable diagnostics conventions for successful and failed audit-entry writes
 - additive audit-store catalog contributions that flow into `/engine/audit-stores` and `/engine/snapshot`
 

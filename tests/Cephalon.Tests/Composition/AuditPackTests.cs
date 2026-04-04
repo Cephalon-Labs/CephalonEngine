@@ -116,4 +116,39 @@ public sealed class AuditPackTests
         Assert.Equal("tenant-001", captureWriter.Entries[0].TenantId);
         Assert.Equal("user-007", captureWriter.Entries[0].Actor.ActorId);
     }
+
+    [Fact]
+    public async Task AddAuditCanDisableTheDefaultInMemoryWriterWithoutPretendingTheMemoryStoreIsActive()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                audit: new AuditSettings(enabled: true)));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new AuditCaptureModule());
+            engine.AddAudit(options => options.EnableInMemoryWriter = false);
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var recorder = provider.GetRequiredService<IAuditRecorder>();
+        var captureWriter = provider.GetRequiredService<CaptureAuditWriter>();
+        var auditStoreCatalog = provider.GetRequiredService<IAuditStoreCatalog>();
+        var snapshot = provider.GetRequiredService<global::Cephalon.Engine.Runtime.IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+
+        var entry = await recorder.RecordAsync(new AuditRecordRequest(
+            category: "tenant",
+            action: "tenant-switched",
+            summary: "Switched the active tenant context.",
+            subjectType: "tenant",
+            subjectId: "tenant-001",
+            outcome: AuditOutcome.Succeeded));
+
+        Assert.NotNull(entry.Id);
+        Assert.Single(captureWriter.Entries);
+        Assert.Equal(entry.Id, captureWriter.Entries[0].Id);
+        Assert.Empty(auditStoreCatalog.AuditStores);
+        Assert.Empty(snapshot.AuditStores);
+    }
 }
