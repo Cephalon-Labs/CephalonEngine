@@ -14,14 +14,17 @@ public sealed class GuardrailValidatorTests
             "performance-guardrails.json"));
 
         Assert.Equal("1.0", catalog.Version);
-        Assert.Equal(7, catalog.Entries.Count);
+        Assert.Equal(10, catalog.Entries.Count);
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifest");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifestWithStrictTrustPolicy");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildPhase8RuntimeManifest");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "InitializeStartStopRuntime");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "InitializeStartStopPhase8Runtime");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "HandleLoggedJsonRequest");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "HandleTruncatedJsonRequest");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "HandleConcurrentLoggedJsonRequest");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "GenerateBlueprintScaffold");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "GeneratePhase8BlueprintScaffold");
     }
 
     [Fact]

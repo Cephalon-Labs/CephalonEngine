@@ -2,6 +2,7 @@ param(
     [switch]$SkipBuild,
     [switch]$SkipTests,
     [switch]$SkipOperationalConventions,
+    [switch]$SkipPhase8Conventions,
     [switch]$SkipBenchmarks,
     [switch]$SkipPackages,
     [switch]$SkipReferenceDocs,
@@ -23,6 +24,7 @@ $benchmarkProjectPath = [System.IO.Path]::Combine($repoRoot, "benchmarks", "Ceph
 $referenceDocsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-reference-docs.ps1")
 $packageArtifactsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-package-artifacts.ps1")
 $operationalConventionsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-operational-conventions.ps1")
+$phase8ConventionsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-phase8-conventions.ps1")
 $referenceDocsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "reference-docs-release")
 $packageArtifactsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "packages-release")
 
@@ -116,6 +118,20 @@ try {
             }
 
             Invoke-PowerShellScript -Path $operationalConventionsScriptPath -Arguments $arguments
+        }
+    }
+
+    if (-not $SkipPhase8Conventions) {
+        Invoke-Step "Validate phase-8 architecture, runtime, and starter conventions (Release)" {
+            $arguments = @(
+                "-Configuration", "Release"
+            )
+
+            if ((-not $SkipBuild) -or (-not $SkipTests)) {
+                $arguments += "-NoBuild"
+            }
+
+            Invoke-PowerShellScript -Path $phase8ConventionsScriptPath -Arguments $arguments
         }
     }
 

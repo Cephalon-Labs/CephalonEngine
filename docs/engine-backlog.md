@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `April 4, 2026`.
+Backlog status in this document reflects the repository state as of `April 5, 2026`.
 
 ## Completed foundation work
 
@@ -525,7 +525,7 @@ Delivered:
 
 ### ENG-029 Cloud-targeted observability companion integrations
 
-Status: later
+Status: in progress
 Estimate: 268
 
 Why:
@@ -906,7 +906,345 @@ Completed work:
 - added `scripts/validate-generated-app-container-image.ps1` so the repo can scaffold a temporary app, seed local packages, preview the shipped build/push contract, build the generated image, and prove push through a local Docker registry backed by `registry:2`
 - extended scaffolding, CLI, template-pack, and documentation coverage for the generated container-image publishing contract, then verified a real smoke path through scaffold -> publish-package-artifacts into `./.cephalon/packages` -> generated `publish-image.ps1` -> local registry push
 
-## Sprint history and next 3 sprints
+## Next configurable application-platform work
+
+This feature wave is split into three non-overlapping workstreams so core contracts can freeze before package and generation follow-through:
+
+- `WS1 Engine core`: `ENG-046`, `ENG-047`, and `ENG-048`
+- `WS2 Companion packs`: `ENG-049`, `ENG-050`, `ENG-051`, and `ENG-052`
+- `WS3 CLI and scaffolding`: `ENG-053`
+- `Validation lane`: `ENG-055` and `ENG-056`
+- `ENG-054` and `ENG-057` stay later until the phase-8 golden path proves the contract
+
+Cross-cutting success principle for this wave:
+
+- every shipped slice should reduce ceremony for consumer apps by moving repeatable infrastructure, runtime wiring, and declarations into Cephalon configuration, companion packs, and scaffold conventions
+- every shipped slice should reduce boilerplate without hiding operational truth, so teams can focus their hand-written code on business logic rather than framework plumbing
+
+### ENG-046 App-model taxonomy and catalog expansion baseline
+
+Status: done
+Estimate: 5
+Completed: April 4, 2026
+
+Why:
+
+- the engine already separates blueprints, patterns, and technologies, but the next feature wave mixes app shape, architecture style, data pattern, security mode, and deployment concerns in ways that will drift unless the taxonomy is frozen first
+- the shipped catalogs stop short of `Hexagonal`, `Layered`, `CleanArchitecture`, `DDD`, `CQRS`, `Outbox`, `EventSourcing`, `IdentityAccess`, `MultiTenancy`, `HybridCloudRuntime`, `ServiceMeshIntegration`, and `ServerlessHosting`
+- phase 8 needs one explicit answer for where each concept lives before code, docs, CLI defaults, or samples expand
+
+Acceptance:
+
+- new pattern ids and technology ids are frozen with aliases where needed
+- shipped blueprints remain limited to app shapes instead of exploding into every architecture label
+- planning, docs, scaffolding, and runtime catalogs can all reference the same ids
+- public descriptors and XML comments explain the intent of every new id that enters the supported catalog
+
+Delivered:
+
+- built-in phase-8 pattern ids now cover `hexagonal-architecture`, `layered-architecture`, `clean-architecture`, `domain-driven-design`, `cqrs`, `outbox`, and `event-sourcing`
+- built-in phase-8 technology ids now cover `identity-access`, `multi-tenancy`, `hybrid-cloud-runtime`, `service-mesh-integration`, and `serverless-hosting`
+- pattern and technology descriptors now support aliases so config, planning, and scaffold guidance can speak one stable vocabulary without forcing only one spelling
+
+### ENG-047 Structured engine configuration and runtime surface baseline for data, identity, tenancy, audit, and messaging
+
+Status: done
+Estimate: 8
+Completed: April 4, 2026
+
+Why:
+
+- consumer apps need to turn these features on, off, or combine them through configuration without rewriting host startup
+- the current `Engine` settings surface is too shallow for additive data, identity, tenancy, audit, and messaging packs with deeper options
+- runtime snapshot and diagnostics surfaces should stay truthful once these new dimensions are introduced
+
+Acceptance:
+
+- structured `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` sections exist with stable option names
+- runtime and introspection surfaces expose the active phase-8 selections without binding the core to Entity Framework, Wolverine, or ASP.NET Core specifics
+- config validation catches invalid combinations and missing prerequisites early
+- host-specific APIs remain out of `Cephalon.Abstractions`
+
+Delivered:
+
+- `EngineSettings` now carries structured phase-8 settings for data, identity, tenancy, audit, and messaging
+- resolved app profiles now surface phase-8 selections through `Data`, `Identity`, `Tenancy`, `Audit`, and `Messaging`
+- phase-8 selection validation now catches invalid combinations such as read/write split without `cqrs`, outbox without `outbox`, or messaging provider selection without `event-driven-integration`
+
+### ENG-048 Host-agnostic data, authorization, tenancy, audit, and id contract baseline
+
+Status: done
+Estimate: 13
+Completed: April 4, 2026
+
+Why:
+
+- the requested phase-8 features need core primitives before any companion package can implement them cleanly
+- the current abstractions do not yet carry first-class contracts for commands, queries, read/write stores, projections, outbox/inbox, authorization, tenant context, audit entries, or id generation
+- if this contract slice drifts after package work starts, every downstream pack, scaffold, and sample will take breaking renames
+
+Acceptance:
+
+- `Cephalon.Abstractions` gains XML-commented public contracts for commands, queries, read/write stores, projections, outbox/inbox, authorization subjects/resources/policies, tenant context/resolution, audit entries, and id generation
+- `Cephalon.Engine` gains matching catalog, descriptor, validation, and runtime-surface hooks without taking on provider-specific logic
+- tests cover contract resolution plus runtime and introspection exposure
+- host adapters stay out of the core contract slice
+
+Delivered:
+
+- `Cephalon.Abstractions` now includes host-agnostic `Data`, `Authorization`, `Tenancy`, `Audit`, and `Ids` contract families with XML-commented public types
+- contract-focused composition tests, reference-doc smoke coverage, and an explicit `Cephalon.Abstractions` package-surface lock now cover the new exported API
+- component guidance for `Cephalon.Abstractions` now documents the new phase-8 contract families
+- `Cephalon.Engine` now exposes merged projection, inbox, outbox, and authorization-policy catalogs through `/engine/projections`, `/engine/inboxes`, `/engine/outboxes`, `/engine/authorization-policies`, and `/engine/snapshot` without binding the core to concrete providers
+- projection ownership validation now fails fast when a module spoofs another module's source id, and runtime tests cover both composition-time and ASP.NET Core introspection exposure
+
+### ENG-049 Relational Entity Framework CQRS, projections, outbox, and Sfid companion baseline
+
+Status: in progress
+Estimate: 21
+
+Why:
+
+- Cephalon needs one honest data golden path before it claims support for many storage models
+- the repo does not yet ship a first-class data/runtime baseline, and the requested feature wave explicitly calls for an Entity Framework-first path with provider escape hatches when official libraries are needed
+- a relational baseline with CQRS read/write split, projections, outbox, and `Sfid` ids is the highest-leverage first slice
+- the chosen id path should bind to the official `Sfid.Net` and `Sfid.EntityFramework` packages instead of a Cephalon-specific reimplementation
+
+Acceptance:
+
+- `Cephalon.Data`, `Cephalon.Data.EntityFramework`, and `Cephalon.Ids.Sfid` exist with clear package boundaries
+- a relational Entity Framework read/write split, projection, and outbox baseline works through configuration and companion-pack registration instead of host-specific shortcuts
+- runtime surfaces and observability hooks expose active stores, projections, outbox state, and id strategy truthfully
+- `Cephalon.Ids.Sfid` wraps the official `Sfid.Net` generator, and the Entity Framework baseline integrates through `Sfid.EntityFramework`
+- tests prove the baseline without over-claiming non-relational provider breadth yet
+
+Progress:
+
+- `Cephalon.Data` now exists as a runtime-neutral command/query dispatch pack and registers default `IReadStore` / `IWriteStore` implementations backed by the existing handler abstractions
+- `Cephalon.Data.EntityFramework` now exists as the first provider-backed data pack and registers single-context or split read/write Entity Framework Core `DbContext` roles through companion-pack registration instead of host-specific startup code
+- `Cephalon.Data.EntityFramework` now also exposes an opt-in Entity Framework-backed inbox baseline that records processed `InboxMessage` rows through write-side contexts implementing `IEntityFrameworkInboxContext`
+- `Cephalon.Data.EntityFramework` now also exposes an opt-in Entity Framework-backed outbox baseline that stages `OutboxMessage` rows through write-side contexts implementing `IEntityFrameworkOutboxContext`
+- `Cephalon.Ids.Sfid` now exists as the first concrete `ENG-049` slice and wraps the official `Sfid.Net` package through `Cephalon.Abstractions.Ids.IIdGenerator`
+- the Sfid pack now supports explicit code-first options plus configuration-driven topology under `Engine:Data:Ids:Sfid` and exposes the official generator interface so `Cephalon.Data.EntityFramework` can use `Sfid.EntityFramework`
+- `Cephalon.Engine` now exposes additive outbox catalogs through `IOutboxCatalog`, `/engine/outboxes`, and `/engine/snapshot`, and the Entity Framework pack publishes a truthful staged-only outbox descriptor instead of implying a dispatch runtime that does not exist yet
+- `Cephalon.Engine` now also exposes additive inbox catalogs through `IInboxCatalog`, `/engine/inboxes`, and `/engine/snapshot`, and the Entity Framework pack publishes a truthful application-managed inbox descriptor instead of implying subscription execution semantics that do not exist yet
+- when `EventDrivenIntegration` is active, the Entity Framework pack now also projects staged-only outbox producers into the `event-driven-integration` technology surface instead of claiming a fuller event dispatch runtime
+- when `EventDrivenIntegration` is active, the Entity Framework pack now also projects application-managed inbox stores into the `event-driven-integration` technology surface instead of claiming handler dispatch or retry ownership that does not exist yet
+- declared event-subscription metadata can now also report when an application-managed inbox store is available for idempotency follow-through without pretending that `Cephalon.Eventing` executes or retries those handlers yet
+- when `EventDrivenIntegration` is active and a real outbox path exists, `Cephalon.Eventing` can now accept `EventPublication` requests through `IEventPublisher` and stage them into the active outbox instead of advertising publish support without a concrete handoff path
+- `Cephalon.Data.EntityFramework` now also exposes an adapter-neutral Entity Framework-backed `IEventDispatchStore` so later first-class adapters can read pending staged outbox rows and apply durable dispatch outcomes without skipping around the Cephalon outbox contract
+- package-surface tests, reference-doc tests, component docs, and solution/test-project wiring now include `Cephalon.Data`, `Cephalon.Data.EntityFramework`, and `Cephalon.Ids.Sfid`
+- remaining work is richer projection persistence/runtime surfaces, broader typed-id/documentation examples on top of the shipped `Sfid.EntityFramework` baseline, and fuller subscription/runtime linkage beyond the shipped staged publication and application-managed idempotency baselines
+
+### ENG-050 Eventing runtime uplift and Wolverine companion baseline
+
+Status: in progress
+Estimate: 13
+
+Why:
+
+- the shipped `Cephalon.Eventing` surface already models channels and runtime answers, but it does not yet expose the fuller publisher/subscriber and outbox bridge story the next feature wave needs
+- the outbox baseline is incomplete unless Cephalon can tell an operator what was published, subscribed, retried, or blocked
+- Wolverine is the current first-class adapter path, `MassTransit` is the tracked-later strategic candidate, and the engine contract must stay runtime-neutral
+- we need one clear first-class adapter path instead of diluting the phase-8 baseline across several bus frameworks at once
+
+Acceptance:
+
+- event runtime contracts support publish and subscribe semantics plus outbox handoff and idempotent inbox follow-through
+- `Cephalon.Eventing` surfaces active channels, subscriptions, and runtime state through the existing introspection model
+- optional `Cephalon.Eventing.Wolverine` integration stays outside the engine core and aligns with the same contracts
+- observability and diagnostics cover retries, handlers, and outbox bridge state
+
+Progress:
+
+- `Cephalon.Eventing` now exposes public `EventPublication` and `IEventPublisher` contracts so active eventing runtimes can accept staged publication requests without leaking provider-specific APIs into `Cephalon.Abstractions`
+- `Cephalon.Eventing` now also exposes public declared-subscription contracts and catalogs so eventing-enabled apps can surface subscription intent through the same pack without pretending that dispatch handlers are already active
+- `Cephalon.Eventing` now registers an outbox-backed publisher only when `EventDrivenIntegration` is selected, publishing is enabled, and a real `IOutbox` implementation is present
+- the `eventing.publish` capability is now truthful: it only appears when that outbox-backed handoff path exists, and its metadata now calls out `handoff = outbox` plus runtime-state availability without claiming a broker-owned dispatch runtime
+- the `event-driven-integration` technology surface now includes `event-subscriptions` and `event-publishers` so operators can see declared subscription intent plus the active staged-publication path alongside `event-channels` and outbox producers
+- declared subscription entries can now also link to hosted-execution descriptors, execution graphs, and runtime-story state through hosted-execution metadata, which gives a truthful application-managed execution answer without claiming that `Cephalon.Eventing` itself owns dispatch
+- `Cephalon.Eventing` now also exposes public application-managed subscription runtime-state contracts through `EventSubscriptionExecutionReport`, `EventSubscriptionRuntimeState`, `IEventSubscriptionRuntimeReporter`, and `IEventSubscriptionRuntimeCatalog`, and `event-subscriptions` now projects that reported state plus operator-facing `reported.*` metadata alongside inbox, hosted-execution, execution-graph, and runtime-story linkage
+- `Cephalon.Eventing` now also exposes public application-managed outbox-dispatch runtime-state contracts through `EventDispatchExecutionReport`, `EventDispatchRuntimeState`, `IEventDispatchRuntimeReporter`, and `IEventDispatchRuntimeCatalog`, and `event-dispatches` now projects that reported state plus operator-facing `reported.*` metadata on top of the staged outbox-backed publication path
+- `Cephalon.Eventing` now also exposes the public `EventDispatchItem` plus `IEventDispatchStore` contract so later first-class adapters can read pending staged events and apply durable dispatch outcomes without binding the contract to Wolverine-specific APIs
+- `Cephalon.Eventing` now publishes a stable diagnostics convention for staged publications plus application-managed subscription and publication-dispatch outcomes, and the engine now keeps technology runtime surfaces live enough for that reported state to show up after startup instead of freezing at the first catalog resolution
+- the current Entity Framework outbox baseline now persists `next_attempt_at_utc` alongside `dispatch_attempt_count` and `dispatched_at_utc`, so the runtime-neutral dispatch-store contract can honor delayed retry intent instead of re-reading every retried row immediately
+- `Cephalon.Eventing.Wolverine` now exists as the official first-class adapter slice with the `eventing.wolverine` capability plus the `wolverine-adapter` runtime surface, and it truthfully supports two modes: a host-wiring-only baseline that reports `dispatchBridge = consumer-managed`, plus an opt-in `wolverine-managed` durable staged-dispatch loop on top of `IEventDispatchStore`
+- the `event-dispatches` technology surface now also projects configured dispatch-runtime descriptor metadata per outbox path, and the `wolverine-adapter` surface now aggregates latest outcome, retry-pending count, and report totals so operators can see both configuration truth and live runtime follow-through without stitching several surfaces together by hand
+- `Cephalon.Eventing.Wolverine` now also contributes its own diagnostics convention so `/engine/diagnostics` and the runtime snapshot advertise the stable `4300-4303` Wolverine dispatch-loop event ids alongside the shared eventing diagnostics range
+- `eventing.subscriptions` still exposes declared subscription descriptors rather than a pack-owned bus runner, while `eventing.subscribe` remains intentionally absent until a real subscription/dispatch runtime exists instead of over-claiming bus behavior
+- decision lock: phase 8 will treat `Cephalon.Eventing.Wolverine` as the official first-class adapter path, keep `MassTransit` as the tracked-later candidate once that first path is proven, and leave `MediatR`, `LiteBus`, `NServiceBus`, and `SlimMessageBus` as consumer-owned coexistence choices unless a later bridge or adapter package is explicitly shipped
+- coexistence rule: one flow should have one durable-messaging owner, so consumer apps should not layer Cephalon-managed durable messaging semantics and a second bus/runtime on the same publish/consume path
+- remaining work is richer observability and retry/runtime follow-through for the now-shipped `wolverine-managed` dispatch path, plus later subscription/handler-execution truth beyond the current declarative and application-managed reporting model
+
+### ENG-051 Identity and authorization companion baseline
+
+Status: in progress
+Estimate: 13
+
+Why:
+
+- consumer apps need ready-to-use identity and authorization support, but Cephalon currently only has capability-boundary gating at the REST layer
+- `RBAC`, `ABAC`, and policy-based evaluation need to be modelled as configuration-driven authorization modes instead of scattered host code
+- ASP.NET Core-specific identity wiring should stay inside adapters, not inside `Cephalon.Abstractions`
+
+Acceptance:
+
+- `Cephalon.Identity` and `Cephalon.Identity.AspNetCore` exist with clear package boundaries
+- authorization supports `RBAC`, `ABAC`, and policy-based evaluation through config plus host-agnostic contracts
+- ASP.NET Core mapping to `ClaimsPrincipal`, schemes, and endpoint policies stays out of `Cephalon.Abstractions`
+- runtime surfaces expose the active identity and authorization mode selection truthfully
+
+Progress:
+
+- `Cephalon.Identity` now exists locally as the host-agnostic identity companion pack with `IdentityRuntimeOptions`, declarative `IdentityPolicyMetadataKeys`, and `AddIdentityAccess(...)`
+- the pack now registers a default metadata-driven `IAuthorizationEvaluator` that can enforce low-ceremony role, owner, tenant-boundary, and subject/resource/context attribute rules on top of the shipped authorization-policy contracts
+- `identity-access` now projects an `identity-authorization` runtime surface that reports selected authorization modes, contributed policy counts, evaluator presence, and declarative convention support through the shared technology catalog
+- `/engine/diagnostics` and `/engine/snapshot` can now advertise stable `Cephalon.Identity` diagnostic event ids `4400-4401` for allow/deny outcomes through the runtime diagnostics catalog
+- `Cephalon.Identity.AspNetCore` now exists locally as a separate host adapter with `AddCephalonIdentityAspNetCore(...)`, config-driven `Engine:Identity:AspNetCore` options, and a REST-only `RequireCephalonAuthorization(...)` endpoint helper that maps `ClaimsPrincipal`, route values, and request metadata into the shared Cephalon authorization contracts
+- the ASP.NET Core adapter currently returns truthful `401` and `403` API responses and keeps authentication scheme ownership with the consumer host instead of pretending to replace ASP.NET Core authentication
+- package-surface tests, reference-doc tests, component docs, solution wiring, and hosting tests now cover both `Cephalon.Identity` and `Cephalon.Identity.AspNetCore`
+
+### ENG-052 Multi-tenancy and audit companion baseline
+
+Status: in progress
+Estimate: 13
+
+Why:
+
+- multi-tenancy plus audit/history are part of the promised consumer-ready surface, not incidental sample code
+- tenant resolution, membership, domain mapping, and audit trails need additive contracts that remain configurable and overridable
+- this slice needs to align with identity and data surfaces instead of inventing separate side channels
+
+Acceptance:
+
+- `Cephalon.MultiTenancy` and `Cephalon.Audit` exist with clear package boundaries
+- tenant context/resolution plus audit and history contracts are configurable, optional, and overridable
+- baseline support covers tenant-aware runtime state and audit/history event capture without forcing one storage model
+- observability and runtime answers surface the active tenancy and audit configuration truthfully
+
+Progress:
+
+- `Cephalon.MultiTenancy` now exists locally as the first host-agnostic tenancy companion pack with `MultiTenancyRuntimeOptions`, `AddMultiTenancy(...)`, a configuration-driven `ITenantResolver`, and an ambient `ITenantContextAccessor`
+- the pack now contributes a truthful `tenant-resolution` runtime surface under `multi-tenancy` plus stable `4500-4502` diagnostics-catalog entries for resolved, defaulted, and missed tenant answers
+- the built-in configuration-driven resolver now keeps explicit tenant-id, tenant-key, and host-name misses as misses instead of defaulting into another tenant, which closes the first tenant-bleed risk in the v1 baseline
+- the built-in resolver can now also be disabled explicitly through `EnableDefaultResolver`, and the runtime surface reports that state instead of pretending the configuration-driven resolver is always active
+- solution wiring, package-surface tests, reference-doc tests, and component docs now cover `Cephalon.MultiTenancy`
+- `Cephalon.Audit` now exists locally as the first narrow host-agnostic audit companion pack with `AuditRuntimeOptions`, `AuditMetadataKeys`, `AddAudit(...)`, a default `IAuditRecorder`, a default ambient `IAuditActorAccessor`, and an application-managed in-memory writer baseline
+- `Cephalon.Audit` now contributes a dedicated audit-store catalog through `IAuditStoreCatalog`, `/engine/audit-stores`, and `/engine/snapshot` instead of overloading technology surfaces or observability-only answers
+- the audit baseline now ships stable `4600-4601` diagnostics-catalog entries for successful and failed audit-entry writes, plus targeted composition, hosting, package-surface, and reference-doc coverage
+- remaining work inside `ENG-052` is audit follow-through beyond the narrow recording baseline, not the existence of the companion-pack and catalog foundation itself
+
+### ENG-053 CLI, scaffolding, template-pack, and sample alignment for phase 8
+
+Status: in progress
+Estimate: 13
+
+Why:
+
+- phase 8 is not a real adoption surface until `cephalon new`, scaffold plans, template starters, and samples emit the same story
+- the shipped scaffolds already imply clean and CQRS-friendly conventions and should be extended instead of replaced
+- generation should follow the frozen ids, config sections, and package names instead of driving them
+- phase 8 only delivers the intended low-ceremony value if generated hosts and starter assets remove repetitive setup and let consumer apps begin closer to business logic
+
+Acceptance:
+
+- `Cephalon.Cli`, `Cephalon.Scaffolding`, `Cephalon.TemplatePack`, and at least one golden-path sample align with the phase-8 config and package contract
+- generated hosts emit the structured `Engine` sections plus the right package hints and folder conventions for clean, CQRS, and DDD-flavored apps
+- test projects carry TDD and BDD-friendly starter conventions without moving those ideas into engine runtime contracts
+- scaffold, runtime, template, and sample semantics stay aligned through tests and docs
+- generated starters keep ceremony low by centralizing common Cephalon wiring, avoiding repeated bootstrap code, and leaving the remaining hand-written code focused on domain and business behavior
+
+Progress:
+
+- `Cephalon.Scaffolding` now emits canonical phase-8 ids in generated `Engine` settings instead of older display-name strings, and generated hosts now carry structured `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` sections
+- phase-8-aware scaffold package hints now add the low-ceremony companion-pack baseline for `Cephalon.Data`, `Cephalon.Ids.Sfid`, `Cephalon.Eventing`, `Cephalon.Eventing.Wolverine`, `Cephalon.Identity`, `Cephalon.Identity.AspNetCore`, `Cephalon.MultiTenancy`, and `Cephalon.Audit` when the selected patterns and technologies require them
+- generated `Program.cs` output now centralizes the common phase-8 host wiring through `builder.AddCephalon(engine => ...)`, optional `builder.AddCephalonIdentityAspNetCore()`, and additive pack registrations so consumer apps do not need to hand-write the same bootstrap code before they reach business logic
+- `Cephalon.TemplatePack` starter apps now also carry canonical ids, structured phase-8 sections, and a narrow low-ceremony `Sfid` plus `Audit` baseline so `dotnet new` does not drift behind `cephalon new`
+- adoption-quality starter samples now mirror that same narrow `Sfid` plus `Audit` baseline through canonical settings and additive host wiring, and hosting coverage now locks those sample app-model answers through `/engine/app-model`
+- generated test projects now start with `Architecture/CompositionSmokeTests.cs` plus per-feature `Features/*BehaviorSpecifications.cs` placeholders so TDD/BDD-friendly starter conventions land through scaffolding and CLI output without turning testing style into a runtime contract
+- remaining work inside `ENG-053` is broader phase-8 sample/template documentation follow-through and any further starter polish, not the existence of the aligned low-ceremony baseline or the TDD/BDD-friendly test harness itself
+
+### ENG-054 Provider-family and hybrid-runtime follow-through
+
+Status: later
+Estimate: 21
+
+Why:
+
+- the requested feature wave eventually reaches vector, document, graph, search, time-series, ledger, service-mesh, hybrid-cloud, and serverless follow-through, but the contract is not proven yet
+- shipping provider breadth before the golden path would over-claim support and destabilize the core
+- this work should stay explicit and adoption-driven after the initial phase-8 baseline lands
+
+Acceptance:
+
+- non-relational provider families are split into explicit companion packages with clear scope and no leakage back into `Cephalon.Engine` or `Cephalon.Abstractions`
+- `HybridCloudRuntime`, `ServiceMeshIntegration`, and `ServerlessHosting` remain additive technology follow-through instead of new blueprints or engine-core branches
+- docs, runtime surfaces, and observability stay truthful about which provider families and deployment runtimes are actually shipped
+- expansion work starts only after the relational-first phase-8 golden path is complete
+
+### ENG-055 Phase 8 validation, benchmark, and runtime-truth matrix
+
+Status: in progress
+Estimate: 8
+
+Why:
+
+- AGENTS requires new runtime features to stay observable, testable, benchmarkable, and truthful through runtime introspection
+- the current phase-8 plan introduces many new contracts and companion packages, but without a dedicated validation lane the repo could accidentally claim support before benchmark, diagnostics, or test coverage catches up
+- the fastest path is not enough on its own; Cephalon needs a repeatable quality bar that survives future package expansion
+
+Acceptance:
+
+- phase-8 features have an explicit validation matrix that covers config validation, runtime introspection, diagnostics, benchmark guardrails, and representative happy-path plus failure-path tests
+- benchmark additions or updates land where hot paths or composition/runtime/scaffolding risks materially change
+- runtime snapshot, diagnostics, runtime-story, and package/technology surfaces stay truthful for every shipped phase-8 slice
+- release and repo validation guidance stays aligned with the new quality bar
+
+Progress:
+
+- `scripts/validate-phase8-conventions.ps1` now exists as the focused validation replay for the shipped phase-8 baseline, covering settings/profile truth, host-agnostic contracts, runtime surfaces, relational data and `Sfid`, eventing and Wolverine, identity/tenancy/audit, ASP.NET Core adapter follow-through, low-ceremony starter output, and package/reference-doc/documentation truth
+- `scripts/validate-release.ps1` now also runs that focused phase-8 suite by default, and the release-validation guidance now documents `-SkipPhase8Conventions` as the explicit escape hatch instead of relying on the wider repo test pass alone
+- adoption docs and package readmes now keep the phase-8 starter-test harness truthful by explicitly calling out `Architecture/CompositionSmokeTests.cs` plus per-feature `Features/*BehaviorSpecifications.cs`, and documentation coverage tests now guard that story
+- `Cephalon.Benchmarks` now also carries explicit phase-8 composition, runtime-lifecycle, and scaffolding scenarios alongside the earlier baseline paths, and the guardrail catalog has been refreshed against the current BenchmarkDotNet output so `--validate-guardrails` can police both the existing baseline and the shipped low-ceremony phase-8 path truthfully
+- the repo-native release-validation entry point now passes again with the phase-8 benchmark filters after aligning reference-module and signed-package `minimumEngineVersion` baselines with the current repo package version, scoping discovery-based tests away from invalid phase-8 negative fixtures plus Entity Framework-only test modules, and making the runtime-route hosting test declare a real event subscription before it expects `eventing.subscriptions`
+
+### ENG-056 Phase 8 docs, XML comments, component-guide, and reference-doc alignment
+
+Status: later
+Estimate: 8
+
+Why:
+
+- the repo treats hand-authored docs plus public XML comments as part of the product surface, not post-hoc extras
+- phase 8 adds new public contracts and companion-package surfaces that will be harder to understand and safer to misuse unless docs and IntelliSense stay aligned from the start
+- adoption quality depends on docs, XML comments, component guides, and reference-doc publishing telling the same truth as the code
+
+Acceptance:
+
+- new public phase-8 contracts ship with XML comments suitable for the supported reference-doc pipeline
+- relevant component docs under `docs/components/` and hand-authored adoption guidance are updated for the shipped phase-8 slices
+- `Cephalon.ReferenceDocs`, hosted reference-doc guidance, and documentation indexes stay aligned if the supported public API surface changes
+- docs stay explicit about what is shipped now versus what remains later, especially around event sourcing, provider breadth, hybrid runtime, service mesh, and serverless claims
+
+### ENG-057 Event-sourcing follow-through baseline
+
+Status: later
+Estimate: 21
+
+Why:
+
+- `EventSourcing` belongs in the phase-8 taxonomy, but the repo does not yet have a truthful delivery baseline for event-store persistence, stream replay, projection rebuilds, or operational answers around those flows
+- folding event sourcing into the early relational-first golden path would risk over-claiming a harder storage and lifecycle model before the underlying CQRS, outbox, and runtime contracts settle
+- keeping this explicit protects the planning truth and leaves room for a stronger, adoption-driven design later
+
+Acceptance:
+
+- event-store persistence, stream versioning, replay, projection rebuild, and operational/runtime-introspection answers are modelled explicitly instead of implied by taxonomy alone
+- any shipped event-sourcing implementation stays additive through companion packages and does not force a storage model into `Cephalon.Engine` or `Cephalon.Abstractions`
+- docs, runtime surfaces, and observability clearly distinguish shipped event-driven integration from shipped event-sourcing support
+- work starts only after the relational-first phase-8 golden path is complete and its contracts are stable
+
+## Sprint history and next 4 sprints
 
 Historical sprint buckets below are retrospective planning groups used to backfill iteration and estimate metadata for delivered work.
 
@@ -1021,3 +1359,25 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 ### Sprint 15
 
 - ENG-045 generated app container-image publishing baseline
+
+### Sprint 16
+
+- ENG-046 app-model taxonomy and catalog expansion baseline
+- ENG-047 structured engine configuration and runtime surface baseline for data, identity, tenancy, audit, and messaging
+- ENG-048 host-agnostic data, authorization, tenancy, audit, and id contract baseline
+
+### Sprint 17
+
+- ENG-049 relational Entity Framework CQRS, projections, outbox, and Sfid companion baseline
+- ENG-050 eventing runtime uplift and Wolverine companion baseline
+
+### Sprint 18
+
+- ENG-051 identity and authorization companion baseline
+- ENG-052 multi-tenancy and audit companion baseline
+- ENG-053 CLI, scaffolding, template-pack, and sample alignment for phase 8
+
+### Sprint 19
+
+- ENG-055 phase 8 validation, benchmark, and runtime-truth matrix
+- ENG-056 phase 8 docs, XML comments, component-guide, and reference-doc alignment
