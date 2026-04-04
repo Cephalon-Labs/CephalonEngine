@@ -1,0 +1,9 @@
+services:
+  modular-monolith:
+    environment:
+      Engine__Discovery__PackageDirectories__0: /app/plugins
+      Engine__PackagePolicy__RequireVersion: "true"
+      Engine__PackagePolicy__RequireMinimumEngineVersion: "true"
+      Engine__PackagePolicy__RequireSupportedTargetFrameworks: "true"
+    volumes:
+      - ./plugins:/app/plugins:ro

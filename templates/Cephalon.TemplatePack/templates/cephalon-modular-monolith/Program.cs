@@ -1,10 +1,22 @@
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.Observability.Hosting;
+using Cephalon.Observability.OpenTelemetry.Hosting;
+using Microsoft.Extensions.Hosting.WindowsServices;
 
-var builder = WebApplication.CreateBuilder(args);
+var options = new WebApplicationOptions
+{
+    Args = args,
+    ContentRootPath = WindowsServiceHelpers.IsWindowsService()
+        ? AppContext.BaseDirectory
+        : default
+};
+
+var builder = WebApplication.CreateBuilder(options);
+builder.Host.UseWindowsService();
 
 builder.AddCephalon();
 builder.Services.AddCephalonObservability(builder.Configuration);
+builder.AddCephalonOpenTelemetry();
 
 var app = builder.Build();
 

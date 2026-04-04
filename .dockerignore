@@ -1,0 +1,10 @@
+.git
+.github
+.vs
+.vscode
+artifacts
+docs/reference
+**/bin
+**/obj
+samples/Cephalon.Sample.ModularMonolith/plugins/*
+!samples/Cephalon.Sample.ModularMonolith/plugins/.gitkeep

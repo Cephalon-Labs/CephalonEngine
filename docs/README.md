@@ -10,6 +10,15 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 
 ## Start here
 
+- [Getting started](getting-started.md)
+- [Generated app publishing](generated-app-publishing.md)
+- [Container image publishing](container-image-publishing.md)
+- [Windows Service deployment](windows-service-deployment.md)
+- [IIS deployment](iis-deployment.md)
+- [Azure App Service deployment](azure-app-service-deployment.md)
+- [Azure Container Apps deployment](azure-container-apps-deployment.md)
+- [Kubernetes deployment](kubernetes-deployment.md)
+- [Linux systemd deployment](linux-systemd-deployment.md)
 - [Architecture](architecture.md)
 - [Component catalog](components/README.md)
 - [Compatibility](compatibility.md)
@@ -17,11 +26,21 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [Module authoring](module-authoring.md)
 - [Observability provider authoring](observability-provider-authoring.md)
 - [Package publishing](package-publishing.md)
+- [External package lifecycle](external-package-lifecycle.md)
 - [Technology packs](technology-packs.md)
 
 ## Runtime and operations
 
 - [Operations](operations.md)
+- [Container runtime](container-runtime.md)
+- [Generated app publishing](generated-app-publishing.md)
+- [Container image publishing](container-image-publishing.md)
+- [Windows Service deployment](windows-service-deployment.md)
+- [IIS deployment](iis-deployment.md)
+- [Azure App Service deployment](azure-app-service-deployment.md)
+- [Azure Container Apps deployment](azure-container-apps-deployment.md)
+- [Kubernetes deployment](kubernetes-deployment.md)
+- [Linux systemd deployment](linux-systemd-deployment.md)
 - [Operational hardening gap inventory](operational-hardening-gap-inventory.md)
 - [Runtime failure policy](runtime-failure-policy.md)
 - [Benchmarking](benchmarking.md)

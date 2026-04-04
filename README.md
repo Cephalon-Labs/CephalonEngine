@@ -96,7 +96,7 @@ This first cut focuses on the core shape we can keep growing:
 - `src/Cephalon.Observability.Serilog`: optional Serilog provider companion package for host integration
 - `src/Cephalon.Retrieval`: companion package for retrieval/runtime knowledge services
 - `src/Cephalon.ReferenceDocs`: optional reference-doc publishing tool that can turn XML comments into browsable API reference output
-- `src/Cephalon.Cli`: command-line surface for blueprint generation and reference-doc workflows, with `CliApplication` as the stable entry point
+- `src/Cephalon.Cli`: command-line surface for blueprint generation, external package staging, and reference-doc workflows, with `CliApplication` as the stable entry point
 - `src/Cephalon.Scaffolding`: scaffold generator that turns app profiles into solution/projects/files
 - `templates/Cephalon.TemplatePack`: `dotnet new` template pack for the shipped Cephalon blueprints
 - `benchmarks/Cephalon.Benchmarks`: BenchmarkDotNet suite for composition, runtime lifecycle, and scaffolding performance
@@ -140,10 +140,12 @@ This keeps config-driven features such as engine settings, OpenAPI, hosted docs,
   dotnet build
   dotnet test
   dotnet run --project src/Cephalon.Cli -- --help
+  dotnet run --project src/Cephalon.Cli -- doctor
   dotnet pack src/Cephalon.Cli/Cephalon.Cli.csproj -c Release -o artifacts/cli-tool
-  dotnet tool install --tool-path .\.tools\cephalon Cephalon.Cli --add-source .\artifacts\cli-tool --ignore-failed-sources --no-cache
+  dotnet tool install --tool-path .\.tools\cephalon Cephalon.Cli --add-source .\artifacts\cli-tool --ignore-failed-sources --no-cache --prerelease
+  .\.tools\cephalon\cephalon doctor
   .\.tools\cephalon\cephalon --help
-  .\scripts\publish-package-artifacts.ps1 -SkipBuild
+  pwsh ./scripts/publish-package-artifacts.ps1 -SkipBuild
   dotnet run --project src/Cephalon.Cli -- docs publish --root .
   dotnet run --project src/Cephalon.Cli -- docs publish --root . --open
   dotnet run --project src/Cephalon.Cli -- docs publish --root . --enable-hosting --appsettings playground/Cephalon.Playground/appsettings.json
@@ -153,16 +155,52 @@ dotnet run --project src/Cephalon.Cli -- docs enable-hosting --appsettings playg
 dotnet run --project src/Cephalon.Cli -- docs validate-hosting --appsettings playground/Cephalon.Playground/appsettings.json --host-url https://localhost:7235
 dotnet run --project src/Cephalon.ReferenceDocs -- --help
 dotnet pack templates/Cephalon.TemplatePack/Cephalon.TemplatePack.csproj -c Release -o artifacts/template-pack
-dotnet run -c Release --project benchmarks/Cephalon.Benchmarks
-dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --validate-guardrails
-.\scripts\validate-release.ps1
-.\scripts\publish-reference-docs.ps1
-dotnet run --project samples/Cephalon.Sample.ModularMonolith
-dotnet run --project samples/Cephalon.Sample.ModularVerticalSlice
-dotnet run --project samples/Cephalon.Sample.Microservice
-dotnet run --project playground/Cephalon.Playground
-dotnet run --project playground/Cephalon.WorkerPlayground
+  dotnet run -c Release --project benchmarks/Cephalon.Benchmarks
+  dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --validate-guardrails
+  pwsh ./scripts/validate-release.ps1
+  pwsh ./scripts/validate-container-runtime.ps1
+  pwsh ./scripts/validate-generated-app-publish.ps1
+  pwsh ./scripts/validate-generated-app-container-image.ps1
+  pwsh ./scripts/validate-generated-app-windows-service.ps1
+  pwsh ./scripts/validate-generated-app-iis.ps1
+  pwsh ./scripts/validate-generated-app-app-service.ps1
+  pwsh ./scripts/validate-generated-app-container-apps.ps1
+  pwsh ./scripts/validate-generated-app-kubernetes.ps1
+  pwsh ./scripts/validate-generated-app-systemd.ps1
+  pwsh ./scripts/publish-reference-docs.ps1
+  docker compose -f samples/Cephalon.Sample.ModularMonolith/compose.yaml up --build
+  dotnet run --project samples/Cephalon.Sample.ModularMonolith
+  dotnet run --project samples/Cephalon.Sample.ModularVerticalSlice
+  dotnet run --project samples/Cephalon.Sample.Microservice
+  dotnet run --project playground/Cephalon.Playground
+  dotnet run --project playground/Cephalon.WorkerPlayground
 ```
+
+For local validation, prefer PowerShell 7 with `pwsh`. The same script entry points now work from Windows, WSL, and Linux-class shells. The current CI baseline proves the full release-validation flow on Windows and the same repo-native flow with `-SkipBenchmarks` on Ubuntu until benchmark guardrails grow an OS-neutral baseline.
+
+If you are adopting Cephalon from a clean machine or package source, start with [docs/getting-started.md](docs/getting-started.md). That guide walks through installing the CLI, running `cephalon doctor`, scaffolding a host, and validating the runtime introspection endpoints.
+
+If you want the published-output baseline for a freshly generated app, continue with [docs/generated-app-publishing.md](docs/generated-app-publishing.md). That guide walks through the shipped `CephalonFolder.pubxml` publish profile, deterministic `artifacts/publish/*` output, and the optional `pwsh ./scripts/validate-generated-app-publish.ps1` replay.
+
+If you want a provider-neutral build/tag/push image baseline for a freshly generated app, continue with [docs/container-image-publishing.md](docs/container-image-publishing.md). That guide walks through the shipped `deploy/container-image/*` assets, the previewable Docker command contract, and the optional `pwsh ./scripts/validate-generated-app-container-image.ps1` replay.
+
+If you want a self-hosted Windows Service baseline for a freshly generated app, continue with [docs/windows-service-deployment.md](docs/windows-service-deployment.md). That guide walks through the shipped `deploy/windows-service/*` assets, the expected `C:\Services\*` install shape, and the optional `pwsh ./scripts/validate-generated-app-windows-service.ps1` replay.
+
+If you want a hosted Windows IIS baseline for a freshly generated app, continue with [docs/iis-deployment.md](docs/iis-deployment.md). That guide walks through the shipped `deploy/iis/*` assets, the expected `C:\inetpub\sites\*` layout, the generated ASP.NET Core Module `web.config` contract, and the optional `pwsh ./scripts/validate-generated-app-iis.ps1` replay.
+
+If you want a hosted Azure App Service baseline for a freshly generated app, continue with [docs/azure-app-service-deployment.md](docs/azure-app-service-deployment.md). That guide walks through the shipped `deploy/azure-app-service/*` assets, the generated ZIP packaging path, the previewable Azure CLI contract, and the optional `pwsh ./scripts/validate-generated-app-app-service.ps1` replay.
+
+If you want a hosted Azure Container Apps baseline for a freshly generated app, continue with [docs/azure-container-apps-deployment.md](docs/azure-container-apps-deployment.md). That guide walks through the shipped `deploy/azure-container-apps/*` assets, the generated Dockerfile/source deployment path, the previewable `az containerapp up --source` contract, and the optional `pwsh ./scripts/validate-generated-app-container-apps.ps1` replay.
+
+If you want a platform-neutral Kubernetes baseline for a freshly generated app, continue with [docs/kubernetes-deployment.md](docs/kubernetes-deployment.md). That guide walks through the shipped `deploy/kubernetes/*` assets, the generated Dockerfile plus manifest path, the previewable `kubectl kustomize` contract, and the optional `pwsh ./scripts/validate-generated-app-kubernetes.ps1` replay.
+
+If you want a self-hosted Linux service-manager baseline for a freshly generated app, continue with [docs/linux-systemd-deployment.md](docs/linux-systemd-deployment.md). That guide walks through the shipped `deploy/linux/systemd/*` assets, the expected `/opt/*` and `/etc/cephalon/*` install shape, and the optional `pwsh ./scripts/validate-generated-app-systemd.ps1` replay.
+
+If you are shipping independently distributed module packages, continue with [docs/external-package-lifecycle.md](docs/external-package-lifecycle.md) for the publish, stage, trust, load, and inspect path.
+
+If you want a reproducible Docker Desktop / WSL runtime smoke for the shipped host surface, continue with [docs/container-runtime.md](docs/container-runtime.md). That guide walks through the modular monolith sample compose stack, OTLP collector handoff, runtime routes, and the optional `pwsh ./scripts/validate-container-runtime.ps1` replay.
+
+Generated app roots from `cephalon new` and the app-focused `dotnet new` starters now also emit `NuGet.config`, `./.cephalon/packages/README.md`, `Properties/PublishProfiles/CephalonFolder.pubxml`, `deploy/windows-service/README.md`, `deploy/windows-service/install-service.ps1`, `deploy/windows-service/remove-service.ps1`, `deploy/iis/README.md`, `deploy/iis/install-site.ps1`, `deploy/iis/remove-site.ps1`, `deploy/azure-app-service/README.md`, `deploy/azure-app-service/deploy-zip.ps1`, `deploy/container-image/README.md`, `deploy/container-image/publish-image.ps1`, `deploy/azure-container-apps/README.md`, `deploy/azure-container-apps/deploy-up.ps1`, `deploy/kubernetes/README.md`, `deploy/kubernetes/apply.ps1`, `deploy/kubernetes/kustomization.yaml`, `deploy/kubernetes/namespace.yaml`, `deploy/kubernetes/deployment.yaml`, `deploy/kubernetes/service.yaml`, `deploy/linux/systemd/README.md`, `deploy/linux/systemd/<App>.service`, `deploy/linux/systemd/<App>.env`, `.dockerignore`, `Dockerfile`, `compose.yaml`, and `otel-collector-config.yaml`, so teams can seed a repo-local package feed, validate a fresh scaffold with deterministic published output, build and publish a provider-neutral container image, install a self-hosted Windows or Linux service shape, preview a hosted IIS site/app-pool path, take either an Azure App Service ZIP deploy path, an Azure Container Apps source-deploy path, or a platform-neutral Kubernetes manifest path, and then use `docker compose up --build` before they add platform-specific deployment packaging.
 
 When the playground is running, open:
 
@@ -671,7 +709,7 @@ The same runtime now also runs under the generic host through `Cephalon.Worker`.
 
 `Cephalon.Benchmarks` gives the repo a first-class performance regression suite over engine composition, runtime lifecycle, and scaffold generation so we can evolve the framework without guessing about cost. The suite now also carries a committed guardrail catalog plus a validation command, so release checks can assert the current hot-path baselines intentionally instead of relying on ad-hoc benchmark runs.
 
-GitHub Actions now runs the same repo-native release validation flow through `.github/workflows/release-validation.yml`, which calls `scripts/validate-release.ps1` on `windows-latest` and uploads benchmark reports as artifacts. Local and CI validation are intentionally the same path.
+GitHub Actions now runs the same repo-native release validation flow through `.github/workflows/release-validation.yml`, calling `scripts/validate-release.ps1` on both `windows-latest` and `ubuntu-latest`. The Windows leg keeps the full benchmark smoke and guardrail path, while the Ubuntu leg currently uses `-SkipBenchmarks` until the benchmark baseline is made OS-neutral. Local and CI validation still share the same script entry point.
 
 The repository now also carries a first-class sample suite in `samples/`:
 

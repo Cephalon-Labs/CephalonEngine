@@ -17,8 +17,8 @@ public sealed class PackagePublishingTests
         try
         {
             var result = RunProcess(
-                "powershell",
-                $"-ExecutionPolicy Bypass -File \"{scriptPath}\" -Configuration {GetCurrentBuildConfiguration()} -OutputPath \"{outputPath}\" -SkipBuild",
+                GetPowerShellExecutable(),
+                $"-File \"{scriptPath}\" -Configuration {GetCurrentBuildConfiguration()} -OutputPath \"{outputPath}\" -SkipBuild",
                 workingDirectory: Path.GetDirectoryName(scriptPath)!);
 
             Assert.True(
@@ -135,7 +135,7 @@ public sealed class PackagePublishingTests
 
             var installResult = RunProcess(
                 "dotnet",
-                $"tool install --tool-path \"{toolPath}\" Cephalon.Cli --add-source \"{outputPath}\" --ignore-failed-sources --no-cache",
+                $"tool install --tool-path \"{toolPath}\" Cephalon.Cli --add-source \"{outputPath}\" --ignore-failed-sources --no-cache --prerelease",
                 workingDirectory: repositoryRoot);
 
             Assert.Equal(0, installResult.ExitCode);
@@ -174,6 +174,8 @@ public sealed class PackagePublishingTests
         return "Release";
 #endif
     }
+
+    private static string GetPowerShellExecutable() => "pwsh";
 
     private static ProcessResult RunProcess(string fileName, string arguments, string workingDirectory)
     {

@@ -34,17 +34,106 @@ public sealed class CliApplicationTests
 
             Assert.Equal(0, exitCode);
             Assert.True(File.Exists(Path.Combine(outputPath, "Acme.Store.slnx")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "NuGet.config")));
+            Assert.True(File.Exists(Path.Combine(outputPath, ".dockerignore")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "Dockerfile")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "compose.yaml")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "otel-collector-config.yaml")));
+            Assert.True(File.Exists(Path.Combine(outputPath, ".cephalon", "packages", "README.md")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "windows-service", "README.md")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "windows-service", "install-service.ps1")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "windows-service", "remove-service.ps1")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "iis", "README.md")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "iis", "install-site.ps1")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "iis", "remove-site.ps1")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "azure-app-service", "README.md")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "azure-app-service", "deploy-zip.ps1")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "container-image", "README.md")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "container-image", "publish-image.ps1")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "azure-container-apps", "README.md")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "azure-container-apps", "deploy-up.ps1")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "kubernetes", "README.md")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "kubernetes", "apply.ps1")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "kubernetes", "kustomization.yaml")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "kubernetes", "namespace.yaml")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "kubernetes", "deployment.yaml")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "kubernetes", "service.yaml")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "linux", "systemd", "README.md")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "linux", "systemd", "Acme.Store.service")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "linux", "systemd", "Acme.Store.env")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Properties", "PublishProfiles", "CephalonFolder.pubxml")));
             Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Program.cs")));
 
             var packageProps = await File.ReadAllTextAsync(Path.Combine(outputPath, "Directory.Packages.props"));
             Assert.Contains("Cephalon.AspNetCore.Grpc", packageProps, StringComparison.Ordinal);
+            Assert.Contains("Cephalon.Observability.OpenTelemetry", packageProps, StringComparison.Ordinal);
+            Assert.Contains("Microsoft.Extensions.Hosting.WindowsServices", packageProps, StringComparison.Ordinal);
             Assert.Contains("Version=\"3.2.0-preview\"", packageProps, StringComparison.Ordinal);
+
+            var nuGetConfig = await File.ReadAllTextAsync(Path.Combine(outputPath, "NuGet.config"));
+            Assert.Contains("./.cephalon/packages", nuGetConfig, StringComparison.Ordinal);
+            Assert.Contains("packageSourceMapping", nuGetConfig, StringComparison.Ordinal);
+
+            var publishProfile = await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "Properties", "PublishProfiles", "CephalonFolder.pubxml"));
+            Assert.Contains("PublishDir", publishProfile, StringComparison.Ordinal);
+            Assert.Contains("UseAppHost>false", publishProfile, StringComparison.Ordinal);
+            Assert.Contains("../../artifacts/publish", publishProfile, StringComparison.Ordinal);
+
+            var windowsInstallScript = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "windows-service", "install-service.ps1"));
+            Assert.Contains("sc.exe create", windowsInstallScript, StringComparison.Ordinal);
+            Assert.Contains("--contentRoot", windowsInstallScript, StringComparison.Ordinal);
+            Assert.Contains("Acme.Store.Service.dll", windowsInstallScript, StringComparison.Ordinal);
+
+            var iisInstallScript = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "iis", "install-site.ps1"));
+            Assert.Contains("add apppool", iisInstallScript, StringComparison.Ordinal);
+            Assert.Contains("add site", iisInstallScript, StringComparison.Ordinal);
+            Assert.Contains("C:\\inetpub\\sites\\Acme.Store\\current", iisInstallScript, StringComparison.Ordinal);
+
+            var azureAppServiceDeployScript = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "azure-app-service", "deploy-zip.ps1"));
+            Assert.Contains("WEBSITE_RUN_FROM_PACKAGE=1", azureAppServiceDeployScript, StringComparison.Ordinal);
+            Assert.Contains("az @deployArguments", azureAppServiceDeployScript, StringComparison.Ordinal);
+            Assert.Contains("azure-app-service.zip", azureAppServiceDeployScript, StringComparison.Ordinal);
+
+            var containerImagePublishScript = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "container-image", "publish-image.ps1"));
+            Assert.Contains("docker build", containerImagePublishScript, StringComparison.Ordinal);
+            Assert.Contains("docker push", containerImagePublishScript, StringComparison.Ordinal);
+            Assert.Contains("Container image publishing completed successfully.", containerImagePublishScript, StringComparison.Ordinal);
+
+            var azureContainerAppsDeployScript = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "azure-container-apps", "deploy-up.ps1"));
+            Assert.Contains("az @upArguments", azureContainerAppsDeployScript, StringComparison.Ordinal);
+            Assert.Contains("--source", azureContainerAppsDeployScript, StringComparison.Ordinal);
+            Assert.Contains("ASPNETCORE_HTTP_PORTS=8080", azureContainerAppsDeployScript, StringComparison.Ordinal);
+
+            var kubernetesApplyScript = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "kubernetes", "apply.ps1"));
+            Assert.Contains("kubectl", kubernetesApplyScript, StringComparison.Ordinal);
+            Assert.Contains("kustomize", kubernetesApplyScript, StringComparison.Ordinal);
+            Assert.Contains("Kubernetes deployment apply completed successfully.", kubernetesApplyScript, StringComparison.Ordinal);
+
+            var kubernetesDeployment = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "kubernetes", "deployment.yaml"));
+            Assert.Contains("replace-with-registry/acme-store:latest", kubernetesDeployment, StringComparison.Ordinal);
+            Assert.Contains("/health/ready", kubernetesDeployment, StringComparison.Ordinal);
+            Assert.Contains("/health/live", kubernetesDeployment, StringComparison.Ordinal);
+
+            var systemdService = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "linux", "systemd", "Acme.Store.service"));
+            Assert.Contains("EnvironmentFile=-/etc/cephalon/Acme.Store.env", systemdService, StringComparison.Ordinal);
+            Assert.Contains("ExecStart=/usr/bin/env dotnet /opt/Acme.Store/current/Acme.Store.Service.dll", systemdService, StringComparison.Ordinal);
+            Assert.Contains("DynamicUser=true", systemdService, StringComparison.Ordinal);
 
             var settings = await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "appsettings.json"));
             Assert.Contains("\"Microservice\"", settings, StringComparison.Ordinal);
             Assert.Contains("\"gRPC\"", settings, StringComparison.Ordinal);
             Assert.Contains("\"JSON-RPC\"", settings, StringComparison.Ordinal);
             Assert.Contains("\"Agentic Workloads\"", settings, StringComparison.Ordinal);
+            Assert.DoesNotContain("http://localhost:4317", settings, StringComparison.Ordinal);
+            Assert.Contains("\"Protocol\": \"otlp/http\"", settings, StringComparison.Ordinal);
+
+            var program = await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "Program.cs"));
+            Assert.Contains("builder.AddCephalonOpenTelemetry();", program, StringComparison.Ordinal);
+            Assert.Contains("WindowsServiceHelpers.IsWindowsService()", program, StringComparison.Ordinal);
+            Assert.Contains("builder.Host.UseWindowsService();", program, StringComparison.Ordinal);
+
+            var compose = await File.ReadAllTextAsync(Path.Combine(outputPath, "compose.yaml"));
+            Assert.Contains("http://otel-collector:4318", compose, StringComparison.Ordinal);
 
             Assert.Contains("Generated 'Acme.Store'", stdout.ToString(), StringComparison.Ordinal);
             Assert.Equal(string.Empty, stderr.ToString());
@@ -94,6 +183,155 @@ public sealed class CliApplicationTests
             if (Directory.Exists(outputPath))
             {
                 Directory.Delete(outputPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorReportsReadyEnvironmentAndTemplateAdvisory()
+    {
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    9.0.312 [C:\Program Files\dotnet\sdk]
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(103, "No templates found matching: 'cephalon'.", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor"
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(0, exitCode);
+            Assert.Contains("[ok] dotnet SDK selection: 10.0.201", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Installed net10.0 SDK family: 10.0.201", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Microsoft.NETCore.App: 10.0.5", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Microsoft.AspNetCore.App: 10.0.5", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Cephalon template pack: No Cephalon templates were found by `dotnet new list cephalon`.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Environment is ready for Cephalon CLI scaffolding.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("cephalon new Acme.Store --output ./Acme.Store", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("dotnet new install Cephalon.TemplatePack", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Equal(string.Empty, stderr.ToString());
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenRequiredSdkSelectionIsTooOld()
+    {
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "9.0.312", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    9.0.312 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 9.0.14 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 9.0.14 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(103, "No templates found matching: 'cephalon'.", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor"
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] dotnet SDK selection: Current SDK selection is '9.0.312', but Cephalon scaffolds target 'net10.0'.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Installed net10.0 SDK family: No 10.x SDK was found in `dotnet --list-sdks`.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Microsoft.NETCore.App: No 10.x runtime was found in `dotnet --list-runtimes`.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Cephalon doctor found 4 required issue(s).", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncStagesPublishedModulePackageIntoLoadableDirectory()
+    {
+        var packageOutputPath = Path.Combine(Path.GetTempPath(), $"cephalon-cli-package-stage-pack-{Guid.NewGuid():N}");
+        var stagedOutputPath = Path.Combine(Path.GetTempPath(), $"cephalon-cli-package-stage-output-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        Directory.CreateDirectory(packageOutputPath);
+
+        try
+        {
+            var packagePath = PackReferenceModulePackage(packageOutputPath);
+
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "package",
+                    "stage",
+                    "--package", packagePath,
+                    "--output", stagedOutputPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(0, exitCode);
+            Assert.True(File.Exists(Path.Combine(stagedOutputPath, "cephalon.package.json")));
+            Assert.True(File.Exists(Path.Combine(stagedOutputPath, "Cephalon.ReferenceModule.Operations.dll")));
+            Assert.True(File.Exists(Path.Combine(stagedOutputPath, "Cephalon.ReferenceModule.Operations.xml")));
+            Assert.True(File.Exists(Path.Combine(stagedOutputPath, "PACKAGE.md")));
+
+            var manifest = await LoadJsonObjectAsync(Path.Combine(stagedOutputPath, "cephalon.package.json"));
+            Assert.Equal("reference-operations", manifest["id"]?.GetValue<string>());
+            Assert.Equal("Cephalon.ReferenceModule.Operations.dll", manifest["assembly"]?.GetValue<string>());
+            Assert.Contains("Staged package 'reference-operations'", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Next step: point Engine:Discovery:PackageDirectories", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Equal(string.Empty, stderr.ToString());
+        }
+        finally
+        {
+            if (Directory.Exists(packageOutputPath))
+            {
+                Directory.Delete(packageOutputPath, recursive: true);
+            }
+
+            if (Directory.Exists(stagedOutputPath))
+            {
+                Directory.Delete(stagedOutputPath, recursive: true);
             }
         }
     }
@@ -616,6 +854,25 @@ public sealed class CliApplicationTests
         Assert.Contains("Unknown option '--unknown'.", stderr.ToString(), StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task RunAsyncHelpIncludesDoctorCommand()
+    {
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        var exitCode = await CliApplication.RunAsync(
+            ["--help"],
+            stdout,
+            stderr);
+
+        Assert.Equal(0, exitCode);
+        Assert.Contains("cephalon doctor", stdout.ToString(), StringComparison.Ordinal);
+        Assert.Contains("cephalon package stage", stdout.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Doctor options:", stdout.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Package stage options:", stdout.ToString(), StringComparison.Ordinal);
+        Assert.Equal(string.Empty, stderr.ToString());
+    }
+
     private static string GetCurrentBuildConfiguration()
     {
         return AppContext.BaseDirectory.Contains(
@@ -630,4 +887,48 @@ public sealed class CliApplicationTests
         var parsed = JsonNode.Parse(await File.ReadAllTextAsync(path));
         return Assert.IsType<JsonObject>(parsed);
     }
+
+    private static string PackReferenceModulePackage(string outputPath)
+    {
+        var repositoryRoot = RepositoryPaths.GetRepositoryRoot();
+        var projectPath = RepositoryPaths.GetFile(
+            "samples",
+            "Cephalon.ReferenceModule.Operations",
+            "Cephalon.ReferenceModule.Operations.csproj");
+        var result = RunProcess(
+            "dotnet",
+            $"pack \"{projectPath}\" -c {GetCurrentBuildConfiguration()} -o \"{outputPath}\" --no-build",
+            repositoryRoot);
+
+        Assert.True(
+            result.ExitCode == 0,
+            $"dotnet pack failed with exit code {result.ExitCode}.{Environment.NewLine}Output:{Environment.NewLine}{result.Output}{Environment.NewLine}Error:{Environment.NewLine}{result.Error}");
+
+        return Directory.GetFiles(outputPath, "Cephalon.ReferenceModule.Operations.*.nupkg", SearchOption.TopDirectoryOnly)
+            .Single(path => !path.EndsWith(".symbols.nupkg", StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static ProcessResult RunProcess(string fileName, string arguments, string workingDirectory)
+    {
+        var startInfo = new System.Diagnostics.ProcessStartInfo
+        {
+            FileName = fileName,
+            Arguments = arguments,
+            WorkingDirectory = workingDirectory,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false
+        };
+
+        using var process = System.Diagnostics.Process.Start(startInfo)
+            ?? throw new InvalidOperationException($"Could not start '{fileName}'.");
+
+        var output = process.StandardOutput.ReadToEnd();
+        var error = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+
+        return new ProcessResult(process.ExitCode, output, error);
+    }
+
+    private sealed record ProcessResult(int ExitCode, string Output, string Error);
 }

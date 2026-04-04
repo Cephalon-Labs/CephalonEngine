@@ -13,10 +13,20 @@ concurrency:
 
 jobs:
   validate:
-    name: Build, Test, Benchmarks, Reference Docs, and Packages
-    runs-on: windows-latest
+    name: Release Validation (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     permissions:
       contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            validate_args: ""
+            benchmark_artifact_suffix: windows
+          - os: ubuntu-latest
+            validate_args: "-SkipBenchmarks"
+            benchmark_artifact_suffix: linux
 
     env:
       DOTNET_NOLOGO: true
@@ -34,13 +44,13 @@ jobs:
 
       - name: Run release validation
         shell: pwsh
-        run: ./scripts/validate-release.ps1
+        run: ./scripts/validate-release.ps1 ${{ matrix.validate_args }}
 
       - name: Upload benchmark results
-        if: always()
+        if: always() && matrix.validate_args == ''
         uses: actions/upload-artifact@v4
         with:
-          name: benchmark-results
+          name: benchmark-results-${{ matrix.benchmark_artifact_suffix }}
           path: BenchmarkDotNet.Artifacts/results
           if-no-files-found: warn
 
@@ -48,7 +58,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: reference-docs
+          name: reference-docs-${{ matrix.benchmark_artifact_suffix }}
           path: artifacts/reference-docs-release
           if-no-files-found: warn
 
@@ -56,6 +66,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: package-artifacts
+          name: package-artifacts-${{ matrix.benchmark_artifact_suffix }}
           path: artifacts/packages-release
           if-no-files-found: warn

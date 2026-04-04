@@ -10,6 +10,8 @@
 
   <PropertyGroup Condition="$([System.String]::Copy('$(MSBuildProjectName)').StartsWith('Cephalon.'))">
     <Authors Condition="'$(Authors)' == ''">Cephalon</Authors>
+    <Version Condition="'$(Version)' == ''">0.1.0-preview</Version>
+    <PackageVersion Condition="'$(PackageVersion)' == ''">$(Version)</PackageVersion>
     <PackageLicenseExpression Condition="'$(PackageLicenseExpression)' == ''">MIT</PackageLicenseExpression>
     <PackageProjectUrl Condition="'$(PackageProjectUrl)' == ''">https://github.com/Cephalon-Labs/CephalonEngine</PackageProjectUrl>
     <RepositoryUrl Condition="'$(RepositoryUrl)' == ''">https://github.com/Cephalon-Labs/CephalonEngine</RepositoryUrl>

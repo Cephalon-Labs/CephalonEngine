@@ -1,0 +1,27 @@
+services:
+  modular-monolith:
+    build:
+      context: ../..
+      dockerfile: samples/Cephalon.Sample.ModularMonolith/Dockerfile
+    environment:
+      ASPNETCORE_HTTP_PORTS: 8080
+      DOTNET_ENVIRONMENT: Container
+      Engine__Observability__Telemetry__Provider: OpenTelemetry
+      Engine__Observability__Telemetry__Protocol: otlp/http
+      Engine__Observability__Telemetry__Endpoint: http://otel-collector:4318
+      Engine__Observability__Telemetry__ExportLogs: "true"
+      Engine__Observability__Telemetry__ExportMetrics: "true"
+      Engine__Observability__Telemetry__ExportTraces: "true"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - otel-collector
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.149.0
+    command:
+      - "--config=/etc/otelcol-contrib/config.yaml"
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    ports:
+      - "13133:13133"

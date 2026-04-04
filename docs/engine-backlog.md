@@ -553,6 +553,359 @@ Acceptance:
 - avoid shipping a first-party `Cephalon.Observability.Cloudflare` package unless Cloudflare later exposes a documented generic OTLP ingestion story for external hosts
 - keep any provider beyond the shipped New Relic slice as a later explicit child item instead of reopening the remaining provider matrix as one task
 
+## Next adoption and operator readiness work
+
+### ENG-033 Cross-platform validation and shell parity baseline
+
+Status: done
+Estimate: 13
+Completed: April 4, 2026
+
+Completed work:
+
+- updated `scripts/validate-release.ps1` plus the package-publishing, reference-doc publishing, and operational-validation helper scripts so nested PowerShell invocations run through the active host with `pwsh`-friendly parameter binding instead of Windows-only assumptions
+- updated `.github/workflows/release-validation.yml` to run the same repo-native validation flow on both Windows and Ubuntu without duplicating build/test/publish logic in workflow YAML
+- extended tooling coverage around package publishing, reference-doc publishing, and release validation so the supported shell path stays locked to the same repo-native scripts
+- aligned release-validation, package-publishing, and adoption docs with the supported Windows, WSL, and Linux-class shell path
+
+Why:
+
+- the current repo-native validation and publishing flow still invokes Windows PowerShell directly and GitHub Actions currently proves it only on `windows-latest`, even though Cephalon's host/runtime model is meant to stay host-agnostic
+- local install smoke coverage for the CLI tool and template pack already exists, but the shipped automation still does not prove those same paths on Linux-class shells or WSL-friendly environments
+- hardening the shell and CI path now is higher leverage than adding more engine surface because it stabilizes every shipped package, sample, and tool
+
+Acceptance:
+
+- repo-native PowerShell scripts use a cross-platform invocation strategy that works under PowerShell 7 / `pwsh`
+- release validation runs on both Windows and Linux without duplicating build/test/publish logic in workflow YAML
+- CLI tool install/help and template install/generate smoke coverage prove a Linux-compatible path in addition to the current Windows path
+- docs call out the supported local validation path for Windows, WSL, and Linux-class shells
+
+### ENG-034 First-run adoption and environment doctor path
+
+Status: done
+Estimate: 8
+Completed: April 4, 2026
+
+Why:
+
+- the repo now has a strong quick start plus package/template/tool install coverage, but new adopters still do not have one first-class answer for "is my environment set up correctly?"
+- `Cephalon.Cli` currently focuses on generation and docs publishing, which leaves install, upgrade, and runtime-smoke validation spread across multiple docs and package readmes
+- a first-run doctor path will reduce support friction and make the framework easier to adopt outside the repo
+
+Acceptance:
+
+- `Cephalon.Cli` ships a first-class doctor or equivalent environment-verification command that checks the expected SDK/tool/template/runtime prerequisites
+- docs add a dedicated getting-started/adoption guide that walks from install to generated-app run and `/engine/*` inspection
+- CLI help text, README guidance, and package readmes stay aligned with the same first-run path
+- automated coverage proves the doctor/verification flow and its documented happy path
+
+Completed work:
+
+- shipped `cephalon doctor` in `Cephalon.Cli` with required SDK/runtime checks plus advisory template-pack detection
+- added `docs/getting-started.md` as the install, verification, scaffold, run, and `/engine/*` inspection path
+- aligned CLI help text, `README.md`, `src/Cephalon.Cli/PACKAGE.md`, and `templates/Cephalon.TemplatePack/PACKAGE.md` with the doctor-first adoption flow
+- added CLI and documentation coverage for the doctor happy path, required-failure path, and doc/readme alignment
+
+### ENG-035 External module package lifecycle prove-out
+
+Status: done
+Estimate: 13
+Completed: April 4, 2026
+
+Why:
+
+- the engine can already load manifest-driven packages with trust and provenance metadata, but the repo still proves most of that story through repo-local references and docs rather than an operator-facing end-to-end workflow
+- a practical framework needs a repeatable "author package, publish artifact, trust it, load it, inspect it" baseline outside the repo-local assembly path
+- this work keeps package loading explicit and introspectable while making the external distribution story concrete enough for real adopters
+
+Acceptance:
+
+- the reference module or an equivalent sample package can be published as an external artifact and loaded into a host from an out-of-tree package location
+- docs show the full package author -> publish -> trust -> load -> inspect flow using `cephalon.package.json`, `Engine:PackagePolicy`, and `Engine:Trust`
+- automated coverage proves external package load paths, trust/policy outcomes, and runtime introspection outside the repo-local assembly-only scenario
+- package-publishing guidance stays aligned with the prove-out flow
+
+Completed work:
+
+- shipped `cephalon package stage` in `Cephalon.Cli` so published module `.nupkg` artifacts can be materialized into loadable package directories outside the repo-local assembly path
+- added end-to-end CLI and ASP.NET Core host coverage that packs `Cephalon.ReferenceModule.Operations`, stages it into an out-of-tree package directory, loads it through `Engine:Discovery:PackageDirectories`, and verifies trust/policy/runtime-introspection surfaces
+- added `docs/external-package-lifecycle.md` as the operator-facing publish -> stage -> trust -> load -> inspect walkthrough
+- aligned `docs/package-publishing.md`, `docs/module-authoring.md`, `samples/Cephalon.ReferenceModule.Operations/README.md`, CLI docs, and package readme guidance with the same external package staging flow
+
+### ENG-036 Containerized local runtime and operations baseline
+
+Status: done
+Estimate: 13
+Completed: April 4, 2026
+
+Completed work:
+
+- made `Cephalon.Sample.ModularMonolith` container-friendly by letting late command-line or environment configuration override the sample JSON baseline and by wiring `Cephalon.Observability.OpenTelemetry`
+- added a Dockerfile, `compose.yaml`, collector config, optional package-directory compose override, sample README, and plugin placeholder so the modular monolith sample can run under Docker Desktop / WSL with the same `/engine/*` and `/health/*` surfaces
+- added `docs/container-runtime.md`, aligned the root/docs/operations guidance with the same container path, and shipped the optional `scripts/validate-container-runtime.ps1` smoke entry point without making Docker a release-validation dependency
+- added hosting and tooling coverage for the container assets/configuration path and verified the sample through the shipped Docker compose smoke flow
+
+Why:
+
+- the repo ships runnable samples and strong `/engine/*` introspection surfaces, but it still lacks a reproducible Docker Desktop / WSL-friendly path for validating a host with production-like deployment boundaries
+- operators and adopters need a concrete local deployment shape for health checks, telemetry configuration, package mounts, and environment-driven settings before Cephalon feels practical beyond source builds
+- this work can prove the existing engine/runtime surface through sample-level assets without pushing Docker-specific behavior into `Cephalon.Engine`
+
+Acceptance:
+
+- at least one adoption-quality sample host ships with a Dockerfile and container run guidance that preserve current config-loading and `/engine/*` surfaces
+- a Docker Compose or equivalent local orchestration path proves app startup, health endpoints, and at least one telemetry/export handoff or collector path
+- docs explain how to run the sample under Docker Desktop / WSL and where to inspect runtime, health, and package surfaces
+- validation guidance includes a containerized smoke path without making Docker a required engine dependency
+
+### ENG-037 Generated app local package-feed bootstrap baseline
+
+Status: done
+Estimate: 8
+Completed: April 4, 2026
+
+Why:
+
+- generated apps from `cephalon new` and the shipped `dotnet new` starters can expose the right runtime shape, but a fresh adopter still needs a truthful first-run answer for where Cephalon packages come from before restore, build, or container startup will work outside this repo
+- the shared package version baseline had drifted far enough that `dotnet pack` could default repo artifacts to `1.0.0` while scaffolds, templates, and docs still expected the preview package line, which makes adoption guidance look correct while restore/install behavior disagrees
+- phase 7 should close the gap between "I can scaffold an app" and "I can actually build and run that generated app" without requiring repo-only NuGet knowledge
+
+Acceptance:
+
+- generated apps from both `cephalon new` and the app-focused `dotnet new` starters emit `NuGet.config` plus a documented local package-feed placeholder by default
+- shared package-version defaults stay aligned with the preview package line used by scaffolds, templates, docs, and the CLI tool install path
+- docs explain how to seed the generated-app local feed or replace the `cephalon` package source before first build and first container run
+- automated coverage plus a real smoke flow prove scaffold -> package publish -> restore/build -> Docker compose startup and the expected `/engine/*`, `/health/*`, and docs surfaces
+
+Completed work:
+
+- aligned shared `Cephalon.*` package-version defaults in `Directory.Build.props` back to `0.1.0-preview` so packed artifacts, templates, scaffolds, and install docs point at the same prerelease baseline
+- updated `Cephalon.Scaffolding` and the shipped app templates to emit `NuGet.config`, `.cephalon/packages/README.md`, and README guidance that explain the seeded-local-feed bootstrap path
+- removed the redundant ASP.NET Core framework reference from generated web hosts so the generated app build stays warning-free on the supported path
+- aligned `README.md`, `docs/getting-started.md`, `docs/container-runtime.md`, `docs/package-publishing.md`, `docs/components/scaffolding.md`, CLI package guidance, and template-pack guidance with the prerelease install plus local-feed bootstrap flow
+- added scaffolding, CLI, template-pack, package-publishing, and documentation coverage for the generated-app bootstrap contract, then verified a real generated app through scaffold -> publish-package-artifacts into `./.cephalon/packages` -> `dotnet build` -> `docker compose up --build` with `/engine/snapshot`, `/health/ready`, and `/scalar`
+
+### ENG-038 Generated app published-output and deployment baseline
+
+Status: done
+Estimate: 8
+Completed: April 4, 2026
+
+Why:
+
+- generated apps can now bootstrap packages and take the documented container path, but adopters still need a truthful deployment-like answer for publishing and starting a Cephalon host from emitted artifacts instead of a source-tree build
+- without a shipped publish profile and a smoke path that exercises published output, teams still have to rediscover host project paths, output conventions, and runtime probes before they can trust the generated app beyond local source builds
+- phase 7 should close the gap between "I can build and container-run a generated app" and "I can publish and run the generated output" without repo-only MSBuild or host-startup knowledge
+
+Acceptance:
+
+- generated hosts from both `cephalon new` and the shipped app-focused `dotnet new` starters emit a deterministic folder publish profile by default
+- docs explain how to publish and run a generated app from published output, including the supported seeded or repointed `cephalon` package-source expectation
+- automated coverage plus an optional validation script prove scaffold -> package publish -> folder publish -> run published output and the expected `/engine/*`, `/health/*`, and docs surfaces
+- published-output guidance stays aligned across scaffolding, CLI, template-pack, and operations docs
+
+Completed work:
+
+- updated `Cephalon.Scaffolding` and the shipped app templates to emit `Properties/PublishProfiles/CephalonFolder.pubxml` that publish into deterministic `artifacts/publish/<ProjectName>/` output without forcing an app host executable
+- added `docs/generated-app-publishing.md` and aligned `README.md`, `docs/getting-started.md`, `docs/container-runtime.md`, `docs/operations.md`, `docs/components/scaffolding.md`, `docs/components/cli.md`, CLI package guidance, and template-pack guidance with the published-output path
+- added `scripts/validate-generated-app-publish.ps1` so the repo can scaffold a temporary app, seed local packages, publish the host, start the published DLL, and validate `/health/ready`, `/engine`, `/engine/snapshot`, and `/scalar`
+- extended scaffolding, CLI, template-pack, and documentation coverage for the generated publish contract, then verified a real smoke path through scaffold -> publish-package-artifacts into `./.cephalon/packages` -> `dotnet publish -p:PublishProfile=CephalonFolder` -> run published output
+
+### ENG-039 Generated app Linux systemd deployment baseline
+
+Status: done
+Estimate: 8
+Completed: April 4, 2026
+
+Why:
+
+- generated apps can now bootstrap packages, publish deterministically, and take the documented container path, but adopters still need a truthful self-hosted Linux answer for turning that published output into a long-running service on a VM or bare-metal host
+- without shipped service assets and a verification path, teams still have to rediscover `/opt/*` layout, environment-file location, and `systemctl` install steps before they can trust the generated app outside local shells or container tooling
+- phase 7 should close the gap between "I can publish the app" and "I can package the published output into a Linux service-manager shape" without pushing Linux-service behavior into `Cephalon.Engine`
+
+Acceptance:
+
+- generated hosts from both `cephalon new` and the shipped app-focused `dotnet new` starters emit Linux `systemd` deployment assets by default
+- docs explain how to install published output plus the generated unit/environment files on a Linux target and how to validate the unit before enabling it
+- automated coverage plus an optional validation script prove scaffold -> package publish -> folder publish -> Linux `systemd` unit verification under WSL or Linux-class shells
+- Linux self-hosted guidance stays aligned across scaffolding, CLI, template-pack, getting-started, operations, and generated-app publishing docs
+
+Completed work:
+
+- updated `Cephalon.Scaffolding` and the shipped app templates to emit `deploy/linux/systemd/README.md`, `deploy/linux/systemd/<App>.service`, and `deploy/linux/systemd/<App>.env` alongside the existing publish/container assets
+- added `docs/linux-systemd-deployment.md` and aligned `README.md`, `docs/getting-started.md`, `docs/generated-app-publishing.md`, `docs/container-runtime.md`, `docs/operations.md`, `docs/components/scaffolding.md`, `docs/components/cli.md`, CLI package guidance, and template-pack guidance with the Linux self-hosted path
+- added `scripts/validate-generated-app-systemd.ps1` so the repo can scaffold a temporary app, seed local packages, publish the host, rewrite the generated unit to WSL-visible publish paths, and run `systemd-analyze verify`
+- extended scaffolding, CLI, template-pack, and documentation coverage for the generated Linux deployment contract, then verified a real smoke path through scaffold -> publish-package-artifacts into `./.cephalon/packages` -> `dotnet publish -p:PublishProfile=CephalonFolder` -> WSL `systemd-analyze verify`
+
+### ENG-040 Generated app Windows Service deployment baseline
+
+Status: done
+Estimate: 8
+Completed: April 4, 2026
+
+Why:
+
+- generated apps can now bootstrap packages, publish deterministically, and take both the documented container path and Linux self-hosted path, but Windows-first teams still need a truthful self-hosted answer for turning that published output into a long-running service without rediscovering `sc.exe` arguments and content-root handling
+- without shipped install assets plus Windows Service-aware host wiring, teams still have to rediscover `C:\Services\*` layout, `--contentRoot` handling, and service-recovery commands before they can trust the generated app outside local shells or container tooling
+- phase 7 should close the gap between "I can publish the app" and "I can package the published output into a Windows service-manager shape" without pushing Windows-only behavior into `Cephalon.Engine`
+
+Acceptance:
+
+- generated hosts from both `cephalon new` and the shipped app-focused `dotnet new` starters emit Windows Service deployment assets by default
+- generated hosts are wired for Windows Service lifetime and content-root handling without changing the blueprint or engine contracts
+- docs explain how to preview, install, verify, and remove the generated Windows Service assets on a Windows target
+- automated coverage plus an optional validation script prove scaffold -> package publish -> folder publish -> Windows Service install preview against published output
+- Windows self-hosted guidance stays aligned across scaffolding, CLI, template-pack, getting-started, operations, and generated-app publishing docs
+
+Completed work:
+
+- updated `Cephalon.Scaffolding` and the shipped app templates to emit `deploy/windows-service/README.md`, `deploy/windows-service/install-service.ps1`, and `deploy/windows-service/remove-service.ps1` alongside the existing publish/container/Linux assets
+- updated generated ASP.NET Core host wiring plus the shipped app templates to use `Microsoft.Extensions.Hosting.WindowsServices`, `WindowsServiceHelpers.IsWindowsService()`, and `builder.Host.UseWindowsService()` so service lifetime and content-root behavior stay aligned under SCM startup
+- added `docs/windows-service-deployment.md` and aligned `README.md`, `docs/README.md`, `docs/getting-started.md`, `docs/generated-app-publishing.md`, `docs/operations.md`, `docs/components/scaffolding.md`, `docs/components/cli.md`, CLI package guidance, and template-pack guidance with the Windows self-hosted path
+- added `scripts/validate-generated-app-windows-service.ps1` so the repo can scaffold a temporary app, seed local packages, publish the host, verify the generated Windows Service host wiring, and replay the shipped install/remove scripts in preview mode against published output
+- extended scaffolding, CLI, template-pack, and documentation coverage for the generated Windows deployment contract, then verified a real smoke path through scaffold -> publish-package-artifacts into `./.cephalon/packages` -> `dotnet publish -p:PublishProfile=CephalonFolder` -> Windows Service install preview
+
+### ENG-041 Generated app IIS deployment baseline
+
+Status: done
+Estimate: 8
+Completed: April 4, 2026
+
+Why:
+
+- generated apps can now bootstrap packages, publish deterministically, and take both the documented self-hosted Windows and Linux paths, but Windows-hosted teams still need a truthful IIS answer for turning that published output into a site plus app-pool deployment without rediscovering the ASP.NET Core Module contract
+- without shipped IIS assets plus guidance around the SDK-generated `web.config`, teams still have to rediscover `C:\inetpub\sites\*` layout, `appcmd.exe` flow, hosting-bundle prerequisites, and ANCM expectations before they can trust the generated app on a hosted Windows baseline
+- phase 7 should close the gap between "I can publish the app" and "I can package the published output into an IIS site/app-pool shape" without pushing IIS-specific behavior into `Cephalon.Engine`
+
+Acceptance:
+
+- generated hosts from both `cephalon new` and the shipped app-focused `dotnet new` starters emit IIS deployment assets by default
+- generated published output keeps the expected ASP.NET Core Module `web.config` so IIS can launch the host through `dotnet`
+- docs explain how to preview, install, verify, and remove the generated IIS assets on a Windows target
+- automated coverage plus an optional validation script prove scaffold -> package publish -> folder publish -> IIS install preview against published output
+- IIS hosted guidance stays aligned across scaffolding, CLI, template-pack, getting-started, operations, and generated-app publishing docs
+
+Completed work:
+
+- updated `Cephalon.Scaffolding` and the shipped app templates to emit `deploy/iis/README.md`, `deploy/iis/install-site.ps1`, and `deploy/iis/remove-site.ps1` alongside the existing publish, container, Windows Service, and Linux assets
+- aligned generated app and template README guidance with the hosted Windows IIS path built on top of the SDK-generated ASP.NET Core Module `web.config`
+- added `docs/iis-deployment.md` and aligned `README.md`, `docs/README.md`, `docs/getting-started.md`, `docs/generated-app-publishing.md`, `docs/operations.md`, `docs/components/scaffolding.md`, `docs/components/cli.md`, CLI package guidance, and template-pack guidance with the IIS hosted path
+- added `scripts/validate-generated-app-iis.ps1` so the repo can scaffold a temporary app, seed local packages, publish the host, verify the generated `web.config`, and replay the shipped IIS install/remove scripts in preview mode against published output
+- extended scaffolding, CLI, template-pack, and documentation coverage for the generated IIS deployment contract, then verified a real smoke path through scaffold -> publish-package-artifacts into `./.cephalon/packages` -> `dotnet publish -p:PublishProfile=CephalonFolder` -> IIS install preview
+
+### ENG-042 Generated app Azure App Service deployment baseline
+
+Status: done
+Estimate: 8
+Completed: April 4, 2026
+
+Why:
+
+- generated apps can now bootstrap packages, publish deterministically, and take self-hosted Windows/Linux plus hosted IIS paths, but cloud-hosted teams still need a truthful Azure App Service answer for turning that published output into a deployable ZIP artifact without rediscovering the run-from-package contract
+- without shipped Azure App Service assets plus guidance around `WEBSITE_RUN_FROM_PACKAGE=1`, `az webapp deploy`, and the deterministic ZIP package path, teams still have to rediscover packaging and deploy-preview behavior before they can trust the generated app on a hosted Azure baseline
+- phase 7 should close the gap between "I can publish the app" and "I can package the published output into an Azure App Service ZIP-deploy shape" without pushing Azure-specific behavior into `Cephalon.Engine`
+
+Acceptance:
+
+- generated hosts from both `cephalon new` and the shipped app-focused `dotnet new` starters emit Azure App Service deployment assets by default
+- generated deployment assets package published output into a deterministic ZIP artifact and preserve the expected SDK-generated `web.config`
+- docs explain how to preview, package, and deploy the generated Azure assets with the current Azure CLI contract
+- automated coverage plus an optional validation script prove scaffold -> package publish -> folder publish -> Azure App Service ZIP packaging and preview against published output
+- Azure App Service guidance stays aligned across scaffolding, CLI, template-pack, getting-started, operations, and generated-app publishing docs
+
+Completed work:
+
+- updated `Cephalon.Scaffolding` and the shipped app templates to emit `deploy/azure-app-service/README.md` and `deploy/azure-app-service/deploy-zip.ps1` alongside the existing publish, container, Windows Service, IIS, and Linux assets
+- aligned generated app and template README guidance with the hosted Azure App Service ZIP-deploy path built on top of the deterministic `CephalonFolder.pubxml` publish output
+- added `docs/azure-app-service-deployment.md` and aligned `README.md`, `docs/README.md`, `docs/getting-started.md`, `docs/generated-app-publishing.md`, `docs/operations.md`, `docs/components/scaffolding.md`, `docs/components/cli.md`, CLI package guidance, and template-pack guidance with the Azure App Service path
+- added `scripts/validate-generated-app-app-service.ps1` so the repo can scaffold a temporary app, seed local packages, publish the host, package the generated ZIP artifact, and replay the shipped Azure deploy script in preview mode against the current Azure CLI contract
+- extended scaffolding, CLI, template-pack, and documentation coverage for the generated Azure App Service deployment contract, then verified a real smoke path through scaffold -> publish-package-artifacts into `./.cephalon/packages` -> `dotnet publish -p:PublishProfile=CephalonFolder` -> Azure App Service ZIP packaging and deploy preview
+
+### ENG-043 Generated app Azure Container Apps deployment baseline
+
+Status: done
+Estimate: 8
+Completed: April 4, 2026
+
+Why:
+
+- generated apps can now bootstrap packages, publish deterministically, and take self-hosted Windows/Linux plus hosted IIS and Azure App Service paths, but cloud-hosted teams using Azure's container-native platform still need a truthful Container Apps answer from the shipped Dockerfile and app root without inventing another deployment script from scratch
+- without shipped Azure Container Apps assets plus guidance around `az containerapp up --source`, ingress, target port, and baseline environment variables, teams still have to rediscover source-root deployment behavior before they can trust the generated app on a hosted Azure container baseline
+- phase 7 follow-through should close the gap between "I can validate the generated Dockerfile locally" and "I can deploy the generated app to Azure Container Apps" without pushing Azure-specific behavior into `Cephalon.Engine`
+
+Acceptance:
+
+- generated hosts from both `cephalon new` and the shipped app-focused `dotnet new` starters emit Azure Container Apps deployment assets by default
+- generated deployment assets validate the source root and preview the current Azure CLI contract from the shipped Dockerfile/app root shape
+- docs explain how to preview and deploy the generated Azure Container Apps assets with `az containerapp up --source`
+- automated coverage plus an optional validation script prove scaffold -> package publish -> local Docker build -> Azure Container Apps deploy preview against the generated app root
+- Azure Container Apps guidance stays aligned across scaffolding, CLI, template-pack, getting-started, operations, and generated-app publishing docs
+
+Completed work:
+
+- updated `Cephalon.Scaffolding` and the shipped app templates to emit `deploy/azure-container-apps/README.md` and `deploy/azure-container-apps/deploy-up.ps1` alongside the existing publish, container, Windows Service, IIS, Azure App Service, and Linux assets
+- aligned generated app and template README guidance with the hosted Azure Container Apps source-deploy path built on top of the shipped Dockerfile and `NuGet.config` bootstrap
+- added `docs/azure-container-apps-deployment.md` and aligned `README.md`, `docs/README.md`, `docs/getting-started.md`, `docs/generated-app-publishing.md`, `docs/operations.md`, `docs/components/scaffolding.md`, `docs/components/cli.md`, CLI package guidance, and template-pack guidance with the Azure Container Apps path
+- added `scripts/validate-generated-app-container-apps.ps1` so the repo can scaffold a temporary app, seed local packages, validate the generated Dockerfile locally, and replay the shipped Azure deploy script in preview mode against the current Azure CLI contract
+- extended scaffolding, CLI, template-pack, and documentation coverage for the generated Azure Container Apps deployment contract, then verified a real smoke path through scaffold -> publish-package-artifacts into `./.cephalon/packages` -> local Docker build -> Azure Container Apps deploy preview
+
+### ENG-044 Generated app Kubernetes deployment baseline
+
+Status: done
+Estimate: 8
+Completed: April 4, 2026
+
+Why:
+
+- generated apps can now bootstrap packages, publish deterministically, and take self-hosted Windows/Linux plus hosted IIS, Azure App Service, and Azure Container Apps paths, but teams deploying onto generic or self-managed Kubernetes clusters still need a truthful manifest/apply answer from the shipped Dockerfile and app root without inventing a second deploy workflow
+- without shipped Kubernetes assets plus guidance around `kubectl kustomize`, namespace shape, service exposure, and baseline health probes, teams still have to rediscover cluster-ready manifest conventions before they can trust the generated app on a platform-neutral Kubernetes baseline
+- adoption follow-through should close the gap between "I can validate the generated Dockerfile locally" and "I can render/apply the generated app onto Kubernetes" without pushing cluster-specific behavior into `Cephalon.Engine`
+
+Acceptance:
+
+- generated hosts from both `cephalon new` and the shipped app-focused `dotnet new` starters emit Kubernetes deployment assets by default
+- generated deployment assets render the manifest set locally and preview the current `kubectl kustomize` contract from the shipped Dockerfile/app root shape
+- docs explain how to preview and apply the generated Kubernetes assets, including namespace, service, and health-probe expectations
+- automated coverage plus an optional validation script prove scaffold -> package publish -> local Docker build -> Kubernetes manifest preview against the generated app root
+- Kubernetes guidance stays aligned across scaffolding, CLI, template-pack, getting-started, operations, and generated-app publishing docs
+
+Completed work:
+
+- updated `Cephalon.Scaffolding` and the shipped app templates to emit `deploy/kubernetes/README.md`, `deploy/kubernetes/apply.ps1`, `deploy/kubernetes/kustomization.yaml`, `deploy/kubernetes/namespace.yaml`, `deploy/kubernetes/deployment.yaml`, and `deploy/kubernetes/service.yaml` alongside the existing publish, container, Windows Service, IIS, Azure App Service, Azure Container Apps, and Linux assets
+- aligned generated app and template README guidance with the Kubernetes manifest/apply path built on top of the shipped Dockerfile and `NuGet.config` bootstrap
+- added `docs/kubernetes-deployment.md` and aligned `README.md`, `docs/README.md`, `docs/getting-started.md`, `docs/generated-app-publishing.md`, `docs/operations.md`, `docs/components/scaffolding.md`, `docs/components/cli.md`, CLI package guidance, and template-pack guidance with the Kubernetes path
+- added `scripts/validate-generated-app-kubernetes.ps1` so the repo can scaffold a temporary app, seed local packages, validate the generated Dockerfile locally, and replay the shipped Kubernetes apply script in preview mode against the current `kubectl kustomize` contract
+- extended scaffolding, CLI, template-pack, and documentation coverage for the generated Kubernetes deployment contract, then verified a real smoke path through scaffold -> publish-package-artifacts into `./.cephalon/packages` -> local Docker build -> Kubernetes manifest preview
+
+### ENG-045 Generated app container-image publishing baseline
+
+Status: done
+Estimate: 8
+Completed: April 4, 2026
+
+Why:
+
+- generated apps can now bootstrap packages, publish deterministically, and take self-hosted Windows/Linux plus hosted IIS, Azure App Service, Azure Container Apps, and Kubernetes paths, but teams still need a truthful provider-neutral image build/tag/push answer from the shipped Dockerfile and app root without inventing a registry workflow from scratch
+- without shipped container-image assets plus guidance around `docker build`, `docker push`, additional tags, and registry auth expectations, teams still have to rediscover how Cephalon's generated Dockerfile should become a pullable image before they can trust the hosted container baselines
+- adoption follow-through should close the gap between "I can validate the generated Dockerfile locally" and "I can publish a pullable image for Kubernetes or another hosted container platform" without pushing registry-specific behavior into `Cephalon.Engine`
+
+Acceptance:
+
+- generated hosts from both `cephalon new` and the shipped app-focused `dotnet new` starters emit container-image publishing assets by default
+- generated publish assets preview the current `docker build` and `docker push` contract from the shipped Dockerfile/app root shape and can build one or more image tags without hidden repo assumptions
+- docs explain how to preview, build, and push the generated container-image assets, including reuse with the hosted container deployment baselines
+- automated coverage plus an optional validation script prove scaffold -> package publish -> local Docker build -> local-registry push against the generated app root
+- container-image guidance stays aligned across scaffolding, CLI, template-pack, getting-started, operations, generated-app publishing, and the hosted container deployment docs
+
+Completed work:
+
+- updated `Cephalon.Scaffolding` and the shipped app templates to emit `deploy/container-image/README.md` and `deploy/container-image/publish-image.ps1` alongside the existing publish, container, Windows Service, IIS, Azure App Service, Azure Container Apps, Kubernetes, and Linux assets
+- aligned generated app and template README guidance with the provider-neutral container image build/tag/push path built on top of the shipped Dockerfile and `NuGet.config` bootstrap
+- added `docs/container-image-publishing.md` and aligned `README.md`, `docs/README.md`, `docs/getting-started.md`, `docs/generated-app-publishing.md`, `docs/operations.md`, `docs/components/scaffolding.md`, `docs/components/cli.md`, CLI package guidance, and template-pack guidance with the container-image path
+- added `scripts/validate-generated-app-container-image.ps1` so the repo can scaffold a temporary app, seed local packages, preview the shipped build/push contract, build the generated image, and prove push through a local Docker registry backed by `registry:2`
+- extended scaffolding, CLI, template-pack, and documentation coverage for the generated container-image publishing contract, then verified a real smoke path through scaffold -> publish-package-artifacts into `./.cephalon/packages` -> generated `publish-image.ps1` -> local registry push
+
 ## Sprint history and next 3 sprints
 
 Historical sprint buckets below are retrospective planning groups used to backfill iteration and estimate metadata for delivered work.
@@ -619,3 +972,52 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - shipped package distribution and provenance follow-through beyond the original package-loading baseline
 - shipped repo-wide XML-comment hygiene for test harnesses through explicit xUnit visibility rules plus tooling-backed guards under `ENG-028`
 - ENG-029 self-hosted OTLP collector/runtime-default follow-through plus the shipped Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, Kubernetes, Cloudflare/downstream provider authoring guidance, Grafana Cloud, and New Relic slices
+
+### Sprint 4
+
+- ENG-033 cross-platform validation and shell parity baseline
+- ENG-034 first-run adoption and environment doctor path
+
+### Sprint 5
+
+- ENG-035 external module package lifecycle prove-out
+
+### Sprint 6
+
+- ENG-036 containerized local runtime and operations baseline
+
+### Sprint 7
+
+- ENG-037 generated app local package-feed bootstrap baseline
+
+### Sprint 8
+
+- ENG-038 generated app published-output and deployment baseline
+
+### Sprint 9
+
+- ENG-039 generated app Linux systemd deployment baseline
+
+### Sprint 10
+
+- ENG-040 generated app Windows Service deployment baseline
+
+### Sprint 11
+
+- ENG-041 generated app IIS deployment baseline
+
+### Sprint 12
+
+- ENG-042 generated app Azure App Service deployment baseline
+
+### Sprint 13
+
+- ENG-043 generated app Azure Container Apps deployment baseline
+
+### Sprint 14
+
+- ENG-044 generated app Kubernetes deployment baseline
+
+### Sprint 15
+
+- ENG-045 generated app container-image publishing baseline

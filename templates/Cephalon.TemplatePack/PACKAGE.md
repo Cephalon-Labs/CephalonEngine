@@ -15,6 +15,7 @@ These templates are the lightweight installation surface for teams that want a f
 ```powershell
 dotnet pack templates/Cephalon.TemplatePack/Cephalon.TemplatePack.csproj -c Release -o artifacts/template-pack
 dotnet new install .\artifacts\template-pack\Cephalon.TemplatePack.0.1.0-preview.nupkg
+dotnet new list cephalon
 ```
 
 ## Create an app
@@ -27,11 +28,34 @@ dotnet new cephalon-module -n Acme.Orders.Module
 dotnet new cephalon-rest-module -n Acme.Orders.RestModule
 ```
 
+If you also install `Cephalon.Cli`, run `cephalon doctor` first so the active SDK/runtime baseline and template-pack availability are verified from one place before you scaffold.
+
+The app-focused starters now also include `NuGet.config`, `./.cephalon/packages/README.md`, `Properties/PublishProfiles/CephalonFolder.pubxml`, `deploy/windows-service/README.md`, `deploy/windows-service/install-service.ps1`, `deploy/windows-service/remove-service.ps1`, `deploy/iis/README.md`, `deploy/iis/install-site.ps1`, `deploy/iis/remove-site.ps1`, `deploy/azure-app-service/README.md`, `deploy/azure-app-service/deploy-zip.ps1`, `deploy/container-image/README.md`, `deploy/container-image/publish-image.ps1`, `deploy/azure-container-apps/README.md`, `deploy/azure-container-apps/deploy-up.ps1`, `deploy/kubernetes/README.md`, `deploy/kubernetes/apply.ps1`, `deploy/kubernetes/kustomization.yaml`, `deploy/kubernetes/namespace.yaml`, `deploy/kubernetes/deployment.yaml`, `deploy/kubernetes/service.yaml`, `deploy/linux/systemd/README.md`, `deploy/linux/systemd/<App>.service`, `deploy/linux/systemd/<App>.env`, `.dockerignore`, `Dockerfile`, `compose.yaml`, and `otel-collector-config.yaml` so a generated app can be validated with `dotnet publish`, Windows Service install previews, IIS install previews, Azure App Service ZIP deploy previews, provider-neutral container-image publish previews, Azure Container Apps source-deploy previews, Kubernetes manifest previews, WSL `systemd-analyze` verification, published-output smoke runs, or `docker compose up --build` without cloning the repository samples first.
+
 ## Notes
 
 - The templates mirror the current shipped blueprint set in the repository.
 - For richer customization, `Cephalon.Cli` and `Cephalon.Scaffolding` remain the more expressive generation path.
 - Generated projects assume you will restore Cephalon packages from the feed or local package source you target.
+- The shipped `NuGet.config` points the `cephalon` source at `./.cephalon/packages` by default so repo-local package artifacts can unblock first-run restore; replace that source when your team has a shared feed.
+- The shipped `CephalonFolder.pubxml` profile publishes generated hosts to a deterministic `./artifacts/publish/<ProjectName>/` path.
+- The shipped Windows Service assets live under `deploy/windows-service/` so generated apps have an installable self-hosted Windows baseline alongside publish, Linux, and container paths.
+- The shipped IIS assets live under `deploy/iis/` so generated apps have a hosted Windows baseline alongside publish, self-hosted service, Linux, and container paths.
+- The shipped Azure App Service assets live under `deploy/azure-app-service/` so generated apps have a hosted cloud ZIP-deploy baseline alongside publish, self-hosted service, IIS, Linux, and container paths.
+- The shipped container-image assets live under `deploy/container-image/` so generated apps have a provider-neutral build/tag/push baseline that can feed Kubernetes or other hosted container deployment paths.
+- The shipped Azure Container Apps assets live under `deploy/azure-container-apps/` so generated apps have a hosted cloud source-deploy baseline alongside publish, self-hosted service, IIS, Linux, and container paths.
+- The shipped Kubernetes assets live under `deploy/kubernetes/` so generated apps have a platform-neutral hosted container baseline alongside publish, self-hosted service, IIS, Azure, Linux, and container paths.
+- The shipped Linux `systemd` assets live under `deploy/linux/systemd/` so generated apps have an installable self-hosted service baseline alongside publish and container paths.
+- Generated app starters keep OTLP wiring available through `Cephalon.Observability.OpenTelemetry`, but they leave the endpoint unset until a local compose file or deployment environment supplies it.
+- The recommended adoption walkthrough lives in [docs/getting-started.md](https://github.com/Cephalon-Labs/CephalonEngine/blob/master/docs/getting-started.md).
+- The published-output walkthrough lives in [docs/generated-app-publishing.md](https://github.com/Cephalon-Labs/CephalonEngine/blob/master/docs/generated-app-publishing.md).
+- The container-image walkthrough lives in [docs/container-image-publishing.md](https://github.com/Cephalon-Labs/CephalonEngine/blob/master/docs/container-image-publishing.md).
+- The Windows self-hosted walkthrough lives in [docs/windows-service-deployment.md](https://github.com/Cephalon-Labs/CephalonEngine/blob/master/docs/windows-service-deployment.md).
+- The Windows hosted-IIS walkthrough lives in [docs/iis-deployment.md](https://github.com/Cephalon-Labs/CephalonEngine/blob/master/docs/iis-deployment.md).
+- The Azure App Service walkthrough lives in [docs/azure-app-service-deployment.md](https://github.com/Cephalon-Labs/CephalonEngine/blob/master/docs/azure-app-service-deployment.md).
+- The Azure Container Apps walkthrough lives in [docs/azure-container-apps-deployment.md](https://github.com/Cephalon-Labs/CephalonEngine/blob/master/docs/azure-container-apps-deployment.md).
+- The Kubernetes walkthrough lives in [docs/kubernetes-deployment.md](https://github.com/Cephalon-Labs/CephalonEngine/blob/master/docs/kubernetes-deployment.md).
+- The Linux self-hosted walkthrough lives in [docs/linux-systemd-deployment.md](https://github.com/Cephalon-Labs/CephalonEngine/blob/master/docs/linux-systemd-deployment.md).
 
 ## Compatibility expectations
 

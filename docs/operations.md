@@ -1,8 +1,88 @@
 # Cephalon Operations
 
-This document captures the current operational surface for Cephalon as of `April 3, 2026`.
+This document captures the current operational surface for Cephalon as of `April 4, 2026`.
 
 For the active phase-2 follow-through inventory, see `docs/operational-hardening-gap-inventory.md`.
+
+## Generated-app deployment smoke
+
+For a repo-native adoption replay that scaffolds a fresh app, seeds the repo-local package feed, publishes the generated host, runs the published output, and validates `/health/ready`, `/engine`, `/engine/snapshot`, and `/scalar`, run:
+
+```powershell
+pwsh ./scripts/validate-generated-app-publish.ps1
+```
+
+See `docs/generated-app-publishing.md` for the corresponding publish-profile and published-output guidance.
+
+## Generated-app Windows Service smoke
+
+For a repo-native adoption replay that scaffolds a fresh app, seeds the repo-local package feed, publishes the generated host, and previews the shipped Windows Service install/remove scripts against the published output without requiring admin rights, run:
+
+```powershell
+pwsh ./scripts/validate-generated-app-windows-service.ps1
+```
+
+See `docs/windows-service-deployment.md` for the corresponding Windows install, verify, and removal guidance.
+
+## Generated-app IIS smoke
+
+For a repo-native adoption replay that scaffolds a fresh app, seeds the repo-local package feed, publishes the generated host, verifies the SDK-generated `web.config`, and previews the shipped IIS install/remove scripts against the published output without requiring admin rights or a live IIS install, run:
+
+```powershell
+pwsh ./scripts/validate-generated-app-iis.ps1
+```
+
+See `docs/iis-deployment.md` for the corresponding Windows hosted-IIS install, verify, and removal guidance.
+
+## Generated-app Azure App Service smoke
+
+For a repo-native adoption replay that scaffolds a fresh app, seeds the repo-local package feed, publishes the generated host, packages it into the shipped Azure ZIP artifact, and previews the Azure CLI deploy contract without contacting Azure, run:
+
+```powershell
+pwsh ./scripts/validate-generated-app-app-service.ps1
+```
+
+See `docs/azure-app-service-deployment.md` for the corresponding Azure ZIP deploy, `WEBSITE_RUN_FROM_PACKAGE`, and `az webapp deploy` guidance.
+
+## Generated-app container-image smoke
+
+For a repo-native adoption replay that scaffolds a fresh app, seeds the repo-local package feed, previews the shipped build/push contract, builds the generated Docker image, and by default proves push through a local Docker registry, run:
+
+```powershell
+pwsh ./scripts/validate-generated-app-container-image.ps1
+```
+
+See `docs/container-image-publishing.md` for the corresponding provider-neutral image build/tag/push guidance.
+
+## Generated-app Azure Container Apps smoke
+
+For a repo-native adoption replay that scaffolds a fresh app, seeds the repo-local package feed, validates the generated Dockerfile locally, and previews the shipped Azure Container Apps source-deploy contract without contacting Azure, run:
+
+```powershell
+pwsh ./scripts/validate-generated-app-container-apps.ps1
+```
+
+See `docs/azure-container-apps-deployment.md` for the corresponding `az containerapp up --source` guidance.
+
+## Generated-app Kubernetes smoke
+
+For a repo-native adoption replay that scaffolds a fresh app, seeds the repo-local package feed, validates the generated Dockerfile locally, and previews the shipped Kubernetes manifest/apply contract without contacting a live cluster, run:
+
+```powershell
+pwsh ./scripts/validate-generated-app-kubernetes.ps1
+```
+
+See `docs/kubernetes-deployment.md` for the corresponding `kubectl kustomize`, namespace, service, and probe guidance.
+
+## Generated-app Linux systemd smoke
+
+For a repo-native adoption replay that scaffolds a fresh app, seeds the repo-local package feed, publishes the generated host, and verifies the shipped Linux `systemd` unit under WSL `systemd-analyze`, run:
+
+```powershell
+pwsh ./scripts/validate-generated-app-systemd.ps1
+```
+
+See `docs/linux-systemd-deployment.md` for the corresponding Linux install, verify, and `systemctl` guidance.
 
 ## Health surfaces
 
@@ -1935,6 +2015,8 @@ It executes a curated test suite that validates:
 `.\scripts\validate-release.ps1` now runs that focused suite by default in addition to the broader repo test, benchmark, and reference-doc flow.
 Use `-SkipOperationalConventions` only when you intentionally want the wider release flow without the named operational replay.
 
+For the Docker Desktop / WSL-friendly operator smoke path, `.\scripts\validate-container-runtime.ps1` runs `samples/Cephalon.Sample.ModularMonolith/compose.yaml`, waits for collector health plus `/health/ready`, `/engine`, `/engine/snapshot`, and `/api/catalog/overview`, and then tears the stack down. That containerized validation stays optional on purpose, so Docker is not a hard dependency of `.\scripts\validate-release.ps1`.
+
 ## Worker hosts
 
 Worker hosts do not expose HTTP health routes, but the same runtime health semantics are available through `RuntimeHealthEvaluator` in DI.
@@ -1948,6 +2030,7 @@ That keeps readiness/liveness logic shared across:
 ## Related documents
 
 - `docs/architecture.md`
+- `docs/container-runtime.md`
 - `docs/operational-hardening-gap-inventory.md`
 - `docs/runtime-failure-policy.md`
 - `docs/engine-roadmap.md`

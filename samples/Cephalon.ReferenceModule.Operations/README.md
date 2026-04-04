@@ -34,3 +34,48 @@ builder.AddCephalon(engine =>
     engine.AddModule(new OperationsModule());
 });
 ```
+
+## From a published artifact
+
+To prove the independent package flow outside the repo-local assembly path:
+
+```powershell
+dotnet pack ./samples/Cephalon.ReferenceModule.Operations/Cephalon.ReferenceModule.Operations.csproj `
+  -c Release `
+  -o ./artifacts/reference-packages
+
+cephalon package stage `
+  --package ./artifacts/reference-packages/Cephalon.ReferenceModule.Operations.1.0.0.nupkg `
+  --output ./plugins/reference-operations
+```
+
+Then point `Engine:Discovery` at the staged package directory:
+
+```json
+{
+  "Engine": {
+    "Discovery": {
+      "PackageDirectories": [
+        {
+          "Path": "plugins",
+          "IncludeSubdirectories": true
+        }
+      ]
+    },
+    "PackagePolicy": {
+      "AllowAssemblyPathPackages": false,
+      "RequireVersion": true,
+      "RequireMinimumEngineVersion": true,
+      "RequireSupportedTargetFrameworks": true,
+      "RequirePublisherId": true
+    },
+    "Trust": {
+      "RequireTrustedPackages": true,
+      "TrustedPublishers": [ "cephalon-labs" ]
+    },
+    "Transports": [ "RestApi" ]
+  }
+}
+```
+
+With the host running, inspect `/api/operations/status`, `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, and `/engine/snapshot`.
