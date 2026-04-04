@@ -384,14 +384,13 @@ public sealed class EntityFrameworkDataPackTests
         var runtime = provider.GetRequiredService<Cephalon.Engine.Runtime.IRuntime>();
         var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
 
-        Assert.Equal(5, eventingSurfaces.Count);
+        Assert.Equal(4, eventingSurfaces.Count);
         var outboxSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "outbox-producers");
         var outboxEntry = Assert.Single(outboxSurface.Entries);
         var publishSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-publishers");
         var publisherEntry = Assert.Single(publishSurface.Entries);
         var dispatchSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
         var dispatchEntry = Assert.Single(dispatchSurface.Entries);
-        var subscriptionSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
         Assert.Equal("entity-framework-outbox", outboxEntry.Id);
         Assert.Equal("entity-framework", outboxEntry.Metadata["provider"]);
         Assert.Equal("transactional-table", outboxEntry.Metadata["mode"]);
@@ -406,7 +405,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("available", dispatchEntry.Metadata["dispatchStore"]);
         Assert.Equal("not-reported", dispatchEntry.Metadata["runtimeState"]);
         Assert.Equal("entity-framework", dispatchEntry.Metadata["provider"]);
-        Assert.Empty(subscriptionSurface.Entries);
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["runtimeState"] == "available");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["dispatchStore"] == "available");
     }

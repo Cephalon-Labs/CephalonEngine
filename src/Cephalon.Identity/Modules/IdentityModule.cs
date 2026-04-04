@@ -59,8 +59,14 @@ internal sealed class IdentityModule(Action<IdentityRuntimeOptions>? configureOp
         }
 
         services.TryAddSingleton<ILogger<MetadataDrivenAuthorizationEvaluator>>(NullLogger<MetadataDrivenAuthorizationEvaluator>.Instance);
-
-        services.TryAddSingleton<Cephalon.Abstractions.Authorization.IAuthorizationEvaluator, MetadataDrivenAuthorizationEvaluator>();
+        services.TryAddSingleton<ILogger<DisabledAuthorizationEvaluator>>(NullLogger<DisabledAuthorizationEvaluator>.Instance);
+        services.TryAddSingleton<Cephalon.Abstractions.Authorization.IAuthorizationEvaluator>(serviceProvider =>
+        {
+            var options = serviceProvider.GetRequiredService<IdentityRuntimeOptions>();
+            return options.EnableDefaultEvaluator
+                ? ActivatorUtilities.CreateInstance<MetadataDrivenAuthorizationEvaluator>(serviceProvider)
+                : ActivatorUtilities.CreateInstance<DisabledAuthorizationEvaluator>(serviceProvider);
+        });
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, IdentityAuthorizationRuntimeSurfaceContributor>());
     }
 

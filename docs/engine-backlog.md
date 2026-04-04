@@ -1105,6 +1105,7 @@ Progress:
 - the REST adapter now also defers `401` and `403` responses to ASP.NET Core challenge/forbid behavior when the host or endpoint metadata already declares authentication schemes, including the low-ceremony `WithCephalonAuthenticationSchemes(...)` endpoint helper, which deepens scheme alignment without pushing authentication concerns into `Cephalon.Abstractions`
 - the REST adapter now also respects `AllowAnonymous` endpoint metadata inside protected route groups, so consumer hosts can keep standard ASP.NET Core public-route semantics without bypassing Cephalon on the rest of the group
 - direct request-factory coverage now locks custom claim-type selection, subject-id fallback behavior, and optional claim/route/query/header projection flags so config-driven ASP.NET Core identity adapter behavior does not silently drift
+- the identity pack now also honors `EnableDefaultEvaluator` and `EnableRuntimeSurface` truthfully, so a disabled built-in evaluator falls back to a deterministic deny path instead of a missing-service failure, and an opt-out runtime surface disappears from the merged technology catalog instead of lingering as misleading metadata
 - package-surface tests, reference-doc tests, component docs, solution wiring, and hosting tests now cover both `Cephalon.Identity` and `Cephalon.Identity.AspNetCore`
 
 ### ENG-052 Multi-tenancy and audit companion baseline

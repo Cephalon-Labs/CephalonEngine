@@ -4,9 +4,9 @@
 
 ## What it owns
 
-- registers a default metadata-driven `IAuthorizationEvaluator` when `IdentityAccess` is active
+- registers a default metadata-driven `IAuthorizationEvaluator` when `IdentityAccess` is active, while letting hosts opt out through `Engine:Identity:EnableDefaultEvaluator` when they want to supply their own evaluator
 - keeps `RBAC`, `ABAC`, and policy-evaluation behavior out of hosts so consumer apps can stay low ceremony
-- projects the active identity runtime answer through the `identity-authorization` technology surface
+- projects the active identity runtime answer through the `identity-authorization` technology surface, which can be disabled explicitly through `Engine:Identity:EnableRuntimeSurface`
 - contributes a dedicated diagnostics convention so `/engine/diagnostics` can advertise stable identity event ids
 - keeps ASP.NET Core `ClaimsPrincipal`, auth schemes, and endpoint-policy mapping out of the host-agnostic pack
 
