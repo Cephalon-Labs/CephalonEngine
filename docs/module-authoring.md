@@ -175,6 +175,20 @@ Keep authored packages aligned with the broader Cephalon compatibility contract:
 - when you change package version or target framework expectations, update the project file, `cephalon.package.json`, packaging docs, and any starter/template copies together
 - use `docs/compatibility.md` as the repository-wide matrix for what else must stay aligned across scaffolding, CLI, templates, and docs
 
+## Staging a published package
+
+Published `.nupkg` files keep their manifest under package content and their runtime assembly under `lib/<tfm>`, so stage them into a loadable directory before pointing host discovery at them:
+
+```powershell
+cephalon package stage `
+  --package ./artifacts/reference-packages/Cephalon.ReferenceModule.Operations.1.0.0.nupkg `
+  --output ./plugins/reference-operations
+```
+
+That staged directory becomes the path you feed into `Engine:Discovery:PackageDirectories` or `Engine:Discovery:Packages:ManifestPath`.
+
+For the full publish -> trust -> load -> inspect walkthrough, see [External package lifecycle](external-package-lifecycle.md).
+
 ## Loading a package
 
 Package-path discovery:

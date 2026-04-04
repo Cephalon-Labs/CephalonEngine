@@ -30,6 +30,7 @@ using Cephalon.Engine.Trust;
 using Cephalon.Eventing.Registration;
 using Cephalon.Eventing.Services;
 using Cephalon.Abstractions.Capabilities;
+using Cephalon.Cli;
 using Cephalon.ReferenceModule.Operations.Registration;
 using Cephalon.ReferenceDocs.Generation;
 using Cephalon.ReferenceDocs.IO;
@@ -1737,6 +1738,89 @@ note: visible
     }
 
     [Fact]
+    public async Task MapCephalonLoadsStagedExternalPackageDirectoryAndExposesTrustAndPolicy()
+    {
+        var stagedPackage = CreateStagedReferenceModulePackage();
+
+        try
+        {
+            var builder = WebApplication.CreateSlimBuilder();
+            builder.WebHost.UseTestServer();
+            builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+            builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+            builder.Configuration[$"{EngineSettings.SectionName}:Discovery:PackageDirectories:0:Path"] = stagedPackage.PluginsRootPath;
+            builder.Configuration[$"{EngineSettings.SectionName}:Discovery:PackageDirectories:0:IncludeSubdirectories"] = "true";
+            builder.Configuration[$"{EngineSettings.SectionName}:PackagePolicy:AllowAssemblyPathPackages"] = "false";
+            builder.Configuration[$"{EngineSettings.SectionName}:PackagePolicy:RequireVersion"] = "true";
+            builder.Configuration[$"{EngineSettings.SectionName}:PackagePolicy:RequireMinimumEngineVersion"] = "true";
+            builder.Configuration[$"{EngineSettings.SectionName}:PackagePolicy:RequireSupportedTargetFrameworks"] = "true";
+            builder.Configuration[$"{EngineSettings.SectionName}:PackagePolicy:RequirePublisherId"] = "true";
+            builder.Configuration[$"{EngineSettings.SectionName}:Trust:RequireTrustedPackages"] = "true";
+            builder.Configuration[$"{EngineSettings.SectionName}:Trust:TrustedPublishers:0"] = "cephalon-labs";
+            builder.AddCephalon();
+
+            await using var app = builder.Build();
+            app.MapCephalon();
+
+            await app.StartAsync();
+            var client = app.GetTestClient();
+
+            var packages = await client.GetFromJsonAsync<PackageManifest[]>("/engine/packages");
+            var packagePolicy = await client.GetFromJsonAsync<PackagePolicy>("/engine/package-policy");
+            var trustSnapshot = await client.GetFromJsonAsync<TrustSnapshot>("/engine/trust-policy");
+            var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+            var operationsStatus = await client.GetStringAsync("/api/operations/status");
+
+            Assert.NotNull(packages);
+            var package = Assert.Single(packages);
+            Assert.Equal("reference-operations", package.Id);
+            Assert.Equal(ModulePackageReference.DirectoryManifestKind, package.Kind);
+            Assert.Equal("1.0.0", package.Version);
+            Assert.Equal("cephalon-labs", package.PublisherId);
+            Assert.True(package.IsTrusted);
+            Assert.Equal("Package publisher is explicitly trusted by the current trust policy.", package.TrustReason);
+            Assert.StartsWith(stagedPackage.PackageDirectoryPath, package.SourcePath, StringComparison.OrdinalIgnoreCase);
+            Assert.EndsWith("cephalon.package.json", package.SourcePath, StringComparison.OrdinalIgnoreCase);
+            Assert.StartsWith(stagedPackage.PackageDirectoryPath, package.Path, StringComparison.OrdinalIgnoreCase);
+            Assert.EndsWith("Cephalon.ReferenceModule.Operations.dll", package.Path, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains("net10.0", package.SupportedTargetFrameworks);
+            Assert.Contains("operations", package.Modules);
+
+            Assert.NotNull(packagePolicy);
+            Assert.False(packagePolicy.AllowAssemblyPathPackages);
+            Assert.True(packagePolicy.RequireVersion);
+            Assert.True(packagePolicy.RequireMinimumEngineVersion);
+            Assert.True(packagePolicy.RequireSupportedTargetFrameworks);
+            Assert.True(packagePolicy.RequirePublisherId);
+
+            Assert.NotNull(trustSnapshot);
+            Assert.True(trustSnapshot.Policy.RequireTrustedPackages);
+            Assert.Contains(trustSnapshot.Policy.TrustedPublishers, publisher => string.Equals(publisher, "cephalon-labs", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(trustSnapshot.Packages, decision =>
+                decision.PackageId == "reference-operations" &&
+                decision.IsTrusted &&
+                decision.PublisherId == "cephalon-labs" &&
+                decision.Reason == "Package publisher is explicitly trusted by the current trust policy.");
+
+            Assert.NotNull(snapshot);
+            Assert.Contains(snapshot.Manifest.Packages, staged =>
+                staged.Id == "reference-operations" &&
+                staged.IsTrusted &&
+                string.Equals(staged.TrustReason, "Package publisher is explicitly trusted by the current trust policy.", StringComparison.Ordinal));
+            Assert.Contains(snapshot.Manifest.Modules, module =>
+                module.Id == "operations" &&
+                module.PackageId == "reference-operations" &&
+                module.IsTrusted);
+
+            Assert.Contains("Operations module is running.", operationsStatus, StringComparison.Ordinal);
+        }
+        finally
+        {
+            TryDeleteDirectory(stagedPackage.WorkspacePath);
+        }
+    }
+
+    [Fact]
     public async Task MapCephalonEnforcesCapabilityTrustPolicyOnRestEndpoints()
     {
         var builder = WebApplication.CreateSlimBuilder();
@@ -1844,6 +1928,55 @@ note: visible
         return outputPath;
     }
 
+    private static StagedPackageResult CreateStagedReferenceModulePackage()
+    {
+        var workspacePath = Path.Combine(Path.GetTempPath(), $"cephalon-staged-package-{Guid.NewGuid():N}");
+        var packageOutputPath = Path.Combine(workspacePath, "packages");
+        var pluginsRootPath = Path.Combine(workspacePath, "plugins");
+        var packageDirectoryPath = Path.Combine(pluginsRootPath, "reference-operations");
+
+        Directory.CreateDirectory(packageOutputPath);
+        Directory.CreateDirectory(pluginsRootPath);
+
+        var projectPath = Path.Combine(
+            GetRepositoryRoot(),
+            "samples",
+            "Cephalon.ReferenceModule.Operations",
+            "Cephalon.ReferenceModule.Operations.csproj");
+        var packResult = RunProcess(
+            "dotnet",
+            $"pack \"{projectPath}\" -c {GetCurrentBuildConfiguration()} -o \"{packageOutputPath}\" --no-build",
+            GetRepositoryRoot());
+
+        if (packResult.ExitCode != 0)
+        {
+            throw new InvalidOperationException(
+                $"dotnet pack failed with exit code {packResult.ExitCode}.{Environment.NewLine}Output:{Environment.NewLine}{packResult.Output}{Environment.NewLine}Error:{Environment.NewLine}{packResult.Error}");
+        }
+
+        var packagePath = Directory.GetFiles(packageOutputPath, "Cephalon.ReferenceModule.Operations.*.nupkg", SearchOption.TopDirectoryOnly)
+            .Single(path => !path.EndsWith(".symbols.nupkg", StringComparison.OrdinalIgnoreCase));
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+        var exitCode = CliApplication.RunAsync(
+            [
+                "package",
+                "stage",
+                "--package", packagePath,
+                "--output", packageDirectoryPath
+            ],
+            stdout,
+            stderr).GetAwaiter().GetResult();
+
+        if (exitCode != 0)
+        {
+            throw new InvalidOperationException(
+                $"cephalon package stage failed with exit code {exitCode}.{Environment.NewLine}Output:{Environment.NewLine}{stdout}{Environment.NewLine}Error:{Environment.NewLine}{stderr}");
+        }
+
+        return new StagedPackageResult(workspacePath, pluginsRootPath, packageDirectoryPath);
+    }
+
     private static string GetRepositoryRoot()
     {
         return Path.GetFullPath(Path.Combine(
@@ -1863,4 +1996,52 @@ note: visible
             ? "Release"
             : "Debug";
     }
+
+    private static ProcessResult RunProcess(string fileName, string arguments, string workingDirectory)
+    {
+        var startInfo = new System.Diagnostics.ProcessStartInfo
+        {
+            FileName = fileName,
+            Arguments = arguments,
+            WorkingDirectory = workingDirectory,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false
+        };
+
+        using var process = System.Diagnostics.Process.Start(startInfo)
+            ?? throw new InvalidOperationException($"Could not start '{fileName}'.");
+
+        var output = process.StandardOutput.ReadToEnd();
+        var error = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+
+        return new ProcessResult(process.ExitCode, output, error);
+    }
+
+    private static void TryDeleteDirectory(string path)
+    {
+        if (!Directory.Exists(path))
+        {
+            return;
+        }
+
+        try
+        {
+            Directory.Delete(path, recursive: true);
+        }
+        catch (IOException)
+        {
+        }
+        catch (UnauthorizedAccessException)
+        {
+        }
+    }
+
+    private sealed record ProcessResult(int ExitCode, string Output, string Error);
+
+    private sealed record StagedPackageResult(
+        string WorkspacePath,
+        string PluginsRootPath,
+        string PackageDirectoryPath);
 }

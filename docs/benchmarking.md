@@ -61,36 +61,36 @@ dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --validate-gua
 For a repo-native validation pass that builds, runs the focused operational health/export convention suite, runs the broader test suite, runs the benchmark smoke suite, validates guardrails, and publishes release reference docs:
 
 ```powershell
-.\scripts\validate-release.ps1
+pwsh ./scripts/validate-release.ps1
 ```
 
 Useful switches:
 
 ```powershell
-.\scripts\validate-release.ps1 -SkipBuild
-.\scripts\validate-release.ps1 -SkipTests
-.\scripts\validate-release.ps1 -SkipOperationalConventions
-.\scripts\validate-release.ps1 -SkipReferenceDocs
-.\scripts\validate-release.ps1 -BenchmarkFilters "*EngineBuilderBenchmarks*" "*EngineRuntimeBenchmarks*" "*AspNetCoreRequestLoggingBenchmarks*"
+pwsh ./scripts/validate-release.ps1 -SkipBuild
+pwsh ./scripts/validate-release.ps1 -SkipTests
+pwsh ./scripts/validate-release.ps1 -SkipOperationalConventions
+pwsh ./scripts/validate-release.ps1 -SkipReferenceDocs
+pwsh ./scripts/validate-release.ps1 -BenchmarkFilters "*EngineBuilderBenchmarks*" "*EngineRuntimeBenchmarks*" "*AspNetCoreRequestLoggingBenchmarks*"
 ```
 
 Run only the focused health/export convention suite:
 
 ```powershell
-.\scripts\validate-operational-conventions.ps1
+pwsh ./scripts/validate-operational-conventions.ps1
 ```
 
 ## CI validation
 
-GitHub Actions runs the same flow through `.github/workflows/release-validation.yml`.
+GitHub Actions runs the same script-led flow through `.github/workflows/release-validation.yml`.
 
 That workflow:
 
-- uses `windows-latest`
+- uses `windows-latest` for the full benchmark and guardrail path
+- uses `ubuntu-latest` for the same repo-native validation entry point with `-SkipBenchmarks` until guardrails are made OS-neutral
 - installs the SDK from `global.json`
-- runs `.\scripts\validate-release.ps1`
-- uploads `BenchmarkDotNet.Artifacts/results` as a workflow artifact
-- uploads `artifacts/reference-docs-release` as a workflow artifact
+- runs `pwsh ./scripts/validate-release.ps1`
+- uploads Windows benchmark output plus per-OS reference-doc and package artifacts as workflow artifacts
 
 Treat `scripts/validate-release.ps1` as the source of truth. If the local release-validation flow changes, keep the workflow aligned instead of duplicating logic in YAML.
 

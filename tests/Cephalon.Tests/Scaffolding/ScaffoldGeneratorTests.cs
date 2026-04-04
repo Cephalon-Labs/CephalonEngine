@@ -52,7 +52,8 @@ public sealed class ScaffoldGeneratorTests
         Assert.Contains("\"Localization\"", hostSettings.Contents, StringComparison.Ordinal);
         Assert.Contains("\"engine.docs.rest.title\"", hostSettings.Contents, StringComparison.Ordinal);
         Assert.Contains("\"Telemetry\"", hostSettings.Contents, StringComparison.Ordinal);
-        Assert.Contains("\"http://localhost:4317\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"Protocol\": \"otlp/http\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.DoesNotContain("\"Endpoint\"", hostSettings.Contents, StringComparison.Ordinal);
         Assert.Contains("\"ReferenceDocs\"", hostSettings.Contents, StringComparison.Ordinal);
         Assert.Contains("\"Enabled\": false", hostSettings.Contents, StringComparison.Ordinal);
         Assert.Contains("\"DirectoryPath\": \"..\\\\..\\\\docs\\\\reference\"", hostSettings.Contents, StringComparison.Ordinal);
@@ -65,10 +66,161 @@ public sealed class ScaffoldGeneratorTests
         Assert.Contains("Cephalon.Retrieval", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.AspNetCore.GraphQL", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.AspNetCore.JsonRpc", packageProps.Contents, StringComparison.Ordinal);
+        Assert.Contains("Microsoft.Extensions.Hosting.WindowsServices", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Version=\"9.1.0-preview\"", packageProps.Contents, StringComparison.Ordinal);
 
         var directoryBuildProps = Assert.Single(scaffold.Files, file => file.Path == "Directory.Build.props");
         Assert.Contains("<GenerateDocumentationFile>true</GenerateDocumentationFile>", directoryBuildProps.Contents, StringComparison.Ordinal);
+
+        var nuGetConfig = Assert.Single(scaffold.Files, file => file.Path == "NuGet.config");
+        Assert.Contains("./.cephalon/packages", nuGetConfig.Contents, StringComparison.Ordinal);
+        Assert.Contains("packageSourceMapping", nuGetConfig.Contents, StringComparison.Ordinal);
+
+        var localFeedReadme = Assert.Single(scaffold.Files, file => file.Path == ".cephalon/packages/README.md");
+        Assert.Contains("publish-package-artifacts.ps1", localFeedReadme.Contents, StringComparison.Ordinal);
+        Assert.Contains("NuGet.config", localFeedReadme.Contents, StringComparison.Ordinal);
+
+        var publishProfile = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "src/Acme.Explorer.Host/Properties/PublishProfiles/CephalonFolder.pubxml");
+        Assert.Contains("PublishDir", publishProfile.Contents, StringComparison.Ordinal);
+        Assert.Contains("UseAppHost>false", publishProfile.Contents, StringComparison.Ordinal);
+        Assert.Contains("../../artifacts/publish", publishProfile.Contents, StringComparison.Ordinal);
+
+        var windowsServiceReadme = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/windows-service/README.md");
+        Assert.Contains("install-service.ps1", windowsServiceReadme.Contents, StringComparison.Ordinal);
+        Assert.Contains("C:\\Services\\Acme.Explorer\\current", windowsServiceReadme.Contents, StringComparison.Ordinal);
+
+        var windowsInstallScript = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/windows-service/install-service.ps1");
+        Assert.Contains("sc.exe create", windowsInstallScript.Contents, StringComparison.Ordinal);
+        Assert.Contains("--contentRoot", windowsInstallScript.Contents, StringComparison.Ordinal);
+        Assert.Contains("Acme.Explorer.Host.dll", windowsInstallScript.Contents, StringComparison.Ordinal);
+
+        var windowsRemoveScript = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/windows-service/remove-service.ps1");
+        Assert.Contains("sc.exe delete", windowsRemoveScript.Contents, StringComparison.Ordinal);
+
+        var iisReadme = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/iis/README.md");
+        Assert.Contains("install-site.ps1", iisReadme.Contents, StringComparison.Ordinal);
+        Assert.Contains("AspNetCoreModuleV2", iisReadme.Contents, StringComparison.Ordinal);
+
+        var iisInstallScript = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/iis/install-site.ps1");
+        Assert.Contains("add apppool", iisInstallScript.Contents, StringComparison.Ordinal);
+        Assert.Contains("add site", iisInstallScript.Contents, StringComparison.Ordinal);
+        Assert.Contains("C:\\inetpub\\sites\\Acme.Explorer\\current", iisInstallScript.Contents, StringComparison.Ordinal);
+
+        var iisRemoveScript = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/iis/remove-site.ps1");
+        Assert.Contains("delete site", iisRemoveScript.Contents, StringComparison.Ordinal);
+        Assert.Contains("delete apppool", iisRemoveScript.Contents, StringComparison.Ordinal);
+
+        var azureAppServiceReadme = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/azure-app-service/README.md");
+        Assert.Contains("deploy-zip.ps1", azureAppServiceReadme.Contents, StringComparison.Ordinal);
+        Assert.Contains("WEBSITE_RUN_FROM_PACKAGE=1", azureAppServiceReadme.Contents, StringComparison.Ordinal);
+        Assert.Contains("az webapp deploy", azureAppServiceReadme.Contents, StringComparison.Ordinal);
+
+        var azureAppServiceDeployScript = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/azure-app-service/deploy-zip.ps1");
+        Assert.Contains("WEBSITE_RUN_FROM_PACKAGE=1", azureAppServiceDeployScript.Contents, StringComparison.Ordinal);
+        Assert.Contains("az @deployArguments", azureAppServiceDeployScript.Contents, StringComparison.Ordinal);
+        Assert.Contains("azure-app-service.zip", azureAppServiceDeployScript.Contents, StringComparison.Ordinal);
+
+        var containerImageReadme = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/container-image/README.md");
+        Assert.Contains("publish-image.ps1", containerImageReadme.Contents, StringComparison.Ordinal);
+        Assert.Contains("docker login ghcr.io", containerImageReadme.Contents, StringComparison.Ordinal);
+        Assert.Contains("deploy/kubernetes/apply.ps1", containerImageReadme.Contents, StringComparison.Ordinal);
+
+        var containerImagePublishScript = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/container-image/publish-image.ps1");
+        Assert.Contains("Get-DockerBuildArguments", containerImagePublishScript.Contents, StringComparison.Ordinal);
+        Assert.Contains("Format-Command -Command \"docker\"", containerImagePublishScript.Contents, StringComparison.Ordinal);
+        Assert.Contains("@(\"push\", $tag)", containerImagePublishScript.Contents, StringComparison.Ordinal);
+        Assert.Contains("Container image publishing completed successfully.", containerImagePublishScript.Contents, StringComparison.Ordinal);
+
+        var azureContainerAppsReadme = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/azure-container-apps/README.md");
+        Assert.Contains("deploy-up.ps1", azureContainerAppsReadme.Contents, StringComparison.Ordinal);
+        Assert.Contains("az containerapp up", azureContainerAppsReadme.Contents, StringComparison.Ordinal);
+        Assert.Contains("--source", azureContainerAppsReadme.Contents, StringComparison.Ordinal);
+
+        var azureContainerAppsDeployScript = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/azure-container-apps/deploy-up.ps1");
+        Assert.Contains("containerapp", azureContainerAppsDeployScript.Contents, StringComparison.Ordinal);
+        Assert.Contains("--source", azureContainerAppsDeployScript.Contents, StringComparison.Ordinal);
+        Assert.Contains("ASPNETCORE_HTTP_PORTS=8080", azureContainerAppsDeployScript.Contents, StringComparison.Ordinal);
+        Assert.Contains("DOTNET_ENVIRONMENT=Production", azureContainerAppsDeployScript.Contents, StringComparison.Ordinal);
+
+        var kubernetesReadme = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/kubernetes/README.md");
+        Assert.Contains("apply.ps1", kubernetesReadme.Contents, StringComparison.Ordinal);
+        Assert.Contains("kubectl kustomize", kubernetesReadme.Contents, StringComparison.Ordinal);
+        Assert.Contains("ClusterIP", kubernetesReadme.Contents, StringComparison.Ordinal);
+
+        var kubernetesApplyScript = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/kubernetes/apply.ps1");
+        Assert.Contains("kubectl", kubernetesApplyScript.Contents, StringComparison.Ordinal);
+        Assert.Contains("kustomize", kubernetesApplyScript.Contents, StringComparison.Ordinal);
+        Assert.Contains("Kubernetes deployment apply completed successfully.", kubernetesApplyScript.Contents, StringComparison.Ordinal);
+
+        var kubernetesKustomization = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/kubernetes/kustomization.yaml");
+        Assert.Contains("kind: Kustomization", kubernetesKustomization.Contents, StringComparison.Ordinal);
+        Assert.Contains("namespace.yaml", kubernetesKustomization.Contents, StringComparison.Ordinal);
+        Assert.Contains("deployment.yaml", kubernetesKustomization.Contents, StringComparison.Ordinal);
+        Assert.Contains("service.yaml", kubernetesKustomization.Contents, StringComparison.Ordinal);
+
+        var kubernetesDeployment = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/kubernetes/deployment.yaml");
+        Assert.Contains("replace-with-registry/acme-explorer:latest", kubernetesDeployment.Contents, StringComparison.Ordinal);
+        Assert.Contains("/health/ready", kubernetesDeployment.Contents, StringComparison.Ordinal);
+        Assert.Contains("/health/live", kubernetesDeployment.Contents, StringComparison.Ordinal);
+
+        var kubernetesService = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/kubernetes/service.yaml");
+        Assert.Contains("type: ClusterIP", kubernetesService.Contents, StringComparison.Ordinal);
+        Assert.Contains("targetPort: http", kubernetesService.Contents, StringComparison.Ordinal);
+
+        var systemdReadme = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/linux/systemd/README.md");
+        Assert.Contains("systemd-analyze verify", systemdReadme.Contents, StringComparison.Ordinal);
+        Assert.Contains("/opt/Acme.Explorer/current", systemdReadme.Contents, StringComparison.Ordinal);
+
+        var systemdService = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/linux/systemd/Acme.Explorer.service");
+        Assert.Contains("EnvironmentFile=-/etc/cephalon/Acme.Explorer.env", systemdService.Contents, StringComparison.Ordinal);
+        Assert.Contains("ExecStart=/usr/bin/env dotnet /opt/Acme.Explorer/current/Acme.Explorer.Host.dll", systemdService.Contents, StringComparison.Ordinal);
+        Assert.Contains("DynamicUser=true", systemdService.Contents, StringComparison.Ordinal);
+
+        var systemdEnv = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "deploy/linux/systemd/Acme.Explorer.env");
+        Assert.Contains("DOTNET_ENVIRONMENT=Production", systemdEnv.Contents, StringComparison.Ordinal);
+        Assert.Contains("Engine__Observability__Telemetry__UseSelfHostedDefaults=true", systemdEnv.Contents, StringComparison.Ordinal);
 
         var moduleProjectFile = Assert.Single(
             scaffold.Files,
@@ -93,11 +245,17 @@ public sealed class ScaffoldGeneratorTests
             file => file.Path == "src/Acme.Explorer.Host/Acme.Explorer.Host.csproj");
         Assert.Contains("Configurations\\**\\*.json", hostProjectFile.Contents, StringComparison.Ordinal);
         Assert.Contains("<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>", hostProjectFile.Contents, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Observability.OpenTelemetry", hostProjectFile.Contents, StringComparison.Ordinal);
+        Assert.Contains("Microsoft.Extensions.Hosting.WindowsServices", hostProjectFile.Contents, StringComparison.Ordinal);
+        Assert.DoesNotContain("FrameworkReference Include=\"Microsoft.AspNetCore.App\"", hostProjectFile.Contents, StringComparison.Ordinal);
 
         var hostProgram = Assert.Single(
             scaffold.Files,
             file => file.Path == "src/Acme.Explorer.Host/Program.cs");
         Assert.Contains("builder.AddGraphQLTransport();", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("builder.AddCephalonOpenTelemetry();", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("WindowsServiceHelpers.IsWindowsService()", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("builder.Host.UseWindowsService();", hostProgram.Contents, StringComparison.Ordinal);
 
         var readme = Assert.Single(scaffold.Files, file => file.Path == "README.md");
         Assert.Contains("Engine:Localization", readme.Contents, StringComparison.Ordinal);
@@ -106,6 +264,42 @@ public sealed class ScaffoldGeneratorTests
         Assert.Contains("Edge-Native Delivery", readme.Contents, StringComparison.Ordinal);
         Assert.Contains("ReferenceDocs", readme.Contents, StringComparison.Ordinal);
         Assert.Contains("Configurations/[group]/[Environment].json", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("CephalonFolder.pubxml", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("dotnet publish src/Acme.Explorer.Host/Acme.Explorer.Host.csproj -p:PublishProfile=CephalonFolder", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("./artifacts/publish/Acme.Explorer.Host/", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("deploy/windows-service/README.md", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("deploy/windows-service/install-service.ps1", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("deploy/iis/README.md", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("deploy/iis/install-site.ps1", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("deploy/azure-app-service/README.md", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("deploy/azure-app-service/deploy-zip.ps1", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("deploy/container-image/README.md", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("deploy/container-image/publish-image.ps1", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("deploy/azure-container-apps/README.md", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("deploy/azure-container-apps/deploy-up.ps1", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("deploy/kubernetes/README.md", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("deploy/kubernetes/apply.ps1", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("deploy/linux/systemd/README.md", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("deploy/linux/systemd/Acme.Explorer.service", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("docker compose up --build", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("NuGet.config", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("./.cephalon/packages", readme.Contents, StringComparison.Ordinal);
+
+        var dockerfile = Assert.Single(scaffold.Files, file => file.Path == "Dockerfile");
+        Assert.Contains("src/Acme.Explorer.Host/Acme.Explorer.Host.csproj", dockerfile.Contents, StringComparison.Ordinal);
+        Assert.Contains("Acme.Explorer.Host.dll", dockerfile.Contents, StringComparison.Ordinal);
+
+        var compose = Assert.Single(scaffold.Files, file => file.Path == "compose.yaml");
+        Assert.Contains("acme-explorer", compose.Contents, StringComparison.Ordinal);
+        Assert.Contains("http://otel-collector:4318", compose.Contents, StringComparison.Ordinal);
+
+        var collectorConfig = Assert.Single(scaffold.Files, file => file.Path == "otel-collector-config.yaml");
+        Assert.Contains("health_check", collectorConfig.Contents, StringComparison.Ordinal);
+        Assert.Contains("debug", collectorConfig.Contents, StringComparison.Ordinal);
+
+        var dockerignore = Assert.Single(scaffold.Files, file => file.Path == ".dockerignore");
+        Assert.Contains("artifacts", dockerignore.Contents, StringComparison.Ordinal);
+        Assert.Contains("TestResults", dockerignore.Contents, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -163,6 +357,32 @@ public sealed class ScaffoldGeneratorTests
             await FileSystemScaffoldWriter.WriteAsync(outputPath, scaffold);
 
             Assert.True(File.Exists(Path.Combine(outputPath, "Future.Stack.slnx")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "NuGet.config")));
+            Assert.True(File.Exists(Path.Combine(outputPath, ".dockerignore")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "Dockerfile")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "compose.yaml")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "otel-collector-config.yaml")));
+            Assert.True(File.Exists(Path.Combine(outputPath, ".cephalon", "packages", "README.md")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "windows-service", "README.md")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "windows-service", "install-service.ps1")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "windows-service", "remove-service.ps1")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "iis", "README.md")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "iis", "install-site.ps1")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "iis", "remove-site.ps1")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "azure-app-service", "README.md")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "azure-app-service", "deploy-zip.ps1")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "container-image", "README.md")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "container-image", "publish-image.ps1")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "kubernetes", "README.md")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "kubernetes", "apply.ps1")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "kubernetes", "kustomization.yaml")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "kubernetes", "namespace.yaml")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "kubernetes", "deployment.yaml")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "kubernetes", "service.yaml")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "linux", "systemd", "README.md")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "linux", "systemd", "Future.Stack.service")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "linux", "systemd", "Future.Stack.env")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "src", "Future.Stack.Host", "Properties", "PublishProfiles", "CephalonFolder.pubxml")));
             Assert.True(File.Exists(Path.Combine(outputPath, "src", "Future.Stack.Host", "Program.cs")));
             Assert.True(Directory.Exists(Path.Combine(outputPath, "src", "Future.Stack.Modules.Platform", "Application")));
             Assert.True(File.Exists(Path.Combine(outputPath, "src", "Future.Stack.Modules.Platform", "cephalon.package.json")));

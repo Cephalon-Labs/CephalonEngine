@@ -24,7 +24,7 @@ public static class BuiltInScaffolds
                 role: ProjectRoles.Host,
                 template: "cephalon-web-host",
                 dependsOn: ["foundation", "module"],
-                packages: ["Cephalon.AspNetCore", "Cephalon.Observability"],
+                packages: ["Cephalon.AspNetCore", "Cephalon.Observability", "Cephalon.Observability.OpenTelemetry", "Microsoft.Extensions.Hosting.WindowsServices"],
                 metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["hostKind"] = "aspnet-core"
@@ -92,7 +92,7 @@ public static class BuiltInScaffolds
                 role: ProjectRoles.Host,
                 template: "cephalon-web-host",
                 dependsOn: ["foundation", "module"],
-                packages: ["Cephalon.AspNetCore", "Cephalon.Observability"],
+                packages: ["Cephalon.AspNetCore", "Cephalon.Observability", "Cephalon.Observability.OpenTelemetry", "Microsoft.Extensions.Hosting.WindowsServices"],
                 metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["hostKind"] = "aspnet-core"
@@ -161,7 +161,7 @@ public static class BuiltInScaffolds
                 role: ProjectRoles.Host,
                 template: "cephalon-service-host",
                 dependsOn: ["foundation", "contracts", "module"],
-                packages: ["Cephalon.AspNetCore", "Cephalon.Observability"],
+                packages: ["Cephalon.AspNetCore", "Cephalon.Observability", "Cephalon.Observability.OpenTelemetry", "Microsoft.Extensions.Hosting.WindowsServices"],
                 metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["hostKind"] = "aspnet-core"

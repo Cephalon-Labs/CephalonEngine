@@ -67,6 +67,116 @@ public sealed class TemplatePackTests
             Assert.Contains(package.Entries, entry =>
                 entry.FullName.EndsWith("content/templates/cephalon-rest-module/cephalon.package.json", StringComparison.OrdinalIgnoreCase));
             Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/Dockerfile", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/compose.yaml", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/NuGet.config", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/.cephalon/packages/README.md", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/Properties/PublishProfiles/CephalonFolder.pubxml", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/deploy/windows-service/install-service.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/deploy/windows-service/remove-service.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/deploy/iis/install-site.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/deploy/iis/remove-site.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/deploy/azure-app-service/deploy-zip.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/deploy/azure-app-service/README.md", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/deploy/container-image/publish-image.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/deploy/container-image/README.md", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/deploy/azure-container-apps/deploy-up.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/deploy/azure-container-apps/README.md", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/deploy/kubernetes/apply.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/deploy/kubernetes/kustomization.yaml", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/deploy/kubernetes/deployment.yaml", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/deploy/kubernetes/service.yaml", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/deploy/linux/systemd/CephalonTemplateApp.service", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/deploy/linux/systemd/CephalonTemplateApp.env", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/Dockerfile", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/Properties/PublishProfiles/CephalonFolder.pubxml", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/deploy/windows-service/install-service.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/deploy/windows-service/remove-service.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/deploy/iis/install-site.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/deploy/iis/remove-site.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/deploy/azure-app-service/deploy-zip.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/deploy/azure-app-service/README.md", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/deploy/container-image/publish-image.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/deploy/container-image/README.md", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/deploy/azure-container-apps/deploy-up.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/deploy/azure-container-apps/README.md", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/deploy/kubernetes/apply.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/deploy/kubernetes/kustomization.yaml", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/deploy/kubernetes/deployment.yaml", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/deploy/kubernetes/service.yaml", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/deploy/linux/systemd/CephalonTemplateApp.service", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/Dockerfile", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/Properties/PublishProfiles/CephalonFolder.pubxml", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/deploy/windows-service/install-service.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/deploy/windows-service/remove-service.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/deploy/iis/install-site.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/deploy/iis/remove-site.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/deploy/azure-app-service/deploy-zip.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/deploy/azure-app-service/README.md", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/deploy/container-image/publish-image.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/deploy/container-image/README.md", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/deploy/azure-container-apps/deploy-up.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/deploy/azure-container-apps/README.md", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/deploy/kubernetes/apply.ps1", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/deploy/kubernetes/kustomization.yaml", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/deploy/kubernetes/deployment.yaml", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/deploy/kubernetes/service.yaml", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/deploy/linux/systemd/CephalonTemplateApp.service", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
                 entry.FullName.EndsWith("PACKAGE.md", StringComparison.OrdinalIgnoreCase));
         }
         finally
@@ -117,6 +227,34 @@ public sealed class TemplatePackTests
             Assert.Equal(0, generateResult.ExitCode);
 
             Assert.True(File.Exists(Path.Combine(appOutputPath, "Acme.Store.csproj")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "NuGet.config")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, ".dockerignore")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "Dockerfile")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "compose.yaml")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "otel-collector-config.yaml")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, ".cephalon", "packages", "README.md")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "windows-service", "README.md")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "windows-service", "install-service.ps1")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "windows-service", "remove-service.ps1")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "iis", "README.md")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "iis", "install-site.ps1")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "iis", "remove-site.ps1")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "azure-app-service", "README.md")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "azure-app-service", "deploy-zip.ps1")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "container-image", "README.md")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "container-image", "publish-image.ps1")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "azure-container-apps", "README.md")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "azure-container-apps", "deploy-up.ps1")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "kubernetes", "README.md")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "kubernetes", "apply.ps1")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "kubernetes", "kustomization.yaml")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "kubernetes", "namespace.yaml")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "kubernetes", "deployment.yaml")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "kubernetes", "service.yaml")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "linux", "systemd", "README.md")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "linux", "systemd", "Acme.Store.service")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "deploy", "linux", "systemd", "Acme.Store.env")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "Properties", "PublishProfiles", "CephalonFolder.pubxml")));
             Assert.True(File.Exists(Path.Combine(appOutputPath, "Program.cs")));
             Assert.True(File.Exists(Path.Combine(appOutputPath, "README.md")));
             Assert.True(File.Exists(Path.Combine(appOutputPath, "appsettings.json")));
@@ -128,15 +266,91 @@ public sealed class TemplatePackTests
             var appProjectContents = File.ReadAllText(appProjectPath);
             Assert.Contains("Configurations\\**\\*.json", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>", appProjectContents, StringComparison.Ordinal);
+            Assert.Contains("Cephalon.Observability.OpenTelemetry", appProjectContents, StringComparison.Ordinal);
+            Assert.Contains("Microsoft.Extensions.Hosting.WindowsServices", appProjectContents, StringComparison.Ordinal);
+            Assert.Contains("builder.AddCephalonOpenTelemetry();", File.ReadAllText(programPath), StringComparison.Ordinal);
+            Assert.Contains("WindowsServiceHelpers.IsWindowsService()", File.ReadAllText(programPath), StringComparison.Ordinal);
+            Assert.Contains("builder.Host.UseWindowsService();", File.ReadAllText(programPath), StringComparison.Ordinal);
             var appSettingsPath = Path.Combine(appOutputPath, "appsettings.json");
             var appSettingsContents = File.ReadAllText(appSettingsPath);
             Assert.Contains("\"ReferenceDocs\"", appSettingsContents, StringComparison.Ordinal);
             Assert.Contains("\"Enabled\": false", appSettingsContents, StringComparison.Ordinal);
             Assert.Contains("\"DirectoryPath\": \"..\\\\..\\\\docs\\\\reference\"", appSettingsContents, StringComparison.Ordinal);
+            Assert.DoesNotContain("http://localhost:4317", appSettingsContents, StringComparison.Ordinal);
+            Assert.Contains("\"Protocol\": \"otlp/http\"", appSettingsContents, StringComparison.Ordinal);
 
             var appReadmePath = Path.Combine(appOutputPath, "README.md");
             var appReadmeContents = File.ReadAllText(appReadmePath);
             Assert.Contains("ReferenceDocs:Enabled", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("CephalonFolder.pubxml", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("dotnet publish Acme.Store.csproj -p:PublishProfile=CephalonFolder", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("./artifacts/publish/Acme.Store/", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("deploy/windows-service/README.md", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("deploy/windows-service/install-service.ps1", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("deploy/iis/README.md", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("deploy/iis/install-site.ps1", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("deploy/azure-app-service/README.md", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("deploy/azure-app-service/deploy-zip.ps1", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("deploy/container-image/README.md", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("deploy/container-image/publish-image.ps1", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("deploy/azure-container-apps/README.md", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("deploy/azure-container-apps/deploy-up.ps1", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("deploy/kubernetes/README.md", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("deploy/kubernetes/apply.ps1", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("deploy/linux/systemd/README.md", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("deploy/linux/systemd/Acme.Store.service", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("docker compose up --build", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("NuGet.config", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("./.cephalon/packages", appReadmeContents, StringComparison.Ordinal);
+
+            var templateComposePath = Path.Combine(appOutputPath, "compose.yaml");
+            var templateComposeContents = File.ReadAllText(templateComposePath);
+            Assert.Contains("http://otel-collector:4318", templateComposeContents, StringComparison.Ordinal);
+            Assert.Contains("dockerfile: Dockerfile", templateComposeContents, StringComparison.Ordinal);
+
+            var generatedNuGetConfig = File.ReadAllText(Path.Combine(appOutputPath, "NuGet.config"));
+            Assert.Contains("./.cephalon/packages", generatedNuGetConfig, StringComparison.Ordinal);
+            Assert.Contains("packageSourceMapping", generatedNuGetConfig, StringComparison.Ordinal);
+
+            var generatedPublishProfile = File.ReadAllText(Path.Combine(appOutputPath, "Properties", "PublishProfiles", "CephalonFolder.pubxml"));
+            Assert.Contains("PublishDir", generatedPublishProfile, StringComparison.Ordinal);
+            Assert.Contains("UseAppHost>false", generatedPublishProfile, StringComparison.Ordinal);
+            Assert.Contains("artifacts/publish", generatedPublishProfile, StringComparison.Ordinal);
+
+            var generatedWindowsInstallScript = File.ReadAllText(Path.Combine(appOutputPath, "deploy", "windows-service", "install-service.ps1"));
+            Assert.Contains("sc.exe create", generatedWindowsInstallScript, StringComparison.Ordinal);
+            Assert.Contains("--contentRoot", generatedWindowsInstallScript, StringComparison.Ordinal);
+            Assert.Contains("Acme.Store.dll", generatedWindowsInstallScript, StringComparison.Ordinal);
+
+            var generatedIisInstallScript = File.ReadAllText(Path.Combine(appOutputPath, "deploy", "iis", "install-site.ps1"));
+            Assert.Contains("add apppool", generatedIisInstallScript, StringComparison.Ordinal);
+            Assert.Contains("add site", generatedIisInstallScript, StringComparison.Ordinal);
+            Assert.Contains("C:\\inetpub\\sites\\Acme.Store\\current", generatedIisInstallScript, StringComparison.Ordinal);
+
+            var generatedAzureDeployScript = File.ReadAllText(Path.Combine(appOutputPath, "deploy", "azure-app-service", "deploy-zip.ps1"));
+            Assert.Contains("WEBSITE_RUN_FROM_PACKAGE=1", generatedAzureDeployScript, StringComparison.Ordinal);
+            Assert.Contains("az @deployArguments", generatedAzureDeployScript, StringComparison.Ordinal);
+            Assert.Contains("azure-app-service.zip", generatedAzureDeployScript, StringComparison.Ordinal);
+
+            var generatedContainerImagePublishScript = File.ReadAllText(Path.Combine(appOutputPath, "deploy", "container-image", "publish-image.ps1"));
+            Assert.Contains("docker build", generatedContainerImagePublishScript, StringComparison.Ordinal);
+            Assert.Contains("docker push", generatedContainerImagePublishScript, StringComparison.Ordinal);
+            Assert.Contains("Container image publishing completed successfully.", generatedContainerImagePublishScript, StringComparison.Ordinal);
+
+            var generatedKubernetesApplyScript = File.ReadAllText(Path.Combine(appOutputPath, "deploy", "kubernetes", "apply.ps1"));
+            Assert.Contains("kubectl", generatedKubernetesApplyScript, StringComparison.Ordinal);
+            Assert.Contains("kustomize", generatedKubernetesApplyScript, StringComparison.Ordinal);
+            Assert.Contains("Kubernetes deployment apply completed successfully.", generatedKubernetesApplyScript, StringComparison.Ordinal);
+
+            var generatedKubernetesDeployment = File.ReadAllText(Path.Combine(appOutputPath, "deploy", "kubernetes", "deployment.yaml"));
+            Assert.Contains("replace-with-registry/cephalon-template-app:latest", generatedKubernetesDeployment, StringComparison.Ordinal);
+            Assert.Contains("/health/ready", generatedKubernetesDeployment, StringComparison.Ordinal);
+            Assert.Contains("/health/live", generatedKubernetesDeployment, StringComparison.Ordinal);
+
+            var generatedSystemdService = File.ReadAllText(Path.Combine(appOutputPath, "deploy", "linux", "systemd", "Acme.Store.service"));
+            Assert.Contains("EnvironmentFile=-/etc/cephalon/Acme.Store.env", generatedSystemdService, StringComparison.Ordinal);
+            Assert.Contains("ExecStart=/usr/bin/env dotnet /opt/Acme.Store/current/Acme.Store.dll", generatedSystemdService, StringComparison.Ordinal);
+            Assert.Contains("DynamicUser=true", generatedSystemdService, StringComparison.Ordinal);
 
             var generateModuleResult = RunProcess(
                 "dotnet",

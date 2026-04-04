@@ -82,7 +82,7 @@ The chained `docs publish --enable-hosting` flow follows the same override rules
 Build and publish the full reference set:
 
 ```powershell
-.\scripts\publish-reference-docs.ps1
+pwsh ./scripts/publish-reference-docs.ps1
 ```
 
 Publish through the main Cephalon CLI:
@@ -141,13 +141,13 @@ dotnet run --project src/Cephalon.Cli -- docs validate-hosting `
 Publish a narrowed set of assemblies:
 
 ```powershell
-.\scripts\publish-reference-docs.ps1 -Assemblies Cephalon.Engine,Cephalon.Agentics
+pwsh ./scripts/publish-reference-docs.ps1 -Assemblies Cephalon.Engine,Cephalon.Agentics
 ```
 
 Skip the build when the solution has already been compiled:
 
 ```powershell
-.\scripts\publish-reference-docs.ps1 -SkipBuild
+pwsh ./scripts/publish-reference-docs.ps1 -SkipBuild
 ```
 
 ## Output

@@ -39,6 +39,8 @@ public static class CliApplication
             return args[0].ToLowerInvariant() switch
             {
                 "new" => await RunNewAsync(args[1..], console, cancellationToken),
+                "doctor" => await RunDoctorAsync(args[1..], console, cancellationToken),
+                "package" => await RunPackageAsync(args[1..], console, cancellationToken),
                 "docs" => await RunDocsAsync(args[1..], console, cancellationToken),
                 _ => await WriteUnknownCommandAsync(args[0], console, cancellationToken)
             };
@@ -127,6 +129,52 @@ public static class CliApplication
         return await DocsPublishCommand.RunAsync(options, console, cancellationToken);
     }
 
+    private static async Task<int> RunPackageAsync(
+        string[] args,
+        CliConsole console,
+        CancellationToken cancellationToken)
+    {
+        if (args.Length == 0)
+        {
+            await console.WriteErrorAsync(
+                $"The 'package' command requires a subcommand.{Environment.NewLine}{Environment.NewLine}{HelpText.Value}",
+                cancellationToken);
+            return 1;
+        }
+
+        if (!string.Equals(args[0], "stage", StringComparison.OrdinalIgnoreCase))
+        {
+            await console.WriteErrorAsync(
+                $"Unknown package subcommand '{args[0]}'.{Environment.NewLine}{Environment.NewLine}{HelpText.Value}",
+                cancellationToken);
+            return 1;
+        }
+
+        var parse = PackageStageCommand.TryParse(args[1..], out var options, out var parseError);
+        if (!parse || options is null)
+        {
+            await console.WriteErrorAsync(parseError ?? "Invalid command arguments.", cancellationToken);
+            return 1;
+        }
+
+        return await PackageStageCommand.RunAsync(options, console, cancellationToken);
+    }
+
+    private static async Task<int> RunDoctorAsync(
+        string[] args,
+        CliConsole console,
+        CancellationToken cancellationToken)
+    {
+        var parse = DoctorCommand.TryParse(args, out var options, out var parseError);
+        if (!parse || options is null)
+        {
+            await console.WriteErrorAsync(parseError ?? "Invalid command arguments.", cancellationToken);
+            return 1;
+        }
+
+        return await DoctorCommand.RunAsync(options, console, cancellationToken);
+    }
+
     private static async Task<int> WriteUnknownCommandAsync(
         string commandName,
         CliConsole console,
@@ -146,6 +194,8 @@ Cephalon CLI
 
 Usage:
   cephalon new <AppName> [options]
+  cephalon doctor
+  cephalon package stage --package <path> --output <path> [options]
   cephalon docs publish [options]
   cephalon docs enable-hosting [options]
   cephalon docs validate-hosting [options]
@@ -161,6 +211,15 @@ New options:
   --package-version <ver>    Cephalon package version written to Directory.Packages.props.
   --target-framework <tfm>   Target framework for generated projects. Default: net10.0
   --force                    Overwrite existing files.
+
+Doctor options:
+  (no options)               Verifies the current .NET SDK/runtime baseline and optional template-pack install path.
+
+Package stage options:
+  --package <path>           Published module .nupkg to stage into a loadable package directory.
+  --output <path>            Target directory for the staged package manifest and assembly files.
+  --target-framework <tfm>   Target framework to stage from the package. Default: net10.0
+  --force                    Overwrite an existing staged output directory.
 
 Docs publish options:
   --root <path>              Repository root. Default: current directory

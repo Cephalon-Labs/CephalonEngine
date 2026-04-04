@@ -1,6 +1,6 @@
 # Cephalon.Cli
 
-`Cephalon.Cli` is the user-facing command-line surface for Cephalon scaffolding and documentation workflows.
+`Cephalon.Cli` is the user-facing command-line surface for Cephalon scaffolding, external package staging, first-run environment verification, and documentation workflows.
 
 Stable public surface:
 
@@ -15,6 +15,16 @@ Internal command pipeline:
 ## What it owns
 
 - blueprint-driven app generation
+- generated app Windows Service deployment assets for app hosts
+- generated app IIS deployment assets for app hosts
+- generated app Azure App Service deployment assets for app hosts
+- generated app Azure Container Apps deployment assets for app hosts
+- generated app Kubernetes deployment assets for app hosts
+- generated app Linux `systemd` deployment assets for app hosts
+- generated app container-runtime assets for app hosts
+- generated app local package-feed bootstrap assets for app hosts
+- external package staging from published `.nupkg` artifacts
+- first-run doctor checks for SDK/runtime/template readiness
 - optional reference-doc publishing
 - hosted reference-doc configuration updates
 - hosted reference-doc validation
@@ -24,6 +34,9 @@ Internal command pipeline:
 
 - `CliApplication.cs`
 - `Commands/NewAppCommand.cs`
+- `Commands/PackageStageCommand.cs`
+- `Commands/DoctorCommand.cs`
+- `Commands/CommandProcessRunner.cs`
 - `Commands/DocsPublishCommand.cs`
 - `Commands/DocsEnableHostingCommand.cs`
 - `Commands/DocsValidateHostingCommand.cs`
@@ -38,12 +51,21 @@ Internal command pipeline:
 
 ## How it fits
 
-This package is the shell over engine, scaffolding, and optional reference-doc services. It should stay aligned with engine semantics rather than inventing its own blueprint or documentation behavior.
+This package is the shell over engine, scaffolding, and optional reference-doc services. It should stay aligned with engine semantics rather than inventing its own blueprint or documentation behavior. The `cephalon new` path now emits the same operator-ready local container assets, Windows Service deployment assets, IIS deployment assets, Azure App Service deployment assets, provider-neutral container-image publishing assets, Azure Container Apps deployment assets, Kubernetes deployment assets, Linux `systemd` deployment assets, `NuGet.config` bootstrap, and `Properties/PublishProfiles/CephalonFolder.pubxml` profile used by the shipped app-starter baseline so generated hosts can restore from `./.cephalon/packages`, or a swapped-in shared feed, before they are validated with `dotnet publish`, Windows Service install previews, IIS install previews, Azure App Service ZIP deploy previews, container-image publish previews, Azure Container Apps source-deploy previews, Kubernetes manifest previews, WSL `systemd-analyze` verification, published-output smoke runs, or `docker compose up --build`.
 
 For package-surface hardening, the command handlers, parsed option objects, console abstraction, and browser launcher are implementation details. External callers should integrate through `CliApplication` rather than binding directly to individual command types.
 
 ## Related docs
 
 - [Reference docs publishing](../reference-docs.md)
+- [Getting started](../getting-started.md)
+- [Generated app publishing](../generated-app-publishing.md)
+- [Windows Service deployment](../windows-service-deployment.md)
+- [IIS deployment](../iis-deployment.md)
+- [Azure App Service deployment](../azure-app-service-deployment.md)
+- [Azure Container Apps deployment](../azure-container-apps-deployment.md)
+- [Kubernetes deployment](../kubernetes-deployment.md)
+- [Linux systemd deployment](../linux-systemd-deployment.md)
+- [External package lifecycle](../external-package-lifecycle.md)
 - [App models](../app-models.md)
 - [Module authoring](../module-authoring.md)
