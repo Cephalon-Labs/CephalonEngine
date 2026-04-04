@@ -12,6 +12,8 @@
 
 - `Configuration/DataRuntimeOptions.cs`
 - `Registration/DataEngineBuilderExtensions.cs`
+- `Services/HandlerDispatchingReadStore.cs`
+- `Services/HandlerDispatchingWriteStore.cs`
 
 ## How it fits
 

@@ -172,5 +172,6 @@ The browser UI can switch between type search and member search, while the JSON 
 - keep shared test-harness types internal and leave only framework-required xUnit classes plus rare reflective transport-contract exceptions public while the test project remains outside the supported published docs set
 - keep hand-authored guide docs in `README.md` and `docs/` focused on capability explanation and adoption guidance
 - regenerate `docs/reference/` after changing public API docs
+- keep the checked-in `docs/reference/` bundle aligned with the current generator output; the reference-doc test suite now treats bundle drift as a failure and expects `pwsh ./scripts/publish-reference-docs.ps1` to be the repair path
 - keep `artifacts/reference-docs-release/` as pipeline output, not as hand-edited source content
 - keep the generator, publish script, and generated output aligned with the current solution layout

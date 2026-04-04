@@ -1,6 +1,7 @@
 using Cephalon.ReferenceDocs.Generation;
 using Cephalon.ReferenceDocs.IO;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace Cephalon.Tests.Tooling;
 
@@ -536,6 +537,51 @@ public sealed class ReferenceDocsGeneratorTests
     }
 
     [Fact]
+    public void GenerateDefaultCatalogMatchesCheckedInReferenceBundle()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var checkedInReferenceRoot = Path.Combine(repositoryRoot, "docs", "reference");
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-checked-in-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: repositoryRoot,
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration());
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var renderedFiles = rendered.Files
+            .ToDictionary(static file => file.Path, static file => file.Contents, StringComparer.Ordinal);
+        var checkedInFiles = Directory
+            .GetFiles(checkedInReferenceRoot, "*", SearchOption.AllDirectories)
+            .ToDictionary(
+                path => Path.GetRelativePath(checkedInReferenceRoot, path).Replace('\\', '/'),
+                static path => File.ReadAllText(path),
+                StringComparer.Ordinal);
+
+        var renderedPaths = renderedFiles.Keys.OrderBy(static path => path, StringComparer.Ordinal).ToArray();
+        var checkedInPaths = checkedInFiles.Keys.OrderBy(static path => path, StringComparer.Ordinal).ToArray();
+
+        Assert.True(
+            renderedPaths.SequenceEqual(checkedInPaths, StringComparer.Ordinal),
+            CreateReferenceBundleDriftMessage(
+                "file-set",
+                [
+                    .. renderedPaths.Except(checkedInPaths, StringComparer.Ordinal).Select(static path => $"+ {path}"),
+                    .. checkedInPaths.Except(renderedPaths, StringComparer.Ordinal).Select(static path => $"- {path}")
+                ]));
+
+        foreach (var renderedFile in renderedFiles)
+        {
+            var checkedInContents = checkedInFiles[renderedFile.Key];
+            Assert.True(
+                string.Equals(
+                    NormalizeReferenceDocContents(renderedFile.Key, renderedFile.Value),
+                    NormalizeReferenceDocContents(renderedFile.Key, checkedInContents),
+                    StringComparison.Ordinal),
+                CreateReferenceBundleDriftMessage("content", [$"~ {renderedFile.Key}"]));
+        }
+    }
+
+    [Fact]
     public async Task WriteAsyncWritesRenderedReferenceDocsToDisk()
     {
         var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-write-{Guid.NewGuid():N}");
@@ -590,6 +636,52 @@ public sealed class ReferenceDocsGeneratorTests
             : "Debug";
     }
 
+    private static string NormalizeReferenceDocContents(string path, string contents)
+    {
+        var normalized = contents
+            .Replace("\r\n", "\n", StringComparison.Ordinal)
+            .Replace('\r', '\n');
+
+        return path switch
+        {
+            "reference-manifest.json" => NormalizeReferenceManifestJson(normalized),
+            "browse.html" => NormalizeReferenceBrowserHtml(normalized),
+            _ => normalized
+        };
+    }
+
+    private static string NormalizeReferenceManifestJson(string manifestJson)
+    {
+        var manifest = JsonNode.Parse(manifestJson)?.AsObject()
+            ?? throw new InvalidOperationException("Reference manifest could not be parsed.");
+
+        manifest["GeneratedAtUtc"] = "__GENERATED_AT_UTC__";
+
+        return manifest.ToJsonString(new JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
+    }
+
+    private static string NormalizeReferenceBrowserHtml(string html)
+    {
+        const string startToken = "<script id=\"reference-manifest\" type=\"application/json\">";
+        const string endToken = "</script>";
+
+        var startIndex = html.IndexOf(startToken, StringComparison.Ordinal);
+        Assert.True(startIndex >= 0, "Checked-in reference browser HTML is missing the inline manifest script.");
+
+        startIndex += startToken.Length;
+
+        var endIndex = html.IndexOf(endToken, startIndex, StringComparison.Ordinal);
+        Assert.True(endIndex >= 0, "Checked-in reference browser HTML is missing the inline manifest terminator.");
+
+        var manifestJson = html[startIndex..endIndex];
+        var normalizedManifest = NormalizeReferenceManifestJson(manifestJson);
+
+        return string.Concat(html.AsSpan(0, startIndex), normalizedManifest, html.AsSpan(endIndex));
+    }
+
     private static string CreateMissingSummaryMessage(string scope, string[] entries)
     {
         const int previewCount = 20;
@@ -602,5 +694,14 @@ public sealed class ReferenceDocsGeneratorTests
             : string.Empty;
 
         return $"Reference docs are missing XML summaries for {scope}:{Environment.NewLine}{string.Join(Environment.NewLine, preview)}{suffix}";
+    }
+
+    private static string CreateReferenceBundleDriftMessage(string scope, string[] entries)
+    {
+        var preview = entries.Length == 0
+            ? string.Empty
+            : $"{Environment.NewLine}{string.Join(Environment.NewLine, entries)}";
+
+        return $"Checked-in docs/reference bundle drift detected for {scope}. Run `pwsh ./scripts/publish-reference-docs.ps1` and commit the refreshed docs/reference output.{preview}";
     }
 }

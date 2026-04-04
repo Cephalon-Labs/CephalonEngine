@@ -525,7 +525,7 @@ Delivered:
 
 ### ENG-029 Cloud-targeted observability companion integrations
 
-Status: in progress
+Status: done
 Estimate: 268
 
 Why:
@@ -1210,7 +1210,7 @@ Progress:
 
 ### ENG-056 Phase 8 docs, XML comments, component-guide, and reference-doc alignment
 
-Status: later
+Status: in progress
 Estimate: 8
 
 Why:
@@ -1224,6 +1224,7 @@ Acceptance:
 - new public phase-8 contracts ship with XML comments suitable for the supported reference-doc pipeline
 - relevant component docs under `docs/components/` and hand-authored adoption guidance are updated for the shipped phase-8 slices
 - `Cephalon.ReferenceDocs`, hosted reference-doc guidance, and documentation indexes stay aligned if the supported public API surface changes
+- checked-in `docs/reference/` output stays aligned with the current `Cephalon.ReferenceDocs` generator through a repo-native drift guard instead of manual spot checks alone
 - docs stay explicit about what is shipped now versus what remains later, especially around event sourcing, provider breadth, hybrid runtime, service mesh, and serverless claims
 
 ### ENG-057 Event-sourcing follow-through baseline

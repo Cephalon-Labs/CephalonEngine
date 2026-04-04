@@ -14,3 +14,9 @@ These are intentionally different from `playground/`.
 
 - `playground/` is for freeform experimentation
 - `samples/` is for showing the intended blueprint shape other teams should copy
+
+The blueprint-shape starters now each carry their own README so the shipped phase-8 baseline stays visible at the sample boundary:
+
+- `samples/Cephalon.Sample.ModularMonolith/README.md`
+- `samples/Cephalon.Sample.ModularVerticalSlice/README.md`
+- `samples/Cephalon.Sample.Microservice/README.md`
