@@ -1,5 +1,7 @@
 using Cephalon.Abstractions.Authorization;
 using Cephalon.Identity.AspNetCore.Configuration;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Cephalon.Identity.AspNetCore.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -13,6 +15,35 @@ namespace Cephalon.Identity.AspNetCore.Transports.Rest;
 /// </summary>
 public static class IdentityEndpointConventionBuilderExtensions
 {
+    /// <summary>
+    /// Declares the ASP.NET Core authentication schemes that should own challenge and forbid responses for an endpoint or route group.
+    /// </summary>
+    /// <typeparam name="TBuilder">The endpoint convention builder type.</typeparam>
+    /// <param name="builder">The endpoint or route-group builder to annotate.</param>
+    /// <param name="authenticationSchemes">The authentication scheme names to use for boundary responses.</param>
+    /// <returns>The same builder for fluent chaining.</returns>
+    public static TBuilder WithCephalonAuthenticationSchemes<TBuilder>(
+        this TBuilder builder,
+        params string[] authenticationSchemes)
+        where TBuilder : IEndpointConventionBuilder
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        var normalizedSchemes = authenticationSchemes?
+            .Where(static scheme => !string.IsNullOrWhiteSpace(scheme))
+            .Select(static scheme => scheme.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static scheme => scheme, StringComparer.OrdinalIgnoreCase)
+            .ToArray() ?? [];
+        if (normalizedSchemes.Length == 0)
+        {
+            throw new ArgumentException("At least one authentication scheme must be provided.", nameof(authenticationSchemes));
+        }
+
+        builder.WithMetadata(new CephalonAuthenticationSchemesMetadata(normalizedSchemes));
+        return builder;
+    }
+
     /// <summary>
     /// Requires a Cephalon authorization decision before a REST route handler can execute.
     /// </summary>
@@ -40,7 +71,7 @@ public static class IdentityEndpointConventionBuilderExtensions
     /// <returns>The same route handler builder for fluent convention chaining.</returns>
     /// <remarks>
     /// This helper keeps ASP.NET Core principal and route parsing in the host layer while still evaluating the shared
-    /// Cephalon authorization contracts through <see cref="IAuthorizationEvaluator" />.
+    /// Cephalon authorization contracts through <see cref="Cephalon.Abstractions.Authorization.IAuthorizationEvaluator" />.
     /// </remarks>
     public static RouteHandlerBuilder RequireCephalonAuthorization(
         this RouteHandlerBuilder builder,
@@ -125,11 +156,17 @@ public static class IdentityEndpointConventionBuilderExtensions
             var httpContext = invocationContext.HttpContext;
             var services = httpContext.RequestServices;
             var requestFactory = services.GetRequiredService<HttpContextAuthorizationRequestFactory>();
-            var evaluator = services.GetRequiredService<IAuthorizationEvaluator>();
+            var evaluator = services.GetRequiredService<Cephalon.Abstractions.Authorization.IAuthorizationEvaluator>();
             var options = services.GetRequiredService<IdentityAspNetCoreOptions>();
 
             if (!requestFactory.TryCreate(httpContext, metadata, out var request, out var failureReason))
             {
+                var challengeResult = await TryCreateAuthenticationBoundaryResultAsync(httpContext, forbid: false).ConfigureAwait(false);
+                if (challengeResult is not null)
+                {
+                    return challengeResult;
+                }
+
                 return TypedResults.Problem(
                     statusCode: StatusCodes.Status401Unauthorized,
                     title: "Authentication required",
@@ -149,6 +186,12 @@ public static class IdentityEndpointConventionBuilderExtensions
 
             if (!decision.IsAllowed)
             {
+                var forbidResult = await TryCreateAuthenticationBoundaryResultAsync(httpContext, forbid: true).ConfigureAwait(false);
+                if (forbidResult is not null)
+                {
+                    return forbidResult;
+                }
+
                 return TypedResults.Problem(
                     statusCode: StatusCodes.Status403Forbidden,
                     title: "Authorization denied",
@@ -163,5 +206,68 @@ public static class IdentityEndpointConventionBuilderExtensions
 
             return await next(invocationContext);
         };
+    }
+
+    private static async ValueTask<IResult?> TryCreateAuthenticationBoundaryResultAsync(HttpContext httpContext, bool forbid)
+    {
+        ArgumentNullException.ThrowIfNull(httpContext);
+
+        var endpoint = httpContext.GetEndpoint();
+        var cephalonSchemes = endpoint?.Metadata
+            .GetMetadata<CephalonAuthenticationSchemesMetadata>()?
+            .AuthenticationSchemes ?? [];
+        if (cephalonSchemes.Length > 0)
+        {
+            return forbid
+                ? Results.Forbid(authenticationSchemes: cephalonSchemes)
+                : Results.Challenge(authenticationSchemes: cephalonSchemes);
+        }
+
+        var explicitSchemes = endpoint?.Metadata
+            .GetOrderedMetadata<IAuthorizeData>()
+            .SelectMany(static metadata => SplitAuthenticationSchemes(metadata.AuthenticationSchemes))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static scheme => scheme, StringComparer.OrdinalIgnoreCase)
+            .ToArray() ?? [];
+        if (explicitSchemes.Length > 0)
+        {
+            return forbid
+                ? Results.Forbid(authenticationSchemes: explicitSchemes)
+                : Results.Challenge(authenticationSchemes: explicitSchemes);
+        }
+
+        var schemeProvider = httpContext.RequestServices.GetService<IAuthenticationSchemeProvider>();
+        if (schemeProvider is null)
+        {
+            return null;
+        }
+
+        var defaultScheme = forbid
+            ? await schemeProvider.GetDefaultForbidSchemeAsync().ConfigureAwait(false) ??
+              await schemeProvider.GetDefaultChallengeSchemeAsync().ConfigureAwait(false)
+            : await schemeProvider.GetDefaultChallengeSchemeAsync().ConfigureAwait(false);
+        if (defaultScheme is null)
+        {
+            return null;
+        }
+
+        return forbid
+            ? Results.Forbid()
+            : Results.Challenge();
+    }
+
+    private static string[] SplitAuthenticationSchemes(string? schemes)
+    {
+        return schemes?
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(static scheme => !string.IsNullOrWhiteSpace(scheme))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static scheme => scheme, StringComparer.OrdinalIgnoreCase)
+            .ToArray() ?? [];
+    }
+
+    private sealed class CephalonAuthenticationSchemesMetadata(string[] authenticationSchemes)
+    {
+        public string[] AuthenticationSchemes { get; } = authenticationSchemes;
     }
 }

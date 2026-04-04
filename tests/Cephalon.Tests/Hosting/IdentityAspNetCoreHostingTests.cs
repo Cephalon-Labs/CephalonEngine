@@ -7,10 +7,15 @@ using Cephalon.Identity.AspNetCore.Hosting;
 using Cephalon.Identity.AspNetCore.Transports.Rest;
 using Cephalon.Identity.Registration;
 using Cephalon.Tests.Support;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System.Text.Encodings.Web;
 
 namespace Cephalon.Tests.Hosting;
 
@@ -116,7 +121,65 @@ public sealed class IdentityAspNetCoreHostingTests
         }
     }
 
+    [Fact]
+    public async Task RequireCephalonAuthorizationUsesDefaultAuthenticationChallengeAndForbidSchemesWhenAvailable()
+    {
+        var app = await CreateAppAsync(
+            configureRoutes: webApplication =>
+            {
+                webApplication.MapGet("/tenants/{tenantId}/documents/{id}/{classification}", () => TypedResults.Ok())
+                    .RequireCephalonAuthorization("tenant-boundary", resourceType: "document");
+            },
+            useAuthenticationSchemes: true);
+
+        await using (app)
+        {
+            var client = app.GetTestClient();
+
+            var unauthorizedResponse = await client.GetAsync("/tenants/tenant-001/documents/doc-001/internal");
+            Assert.Equal(HttpStatusCode.Unauthorized, unauthorizedResponse.StatusCode);
+            Assert.Equal(TestAuthenticationDefaults.DefaultScheme, unauthorizedResponse.Headers.GetValues(TestAuthenticationDefaults.ChallengeHeaderName).Single());
+
+            var forbiddenRequest = new HttpRequestMessage(HttpMethod.Get, "/tenants/tenant-001/documents/doc-001/internal");
+            forbiddenRequest.Headers.Add("X-Test-Subject", "user-004");
+            forbiddenRequest.Headers.Add("X-Test-Role", "member");
+            forbiddenRequest.Headers.Add("X-Test-Tenant", "tenant-999");
+            forbiddenRequest.Headers.Add("X-Test-Region", "apac");
+
+            var forbiddenResponse = await client.SendAsync(forbiddenRequest);
+            Assert.Equal(HttpStatusCode.Forbidden, forbiddenResponse.StatusCode);
+            Assert.Equal(TestAuthenticationDefaults.DefaultScheme, forbiddenResponse.Headers.GetValues(TestAuthenticationDefaults.ForbidHeaderName).Single());
+        }
+    }
+
+    [Fact]
+    public async Task RequireCephalonAuthorizationPrefersExplicitAuthorizeMetadataSchemesForChallengeResponses()
+    {
+        var app = await CreateAppAsync(
+            configureRoutes: webApplication =>
+            {
+                webApplication.MapGet("/tenants/{tenantId}/documents/{id}", () => TypedResults.Ok())
+                    .WithCephalonAuthenticationSchemes(TestAuthenticationDefaults.OverrideScheme)
+                    .RequireCephalonAuthorization("tenant-boundary", resourceType: "document");
+            },
+            useAuthenticationSchemes: true);
+
+        await using (app)
+        {
+            var client = app.GetTestClient();
+            var response = await client.GetAsync("/tenants/tenant-001/documents/doc-001");
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal(TestAuthenticationDefaults.OverrideScheme, response.Headers.GetValues(TestAuthenticationDefaults.ChallengeHeaderName).Single());
+        }
+    }
+
     private static async Task<WebApplication> CreateAppAsync(Action<WebApplication> configureRoutes)
+    {
+        return await CreateAppAsync(configureRoutes, useAuthenticationSchemes: false);
+    }
+
+    private static async Task<WebApplication> CreateAppAsync(Action<WebApplication> configureRoutes, bool useAuthenticationSchemes)
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
@@ -134,17 +197,36 @@ public sealed class IdentityAspNetCoreHostingTests
             engine.AddIdentityAccess();
         });
         builder.AddCephalonIdentityAspNetCore();
+        if (useAuthenticationSchemes)
+        {
+            builder.Services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = TestAuthenticationDefaults.DefaultScheme;
+                    options.DefaultChallengeScheme = TestAuthenticationDefaults.DefaultScheme;
+                    options.DefaultForbidScheme = TestAuthenticationDefaults.DefaultScheme;
+                })
+                .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>(TestAuthenticationDefaults.DefaultScheme, static _ => { })
+                .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>(TestAuthenticationDefaults.OverrideScheme, static _ => { });
+        }
 
         var app = builder.Build();
-        app.Use(async (context, next) =>
+        if (useAuthenticationSchemes)
         {
-            if (TryCreateTestPrincipal(context, out var principal))
+            app.UseAuthentication();
+        }
+        else
+        {
+            app.Use(async (context, next) =>
             {
-                context.User = principal;
-            }
+                if (TryCreateTestPrincipal(context, out var principal))
+                {
+                    context.User = principal;
+                }
 
-            await next();
-        });
+                await next();
+            });
+        }
 
         app.MapCephalon();
         configureRoutes(app);
@@ -188,5 +270,73 @@ public sealed class IdentityAspNetCoreHostingTests
 
         principal = new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationType: "Test"));
         return true;
+    }
+
+    private static class TestAuthenticationDefaults
+    {
+        public const string DefaultScheme = "CephalonDefault";
+        public const string OverrideScheme = "CephalonOverride";
+        public const string ChallengeHeaderName = "X-Test-Challenge";
+        public const string ForbidHeaderName = "X-Test-Forbid";
+    }
+
+    private sealed class TestAuthenticationHandler(
+        IOptionsMonitor<AuthenticationSchemeOptions> options,
+        ILoggerFactory logger,
+        UrlEncoder encoder)
+        : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
+    {
+        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+        {
+            if (!Request.Headers.TryGetValue("X-Test-Subject", out var subjectValues))
+            {
+                return Task.FromResult(AuthenticateResult.NoResult());
+            }
+
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.NameIdentifier, subjectValues.ToString())
+            };
+
+            if (Request.Headers.TryGetValue("X-Test-Role", out var roleValues))
+            {
+                foreach (var role in roleValues.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
+            }
+
+            if (Request.Headers.TryGetValue("X-Test-Tenant", out var tenantValues))
+            {
+                foreach (var tenantId in tenantValues.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                {
+                    claims.Add(new Claim("tenant_id", tenantId));
+                }
+            }
+
+            if (Request.Headers.TryGetValue("X-Test-Region", out var regionValues))
+            {
+                claims.Add(new Claim("region", regionValues.ToString()));
+            }
+
+            var identity = new ClaimsIdentity(claims, Scheme.Name);
+            var principal = new ClaimsPrincipal(identity);
+            var ticket = new AuthenticationTicket(principal, Scheme.Name);
+            return Task.FromResult(AuthenticateResult.Success(ticket));
+        }
+
+        protected override Task HandleChallengeAsync(AuthenticationProperties properties)
+        {
+            Response.StatusCode = StatusCodes.Status401Unauthorized;
+            Response.Headers[TestAuthenticationDefaults.ChallengeHeaderName] = Scheme.Name;
+            return Task.CompletedTask;
+        }
+
+        protected override Task HandleForbiddenAsync(AuthenticationProperties properties)
+        {
+            Response.StatusCode = StatusCodes.Status403Forbidden;
+            Response.Headers[TestAuthenticationDefaults.ForbidHeaderName] = Scheme.Name;
+            return Task.CompletedTask;
+        }
     }
 }
