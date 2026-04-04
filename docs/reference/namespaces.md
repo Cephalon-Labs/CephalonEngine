@@ -6,15 +6,27 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.AppModel`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-appmodel): 3 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-appmodel): 8 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel)
 
 ## `Cephalon.Abstractions.AppModel.Scaffolding`
 
 - [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-appmodel-scaffolding): 7 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding)
 
+## `Cephalon.Abstractions.Audit`
+
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-audit): 9 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit)
+
+## `Cephalon.Abstractions.Authorization`
+
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-authorization): 10 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization)
+
 ## `Cephalon.Abstractions.Capabilities`
 
 - [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-capabilities): 3 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities)
+
+## `Cephalon.Abstractions.Data`
+
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-data): 25 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data)
 
 ## `Cephalon.Abstractions.Execution`
 
@@ -23,6 +35,10 @@ Browse the published API surface by namespace.
 ## `Cephalon.Abstractions.Health`
 
 - [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-health): 3 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health)
+
+## `Cephalon.Abstractions.Ids`
+
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-ids): 2 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Ids)
 
 ## `Cephalon.Abstractions.Localization`
 
@@ -39,6 +55,10 @@ Browse the published API surface by namespace.
 ## `Cephalon.Abstractions.Technologies`
 
 - [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-technologies): 11 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies)
+
+## `Cephalon.Abstractions.Tenancy`
+
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-tenancy): 5 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Tenancy)
 
 ## `Cephalon.Abstractions.Transports`
 
@@ -116,9 +136,45 @@ Browse the published API surface by namespace.
 
 - [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-transports-websockets): 1 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.WebSockets)
 
+## `Cephalon.Audit.Configuration`
+
+- [Cephalon.Audit](cephalon-audit.md#namespace-cephalon-audit-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Audit&namespace=Cephalon.Audit.Configuration)
+
+## `Cephalon.Audit.Conventions`
+
+- [Cephalon.Audit](cephalon-audit.md#namespace-cephalon-audit-conventions): 1 public types [Browse](browse.html?assembly=Cephalon.Audit&namespace=Cephalon.Audit.Conventions)
+
+## `Cephalon.Audit.Registration`
+
+- [Cephalon.Audit](cephalon-audit.md#namespace-cephalon-audit-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Audit&namespace=Cephalon.Audit.Registration)
+
+## `Cephalon.Audit.Services`
+
+- [Cephalon.Audit](cephalon-audit.md#namespace-cephalon-audit-services): 3 public types [Browse](browse.html?assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services)
+
 ## `Cephalon.Cli`
 
 - [Cephalon.Cli](cephalon-cli.md#namespace-cephalon-cli): 1 public types [Browse](browse.html?assembly=Cephalon.Cli&namespace=Cephalon.Cli)
+
+## `Cephalon.Data.Configuration`
+
+- [Cephalon.Data](cephalon-data.md#namespace-cephalon-data-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration)
+
+## `Cephalon.Data.EntityFramework.Configuration`
+
+- [Cephalon.Data.EntityFramework](cephalon-data-entityframework.md#namespace-cephalon-data-entityframework-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration)
+
+## `Cephalon.Data.EntityFramework.Modeling`
+
+- [Cephalon.Data.EntityFramework](cephalon-data-entityframework.md#namespace-cephalon-data-entityframework-modeling): 5 public types [Browse](browse.html?assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling)
+
+## `Cephalon.Data.EntityFramework.Registration`
+
+- [Cephalon.Data.EntityFramework](cephalon-data-entityframework.md#namespace-cephalon-data-entityframework-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Registration)
+
+## `Cephalon.Data.Registration`
+
+- [Cephalon.Data](cephalon-data.md#namespace-cephalon-data-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Data&namespace=Cephalon.Data.Registration)
 
 ## `Cephalon.Edge.Configuration`
 
@@ -146,7 +202,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Engine.Configuration`
 
-- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-configuration): 12 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-configuration): 17 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
 
 ## `Cephalon.Engine.Diagnostics`
 
@@ -190,7 +246,55 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Eventing.Services`
 
-- [Cephalon.Eventing](cephalon-eventing.md#namespace-cephalon-eventing-services): 4 public types [Browse](browse.html?assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
+- [Cephalon.Eventing](cephalon-eventing.md#namespace-cephalon-eventing-services): 25 public types [Browse](browse.html?assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
+
+## `Cephalon.Eventing.Wolverine.Configuration`
+
+- [Cephalon.Eventing.Wolverine](cephalon-eventing-wolverine.md#namespace-cephalon-eventing-wolverine-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration)
+
+## `Cephalon.Eventing.Wolverine.Registration`
+
+- [Cephalon.Eventing.Wolverine](cephalon-eventing-wolverine.md#namespace-cephalon-eventing-wolverine-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Registration)
+
+## `Cephalon.Identity.AspNetCore.Configuration`
+
+- [Cephalon.Identity.AspNetCore](cephalon-identity-aspnetcore.md#namespace-cephalon-identity-aspnetcore-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Configuration)
+
+## `Cephalon.Identity.AspNetCore.Hosting`
+
+- [Cephalon.Identity.AspNetCore](cephalon-identity-aspnetcore.md#namespace-cephalon-identity-aspnetcore-hosting): 2 public types [Browse](browse.html?assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Hosting)
+
+## `Cephalon.Identity.AspNetCore.Transports.Rest`
+
+- [Cephalon.Identity.AspNetCore](cephalon-identity-aspnetcore.md#namespace-cephalon-identity-aspnetcore-transports-rest): 1 public types [Browse](browse.html?assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Transports.Rest)
+
+## `Cephalon.Identity.Configuration`
+
+- [Cephalon.Identity](cephalon-identity.md#namespace-cephalon-identity-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Identity&namespace=Cephalon.Identity.Configuration)
+
+## `Cephalon.Identity.Policies`
+
+- [Cephalon.Identity](cephalon-identity.md#namespace-cephalon-identity-policies): 1 public types [Browse](browse.html?assembly=Cephalon.Identity&namespace=Cephalon.Identity.Policies)
+
+## `Cephalon.Identity.Registration`
+
+- [Cephalon.Identity](cephalon-identity.md#namespace-cephalon-identity-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Identity&namespace=Cephalon.Identity.Registration)
+
+## `Cephalon.Ids.Sfid.Configuration`
+
+- [Cephalon.Ids.Sfid](cephalon-ids-sfid.md#namespace-cephalon-ids-sfid-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Ids.Sfid&namespace=Cephalon.Ids.Sfid.Configuration)
+
+## `Cephalon.Ids.Sfid.Registration`
+
+- [Cephalon.Ids.Sfid](cephalon-ids-sfid.md#namespace-cephalon-ids-sfid-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Ids.Sfid&namespace=Cephalon.Ids.Sfid.Registration)
+
+## `Cephalon.MultiTenancy.Configuration`
+
+- [Cephalon.MultiTenancy](cephalon-multitenancy.md#namespace-cephalon-multitenancy-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy&namespace=Cephalon.MultiTenancy.Configuration)
+
+## `Cephalon.MultiTenancy.Registration`
+
+- [Cephalon.MultiTenancy](cephalon-multitenancy.md#namespace-cephalon-multitenancy-registration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy&namespace=Cephalon.MultiTenancy.Registration)
 
 ## `Cephalon.Observability.AlibabaCloud.Configuration`
 

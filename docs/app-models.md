@@ -212,16 +212,36 @@ public sealed class AppProfile
 ```
 
 The current runtime still resolves app-level `AppProfile` objects only. The suite layer is now modeled separately through `SuiteBlueprint`, with the built-in `MicroserviceSuite` blueprint composing repeatable service slots from the shipped `Microservice` scaffold contract instead of redefining service internals at the suite layer.
+The resolved app profile now also carries structured phase-8 selections for `Data`, `Identity`, `Tenancy`, `Audit`, and `Messaging`. Legacy display-name aliases still resolve for compatibility, but the shipped starter and template surfaces now emit canonical kebab-case ids plus those structured sections by default.
 
 The runtime should support configuration-driven blueprint, pattern, technology, and transport selection, for example:
 
 ```json
 {
   "Engine": {
-    "Blueprint": "ModularVerticalSlice",
-    "Patterns": ["StrategyPattern", "PipelinePattern"],
-    "Technologies": ["AgenticWorkloads", "RealtimeExperience"],
-    "Transports": ["RestApi", "WebSocket"]
+    "Blueprint": "modular-vertical-slice",
+    "Patterns": ["strategy-pattern", "pipeline-pattern", "cqrs"],
+    "Technologies": ["event-driven-integration", "identity-access"],
+    "Transports": ["rest-api"],
+    "Data": {
+      "ReadWriteSplit": true,
+      "Ids": {
+        "Generator": "Sfid"
+      }
+    },
+    "Identity": {
+      "Enabled": true,
+      "AuthorizationModes": ["RBAC", "ABAC", "Policy"]
+    },
+    "Tenancy": {
+      "Enabled": false
+    },
+    "Audit": {
+      "Enabled": true
+    },
+    "Messaging": {
+      "Provider": "Wolverine"
+    }
   }
 }
 ```
@@ -360,10 +380,26 @@ Use the `Engine` section as the primary source of truth for blueprint, pattern, 
 ```json
 {
   "Engine": {
-    "Blueprint": "ModularVerticalSlice",
-    "Patterns": ["StrategyPattern", "PipelinePattern"],
-    "Technologies": ["AgenticWorkloads"],
-    "Transports": ["RestApi"]
+    "Blueprint": "modular-vertical-slice",
+    "Patterns": ["strategy-pattern", "pipeline-pattern"],
+    "Technologies": ["identity-access"],
+    "Transports": ["rest-api"],
+    "Data": {
+      "Ids": {
+        "Generator": "Sfid"
+      }
+    },
+    "Identity": {
+      "Enabled": true,
+      "AuthorizationModes": ["RBAC", "ABAC", "Policy"]
+    },
+    "Tenancy": {
+      "Enabled": false
+    },
+    "Audit": {
+      "Enabled": true
+    },
+    "Messaging": {}
   }
 }
 ```

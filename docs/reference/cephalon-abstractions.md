@@ -7,13 +7,18 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 - `Cephalon.Abstractions.AppModel`
 - `Cephalon.Abstractions.AppModel.Scaffolding`
+- `Cephalon.Abstractions.Audit`
+- `Cephalon.Abstractions.Authorization`
 - `Cephalon.Abstractions.Capabilities`
+- `Cephalon.Abstractions.Data`
 - `Cephalon.Abstractions.Execution`
 - `Cephalon.Abstractions.Health`
+- `Cephalon.Abstractions.Ids`
 - `Cephalon.Abstractions.Localization`
 - `Cephalon.Abstractions.Modules`
 - `Cephalon.Abstractions.Patterns`
 - `Cephalon.Abstractions.Technologies`
+- `Cephalon.Abstractions.Tenancy`
 - `Cephalon.Abstractions.Transports`
 
 <a id="namespace-cephalon-abstractions-appmodel"></a>
@@ -143,12 +148,12 @@ public sealed class AppProfile
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor"></a>
+<a id="member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection"></a>
 
 ##### `AppProfile`
 
 ```csharp
-AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports)
+AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging)
 ```
 
 Creates an app profile without scaffold metadata.
@@ -160,13 +165,18 @@ Parameters:
 - `patterns`: The patterns active for the app.
 - `technologies`: The selected technology profiles.
 - `transports`: The selected transports.
+- `data`: The selected data inputs.
+- `identity`: The selected identity and authorization inputs.
+- `tenancy`: The selected multi-tenancy inputs.
+- `audit`: The selected audit inputs.
+- `messaging`: The selected messaging inputs.
 
-<a id="member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor"></a>
+<a id="member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection"></a>
 
 ##### `AppProfile`
 
 ```csharp
-AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, ScaffoldPlan scaffold, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports)
+AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, ScaffoldPlan scaffold, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging)
 ```
 
 Creates an app profile with optional scaffold metadata.
@@ -179,8 +189,23 @@ Parameters:
 - `scaffold`: The scaffold plan associated with the app shape.
 - `technologies`: The selected technology profiles.
 - `transports`: The selected transports.
+- `data`: The selected data inputs.
+- `identity`: The selected identity and authorization inputs.
+- `tenancy`: The selected multi-tenancy inputs.
+- `audit`: The selected audit inputs.
+- `messaging`: The selected messaging inputs.
 
 #### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-appprofile-audit"></a>
+
+##### `Audit`
+
+```csharp
+AuditSelection Audit { get; }
+```
+
+Gets the selected audit inputs.
 
 <a id="member-p-cephalon-abstractions-appmodel-appprofile-blueprintdescription"></a>
 
@@ -212,6 +237,36 @@ string BlueprintId { get; }
 
 Gets the selected blueprint identifier.
 
+<a id="member-p-cephalon-abstractions-appmodel-appprofile-data"></a>
+
+##### `Data`
+
+```csharp
+DataSelection Data { get; }
+```
+
+Gets the selected data inputs.
+
+<a id="member-p-cephalon-abstractions-appmodel-appprofile-identity"></a>
+
+##### `Identity`
+
+```csharp
+IdentitySelection Identity { get; }
+```
+
+Gets the selected identity and authorization inputs.
+
+<a id="member-p-cephalon-abstractions-appmodel-appprofile-messaging"></a>
+
+##### `Messaging`
+
+```csharp
+MessagingSelection Messaging { get; }
+```
+
+Gets the selected messaging inputs.
+
 <a id="member-p-cephalon-abstractions-appmodel-appprofile-patterns"></a>
 
 ##### `Patterns`
@@ -242,6 +297,16 @@ IReadOnlyList<TechnologyDescriptor> Technologies { get; }
 
 Gets the selected technology profiles.
 
+<a id="member-p-cephalon-abstractions-appmodel-appprofile-tenancy"></a>
+
+##### `Tenancy`
+
+```csharp
+TenancySelection Tenancy { get; }
+```
+
+Gets the selected multi-tenancy inputs.
+
 <a id="member-p-cephalon-abstractions-appmodel-appprofile-transports"></a>
 
 ##### `Transports`
@@ -251,6 +316,282 @@ IReadOnlyList<TransportDescriptor> Transports { get; }
 ```
 
 Gets the selected transports.
+
+<a id="type-cephalon-abstractions-appmodel-auditselection"></a>
+
+### `AuditSelection`
+
+Describes the active audit and history inputs resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class AuditSelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-auditselection-ctor-system-nullable-system-boolean"></a>
+
+##### `AuditSelection`
+
+```csharp
+AuditSelection(bool? enabled)
+```
+
+Initializes a new instance of the `AuditSelection` class.
+
+Parameters:
+- `enabled`: Whether audit support was explicitly enabled.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-auditselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+AuditSelection Empty { get; }
+```
+
+Gets an empty audit-selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-auditselection-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether audit support was explicitly enabled.
+
+<a id="member-p-cephalon-abstractions-appmodel-auditselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any audit-selection inputs were explicitly supplied.
+
+<a id="type-cephalon-abstractions-appmodel-dataselection"></a>
+
+### `DataSelection`
+
+Describes the active data-selection inputs resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class DataSelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-dataselection-ctor-system-string-system-nullable-system-boolean-system-nullable-system-boolean-system-string"></a>
+
+##### `DataSelection`
+
+```csharp
+DataSelection(string provider, bool? readWriteSplit, bool? outboxEnabled, string idGenerator)
+```
+
+Initializes a new instance of the `DataSelection` class.
+
+Parameters:
+- `provider`: The selected primary data-provider family or implementation identifier.
+- `readWriteSplit`: Whether distinct read and write paths were explicitly selected.
+- `outboxEnabled`: Whether the outbox pattern was explicitly enabled.
+- `idGenerator`: The selected identifier-generation strategy.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-dataselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+DataSelection Empty { get; }
+```
+
+Gets an empty data-selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-dataselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any data-selection inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-dataselection-idgenerator"></a>
+
+##### `IdGenerator`
+
+```csharp
+string IdGenerator { get; }
+```
+
+Gets the selected identifier-generation strategy.
+
+<a id="member-p-cephalon-abstractions-appmodel-dataselection-outboxenabled"></a>
+
+##### `OutboxEnabled`
+
+```csharp
+bool? OutboxEnabled { get; }
+```
+
+Gets a value indicating whether the outbox pattern was explicitly enabled.
+
+<a id="member-p-cephalon-abstractions-appmodel-dataselection-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; }
+```
+
+Gets the selected primary data-provider family or implementation identifier.
+
+<a id="member-p-cephalon-abstractions-appmodel-dataselection-readwritesplit"></a>
+
+##### `ReadWriteSplit`
+
+```csharp
+bool? ReadWriteSplit { get; }
+```
+
+Gets a value indicating whether distinct read and write paths were explicitly selected.
+
+<a id="type-cephalon-abstractions-appmodel-identityselection"></a>
+
+### `IdentitySelection`
+
+Describes the active identity and authorization inputs resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class IdentitySelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-identityselection-ctor-system-nullable-system-boolean-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `IdentitySelection`
+
+```csharp
+IdentitySelection(bool? enabled, IReadOnlyList<string> authorizationModes)
+```
+
+Initializes a new instance of the `IdentitySelection` class.
+
+Parameters:
+- `enabled`: Whether identity and authorization support was explicitly enabled.
+- `authorizationModes`: The selected authorization modes.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-identityselection-authorizationmodes"></a>
+
+##### `AuthorizationModes`
+
+```csharp
+IReadOnlyList<string> AuthorizationModes { get; }
+```
+
+Gets the selected authorization modes.
+
+<a id="member-p-cephalon-abstractions-appmodel-identityselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+IdentitySelection Empty { get; }
+```
+
+Gets an empty identity-selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-identityselection-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether identity and authorization support was explicitly enabled.
+
+<a id="member-p-cephalon-abstractions-appmodel-identityselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any identity-selection inputs were explicitly supplied.
+
+<a id="type-cephalon-abstractions-appmodel-messagingselection"></a>
+
+### `MessagingSelection`
+
+Describes the active messaging inputs resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class MessagingSelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-messagingselection-ctor-system-string"></a>
+
+##### `MessagingSelection`
+
+```csharp
+MessagingSelection(string provider)
+```
+
+Initializes a new instance of the `MessagingSelection` class.
+
+Parameters:
+- `provider`: The selected messaging provider or runtime adapter.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-messagingselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+MessagingSelection Empty { get; }
+```
+
+Gets an empty messaging-selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-messagingselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any messaging-selection inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-messagingselection-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; }
+```
+
+Gets the selected messaging provider or runtime adapter.
 
 <a id="type-cephalon-abstractions-appmodel-suiteblueprint"></a>
 
@@ -333,6 +674,75 @@ SuiteScaffoldPlan Scaffold { get; }
 ```
 
 Gets the suite-scaffold plan associated with the suite blueprint.
+
+<a id="type-cephalon-abstractions-appmodel-tenancyselection"></a>
+
+### `TenancySelection`
+
+Describes the active multi-tenancy inputs resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class TenancySelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-tenancyselection-ctor-system-nullable-system-boolean-system-string"></a>
+
+##### `TenancySelection`
+
+```csharp
+TenancySelection(bool? enabled, string mode)
+```
+
+Initializes a new instance of the `TenancySelection` class.
+
+Parameters:
+- `enabled`: Whether multi-tenancy was explicitly enabled.
+- `mode`: The selected tenancy mode.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-tenancyselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+TenancySelection Empty { get; }
+```
+
+Gets an empty tenancy-selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-tenancyselection-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether multi-tenancy was explicitly enabled.
+
+<a id="member-p-cephalon-abstractions-appmodel-tenancyselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any tenancy-selection inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-tenancyselection-mode"></a>
+
+##### `Mode`
+
+```csharp
+string Mode { get; }
+```
+
+Gets the selected tenancy mode.
 
 <a id="namespace-cephalon-abstractions-appmodel-scaffolding"></a>
 
@@ -996,6 +1406,1286 @@ string PathTemplate { get; }
 
 Gets the generated root-path template for the service.
 
+<a id="namespace-cephalon-abstractions-audit"></a>
+
+## Namespace Cephalon.Abstractions.Audit
+
+<a id="type-cephalon-abstractions-audit-auditactor"></a>
+
+### `AuditActor`
+
+Describes the actor responsible for one audited operation.
+
+#### Declaration
+```csharp
+public sealed class AuditActor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-audit-auditactor-ctor-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `AuditActor`
+
+```csharp
+AuditActor(string actorId, string displayName, string actorType, bool isSystem, IReadOnlyDictionary<string, string> attributes)
+```
+
+Creates a new audit actor.
+
+Parameters:
+- `actorId`: The stable actor identifier.
+- `displayName`: The human-readable actor name when one is known.
+- `actorType`: The logical actor type such as `user`, `service`, or `system`.
+- `isSystem`: Whether the actor represents system-owned automation.
+- `attributes`: Optional actor attributes.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-audit-auditactor-actorid"></a>
+
+##### `ActorId`
+
+```csharp
+string ActorId { get; }
+```
+
+Gets the stable actor identifier.
+
+<a id="member-p-cephalon-abstractions-audit-auditactor-actortype"></a>
+
+##### `ActorType`
+
+```csharp
+string ActorType { get; }
+```
+
+Gets the logical actor type when one is known.
+
+<a id="member-p-cephalon-abstractions-audit-auditactor-attributes"></a>
+
+##### `Attributes`
+
+```csharp
+IReadOnlyDictionary<string, string> Attributes { get; }
+```
+
+Gets the actor attributes.
+
+<a id="member-p-cephalon-abstractions-audit-auditactor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the human-readable actor name when one is known.
+
+<a id="member-p-cephalon-abstractions-audit-auditactor-issystem"></a>
+
+##### `IsSystem`
+
+```csharp
+bool IsSystem { get; }
+```
+
+Gets a value indicating whether the actor represents system-owned automation.
+
+<a id="type-cephalon-abstractions-audit-auditchange"></a>
+
+### `AuditChange`
+
+Describes one field-level change captured by an audit entry.
+
+#### Declaration
+```csharp
+public sealed class AuditChange
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-audit-auditchange-ctor-system-string-system-string-system-string"></a>
+
+##### `AuditChange`
+
+```csharp
+AuditChange(string fieldName, string oldValue, string newValue)
+```
+
+Creates a new audit change.
+
+Parameters:
+- `fieldName`: The logical field or property name that changed.
+- `oldValue`: The previous serialized value when one is known.
+- `newValue`: The new serialized value when one is known.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-audit-auditchange-fieldname"></a>
+
+##### `FieldName`
+
+```csharp
+string FieldName { get; }
+```
+
+Gets the logical field or property name that changed.
+
+<a id="member-p-cephalon-abstractions-audit-auditchange-newvalue"></a>
+
+##### `NewValue`
+
+```csharp
+string NewValue { get; }
+```
+
+Gets the new serialized value when one is known.
+
+<a id="member-p-cephalon-abstractions-audit-auditchange-oldvalue"></a>
+
+##### `OldValue`
+
+```csharp
+string OldValue { get; }
+```
+
+Gets the previous serialized value when one is known.
+
+<a id="type-cephalon-abstractions-audit-auditentry"></a>
+
+### `AuditEntry`
+
+Describes one auditable operation recorded by the active audit implementation.
+
+#### Declaration
+```csharp
+public sealed class AuditEntry
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-audit-auditentry-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-cephalon-abstractions-audit-auditactor-cephalon-abstractions-audit-auditoutcome-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-audit-auditchange-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `AuditEntry`
+
+```csharp
+AuditEntry(string id, string category, string action, string summary, string subjectType, string subjectId, DateTimeOffset occurredAtUtc, AuditActor actor, AuditOutcome outcome, string tenantId, string correlationId, IReadOnlyList<AuditChange> changes, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new audit entry.
+
+Parameters:
+- `id`: The stable audit-entry identifier.
+- `category`: The logical audit category such as `identity`, `tenant`, or `billing`.
+- `action`: The logical action identifier associated with the audit event.
+- `summary`: The human-readable audit summary.
+- `subjectType`: The logical subject type associated with the entry.
+- `subjectId`: The stable subject identifier associated with the entry when one is known.
+- `occurredAtUtc`: The time at which the audited operation occurred.
+- `actor`: The actor responsible for the audited operation.
+- `outcome`: The outcome recorded for the audited operation.
+- `tenantId`: The tenant identifier associated with the audited operation.
+- `correlationId`: The correlation identifier associated with the audited operation.
+- `changes`: Optional field-level changes captured for the operation.
+- `tags`: Optional descriptive tags associated with the entry.
+- `metadata`: Optional audit metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-audit-auditentry-action"></a>
+
+##### `Action`
+
+```csharp
+string Action { get; }
+```
+
+Gets the logical action identifier associated with the audit event.
+
+<a id="member-p-cephalon-abstractions-audit-auditentry-actor"></a>
+
+##### `Actor`
+
+```csharp
+AuditActor Actor { get; }
+```
+
+Gets the actor responsible for the audited operation.
+
+<a id="member-p-cephalon-abstractions-audit-auditentry-category"></a>
+
+##### `Category`
+
+```csharp
+string Category { get; }
+```
+
+Gets the logical audit category.
+
+<a id="member-p-cephalon-abstractions-audit-auditentry-changes"></a>
+
+##### `Changes`
+
+```csharp
+IReadOnlyList<AuditChange> Changes { get; }
+```
+
+Gets the field-level changes captured for the operation.
+
+<a id="member-p-cephalon-abstractions-audit-auditentry-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the correlation identifier associated with the audited operation.
+
+<a id="member-p-cephalon-abstractions-audit-auditentry-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable audit-entry identifier.
+
+<a id="member-p-cephalon-abstractions-audit-auditentry-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets audit metadata associated with the entry.
+
+<a id="member-p-cephalon-abstractions-audit-auditentry-occurredatutc"></a>
+
+##### `OccurredAtUtc`
+
+```csharp
+DateTimeOffset OccurredAtUtc { get; }
+```
+
+Gets the time at which the audited operation occurred.
+
+<a id="member-p-cephalon-abstractions-audit-auditentry-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+AuditOutcome Outcome { get; }
+```
+
+Gets the outcome recorded for the audited operation.
+
+<a id="member-p-cephalon-abstractions-audit-auditentry-subjectid"></a>
+
+##### `SubjectId`
+
+```csharp
+string SubjectId { get; }
+```
+
+Gets the stable subject identifier associated with the entry when one is known.
+
+<a id="member-p-cephalon-abstractions-audit-auditentry-subjecttype"></a>
+
+##### `SubjectType`
+
+```csharp
+string SubjectType { get; }
+```
+
+Gets the logical subject type associated with the entry.
+
+<a id="member-p-cephalon-abstractions-audit-auditentry-summary"></a>
+
+##### `Summary`
+
+```csharp
+string Summary { get; }
+```
+
+Gets the human-readable audit summary.
+
+<a id="member-p-cephalon-abstractions-audit-auditentry-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets descriptive tags associated with the entry.
+
+<a id="member-p-cephalon-abstractions-audit-auditentry-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier associated with the audited operation.
+
+<a id="type-cephalon-abstractions-audit-auditoutcome"></a>
+
+### `AuditOutcome`
+
+Identifies the outcome recorded for an audit entry.
+
+#### Declaration
+```csharp
+public enum AuditOutcome
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-audit-auditoutcome-failed"></a>
+
+##### `Failed`
+
+```csharp
+const AuditOutcome Failed
+```
+
+Indicates the operation failed.
+
+<a id="member-f-cephalon-abstractions-audit-auditoutcome-succeeded"></a>
+
+##### `Succeeded`
+
+```csharp
+const AuditOutcome Succeeded
+```
+
+Indicates the operation completed successfully.
+
+<a id="member-f-cephalon-abstractions-audit-auditoutcome-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const AuditOutcome Unknown
+```
+
+Indicates the operation outcome was not explicitly classified.
+
+<a id="type-cephalon-abstractions-audit-auditstoredescriptor"></a>
+
+### `AuditStoreDescriptor`
+
+Describes one audit store surface contributed to the active runtime.
+
+#### Declaration
+```csharp
+public sealed class AuditStoreDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-audit-auditstoredescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `AuditStoreDescriptor`
+
+```csharp
+AuditStoreDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string mode, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new audit-store descriptor.
+
+Parameters:
+- `id`: The stable audit-store identifier.
+- `displayName`: The operator-facing audit-store name.
+- `description`: The human-readable audit-store description.
+- `sourceModuleId`: The module identifier that owns the audit-store surface.
+- `provider`: The logical provider identifier that backs the audit-store surface.
+- `mode`: The audit-store mode such as `volatile-buffer` or `transactional-table`.
+- `tags`: Optional descriptive tags associated with the audit store.
+- `metadata`: Optional operator-facing metadata associated with the audit store.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-audit-auditstoredescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable audit-store description.
+
+<a id="member-p-cephalon-abstractions-audit-auditstoredescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing audit-store name.
+
+<a id="member-p-cephalon-abstractions-audit-auditstoredescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable audit-store identifier.
+
+<a id="member-p-cephalon-abstractions-audit-auditstoredescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata associated with the audit store.
+
+<a id="member-p-cephalon-abstractions-audit-auditstoredescriptor-mode"></a>
+
+##### `Mode`
+
+```csharp
+string Mode { get; }
+```
+
+Gets the audit-store mode.
+
+<a id="member-p-cephalon-abstractions-audit-auditstoredescriptor-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; }
+```
+
+Gets the logical provider identifier that backs the audit-store surface.
+
+<a id="member-p-cephalon-abstractions-audit-auditstoredescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the identifier of the module that owns the audit-store surface.
+
+<a id="member-p-cephalon-abstractions-audit-auditstoredescriptor-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets descriptive tags associated with the audit store.
+
+<a id="type-cephalon-abstractions-audit-iauditstorecatalog"></a>
+
+### `IAuditStoreCatalog`
+
+Exposes the audit-store surfaces visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IAuditStoreCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-audit-iauditstorecatalog-auditstores"></a>
+
+##### `AuditStores`
+
+```csharp
+IReadOnlyList<AuditStoreDescriptor> AuditStores { get; }
+```
+
+Gets all audit-store surfaces visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-audit-iauditstorecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+AuditStoreDescriptor GetById(string auditStoreId)
+```
+
+Gets one audit store by its stable identifier.
+
+Returns: The matching audit store, or `null` when it is not active.
+
+Parameters:
+- `auditStoreId`: The audit-store identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-audit-iauditstorecatalog-getbyprovider-system-string"></a>
+
+##### `GetByProvider`
+
+```csharp
+IReadOnlyList<AuditStoreDescriptor> GetByProvider(string provider)
+```
+
+Gets all audit stores backed by the requested provider identifier.
+
+Returns: The matching audit stores, or an empty list when the provider contributes none.
+
+Parameters:
+- `provider`: The provider identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-audit-iauditstorecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<AuditStoreDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all audit stores contributed by the requested module.
+
+Returns: The matching audit stores, or an empty list when the module contributed none.
+
+Parameters:
+- `sourceModuleId`: The source module identifier to filter by.
+
+<a id="type-cephalon-abstractions-audit-iauditstorecontributor"></a>
+
+### `IAuditStoreContributor`
+
+Contributes one or more audit-store descriptors to the active runtime.
+
+#### Declaration
+```csharp
+public interface IAuditStoreContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-audit-iauditstorecontributor-registerauditstores-cephalon-abstractions-audit-iauditstoreregistry"></a>
+
+##### `RegisterAuditStores`
+
+```csharp
+void RegisterAuditStores(IAuditStoreRegistry auditStores)
+```
+
+Registers one or more audit-store descriptors with the supplied registry.
+
+Parameters:
+- `auditStores`: The registry that collects contributed audit-store descriptors.
+
+<a id="type-cephalon-abstractions-audit-iauditstoreregistry"></a>
+
+### `IAuditStoreRegistry`
+
+Receives audit-store descriptors contributed by active modules or packages.
+
+#### Declaration
+```csharp
+public interface IAuditStoreRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-audit-iauditstoreregistry-add-cephalon-abstractions-audit-auditstoredescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(AuditStoreDescriptor auditStore)
+```
+
+Adds an audit store to the current runtime composition.
+
+Parameters:
+- `auditStore`: The audit-store descriptor to register.
+
+<a id="type-cephalon-abstractions-audit-iauditwriter"></a>
+
+### `IAuditWriter`
+
+Persists audit entries for the current runtime.
+
+#### Declaration
+```csharp
+public interface IAuditWriter
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-audit-iauditwriter-writeasync-cephalon-abstractions-audit-auditentry-system-threading-cancellationtoken"></a>
+
+##### `WriteAsync`
+
+```csharp
+ValueTask WriteAsync(AuditEntry entry, CancellationToken cancellationToken)
+```
+
+Writes one audit entry.
+
+Returns: A task that completes when the audit entry has been written.
+
+Parameters:
+- `entry`: The audit entry to write.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="namespace-cephalon-abstractions-authorization"></a>
+
+## Namespace Cephalon.Abstractions.Authorization
+
+<a id="type-cephalon-abstractions-authorization-authorizationcontext"></a>
+
+### `AuthorizationContext`
+
+Describes the operation-specific context supplied to an authorization evaluation.
+
+#### Declaration
+```csharp
+public sealed class AuthorizationContext
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-authorization-authorizationcontext-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `AuthorizationContext`
+
+```csharp
+AuthorizationContext(string action, string policyId, string tenantId, string correlationId, IReadOnlyDictionary<string, string> attributes)
+```
+
+Creates a new authorization context.
+
+Parameters:
+- `action`: The action being requested, such as `read`, `write`, or `approve`.
+- `policyId`: The explicit policy identifier requested by the caller when one is known.
+- `tenantId`: The tenant identifier associated with the current operation.
+- `correlationId`: The correlation identifier associated with the current operation.
+- `attributes`: Optional operation-specific attributes.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationcontext-action"></a>
+
+##### `Action`
+
+```csharp
+string Action { get; }
+```
+
+Gets the action being requested.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationcontext-attributes"></a>
+
+##### `Attributes`
+
+```csharp
+IReadOnlyDictionary<string, string> Attributes { get; }
+```
+
+Gets the operation-specific attributes.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationcontext-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the correlation identifier associated with the current operation.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationcontext-policyid"></a>
+
+##### `PolicyId`
+
+```csharp
+string PolicyId { get; }
+```
+
+Gets the explicit policy identifier requested by the caller when one is known.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationcontext-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier associated with the current operation.
+
+<a id="type-cephalon-abstractions-authorization-authorizationdecision"></a>
+
+### `AuthorizationDecision`
+
+Describes the outcome of one authorization evaluation.
+
+#### Declaration
+```csharp
+public sealed class AuthorizationDecision
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-authorization-authorizationdecision-ctor-system-boolean-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-authorization-authorizationmode-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `AuthorizationDecision`
+
+```csharp
+AuthorizationDecision(bool isAllowed, string policyId, string reason, IReadOnlyList<AuthorizationMode> modes, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new authorization decision.
+
+Parameters:
+- `isAllowed`: Whether access was allowed.
+- `policyId`: The policy identifier that produced the decision when one is known.
+- `reason`: The human-readable reason associated with the decision.
+- `modes`: The authorization modes that participated in the decision.
+- `metadata`: Optional decision metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationdecision-isallowed"></a>
+
+##### `IsAllowed`
+
+```csharp
+bool IsAllowed { get; }
+```
+
+Gets a value indicating whether access was allowed.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationdecision-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional decision metadata.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationdecision-modes"></a>
+
+##### `Modes`
+
+```csharp
+IReadOnlyList<AuthorizationMode> Modes { get; }
+```
+
+Gets the authorization modes that participated in the decision.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationdecision-policyid"></a>
+
+##### `PolicyId`
+
+```csharp
+string PolicyId { get; }
+```
+
+Gets the policy identifier that produced the decision when one is known.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationdecision-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the human-readable reason associated with the decision.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-authorization-authorizationdecision-allow-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-authorization-authorizationmode-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `Allow`
+
+```csharp
+AuthorizationDecision Allow(string policyId, string reason, IReadOnlyList<AuthorizationMode> modes, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates an allowed authorization decision.
+
+Returns: An allowed authorization decision.
+
+Parameters:
+- `policyId`: The policy identifier that produced the decision when one is known.
+- `reason`: The human-readable reason associated with the decision.
+- `modes`: The authorization modes that participated in the decision.
+- `metadata`: Optional decision metadata.
+
+<a id="member-m-cephalon-abstractions-authorization-authorizationdecision-deny-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-authorization-authorizationmode-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `Deny`
+
+```csharp
+AuthorizationDecision Deny(string policyId, string reason, IReadOnlyList<AuthorizationMode> modes, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a denied authorization decision.
+
+Returns: A denied authorization decision.
+
+Parameters:
+- `policyId`: The policy identifier that produced the decision when one is known.
+- `reason`: The human-readable reason associated with the decision.
+- `modes`: The authorization modes that participated in the decision.
+- `metadata`: Optional decision metadata.
+
+<a id="type-cephalon-abstractions-authorization-authorizationmode"></a>
+
+### `AuthorizationMode`
+
+Identifies one authorization approach active inside a policy evaluation.
+
+#### Declaration
+```csharp
+public enum AuthorizationMode
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-authorization-authorizationmode-abac"></a>
+
+##### `Abac`
+
+```csharp
+const AuthorizationMode Abac
+```
+
+Indicates an attribute-based access-control evaluation.
+
+<a id="member-f-cephalon-abstractions-authorization-authorizationmode-policy"></a>
+
+##### `Policy`
+
+```csharp
+const AuthorizationMode Policy
+```
+
+Indicates a policy-driven authorization evaluation.
+
+<a id="member-f-cephalon-abstractions-authorization-authorizationmode-rbac"></a>
+
+##### `Rbac`
+
+```csharp
+const AuthorizationMode Rbac
+```
+
+Indicates a role-based access-control evaluation.
+
+<a id="type-cephalon-abstractions-authorization-authorizationpolicydescriptor"></a>
+
+### `AuthorizationPolicyDescriptor`
+
+Describes one authorization policy surface contributed to the active runtime.
+
+#### Declaration
+```csharp
+public sealed class AuthorizationPolicyDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-authorization-authorizationpolicydescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-authorization-authorizationmode-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `AuthorizationPolicyDescriptor`
+
+```csharp
+AuthorizationPolicyDescriptor(string id, string displayName, string description, IReadOnlyList<AuthorizationMode> modes, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new authorization policy descriptor.
+
+Parameters:
+- `id`: The stable authorization-policy identifier.
+- `displayName`: The operator-facing authorization-policy name.
+- `description`: The human-readable authorization-policy description.
+- `modes`: The authorization modes supported by the policy.
+- `tags`: Optional descriptive tags associated with the policy.
+- `metadata`: Optional operator-facing metadata associated with the policy.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationpolicydescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable authorization-policy description.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationpolicydescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing authorization-policy name.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationpolicydescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable authorization-policy identifier.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationpolicydescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata associated with the policy.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationpolicydescriptor-modes"></a>
+
+##### `Modes`
+
+```csharp
+IReadOnlyList<AuthorizationMode> Modes { get; }
+```
+
+Gets the authorization modes supported by the policy.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationpolicydescriptor-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets descriptive tags associated with the policy.
+
+<a id="type-cephalon-abstractions-authorization-authorizationresource"></a>
+
+### `AuthorizationResource`
+
+Describes the protected resource being evaluated by an authorization policy.
+
+#### Declaration
+```csharp
+public sealed class AuthorizationResource
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-authorization-authorizationresource-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `AuthorizationResource`
+
+```csharp
+AuthorizationResource(string resourceType, string resourceId, string tenantId, string ownerSubjectId, IReadOnlyDictionary<string, string> attributes)
+```
+
+Creates a new authorization resource.
+
+Parameters:
+- `resourceType`: The logical resource type identifier.
+- `resourceId`: The stable resource identifier when one is known.
+- `tenantId`: The tenant identifier associated with the resource.
+- `ownerSubjectId`: The owning subject identifier when one is known.
+- `attributes`: Optional attributes associated with the resource.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationresource-attributes"></a>
+
+##### `Attributes`
+
+```csharp
+IReadOnlyDictionary<string, string> Attributes { get; }
+```
+
+Gets the attributes associated with the resource.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationresource-ownersubjectid"></a>
+
+##### `OwnerSubjectId`
+
+```csharp
+string OwnerSubjectId { get; }
+```
+
+Gets the owning subject identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationresource-resourceid"></a>
+
+##### `ResourceId`
+
+```csharp
+string ResourceId { get; }
+```
+
+Gets the stable resource identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationresource-resourcetype"></a>
+
+##### `ResourceType`
+
+```csharp
+string ResourceType { get; }
+```
+
+Gets the logical resource type identifier.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationresource-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier associated with the resource.
+
+<a id="type-cephalon-abstractions-authorization-authorizationsubject"></a>
+
+### `AuthorizationSubject`
+
+Describes the caller or actor being evaluated by an authorization policy.
+
+#### Declaration
+```csharp
+public sealed class AuthorizationSubject
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-authorization-authorizationsubject-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `AuthorizationSubject`
+
+```csharp
+AuthorizationSubject(string subjectId, string displayName, IReadOnlyList<string> roles, IReadOnlyList<string> tenantIds, IReadOnlyDictionary<string, string> attributes)
+```
+
+Creates a new authorization subject.
+
+Parameters:
+- `subjectId`: The stable subject identifier.
+- `displayName`: The human-readable subject name when one is known.
+- `roles`: Optional roles assigned to the subject.
+- `tenantIds`: Optional tenant identifiers associated with the subject.
+- `attributes`: Optional attributes associated with the subject.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationsubject-attributes"></a>
+
+##### `Attributes`
+
+```csharp
+IReadOnlyDictionary<string, string> Attributes { get; }
+```
+
+Gets the attributes associated with the subject.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationsubject-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the human-readable subject name when one is known.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationsubject-roles"></a>
+
+##### `Roles`
+
+```csharp
+IReadOnlyList<string> Roles { get; }
+```
+
+Gets the roles assigned to the subject.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationsubject-subjectid"></a>
+
+##### `SubjectId`
+
+```csharp
+string SubjectId { get; }
+```
+
+Gets the stable subject identifier.
+
+<a id="member-p-cephalon-abstractions-authorization-authorizationsubject-tenantids"></a>
+
+##### `TenantIds`
+
+```csharp
+IReadOnlyList<string> TenantIds { get; }
+```
+
+Gets the tenant identifiers associated with the subject.
+
+<a id="type-cephalon-abstractions-authorization-iauthorizationevaluator"></a>
+
+### `IAuthorizationEvaluator`
+
+Evaluates access decisions for the current authorization runtime.
+
+#### Declaration
+```csharp
+public interface IAuthorizationEvaluator
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-authorization-iauthorizationevaluator-evaluateasync-cephalon-abstractions-authorization-authorizationsubject-cephalon-abstractions-authorization-authorizationresource-cephalon-abstractions-authorization-authorizationcontext-system-threading-cancellationtoken"></a>
+
+##### `EvaluateAsync`
+
+```csharp
+ValueTask<AuthorizationDecision> EvaluateAsync(AuthorizationSubject subject, AuthorizationResource resource, AuthorizationContext context, CancellationToken cancellationToken)
+```
+
+Evaluates one authorization request.
+
+Returns: A task that completes with the resulting authorization decision.
+
+Parameters:
+- `subject`: The subject requesting access.
+- `resource`: The protected resource being accessed.
+- `context`: The operation-specific authorization context.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-abstractions-authorization-iauthorizationpolicycatalog"></a>
+
+### `IAuthorizationPolicyCatalog`
+
+Exposes the authorization policies visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IAuthorizationPolicyCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-authorization-iauthorizationpolicycatalog-policies"></a>
+
+##### `Policies`
+
+```csharp
+IReadOnlyList<AuthorizationPolicyDescriptor> Policies { get; }
+```
+
+Gets all authorization policies visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-authorization-iauthorizationpolicycatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+AuthorizationPolicyDescriptor GetById(string policyId)
+```
+
+Gets one authorization policy by its stable identifier.
+
+Returns: The matching policy, or `null` when it is not active.
+
+Parameters:
+- `policyId`: The authorization-policy identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-authorization-iauthorizationpolicycatalog-getbymode-cephalon-abstractions-authorization-authorizationmode"></a>
+
+##### `GetByMode`
+
+```csharp
+IReadOnlyList<AuthorizationPolicyDescriptor> GetByMode(AuthorizationMode mode)
+```
+
+Gets all authorization policies that support the requested mode.
+
+Returns: The matching policies, or an empty list when none support the requested mode.
+
+Parameters:
+- `mode`: The authorization mode to filter by.
+
+<a id="type-cephalon-abstractions-authorization-iauthorizationpolicycontributor"></a>
+
+### `IAuthorizationPolicyContributor`
+
+Contributes one or more authorization-policy descriptors to the active runtime.
+
+#### Declaration
+```csharp
+public interface IAuthorizationPolicyContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-authorization-iauthorizationpolicycontributor-registerpolicies-cephalon-abstractions-authorization-iauthorizationpolicyregistry"></a>
+
+##### `RegisterPolicies`
+
+```csharp
+void RegisterPolicies(IAuthorizationPolicyRegistry policies)
+```
+
+Registers one or more authorization-policy descriptors with the supplied registry.
+
+Parameters:
+- `policies`: The registry that collects contributed authorization-policy descriptors.
+
+<a id="type-cephalon-abstractions-authorization-iauthorizationpolicyregistry"></a>
+
+### `IAuthorizationPolicyRegistry`
+
+Receives authorization-policy descriptors contributed by active modules or packages.
+
+#### Declaration
+```csharp
+public interface IAuthorizationPolicyRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-authorization-iauthorizationpolicyregistry-add-cephalon-abstractions-authorization-authorizationpolicydescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(AuthorizationPolicyDescriptor policy)
+```
+
+Adds an authorization policy to the current runtime composition.
+
+Parameters:
+- `policy`: The authorization-policy descriptor to register.
+
 <a id="namespace-cephalon-abstractions-capabilities"></a>
 
 ## Namespace Cephalon.Abstractions.Capabilities
@@ -1139,6 +2829,1361 @@ Adds a capability to the registry.
 
 Parameters:
 - `capability`: The capability to register.
+
+<a id="namespace-cephalon-abstractions-data"></a>
+
+## Namespace Cephalon.Abstractions.Data
+
+<a id="type-cephalon-abstractions-data-icommand"></a>
+
+### `ICommand`
+
+Marks a request that should execute on the write side of a Cephalon application.
+
+#### Declaration
+```csharp
+public interface ICommand
+```
+
+<a id="type-cephalon-abstractions-data-icommandhandler-tcommand"></a>
+
+### `ICommandHandler<TCommand>`
+
+Handles a write-side request that does not return a result value.
+
+#### Declaration
+```csharp
+public interface ICommandHandler<TCommand>
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-icommandhandler-1-handleasync-0-system-threading-cancellationtoken"></a>
+
+##### `HandleAsync`
+
+```csharp
+ValueTask HandleAsync(TCommand command, CancellationToken cancellationToken)
+```
+
+Handles the supplied command.
+
+Returns: A task that completes when the command has finished running.
+
+Parameters:
+- `command`: The command to execute.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-abstractions-data-icommandhandler-tcommand-tresult"></a>
+
+### `ICommandHandler<TCommand, TResult>`
+
+Handles a write-side request that returns a result value.
+
+#### Declaration
+```csharp
+public interface ICommandHandler<TCommand, TResult>
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-icommandhandler-2-handleasync-0-system-threading-cancellationtoken"></a>
+
+##### `HandleAsync`
+
+```csharp
+ValueTask<TResult> HandleAsync(TCommand command, CancellationToken cancellationToken)
+```
+
+Handles the supplied command.
+
+Returns: A task that completes with the result produced by the command.
+
+Parameters:
+- `command`: The command to execute.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-abstractions-data-icommand-tresult"></a>
+
+### `ICommand<TResult>`
+
+Marks a write-side request that returns a value when it completes.
+
+#### Declaration
+```csharp
+public interface ICommand<TResult>
+```
+
+<a id="type-cephalon-abstractions-data-iinbox"></a>
+
+### `IInbox`
+
+Tracks inbound messages so consumer pipelines can enforce idempotent handling.
+
+#### Declaration
+```csharp
+public interface IInbox
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-iinbox-hasprocessedasync-system-string-system-threading-cancellationtoken"></a>
+
+##### `HasProcessedAsync`
+
+```csharp
+ValueTask<bool> HasProcessedAsync(string messageId, CancellationToken cancellationToken)
+```
+
+Determines whether the requested message identifier has already been recorded as processed.
+
+Returns: `true` when the message has already been processed; otherwise, `false`.
+
+Parameters:
+- `messageId`: The stable inbound message identifier.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="member-m-cephalon-abstractions-data-iinbox-markprocessedasync-cephalon-abstractions-data-inboxmessage-system-threading-cancellationtoken"></a>
+
+##### `MarkProcessedAsync`
+
+```csharp
+ValueTask MarkProcessedAsync(InboxMessage message, CancellationToken cancellationToken)
+```
+
+Records one inbound message as processed.
+
+Returns: A task that completes when the inbox has persisted the processed-message record.
+
+Parameters:
+- `message`: The inbound message that completed processing.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-abstractions-data-iinboxcatalog"></a>
+
+### `IInboxCatalog`
+
+Exposes the inbox surfaces visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IInboxCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-iinboxcatalog-inboxes"></a>
+
+##### `Inboxes`
+
+```csharp
+IReadOnlyList<InboxDescriptor> Inboxes { get; }
+```
+
+Gets all inbox surfaces visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-iinboxcatalog-getbychannelid-system-string"></a>
+
+##### `GetByChannelId`
+
+```csharp
+IReadOnlyList<InboxDescriptor> GetByChannelId(string channelId)
+```
+
+Gets all inboxes that explicitly declare the requested channel identifier.
+
+Returns: The matching inboxes, or an empty list when no inbox declares that channel.
+
+Parameters:
+- `channelId`: The channel identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-iinboxcatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+InboxDescriptor GetById(string inboxId)
+```
+
+Gets one inbox by its stable identifier.
+
+Returns: The matching inbox, or `null` when it is not active.
+
+Parameters:
+- `inboxId`: The inbox identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-iinboxcatalog-getbyprovider-system-string"></a>
+
+##### `GetByProvider`
+
+```csharp
+IReadOnlyList<InboxDescriptor> GetByProvider(string provider)
+```
+
+Gets all inboxes backed by the requested provider identifier.
+
+Returns: The matching inboxes, or an empty list when the provider contributes none.
+
+Parameters:
+- `provider`: The provider identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-iinboxcatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<InboxDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all inboxes contributed by the requested module.
+
+Returns: The matching inboxes, or an empty list when the module contributed none.
+
+Parameters:
+- `sourceModuleId`: The source module identifier to filter by.
+
+<a id="type-cephalon-abstractions-data-iinboxcontributor"></a>
+
+### `IInboxContributor`
+
+Contributes one or more inbox descriptors to the active runtime.
+
+#### Declaration
+```csharp
+public interface IInboxContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-iinboxcontributor-registerinboxes-cephalon-abstractions-data-iinboxregistry"></a>
+
+##### `RegisterInboxes`
+
+```csharp
+void RegisterInboxes(IInboxRegistry inboxes)
+```
+
+Registers one or more inbox descriptors with the supplied registry.
+
+Parameters:
+- `inboxes`: The registry that collects contributed inbox descriptors.
+
+<a id="type-cephalon-abstractions-data-iinboxregistry"></a>
+
+### `IInboxRegistry`
+
+Receives inbox descriptors contributed by active modules or packages.
+
+#### Declaration
+```csharp
+public interface IInboxRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-iinboxregistry-add-cephalon-abstractions-data-inboxdescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(InboxDescriptor inbox)
+```
+
+Adds an inbox to the current runtime composition.
+
+Parameters:
+- `inbox`: The inbox descriptor to register.
+
+<a id="type-cephalon-abstractions-data-inboxdescriptor"></a>
+
+### `InboxDescriptor`
+
+Describes one inbox surface contributed to the active runtime.
+
+#### Declaration
+```csharp
+public sealed class InboxDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-inboxdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `InboxDescriptor`
+
+```csharp
+InboxDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string mode, IReadOnlyList<string> channelIds, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new inbox descriptor.
+
+Parameters:
+- `id`: The stable inbox identifier.
+- `displayName`: The operator-facing inbox name.
+- `description`: The human-readable inbox description.
+- `sourceModuleId`: The module identifier that owns the inbox surface.
+- `provider`: The logical provider identifier that backs the inbox.
+- `mode`: The inbox mode such as `processed-message-table` or `durable-log`.
+- `channelIds`: Optional channel identifiers that this inbox is explicitly scoped to.
+- `tags`: Optional descriptive tags associated with the inbox.
+- `metadata`: Optional operator-facing metadata associated with the inbox.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-inboxdescriptor-channelids"></a>
+
+##### `ChannelIds`
+
+```csharp
+IReadOnlyList<string> ChannelIds { get; }
+```
+
+Gets the optional channel identifiers that this inbox is explicitly scoped to.
+
+<a id="member-p-cephalon-abstractions-data-inboxdescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable inbox description.
+
+<a id="member-p-cephalon-abstractions-data-inboxdescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing inbox name.
+
+<a id="member-p-cephalon-abstractions-data-inboxdescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable inbox identifier.
+
+<a id="member-p-cephalon-abstractions-data-inboxdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata associated with the inbox.
+
+<a id="member-p-cephalon-abstractions-data-inboxdescriptor-mode"></a>
+
+##### `Mode`
+
+```csharp
+string Mode { get; }
+```
+
+Gets the inbox mode.
+
+<a id="member-p-cephalon-abstractions-data-inboxdescriptor-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; }
+```
+
+Gets the logical provider identifier that backs the inbox.
+
+<a id="member-p-cephalon-abstractions-data-inboxdescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the identifier of the module that owns the inbox surface.
+
+<a id="member-p-cephalon-abstractions-data-inboxdescriptor-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets descriptive tags associated with the inbox.
+
+<a id="type-cephalon-abstractions-data-inboxmessage"></a>
+
+### `InboxMessage`
+
+Describes one inbound message tracked by an inbox implementation for idempotency or replay control.
+
+#### Declaration
+```csharp
+public sealed class InboxMessage
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-inboxmessage-ctor-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `InboxMessage`
+
+```csharp
+InboxMessage(string id, string channelId, string messageType, string payload, DateTimeOffset receivedAtUtc, string contentType, string correlationId, string tenantId, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new inbox message.
+
+Parameters:
+- `id`: The stable inbound message identifier.
+- `channelId`: The logical channel or source identifier.
+- `messageType`: The logical message type identifier.
+- `payload`: The serialized payload that was received.
+- `receivedAtUtc`: The time at which the message was received.
+- `contentType`: The payload content type when one is known.
+- `correlationId`: The correlation identifier associated with the message.
+- `tenantId`: The tenant identifier associated with the message.
+- `headers`: Optional message headers.
+- `metadata`: Optional message metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-inboxmessage-channelid"></a>
+
+##### `ChannelId`
+
+```csharp
+string ChannelId { get; }
+```
+
+Gets the logical channel or source identifier.
+
+<a id="member-p-cephalon-abstractions-data-inboxmessage-contenttype"></a>
+
+##### `ContentType`
+
+```csharp
+string ContentType { get; }
+```
+
+Gets the payload content type when one is known.
+
+<a id="member-p-cephalon-abstractions-data-inboxmessage-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the correlation identifier associated with the message.
+
+<a id="member-p-cephalon-abstractions-data-inboxmessage-headers"></a>
+
+##### `Headers`
+
+```csharp
+IReadOnlyDictionary<string, string> Headers { get; }
+```
+
+Gets message headers associated with the message.
+
+<a id="member-p-cephalon-abstractions-data-inboxmessage-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable inbound message identifier.
+
+<a id="member-p-cephalon-abstractions-data-inboxmessage-messagetype"></a>
+
+##### `MessageType`
+
+```csharp
+string MessageType { get; }
+```
+
+Gets the logical message type identifier.
+
+<a id="member-p-cephalon-abstractions-data-inboxmessage-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets message metadata associated with the message.
+
+<a id="member-p-cephalon-abstractions-data-inboxmessage-payload"></a>
+
+##### `Payload`
+
+```csharp
+string Payload { get; }
+```
+
+Gets the serialized payload that was received.
+
+<a id="member-p-cephalon-abstractions-data-inboxmessage-receivedatutc"></a>
+
+##### `ReceivedAtUtc`
+
+```csharp
+DateTimeOffset ReceivedAtUtc { get; }
+```
+
+Gets the time at which the message was received.
+
+<a id="member-p-cephalon-abstractions-data-inboxmessage-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier associated with the message.
+
+<a id="type-cephalon-abstractions-data-ioutbox"></a>
+
+### `IOutbox`
+
+Stages messages for durable delivery after the current write-side operation completes.
+
+#### Declaration
+```csharp
+public interface IOutbox
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-ioutbox-enqueueasync-cephalon-abstractions-data-outboxmessage-system-threading-cancellationtoken"></a>
+
+##### `EnqueueAsync`
+
+```csharp
+ValueTask EnqueueAsync(OutboxMessage message, CancellationToken cancellationToken)
+```
+
+Enqueues one message for later delivery.
+
+Returns: A task that completes when the message has been persisted to the outbox.
+
+Parameters:
+- `message`: The message to stage for later delivery.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-abstractions-data-ioutboxcatalog"></a>
+
+### `IOutboxCatalog`
+
+Exposes the outbox surfaces visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IOutboxCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-ioutboxcatalog-outboxes"></a>
+
+##### `Outboxes`
+
+```csharp
+IReadOnlyList<OutboxDescriptor> Outboxes { get; }
+```
+
+Gets all outbox surfaces visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-ioutboxcatalog-getbychannelid-system-string"></a>
+
+##### `GetByChannelId`
+
+```csharp
+IReadOnlyList<OutboxDescriptor> GetByChannelId(string channelId)
+```
+
+Gets all outboxes that explicitly declare the requested channel identifier.
+
+Returns: The matching outboxes, or an empty list when no outbox declares that channel.
+
+Parameters:
+- `channelId`: The channel identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-ioutboxcatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+OutboxDescriptor GetById(string outboxId)
+```
+
+Gets one outbox by its stable identifier.
+
+Returns: The matching outbox, or `null` when it is not active.
+
+Parameters:
+- `outboxId`: The outbox identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ioutboxcatalog-getbyprovider-system-string"></a>
+
+##### `GetByProvider`
+
+```csharp
+IReadOnlyList<OutboxDescriptor> GetByProvider(string provider)
+```
+
+Gets all outboxes backed by the requested provider identifier.
+
+Returns: The matching outboxes, or an empty list when the provider contributes none.
+
+Parameters:
+- `provider`: The provider identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-ioutboxcatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<OutboxDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all outboxes contributed by the requested module.
+
+Returns: The matching outboxes, or an empty list when the module contributed none.
+
+Parameters:
+- `sourceModuleId`: The source module identifier to filter by.
+
+<a id="type-cephalon-abstractions-data-ioutboxcontributor"></a>
+
+### `IOutboxContributor`
+
+Contributes one or more outbox descriptors to the active runtime.
+
+#### Declaration
+```csharp
+public interface IOutboxContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-ioutboxcontributor-registeroutboxes-cephalon-abstractions-data-ioutboxregistry"></a>
+
+##### `RegisterOutboxes`
+
+```csharp
+void RegisterOutboxes(IOutboxRegistry outboxes)
+```
+
+Registers one or more outbox descriptors with the supplied registry.
+
+Parameters:
+- `outboxes`: The registry that collects contributed outbox descriptors.
+
+<a id="type-cephalon-abstractions-data-ioutboxregistry"></a>
+
+### `IOutboxRegistry`
+
+Receives outbox descriptors contributed by active modules or packages.
+
+#### Declaration
+```csharp
+public interface IOutboxRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-ioutboxregistry-add-cephalon-abstractions-data-outboxdescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(OutboxDescriptor outbox)
+```
+
+Adds an outbox to the current runtime composition.
+
+Parameters:
+- `outbox`: The outbox descriptor to register.
+
+<a id="type-cephalon-abstractions-data-iprojectioncatalog"></a>
+
+### `IProjectionCatalog`
+
+Exposes the projections visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IProjectionCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-iprojectioncatalog-projections"></a>
+
+##### `Projections`
+
+```csharp
+IReadOnlyList<ProjectionDescriptor> Projections { get; }
+```
+
+Gets all projections visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-iprojectioncatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+ProjectionDescriptor GetById(string projectionId)
+```
+
+Gets one projection by its stable identifier.
+
+Returns: The matching projection, or `null` when it is not active.
+
+Parameters:
+- `projectionId`: The projection identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-iprojectioncatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<ProjectionDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all projections contributed by the requested module.
+
+Returns: The matching projections, or an empty list when the module contributed none.
+
+Parameters:
+- `sourceModuleId`: The source module identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-iprojectioncatalog-getbytargetstore-system-string"></a>
+
+##### `GetByTargetStore`
+
+```csharp
+IReadOnlyList<ProjectionDescriptor> GetByTargetStore(string targetStoreId)
+```
+
+Gets all projections that target the requested store identifier.
+
+Returns: The matching projections, or an empty list when no projection targets the store.
+
+Parameters:
+- `targetStoreId`: The target store identifier to filter by.
+
+<a id="type-cephalon-abstractions-data-iprojectioncontributor"></a>
+
+### `IProjectionContributor`
+
+Contributes one or more projection descriptors to the active runtime.
+
+#### Declaration
+```csharp
+public interface IProjectionContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-iprojectioncontributor-registerprojections-cephalon-abstractions-data-iprojectionregistry"></a>
+
+##### `RegisterProjections`
+
+```csharp
+void RegisterProjections(IProjectionRegistry projections)
+```
+
+Registers one or more projection descriptors with the supplied registry.
+
+Parameters:
+- `projections`: The registry that collects contributed projection descriptors.
+
+<a id="type-cephalon-abstractions-data-iprojectionregistry"></a>
+
+### `IProjectionRegistry`
+
+Receives projection descriptors contributed by active modules or packages.
+
+#### Declaration
+```csharp
+public interface IProjectionRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-iprojectionregistry-add-cephalon-abstractions-data-projectiondescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(ProjectionDescriptor projection)
+```
+
+Adds a projection to the current runtime composition.
+
+Parameters:
+- `projection`: The projection descriptor to register.
+
+<a id="type-cephalon-abstractions-data-iprojection-tmessage"></a>
+
+### `IProjection<TMessage>`
+
+Applies one message, event, or record to a projection target.
+
+#### Declaration
+```csharp
+public interface IProjection<TMessage>
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-iprojection-1-projectasync-0-system-threading-cancellationtoken"></a>
+
+##### `ProjectAsync`
+
+```csharp
+ValueTask ProjectAsync(TMessage message, CancellationToken cancellationToken)
+```
+
+Projects the supplied message into the target read model or data view.
+
+Returns: A task that completes when the projection has finished applying the message.
+
+Parameters:
+- `message`: The message to project.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-abstractions-data-iqueryhandler-tquery-tresult"></a>
+
+### `IQueryHandler<TQuery, TResult>`
+
+Handles a read-side request and returns the requested result.
+
+#### Declaration
+```csharp
+public interface IQueryHandler<TQuery, TResult>
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-iqueryhandler-2-handleasync-0-system-threading-cancellationtoken"></a>
+
+##### `HandleAsync`
+
+```csharp
+ValueTask<TResult> HandleAsync(TQuery query, CancellationToken cancellationToken)
+```
+
+Handles the supplied query.
+
+Returns: A task that completes with the result produced by the query.
+
+Parameters:
+- `query`: The query to execute.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-abstractions-data-iquery-tresult"></a>
+
+### `IQuery<TResult>`
+
+Marks a request that should execute on the read side of a Cephalon application.
+
+#### Declaration
+```csharp
+public interface IQuery<TResult>
+```
+
+<a id="type-cephalon-abstractions-data-ireadstore"></a>
+
+### `IReadStore`
+
+Executes read-side requests against the active data implementation.
+
+#### Declaration
+```csharp
+public interface IReadStore
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-ireadstore-executeasync-1-cephalon-abstractions-data-iquery-0-system-threading-cancellationtoken"></a>
+
+##### `ExecuteAsync`
+
+```csharp
+ValueTask<TResult> ExecuteAsync<TResult>(IQuery<TResult> query, CancellationToken cancellationToken)
+```
+
+Executes the supplied query on the read side.
+
+Returns: A task that completes with the requested result.
+
+Type parameters:
+- `TResult`: The result type returned by the query.
+
+Parameters:
+- `query`: The query to execute.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-abstractions-data-iwritestore"></a>
+
+### `IWriteStore`
+
+Executes write-side requests against the active data implementation.
+
+#### Declaration
+```csharp
+public interface IWriteStore
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-iwritestore-executeasync-cephalon-abstractions-data-icommand-system-threading-cancellationtoken"></a>
+
+##### `ExecuteAsync`
+
+```csharp
+ValueTask ExecuteAsync(ICommand command, CancellationToken cancellationToken)
+```
+
+Executes the supplied command on the write side.
+
+Returns: A task that completes when the command has finished running.
+
+Parameters:
+- `command`: The command to execute.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="member-m-cephalon-abstractions-data-iwritestore-executeasync-1-cephalon-abstractions-data-icommand-0-system-threading-cancellationtoken"></a>
+
+##### `ExecuteAsync`
+
+```csharp
+ValueTask<TResult> ExecuteAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken)
+```
+
+Executes the supplied command on the write side and returns the resulting value.
+
+Returns: A task that completes with the result produced by the command.
+
+Type parameters:
+- `TResult`: The result type returned by the command.
+
+Parameters:
+- `command`: The command to execute.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-abstractions-data-outboxdescriptor"></a>
+
+### `OutboxDescriptor`
+
+Describes one outbox surface contributed to the active runtime.
+
+#### Declaration
+```csharp
+public sealed class OutboxDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-outboxdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `OutboxDescriptor`
+
+```csharp
+OutboxDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string mode, IReadOnlyList<string> channelIds, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new outbox descriptor.
+
+Parameters:
+- `id`: The stable outbox identifier.
+- `displayName`: The operator-facing outbox name.
+- `description`: The human-readable outbox description.
+- `sourceModuleId`: The module identifier that owns the outbox surface.
+- `provider`: The logical provider identifier that backs the outbox.
+- `mode`: The outbox mode such as `transactional-table` or `append-only-log`.
+- `channelIds`: Optional channel identifiers that this outbox is explicitly scoped to.
+- `tags`: Optional descriptive tags associated with the outbox.
+- `metadata`: Optional operator-facing metadata associated with the outbox.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-outboxdescriptor-channelids"></a>
+
+##### `ChannelIds`
+
+```csharp
+IReadOnlyList<string> ChannelIds { get; }
+```
+
+Gets the optional channel identifiers that this outbox is explicitly scoped to.
+
+<a id="member-p-cephalon-abstractions-data-outboxdescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable outbox description.
+
+<a id="member-p-cephalon-abstractions-data-outboxdescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing outbox name.
+
+<a id="member-p-cephalon-abstractions-data-outboxdescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable outbox identifier.
+
+<a id="member-p-cephalon-abstractions-data-outboxdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata associated with the outbox.
+
+<a id="member-p-cephalon-abstractions-data-outboxdescriptor-mode"></a>
+
+##### `Mode`
+
+```csharp
+string Mode { get; }
+```
+
+Gets the outbox mode.
+
+<a id="member-p-cephalon-abstractions-data-outboxdescriptor-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; }
+```
+
+Gets the logical provider identifier that backs the outbox.
+
+<a id="member-p-cephalon-abstractions-data-outboxdescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the identifier of the module that owns the outbox surface.
+
+<a id="member-p-cephalon-abstractions-data-outboxdescriptor-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets descriptive tags associated with the outbox.
+
+<a id="type-cephalon-abstractions-data-outboxmessage"></a>
+
+### `OutboxMessage`
+
+Describes one message staged for later delivery through an outbox implementation.
+
+#### Declaration
+```csharp
+public sealed class OutboxMessage
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-outboxmessage-ctor-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `OutboxMessage`
+
+```csharp
+OutboxMessage(string id, string channelId, string messageType, string payload, DateTimeOffset occurredAtUtc, string contentType, string correlationId, string tenantId, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new outbox message.
+
+Parameters:
+- `id`: The stable outbox message identifier.
+- `channelId`: The logical channel or destination identifier.
+- `messageType`: The logical message type identifier.
+- `payload`: The serialized payload that should be delivered later.
+- `occurredAtUtc`: The time at which the message became visible to the outbox.
+- `contentType`: The payload content type when one is known.
+- `correlationId`: The correlation identifier associated with the message.
+- `tenantId`: The tenant identifier associated with the message.
+- `headers`: Optional message headers.
+- `metadata`: Optional message metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-outboxmessage-channelid"></a>
+
+##### `ChannelId`
+
+```csharp
+string ChannelId { get; }
+```
+
+Gets the logical channel or destination identifier.
+
+<a id="member-p-cephalon-abstractions-data-outboxmessage-contenttype"></a>
+
+##### `ContentType`
+
+```csharp
+string ContentType { get; }
+```
+
+Gets the payload content type when one is known.
+
+<a id="member-p-cephalon-abstractions-data-outboxmessage-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the correlation identifier associated with the message.
+
+<a id="member-p-cephalon-abstractions-data-outboxmessage-headers"></a>
+
+##### `Headers`
+
+```csharp
+IReadOnlyDictionary<string, string> Headers { get; }
+```
+
+Gets message headers associated with the message.
+
+<a id="member-p-cephalon-abstractions-data-outboxmessage-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable outbox message identifier.
+
+<a id="member-p-cephalon-abstractions-data-outboxmessage-messagetype"></a>
+
+##### `MessageType`
+
+```csharp
+string MessageType { get; }
+```
+
+Gets the logical message type identifier.
+
+<a id="member-p-cephalon-abstractions-data-outboxmessage-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets message metadata associated with the message.
+
+<a id="member-p-cephalon-abstractions-data-outboxmessage-occurredatutc"></a>
+
+##### `OccurredAtUtc`
+
+```csharp
+DateTimeOffset OccurredAtUtc { get; }
+```
+
+Gets the time at which the message became visible to the outbox.
+
+<a id="member-p-cephalon-abstractions-data-outboxmessage-payload"></a>
+
+##### `Payload`
+
+```csharp
+string Payload { get; }
+```
+
+Gets the serialized payload that should be delivered later.
+
+<a id="member-p-cephalon-abstractions-data-outboxmessage-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier associated with the message.
+
+<a id="type-cephalon-abstractions-data-projectiondescriptor"></a>
+
+### `ProjectionDescriptor`
+
+Describes one projection surface contributed to the active runtime.
+
+#### Declaration
+```csharp
+public sealed class ProjectionDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-projectiondescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `ProjectionDescriptor`
+
+```csharp
+ProjectionDescriptor(string id, string displayName, string description, string sourceModuleId, string targetStoreId, string mode, IReadOnlyList<string> sourceContracts, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new projection descriptor.
+
+Parameters:
+- `id`: The stable projection identifier.
+- `displayName`: The operator-facing projection name.
+- `description`: The human-readable projection description.
+- `sourceModuleId`: The module identifier that owns the projection.
+- `targetStoreId`: The logical target store or read-model identifier populated by the projection.
+- `mode`: The projection mode such as `synchronous`, `asynchronous`, or `rebuild`.
+- `sourceContracts`: Optional source contracts that can feed the projection.
+- `tags`: Optional descriptive tags associated with the projection.
+- `metadata`: Optional operator-facing metadata associated with the projection.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-projectiondescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable projection description.
+
+<a id="member-p-cephalon-abstractions-data-projectiondescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing projection name.
+
+<a id="member-p-cephalon-abstractions-data-projectiondescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable projection identifier.
+
+<a id="member-p-cephalon-abstractions-data-projectiondescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata associated with the projection.
+
+<a id="member-p-cephalon-abstractions-data-projectiondescriptor-mode"></a>
+
+##### `Mode`
+
+```csharp
+string Mode { get; }
+```
+
+Gets the projection mode.
+
+<a id="member-p-cephalon-abstractions-data-projectiondescriptor-sourcecontracts"></a>
+
+##### `SourceContracts`
+
+```csharp
+IReadOnlyList<string> SourceContracts { get; }
+```
+
+Gets the optional source contracts that can feed the projection.
+
+<a id="member-p-cephalon-abstractions-data-projectiondescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the identifier of the module that owns the projection.
+
+<a id="member-p-cephalon-abstractions-data-projectiondescriptor-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets descriptive tags associated with the projection.
+
+<a id="member-p-cephalon-abstractions-data-projectiondescriptor-targetstoreid"></a>
+
+##### `TargetStoreId`
+
+```csharp
+string TargetStoreId { get; }
+```
+
+Gets the logical target store or read-model identifier populated by the projection.
 
 <a id="namespace-cephalon-abstractions-execution"></a>
 
@@ -1987,6 +5032,132 @@ Returns the dependency-health reports currently known to the contributor.
 
 Returns: The contributed dependency-health reports.
 
+<a id="namespace-cephalon-abstractions-ids"></a>
+
+## Namespace Cephalon.Abstractions.Ids
+
+<a id="type-cephalon-abstractions-ids-idgenerationrequest"></a>
+
+### `IdGenerationRequest`
+
+Describes optional hints supplied to an identifier generator.
+
+#### Declaration
+```csharp
+public sealed class IdGenerationRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-ids-idgenerationrequest-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IdGenerationRequest`
+
+```csharp
+IdGenerationRequest(string kind, string scope, string tenantId, IReadOnlyDictionary<string, string> attributes)
+```
+
+Creates a new identifier-generation request.
+
+Parameters:
+- `kind`: The logical identifier kind or entity category when one is known.
+- `scope`: The logical generation scope when one is known.
+- `tenantId`: The tenant identifier associated with the requested identifier when one is known.
+- `attributes`: Optional generation hints supplied by the caller.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-ids-idgenerationrequest-attributes"></a>
+
+##### `Attributes`
+
+```csharp
+IReadOnlyDictionary<string, string> Attributes { get; }
+```
+
+Gets optional generation hints supplied by the caller.
+
+<a id="member-p-cephalon-abstractions-ids-idgenerationrequest-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any generation hints were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-ids-idgenerationrequest-kind"></a>
+
+##### `Kind`
+
+```csharp
+string Kind { get; }
+```
+
+Gets the logical identifier kind or entity category when one is known.
+
+<a id="member-p-cephalon-abstractions-ids-idgenerationrequest-scope"></a>
+
+##### `Scope`
+
+```csharp
+string Scope { get; }
+```
+
+Gets the logical generation scope when one is known.
+
+<a id="member-p-cephalon-abstractions-ids-idgenerationrequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier associated with the requested identifier when one is known.
+
+<a id="type-cephalon-abstractions-ids-iidgenerator"></a>
+
+### `IIdGenerator`
+
+Generates stable textual identifiers for Cephalon workloads.
+
+#### Declaration
+```csharp
+public interface IIdGenerator
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-ids-iidgenerator-strategyid"></a>
+
+##### `StrategyId`
+
+```csharp
+string StrategyId { get; }
+```
+
+Gets the stable identifier-generation strategy identifier.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-ids-iidgenerator-generateasync-cephalon-abstractions-ids-idgenerationrequest-system-threading-cancellationtoken"></a>
+
+##### `GenerateAsync`
+
+```csharp
+ValueTask<string> GenerateAsync(IdGenerationRequest request, CancellationToken cancellationToken)
+```
+
+Generates one identifier.
+
+Returns: A task that completes with the generated identifier.
+
+Parameters:
+- `request`: Optional generation hints supplied by the caller.
+- `cancellationToken`: The token that cancels the operation.
+
 <a id="namespace-cephalon-abstractions-localization"></a>
 
 ## Namespace Cephalon.Abstractions.Localization
@@ -2603,12 +5774,12 @@ public sealed class PatternDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-patterns-patterndescriptor-ctor-system-string-system-string-system-string-cephalon-abstractions-patterns-patternkind-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-patterns-patterndescriptor-ctor-system-string-system-string-system-string-cephalon-abstractions-patterns-patternkind-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `PatternDescriptor`
 
 ```csharp
-PatternDescriptor(string id, string displayName, string description, PatternKind kind, IReadOnlyList<string> tags, IReadOnlyList<string> requires, IReadOnlyList<string> conflictsWith, IReadOnlyDictionary<string, string> metadata)
+PatternDescriptor(string id, string displayName, string description, PatternKind kind, IReadOnlyList<string> aliases, IReadOnlyList<string> tags, IReadOnlyList<string> requires, IReadOnlyList<string> conflictsWith, IReadOnlyDictionary<string, string> metadata)
 ```
 
 Creates a pattern descriptor.
@@ -2618,12 +5789,23 @@ Parameters:
 - `displayName`: The human-readable pattern name.
 - `description`: The pattern description.
 - `kind`: The category of the pattern.
+- `aliases`: Optional aliases that can resolve to the same pattern.
 - `tags`: The tags associated with the pattern.
 - `requires`: The pattern identifiers required by this pattern.
 - `conflictsWith`: The pattern identifiers that conflict with this pattern.
 - `metadata`: Optional pattern metadata.
 
 #### Properties
+
+<a id="member-p-cephalon-abstractions-patterns-patterndescriptor-aliases"></a>
+
+##### `Aliases`
+
+```csharp
+IReadOnlyList<string> Aliases { get; }
+```
+
+Gets optional aliases that can resolve to the same pattern.
 
 <a id="member-p-cephalon-abstractions-patterns-patterndescriptor-conflictswith"></a>
 
@@ -2718,6 +5900,16 @@ public enum PatternKind
 
 #### Fields
 
+<a id="member-f-cephalon-abstractions-patterns-patternkind-architecture"></a>
+
+##### `Architecture`
+
+```csharp
+const PatternKind Architecture
+```
+
+Identifies an architecture-shaping pattern.
+
 <a id="member-f-cephalon-abstractions-patterns-patternkind-composition"></a>
 
 ##### `Composition`
@@ -2727,6 +5919,16 @@ const PatternKind Composition
 ```
 
 Identifies a composition pattern.
+
+<a id="member-f-cephalon-abstractions-patterns-patternkind-data"></a>
+
+##### `Data`
+
+```csharp
+const PatternKind Data
+```
+
+Identifies a data or persistence pattern.
 
 <a id="member-f-cephalon-abstractions-patterns-patternkind-deployment"></a>
 
@@ -2747,6 +5949,16 @@ const PatternKind Design
 ```
 
 Identifies a design pattern.
+
+<a id="member-f-cephalon-abstractions-patterns-patternkind-domain"></a>
+
+##### `Domain`
+
+```csharp
+const PatternKind Domain
+```
+
+Identifies a domain-modeling pattern.
 
 <a id="member-f-cephalon-abstractions-patterns-patternkind-foundation"></a>
 
@@ -2956,12 +6168,12 @@ public sealed class TechnologyDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-technologies-technologydescriptor-ctor-system-string-system-string-system-string-cephalon-abstractions-technologies-technologykind-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-technologies-technologydescriptor-ctor-system-string-system-string-system-string-cephalon-abstractions-technologies-technologykind-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `TechnologyDescriptor`
 
 ```csharp
-TechnologyDescriptor(string id, string displayName, string description, TechnologyKind kind, IReadOnlyList<string> tags, IReadOnlyList<string> requiresPatterns, IReadOnlyList<string> requiresTransports, IReadOnlyList<string> requiresTechnologies, IReadOnlyList<string> conflictsWith, IReadOnlyList<string> packageHints, IReadOnlyList<string> guidance, IReadOnlyDictionary<string, string> metadata)
+TechnologyDescriptor(string id, string displayName, string description, TechnologyKind kind, IReadOnlyList<string> aliases, IReadOnlyList<string> tags, IReadOnlyList<string> requiresPatterns, IReadOnlyList<string> requiresTransports, IReadOnlyList<string> requiresTechnologies, IReadOnlyList<string> conflictsWith, IReadOnlyList<string> packageHints, IReadOnlyList<string> guidance, IReadOnlyDictionary<string, string> metadata)
 ```
 
 Creates a technology descriptor.
@@ -2971,6 +6183,7 @@ Parameters:
 - `displayName`: The human-readable technology name.
 - `description`: The technology description.
 - `kind`: The category of the technology.
+- `aliases`: Optional aliases that can resolve to the same technology.
 - `tags`: The tags associated with the technology.
 - `requiresPatterns`: The pattern identifiers required by the technology.
 - `requiresTransports`: The transport identifiers required by the technology.
@@ -2981,6 +6194,16 @@ Parameters:
 - `metadata`: Optional technology metadata.
 
 #### Properties
+
+<a id="member-p-cephalon-abstractions-technologies-technologydescriptor-aliases"></a>
+
+##### `Aliases`
+
+```csharp
+IReadOnlyList<string> Aliases { get; }
+```
+
+Gets optional aliases that can resolve to the same technology.
 
 <a id="member-p-cephalon-abstractions-technologies-technologydescriptor-conflictswith"></a>
 
@@ -3164,6 +6387,26 @@ const TechnologyKind Messaging
 ```
 
 Identifies a messaging-oriented technology.
+
+<a id="member-f-cephalon-abstractions-technologies-technologykind-platform"></a>
+
+##### `Platform`
+
+```csharp
+const TechnologyKind Platform
+```
+
+Identifies a platform- or runtime-oriented technology.
+
+<a id="member-f-cephalon-abstractions-technologies-technologykind-security"></a>
+
+##### `Security`
+
+```csharp
+const TechnologyKind Security
+```
+
+Identifies a security-oriented technology.
 
 <a id="type-cephalon-abstractions-technologies-technologyruntimeentry"></a>
 
@@ -3430,6 +6673,318 @@ Returns: `true` when the technology is selected; otherwise `false`.
 Parameters:
 - `value`: The technology identifier or display name to match.
 - `technology`: The resolved selected technology when one is found.
+
+<a id="namespace-cephalon-abstractions-tenancy"></a>
+
+## Namespace Cephalon.Abstractions.Tenancy
+
+<a id="type-cephalon-abstractions-tenancy-itenantcontextaccessor"></a>
+
+### `ITenantContextAccessor`
+
+Exposes the tenant context currently active for the ambient runtime scope.
+
+#### Declaration
+```csharp
+public interface ITenantContextAccessor
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-tenancy-itenantcontextaccessor-current"></a>
+
+##### `Current`
+
+```csharp
+TenantContext Current { get; }
+```
+
+Gets the tenant context currently active for the ambient runtime scope.
+
+<a id="type-cephalon-abstractions-tenancy-itenantresolver"></a>
+
+### `ITenantResolver`
+
+Resolves the tenant context for the current operation from host-neutral hints.
+
+#### Declaration
+```csharp
+public interface ITenantResolver
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-tenancy-itenantresolver-resolveasync-cephalon-abstractions-tenancy-tenantresolutionrequest-system-threading-cancellationtoken"></a>
+
+##### `ResolveAsync`
+
+```csharp
+ValueTask<TenantResolutionResult> ResolveAsync(TenantResolutionRequest request, CancellationToken cancellationToken)
+```
+
+Resolves the tenant context for the supplied request.
+
+Returns: A task that completes with the resulting tenant-resolution outcome.
+
+Parameters:
+- `request`: The host-neutral resolution request.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-abstractions-tenancy-tenantcontext"></a>
+
+### `TenantContext`
+
+Describes the tenant currently associated with an operation or ambient runtime scope.
+
+#### Declaration
+```csharp
+public sealed class TenantContext
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-tenancy-tenantcontext-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantContext`
+
+```csharp
+TenantContext(string tenantId, string tenantKey, string displayName, string parentTenantId, IReadOnlyList<string> domains, IReadOnlyDictionary<string, string> attributes)
+```
+
+Creates a new tenant context.
+
+Parameters:
+- `tenantId`: The stable tenant identifier.
+- `tenantKey`: The tenant key, slug, or subdomain-friendly identifier when one is known.
+- `displayName`: The human-readable tenant name when one is known.
+- `parentTenantId`: The parent tenant identifier when one is known.
+- `domains`: Optional domains associated with the tenant.
+- `attributes`: Optional tenant attributes.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-tenancy-tenantcontext-attributes"></a>
+
+##### `Attributes`
+
+```csharp
+IReadOnlyDictionary<string, string> Attributes { get; }
+```
+
+Gets the tenant attributes.
+
+<a id="member-p-cephalon-abstractions-tenancy-tenantcontext-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the human-readable tenant name when one is known.
+
+<a id="member-p-cephalon-abstractions-tenancy-tenantcontext-domains"></a>
+
+##### `Domains`
+
+```csharp
+IReadOnlyList<string> Domains { get; }
+```
+
+Gets the domains associated with the tenant.
+
+<a id="member-p-cephalon-abstractions-tenancy-tenantcontext-parenttenantid"></a>
+
+##### `ParentTenantId`
+
+```csharp
+string ParentTenantId { get; }
+```
+
+Gets the parent tenant identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-tenancy-tenantcontext-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the stable tenant identifier.
+
+<a id="member-p-cephalon-abstractions-tenancy-tenantcontext-tenantkey"></a>
+
+##### `TenantKey`
+
+```csharp
+string TenantKey { get; }
+```
+
+Gets the tenant key, slug, or subdomain-friendly identifier when one is known.
+
+<a id="type-cephalon-abstractions-tenancy-tenantresolutionrequest"></a>
+
+### `TenantResolutionRequest`
+
+Describes the host-neutral hints available when resolving a tenant for the current operation.
+
+#### Declaration
+```csharp
+public sealed class TenantResolutionRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-tenancy-tenantresolutionrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `TenantResolutionRequest`
+
+```csharp
+TenantResolutionRequest(string hostName, string pathBase, string requestedTenantId, string requestedTenantKey, string userId, IReadOnlyDictionary<string, string> attributes)
+```
+
+Creates a new tenant-resolution request.
+
+Parameters:
+- `hostName`: The host name associated with the current request when one is known.
+- `pathBase`: The path base associated with the current request when one is known.
+- `requestedTenantId`: The explicitly requested tenant identifier when one is known.
+- `requestedTenantKey`: The explicitly requested tenant key when one is known.
+- `userId`: The current user identifier when one is known.
+- `attributes`: Optional resolution hints supplied by the host or caller.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-tenancy-tenantresolutionrequest-attributes"></a>
+
+##### `Attributes`
+
+```csharp
+IReadOnlyDictionary<string, string> Attributes { get; }
+```
+
+Gets optional resolution hints supplied by the host or caller.
+
+<a id="member-p-cephalon-abstractions-tenancy-tenantresolutionrequest-hostname"></a>
+
+##### `HostName`
+
+```csharp
+string HostName { get; }
+```
+
+Gets the host name associated with the current request when one is known.
+
+<a id="member-p-cephalon-abstractions-tenancy-tenantresolutionrequest-pathbase"></a>
+
+##### `PathBase`
+
+```csharp
+string PathBase { get; }
+```
+
+Gets the path base associated with the current request when one is known.
+
+<a id="member-p-cephalon-abstractions-tenancy-tenantresolutionrequest-requestedtenantid"></a>
+
+##### `RequestedTenantId`
+
+```csharp
+string RequestedTenantId { get; }
+```
+
+Gets the explicitly requested tenant identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-tenancy-tenantresolutionrequest-requestedtenantkey"></a>
+
+##### `RequestedTenantKey`
+
+```csharp
+string RequestedTenantKey { get; }
+```
+
+Gets the explicitly requested tenant key when one is known.
+
+<a id="member-p-cephalon-abstractions-tenancy-tenantresolutionrequest-userid"></a>
+
+##### `UserId`
+
+```csharp
+string UserId { get; }
+```
+
+Gets the current user identifier when one is known.
+
+<a id="type-cephalon-abstractions-tenancy-tenantresolutionresult"></a>
+
+### `TenantResolutionResult`
+
+Describes the outcome of one tenant-resolution attempt.
+
+#### Declaration
+```csharp
+public sealed class TenantResolutionResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-tenancy-tenantresolutionresult-ctor-cephalon-abstractions-tenancy-tenantcontext-system-string-system-string"></a>
+
+##### `TenantResolutionResult`
+
+```csharp
+TenantResolutionResult(TenantContext tenant, string source, string reason)
+```
+
+Creates a new tenant-resolution result.
+
+Parameters:
+- `tenant`: The resolved tenant context when resolution succeeded.
+- `source`: The source or strategy that produced the result when one is known.
+- `reason`: The human-readable reason associated with the result.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-tenancy-tenantresolutionresult-isresolved"></a>
+
+##### `IsResolved`
+
+```csharp
+bool IsResolved { get; }
+```
+
+Gets a value indicating whether tenant resolution succeeded.
+
+<a id="member-p-cephalon-abstractions-tenancy-tenantresolutionresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the human-readable reason associated with the result.
+
+<a id="member-p-cephalon-abstractions-tenancy-tenantresolutionresult-source"></a>
+
+##### `Source`
+
+```csharp
+string Source { get; }
+```
+
+Gets the source or strategy that produced the result when one is known.
+
+<a id="member-p-cephalon-abstractions-tenancy-tenantresolutionresult-tenant"></a>
+
+##### `Tenant`
+
+```csharp
+TenantContext Tenant { get; }
+```
+
+Gets the resolved tenant context when resolution succeeded.
 
 <a id="namespace-cephalon-abstractions-transports"></a>
 

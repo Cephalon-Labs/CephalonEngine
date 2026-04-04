@@ -64,6 +64,7 @@ Generate the default modular monolith shape:
 That produces a host project at `./Acme.Store/src/Acme.Store.Host/Acme.Store.Host.csproj`.
 The generated app root now also includes `NuGet.config`, `./.cephalon/packages/README.md`, `deploy/windows-service/README.md`, `deploy/windows-service/install-service.ps1`, `deploy/windows-service/remove-service.ps1`, `deploy/iis/README.md`, `deploy/iis/install-site.ps1`, `deploy/iis/remove-site.ps1`, `deploy/azure-app-service/README.md`, `deploy/azure-app-service/deploy-zip.ps1`, `deploy/container-image/README.md`, `deploy/container-image/publish-image.ps1`, `deploy/azure-container-apps/README.md`, `deploy/azure-container-apps/deploy-up.ps1`, `deploy/kubernetes/README.md`, `deploy/kubernetes/apply.ps1`, `deploy/kubernetes/kustomization.yaml`, `deploy/kubernetes/namespace.yaml`, `deploy/kubernetes/deployment.yaml`, `deploy/kubernetes/service.yaml`, `deploy/linux/systemd/README.md`, `deploy/linux/systemd/Acme.Store.service`, `deploy/linux/systemd/Acme.Store.env`, `.dockerignore`, `Dockerfile`, `compose.yaml`, and `otel-collector-config.yaml`.
 The generated test project also starts with `Architecture/CompositionSmokeTests.cs` plus per-feature `Features/*BehaviorSpecifications.cs` placeholders so you can move straight into composition checks and Given/When/Then-style business behavior without building a test harness from scratch.
+Generated hosts now also start with canonical kebab-case `Engine` ids plus structured `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` sections. The narrow starter baseline keeps `Identity`, `Tenancy`, and `Messaging` dormant, enables `Audit`, and defaults the data id strategy to `Sfid` so teams can grow into richer phase-8 packs without rewriting host startup.
 
 ## Seed The Generated Package Feed
 
@@ -216,6 +217,8 @@ Once the app is running, inspect these routes:
 - `/engine/manifest`
 - `/engine/snapshot`
 - `/engine/runtime-story`
+- `/engine/technology-surfaces`
+- `/engine/diagnostics`
 - `/engine/modules`
 - `/engine/packages`
 - `/health`
@@ -223,6 +226,7 @@ Once the app is running, inspect these routes:
 - `/scalar`
 
 These routes give adopters an immediate answer for what loaded, what the runtime believes is active, and whether the host is healthy.
+When you later turn on broader phase-8 packs such as eventing, data persistence, or identity/tenancy, the same runtime surface family will also light up `/engine/inboxes`, `/engine/outboxes`, `/engine/projections`, and richer `event-driven-integration` entries inside `/engine/technology-surfaces` and `/engine/snapshot`.
 
 ## Optional Container Path
 
@@ -253,6 +257,7 @@ dotnet new list cephalon
 
 `cephalon doctor` should then report the template-pack check as `[ok]`.
 The `dotnet new` app starters also emit the same `NuGet.config`, `./.cephalon/packages/README.md`, `deploy/windows-service/README.md`, `deploy/windows-service/install-service.ps1`, `deploy/windows-service/remove-service.ps1`, `deploy/iis/README.md`, `deploy/iis/install-site.ps1`, `deploy/iis/remove-site.ps1`, `deploy/azure-app-service/README.md`, `deploy/azure-app-service/deploy-zip.ps1`, `deploy/container-image/README.md`, `deploy/container-image/publish-image.ps1`, `deploy/azure-container-apps/README.md`, `deploy/azure-container-apps/deploy-up.ps1`, `deploy/kubernetes/README.md`, `deploy/kubernetes/apply.ps1`, `deploy/kubernetes/kustomization.yaml`, `deploy/kubernetes/namespace.yaml`, `deploy/kubernetes/deployment.yaml`, `deploy/kubernetes/service.yaml`, `deploy/linux/systemd/README.md`, `deploy/linux/systemd/<App>.service`, `deploy/linux/systemd/<App>.env`, `.dockerignore`, `Dockerfile`, `compose.yaml`, and `otel-collector-config.yaml` baseline.
+The template starters also emit the same structured phase-8 `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` sections, using canonical ids and the same low-ceremony `Sfid` plus `Audit` starter path as `cephalon new`.
 
 ## Next Docs
 

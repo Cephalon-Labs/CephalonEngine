@@ -25,6 +25,9 @@ Current baseline packages:
 - `Cephalon.Eventing`
   - runtime services and capability activation for `EventDrivenIntegration`
   - registers `IEventChannelCatalog` when the profile is selected
+- `Cephalon.Eventing.Wolverine`
+  - official first-class adapter path for managed dispatch over `EventDrivenIntegration`
+  - projects runtime truth for the current Wolverine-backed outbox and dispatch loop without turning Wolverine into an engine-core dependency
 - `Cephalon.Retrieval`
   - runtime services and capability activation for `KnowledgeRetrieval`
   - registers `IKnowledgeCatalog` when the profile is selected
@@ -33,6 +36,7 @@ Current baseline packages:
   - registers `IEdgeNodeCatalog` when the profile is selected
 
 These packages are also used as scaffold hints for the matching built-in technology profiles.
+The phase-8 data packs are companion packages rather than technology packs, but they can now enrich `EventDrivenIntegration` truth by projecting staged outbox producers and application-managed inbox stores into the eventing runtime surfaces when both baselines are active.
 
 ## Runtime pattern
 

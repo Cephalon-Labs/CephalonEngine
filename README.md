@@ -15,6 +15,13 @@ This first cut focuses on the core shape we can keep growing:
 - lifecycle hooks and runtime status tracking
 - ASP.NET Core integration for shipping modules over HTTP
 - generic-host worker integration for non-HTTP runtime scenarios
+- runtime-neutral data companion package with handler-backed read/write stores
+- optional Entity Framework Core companion package for read/write DbContext baselines, inbox/outbox storage, and `Sfid.EntityFramework` integration
+- optional identity companion packages for host-agnostic authorization plus ASP.NET Core adapter follow-through
+- optional multi-tenancy companion package for tenant resolution and ambient tenant context
+- optional audit companion package for host-agnostic audit recording and runtime cataloging
+- optional `Sfid.Net`-backed identifier companion package for low-ceremony database ids
+- optional Wolverine eventing adapter as the current first-class managed dispatch path
 - observability package with runtime logs, metrics, and tracing conventions
 - optional Cassandra dependency-health companion package for Cassandra readiness reporting
 - optional ClickHouse dependency-health companion package for analytics-database readiness reporting
@@ -59,7 +66,15 @@ This first cut focuses on the core shape we can keep growing:
 - `src/Cephalon.AspNetCore.GraphQL`: GraphQL transport adapter for ASP.NET Core
 - `src/Cephalon.AspNetCore.JsonRpc`: JSON-RPC transport adapter for ASP.NET Core
 - `src/Cephalon.AspNetCore.Grpc`: gRPC transport adapter for ASP.NET Core
+- `src/Cephalon.Audit`: host-agnostic audit recording companion package
+- `src/Cephalon.Data`: runtime-neutral data companion package for command/query-backed stores
+- `src/Cephalon.Data.EntityFramework`: Entity Framework Core companion package for read/write DbContexts plus inbox/outbox baselines
 - `src/Cephalon.Eventing`: companion package for event-driven integration runtime services
+- `src/Cephalon.Eventing.Wolverine`: official Wolverine adapter companion package for managed event dispatch
+- `src/Cephalon.Identity`: host-agnostic identity and authorization companion package
+- `src/Cephalon.Identity.AspNetCore`: ASP.NET Core adapter for Cephalon identity and authorization
+- `src/Cephalon.Ids.Sfid`: official `Sfid.Net` identifier companion package
+- `src/Cephalon.MultiTenancy`: host-agnostic multi-tenancy companion package
 - `src/Cephalon.Worker`: Generic Host worker adapter for non-HTTP hosts
 - `src/Cephalon.Observability`: observability package for logs, metrics, and tracing conventions
 - `src/Cephalon.Observability.CassandraDependencies`: optional Cassandra dependency-health companion package for Cassandra probes
