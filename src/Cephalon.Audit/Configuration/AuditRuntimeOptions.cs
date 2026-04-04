@@ -53,7 +53,22 @@ public sealed class AuditRuntimeOptions
             .GetSection("Audit");
 
         return new AuditRuntimeOptions(
-            inMemoryBufferCapacity: ParsePositiveInt(section["InMemoryBufferCapacity"], defaultValue: 1024));
+            inMemoryBufferCapacity: ParsePositiveInt(section["InMemoryBufferCapacity"], defaultValue: 1024))
+        {
+            EnableInMemoryWriter = ParseBoolean(section["EnableInMemoryWriter"], defaultValue: true)
+        };
+    }
+
+    private static bool ParseBoolean(string? value, bool defaultValue)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return defaultValue;
+        }
+
+        return bool.TryParse(value.Trim(), out var parsed)
+            ? parsed
+            : defaultValue;
     }
 
     private static int ParsePositiveInt(string? value, int defaultValue)
