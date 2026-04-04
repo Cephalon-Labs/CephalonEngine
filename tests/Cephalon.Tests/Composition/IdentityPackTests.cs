@@ -225,4 +225,73 @@ public sealed class IdentityPackTests
         Assert.Equal("none", decision.Metadata["policyId"]);
         Assert.Contains("policy id", decision.Reason!, StringComparison.OrdinalIgnoreCase);
     }
+
+    [Fact]
+    public async Task AddIdentityAccessCanDisableTheBuiltInEvaluatorWithoutBreakingResolution()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["IdentityAccess"],
+                identity: new IdentitySettings(
+                    enabled: true,
+                    authorizationModes: ["Policy", "RBAC", "ABAC"])));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new IdentityAuthorizationTestModule());
+            engine.AddIdentityAccess(options => options.EnableDefaultEvaluator = false);
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var evaluator = provider.GetRequiredService<IAuthorizationEvaluator>();
+        var technologyCatalog = provider.GetRequiredService<global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeCatalog>();
+        var identitySurface = Assert.Single(technologyCatalog.GetByTechnology("identity-access"), surface => surface.SurfaceId == "identity-authorization");
+        var identityEntry = Assert.Single(identitySurface.Entries, entry => entry.Id == "identity-runtime");
+
+        var decision = await evaluator.EvaluateAsync(
+            new AuthorizationSubject(
+                subjectId: "user-006",
+                roles: ["tenant-admin"],
+                tenantIds: ["tenant-001"]),
+            new AuthorizationResource(
+                resourceType: "tenant",
+                resourceId: "tenant-001",
+                tenantId: "tenant-001"),
+            new AuthorizationContext(
+                action: "manage",
+                policyId: "tenant-admin",
+                tenantId: "tenant-001"));
+
+        Assert.False(decision.IsAllowed);
+        Assert.Equal("disabled", identityEntry.Metadata["defaultEvaluator"]);
+        Assert.Equal("false", identityEntry.Metadata["defaultEvaluatorEnabled"]);
+        Assert.Equal("none", identityEntry.Metadata["defaultEvaluatorType"]);
+        Assert.Contains("disabled", decision.Reason!, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("disabled", decision.Metadata["evaluator"]);
+        Assert.Contains("DisabledAuthorizationEvaluator", identityEntry.Metadata["authorizationEvaluatorTypes"], StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task AddIdentityAccessCanDisableRuntimeSurfaceProjection()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                technologies: ["IdentityAccess"],
+                identity: new IdentitySettings(
+                    enabled: true,
+                    authorizationModes: ["Policy"])));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new IdentityAuthorizationTestModule());
+            engine.AddIdentityAccess(options => options.EnableRuntimeSurface = false);
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var technologyCatalog = provider.GetRequiredService<global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeCatalog>();
+
+        Assert.Empty(technologyCatalog.GetByTechnology("identity-access"));
+    }
 }

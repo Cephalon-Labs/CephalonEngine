@@ -10,6 +10,7 @@
 - provides low-ceremony REST helpers, `RequireCephalonAuthorization(...)` and `WithCephalonAuthenticationSchemes(...)`, for minimal API endpoints and route groups
 - returns truthful `401` and `403` API responses without pretending to own consumer authentication schemes, and now defers to ASP.NET Core challenge/forbid flows when the host or endpoint metadata already declares authentication schemes
 - respects ASP.NET Core `AllowAnonymous` endpoint metadata so public child endpoints can still opt out cleanly inside protected route groups
+- stays deterministic even when the built-in `Cephalon.Identity` evaluator is disabled, so protected endpoints deny cleanly instead of drifting into missing-service failures while a consumer is wiring a custom evaluator
 
 ## Main surfaces
 

@@ -52,6 +52,7 @@ public sealed class TechnologyRuntimeCatalogSnapshot : ITechnologyRuntimeCatalog
     {
         return contributors?
             .Select(static contributor => contributor.DescribeRuntimeSurface())
+            .Where(static surface => surface.Entries.Count > 0)
             .OrderBy(static surface => surface.DisplayName, StringComparer.OrdinalIgnoreCase)
             .ToArray() ?? [];
     }

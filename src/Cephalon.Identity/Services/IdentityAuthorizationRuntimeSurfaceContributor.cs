@@ -15,6 +15,16 @@ internal sealed class IdentityAuthorizationRuntimeSurfaceContributor(
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
+        if (!options.EnableRuntimeSurface)
+        {
+            return new TechnologyRuntimeSurface(
+                technologyId: "identity-access",
+                surfaceId: "identity-authorization",
+                displayName: "Identity Authorization",
+                description: "Projects the active Cephalon identity and authorization runtime answer.",
+                entries: []);
+        }
+
         var policies = policyCatalog.Policies
             .OrderBy(static policy => policy.Id, StringComparer.OrdinalIgnoreCase)
             .ToArray();
@@ -31,6 +41,9 @@ internal sealed class IdentityAuthorizationRuntimeSurfaceContributor(
             .ToArray();
         var defaultEvaluatorType = evaluatorTypes.FirstOrDefault(static typeName =>
             string.Equals(typeName, typeof(MetadataDrivenAuthorizationEvaluator).FullName, StringComparison.Ordinal));
+        var defaultEvaluatorState = options.EnableDefaultEvaluator
+            ? defaultEvaluatorType is null ? "not-configured" : "configured"
+            : "disabled";
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["identitySelection"] = appProfile.Identity.Enabled switch
@@ -48,11 +61,13 @@ internal sealed class IdentityAuthorizationRuntimeSurfaceContributor(
             ["policyIds"] = policies.Length == 0 ? "none" : string.Join(",", policies.Select(static policy => policy.Id)),
             ["authorizationEvaluatorCount"] = evaluatorTypes.Length.ToString(CultureInfo.InvariantCulture),
             ["authorizationEvaluatorTypes"] = evaluatorTypes.Length == 0 ? "none" : string.Join(",", evaluatorTypes),
-            ["defaultEvaluator"] = defaultEvaluatorType is null ? "not-configured" : "configured",
-            ["defaultEvaluatorType"] = defaultEvaluatorType ?? "none",
+            ["defaultEvaluator"] = defaultEvaluatorState,
+            ["defaultEvaluatorType"] = options.EnableDefaultEvaluator
+                ? defaultEvaluatorType ?? "none"
+                : "none",
             ["defaultEvaluatorEnabled"] = options.EnableDefaultEvaluator ? "true" : "false",
             ["requireExplicitPolicy"] = options.RequireExplicitPolicy ? "true" : "false",
-            ["runtimeSurface"] = options.EnableRuntimeSurface ? "enabled" : "disabled",
+            ["runtimeSurface"] = "enabled",
             ["declarativeConventions"] = string.Join(",",
                 IdentityPolicyMetadataKeys.RequiredRoles,
                 IdentityPolicyMetadataKeys.RequiredRoleMatch,

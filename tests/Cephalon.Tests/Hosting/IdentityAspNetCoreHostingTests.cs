@@ -200,12 +200,54 @@ public sealed class IdentityAspNetCoreHostingTests
         }
     }
 
+    [Fact]
+    public async Task RequireCephalonAuthorizationReturnsDeterministicForbiddenProblemWhenTheBuiltInEvaluatorIsDisabled()
+    {
+        var app = await CreateAppAsync(
+            configureRoutes: webApplication =>
+            {
+                webApplication.MapGet("/tenants/{tenantId}/documents/{id}/{classification}", () => TypedResults.Ok())
+                    .RequireCephalonAuthorization("tenant-boundary", resourceType: "document");
+            },
+            useAuthenticationSchemes: false,
+            configureBuilder: builder =>
+            {
+                builder.Configuration[$"{EngineSettings.SectionName}:Identity:EnableDefaultEvaluator"] = "false";
+            });
+
+        await using (app)
+        {
+            var client = app.GetTestClient();
+            var request = new HttpRequestMessage(HttpMethod.Get, "/tenants/tenant-001/documents/doc-001/internal");
+            request.Headers.Add("X-Test-Subject", "user-002");
+            request.Headers.Add("X-Test-Role", "member");
+            request.Headers.Add("X-Test-Tenant", "tenant-001");
+            request.Headers.Add("X-Test-Region", "apac");
+
+            var response = await client.SendAsync(request);
+            var payload = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.NotNull(payload);
+            Assert.Equal("Authorization denied", payload.Title);
+            Assert.Contains("disabled", payload.Detail!, StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
     private static async Task<WebApplication> CreateAppAsync(Action<WebApplication> configureRoutes)
     {
-        return await CreateAppAsync(configureRoutes, useAuthenticationSchemes: false);
+        return await CreateAppAsync(configureRoutes, useAuthenticationSchemes: false, configureBuilder: null);
     }
 
     private static async Task<WebApplication> CreateAppAsync(Action<WebApplication> configureRoutes, bool useAuthenticationSchemes)
+    {
+        return await CreateAppAsync(configureRoutes, useAuthenticationSchemes, configureBuilder: null);
+    }
+
+    private static async Task<WebApplication> CreateAppAsync(
+        Action<WebApplication> configureRoutes,
+        bool useAuthenticationSchemes,
+        Action<WebApplicationBuilder>? configureBuilder)
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
@@ -216,6 +258,7 @@ public sealed class IdentityAspNetCoreHostingTests
         builder.Configuration[$"{EngineSettings.SectionName}:Identity:AuthorizationModes:0"] = "Policy";
         builder.Configuration[$"{EngineSettings.SectionName}:Identity:AuthorizationModes:1"] = "RBAC";
         builder.Configuration[$"{EngineSettings.SectionName}:Identity:AuthorizationModes:2"] = "ABAC";
+        configureBuilder?.Invoke(builder);
         builder.AddCephalon(engine =>
         {
             engine.AddModule(new PlatformTestModule());
