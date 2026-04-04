@@ -25,6 +25,7 @@ public sealed class AuditPackTests
                 blueprint: "Microservice",
                 audit: new AuditSettings(enabled: true)));
             engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
             engine.AddAudit();
         });
 
@@ -34,22 +35,26 @@ public sealed class AuditPackTests
         var diagnosticsCatalog = provider.GetRequiredService<IRuntimeDiagnosticsCatalog>();
         var snapshot = provider.GetRequiredService<global::Cephalon.Engine.Runtime.IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
 
-        var auditStore = Assert.Single(auditStoreCatalog.AuditStores);
+        var auditStores = auditStoreCatalog.AuditStores;
+        var builtinAuditStore = Assert.Single(auditStores, item => item.Id == "audit-default");
+        var consumerAuditStore = Assert.Single(auditStores, item => item.Id == "tenant-audit-store");
         var diagnosticsConvention = Assert.Single(diagnosticsCatalog.GetBySource("Cephalon.Audit"));
 
         Assert.NotNull(recorder);
-        Assert.Equal("audit-default", auditStore.Id);
-        Assert.Equal("audit", auditStore.SourceModuleId);
-        Assert.Equal("memory", auditStore.Provider);
-        Assert.Equal("volatile-buffer", auditStore.Mode);
-        Assert.Equal("application-managed", auditStore.Metadata["writeMode"]);
-        Assert.Equal("not-configured", auditStore.Metadata["queryMode"]);
+        Assert.Equal("audit", builtinAuditStore.SourceModuleId);
+        Assert.Equal("memory", builtinAuditStore.Provider);
+        Assert.Equal("volatile-buffer", builtinAuditStore.Mode);
+        Assert.Equal("application-managed", builtinAuditStore.Metadata["writeMode"]);
+        Assert.Equal("not-configured", builtinAuditStore.Metadata["queryMode"]);
+        Assert.Equal("phase8-runtime-catalogs", consumerAuditStore.SourceModuleId);
+        Assert.Equal("memory", consumerAuditStore.Provider);
         Assert.Equal(4600, diagnosticsConvention.MinimumEventId);
         Assert.Equal(4601, diagnosticsConvention.MaximumEventId);
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4600 && entry.Name == "AuditEntryWritten");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4601 && entry.Name == "AuditEntryWriteFailed");
-        Assert.Single(snapshot.AuditStores);
+        Assert.Equal(2, snapshot.AuditStores.Count);
         Assert.Contains(snapshot.AuditStores, item => item.Id == "audit-default");
+        Assert.Contains(snapshot.AuditStores, item => item.Id == "tenant-audit-store");
     }
 
     [Fact]
@@ -66,6 +71,7 @@ public sealed class AuditPackTests
                     mode: "SharedDatabase"),
                 audit: new AuditSettings(enabled: true)));
             engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
             engine.AddModule(new AuditCaptureModule());
             engine.AddMultiTenancy(options =>
             {
@@ -81,6 +87,8 @@ public sealed class AuditPackTests
         var resolver = provider.GetRequiredService<ITenantResolver>();
         var recorder = provider.GetRequiredService<IAuditRecorder>();
         var captureWriter = provider.GetRequiredService<CaptureAuditWriter>();
+        var auditStoreCatalog = provider.GetRequiredService<IAuditStoreCatalog>();
+        var snapshot = provider.GetRequiredService<global::Cephalon.Engine.Runtime.IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
 
         var resolvedTenant = await resolver.ResolveAsync(new TenantResolutionRequest(
             requestedTenantKey: "acme",
@@ -116,6 +124,8 @@ public sealed class AuditPackTests
         Assert.Equal(entry.Id, captureWriter.Entries[0].Id);
         Assert.Equal("tenant-001", captureWriter.Entries[0].TenantId);
         Assert.Equal("user-007", captureWriter.Entries[0].Actor.ActorId);
+        Assert.Contains(auditStoreCatalog.AuditStores, item => item.Id == "tenant-audit-store");
+        Assert.Contains(snapshot.AuditStores, item => item.Id == "tenant-audit-store");
     }
 
     [Fact]
@@ -128,6 +138,7 @@ public sealed class AuditPackTests
                 blueprint: "ModularMonolith",
                 audit: new AuditSettings(enabled: true)));
             engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
             engine.AddModule(new AuditCaptureModule());
             engine.AddAudit(options => options.EnableInMemoryWriter = false);
         });
@@ -149,8 +160,10 @@ public sealed class AuditPackTests
         Assert.NotNull(entry.Id);
         Assert.Single(captureWriter.Entries);
         Assert.Equal(entry.Id, captureWriter.Entries[0].Id);
-        Assert.Empty(auditStoreCatalog.AuditStores);
-        Assert.Empty(snapshot.AuditStores);
+        Assert.Contains(auditStoreCatalog.AuditStores, item => item.Id == "tenant-audit-store");
+        Assert.Contains(snapshot.AuditStores, item => item.Id == "tenant-audit-store");
+        Assert.DoesNotContain(auditStoreCatalog.AuditStores, item => item.Id == "audit-default");
+        Assert.DoesNotContain(snapshot.AuditStores, item => item.Id == "audit-default");
     }
 
     [Fact]
@@ -170,6 +183,7 @@ public sealed class AuditPackTests
                 blueprint: "ModularMonolith",
                 audit: new AuditSettings(enabled: true)));
             engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
             engine.AddModule(new AuditCaptureModule());
             engine.AddAudit();
         });
@@ -191,7 +205,9 @@ public sealed class AuditPackTests
         Assert.NotNull(entry.Id);
         Assert.Single(captureWriter.Entries);
         Assert.Equal(entry.Id, captureWriter.Entries[0].Id);
-        Assert.Empty(auditStoreCatalog.AuditStores);
-        Assert.Empty(snapshot.AuditStores);
+        Assert.Contains(auditStoreCatalog.AuditStores, item => item.Id == "tenant-audit-store");
+        Assert.Contains(snapshot.AuditStores, item => item.Id == "tenant-audit-store");
+        Assert.DoesNotContain(auditStoreCatalog.AuditStores, item => item.Id == "audit-default");
+        Assert.DoesNotContain(snapshot.AuditStores, item => item.Id == "audit-default");
     }
 }

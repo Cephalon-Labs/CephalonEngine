@@ -73,7 +73,7 @@ Quick links:
 - [Cephalon.Data.EntityFramework](cephalon-data-entityframework.md): Entity Framework Core read/write, inbox, and outbox integration for Cephalon data workloads. Contains 3 namespaces and 7 public types. [Browse](browse.html?assembly=Cephalon.Data.EntityFramework)
 - [Cephalon.Eventing.Wolverine](cephalon-eventing-wolverine.md): Official Wolverine adapter and managed dispatch-loop integration for Cephalon eventing workloads. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Eventing.Wolverine)
 - [Cephalon.Identity](cephalon-identity.md): Host-agnostic identity and authorization baseline for Cephalon runtimes. Contains 3 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Identity)
-- [Cephalon.Identity.AspNetCore](cephalon-identity-aspnetcore.md): ASP.NET Core host adapter for Cephalon identity and authorization workloads. Contains 3 namespaces and 4 public types. [Browse](browse.html?assembly=Cephalon.Identity.AspNetCore)
+- [Cephalon.Identity.AspNetCore](cephalon-identity-aspnetcore.md): ASP.NET Core host adapter for Cephalon identity and authorization workloads. Contains 3 namespaces and 5 public types. [Browse](browse.html?assembly=Cephalon.Identity.AspNetCore)
 - [Cephalon.Ids.Sfid](cephalon-ids-sfid.md): Official Sfid.Net-backed identifier generation for Cephalon runtimes. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Ids.Sfid)
 - [Cephalon.MultiTenancy](cephalon-multitenancy.md): Host-agnostic tenant-resolution and ambient tenant-context baseline for Cephalon runtimes. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy)
 

@@ -583,7 +583,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions),
             typeof(global::Cephalon.Identity.AspNetCore.Hosting.IdentityAspNetCoreServiceCollectionExtensions),
             typeof(global::Cephalon.Identity.AspNetCore.Hosting.IdentityAspNetCoreWebApplicationBuilderExtensions),
-            typeof(global::Cephalon.Identity.AspNetCore.Transports.Rest.IdentityEndpointConventionBuilderExtensions));
+            typeof(global::Cephalon.Identity.AspNetCore.Transports.Rest.IdentityEndpointConventionBuilderExtensions),
+            typeof(global::Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute));
     }
 
     [Fact]

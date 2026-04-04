@@ -2056,6 +2056,40 @@ note: visible
         }
     }
 
+    [Fact]
+    public async Task MapCephalonPreservesConsumerAuditStoreWhenBuiltInAuditWriterIsDisabled()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:EnableInMemoryWriter"] = "false";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddAudit();
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var auditStoreCatalog = app.Services.GetRequiredService<IAuditStoreCatalog>();
+        var snapshot = app.Services.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+
+        Assert.Single(auditStoreCatalog.AuditStores);
+        Assert.Equal("tenant-audit-store", auditStoreCatalog.AuditStores[0].Id);
+        Assert.Single(snapshot.AuditStores);
+        Assert.Equal("tenant-audit-store", snapshot.AuditStores[0].Id);
+        Assert.DoesNotContain(auditStoreCatalog.AuditStores, item => item.Id == "audit-default");
+        Assert.DoesNotContain(snapshot.AuditStores, item => item.Id == "audit-default");
+
+        await app.StopAsync();
+    }
+
     private static string GetReferenceModuleAssemblyPath()
     {
         var path = typeof(OperationsModule).Assembly.Location;

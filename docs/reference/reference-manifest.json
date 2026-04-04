@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-04T20:29:01.7816412+00:00",
+  "GeneratedAtUtc": "2026-04-04T21:44:23.4718027+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -128,7 +128,7 @@
       "Description": "ASP.NET Core host adapter for Cephalon identity and authorization workloads.",
       "FileName": "cephalon-identity-aspnetcore.md",
       "NamespaceCount": 3,
-      "TypeCount": 4
+      "TypeCount": 5
     },
     {
       "AssemblyName": "Cephalon.Ids.Sfid",
@@ -904,7 +904,7 @@
       "AssemblyName": "Cephalon.Identity.AspNetCore",
       "FileName": "cephalon-identity-aspnetcore.md",
       "AnchorId": "namespace-cephalon-identity-aspnetcore-transports-rest",
-      "TypeCount": 1
+      "TypeCount": 2
     },
     {
       "NamespaceName": "Cephalon.Identity.Configuration",
@@ -6149,6 +6149,21 @@
       }
     },
     {
+      "DisplayName": "RequireCephalonAuthorizationAttribute",
+      "NamespaceName": "Cephalon.Identity.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.Identity.AspNetCore",
+      "FileName": "cephalon-identity-aspnetcore.md",
+      "AnchorId": "type-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute",
+      "Declaration": "public sealed class RequireCephalonAuthorizationAttribute",
+      "Summary": "Requires a Cephalon authorization decision before an ASP.NET Core controller or action can execute.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "RestEndpointConventionBuilderExtensions",
       "NamespaceName": "Cephalon.AspNetCore.Transports.Rest",
       "AssemblyName": "Cephalon.AspNetCore",
@@ -7122,6 +7137,17 @@
       "AnchorId": "member-p-cephalon-abstractions-authorization-authorizationcontext-action",
       "Signature": "string Action { get; }",
       "Summary": "Gets the action being requested."
+    },
+    {
+      "DisplayName": "Action",
+      "Category": "Properties",
+      "DeclaringTypeName": "RequireCephalonAuthorizationAttribute",
+      "NamespaceName": "Cephalon.Identity.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.Identity.AspNetCore",
+      "FileName": "cephalon-identity-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-action",
+      "Signature": "string Action { get; set; }",
+      "Summary": "Gets or sets the optional action to evaluate."
     },
     {
       "DisplayName": "ActivatedAtUtc",
@@ -10873,6 +10899,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventdispatchitem-createdatutc",
       "Signature": "DateTimeOffset CreatedAtUtc { get; }",
       "Summary": "Gets the time at which the durable outbox row was created."
+    },
+    {
+      "DisplayName": "CreateInstance",
+      "Category": "Methods",
+      "DeclaringTypeName": "RequireCephalonAuthorizationAttribute",
+      "NamespaceName": "Cephalon.Identity.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.Identity.AspNetCore",
+      "FileName": "cephalon-identity-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-createinstance-system-iserviceprovider",
+      "Signature": "IFilterMetadata CreateInstance(IServiceProvider serviceProvider)",
+      "Summary": "Creates the MVC authorization filter that evaluates the current request through the shared Cephalon boundary executor."
     },
     {
       "DisplayName": "CreateSnapshot",
@@ -17684,6 +17721,17 @@
       "Summary": "Gets a value indicating whether tenant resolution succeeded."
     },
     {
+      "DisplayName": "IsReusable",
+      "Category": "Properties",
+      "DeclaringTypeName": "RequireCephalonAuthorizationAttribute",
+      "NamespaceName": "Cephalon.Identity.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.Identity.AspNetCore",
+      "FileName": "cephalon-identity-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-isreusable",
+      "Signature": "bool IsReusable { get; }",
+      "Summary": "Gets a value indicating whether the MVC filter instance can be reused across requests."
+    },
+    {
       "DisplayName": "IsSelected",
       "Category": "Methods",
       "DeclaringTypeName": "TechnologySelection",
@@ -20632,6 +20680,17 @@
       "Summary": "Initializes a new instance of the \u0060OracleDependencyHealthOptions\u0060 class."
     },
     {
+      "DisplayName": "Order",
+      "Category": "Properties",
+      "DeclaringTypeName": "RequireCephalonAuthorizationAttribute",
+      "NamespaceName": "Cephalon.Identity.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.Identity.AspNetCore",
+      "FileName": "cephalon-identity-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-order",
+      "Signature": "int Order { get; }",
+      "Summary": "Gets the MVC filter order used to run the Cephalon authorization boundary early in the authorization stage."
+    },
+    {
       "DisplayName": "Organization",
       "Category": "Fields",
       "DeclaringTypeName": "PatternKind",
@@ -20839,6 +20898,17 @@
       "AnchorId": "member-p-cephalon-abstractions-authorization-authorizationresource-ownersubjectid",
       "Signature": "string OwnerSubjectId { get; }",
       "Summary": "Gets the owning subject identifier when one is known."
+    },
+    {
+      "DisplayName": "OwnerSubjectIdRouteKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "RequireCephalonAuthorizationAttribute",
+      "NamespaceName": "Cephalon.Identity.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.Identity.AspNetCore",
+      "FileName": "cephalon-identity-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-ownersubjectidroutekey",
+      "Signature": "string OwnerSubjectIdRouteKey { get; set; }",
+      "Summary": "Gets or sets the optional route-value key that provides the owning subject identifier."
     },
     {
       "DisplayName": "OwnerSubjectIdRouteKeys",
@@ -21620,6 +21690,17 @@
       "AnchorId": "member-p-cephalon-abstractions-authorization-authorizationdecision-policyid",
       "Signature": "string PolicyId { get; }",
       "Summary": "Gets the policy identifier that produced the decision when one is known."
+    },
+    {
+      "DisplayName": "PolicyId",
+      "Category": "Properties",
+      "DeclaringTypeName": "RequireCephalonAuthorizationAttribute",
+      "NamespaceName": "Cephalon.Identity.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.Identity.AspNetCore",
+      "FileName": "cephalon-identity-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-policyid",
+      "Signature": "string PolicyId { get; }",
+      "Summary": "Gets the Cephalon authorization policy id that must allow the request."
     },
     {
       "DisplayName": "Port",
@@ -23217,6 +23298,17 @@
       "Summary": "Requires a Cephalon authorization decision before every REST route handler in the route group can execute."
     },
     {
+      "DisplayName": "RequireCephalonAuthorizationAttribute",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RequireCephalonAuthorizationAttribute",
+      "NamespaceName": "Cephalon.Identity.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.Identity.AspNetCore",
+      "FileName": "cephalon-identity-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-ctor-system-string",
+      "Signature": "RequireCephalonAuthorizationAttribute(string policyId)",
+      "Summary": "Requires a Cephalon authorization decision before an ASP.NET Core controller or action can execute."
+    },
+    {
       "DisplayName": "Required",
       "Category": "Properties",
       "DeclaringTypeName": "CassandraDependencyDefinition",
@@ -23800,6 +23892,17 @@
       "Summary": "Gets the stable resource identifier when one is known."
     },
     {
+      "DisplayName": "ResourceIdRouteKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "RequireCephalonAuthorizationAttribute",
+      "NamespaceName": "Cephalon.Identity.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.Identity.AspNetCore",
+      "FileName": "cephalon-identity-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-resourceidroutekey",
+      "Signature": "string ResourceIdRouteKey { get; set; }",
+      "Summary": "Gets or sets the optional route-value key that provides the resource identifier."
+    },
+    {
       "DisplayName": "ResourceIdRouteKeys",
       "Category": "Properties",
       "DeclaringTypeName": "IdentityAspNetCoreOptions",
@@ -23842,6 +23945,17 @@
       "AnchorId": "member-p-cephalon-abstractions-authorization-authorizationresource-resourcetype",
       "Signature": "string ResourceType { get; }",
       "Summary": "Gets the logical resource type identifier."
+    },
+    {
+      "DisplayName": "ResourceType",
+      "Category": "Properties",
+      "DeclaringTypeName": "RequireCephalonAuthorizationAttribute",
+      "NamespaceName": "Cephalon.Identity.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.Identity.AspNetCore",
+      "FileName": "cephalon-identity-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-resourcetype",
+      "Signature": "string ResourceType { get; set; }",
+      "Summary": "Gets or sets the optional logical resource type."
     },
     {
       "DisplayName": "ResponseBodyLimit",
@@ -26944,6 +27058,17 @@
       "AnchorId": "member-m-cephalon-abstractions-tenancy-tenantresolutionresult-ctor-cephalon-abstractions-tenancy-tenantcontext-system-string-system-string",
       "Signature": "TenantResolutionResult(TenantContext tenant, string source, string reason)",
       "Summary": "Creates a new tenant-resolution result."
+    },
+    {
+      "DisplayName": "TenantRouteKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "RequireCephalonAuthorizationAttribute",
+      "NamespaceName": "Cephalon.Identity.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.Identity.AspNetCore",
+      "FileName": "cephalon-identity-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-tenantroutekey",
+      "Signature": "string TenantRouteKey { get; set; }",
+      "Summary": "Gets or sets the optional route-value key that provides the tenant identifier."
     },
     {
       "DisplayName": "TenantRouteKeys",
