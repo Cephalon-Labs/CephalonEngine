@@ -16,8 +16,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Cephalon.Audit\Cephalon.Audit.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data\Cephalon.Data.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Engine\Cephalon.Engine.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Eventing\Cephalon.Eventing.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Eventing.Wolverine\Cephalon.Eventing.Wolverine.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Identity\Cephalon.Identity.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Ids.Sfid\Cephalon.Ids.Sfid.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.MultiTenancy\Cephalon.MultiTenancy.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Scaffolding\Cephalon.Scaffolding.csproj" />
   </ItemGroup>
 
