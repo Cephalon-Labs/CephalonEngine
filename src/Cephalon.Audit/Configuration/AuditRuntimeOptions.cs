@@ -24,6 +24,11 @@ public sealed class AuditRuntimeOptions
     }
 
     /// <summary>
+    /// Gets or sets a value indicating whether the built-in in-memory audit writer should remain active.
+    /// </summary>
+    public bool EnableInMemoryWriter { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets the maximum number of audit entries retained by the default in-memory writer.
     /// </summary>
     public int InMemoryBufferCapacity { get; set; } = 1024;

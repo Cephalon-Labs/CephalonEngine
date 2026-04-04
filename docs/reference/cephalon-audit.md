@@ -42,6 +42,16 @@ Parameters:
 
 #### Properties
 
+<a id="member-p-cephalon-audit-configuration-auditruntimeoptions-enableinmemorywriter"></a>
+
+##### `EnableInMemoryWriter`
+
+```csharp
+bool EnableInMemoryWriter { get; set; }
+```
+
+Gets or sets a value indicating whether the built-in in-memory audit writer should remain active.
+
 <a id="member-p-cephalon-audit-configuration-auditruntimeoptions-inmemorybuffercapacity"></a>
 
 ##### `InMemoryBufferCapacity`

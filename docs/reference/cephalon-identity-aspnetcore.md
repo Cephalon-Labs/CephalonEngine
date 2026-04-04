@@ -321,3 +321,22 @@ Parameters:
 - `resourceIdRouteKey`: The optional route-value key that provides the resource identifier. When omitted, the adapter falls back to the configured resource-id route keys.
 - `tenantRouteKey`: The optional route-value key that provides the tenant identifier. When omitted, the adapter falls back to the configured tenant route keys and tenant headers.
 - `ownerSubjectIdRouteKey`: The optional route-value key that provides the owning subject identifier for owner-based policies.
+
+<a id="member-m-cephalon-identity-aspnetcore-transports-rest-identityendpointconventionbuilderextensions-withcephalonauthenticationschemes-1-0-system-string"></a>
+
+##### `WithCephalonAuthenticationSchemes`
+
+```csharp
+TBuilder WithCephalonAuthenticationSchemes<TBuilder>(this TBuilder builder, string[] authenticationSchemes)
+```
+
+Declares the ASP.NET Core authentication schemes that should own challenge and forbid responses for an endpoint or route group.
+
+Returns: The same builder for fluent chaining.
+
+Type parameters:
+- `TBuilder`: The endpoint convention builder type.
+
+Parameters:
+- `builder`: The endpoint or route-group builder to annotate.
+- `authenticationSchemes`: The authentication scheme names to use for boundary responses.
