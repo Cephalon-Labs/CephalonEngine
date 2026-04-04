@@ -1,4 +1,6 @@
 using Cephalon.AspNetCore.Hosting;
+using Cephalon.Audit.Registration;
+using Cephalon.Ids.Sfid.Registration;
 using Cephalon.Observability.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -42,7 +44,11 @@ public static class MicroserviceSampleApp
         configureBuilder?.Invoke(builder);
         builder.Configuration.AddJsonFile("microservice.settings.json", optional: false, reloadOnChange: false);
 
-        builder.AddCephalon();
+        builder.AddCephalon(engine =>
+        {
+            engine.AddSfidIds();
+            engine.AddAudit();
+        });
         builder.Services.AddCephalonObservability(builder.Configuration);
 
         var app = builder.Build();

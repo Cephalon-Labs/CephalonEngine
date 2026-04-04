@@ -1,4 +1,6 @@
 using Cephalon.AspNetCore.Hosting;
+using Cephalon.Audit.Registration;
+using Cephalon.Ids.Sfid.Registration;
 using Cephalon.Observability.Hosting;
 using Cephalon.Observability.OpenTelemetry.Hosting;
 using Microsoft.AspNetCore.Builder;
@@ -47,7 +49,11 @@ public static class ModularMonolithSampleApp
 
         configureBuilder?.Invoke(builder);
 
-        builder.AddCephalon();
+        builder.AddCephalon(engine =>
+        {
+            engine.AddSfidIds();
+            engine.AddAudit();
+        });
         builder.Services.AddCephalonObservability(builder.Configuration);
         builder.AddCephalonOpenTelemetry();
 

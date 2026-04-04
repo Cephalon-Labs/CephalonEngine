@@ -63,6 +63,7 @@ Generate the default modular monolith shape:
 
 That produces a host project at `./Acme.Store/src/Acme.Store.Host/Acme.Store.Host.csproj`.
 The generated app root now also includes `NuGet.config`, `./.cephalon/packages/README.md`, `deploy/windows-service/README.md`, `deploy/windows-service/install-service.ps1`, `deploy/windows-service/remove-service.ps1`, `deploy/iis/README.md`, `deploy/iis/install-site.ps1`, `deploy/iis/remove-site.ps1`, `deploy/azure-app-service/README.md`, `deploy/azure-app-service/deploy-zip.ps1`, `deploy/container-image/README.md`, `deploy/container-image/publish-image.ps1`, `deploy/azure-container-apps/README.md`, `deploy/azure-container-apps/deploy-up.ps1`, `deploy/kubernetes/README.md`, `deploy/kubernetes/apply.ps1`, `deploy/kubernetes/kustomization.yaml`, `deploy/kubernetes/namespace.yaml`, `deploy/kubernetes/deployment.yaml`, `deploy/kubernetes/service.yaml`, `deploy/linux/systemd/README.md`, `deploy/linux/systemd/Acme.Store.service`, `deploy/linux/systemd/Acme.Store.env`, `.dockerignore`, `Dockerfile`, `compose.yaml`, and `otel-collector-config.yaml`.
+The generated test project also starts with `Architecture/CompositionSmokeTests.cs` plus per-feature `Features/*BehaviorSpecifications.cs` placeholders so you can move straight into composition checks and Given/When/Then-style business behavior without building a test harness from scratch.
 
 ## Seed The Generated Package Feed
 

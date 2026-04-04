@@ -63,6 +63,8 @@ public sealed class CliApplicationTests
             Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "linux", "systemd", "Acme.Store.env")));
             Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Properties", "PublishProfiles", "CephalonFolder.pubxml")));
             Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Program.cs")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "tests", "Acme.Store.Service.Tests", "Architecture", "CompositionSmokeTests.cs")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "tests", "Acme.Store.Service.Tests", "Features", "CheckoutBehaviorSpecifications.cs")));
 
             var packageProps = await File.ReadAllTextAsync(Path.Combine(outputPath, "Directory.Packages.props"));
             Assert.Contains("Cephalon.AspNetCore.Grpc", packageProps, StringComparison.Ordinal);
@@ -95,8 +97,9 @@ public sealed class CliApplicationTests
             Assert.Contains("azure-app-service.zip", azureAppServiceDeployScript, StringComparison.Ordinal);
 
             var containerImagePublishScript = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "container-image", "publish-image.ps1"));
-            Assert.Contains("docker build", containerImagePublishScript, StringComparison.Ordinal);
-            Assert.Contains("docker push", containerImagePublishScript, StringComparison.Ordinal);
+            Assert.Contains("Get-DockerBuildArguments", containerImagePublishScript, StringComparison.Ordinal);
+            Assert.Contains("Format-Command -Command \"docker\"", containerImagePublishScript, StringComparison.Ordinal);
+            Assert.Contains("@(\"push\", $tag)", containerImagePublishScript, StringComparison.Ordinal);
             Assert.Contains("Container image publishing completed successfully.", containerImagePublishScript, StringComparison.Ordinal);
 
             var azureContainerAppsDeployScript = await File.ReadAllTextAsync(Path.Combine(outputPath, "deploy", "azure-container-apps", "deploy-up.ps1"));
@@ -120,10 +123,14 @@ public sealed class CliApplicationTests
             Assert.Contains("DynamicUser=true", systemdService, StringComparison.Ordinal);
 
             var settings = await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "appsettings.json"));
-            Assert.Contains("\"Microservice\"", settings, StringComparison.Ordinal);
-            Assert.Contains("\"gRPC\"", settings, StringComparison.Ordinal);
-            Assert.Contains("\"JSON-RPC\"", settings, StringComparison.Ordinal);
-            Assert.Contains("\"Agentic Workloads\"", settings, StringComparison.Ordinal);
+            Assert.Contains("\"microservice\"", settings, StringComparison.Ordinal);
+            Assert.Contains("\"grpc\"", settings, StringComparison.Ordinal);
+            Assert.Contains("\"json-rpc\"", settings, StringComparison.Ordinal);
+            Assert.Contains("\"agentic-workloads\"", settings, StringComparison.Ordinal);
+            Assert.Contains("\"Data\"", settings, StringComparison.Ordinal);
+            Assert.Contains("\"Identity\"", settings, StringComparison.Ordinal);
+            Assert.Contains("\"Tenancy\"", settings, StringComparison.Ordinal);
+            Assert.Contains("\"Audit\"", settings, StringComparison.Ordinal);
             Assert.DoesNotContain("http://localhost:4317", settings, StringComparison.Ordinal);
             Assert.Contains("\"Protocol\": \"otlp/http\"", settings, StringComparison.Ordinal);
 
@@ -131,6 +138,12 @@ public sealed class CliApplicationTests
             Assert.Contains("builder.AddCephalonOpenTelemetry();", program, StringComparison.Ordinal);
             Assert.Contains("WindowsServiceHelpers.IsWindowsService()", program, StringComparison.Ordinal);
             Assert.Contains("builder.Host.UseWindowsService();", program, StringComparison.Ordinal);
+
+            var compositionSmokeTest = await File.ReadAllTextAsync(Path.Combine(outputPath, "tests", "Acme.Store.Service.Tests", "Architecture", "CompositionSmokeTests.cs"));
+            Assert.Contains("Generated_scaffold_has_a_test_harness_ready_for_real_composition_checks", compositionSmokeTest, StringComparison.Ordinal);
+
+            var checkoutBehaviorSpecification = await File.ReadAllTextAsync(Path.Combine(outputPath, "tests", "Acme.Store.Service.Tests", "Features", "CheckoutBehaviorSpecifications.cs"));
+            Assert.Contains("Given_checkout_behavior_when_you_start_tdd_then_replace_this_placeholder_with_the_first_failing_specification", checkoutBehaviorSpecification, StringComparison.Ordinal);
 
             var compose = await File.ReadAllTextAsync(Path.Combine(outputPath, "compose.yaml"));
             Assert.Contains("http://otel-collector:4318", compose, StringComparison.Ordinal);

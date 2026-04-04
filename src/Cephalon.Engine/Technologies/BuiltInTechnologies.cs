@@ -15,6 +15,7 @@ public static class BuiltInTechnologies
         displayName: "Agentic Workloads",
         description: "Prepares the app model for assistants, tool-using agents, and long-running autonomous workflows.",
         kind: TechnologyKind.Intelligence,
+        aliases: ["AgenticWorkloads", "Agentic"],
         tags: ["ai", "agents", "llm", "automation"],
         packageHints: ["Cephalon.Agentics"],
         guidance:
@@ -32,6 +33,7 @@ public static class BuiltInTechnologies
         displayName: "Event-Driven Integration",
         description: "Prepares modules for broker-backed events, asynchronous workflows, and eventually consistent integration flows.",
         kind: TechnologyKind.Messaging,
+        aliases: ["EventDrivenIntegration", "EventDriven"],
         tags: ["events", "messaging", "broker", "async"],
         packageHints: ["Cephalon.Eventing"],
         guidance:
@@ -49,6 +51,7 @@ public static class BuiltInTechnologies
         displayName: "Knowledge Retrieval",
         description: "Prepares the app for semantic retrieval, indexing, search, and knowledge-backed experiences.",
         kind: TechnologyKind.Data,
+        aliases: ["KnowledgeRetrieval", "Knowledge"],
         tags: ["knowledge", "retrieval", "search", "vector"],
         packageHints: ["Cephalon.Retrieval"],
         guidance:
@@ -66,6 +69,7 @@ public static class BuiltInTechnologies
         displayName: "Realtime Experience",
         description: "Prepares the app for live collaboration, presence, streaming updates, and reactive client experiences.",
         kind: TechnologyKind.Experience,
+        aliases: ["RealtimeExperience", "Realtime"],
         tags: ["realtime", "presence", "collaboration", "streaming"],
         guidance:
         [
@@ -82,6 +86,7 @@ public static class BuiltInTechnologies
         displayName: "Edge-Native Delivery",
         description: "Prepares the app for browser, device, edge, and intermittently connected deployment scenarios.",
         kind: TechnologyKind.Deployment,
+        aliases: ["EdgeNativeDelivery", "EdgeNative", "Edge"],
         tags: ["edge", "offline", "hybrid", "device"],
         packageHints: ["Cephalon.Edge"],
         guidance:
@@ -91,13 +96,105 @@ public static class BuiltInTechnologies
             "Prefer graceful degradation paths instead of assuming permanent connectivity to central infrastructure."
         ]);
 
+    /// <summary>
+    /// Gets the built-in identity-access technology profile.
+    /// </summary>
+    public static TechnologyDescriptor IdentityAccess { get; } = new(
+        id: "identity-access",
+        displayName: "Identity Access",
+        description: "Prepares the app for configurable authentication and authorization flows such as RBAC, ABAC, and policy evaluation.",
+        kind: TechnologyKind.Security,
+        aliases: ["IdentityAccess", "Identity"],
+        tags: ["security", "identity", "authorization", "authn", "authz"],
+        packageHints: ["Cephalon.Identity"],
+        guidance:
+        [
+            "Keep identity and authorization decisions behind host-agnostic contracts so host adapters stay thin.",
+            "Treat RBAC, ABAC, and policy-based evaluation as configuration-driven modes instead of hard-coded endpoint logic.",
+            "Keep infrastructure-specific principal, token, and scheme details inside adapter packages."
+        ]);
+
+    /// <summary>
+    /// Gets the built-in multi-tenancy technology profile.
+    /// </summary>
+    public static TechnologyDescriptor MultiTenancy { get; } = new(
+        id: "multi-tenancy",
+        displayName: "Multi-Tenancy",
+        description: "Prepares the app for tenant-aware routing, isolation, membership, and runtime answers.",
+        kind: TechnologyKind.Platform,
+        aliases: ["MultiTenancy", "Multitenancy"],
+        tags: ["platform", "tenancy", "tenant", "isolation"],
+        packageHints: ["Cephalon.MultiTenancy"],
+        guidance:
+        [
+            "Keep tenant resolution, membership, and domain mapping explicit instead of folding them into ad-hoc module state.",
+            "Design audit, authorization, and runtime surfaces to remain tenant-aware when the technology is active.",
+            "Prefer additive tenant policies and context resolution over hard-coded single-tenant assumptions."
+        ]);
+
+    /// <summary>
+    /// Gets the built-in hybrid-cloud-runtime technology profile.
+    /// </summary>
+    public static TechnologyDescriptor HybridCloudRuntime { get; } = new(
+        id: "hybrid-cloud-runtime",
+        displayName: "Hybrid Cloud Runtime",
+        description: "Prepares the app for mixed on-premises, edge, and cloud deployment handoffs without changing the engine core.",
+        kind: TechnologyKind.Platform,
+        aliases: ["HybridCloudRuntime", "HybridCloud"],
+        tags: ["platform", "hybrid", "cloud", "runtime"],
+        guidance:
+        [
+            "Keep platform-specific deployment and connectivity concerns inside companion packages or governance layers.",
+            "Prefer explicit runtime surfaces that describe active topology assumptions instead of embedding cloud branches into modules.",
+            "Treat hybrid deployment as an additive operational slice, not a new blueprint."
+        ]);
+
+    /// <summary>
+    /// Gets the built-in service-mesh-integration technology profile.
+    /// </summary>
+    public static TechnologyDescriptor ServiceMeshIntegration { get; } = new(
+        id: "service-mesh-integration",
+        displayName: "Service Mesh Integration",
+        description: "Prepares the app for additive service-mesh coordination, policy handoff, and traffic-governance guidance.",
+        kind: TechnologyKind.Platform,
+        aliases: ["ServiceMeshIntegration", "ServiceMesh"],
+        tags: ["platform", "service-mesh", "traffic", "policy"],
+        guidance:
+        [
+            "Keep mesh-specific traffic, policy, and identity handoff outside the engine core.",
+            "Expose runtime metadata that helps operators understand mesh expectations when the technology is active.",
+            "Prefer additive gateway or control-plane integration over engine-owned orchestration."
+        ]);
+
+    /// <summary>
+    /// Gets the built-in serverless-hosting technology profile.
+    /// </summary>
+    public static TechnologyDescriptor ServerlessHosting { get; } = new(
+        id: "serverless-hosting",
+        displayName: "Serverless Hosting",
+        description: "Prepares the app for event-triggered or function-style hosting without changing the host-agnostic core runtime model.",
+        kind: TechnologyKind.Deployment,
+        aliases: ["ServerlessHosting", "Serverless"],
+        tags: ["deployment", "serverless", "functions", "hosting"],
+        guidance:
+        [
+            "Keep host-trigger and cloud-function specifics inside adapters instead of `Cephalon.Abstractions` or `Cephalon.Engine`.",
+            "Prefer explicit transport and execution surfaces that remain truthful when the hosting model is request-driven or event-triggered.",
+            "Treat serverless delivery as an additive hosting slice, not as a replacement for the app profile or module model."
+        ]);
+
     private static readonly TechnologyDescriptor[] Items =
     [
         AgenticWorkloads,
         EventDrivenIntegration,
         KnowledgeRetrieval,
         RealtimeExperience,
-        EdgeNativeDelivery
+        EdgeNativeDelivery,
+        IdentityAccess,
+        MultiTenancy,
+        HybridCloudRuntime,
+        ServiceMeshIntegration,
+        ServerlessHosting
     ];
 
     private static readonly Dictionary<string, TechnologyDescriptor> Index = CreateIndex();
@@ -140,24 +237,20 @@ public static class BuiltInTechnologies
     {
         var index = new Dictionary<string, TechnologyDescriptor>(StringComparer.Ordinal);
 
-        Add(index, AgenticWorkloads, "AgenticWorkloads", "Agentic");
-        Add(index, EventDrivenIntegration, "EventDrivenIntegration", "EventDriven");
-        Add(index, KnowledgeRetrieval, "KnowledgeRetrieval", "Knowledge");
-        Add(index, RealtimeExperience, "RealtimeExperience", "Realtime");
-        Add(index, EdgeNativeDelivery, "EdgeNativeDelivery", "EdgeNative", "Edge");
+        foreach (var item in Items)
+        {
+            Add(index, item);
+        }
 
         return index;
     }
 
-    private static void Add(
-        Dictionary<string, TechnologyDescriptor> index,
-        TechnologyDescriptor technology,
-        params string[] aliases)
+    private static void Add(Dictionary<string, TechnologyDescriptor> index, TechnologyDescriptor technology)
     {
         index[NormalizeKey(technology.Id)] = technology;
         index[NormalizeKey(technology.DisplayName)] = technology;
 
-        foreach (var alias in aliases)
+        foreach (var alias in technology.Aliases)
         {
             index[NormalizeKey(alias)] = technology;
         }

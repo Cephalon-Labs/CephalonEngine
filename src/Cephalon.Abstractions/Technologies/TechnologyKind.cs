@@ -28,5 +28,15 @@ public enum TechnologyKind
     /// <summary>
     /// Identifies a deployment-oriented technology.
     /// </summary>
-    Deployment = 4
+    Deployment = 4,
+
+    /// <summary>
+    /// Identifies a security-oriented technology.
+    /// </summary>
+    Security = 5,
+
+    /// <summary>
+    /// Identifies a platform- or runtime-oriented technology.
+    /// </summary>
+    Platform = 6
 }

@@ -50,7 +50,11 @@ That keeps the authoring path close to the same module-first ideas used by Cepha
 9. Use `ITechnologyRuntimeContributor` when the package or pack needs to expose an operator-facing runtime snapshot through `/engine/technology-surfaces`.
 10. Use `IExecutionGraphContributor` when the package needs to publish operator-facing workflow or execution-graph descriptors through `/engine/execution-graphs` and `/engine/snapshot`.
 11. Use `IHostedExecutionContributor` when the package needs to publish operator-facing hosted or background execution descriptors through `/engine/hosted-executions`, `/engine/runtime-story`, and `/engine/snapshot`.
-12. Add transport contribution interfaces only when the package really owns an external surface.
+12. Use `IProjectionContributor` when the package needs to publish operator-facing projection descriptors through `/engine/projections` and `/engine/snapshot`.
+13. Use `IInboxContributor` when the package needs to publish operator-facing inbox descriptors through `/engine/inboxes` and `/engine/snapshot`.
+14. Use `IOutboxContributor` when the package needs to publish operator-facing outbox descriptors through `/engine/outboxes` and `/engine/snapshot`.
+15. Use `IAuthorizationPolicyContributor` when the package needs to publish operator-facing authorization-policy descriptors through `/engine/authorization-policies` and `/engine/snapshot`.
+16. Add transport contribution interfaces only when the package really owns an external surface.
 
 ## Workflow and orchestration descriptors
 
@@ -66,10 +70,31 @@ Current baseline behavior:
 - `/engine/runtime-story` now carries the operator-facing lifecycle state for each execution graph, including load, activate, and deactivate timestamps
 - `/engine/hosted-executions` exposes the hosted/background catalog, `/engine/snapshot` carries the same hosted descriptors, and `/engine/runtime-story` now carries hosted-execution load, activate, and deactivate timestamps
 - hosted executions can link back to one execution graph through `executionGraphId`, but they stay descriptive and operator-facing instead of introducing a separate Cephalon runner abstraction
+- hosted executions can also declare `metadata.eventSubscriptionId` or `metadata.eventSubscriptionIds` when they own the application-managed execution path for declared event subscriptions, which lets `Cephalon.Eventing` project truthful linkage without inventing a second runtime registry; if the hosted execution also points at an `executionGraphId`, the eventing runtime surface can surface that orchestration link too
+- modules that own application-managed event handling can also inject `IEventSubscriptionRuntimeReporter` and report `started`, `succeeded`, `failed`, `retry-scheduled`, or `skipped` observations plus operator-facing metadata such as retry windows or backoff hints so `Cephalon.Eventing` can project truthful live runtime state without claiming a pack-owned bus runner
+- modules or adapter packages that own application-managed publication dispatch can inject `IEventDispatchRuntimeReporter` and report `started`, `succeeded`, `failed`, `retry-scheduled`, or `skipped` observations plus operator-facing metadata such as `outboxId`, `channelId`, retry windows, or backoff hints so `Cephalon.Eventing` can project truthful dispatch runtime state without claiming a broker-owned dispatch runtime
 - `Cephalon.Agentics` can now project agent-tool links to capability keys, execution graphs, and hosted executions through `/engine/technology-surfaces` and `/engine/snapshot`
 - invalid agent-tool references to unknown capability keys, execution graphs, or hosted executions now fail when the agentic runtime catalog is resolved
 - the engine validates hosted-execution ids, source modules, and referenced execution graphs at build time so invalid hosted descriptors fail fast
 - the engine validates graph ids, entry nodes, edges, referenced modules, and referenced capability keys at build time so invalid descriptors fail fast
+
+## Data and authorization descriptors
+
+Packages that need to publish read-model or projection shape can implement `IProjectionContributor` and register one or more `ProjectionDescriptor` entries.
+Packages that need to publish durable processed-message or idempotency-store shape can implement `IInboxContributor` and register one or more `InboxDescriptor` entries.
+Packages that need to publish durable outbound message staging shape can implement `IOutboxContributor` and register one or more `OutboxDescriptor` entries.
+Packages that need to publish operator-facing authorization choices can implement `IAuthorizationPolicyContributor` and register one or more `AuthorizationPolicyDescriptor` entries.
+
+Current baseline behavior:
+
+- `/engine/projections` exposes the merged projection catalog, and `/engine/snapshot` carries the same projection descriptors alongside manifest, diagnostics, and lifecycle data
+- `/engine/inboxes` exposes the merged inbox catalog, and `/engine/snapshot` carries the same inbox descriptors alongside manifest, diagnostics, and lifecycle data
+- `/engine/outboxes` exposes the merged outbox catalog, and `/engine/snapshot` carries the same outbox descriptors alongside manifest, diagnostics, and lifecycle data
+- `/engine/authorization-policies` exposes the merged authorization-policy catalog, and `/engine/snapshot` carries the same policy descriptors in the broader runtime answer
+- projection descriptors stay grounded in module ownership through `sourceModuleId`, target store ids, and optional source contract metadata
+- inbox descriptors stay grounded in module ownership through `sourceModuleId`, provider, mode, optional channel ids, and operator-facing metadata such as idempotency scope
+- outbox descriptors stay grounded in module ownership through `sourceModuleId`, provider, mode, optional channel ids, and operator-facing metadata such as dispatch ownership
+- authorization-policy descriptors stay host-agnostic and can publish supported `RBAC`, `ABAC`, and `Policy` modes without leaking ASP.NET Core or identity-provider types into `Cephalon.Abstractions`
 
 ## Package manifest contract
 

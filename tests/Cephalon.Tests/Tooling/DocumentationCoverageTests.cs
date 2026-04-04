@@ -6,15 +6,23 @@ public sealed class DocumentationCoverageTests
         new Dictionary<string, string>(StringComparer.Ordinal)
         {
             ["Cephalon.Abstractions"] = "abstractions.md",
+            ["Cephalon.Audit"] = "audit.md",
             ["Cephalon.Agentics"] = "agentics.md",
             ["Cephalon.AspNetCore"] = "aspnetcore.md",
             ["Cephalon.AspNetCore.GraphQL"] = "aspnetcore-graphql.md",
             ["Cephalon.AspNetCore.Grpc"] = "aspnetcore-grpc.md",
             ["Cephalon.AspNetCore.JsonRpc"] = "aspnetcore-jsonrpc.md",
             ["Cephalon.Cli"] = "cli.md",
+            ["Cephalon.Data"] = "data.md",
+            ["Cephalon.Data.EntityFramework"] = "data-entityframework.md",
             ["Cephalon.Edge"] = "edge.md",
             ["Cephalon.Engine"] = "engine.md",
             ["Cephalon.Eventing"] = "eventing.md",
+            ["Cephalon.Eventing.Wolverine"] = "eventing-wolverine.md",
+            ["Cephalon.Identity"] = "identity.md",
+            ["Cephalon.Identity.AspNetCore"] = "identity-aspnetcore.md",
+            ["Cephalon.Ids.Sfid"] = "ids-sfid.md",
+            ["Cephalon.MultiTenancy"] = "multi-tenancy.md",
             ["Cephalon.Observability"] = "observability.md",
             ["Cephalon.Observability.AlibabaCloud"] = "observability-alibaba-cloud.md",
             ["Cephalon.Observability.Aws"] = "observability-aws.md",
@@ -157,6 +165,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("linux-systemd-deployment.md", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-systemd.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("dotnet new list cephalon", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("CompositionSmokeTests.cs", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("BehaviorSpecifications.cs", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("CephalonFolder.pubxml", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("deploy/windows-service/install-service.ps1", generatedAppPublishing, StringComparison.Ordinal);
         Assert.Contains("windows-service-deployment.md", generatedAppPublishing, StringComparison.Ordinal);
@@ -211,6 +221,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("validate-generated-app-kubernetes.ps1", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("linux-systemd-deployment.md", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("CephalonFolder.pubxml", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("CompositionSmokeTests.cs", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("BehaviorSpecifications.cs", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("dotnet new list cephalon", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("generated-app-publishing.md", templatePackReadme, StringComparison.Ordinal);
@@ -228,6 +240,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("deploy/kubernetes", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("linux-systemd-deployment.md", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("CephalonFolder.pubxml", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("CompositionSmokeTests.cs", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("BehaviorSpecifications.cs", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("docs/getting-started.md", rootReadme, StringComparison.Ordinal);
         Assert.Contains("docs/generated-app-publishing.md", rootReadme, StringComparison.Ordinal);
         Assert.Contains("docs/container-image-publishing.md", rootReadme, StringComparison.Ordinal);

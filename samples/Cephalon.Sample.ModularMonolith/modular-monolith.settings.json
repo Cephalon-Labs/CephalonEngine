@@ -1,16 +1,37 @@
 {
   "Engine": {
-    "Blueprint": "ModularMonolith",
+    "Blueprint": "modular-monolith",
     "Discovery": {
       "Assemblies": [
         "Cephalon.Sample.ModularMonolith"
       ]
     },
     "Patterns": [
-      "StrategyPattern"
+      "strategy-pattern"
     ],
+    "Data": {
+      "Ids": {
+        "Generator": "Sfid"
+      }
+    },
+    "Identity": {
+      "Enabled": false,
+      "AuthorizationModes": []
+    },
+    "Tenancy": {
+      "Enabled": false
+    },
+    "Audit": {
+      "Enabled": true
+    },
+    "Messaging": {},
+    "Observability": {
+      "LogManifestSummary": true,
+      "LogModuleSummary": true,
+      "LogCapabilitySummary": true
+    },
     "Transports": [
-      "RestApi"
+      "rest-api"
     ]
   },
   "OpenApi": {

@@ -101,6 +101,15 @@ public sealed class WorkerHostingTests
         builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:failing-stop:Enabled"] = "false";
         builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:stop-observer:Enabled"] = "false";
         builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:slow-stop:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:phase8-runtime-catalogs:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:invalid-phase8-projection:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:invalid-phase8-outbox:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:invalid-phase8-inbox:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:invalid-phase8-audit-store:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:entity-framework-single-context-tests:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:entity-framework-split-context-tests:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:entity-framework-outbox-tests:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:entity-framework-sfid-tests:Enabled"] = "false";
         builder.AddCephalon();
 
         using var host = builder.Build();

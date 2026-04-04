@@ -1,16 +1,37 @@
 {
   "Engine": {
-    "Blueprint": "ModularVerticalSlice",
+    "Blueprint": "modular-vertical-slice",
     "Discovery": {
       "Assemblies": [
         "Cephalon.Sample.ModularVerticalSlice"
       ]
     },
     "Patterns": [
-      "PipelinePattern"
+      "pipeline-pattern"
     ],
+    "Data": {
+      "Ids": {
+        "Generator": "Sfid"
+      }
+    },
+    "Identity": {
+      "Enabled": false,
+      "AuthorizationModes": []
+    },
+    "Tenancy": {
+      "Enabled": false
+    },
+    "Audit": {
+      "Enabled": true
+    },
+    "Messaging": {},
+    "Observability": {
+      "LogManifestSummary": true,
+      "LogModuleSummary": true,
+      "LogCapabilitySummary": true
+    },
     "Transports": [
-      "RestApi"
+      "rest-api"
     ]
   },
   "OpenApi": {

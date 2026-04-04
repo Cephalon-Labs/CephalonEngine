@@ -15,6 +15,7 @@ public static class BuiltInPatterns
         displayName: "Modular Architecture",
         description: "Composes the application from explicit modules with bounded responsibilities.",
         kind: PatternKind.Composition,
+        aliases: ["ModularArchitecture"],
         tags: ["architecture", "modular"]);
 
     /// <summary>
@@ -25,6 +26,7 @@ public static class BuiltInPatterns
         displayName: "Single Host Topology",
         description: "Runs the application as one deployable host while preserving internal boundaries.",
         kind: PatternKind.Deployment,
+        aliases: ["SingleHostTopology", "SingleHost"],
         tags: ["topology", "monolith"],
         conflictsWith: ["microservice-topology"]);
 
@@ -36,6 +38,7 @@ public static class BuiltInPatterns
         displayName: "Microservice Topology",
         description: "Deploys the application as an independently deployable service boundary.",
         kind: PatternKind.Deployment,
+        aliases: ["MicroserviceTopology", "Microservice"],
         tags: ["topology", "microservice"],
         conflictsWith: ["single-host-topology"]);
 
@@ -47,6 +50,7 @@ public static class BuiltInPatterns
         displayName: "Vertical Slice Organization",
         description: "Organizes code around features so endpoints, handlers, and rules stay together.",
         kind: PatternKind.Organization,
+        aliases: ["VerticalSliceOrganization", "VerticalSlice"],
         tags: ["organization", "vertical-slice"],
         conflictsWith: ["module-first-organization"]);
 
@@ -58,6 +62,7 @@ public static class BuiltInPatterns
         displayName: "Module-First Organization",
         description: "Organizes code around modules first, then features inside each module.",
         kind: PatternKind.Organization,
+        aliases: ["ModuleFirstOrganization", "ModuleFirst"],
         tags: ["organization", "module-first"],
         conflictsWith: ["vertical-slice-organization"]);
 
@@ -69,6 +74,7 @@ public static class BuiltInPatterns
         displayName: "Shared Foundation Pattern",
         description: "Uses the Cephalon engine foundation for contracts, runtime conventions, and diagnostics.",
         kind: PatternKind.Foundation,
+        aliases: ["SharedFoundationPattern", "SharedFoundation"],
         tags: ["foundation", "platform"]);
 
     /// <summary>
@@ -79,6 +85,7 @@ public static class BuiltInPatterns
         displayName: "Strategy Pattern",
         description: "Enables pluggable behaviors that can be swapped without changing the calling feature.",
         kind: PatternKind.Design,
+        aliases: ["StrategyPattern", "Strategy"],
         tags: ["design-pattern", "behavior"]);
 
     /// <summary>
@@ -89,6 +96,7 @@ public static class BuiltInPatterns
         displayName: "Pipeline Pattern",
         description: "Applies behavior through ordered stages such as validation, enrichment, and execution.",
         kind: PatternKind.Design,
+        aliases: ["PipelinePattern", "Pipeline"],
         tags: ["design-pattern", "pipeline"]);
 
     /// <summary>
@@ -99,6 +107,7 @@ public static class BuiltInPatterns
         displayName: "Mediator Pattern",
         description: "Routes requests through handlers to keep senders and receivers decoupled.",
         kind: PatternKind.Design,
+        aliases: ["MediatorPattern", "Mediator"],
         tags: ["design-pattern", "mediator"]);
 
     /// <summary>
@@ -109,7 +118,85 @@ public static class BuiltInPatterns
         displayName: "Specification Pattern",
         description: "Encapsulates reusable business rules and query predicates behind explicit specifications.",
         kind: PatternKind.Design,
+        aliases: ["SpecificationPattern", "Specification"],
         tags: ["design-pattern", "specification"]);
+
+    /// <summary>
+    /// Gets the hexagonal-architecture pattern.
+    /// </summary>
+    public static PatternDescriptor HexagonalArchitecture { get; } = new(
+        id: "hexagonal-architecture",
+        displayName: "Hexagonal Architecture",
+        description: "Keeps domain logic at the center and isolates infrastructure behind explicit ports and adapters.",
+        kind: PatternKind.Architecture,
+        aliases: ["HexagonalArchitecture", "Hexagonal", "PortsAndAdapters"],
+        tags: ["architecture", "hexagonal", "ports-and-adapters"]);
+
+    /// <summary>
+    /// Gets the layered-architecture pattern.
+    /// </summary>
+    public static PatternDescriptor LayeredArchitecture { get; } = new(
+        id: "layered-architecture",
+        displayName: "Layered Architecture",
+        description: "Organizes responsibilities into explicit layers with clear direction of dependency flow.",
+        kind: PatternKind.Architecture,
+        aliases: ["LayeredArchitecture", "Layered"],
+        tags: ["architecture", "layered"]);
+
+    /// <summary>
+    /// Gets the clean-architecture pattern.
+    /// </summary>
+    public static PatternDescriptor CleanArchitecture { get; } = new(
+        id: "clean-architecture",
+        displayName: "Clean Architecture",
+        description: "Keeps domain and application rules independent from infrastructure and delivery details.",
+        kind: PatternKind.Architecture,
+        aliases: ["CleanArchitecture", "Clean"],
+        tags: ["architecture", "clean", "boundaries"]);
+
+    /// <summary>
+    /// Gets the domain-driven-design pattern.
+    /// </summary>
+    public static PatternDescriptor DomainDrivenDesign { get; } = new(
+        id: "domain-driven-design",
+        displayName: "Domain-Driven Design",
+        description: "Centers the model on domain language, aggregates, invariants, and explicit bounded contexts.",
+        kind: PatternKind.Domain,
+        aliases: ["DomainDrivenDesign", "DDD"],
+        tags: ["domain", "ddd", "modeling"]);
+
+    /// <summary>
+    /// Gets the CQRS pattern.
+    /// </summary>
+    public static PatternDescriptor CqrsPattern { get; } = new(
+        id: "cqrs",
+        displayName: "CQRS",
+        description: "Separates command-side and query-side responsibilities so write and read concerns can evolve independently.",
+        kind: PatternKind.Data,
+        aliases: ["Cqrs", "CQRS", "CqrsPattern"],
+        tags: ["data", "cqrs", "read-write-split"]);
+
+    /// <summary>
+    /// Gets the outbox pattern.
+    /// </summary>
+    public static PatternDescriptor OutboxPattern { get; } = new(
+        id: "outbox",
+        displayName: "Outbox",
+        description: "Coordinates persistence and message publication through a durable handoff that can be replayed safely.",
+        kind: PatternKind.Data,
+        aliases: ["Outbox", "OutboxPattern"],
+        tags: ["data", "messaging", "outbox"]);
+
+    /// <summary>
+    /// Gets the event-sourcing pattern.
+    /// </summary>
+    public static PatternDescriptor EventSourcingPattern { get; } = new(
+        id: "event-sourcing",
+        displayName: "Event Sourcing",
+        description: "Represents state changes as an ordered stream of domain events instead of only storing current state.",
+        kind: PatternKind.Data,
+        aliases: ["EventSourcing", "EventSourcingPattern"],
+        tags: ["data", "events", "event-sourcing"]);
 
     private static readonly PatternDescriptor[] Items =
     [
@@ -122,7 +209,14 @@ public static class BuiltInPatterns
         StrategyPattern,
         PipelinePattern,
         MediatorPattern,
-        SpecificationPattern
+        SpecificationPattern,
+        HexagonalArchitecture,
+        LayeredArchitecture,
+        CleanArchitecture,
+        DomainDrivenDesign,
+        CqrsPattern,
+        OutboxPattern,
+        EventSourcingPattern
     ];
 
     private static readonly Dictionary<string, PatternDescriptor> Index = CreateIndex();
@@ -165,26 +259,20 @@ public static class BuiltInPatterns
     {
         var index = new Dictionary<string, PatternDescriptor>(StringComparer.Ordinal);
 
-        Add(index, ModularArchitecture, "ModularArchitecture");
-        Add(index, SingleHostTopology, "SingleHostTopology");
-        Add(index, MicroserviceTopology, "MicroserviceTopology");
-        Add(index, VerticalSliceOrganization, "VerticalSliceOrganization");
-        Add(index, ModuleFirstOrganization, "ModuleFirstOrganization");
-        Add(index, SharedFoundationPattern, "SharedFoundationPattern");
-        Add(index, StrategyPattern, "StrategyPattern", "Strategy");
-        Add(index, PipelinePattern, "PipelinePattern", "Pipeline");
-        Add(index, MediatorPattern, "MediatorPattern", "Mediator");
-        Add(index, SpecificationPattern, "SpecificationPattern", "Specification");
+        foreach (var item in Items)
+        {
+            Add(index, item);
+        }
 
         return index;
     }
 
-    private static void Add(Dictionary<string, PatternDescriptor> index, PatternDescriptor pattern, params string[] aliases)
+    private static void Add(Dictionary<string, PatternDescriptor> index, PatternDescriptor pattern)
     {
         index[NormalizeKey(pattern.Id)] = pattern;
         index[NormalizeKey(pattern.DisplayName)] = pattern;
 
-        foreach (var alias in aliases)
+        foreach (var alias in pattern.Aliases)
         {
             index[NormalizeKey(alias)] = pattern;
         }

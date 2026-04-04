@@ -62,13 +62,16 @@ public static class BuiltInScaffolds
             new ScaffoldFolder("Domain", "Entities, value objects, domain services, and core business rules.", ScaffoldScopes.Module, projectId: "module"),
             new ScaffoldFolder("Infrastructure", "Persistence, gateway implementations, and external integrations.", ScaffoldScopes.Module, projectId: "module"),
             new ScaffoldFolder("Endpoints", "Transport-facing adapters exposed by the module.", ScaffoldScopes.Module, projectId: "module"),
-            new ScaffoldFolder("Strategies", "Optional strategy implementations for swappable behaviors.", ScaffoldScopes.Module, projectId: "module")
+            new ScaffoldFolder("Strategies", "Optional strategy implementations for swappable behaviors.", ScaffoldScopes.Module, projectId: "module"),
+            new ScaffoldFolder("Architecture", "Smoke tests that guard host composition and startup assumptions.", ScaffoldScopes.Solution, projectId: "tests"),
+            new ScaffoldFolder("Features/{FeatureName}", "Behavior specifications that teams can turn into real TDD and BDD scenarios.", ScaffoldScopes.Feature, projectId: "tests")
         ],
         conventions:
         [
             "Keep the host thin; compose modules, register transports, and expose health or manifest routes there.",
             "Keep business logic inside modules and use configuration-driven discovery where possible.",
-            "Use shared foundation packages for contracts, diagnostics, and runtime policies."
+            "Use shared foundation packages for contracts, diagnostics, and runtime policies.",
+            "Keep the tests project lightweight: start with architecture smoke checks plus Given/When/Then behavior specifications per feature."
         ],
         metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -131,13 +134,16 @@ public static class BuiltInScaffolds
             new ScaffoldFolder("Features/{FeatureName}/Endpoints", "REST, JSON-RPC, gRPC, SSE, or WebSocket transport adapters for the slice.", ScaffoldScopes.Feature, projectId: "module"),
             new ScaffoldFolder("Features/{FeatureName}/Contracts", "Feature DTOs, request contracts, and event payloads.", ScaffoldScopes.Feature, projectId: "module"),
             new ScaffoldFolder("Features/{FeatureName}/Policies", "Cross-cutting rules, authorization policies, and pipeline behaviors for the slice.", ScaffoldScopes.Feature, projectId: "module"),
-            new ScaffoldFolder("Features/{FeatureName}/Strategies", "Optional strategy implementations scoped to the feature slice.", ScaffoldScopes.Feature, projectId: "module")
+            new ScaffoldFolder("Features/{FeatureName}/Strategies", "Optional strategy implementations scoped to the feature slice.", ScaffoldScopes.Feature, projectId: "module"),
+            new ScaffoldFolder("Architecture", "Smoke tests that guard host composition and startup assumptions.", ScaffoldScopes.Solution, projectId: "tests"),
+            new ScaffoldFolder("Features/{FeatureName}", "Behavior specifications that teams can turn into real TDD and BDD scenarios.", ScaffoldScopes.Feature, projectId: "tests")
         ],
         conventions:
         [
             "Group handlers, endpoints, contracts, and policies by feature so ownership stays close to the use case.",
             "Keep cross-slice collaboration explicit through contracts, events, or module capabilities.",
-            "Use the host only for composition and transport registration; keep feature logic in the module."
+            "Use the host only for composition and transport registration; keep feature logic in the module.",
+            "Keep the tests project lightweight: start with architecture smoke checks plus Given/When/Then behavior specifications per feature."
         ],
         metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -207,13 +213,16 @@ public static class BuiltInScaffolds
             new ScaffoldFolder("Features/{FeatureName}/Api", "Transport-facing endpoints or RPC services for the feature boundary.", ScaffoldScopes.Feature, projectId: "module"),
             new ScaffoldFolder("Features/{FeatureName}/Application", "Feature workflows, orchestration, and service-level business logic.", ScaffoldScopes.Feature, projectId: "module"),
             new ScaffoldFolder("Features/{FeatureName}/Contracts", "Service contracts, integration events, and boundary DTOs.", ScaffoldScopes.Feature, projectId: "module"),
-            new ScaffoldFolder("Features/{FeatureName}/Policies", "Resilience, authorization, and policy-driven behaviors for the service.", ScaffoldScopes.Feature, projectId: "module")
+            new ScaffoldFolder("Features/{FeatureName}/Policies", "Resilience, authorization, and policy-driven behaviors for the service.", ScaffoldScopes.Feature, projectId: "module"),
+            new ScaffoldFolder("Architecture", "Smoke tests that guard host composition and startup assumptions.", ScaffoldScopes.Solution, projectId: "tests"),
+            new ScaffoldFolder("Features/{FeatureName}", "Behavior specifications that teams can turn into real TDD and BDD scenarios.", ScaffoldScopes.Feature, projectId: "tests")
         ],
         conventions:
         [
             "Treat the service boundary as explicit; keep public contracts versionable and isolated from internal module details.",
             "Use modules and slices inside the service so growth does not collapse into one large service layer.",
-            "Keep host configuration environment-aware and let transports remain adapters over the same application model."
+            "Keep host configuration environment-aware and let transports remain adapters over the same application model.",
+            "Keep the tests project lightweight: start with architecture smoke checks plus Given/When/Then behavior specifications per feature."
         ],
         metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {

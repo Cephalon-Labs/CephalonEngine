@@ -1,6 +1,9 @@
 using Cephalon.AspNetCore.Documentation;
 using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Health;
+using Cephalon.Abstractions.Audit;
+using Cephalon.Abstractions.Authorization;
+using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Localization;
 using Cephalon.Abstractions.Technologies;
@@ -122,6 +125,51 @@ public static class EngineWebApplicationExtensions
                 return graph is null ? Results.NotFound() : Results.Ok(graph);
             })
             .WithName("GetCephalonExecutionGraph");
+        engineGroup.MapGet("/projections", (IProjectionCatalog catalog) => TypedResults.Ok(catalog.Projections))
+            .WithName("GetCephalonProjections");
+        engineGroup.MapGet("/projections/{projectionId}", (string projectionId, IProjectionCatalog catalog) =>
+            {
+                var projection = catalog.GetById(projectionId);
+
+                return projection is null ? Results.NotFound() : Results.Ok(projection);
+            })
+            .WithName("GetCephalonProjection");
+        engineGroup.MapGet("/outboxes", (IOutboxCatalog catalog) => TypedResults.Ok(catalog.Outboxes))
+            .WithName("GetCephalonOutboxes");
+        engineGroup.MapGet("/outboxes/{outboxId}", (string outboxId, IOutboxCatalog catalog) =>
+            {
+                var outbox = catalog.GetById(outboxId);
+
+                return outbox is null ? Results.NotFound() : Results.Ok(outbox);
+            })
+            .WithName("GetCephalonOutbox");
+        engineGroup.MapGet("/inboxes", (IInboxCatalog catalog) => TypedResults.Ok(catalog.Inboxes))
+            .WithName("GetCephalonInboxes");
+        engineGroup.MapGet("/inboxes/{inboxId}", (string inboxId, IInboxCatalog catalog) =>
+            {
+                var inbox = catalog.GetById(inboxId);
+
+                return inbox is null ? Results.NotFound() : Results.Ok(inbox);
+            })
+            .WithName("GetCephalonInbox");
+        engineGroup.MapGet("/audit-stores", (IAuditStoreCatalog catalog) => TypedResults.Ok(catalog.AuditStores))
+            .WithName("GetCephalonAuditStores");
+        engineGroup.MapGet("/audit-stores/{auditStoreId}", (string auditStoreId, IAuditStoreCatalog catalog) =>
+            {
+                var auditStore = catalog.GetById(auditStoreId);
+
+                return auditStore is null ? Results.NotFound() : Results.Ok(auditStore);
+            })
+            .WithName("GetCephalonAuditStore");
+        engineGroup.MapGet("/authorization-policies", (IAuthorizationPolicyCatalog catalog) => TypedResults.Ok(catalog.Policies))
+            .WithName("GetCephalonAuthorizationPolicies");
+        engineGroup.MapGet("/authorization-policies/{policyId}", (string policyId, IAuthorizationPolicyCatalog catalog) =>
+            {
+                var policy = catalog.GetById(policyId);
+
+                return policy is null ? Results.NotFound() : Results.Ok(policy);
+            })
+            .WithName("GetCephalonAuthorizationPolicy");
         engineGroup.MapGet("/patterns", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Patterns))
             .WithName("GetCephalonPatterns");
         engineGroup.MapGet("/technologies", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Technologies))
