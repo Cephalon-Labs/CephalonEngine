@@ -4,9 +4,10 @@ Generated from the Cephalon modular monolith template.
 
 ## Included shape
 
-- Blueprint: `ModularMonolith`
+- Blueprint: `modular-monolith`
 - Project style: single ASP.NET Core host with module-first organization
 - Starter module: `Catalog`
+- Starter runtime baseline: structured phase-8 `Engine` config with `Sfid` id generation plus the narrow `Cephalon.Audit` baseline already wired
 
 ## Next steps
 
@@ -15,7 +16,8 @@ Generated from the Cephalon modular monolith template.
 3. Update package versions to the Cephalon feed or release you want to target.
 4. Add more modules under `Modules/`.
 5. Keep the host thin and push behavior into modules.
-6. Publish reference docs, then flip `ReferenceDocs:Enabled` to `true` when you want the host to serve them.
+6. Extend `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` in `appsettings.json` when you want to widen the phase-8 baseline beyond the shipped `Sfid` plus `Audit` starter path.
+7. Publish reference docs, then flip `ReferenceDocs:Enabled` to `true` when you want the host to serve them.
 
 ## Optional published-output path
 

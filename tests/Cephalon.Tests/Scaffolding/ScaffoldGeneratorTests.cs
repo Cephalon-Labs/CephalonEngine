@@ -44,11 +44,14 @@ public sealed class ScaffoldGeneratorTests
 
         var hostSettings = Assert.Single(scaffold.Files, file => file.Path == "src/Acme.Explorer.Host/appsettings.json");
         Assert.Contains("Acme.Explorer.Modules.Platform", hostSettings.Contents, StringComparison.Ordinal);
-        Assert.Contains("\"JSON-RPC\"", hostSettings.Contents, StringComparison.Ordinal);
-        Assert.Contains("\"gRPC\"", hostSettings.Contents, StringComparison.Ordinal);
-        Assert.Contains("\"GraphQL\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"json-rpc\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"grpc\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"graphql\"", hostSettings.Contents, StringComparison.Ordinal);
         Assert.Contains("\"Technologies\"", hostSettings.Contents, StringComparison.Ordinal);
-        Assert.Contains("\"Agentic Workloads\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"agentic-workloads\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"event-driven-integration\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"Messaging\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"Provider\": \"Wolverine\"", hostSettings.Contents, StringComparison.Ordinal);
         Assert.Contains("\"Localization\"", hostSettings.Contents, StringComparison.Ordinal);
         Assert.Contains("\"engine.docs.rest.title\"", hostSettings.Contents, StringComparison.Ordinal);
         Assert.Contains("\"Telemetry\"", hostSettings.Contents, StringComparison.Ordinal);
@@ -62,12 +65,30 @@ public sealed class ScaffoldGeneratorTests
         var packageProps = Assert.Single(scaffold.Files, file => file.Path == "Directory.Packages.props");
         Assert.Contains("Cephalon.Agentics", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Eventing", packageProps.Contents, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Eventing.Wolverine", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Edge", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Retrieval", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.AspNetCore.GraphQL", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.AspNetCore.JsonRpc", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Microsoft.Extensions.Hosting.WindowsServices", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Version=\"9.1.0-preview\"", packageProps.Contents, StringComparison.Ordinal);
+
+        var phase8HostProgram = Assert.Single(scaffold.Files, file => file.Path == "src/Acme.Explorer.Host/Program.cs");
+        Assert.Contains("builder.AddCephalon(engine =>", phase8HostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("engine.AddEventing();", phase8HostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("engine.AddWolverineEventing();", phase8HostProgram.Contents, StringComparison.Ordinal);
+
+        var compositionSmokeTest = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "tests/Acme.Explorer.Tests/Architecture/CompositionSmokeTests.cs");
+        Assert.Contains("namespace Acme.Explorer.Tests.Architecture;", compositionSmokeTest.Contents, StringComparison.Ordinal);
+        Assert.Contains("Generated_scaffold_has_a_test_harness_ready_for_real_composition_checks", compositionSmokeTest.Contents, StringComparison.Ordinal);
+
+        var behaviorSpecification = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "tests/Acme.Explorer.Tests/Features/GreetingsBehaviorSpecifications.cs");
+        Assert.Contains("namespace Acme.Explorer.Tests.Features;", behaviorSpecification.Contents, StringComparison.Ordinal);
+        Assert.Contains("Given_greetings_behavior_when_you_start_tdd_then_replace_this_placeholder_with_the_first_failing_specification", behaviorSpecification.Contents, StringComparison.Ordinal);
 
         var directoryBuildProps = Assert.Single(scaffold.Files, file => file.Path == "Directory.Build.props");
         Assert.Contains("<GenerateDocumentationFile>true</GenerateDocumentationFile>", directoryBuildProps.Contents, StringComparison.Ordinal);
@@ -300,6 +321,110 @@ public sealed class ScaffoldGeneratorTests
         var dockerignore = Assert.Single(scaffold.Files, file => file.Path == ".dockerignore");
         Assert.Contains("artifacts", dockerignore.Contents, StringComparison.Ordinal);
         Assert.Contains("TestResults", dockerignore.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GenerateAddsPhase8StarterConfigPackagesAndRegistrationsWhenSelectionsAreActive()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularMonolith",
+            patterns: ["CQRS", "Outbox"],
+            technologies: ["IdentityAccess", "MultiTenancy", "EventDrivenIntegration"],
+            data: new DataSettings(
+                readWriteSplit: true,
+                outboxEnabled: true,
+                idGenerator: "Sfid"),
+            identity: new IdentitySettings(
+                enabled: true,
+                authorizationModes: ["RBAC"]),
+            tenancy: new TenancySettings(
+                enabled: true,
+                mode: "SharedDatabase"),
+            audit: new AuditSettings(enabled: true),
+            messaging: new MessagingSettings(provider: "Wolverine")));
+
+        var runtime = builder.Build();
+        var scaffold = ScaffoldGenerator.Generate(
+            runtime.Manifest.AppProfile,
+            new ScaffoldRequest(
+                appName: "Acme.Platform",
+                modules: ["Platform"],
+                features: ["Overview"],
+                cephalonPackageVersion: "9.1.0-preview"));
+
+        var hostProject = Assert.Single(scaffold.Projects, project => project.Name == "Acme.Platform.Host");
+        Assert.Contains("Cephalon.Data", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.Ids.Sfid", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.Eventing", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.Eventing.Wolverine", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.Identity", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.Identity.AspNetCore", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.MultiTenancy", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.Audit", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+
+        var hostProgram = Assert.Single(scaffold.Files, file => file.Path == "src/Acme.Platform.Host/Program.cs");
+        Assert.Contains("builder.AddCephalonIdentityAspNetCore();", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("engine.AddData();", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("engine.AddSfidIds();", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("engine.AddEventing();", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("engine.AddWolverineEventing();", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("engine.AddIdentityAccess();", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("engine.AddMultiTenancy();", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("engine.AddAudit();", hostProgram.Contents, StringComparison.Ordinal);
+
+        var hostSettings = Assert.Single(scaffold.Files, file => file.Path == "src/Acme.Platform.Host/appsettings.json");
+        Assert.Contains("\"Blueprint\": \"modular-monolith\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"cqrs\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"outbox\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"identity-access\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"multi-tenancy\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"event-driven-integration\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"ReadWriteSplit\": true", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"Generator\": \"Sfid\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"AuthorizationModes\": [", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"RBAC\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"Mode\": \"SharedDatabase\"", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"Audit\": {", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"Enabled\": true", hostSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"Provider\": \"Wolverine\"", hostSettings.Contents, StringComparison.Ordinal);
+
+        var compositionSmokeTest = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "tests/Acme.Platform.Tests/Architecture/CompositionSmokeTests.cs");
+        Assert.Contains("namespace Acme.Platform.Tests.Architecture;", compositionSmokeTest.Contents, StringComparison.Ordinal);
+
+        var overviewBehaviorSpecification = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "tests/Acme.Platform.Tests/Features/OverviewBehaviorSpecifications.cs");
+        Assert.Contains("Given_overview_behavior_when_you_start_tdd_then_replace_this_placeholder_with_the_first_failing_specification", overviewBehaviorSpecification.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GenerateAddsCoreBehaviorSpecificationWhenNoFeatureNamesAreProvided()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularMonolith",
+            transports: ["RestApi"]));
+
+        var runtime = builder.Build();
+        var scaffold = ScaffoldGenerator.Generate(
+            runtime.Manifest.AppProfile,
+            new ScaffoldRequest(
+                appName: "Acme.Core",
+                modules: ["Platform"],
+                cephalonPackageVersion: "9.1.0-preview"));
+
+        var compositionSmokeTest = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "tests/Acme.Core.Tests/Architecture/CompositionSmokeTests.cs");
+        Assert.Contains("namespace Acme.Core.Tests.Architecture;", compositionSmokeTest.Contents, StringComparison.Ordinal);
+
+        var coreBehaviorSpecification = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "tests/Acme.Core.Tests/Features/CoreBehaviorSpecifications.cs");
+        Assert.Contains("Given_core_behavior_when_you_start_tdd_then_replace_this_placeholder_with_the_first_failing_specification", coreBehaviorSpecification.Contents, StringComparison.Ordinal);
     }
 
     [Fact]

@@ -36,6 +36,9 @@ The app-focused starters now also include `NuGet.config`, `./.cephalon/packages/
 
 - The templates mirror the current shipped blueprint set in the repository.
 - For richer customization, `Cephalon.Cli` and `Cephalon.Scaffolding` remain the more expressive generation path.
+- The app starters now use canonical phase-8 ids plus structured `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` sections so `dotnet new` stays aligned with the runtime app-model contract.
+- The app starters also ship a narrow low-ceremony `Sfid` plus `Audit` baseline so teams can start with additive ids and audit plumbing before they choose fuller data, identity, tenancy, or messaging follow-through.
+- The generated test project now starts with `Architecture/CompositionSmokeTests.cs` plus per-feature `Features/*BehaviorSpecifications.cs` placeholders so teams can move straight into composition checks and Given/When/Then-style business behavior instead of inventing a starter harness from scratch.
 - Generated projects assume you will restore Cephalon packages from the feed or local package source you target.
 - The shipped `NuGet.config` points the `cephalon` source at `./.cephalon/packages` by default so repo-local package artifacts can unblock first-run restore; replace that source when your team has a shared feed.
 - The shipped `CephalonFolder.pubxml` profile publishes generated hosts to a deterministic `./artifacts/publish/<ProjectName>/` path.
@@ -47,6 +50,8 @@ The app-focused starters now also include `NuGet.config`, `./.cephalon/packages/
 - The shipped Kubernetes assets live under `deploy/kubernetes/` so generated apps have a platform-neutral hosted container baseline alongside publish, self-hosted service, IIS, Azure, Linux, and container paths.
 - The shipped Linux `systemd` assets live under `deploy/linux/systemd/` so generated apps have an installable self-hosted service baseline alongside publish and container paths.
 - Generated app starters keep OTLP wiring available through `Cephalon.Observability.OpenTelemetry`, but they leave the endpoint unset until a local compose file or deployment environment supplies it.
+- Generated app starters now also use canonical phase-8 `Engine` ids plus structured `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` sections so `dotnet new` stays aligned with `cephalon new`.
+- The current template baseline keeps ceremony low with a narrow built-in `Sfid` plus `Audit` starter path while leaving broader phase-8 data, identity, tenancy, and messaging choices available for later configuration or the richer CLI/scaffolding path.
 - The recommended adoption walkthrough lives in [docs/getting-started.md](https://github.com/Cephalon-Labs/CephalonEngine/blob/master/docs/getting-started.md).
 - The published-output walkthrough lives in [docs/generated-app-publishing.md](https://github.com/Cephalon-Labs/CephalonEngine/blob/master/docs/generated-app-publishing.md).
 - The container-image walkthrough lives in [docs/container-image-publishing.md](https://github.com/Cephalon-Labs/CephalonEngine/blob/master/docs/container-image-publishing.md).

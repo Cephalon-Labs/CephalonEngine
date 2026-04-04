@@ -1133,6 +1133,66 @@ Current note:
 - hosted executions are descriptive operator-facing conventions on top of the existing Generic Host and module lifecycle model, not a replacement for `IHostedService`, `BackgroundService`, or module-owned runtime hooks
 - invalid hosted-execution ids, unknown source modules, or unknown cross-module execution-graph references fail at build time instead of leaking broken operator data
 
+## Projection surface
+
+`GET /engine/projections` exposes the operator-facing projection catalog contributed by active modules.
+
+Current payload highlights:
+
+- each projection carries a stable `id`, `displayName`, `description`, `sourceModuleId`, `targetStoreId`, and `mode`
+- `sourceContracts`, `tags`, and free-form `metadata` keep the projected read model grounded in the surrounding CQRS or event-driven contract without tying the engine to one storage provider
+- the same projection catalog is also available through `/engine/snapshot` when operators want one merged runtime answer
+
+Current note:
+
+- this is a descriptive runtime catalog for the active composition, not an Entity Framework-specific implementation contract yet
+- invalid projection source-module ownership fails at build time instead of leaking broken operator metadata
+
+## Outbox surface
+
+`GET /engine/outboxes` exposes the operator-facing outbox catalog contributed by active modules and companion packs.
+
+Current payload highlights:
+
+- each outbox carries a stable `id`, `displayName`, `description`, `sourceModuleId`, `provider`, and `mode`
+- `channelIds`, `tags`, and free-form `metadata` let a pack say whether the outbox is channel-scoped, what provider owns it, and whether dispatch/runtime linking is configured yet
+- the same outbox catalog is also available through `/engine/snapshot` when operators want one merged runtime answer
+
+Current note:
+
+- this is a descriptive runtime answer for durable outbound staging surfaces, not a claim that Cephalon already ships a full event dispatch bridge
+- invalid outbox source-module ownership fails at build time instead of leaking broken operator metadata
+
+## Inbox surface
+
+`GET /engine/inboxes` exposes the operator-facing inbox catalog contributed by active modules and companion packs.
+
+Current payload highlights:
+
+- each inbox carries a stable `id`, `displayName`, `description`, `sourceModuleId`, `provider`, and `mode`
+- `channelIds`, `tags`, and free-form `metadata` let a pack say whether the inbox is channel-scoped, what provider owns it, and whether idempotency or dispatch/runtime linking is configured yet
+- the same inbox catalog is also available through `/engine/snapshot` when operators want one merged runtime answer
+
+Current note:
+
+- this is a descriptive runtime answer for processed-message or idempotency-store surfaces, not a claim that Cephalon already ships a full subscription-dispatch runtime
+- invalid inbox source-module ownership fails at build time instead of leaking broken operator metadata
+
+## Authorization policy surface
+
+`GET /engine/authorization-policies` exposes the operator-facing authorization-policy catalog contributed by active modules.
+
+Current payload highlights:
+
+- each policy carries a stable `id`, `displayName`, `description`, supported authorization `modes`, and optional `tags` plus `metadata`
+- supported modes stay aligned with the phase-8 core model: `RBAC`, `ABAC`, and `Policy`
+- the same authorization-policy catalog is also available through `/engine/snapshot` when operators want one merged runtime answer
+
+Current note:
+
+- this is a host-agnostic runtime answer for active policy descriptors, not a replacement for ASP.NET Core schemes, claims mapping, or provider-specific identity wiring
+- the engine stamps each policy with its contributing module through `metadata.sourceModuleId` so operators can trace ownership without a second registry
+
 ## Technology surface
 
 `GET /engine/technology-surfaces` exposes the active runtime surfaces projected by selected technology packs.
@@ -2014,6 +2074,19 @@ It executes a curated test suite that validates:
 
 `.\scripts\validate-release.ps1` now runs that focused suite by default in addition to the broader repo test, benchmark, and reference-doc flow.
 Use `-SkipOperationalConventions` only when you intentionally want the wider release flow without the named operational replay.
+
+`.\scripts\validate-phase8-conventions.ps1` is the focused validation pass for the current phase-8 architecture/data/security/starter baseline.
+It executes a curated suite that validates:
+
+- structured `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` settings plus phase-8 app-profile truth
+- host-agnostic phase-8 contracts, runtime catalogs, and runtime-snapshot answers for projections, inboxes, outboxes, audit stores, and authorization policies
+- `Cephalon.Data`, `Cephalon.Data.EntityFramework`, and `Cephalon.Ids.Sfid` through the shipped relational-first CQRS, inbox, outbox, and `Sfid` baseline
+- `Cephalon.Eventing` plus `Cephalon.Eventing.Wolverine` through the staged publication, declarative subscription, runtime-reporting, and adapter-surface path
+- `Cephalon.Identity`, `Cephalon.Identity.AspNetCore`, `Cephalon.MultiTenancy`, and `Cephalon.Audit` through their runtime surfaces, adapter behavior, and package/reference-doc truth
+- low-ceremony starter output across `Cephalon.Scaffolding`, `Cephalon.Cli`, `Cephalon.TemplatePack`, adoption docs, and starter samples so generated apps stay aligned with the runtime story
+
+`.\scripts\validate-release.ps1` now also runs that focused phase-8 suite by default.
+Use `-SkipPhase8Conventions` only when you intentionally want the wider release flow without the named phase-8 replay.
 
 For the Docker Desktop / WSL-friendly operator smoke path, `.\scripts\validate-container-runtime.ps1` runs `samples/Cephalon.Sample.ModularMonolith/compose.yaml`, waits for collector health plus `/health/ready`, `/engine`, `/engine/snapshot`, and `/api/catalog/overview`, and then tears the stack down. That containerized validation stays optional on purpose, so Docker is not a hard dependency of `.\scripts\validate-release.ps1`.
 

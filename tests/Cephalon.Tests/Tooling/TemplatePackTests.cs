@@ -265,16 +265,30 @@ public sealed class TemplatePackTests
             var appProjectPath = Path.Combine(appOutputPath, "Acme.Store.csproj");
             var appProjectContents = File.ReadAllText(appProjectPath);
             Assert.Contains("Configurations\\**\\*.json", appProjectContents, StringComparison.Ordinal);
+            Assert.Contains("Cephalon.Audit", appProjectContents, StringComparison.Ordinal);
+            Assert.Contains("Cephalon.Ids.Sfid", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("Cephalon.Observability.OpenTelemetry", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("Microsoft.Extensions.Hosting.WindowsServices", appProjectContents, StringComparison.Ordinal);
+            Assert.Contains("builder.AddCephalon(engine =>", File.ReadAllText(programPath), StringComparison.Ordinal);
+            Assert.Contains("engine.AddSfidIds();", File.ReadAllText(programPath), StringComparison.Ordinal);
+            Assert.Contains("engine.AddAudit();", File.ReadAllText(programPath), StringComparison.Ordinal);
             Assert.Contains("builder.AddCephalonOpenTelemetry();", File.ReadAllText(programPath), StringComparison.Ordinal);
             Assert.Contains("WindowsServiceHelpers.IsWindowsService()", File.ReadAllText(programPath), StringComparison.Ordinal);
             Assert.Contains("builder.Host.UseWindowsService();", File.ReadAllText(programPath), StringComparison.Ordinal);
             var appSettingsPath = Path.Combine(appOutputPath, "appsettings.json");
             var appSettingsContents = File.ReadAllText(appSettingsPath);
+            Assert.Contains("\"Blueprint\": \"modular-monolith\"", appSettingsContents, StringComparison.Ordinal);
+            Assert.Contains("\"strategy-pattern\"", appSettingsContents, StringComparison.Ordinal);
+            Assert.Contains("\"rest-api\"", appSettingsContents, StringComparison.Ordinal);
+            Assert.Contains("\"Data\"", appSettingsContents, StringComparison.Ordinal);
+            Assert.Contains("\"Generator\": \"Sfid\"", appSettingsContents, StringComparison.Ordinal);
+            Assert.Contains("\"Identity\"", appSettingsContents, StringComparison.Ordinal);
+            Assert.Contains("\"Tenancy\"", appSettingsContents, StringComparison.Ordinal);
+            Assert.Contains("\"Audit\"", appSettingsContents, StringComparison.Ordinal);
             Assert.Contains("\"ReferenceDocs\"", appSettingsContents, StringComparison.Ordinal);
             Assert.Contains("\"Enabled\": false", appSettingsContents, StringComparison.Ordinal);
+            Assert.Contains("\"Enabled\": true", appSettingsContents, StringComparison.Ordinal);
             Assert.Contains("\"DirectoryPath\": \"..\\\\..\\\\docs\\\\reference\"", appSettingsContents, StringComparison.Ordinal);
             Assert.DoesNotContain("http://localhost:4317", appSettingsContents, StringComparison.Ordinal);
             Assert.Contains("\"Protocol\": \"otlp/http\"", appSettingsContents, StringComparison.Ordinal);
@@ -333,8 +347,9 @@ public sealed class TemplatePackTests
             Assert.Contains("azure-app-service.zip", generatedAzureDeployScript, StringComparison.Ordinal);
 
             var generatedContainerImagePublishScript = File.ReadAllText(Path.Combine(appOutputPath, "deploy", "container-image", "publish-image.ps1"));
-            Assert.Contains("docker build", generatedContainerImagePublishScript, StringComparison.Ordinal);
-            Assert.Contains("docker push", generatedContainerImagePublishScript, StringComparison.Ordinal);
+            Assert.Contains("Get-DockerBuildArguments", generatedContainerImagePublishScript, StringComparison.Ordinal);
+            Assert.Contains("Format-Command -Command \"docker\"", generatedContainerImagePublishScript, StringComparison.Ordinal);
+            Assert.Contains("@(\"push\", $tag)", generatedContainerImagePublishScript, StringComparison.Ordinal);
             Assert.Contains("Container image publishing completed successfully.", generatedContainerImagePublishScript, StringComparison.Ordinal);
 
             var generatedKubernetesApplyScript = File.ReadAllText(Path.Combine(appOutputPath, "deploy", "kubernetes", "apply.ps1"));

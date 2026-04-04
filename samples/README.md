@@ -2,6 +2,8 @@
 
 These samples are adoption-quality blueprint examples.
 
+They now also serve as the narrow phase-8 starter baseline for the shipped blueprint shapes: canonical `Engine` ids, structured phase-8 config sections, and a low-ceremony `Sfid` plus `Audit` path are already present so runtime introspection and starter guidance stay aligned.
+
 - `Cephalon.ReferenceModule.Operations`: reference module package that demonstrates lifecycle, capability, localization, and REST contribution authoring
 - `Cephalon.Sample.ModularMonolith`: module-first organization inside one ASP.NET Core host
 - `Cephalon.Sample.ModularVerticalSlice`: feature-slice organization inside a bounded module

@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="Cephalon.AspNetCore" Version="0.1.0-preview" />
+    <PackageReference Include="Cephalon.Audit" Version="0.1.0-preview" />
+    <PackageReference Include="Cephalon.Ids.Sfid" Version="0.1.0-preview" />
     <PackageReference Include="Cephalon.Observability" Version="0.1.0-preview" />
     <PackageReference Include="Cephalon.Observability.OpenTelemetry" Version="0.1.0-preview" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="10.0.5" />

@@ -1,6 +1,8 @@
 using Cephalon.Abstractions.Capabilities;
+using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Technologies;
+using Cephalon.Engine.Diagnostics;
 using Cephalon.Eventing.Configuration;
 using Cephalon.Eventing.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +27,11 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
 
     private readonly EventingOptions options;
     private bool hasChannelContributors;
+    private bool hasDispatchStore;
+    private bool hasDispatchRuntimeContributors;
+    private bool hasInboxPath;
+    private bool hasSubscriptionContributors;
+    private bool hasPublishingPath;
 
     public EventingModule(EventingOptions options)
     {
@@ -52,9 +59,39 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         }
 
         hasChannelContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventChannelContributor));
+        hasDispatchStore = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchStore));
+        hasDispatchRuntimeContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchRuntimeContributor));
+        hasInboxPath = services.Any(static descriptor => descriptor.ServiceType == typeof(IInbox));
+        hasSubscriptionContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionContributor));
         services.TryAddSingleton(options);
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, EventingDiagnosticsConventionContributor>());
         services.TryAddSingleton<IEventChannelCatalog, EventChannelCatalog>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingRuntimeSurfaceContributor>());
+        if (options.EnableSubscriptions)
+        {
+            services.TryAddSingleton<IEventSubscriptionCatalog, EventSubscriptionCatalog>();
+            services.TryAddSingleton<EventSubscriptionRuntimeCatalog>();
+            services.TryAddSingleton<IEventSubscriptionRuntimeCatalog>(static provider => provider.GetRequiredService<EventSubscriptionRuntimeCatalog>());
+            services.TryAddSingleton<IEventSubscriptionRuntimeReporter>(static provider => provider.GetRequiredService<EventSubscriptionRuntimeCatalog>());
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingSubscriptionRuntimeSurfaceContributor>());
+        }
+
+        hasPublishingPath = options.EnablePublishing &&
+            services.Any(static descriptor => descriptor.ServiceType == typeof(IOutbox));
+        if (hasPublishingPath)
+        {
+            services.TryAddSingleton<EventDispatchRuntimeDescriptorCatalog>();
+            services.TryAddSingleton<EventDispatchRuntimeCatalog>();
+            services.TryAddSingleton<IEventDispatchRuntimeCatalog>(static provider => provider.GetRequiredService<EventDispatchRuntimeCatalog>());
+            services.TryAddSingleton<IEventDispatchRuntimeReporter>(static provider => provider.GetRequiredService<EventDispatchRuntimeCatalog>());
+            services.TryAddScoped<IEventPublisher, OutboxBackedEventPublisher>();
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingPublishingRuntimeSurfaceContributor>());
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingDispatchRuntimeSurfaceContributor>());
+            if (hasDispatchRuntimeContributors)
+            {
+                services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingDispatchRuntimeCatalogSurfaceContributor>());
+            }
+        }
     }
 
     public void RegisterTechnologyCapabilities(ICapabilityRegistry capabilities, TechnologySelection technologies)
@@ -67,27 +104,34 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             return;
         }
 
-        if (options.EnablePublishing)
+        if (options.EnablePublishing && hasPublishingPath)
         {
             capabilities.Add(new Capability(
                 key: "eventing.publish",
                 displayName: "Event Publishing",
-                description: "Publishes integration events to configured event channels.",
+                description: "Accepts integration events for configured event channels and stages them through the active outbox path.",
                 metadata: new Dictionary<string, string>
                 {
-                    ["technology"] = "event-driven-integration"
+                    ["technology"] = "event-driven-integration",
+                    ["handoff"] = "outbox",
+                    ["dispatchRuntime"] = hasDispatchRuntimeContributors ? "configured" : "not-configured",
+                    ["dispatchStore"] = hasDispatchStore ? "available" : "not-configured",
+                    ["runtimeState"] = "available"
                 }));
         }
 
-        if (options.EnableSubscriptions)
+        if (options.EnableSubscriptions && (options.Subscriptions.Count > 0 || hasSubscriptionContributors))
         {
             capabilities.Add(new Capability(
-                key: "eventing.subscribe",
-                displayName: "Event Subscription",
-                description: "Subscribes to integration events from configured event channels.",
+                key: "eventing.subscriptions",
+                displayName: "Event Subscription Descriptors",
+                description: "Exposes declared event subscription descriptors to the runtime.",
                 metadata: new Dictionary<string, string>
                 {
-                    ["technology"] = "event-driven-integration"
+                    ["technology"] = "event-driven-integration",
+                    ["dispatchRuntime"] = "not-configured",
+                    ["inbox"] = hasInboxPath ? "available" : "not-configured",
+                    ["runtimeState"] = "available"
                 }));
         }
 

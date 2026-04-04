@@ -1,4 +1,6 @@
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.AppModel.Scaffolding;
 
@@ -260,7 +262,17 @@ public static class ScaffoldGenerator
                         BuildPackageManifest(project, request)));
                     break;
                 case "cephalon-tests":
-                    files.Add(new(Path.Combine(project.Path, "SmokeTests.cs"), BuildSmokeTest(request)));
+                    files.Add(new(
+                        Path.Combine(project.Path, "Architecture", "CompositionSmokeTests.cs"),
+                        BuildCompositionSmokeTest(request)));
+
+                    foreach (var feature in ResolveGeneratedTestFeatures(request))
+                    {
+                        files.Add(new(
+                            Path.Combine(project.Path, "Features", $"{feature.ClassName}BehaviorSpecifications.cs"),
+                            BuildBehaviorSpecificationTest(request, feature.DisplayName, feature.ClassName)));
+                    }
+
                     break;
             }
         }
@@ -704,6 +716,8 @@ docker compose up --build
             "using Microsoft.Extensions.Hosting.WindowsServices;"
         };
         var registrationLines = new List<string>();
+        var hostRegistrationLines = new List<string>();
+        var engineRegistrationLines = new List<string>();
 
         if (appProfile.Transports.Any(transport => string.Equals(transport.Id, "json-rpc", StringComparison.OrdinalIgnoreCase)))
         {
@@ -723,9 +737,62 @@ docker compose up --build
             registrationLines.Add("builder.AddGraphQLTransport();");
         }
 
+        if (ShouldGenerateDataPack(appProfile))
+        {
+            usingLines.Add("using Cephalon.Data.Registration;");
+            engineRegistrationLines.Add("    engine.AddData();");
+        }
+
+        if (ShouldGenerateSfidPack(appProfile))
+        {
+            usingLines.Add("using Cephalon.Ids.Sfid.Registration;");
+            engineRegistrationLines.Add("    engine.AddSfidIds();");
+        }
+
+        if (ShouldGenerateEventingPack(appProfile))
+        {
+            usingLines.Add("using Cephalon.Eventing.Registration;");
+            engineRegistrationLines.Add("    engine.AddEventing();");
+        }
+
+        if (ShouldGenerateWolverinePack(appProfile))
+        {
+            usingLines.Add("using Cephalon.Eventing.Wolverine.Registration;");
+            engineRegistrationLines.Add("    engine.AddWolverineEventing();");
+        }
+
+        if (ShouldGenerateIdentityPack(appProfile))
+        {
+            usingLines.Add("using Cephalon.Identity.AspNetCore.Hosting;");
+            usingLines.Add("using Cephalon.Identity.Registration;");
+            hostRegistrationLines.Add("builder.AddCephalonIdentityAspNetCore();");
+            engineRegistrationLines.Add("    engine.AddIdentityAccess();");
+        }
+
+        if (ShouldGenerateMultiTenancyPack(appProfile))
+        {
+            usingLines.Add("using Cephalon.MultiTenancy.Registration;");
+            engineRegistrationLines.Add("    engine.AddMultiTenancy();");
+        }
+
+        if (ShouldGenerateAuditPack(appProfile))
+        {
+            usingLines.Add("using Cephalon.Audit.Registration;");
+            engineRegistrationLines.Add("    engine.AddAudit();");
+        }
+
         var registrations = registrationLines.Count == 0
             ? string.Empty
             : string.Join(Environment.NewLine, registrationLines) + Environment.NewLine;
+        var hostRegistrations = hostRegistrationLines.Count == 0
+            ? string.Empty
+            : string.Join(Environment.NewLine, hostRegistrationLines) + Environment.NewLine;
+        var cephalonRegistration = engineRegistrationLines.Count == 0
+            ? "builder.AddCephalon();"
+            : "builder.AddCephalon(engine =>" + Environment.NewLine +
+              "{" + Environment.NewLine +
+              string.Join(Environment.NewLine, engineRegistrationLines) + Environment.NewLine +
+              "});";
 
         return $@"{string.Join(Environment.NewLine, usingLines.Distinct(StringComparer.Ordinal))}
 
@@ -739,7 +806,7 @@ var options = new WebApplicationOptions
 
 var builder = WebApplication.CreateBuilder(options);
 builder.Host.UseWindowsService();
-{registrations}builder.AddCephalon();
+{registrations}{hostRegistrations}{cephalonRegistration}
 builder.Services.AddCephalonObservability(builder.Configuration);
 builder.AddCephalonOpenTelemetry();
 
@@ -759,86 +826,249 @@ app.Run();
 
     private static string BuildHostSettings(AppProfile appProfile, ScaffoldRequest request)
     {
-        var builder = new StringBuilder();
-        builder.AppendLine("{");
-        builder.AppendLine("  \"Engine\": {");
-        builder.AppendLine("    \"Blueprint\": \"" + EscapeJson(appProfile.BlueprintDisplayName) + "\",");
-        builder.AppendLine("    \"Discovery\": {");
-        builder.AppendLine("      \"Assemblies\": [");
-
-        for (var index = 0; index < request.Modules.Count; index++)
+        var engineSettings = new JsonObject
         {
-            var moduleName = request.Modules[index];
-            var suffix = index == request.Modules.Count - 1 ? string.Empty : ",";
-            builder.AppendLine("        \"" + EscapeJson(request.AppName + ".Modules." + moduleName) + "\"" + suffix);
+            ["Blueprint"] = appProfile.BlueprintId,
+            ["Discovery"] = new JsonObject
+            {
+                ["Assemblies"] = CreateJsonArray(
+                    request.Modules.Select(moduleName => request.AppName + ".Modules." + moduleName))
+            },
+            ["Patterns"] = CreateJsonArray(appProfile.Patterns.Select(pattern => pattern.Id)),
+            ["Technologies"] = CreateJsonArray(appProfile.Technologies.Select(technology => technology.Id)),
+            ["Data"] = BuildGeneratedDataSettings(appProfile),
+            ["Identity"] = BuildGeneratedIdentitySettings(appProfile),
+            ["Tenancy"] = BuildGeneratedTenancySettings(appProfile),
+            ["Audit"] = new JsonObject
+            {
+                ["Enabled"] = ShouldGenerateAuditPack(appProfile)
+            },
+            ["Messaging"] = BuildGeneratedMessagingSettings(appProfile),
+            ["Observability"] = new JsonObject
+            {
+                ["LogManifestSummary"] = true,
+                ["LogModuleSummary"] = true,
+                ["LogCapabilitySummary"] = true,
+                ["Telemetry"] = new JsonObject
+                {
+                    ["Provider"] = "OpenTelemetry",
+                    ["Protocol"] = "otlp/http",
+                    ["ExportLogs"] = true,
+                    ["ExportMetrics"] = true,
+                    ["ExportTraces"] = true
+                }
+            },
+            ["Localization"] = new JsonObject
+            {
+                ["DefaultCulture"] = "en",
+                ["SupportedCultures"] = CreateJsonArray(["en", "th"]),
+                ["Resources"] = new JsonObject
+                {
+                    ["th"] = new JsonObject
+                    {
+                        ["engine.docs.rest.title"] = request.AppName + " REST API ภาษาไทย",
+                        ["engine.docs.rest.description"] = "พื้นผิว REST ที่ " + request.AppName + " host เปิดให้ใช้งาน"
+                    }
+                }
+            },
+            ["Transports"] = CreateJsonArray(appProfile.Transports.Select(transport => transport.Id))
+        };
+
+        var root = new JsonObject
+        {
+            ["Engine"] = engineSettings,
+            ["ReferenceDocs"] = new JsonObject
+            {
+                ["Enabled"] = false,
+                ["RoutePrefix"] = "/reference",
+                ["DirectoryPath"] = "..\\..\\docs\\reference",
+                ["DefaultDocument"] = "browse.html"
+            }
+        };
+
+        return root.ToJsonString(new JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
+    }
+
+    private static JsonObject BuildGeneratedDataSettings(AppProfile appProfile)
+    {
+        var dataSettings = new JsonObject
+        {
+            ["ReadWriteSplit"] = appProfile.Data.ReadWriteSplit ?? HasPattern(appProfile, "cqrs"),
+            ["Outbox"] = new JsonObject
+            {
+                ["Enabled"] = appProfile.Data.OutboxEnabled ?? HasPattern(appProfile, "outbox")
+            },
+            ["Ids"] = new JsonObject()
+        };
+
+        if (!string.IsNullOrWhiteSpace(appProfile.Data.Provider))
+        {
+            dataSettings["Provider"] = appProfile.Data.Provider;
         }
 
-        builder.AppendLine("      ]");
-        builder.AppendLine("    },");
-        builder.AppendLine("    \"Patterns\": [");
-
-        for (var index = 0; index < appProfile.Patterns.Count; index++)
+        var idGenerator = ResolveGeneratedIdGenerator(appProfile);
+        if (!string.IsNullOrWhiteSpace(idGenerator))
         {
-            var pattern = appProfile.Patterns[index];
-            var suffix = index == appProfile.Patterns.Count - 1 ? string.Empty : ",";
-            builder.AppendLine("      \"" + EscapeJson(pattern.DisplayName) + "\"" + suffix);
+            ((JsonObject)dataSettings["Ids"]!).Add("Generator", idGenerator);
         }
 
-        builder.AppendLine("    ],");
-        builder.AppendLine("    \"Technologies\": [");
+        return dataSettings;
+    }
 
-        for (var index = 0; index < appProfile.Technologies.Count; index++)
+    private static JsonObject BuildGeneratedIdentitySettings(AppProfile appProfile)
+    {
+        var authorizationModes = ResolveGeneratedAuthorizationModes(appProfile);
+        return new JsonObject
         {
-            var technology = appProfile.Technologies[index];
-            var suffix = index == appProfile.Technologies.Count - 1 ? string.Empty : ",";
-            builder.AppendLine("      \"" + EscapeJson(technology.DisplayName) + "\"" + suffix);
+            ["Enabled"] = ShouldGenerateIdentityPack(appProfile),
+            ["AuthorizationModes"] = CreateJsonArray(authorizationModes)
+        };
+    }
+
+    private static JsonObject BuildGeneratedTenancySettings(AppProfile appProfile)
+    {
+        var settings = new JsonObject
+        {
+            ["Enabled"] = ShouldGenerateMultiTenancyPack(appProfile)
+        };
+
+        var mode = ResolveGeneratedTenancyMode(appProfile);
+        if (!string.IsNullOrWhiteSpace(mode))
+        {
+            settings["Mode"] = mode;
         }
 
-        builder.AppendLine("    ],");
-        builder.AppendLine("    \"Observability\": {");
-        builder.AppendLine("      \"LogManifestSummary\": true,");
-        builder.AppendLine("      \"LogModuleSummary\": true,");
-        builder.AppendLine("      \"LogCapabilitySummary\": true,");
-        builder.AppendLine("      \"Telemetry\": {");
-        builder.AppendLine("        \"Provider\": \"OpenTelemetry\",");
-        builder.AppendLine("        \"Protocol\": \"otlp/http\",");
-        builder.AppendLine("        \"ExportLogs\": true,");
-        builder.AppendLine("        \"ExportMetrics\": true,");
-        builder.AppendLine("        \"ExportTraces\": true");
-        builder.AppendLine("      }");
-        builder.AppendLine("    },");
-        builder.AppendLine("    \"Localization\": {");
-        builder.AppendLine("      \"DefaultCulture\": \"en\",");
-        builder.AppendLine("      \"SupportedCultures\": [");
-        builder.AppendLine("        \"en\",");
-        builder.AppendLine("        \"th\"");
-        builder.AppendLine("      ],");
-        builder.AppendLine("      \"Resources\": {");
-        builder.AppendLine("        \"th\": {");
-        builder.AppendLine("          \"engine.docs.rest.title\": \"" + EscapeJson(request.AppName + " REST API ภาษาไทย") + "\",");
-        builder.AppendLine("          \"engine.docs.rest.description\": \"" + EscapeJson("พื้นผิว REST ที่ " + request.AppName + " host เปิดให้ใช้งาน") + "\"");
-        builder.AppendLine("        }");
-        builder.AppendLine("      }");
-        builder.AppendLine("    },");
-        builder.AppendLine("    \"Transports\": [");
+        return settings;
+    }
 
-        for (var index = 0; index < appProfile.Transports.Count; index++)
+    private static JsonObject BuildGeneratedMessagingSettings(AppProfile appProfile)
+    {
+        var settings = new JsonObject();
+        var provider = ResolveGeneratedMessagingProvider(appProfile);
+        if (!string.IsNullOrWhiteSpace(provider))
         {
-            var transport = appProfile.Transports[index];
-            var suffix = index == appProfile.Transports.Count - 1 ? string.Empty : ",";
-            builder.AppendLine("      \"" + EscapeJson(transport.DisplayName) + "\"" + suffix);
+            settings["Provider"] = provider;
         }
 
-        builder.AppendLine("    ]");
-        builder.AppendLine("  },");
-        builder.AppendLine("  \"ReferenceDocs\": {");
-        builder.AppendLine("    \"Enabled\": false,");
-        builder.AppendLine("    \"RoutePrefix\": \"/reference\",");
-        builder.AppendLine("    \"DirectoryPath\": \"..\\\\..\\\\docs\\\\reference\",");
-        builder.AppendLine("    \"DefaultDocument\": \"browse.html\"");
-        builder.AppendLine("  }");
-        builder.AppendLine("}");
-        return builder.ToString();
+        return settings;
+    }
+
+    private static JsonArray CreateJsonArray(IEnumerable<string> values)
+    {
+        var array = new JsonArray();
+
+        foreach (var value in values)
+        {
+            array.Add(value);
+        }
+
+        return array;
+    }
+
+    private static bool ShouldGenerateDataPack(AppProfile appProfile)
+    {
+        return appProfile.Data.HasValues ||
+            HasPattern(appProfile, "cqrs") ||
+            HasPattern(appProfile, "outbox");
+    }
+
+    private static bool ShouldGenerateSfidPack(AppProfile appProfile)
+    {
+        return !string.IsNullOrWhiteSpace(ResolveGeneratedIdGenerator(appProfile));
+    }
+
+    private static string? ResolveGeneratedIdGenerator(AppProfile appProfile)
+    {
+        if (!string.IsNullOrWhiteSpace(appProfile.Data.IdGenerator))
+        {
+            return appProfile.Data.IdGenerator;
+        }
+
+        return ShouldGenerateDataPack(appProfile)
+            ? "Sfid"
+            : null;
+    }
+
+    private static bool ShouldGenerateIdentityPack(AppProfile appProfile)
+    {
+        return appProfile.Identity.HasValues ||
+            HasTechnology(appProfile, "identity-access");
+    }
+
+    private static IReadOnlyList<string> ResolveGeneratedAuthorizationModes(AppProfile appProfile)
+    {
+        if (appProfile.Identity.AuthorizationModes.Count > 0)
+        {
+            return appProfile.Identity.AuthorizationModes;
+        }
+
+        return ShouldGenerateIdentityPack(appProfile)
+            ? ["RBAC", "ABAC", "Policy"]
+            : [];
+    }
+
+    private static bool ShouldGenerateMultiTenancyPack(AppProfile appProfile)
+    {
+        return appProfile.Tenancy.HasValues ||
+            HasTechnology(appProfile, "multi-tenancy");
+    }
+
+    private static string? ResolveGeneratedTenancyMode(AppProfile appProfile)
+    {
+        if (!string.IsNullOrWhiteSpace(appProfile.Tenancy.Mode))
+        {
+            return appProfile.Tenancy.Mode;
+        }
+
+        return ShouldGenerateMultiTenancyPack(appProfile)
+            ? "SharedDatabase"
+            : null;
+    }
+
+    private static bool ShouldGenerateAuditPack(AppProfile appProfile)
+    {
+        return appProfile.Audit.Enabled == true;
+    }
+
+    private static bool ShouldGenerateEventingPack(AppProfile appProfile)
+    {
+        return appProfile.Messaging.HasValues ||
+            HasTechnology(appProfile, "event-driven-integration");
+    }
+
+    private static bool ShouldGenerateWolverinePack(AppProfile appProfile)
+    {
+        return string.Equals(
+            ResolveGeneratedMessagingProvider(appProfile),
+            "Wolverine",
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string? ResolveGeneratedMessagingProvider(AppProfile appProfile)
+    {
+        if (!string.IsNullOrWhiteSpace(appProfile.Messaging.Provider))
+        {
+            return appProfile.Messaging.Provider;
+        }
+
+        return ShouldGenerateEventingPack(appProfile)
+            ? "Wolverine"
+            : null;
+    }
+
+    private static bool HasPattern(AppProfile appProfile, string patternId)
+    {
+        return appProfile.Patterns.Any(pattern =>
+            string.Equals(pattern.Id, patternId, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static bool HasTechnology(AppProfile appProfile, string technologyId)
+    {
+        return appProfile.Technologies.Any(technology =>
+            string.Equals(technology.Id, technologyId, StringComparison.OrdinalIgnoreCase));
     }
 
     private static string BuildFoundationMarker(ScaffoldRequest request)
@@ -913,20 +1143,59 @@ public sealed class {moduleTypeName}Module : ModuleBase
 """;
     }
 
-    private static string BuildSmokeTest(ScaffoldRequest request)
+    private static string BuildCompositionSmokeTest(ScaffoldRequest request)
     {
-        return $@"namespace {request.RootNamespace}.Tests;
+        return $@"namespace {request.RootNamespace}.Tests.Architecture;
 
-public sealed class SmokeTests
+public sealed class CompositionSmokeTests
 {{
     [Fact]
-    public void GeneratedScaffoldCompilesIntoATestableSolution()
+    public void Generated_scaffold_has_a_test_harness_ready_for_real_composition_checks()
     {{
         Assert.True(true);
     }}
 }}
 ";
     }
+
+    private static string BuildBehaviorSpecificationTest(
+        ScaffoldRequest request,
+        string featureName,
+        string className)
+    {
+        var featureSlug = ScaffoldRequest.ToSlug(featureName, "feature")
+            .Replace("-", "_", StringComparison.Ordinal);
+
+        return $@"namespace {request.RootNamespace}.Tests.Features;
+
+public sealed class {className}BehaviorSpecifications
+{{
+    [Fact]
+    public void Given_{featureSlug}_behavior_when_you_start_tdd_then_replace_this_placeholder_with_the_first_failing_specification()
+    {{
+        // Replace this starter assertion with the first business rule you want to drive through TDD.
+        Assert.True(true);
+    }}
+}}
+";
+    }
+
+    private static GeneratedTestFeature[] ResolveGeneratedTestFeatures(ScaffoldRequest request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        var features = request.Features.Count == 0
+            ? ["Core"]
+            : request.Features;
+
+        return features
+            .Select(feature => new GeneratedTestFeature(
+                feature,
+                $"{ScaffoldRequest.ToIdentifier(feature, "Feature")}"))
+            .ToArray();
+    }
+
+    private sealed record GeneratedTestFeature(string DisplayName, string ClassName);
 
     private static string ResolveModuleName(RenderedProject project)
     {

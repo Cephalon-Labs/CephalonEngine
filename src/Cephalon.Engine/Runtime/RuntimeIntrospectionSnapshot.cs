@@ -1,3 +1,6 @@
+using Cephalon.Abstractions.Audit;
+using Cephalon.Abstractions.Authorization;
+using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Diagnostics;
@@ -25,7 +28,7 @@ namespace Cephalon.Engine.Runtime;
 /// <remarks>
 /// This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime
 /// without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details,
-/// diagnostics conventions, and lifecycle story data.
+/// diagnostics conventions, data projection details, outbox details, inbox details, authorization-policy details, and lifecycle story data.
 /// </remarks>
 public sealed record RuntimeIntrospectionSnapshot(
     RuntimeManifest Manifest,
@@ -39,4 +42,29 @@ public sealed record RuntimeIntrospectionSnapshot(
     /// Gets the hosted executions contributed by active modules and visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<HostedExecutionDescriptor> HostedExecutions { get; init; } = [];
+
+    /// <summary>
+    /// Gets the projections contributed by active modules and visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<ProjectionDescriptor> Projections { get; init; } = [];
+
+    /// <summary>
+    /// Gets the outbox surfaces contributed by active modules and visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<OutboxDescriptor> Outboxes { get; init; } = [];
+
+    /// <summary>
+    /// Gets the inbox surfaces contributed by active modules and visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<InboxDescriptor> Inboxes { get; init; } = [];
+
+    /// <summary>
+    /// Gets the authorization policies contributed by active modules and visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<AuthorizationPolicyDescriptor> AuthorizationPolicies { get; init; } = [];
+
+    /// <summary>
+    /// Gets the audit-store surfaces contributed by active modules and visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<AuditStoreDescriptor> AuditStores { get; init; } = [];
 }

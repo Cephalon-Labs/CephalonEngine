@@ -48,5 +48,21 @@ public static class AppProfileFactory
         {
             builder.SelectTechnology(technologyName);
         }
+
+        builder.UseDataSelection(new Abstractions.AppModel.DataSelection(
+            provider: settings.Data.Provider,
+            readWriteSplit: settings.Data.ReadWriteSplit,
+            outboxEnabled: settings.Data.OutboxEnabled,
+            idGenerator: settings.Data.IdGenerator));
+        builder.UseIdentitySelection(new Abstractions.AppModel.IdentitySelection(
+            enabled: settings.Identity.Enabled,
+            authorizationModes: settings.Identity.AuthorizationModes));
+        builder.UseTenancySelection(new Abstractions.AppModel.TenancySelection(
+            enabled: settings.Tenancy.Enabled,
+            mode: settings.Tenancy.Mode));
+        builder.UseAuditSelection(new Abstractions.AppModel.AuditSelection(
+            enabled: settings.Audit.Enabled));
+        builder.UseMessagingSelection(new Abstractions.AppModel.MessagingSelection(
+            provider: settings.Messaging.Provider));
     }
 }

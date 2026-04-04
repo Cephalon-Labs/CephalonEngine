@@ -33,6 +33,8 @@ public sealed class SampleSuiteHostingTests
 
         Assert.NotNull(profile);
         Assert.Equal("modular-monolith", profile.BlueprintId);
+        Assert.Equal("Sfid", profile.Data.IdGenerator);
+        Assert.True(profile.Audit.Enabled);
         Assert.Contains("ModularMonolith", overview, StringComparison.Ordinal);
         Assert.Contains("starter-kit", overview, StringComparison.Ordinal);
     }
@@ -83,6 +85,8 @@ public sealed class SampleSuiteHostingTests
 
         Assert.NotNull(profile);
         Assert.Equal("modular-vertical-slice", profile.BlueprintId);
+        Assert.Equal("Sfid", profile.Data.IdGenerator);
+        Assert.True(profile.Audit.Enabled);
         Assert.Contains("ModularVerticalSlice", preview, StringComparison.Ordinal);
         Assert.Contains("vip-fast-lane", preview, StringComparison.Ordinal);
     }
@@ -101,6 +105,8 @@ public sealed class SampleSuiteHostingTests
 
         Assert.NotNull(profile);
         Assert.Equal("microservice", profile.BlueprintId);
+        Assert.Equal("Sfid", profile.Data.IdGenerator);
+        Assert.True(profile.Audit.Enabled);
         Assert.Contains("enterprise-boundary", welcome, StringComparison.Ordinal);
         Assert.Contains("Cephalon microservice sample", welcome, StringComparison.Ordinal);
     }

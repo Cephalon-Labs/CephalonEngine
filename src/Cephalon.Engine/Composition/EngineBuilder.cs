@@ -1,12 +1,18 @@
 using Cephalon.Abstractions.AppModel;
+using Cephalon.Abstractions.Audit;
+using Cephalon.Abstractions.Authorization;
 using Cephalon.Abstractions.Capabilities;
+using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Patterns;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Abstractions.Transports;
+using Cephalon.Engine.Audit;
+using Cephalon.Engine.Authorization;
 using Cephalon.Engine.AppModel;
 using Cephalon.Engine.Configuration;
+using Cephalon.Engine.Data;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.Engine.Execution;
 using Cephalon.Engine.Localization;
@@ -525,6 +531,11 @@ public sealed class EngineBuilder
             var modulesByType = orderedModules.ToDictionary(module => module.GetType());
             var executionGraphs = new List<ExecutionGraphDescriptor>();
             var hostedExecutions = new List<HostedExecutionDescriptor>();
+            var projections = new List<ProjectionDescriptor>();
+            var outboxes = new List<OutboxDescriptor>();
+            var inboxes = new List<InboxDescriptor>();
+            var auditStores = new List<AuditStoreDescriptor>();
+            var authorizationPolicies = new List<AuthorizationPolicyDescriptor>();
             var capabilities = new CapabilityManifestCollector();
             var technologyRegistry = new TechnologyRegistryAdapter(appProfileBuilder);
             foreach (var module in orderedModules.OfType<ITechnologyContributor>())
@@ -544,6 +555,36 @@ public sealed class EngineBuilder
                     new HostedExecutionRegistryAdapter(module.Descriptor.Id, hostedExecutions));
             }
 
+            foreach (var module in orderedModules.Where(static module => module is IProjectionContributor))
+            {
+                ((IProjectionContributor)module).RegisterProjections(
+                    new ProjectionRegistryAdapter(module.Descriptor.Id, projections));
+            }
+
+            foreach (var module in orderedModules.Where(static module => module is IOutboxContributor))
+            {
+                ((IOutboxContributor)module).RegisterOutboxes(
+                    new OutboxRegistryAdapter(module.Descriptor.Id, outboxes));
+            }
+
+            foreach (var module in orderedModules.Where(static module => module is IInboxContributor))
+            {
+                ((IInboxContributor)module).RegisterInboxes(
+                    new InboxRegistryAdapter(module.Descriptor.Id, inboxes));
+            }
+
+            foreach (var module in orderedModules.Where(static module => module is IAuditStoreContributor))
+            {
+                ((IAuditStoreContributor)module).RegisterAuditStores(
+                    new AuditStoreRegistryAdapter(module.Descriptor.Id, auditStores));
+            }
+
+            foreach (var module in orderedModules.Where(static module => module is IAuthorizationPolicyContributor))
+            {
+                ((IAuthorizationPolicyContributor)module).RegisterPolicies(
+                    new AuthorizationPolicyRegistryAdapter(module.Descriptor.Id, authorizationPolicies));
+            }
+
             var appProfile = appProfileBuilder.Build();
             var technologyCatalog = new TechnologyCatalogSnapshot(appProfileBuilder.GetTechnologyCatalog());
             var technologySelection = new TechnologySelection(appProfile.Technologies, technologyCatalog.Technologies);
@@ -558,12 +599,14 @@ public sealed class EngineBuilder
             Services.TryAddSingleton(appProfile);
             Services.TryAddSingleton(technologyCatalog);
             Services.TryAddSingleton(technologySelection);
+            Services.TryAddSingleton<IProjectionCatalog>(_ => new ProjectionCatalogSnapshot(projections));
+            Services.TryAddSingleton<IOutboxCatalog>(_ => new OutboxCatalogSnapshot(outboxes));
+            Services.TryAddSingleton<IInboxCatalog>(_ => new InboxCatalogSnapshot(inboxes));
+            Services.TryAddSingleton<IAuditStoreCatalog>(_ => new AuditStoreCatalogSnapshot(auditStores));
+            Services.TryAddSingleton<IAuthorizationPolicyCatalog>(_ => new AuthorizationPolicyCatalogSnapshot(authorizationPolicies));
             Services.TryAddSingleton<TechnologyRuntimeCatalogSnapshot>(serviceProvider =>
                 new TechnologyRuntimeCatalogSnapshot(
-                    serviceProvider.GetServices<ITechnologyRuntimeContributor>()
-                        .Select(static contributor => contributor.DescribeRuntimeSurface())
-                        .OrderBy(static surface => surface.DisplayName, StringComparer.OrdinalIgnoreCase)
-                        .ToArray()));
+                    serviceProvider.GetServices<ITechnologyRuntimeContributor>()));
             Services.TryAddSingleton<ITechnologyRuntimeCatalog>(serviceProvider =>
                 serviceProvider.GetRequiredService<TechnologyRuntimeCatalogSnapshot>());
 
