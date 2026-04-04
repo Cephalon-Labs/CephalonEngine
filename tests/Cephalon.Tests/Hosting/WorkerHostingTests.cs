@@ -1,3 +1,5 @@
+using Cephalon.Abstractions.Audit;
+using Cephalon.Audit.Registration;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Runtime;
 using Cephalon.Tests.Support;
@@ -180,5 +182,33 @@ public sealed class WorkerHostingTests
         var stoppedHostedExecution = Assert.Single(runtime.OperationalStory.HostedExecutions);
         Assert.True(stoppedHostedExecution.IsDeactivated);
         Assert.False(stoppedHostedExecution.IsActive);
+    }
+
+    [Fact]
+    public async Task AddCephalonHonorsConfigurationDrivenAuditWriterDisablementWithinGenericHost()
+    {
+        var builder = Host.CreateApplicationBuilder();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:EnableInMemoryWriter"] = "false";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new AuditCaptureModule());
+            cephalon.AddAudit();
+        });
+
+        using var host = builder.Build();
+        var auditStoreCatalog = host.Services.GetRequiredService<IAuditStoreCatalog>();
+        var snapshotProvider = host.Services.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>();
+
+        await host.StartAsync();
+
+        var snapshot = snapshotProvider.CreateSnapshot();
+
+        Assert.Empty(auditStoreCatalog.AuditStores);
+        Assert.Empty(snapshot.AuditStores);
+
+        await host.StopAsync();
     }
 }

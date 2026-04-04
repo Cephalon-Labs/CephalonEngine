@@ -8,6 +8,7 @@ using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.MultiTenancy.Registration;
 using Cephalon.Tests.Support;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Composition;
@@ -129,6 +130,48 @@ public sealed class AuditPackTests
             engine.AddModule(new PlatformTestModule());
             engine.AddModule(new AuditCaptureModule());
             engine.AddAudit(options => options.EnableInMemoryWriter = false);
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var recorder = provider.GetRequiredService<IAuditRecorder>();
+        var captureWriter = provider.GetRequiredService<CaptureAuditWriter>();
+        var auditStoreCatalog = provider.GetRequiredService<IAuditStoreCatalog>();
+        var snapshot = provider.GetRequiredService<global::Cephalon.Engine.Runtime.IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+
+        var entry = await recorder.RecordAsync(new AuditRecordRequest(
+            category: "tenant",
+            action: "tenant-switched",
+            summary: "Switched the active tenant context.",
+            subjectType: "tenant",
+            subjectId: "tenant-001",
+            outcome: AuditOutcome.Succeeded));
+
+        Assert.NotNull(entry.Id);
+        Assert.Single(captureWriter.Entries);
+        Assert.Equal(entry.Id, captureWriter.Entries[0].Id);
+        Assert.Empty(auditStoreCatalog.AuditStores);
+        Assert.Empty(snapshot.AuditStores);
+    }
+
+    [Fact]
+    public async Task AddAuditHonorsConfigurationDrivenInMemoryWriterDisablement()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                [$"{EngineSettings.SectionName}:Audit:EnableInMemoryWriter"] = "false"
+            })
+            .Build();
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                audit: new AuditSettings(enabled: true)));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new AuditCaptureModule());
+            engine.AddAudit();
         });
 
         await using var provider = services.BuildServiceProvider();

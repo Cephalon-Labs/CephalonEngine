@@ -1134,7 +1134,7 @@ Progress:
 - solution wiring, package-surface tests, reference-doc tests, and component docs now cover `Cephalon.MultiTenancy`
 - `Cephalon.Audit` now exists locally as the first narrow host-agnostic audit companion pack with `AuditRuntimeOptions`, `AuditMetadataKeys`, `AddAudit(...)`, a default `IAuditRecorder`, a default ambient `IAuditActorAccessor`, and an application-managed in-memory writer baseline
 - `Cephalon.Audit` now contributes a dedicated audit-store catalog through `IAuditStoreCatalog`, `/engine/audit-stores`, and `/engine/snapshot` instead of overloading technology surfaces or observability-only answers
-- the audit baseline now lets hosts disable the built-in in-memory writer through `AuditRuntimeOptions.EnableInMemoryWriter` / `Engine:Audit:EnableInMemoryWriter`, and the runtime audit-store catalog now stays aligned with that choice instead of pretending the memory-backed store is active when it is not
+- the audit baseline now honors `AuditRuntimeOptions.EnableInMemoryWriter` / `Engine:Audit:EnableInMemoryWriter` end to end across service-collection, ASP.NET Core, and Worker host paths, and the runtime audit-store catalog now stays aligned with that choice instead of pretending the memory-backed store is active when it is not
 - the audit baseline now ships stable `4600-4601` diagnostics-catalog entries for successful and failed audit-entry writes, plus targeted composition, hosting, package-surface, and reference-doc coverage
 - remaining work inside `ENG-052` is audit follow-through beyond the narrow recording baseline, not the existence of the companion-pack and catalog foundation itself
 

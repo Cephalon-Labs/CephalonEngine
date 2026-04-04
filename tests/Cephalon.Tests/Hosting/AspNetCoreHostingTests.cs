@@ -17,6 +17,7 @@ using Cephalon.Abstractions.Technologies;
 using Cephalon.Abstractions.Transports;
 using Cephalon.Agentics.Registration;
 using Cephalon.Agentics.Services;
+using Cephalon.Audit.Registration;
 using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Documentation;
@@ -805,6 +806,37 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains(snapshot.Outboxes, item => item.Id == "tenant-event-outbox");
         Assert.Contains(snapshot.AuditStores, item => item.Id == "tenant-audit-store");
         Assert.Contains(snapshot.AuthorizationPolicies, item => item.Id == "tenant-boundary");
+    }
+
+    [Fact]
+    public async Task MapCephalonHonorsConfigurationDrivenAuditWriterDisablement()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:EnableInMemoryWriter"] = "false";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new AuditCaptureModule());
+            cephalon.AddAudit();
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var auditStores = await client.GetFromJsonAsync<AuditStoreDescriptor[]>("/engine/audit-stores");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(auditStores);
+        Assert.Empty(auditStores);
+        Assert.NotNull(snapshot);
+        Assert.Empty(snapshot.AuditStores);
     }
 
     [Fact]
