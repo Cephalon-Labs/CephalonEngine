@@ -282,6 +282,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("IdentityAspNetCoreOptions", identityPage.Contents, StringComparison.Ordinal);
         Assert.Contains("IdentityAspNetCoreServiceCollectionExtensions", identityPage.Contents, StringComparison.Ordinal);
         Assert.Contains("IdentityEndpointConventionBuilderExtensions", identityPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("RequireCephalonAuthorizationAttribute", identityPage.Contents, StringComparison.Ordinal);
     }
 
     [Fact]

@@ -24,7 +24,7 @@ This package is the first honest runtime slice of the phase-8 identity story. `C
 
 The built-in evaluator is intentionally declarative and conservative. It understands low-ceremony metadata conventions for role checks, owner checks, tenant-boundary checks, and subject/resource/context attribute matching, but it does not pretend to be a full authentication stack or a product-specific policy engine. That keeps the current slice truthful while still giving consumer apps a meaningful ready-to-use baseline that reduces repeated authorization wiring and lets project code focus on business rules.
 
-The next step after this package is an adapter-oriented `Cephalon.Identity.AspNetCore` follow-through that maps these contracts onto `ClaimsPrincipal`, auth schemes, and endpoint policies without changing the host-agnostic core story.
+The next step after this package is broader adapter follow-through on top of the shipped `Cephalon.Identity.AspNetCore` baseline. That now covers minimal APIs and controller actions while keeping `ClaimsPrincipal`, auth schemes, and endpoint-policy wiring out of the host-agnostic core, and the next iterations should deepen host/runtime truth instead of pushing ASP.NET Core concerns back into `Cephalon.Abstractions`.
 
 ## Related docs
 

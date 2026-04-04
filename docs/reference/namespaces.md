@@ -266,7 +266,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Identity.AspNetCore.Transports.Rest`
 
-- [Cephalon.Identity.AspNetCore](cephalon-identity-aspnetcore.md#namespace-cephalon-identity-aspnetcore-transports-rest): 1 public types [Browse](browse.html?assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Transports.Rest)
+- [Cephalon.Identity.AspNetCore](cephalon-identity-aspnetcore.md#namespace-cephalon-identity-aspnetcore-transports-rest): 2 public types [Browse](browse.html?assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Transports.Rest)
 
 ## `Cephalon.Identity.Configuration`
 

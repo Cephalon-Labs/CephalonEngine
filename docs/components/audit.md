@@ -9,7 +9,7 @@
 - a default in-memory audit writer baseline for local and starter scenarios
 - config-driven control over whether the built-in in-memory writer stays active, including `Engine:Audit:EnableInMemoryWriter`, with runtime audit-store answers that stay aligned with that choice
 - stable diagnostics conventions for successful and failed audit-entry writes
-- additive audit-store catalog contributions that flow into `/engine/audit-stores` and `/engine/snapshot`
+- additive audit-store catalog contributions that flow into `/engine/audit-stores` and `/engine/snapshot`, so consumer-contributed stores remain visible when `AddAudit()` is active and the built-in memory store only disappears when it is explicitly disabled
 
 ## Main surfaces
 
@@ -32,7 +32,7 @@
 
 This pack stays intentionally narrow. It gives consumer apps a ready-to-use audit recording path without forcing one durable storage model, one observability backend, or one query/history UI. The default writer is in-memory and application-managed on purpose, which keeps the baseline truthful while the engine still exposes audit-store answers through runtime introspection.
 
-The audit path is also designed to stay low ceremony. Consumer apps can turn the pack on, record audit events through one service, let ambient tenant and actor context fill the repetitive fields, and keep the remaining hand-written code focused on business behavior instead of boilerplate audit plumbing.
+The audit path is also designed to stay low ceremony. Consumer apps can turn the pack on, record audit events through one service, let ambient tenant and actor context fill the repetitive fields, and keep the remaining hand-written code focused on business behavior instead of boilerplate audit plumbing. Just as importantly, the pack now layers on top of consumer audit-store contributions instead of replacing them, so teams can add durable stores or custom query surfaces without losing truthful `/engine/audit-stores` answers when the built-in writer is enabled or disabled.
 
 ## Related docs
 

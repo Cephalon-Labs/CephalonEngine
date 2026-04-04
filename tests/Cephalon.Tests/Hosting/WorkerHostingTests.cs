@@ -211,4 +211,36 @@ public sealed class WorkerHostingTests
 
         await host.StopAsync();
     }
+
+    [Fact]
+    public async Task AddCephalonPreservesConsumerAuditStoreWhenBuiltInAuditWriterIsDisabledWithinGenericHost()
+    {
+        var builder = Host.CreateApplicationBuilder();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:EnableInMemoryWriter"] = "false";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new Phase8CatalogModule());
+            cephalon.AddAudit();
+        });
+
+        using var host = builder.Build();
+        var auditStoreCatalog = host.Services.GetRequiredService<IAuditStoreCatalog>();
+        var snapshotProvider = host.Services.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>();
+
+        await host.StartAsync();
+
+        var snapshot = snapshotProvider.CreateSnapshot();
+
+        Assert.Single(auditStoreCatalog.AuditStores);
+        Assert.Equal("tenant-audit-store", auditStoreCatalog.AuditStores[0].Id);
+        Assert.Single(snapshot.AuditStores);
+        Assert.Equal("tenant-audit-store", snapshot.AuditStores[0].Id);
+        Assert.DoesNotContain(auditStoreCatalog.AuditStores, item => item.Id == "audit-default");
+        Assert.DoesNotContain(snapshot.AuditStores, item => item.Id == "audit-default");
+
+        await host.StopAsync();
+    }
 }

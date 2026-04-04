@@ -599,6 +599,7 @@ public sealed class EngineBuilder
             Services.TryAddSingleton(appProfile);
             Services.TryAddSingleton(technologyCatalog);
             Services.TryAddSingleton(technologySelection);
+            Services.TryAddSingleton<IReadOnlyList<AuditStoreDescriptor>>(_ => auditStores.ToArray());
             Services.TryAddSingleton<IProjectionCatalog>(_ => new ProjectionCatalogSnapshot(projections));
             Services.TryAddSingleton<IOutboxCatalog>(_ => new OutboxCatalogSnapshot(outboxes));
             Services.TryAddSingleton<IInboxCatalog>(_ => new InboxCatalogSnapshot(inboxes));

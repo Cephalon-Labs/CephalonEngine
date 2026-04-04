@@ -340,3 +340,129 @@ Type parameters:
 Parameters:
 - `builder`: The endpoint or route-group builder to annotate.
 - `authenticationSchemes`: The authentication scheme names to use for boundary responses.
+
+<a id="type-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute"></a>
+
+### `RequireCephalonAuthorizationAttribute`
+
+Requires a Cephalon authorization decision before an ASP.NET Core controller or action can execute.
+
+Remarks: This keeps controller and action authorization low ceremony by reusing the same Cephalon request-shaping, challenge, forbid, and problem-details behavior already used by the minimal-API helper surface.
+
+#### Declaration
+```csharp
+public sealed class RequireCephalonAuthorizationAttribute
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-ctor-system-string"></a>
+
+##### `RequireCephalonAuthorizationAttribute`
+
+```csharp
+RequireCephalonAuthorizationAttribute(string policyId)
+```
+
+Requires a Cephalon authorization decision before an ASP.NET Core controller or action can execute.
+
+Remarks: This keeps controller and action authorization low ceremony by reusing the same Cephalon request-shaping, challenge, forbid, and problem-details behavior already used by the minimal-API helper surface.
+
+#### Properties
+
+<a id="member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-action"></a>
+
+##### `Action`
+
+```csharp
+string Action { get; set; }
+```
+
+Gets or sets the optional action to evaluate.
+
+<a id="member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-isreusable"></a>
+
+##### `IsReusable`
+
+```csharp
+bool IsReusable { get; }
+```
+
+Gets a value indicating whether the MVC filter instance can be reused across requests.
+
+<a id="member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-order"></a>
+
+##### `Order`
+
+```csharp
+int Order { get; }
+```
+
+Gets the MVC filter order used to run the Cephalon authorization boundary early in the authorization stage.
+
+<a id="member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-ownersubjectidroutekey"></a>
+
+##### `OwnerSubjectIdRouteKey`
+
+```csharp
+string OwnerSubjectIdRouteKey { get; set; }
+```
+
+Gets or sets the optional route-value key that provides the owning subject identifier.
+
+<a id="member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-policyid"></a>
+
+##### `PolicyId`
+
+```csharp
+string PolicyId { get; }
+```
+
+Gets the Cephalon authorization policy id that must allow the request.
+
+<a id="member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-resourceidroutekey"></a>
+
+##### `ResourceIdRouteKey`
+
+```csharp
+string ResourceIdRouteKey { get; set; }
+```
+
+Gets or sets the optional route-value key that provides the resource identifier.
+
+<a id="member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-resourcetype"></a>
+
+##### `ResourceType`
+
+```csharp
+string ResourceType { get; set; }
+```
+
+Gets or sets the optional logical resource type.
+
+<a id="member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-tenantroutekey"></a>
+
+##### `TenantRouteKey`
+
+```csharp
+string TenantRouteKey { get; set; }
+```
+
+Gets or sets the optional route-value key that provides the tenant identifier.
+
+#### Methods
+
+<a id="member-m-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-createinstance-system-iserviceprovider"></a>
+
+##### `CreateInstance`
+
+```csharp
+IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
+```
+
+Creates the MVC authorization filter that evaluates the current request through the shared Cephalon boundary executor.
+
+Returns: The filter instance that will enforce the declared Cephalon authorization metadata.
+
+Parameters:
+- `serviceProvider`: The request-scoped service provider used to resolve executor services.

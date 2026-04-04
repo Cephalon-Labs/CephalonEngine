@@ -1,5 +1,6 @@
 using Cephalon.Identity.AspNetCore.Configuration;
 using Cephalon.Identity.AspNetCore.Services;
+using Cephalon.Abstractions.Technologies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -36,6 +37,8 @@ public static class IdentityAspNetCoreServiceCollectionExtensions
         services.RemoveAll<IdentityAspNetCoreOptions>();
         services.AddSingleton(options);
         services.TryAddSingleton<HttpContextAuthorizationRequestFactory>();
+        services.TryAddSingleton<CephalonAuthorizationBoundaryExecutor>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, IdentityAspNetCoreRuntimeSurfaceContributor>());
         return services;
     }
 }

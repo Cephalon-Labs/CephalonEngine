@@ -4,6 +4,7 @@ using Cephalon.Engine.Diagnostics;
 using Cephalon.Audit.Configuration;
 using Cephalon.Audit.Services;
 using System.Globalization;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
@@ -41,8 +42,10 @@ internal sealed class AuditModule(Action<AuditRuntimeOptions>? configureOptions)
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IAuditWriter, ConfiguredInMemoryAuditWriter>());
 
         services.AddSingleton<IAuditStoreCatalog>(serviceProvider =>
-            new ConfiguredAuditStoreCatalog(CreateAuditStores(
-                serviceProvider.GetRequiredService<AuditRuntimeOptions>())));
+            new ConfiguredAuditStoreCatalog(
+                serviceProvider.GetRequiredService<IReadOnlyList<AuditStoreDescriptor>>()
+                    .Concat(CreateAuditStores(
+                        serviceProvider.GetRequiredService<AuditRuntimeOptions>()))));
         services.TryAddSingleton<IAuditRecorder, DefaultAuditRecorder>();
     }
 
@@ -53,11 +56,6 @@ internal sealed class AuditModule(Action<AuditRuntimeOptions>? configureOptions)
     public void RegisterAuditStores(IAuditStoreRegistry auditStores)
     {
         ArgumentNullException.ThrowIfNull(auditStores);
-
-        foreach (var auditStore in CreateAuditStores(CreateResolvedOptions(configuration: null)))
-        {
-            auditStores.Add(auditStore);
-        }
     }
 
     private AuditRuntimeOptions CreateResolvedOptions(Microsoft.Extensions.Configuration.IConfiguration? configuration)

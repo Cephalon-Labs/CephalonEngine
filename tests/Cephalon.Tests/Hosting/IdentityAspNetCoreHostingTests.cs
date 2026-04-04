@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.Engine.Configuration;
 using Cephalon.Identity.AspNetCore.Hosting;
@@ -234,6 +235,86 @@ public sealed class IdentityAspNetCoreHostingTests
         }
     }
 
+    [Fact]
+    public async Task RequireCephalonAuthorizationAttributeProtectsControllerActionsAndHonorsAllowAnonymousOverrides()
+    {
+        var app = await CreateAppAsync(
+            configureRoutes: webApplication =>
+            {
+                webApplication.MapControllers();
+            },
+            useAuthenticationSchemes: false,
+            configureBuilder: builder =>
+            {
+                builder.Services
+                    .AddControllers()
+                    .AddApplicationPart(typeof(IdentityAspNetCoreDocumentsController).Assembly);
+            });
+
+        await using (app)
+        {
+            var client = app.GetTestClient();
+
+            var publicResponse = await client.GetAsync("/mvc/tenants/tenant-001/documents/public");
+            Assert.Equal(HttpStatusCode.OK, publicResponse.StatusCode);
+
+            var protectedRequest = new HttpRequestMessage(HttpMethod.Get, "/mvc/tenants/tenant-001/documents/doc-001/internal");
+            protectedRequest.Headers.Add("X-Test-Subject", "user-002");
+            protectedRequest.Headers.Add("X-Test-Role", "member");
+            protectedRequest.Headers.Add("X-Test-Tenant", "tenant-001");
+            protectedRequest.Headers.Add("X-Test-Region", "apac");
+
+            var protectedResponse = await client.SendAsync(protectedRequest);
+            Assert.Equal(HttpStatusCode.OK, protectedResponse.StatusCode);
+
+            var unauthorizedResponse = await client.GetAsync("/mvc/tenants/tenant-001/documents/doc-001/internal");
+            var payload = await unauthorizedResponse.Content.ReadFromJsonAsync<ProblemDetails>();
+
+            Assert.Equal(HttpStatusCode.Unauthorized, unauthorizedResponse.StatusCode);
+            Assert.NotNull(payload);
+            Assert.Equal("Authentication required", payload.Title);
+        }
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesIdentityAspNetCoreBoundarySurfaceForMinimalApisAndControllers()
+    {
+        var app = await CreateAppAsync(
+            configureRoutes: webApplication =>
+            {
+                webApplication.MapGet("/tenants/{tenantId}/documents/{id}/{classification}", () => TypedResults.Ok())
+                    .RequireCephalonAuthorization("tenant-boundary", resourceType: "document");
+                webApplication.MapControllers();
+            },
+            useAuthenticationSchemes: false,
+            configureBuilder: builder =>
+            {
+                builder.Services
+                    .AddControllers()
+                    .AddApplicationPart(typeof(IdentityAspNetCoreDocumentsController).Assembly);
+            });
+
+        await using (app)
+        {
+            var client = app.GetTestClient();
+            var identitySurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/identity-access");
+
+            Assert.NotNull(identitySurfaces);
+
+            var adapterSurface = Assert.Single(identitySurfaces, surface => surface.SurfaceId == "identity-aspnetcore");
+            var adapterEntry = Assert.Single(adapterSurface.Entries);
+
+            Assert.Equal("3", adapterEntry.Metadata["protectedEndpointCount"]);
+            Assert.Equal("1", adapterEntry.Metadata["protectedPolicyCount"]);
+            Assert.Equal("tenant-boundary", adapterEntry.Metadata["protectedPolicyIds"]);
+            Assert.Equal("2", adapterEntry.Metadata["integrationModeCount"]);
+            Assert.Equal("minimal-api,mvc", adapterEntry.Metadata["integrationModes"]);
+            Assert.Equal("1", adapterEntry.Metadata["minimalApiProtectedEndpointCount"]);
+            Assert.Equal("2", adapterEntry.Metadata["mvcProtectedEndpointCount"]);
+            Assert.Equal("1", adapterEntry.Metadata["allowAnonymousOverrideCount"]);
+        }
+    }
+
     private static async Task<WebApplication> CreateAppAsync(Action<WebApplication> configureRoutes)
     {
         return await CreateAppAsync(configureRoutes, useAuthenticationSchemes: false, configureBuilder: null);
@@ -407,5 +488,25 @@ public sealed class IdentityAspNetCoreHostingTests
             Response.Headers[TestAuthenticationDefaults.ForbidHeaderName] = Scheme.Name;
             return Task.CompletedTask;
         }
+    }
+}
+
+[ApiController]
+[Route("mvc/tenants/{tenantId}/documents")]
+public sealed class IdentityAspNetCoreDocumentsController : ControllerBase
+{
+    [HttpGet("{id}/{classification}")]
+    [RequireCephalonAuthorization("tenant-boundary", ResourceType = "document")]
+    public IActionResult GetProtectedDocument()
+    {
+        return Ok(new { ok = true });
+    }
+
+    [HttpGet("public")]
+    [AllowAnonymous]
+    [RequireCephalonAuthorization("tenant-boundary", ResourceType = "document")]
+    public IActionResult GetPublicDocument()
+    {
+        return Ok(new { ok = true });
     }
 }
