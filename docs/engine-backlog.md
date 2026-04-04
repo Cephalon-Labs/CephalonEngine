@@ -1102,6 +1102,7 @@ Progress:
 - `/engine/diagnostics` and `/engine/snapshot` can now advertise stable `Cephalon.Identity` diagnostic event ids `4400-4401` for allow/deny outcomes through the runtime diagnostics catalog
 - `Cephalon.Identity.AspNetCore` now exists locally as a separate host adapter with `AddCephalonIdentityAspNetCore(...)`, config-driven `Engine:Identity:AspNetCore` options, and a REST-only `RequireCephalonAuthorization(...)` endpoint helper that maps `ClaimsPrincipal`, route values, and request metadata into the shared Cephalon authorization contracts
 - the ASP.NET Core adapter currently returns truthful `401` and `403` API responses and keeps authentication scheme ownership with the consumer host instead of pretending to replace ASP.NET Core authentication
+- the REST adapter now also defers `401` and `403` responses to ASP.NET Core challenge/forbid behavior when the host or endpoint metadata already declares authentication schemes, including the low-ceremony `WithCephalonAuthenticationSchemes(...)` endpoint helper, which deepens scheme alignment without pushing authentication concerns into `Cephalon.Abstractions`
 - package-surface tests, reference-doc tests, component docs, solution wiring, and hosting tests now cover both `Cephalon.Identity` and `Cephalon.Identity.AspNetCore`
 
 ### ENG-052 Multi-tenancy and audit companion baseline

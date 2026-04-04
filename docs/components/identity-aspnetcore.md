@@ -7,8 +7,8 @@
 - maps `ClaimsPrincipal`, route values, and request metadata into the shared Cephalon authorization contracts
 - keeps ASP.NET Core-specific claim parsing, route parsing, and endpoint-filter behavior out of `Cephalon.Abstractions`
 - provides `AddCephalonIdentityAspNetCore(...)` host wiring for `IServiceCollection` and `WebApplicationBuilder`
-- provides a low-ceremony REST helper, `RequireCephalonAuthorization(...)`, for minimal API endpoints and route groups
-- returns truthful `401` and `403` API responses without pretending to own consumer authentication schemes
+- provides low-ceremony REST helpers, `RequireCephalonAuthorization(...)` and `WithCephalonAuthenticationSchemes(...)`, for minimal API endpoints and route groups
+- returns truthful `401` and `403` API responses without pretending to own consumer authentication schemes, and now defers to ASP.NET Core challenge/forbid flows when the host or endpoint metadata already declares authentication schemes
 
 ## Main surfaces
 
