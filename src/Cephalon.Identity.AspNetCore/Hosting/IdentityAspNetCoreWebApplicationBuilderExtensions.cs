@@ -19,7 +19,9 @@ public static class IdentityAspNetCoreWebApplicationBuilderExtensions
     /// <returns>The same builder instance for fluent composition.</returns>
     /// <remarks>
     /// This keeps ASP.NET Core-specific principal, claim, and route-bound authorization mapping in the host layer while
-    /// still feeding the host-agnostic Cephalon authorization contracts.
+    /// still feeding the host-agnostic Cephalon authorization contracts. When <c>Cephalon.Audit</c> is also active and
+    /// no custom <see cref="Cephalon.Audit.Services.IAuditActorAccessor" /> has been registered, the same adapter also
+    /// bridges the current authenticated principal into the ambient audit actor contract.
     /// </remarks>
     public static WebApplicationBuilder AddCephalonIdentityAspNetCore(
         this WebApplicationBuilder builder,

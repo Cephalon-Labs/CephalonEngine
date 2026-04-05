@@ -1107,6 +1107,7 @@ Progress:
 - direct request-factory coverage now locks custom claim-type selection, subject-id fallback behavior, and optional claim/route/query/header projection flags so config-driven ASP.NET Core identity adapter behavior does not silently drift
 - the identity pack now also honors `EnableDefaultEvaluator` and `EnableRuntimeSurface` truthfully, so a disabled built-in evaluator falls back to a deterministic deny path instead of a missing-service failure, and an opt-out runtime surface disappears from the merged technology catalog instead of lingering as misleading metadata
 - the ASP.NET Core adapter now also exposes a public `[RequireCephalonAuthorization]` attribute for controller and action boundaries, and it projects an `identity-aspnetcore` runtime surface so operator flows can see protected ASP.NET Core endpoint counts, active policy ids, integration modes, and `AllowAnonymous` overrides without guessing from code
+- the ASP.NET Core adapter now also bridges authenticated `ClaimsPrincipal` data into `Cephalon.Audit` automatically when the audit pack is active and the host has not already supplied a custom `IAuditActorAccessor`, which gives low-ceremony audit actor resolution without pulling ASP.NET Core APIs into the host-agnostic audit pack
 - package-surface tests, reference-doc tests, component docs, solution wiring, and hosting tests now cover both `Cephalon.Identity` and `Cephalon.Identity.AspNetCore`
 
 ### ENG-052 Multi-tenancy and audit companion baseline
@@ -1139,6 +1140,7 @@ Progress:
 - the audit baseline now honors `AuditRuntimeOptions.EnableInMemoryWriter` / `Engine:Audit:EnableInMemoryWriter` end to end across service-collection, ASP.NET Core, and Worker host paths, and the runtime audit-store catalog now stays aligned with that choice instead of pretending the memory-backed store is active when it is not
 - the audit pack now also preserves additive consumer audit-store contributions when `AddAudit()` is active, so disabling the built-in in-memory writer only removes `audit-default` and no longer clobbers consumer/runtime-provided audit stores from `/engine/audit-stores` or `/engine/snapshot`
 - the audit baseline now ships stable `4600-4601` diagnostics-catalog entries for successful and failed audit-entry writes, plus targeted composition, hosting, package-surface, and reference-doc coverage
+- the audit baseline now also gets a truthful low-ceremony actor bridge in ASP.NET Core hosts: when `Cephalon.Identity.AspNetCore` is active, authenticated principal data can populate ambient audit actors automatically, while custom audit actor accessors still remain authoritative and `/engine/technology-surfaces/identity-access` reports whether that bridge is active, merely available, or not configured
 - remaining work inside `ENG-052` is audit follow-through beyond the narrow recording baseline, not the existence of the companion-pack and catalog foundation itself
 
 ### ENG-053 CLI, scaffolding, template-pack, and sample alignment for phase 8
