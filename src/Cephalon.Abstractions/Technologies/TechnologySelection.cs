@@ -91,6 +91,11 @@ public sealed class TechnologySelection
         {
             index[NormalizeKey(technology.Id)] = technology;
             index[NormalizeKey(technology.DisplayName)] = technology;
+
+            foreach (var alias in technology.Aliases)
+            {
+                index[NormalizeKey(alias)] = technology;
+            }
         }
 
         return index;

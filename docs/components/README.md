@@ -23,6 +23,17 @@ See also: [Docs hub](../README.md)
 - [Cephalon.Retrieval](retrieval.md)
 - [Cephalon.Edge](edge.md)
 
+## Phase 8 companion packs
+
+- [Cephalon.Audit](audit.md)
+- [Cephalon.Data](data.md)
+- [Cephalon.Data.EntityFramework](data-entityframework.md)
+- [Cephalon.Eventing.Wolverine](eventing-wolverine.md)
+- [Cephalon.Identity](identity.md)
+- [Cephalon.Identity.AspNetCore](identity-aspnetcore.md)
+- [Cephalon.Ids.Sfid](ids-sfid.md)
+- [Cephalon.MultiTenancy](multi-tenancy.md)
+
 ## Tooling and adoption
 
 - [Cephalon.Observability](observability.md)

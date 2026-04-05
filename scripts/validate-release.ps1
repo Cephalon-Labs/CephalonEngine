@@ -2,6 +2,7 @@ param(
     [switch]$SkipBuild,
     [switch]$SkipTests,
     [switch]$SkipOperationalConventions,
+    [switch]$SkipPhase8Conventions,
     [switch]$SkipBenchmarks,
     [switch]$SkipPackages,
     [switch]$SkipReferenceDocs,
@@ -18,13 +19,14 @@ $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $solutionPath = Join-Path $repoRoot "CephalonEngine.slnx"
-$testsProjectPath = Join-Path $repoRoot "tests\Cephalon.Tests\Cephalon.Tests.csproj"
-$benchmarkProjectPath = Join-Path $repoRoot "benchmarks\Cephalon.Benchmarks\Cephalon.Benchmarks.csproj"
-$referenceDocsScriptPath = Join-Path $repoRoot "scripts\publish-reference-docs.ps1"
-$packageArtifactsScriptPath = Join-Path $repoRoot "scripts\publish-package-artifacts.ps1"
-$operationalConventionsScriptPath = Join-Path $repoRoot "scripts\validate-operational-conventions.ps1"
-$referenceDocsOutputPath = Join-Path $repoRoot "artifacts\reference-docs-release"
-$packageArtifactsOutputPath = Join-Path $repoRoot "artifacts\packages-release"
+$testsProjectPath = [System.IO.Path]::Combine($repoRoot, "tests", "Cephalon.Tests", "Cephalon.Tests.csproj")
+$benchmarkProjectPath = [System.IO.Path]::Combine($repoRoot, "benchmarks", "Cephalon.Benchmarks", "Cephalon.Benchmarks.csproj")
+$referenceDocsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-reference-docs.ps1")
+$packageArtifactsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-package-artifacts.ps1")
+$operationalConventionsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-operational-conventions.ps1")
+$phase8ConventionsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-phase8-conventions.ps1")
+$referenceDocsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "reference-docs-release")
+$packageArtifactsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "packages-release")
 
 function Invoke-Step {
     param(
@@ -51,6 +53,26 @@ function Invoke-DotNet {
     }
 }
 
+function Get-PowerShellHostPath {
+    try {
+        $processPath = (Get-Process -Id $PID).Path
+        if (-not [string]::IsNullOrWhiteSpace($processPath) -and (Test-Path -LiteralPath $processPath)) {
+            return $processPath
+        }
+    }
+    catch {
+    }
+
+    foreach ($candidate in @("pwsh", "powershell")) {
+        $command = Get-Command -Name $candidate -CommandType Application -ErrorAction SilentlyContinue
+        if ($null -ne $command -and -not [string]::IsNullOrWhiteSpace($command.Source)) {
+            return $command.Source
+        }
+    }
+
+    throw "Unable to resolve the current PowerShell host executable."
+}
+
 function Invoke-PowerShellScript {
     param(
         [Parameter(Mandatory = $true)]
@@ -59,9 +81,10 @@ function Invoke-PowerShellScript {
         [string[]]$Arguments
     )
 
-    & powershell -ExecutionPolicy Bypass -File $Path @Arguments
+    $powerShellHostPath = Get-PowerShellHostPath
+    & $powerShellHostPath -NoLogo -NoProfile -File $Path @Arguments
     if ($LASTEXITCODE -ne 0) {
-        throw "PowerShell script failed: powershell -ExecutionPolicy Bypass -File $Path $($Arguments -join ' ')"
+        throw "PowerShell script failed: $Path $($Arguments -join ' ')"
     }
 }
 
@@ -95,6 +118,20 @@ try {
             }
 
             Invoke-PowerShellScript -Path $operationalConventionsScriptPath -Arguments $arguments
+        }
+    }
+
+    if (-not $SkipPhase8Conventions) {
+        Invoke-Step "Validate phase-8 architecture, runtime, and starter conventions (Release)" {
+            $arguments = @(
+                "-Configuration", "Release"
+            )
+
+            if ((-not $SkipBuild) -or (-not $SkipTests)) {
+                $arguments += "-NoBuild"
+            }
+
+            Invoke-PowerShellScript -Path $phase8ConventionsScriptPath -Arguments $arguments
         }
     }
 

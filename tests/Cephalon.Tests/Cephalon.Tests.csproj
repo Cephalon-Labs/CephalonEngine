@@ -12,6 +12,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit" />
@@ -30,13 +31,21 @@
     <ProjectReference Include="..\..\benchmarks\Cephalon.Benchmarks\Cephalon.Benchmarks.csproj" />
     <ProjectReference Include="..\..\samples\Cephalon.ReferenceModule.Operations\Cephalon.ReferenceModule.Operations.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Agentics\Cephalon.Agentics.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Audit\Cephalon.Audit.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.AspNetCore.Grpc\Cephalon.AspNetCore.Grpc.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.AspNetCore.JsonRpc\Cephalon.AspNetCore.JsonRpc.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Cli\Cephalon.Cli.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data\Cephalon.Data.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.EntityFramework\Cephalon.Data.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Edge\Cephalon.Edge.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Engine\Cephalon.Engine.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Eventing\Cephalon.Eventing.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Eventing.Wolverine\Cephalon.Eventing.Wolverine.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Identity\Cephalon.Identity.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Identity.AspNetCore\Cephalon.Identity.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Ids.Sfid\Cephalon.Ids.Sfid.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.MultiTenancy\Cephalon.MultiTenancy.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability\Cephalon.Observability.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.CassandraDependencies\Cephalon.Observability.CassandraDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.ClickHouseDependencies\Cephalon.Observability.ClickHouseDependencies.csproj" />

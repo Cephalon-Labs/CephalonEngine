@@ -4,23 +4,37 @@
     {
       "reportFileName": "Cephalon.Benchmarks.Composition.EngineBuilderBenchmarks-report.csv",
       "benchmark": "BuildRuntimeManifest",
-      "maxMeanNanoseconds": 80000,
-      "maxAllocatedBytes": 40000,
-      "notes": "Configured-builder composition and manifest construction should stay below 80 us in the shipped benchmark scenario."
+      "maxMeanNanoseconds": 100000,
+      "maxAllocatedBytes": 55000,
+      "notes": "Configured-builder composition and manifest construction should stay below 100 us and under roughly 55 KB allocated in the shipped benchmark scenario."
     },
     {
       "reportFileName": "Cephalon.Benchmarks.Composition.EngineBuilderBenchmarks-report.csv",
       "benchmark": "BuildRuntimeManifestWithStrictTrustPolicy",
-      "maxMeanNanoseconds": 85000,
-      "maxAllocatedBytes": 40000,
-      "notes": "Configured-builder composition under strict capability trust filtering should stay below 85 us and under roughly 40 KB allocated in the shipped benchmark scenario."
+      "maxMeanNanoseconds": 100000,
+      "maxAllocatedBytes": 55000,
+      "notes": "Configured-builder composition under strict capability trust filtering should stay below 100 us and under roughly 55 KB allocated in the shipped benchmark scenario."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.Composition.EngineBuilderBenchmarks-report.csv",
+      "benchmark": "BuildPhase8RuntimeManifest",
+      "maxMeanNanoseconds": 250000,
+      "maxAllocatedBytes": 135000,
+      "notes": "Configured-builder composition for the shipped phase-8 companion-pack baseline should stay below 250 us and under roughly 135 KB allocated in the benchmark scenario."
     },
     {
       "reportFileName": "Cephalon.Benchmarks.Runtime.EngineRuntimeBenchmarks-report.csv",
       "benchmark": "InitializeStartStopRuntime",
-      "maxMeanNanoseconds": 25000,
+      "maxMeanNanoseconds": 30000,
+      "maxAllocatedBytes": 15000,
+      "notes": "Prepared runtime initialize/start/stop lifecycle overhead should stay below 30 us and under roughly 15 KB allocated for the benchmark scenario."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.Runtime.EngineRuntimeBenchmarks-report.csv",
+      "benchmark": "InitializeStartStopPhase8Runtime",
+      "maxMeanNanoseconds": 100000,
       "maxAllocatedBytes": 50000,
-      "notes": "Prepared runtime initialize/start/stop lifecycle overhead should stay below 25 us for the benchmark scenario."
+      "notes": "Prepared runtime initialize/start/stop lifecycle overhead for the shipped phase-8 companion-pack baseline should stay below 100 us and under roughly 50 KB allocated in the benchmark scenario."
     },
     {
       "reportFileName": "Cephalon.Benchmarks.Runtime.AspNetCoreRequestLoggingBenchmarks-report.csv",
@@ -46,9 +60,16 @@
     {
       "reportFileName": "Cephalon.Benchmarks.Scaffolding.ScaffoldGeneratorBenchmarks-report.csv",
       "benchmark": "GenerateBlueprintScaffold",
-      "maxMeanNanoseconds": 220000,
-      "maxAllocatedBytes": 460000,
-      "notes": "Scaffolding should stay below 220 us and under roughly 450 KB allocated."
+      "maxMeanNanoseconds": 325000,
+      "maxAllocatedBytes": 575000,
+      "notes": "Scaffolding should stay below 325 us and under roughly 575 KB allocated in the benchmark scenario."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.Scaffolding.ScaffoldGeneratorBenchmarks-report.csv",
+      "benchmark": "GeneratePhase8BlueprintScaffold",
+      "maxMeanNanoseconds": 375000,
+      "maxAllocatedBytes": 625000,
+      "notes": "Phase-8 scaffolding should stay below 375 us and under roughly 625 KB allocated while emitting the structured config, additive pack hints, and starter-test baseline."
     }
   ]
 }

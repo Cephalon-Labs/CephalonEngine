@@ -28,5 +28,20 @@ public enum PatternKind
     /// <summary>
     /// Identifies a design pattern.
     /// </summary>
-    Design = 4
+    Design = 4,
+
+    /// <summary>
+    /// Identifies an architecture-shaping pattern.
+    /// </summary>
+    Architecture = 5,
+
+    /// <summary>
+    /// Identifies a domain-modeling pattern.
+    /// </summary>
+    Domain = 6,
+
+    /// <summary>
+    /// Identifies a data or persistence pattern.
+    /// </summary>
+    Data = 7
 }

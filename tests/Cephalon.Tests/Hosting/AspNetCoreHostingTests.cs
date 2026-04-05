@@ -6,6 +6,9 @@ using System.Text;
 using System.Text.Json;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.AppModel.Scaffolding;
+using Cephalon.Abstractions.Audit;
+using Cephalon.Abstractions.Authorization;
+using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Health;
 using Cephalon.Abstractions.Localization;
@@ -14,6 +17,7 @@ using Cephalon.Abstractions.Technologies;
 using Cephalon.Abstractions.Transports;
 using Cephalon.Agentics.Registration;
 using Cephalon.Agentics.Services;
+using Cephalon.Audit.Registration;
 using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Documentation;
@@ -30,6 +34,7 @@ using Cephalon.Engine.Trust;
 using Cephalon.Eventing.Registration;
 using Cephalon.Eventing.Services;
 using Cephalon.Abstractions.Capabilities;
+using Cephalon.Cli;
 using Cephalon.ReferenceModule.Operations.Registration;
 using Cephalon.ReferenceDocs.Generation;
 using Cephalon.ReferenceDocs.IO;
@@ -227,6 +232,14 @@ public sealed class AspNetCoreHostingTests
                     id: "orders",
                     displayName: "Orders",
                     description: "Integration events for the order domain."));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "orders-projector",
+                    displayName: "Orders Projector",
+                    description: "Projects order integration events into the runtime test read model.",
+                    channelId: "orders",
+                    handlerId: "orders-projector",
+                    deliveryMode: "background-service",
+                    tags: ["orders", "projection"]));
             });
             cephalon.AddEdge(options =>
             {
@@ -379,8 +392,9 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains(capabilities, capability =>
             capability.Key == "discovery.greetings" &&
             capability.SourceModuleId == "discovery");
-        Assert.Contains(capabilities, capability => capability.Key == "eventing.publish");
+        Assert.DoesNotContain(capabilities, capability => capability.Key == "eventing.publish");
         Assert.Contains(capabilities, capability => capability.Key == "eventing.channels");
+        Assert.Contains(capabilities, capability => capability.Key == "eventing.subscriptions");
         Assert.Contains(capabilities, capability => capability.Key == "edge.offline");
         Assert.Contains(capabilities, capability => capability.Key == "edge.nodes");
 
@@ -620,6 +634,20 @@ public sealed class AspNetCoreHostingTests
         app.MapCephalon();
 
         await app.StartAsync();
+        var reporter = app.Services.GetRequiredService<IEventSubscriptionRuntimeReporter>();
+        await reporter.ReportAsync(
+            new EventSubscriptionExecutionReport(
+                subscriptionId: "audit-projector",
+                outcome: EventSubscriptionExecutionOutcomes.RetryScheduled,
+                observedAtUtc: new DateTimeOffset(2026, 04, 04, 11, 0, 0, TimeSpan.Zero),
+                messageId: "audit-hosting-001",
+                attempt: 4,
+                error: "Hosting retry requested",
+                metadata: new Dictionary<string, string>
+                {
+                    ["nextRetryAtUtc"] = "2026-04-04T11:05:00.0000000+00:00",
+                    ["retryPolicy"] = "delayed"
+                }));
         var client = app.GetTestClient();
         var manifest = await client.GetFromJsonAsync<RuntimeManifest>("/engine/manifest");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
@@ -631,11 +659,12 @@ public sealed class AspNetCoreHostingTests
         Assert.NotNull(snapshot);
         Assert.Equal(RuntimeStatus.Started, snapshot.Status.Status);
         Assert.Equal("modular-vertical-slice", snapshot.Manifest.AppProfile.BlueprintId);
-        Assert.Equal(4, snapshot.TechnologySurfaces.Count);
+        Assert.Equal(5, snapshot.TechnologySurfaces.Count);
+        Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Eventing");
         Assert.NotNull(surfaces);
-        Assert.Equal(4, surfaces.Length);
+        Assert.Equal(5, surfaces.Length);
         Assert.NotNull(eventingSurfaces);
-        Assert.Single(eventingSurfaces);
+        Assert.Equal(2, eventingSurfaces.Length);
 
         var agentics = Assert.Single(surfaces, surface => surface.TechnologyId == "agentic-workloads");
         Assert.Contains(agentics.Entries, entry => entry.Id == "planner");
@@ -654,17 +683,44 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal("Approval decision,Approval request", approvalOrchestrator.Metadata["capabilityDisplayNames"]);
         Assert.Equal("true", approvalOrchestrator.Metadata["orchestrationLinked"]);
 
-        var eventing = Assert.Single(surfaces, surface => surface.TechnologyId == "event-driven-integration");
-        Assert.Contains(eventing.Entries, entry => entry.Id == "orders");
-        Assert.Contains(eventing.Entries, entry => entry.Id == "audit");
-        Assert.Equal("event-channels", eventingSurfaces[0].SurfaceId);
+        var eventChannelSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-channels");
+        Assert.Contains(eventChannelSurface.Entries, entry => entry.Id == "orders");
+        Assert.Contains(eventChannelSurface.Entries, entry => entry.Id == "audit");
+        var eventSubscriptionSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
+        Assert.Contains(
+            eventSubscriptionSurface.Entries,
+                entry => entry.Id == "audit-projector" &&
+                    entry.Metadata["channelId"] == "audit" &&
+                    entry.Metadata["dispatchRuntime"] == "application-managed" &&
+                    entry.Metadata["runtimeState"] == "reported" &&
+                    entry.Metadata["subscriptionRuntime"] == "hosted-execution-linked" &&
+                    entry.Metadata["hostedExecutionId"] == "audit-projector-pump" &&
+                    entry.Metadata["executionGraphId"] == "audit-subscription-flow" &&
+                    entry.Metadata["executionGraphDisplayName"] == "Audit Subscription Flow" &&
+                    entry.Metadata["executionGraphPhase"] == "activate" &&
+                    entry.Metadata["executionGraphIsActive"] == "true" &&
+                    entry.Metadata["hostedExecutionPhase"] == "activate" &&
+                    entry.Metadata["hostedExecutionIsActive"] == "true" &&
+                    entry.Metadata["lastOutcome"] == "retry-scheduled" &&
+                    entry.Metadata["lastMessageId"] == "audit-hosting-001" &&
+                    entry.Metadata["lastAttempt"] == "4" &&
+                    entry.Metadata["retryScheduledCount"] == "1" &&
+                    entry.Metadata["retryPending"] == "true" &&
+                    entry.Metadata["reported.nextRetryAtUtc"] == "2026-04-04T11:05:00.0000000+00:00" &&
+                    entry.Metadata["reported.retryPolicy"] == "delayed" &&
+                    entry.Metadata["lastError"] == "Hosting retry requested");
         Assert.Contains(
             snapshot.TechnologySurfaces.Single(surface => surface.TechnologyId == "agentic-workloads").Entries,
             entry => entry.Id == "approval-orchestrator" &&
                 entry.Metadata["hostedExecutionId"] == "approval-pump");
         Assert.Contains(
-            snapshot.TechnologySurfaces.Single(surface => surface.TechnologyId == "event-driven-integration").Entries,
+            snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "event-channels").Entries,
             entry => entry.Id == "audit");
+        Assert.Contains(
+            snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "event-subscriptions").Entries,
+            entry => entry.Id == "audit-projector" &&
+                entry.Metadata["lastOutcome"] == "retry-scheduled" &&
+                entry.Metadata["retryPending"] == "true");
 
         var retrieval = Assert.Single(surfaces, surface => surface.TechnologyId == "knowledge-retrieval");
         Assert.Contains(retrieval.Entries, entry => entry.Id == "docs");
@@ -673,6 +729,114 @@ public sealed class AspNetCoreHostingTests
         var edge = Assert.Single(surfaces, surface => surface.TechnologyId == "edge-native-delivery");
         Assert.Contains(edge.Entries, entry => entry.Id == "storefront-edge");
         Assert.Contains(edge.Entries, entry => entry.Id == "warehouse-edge");
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesPhase8ProjectionInboxOutboxAndAuthorizationCatalogs()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "CQRS";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "IdentityAccess";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new Phase8CatalogModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var projections = await client.GetFromJsonAsync<ProjectionDescriptor[]>("/engine/projections");
+        var projection = await client.GetFromJsonAsync<ProjectionDescriptor>("/engine/projections/tenant-summary");
+        var inboxes = await client.GetFromJsonAsync<InboxDescriptor[]>("/engine/inboxes");
+        var inbox = await client.GetFromJsonAsync<InboxDescriptor>("/engine/inboxes/tenant-event-inbox");
+        var outboxes = await client.GetFromJsonAsync<OutboxDescriptor[]>("/engine/outboxes");
+        var outbox = await client.GetFromJsonAsync<OutboxDescriptor>("/engine/outboxes/tenant-event-outbox");
+        var auditStores = await client.GetFromJsonAsync<AuditStoreDescriptor[]>("/engine/audit-stores");
+        var auditStore = await client.GetFromJsonAsync<AuditStoreDescriptor>("/engine/audit-stores/tenant-audit-store");
+        var policies = await client.GetFromJsonAsync<AuthorizationPolicyDescriptor[]>("/engine/authorization-policies");
+        var policy = await client.GetFromJsonAsync<AuthorizationPolicyDescriptor>("/engine/authorization-policies/tenant-admin");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(projections);
+        Assert.Single(projections);
+        Assert.NotNull(projection);
+        Assert.Equal("phase8-runtime-catalogs", projection.SourceModuleId);
+        Assert.Equal("tenant-summary-read-model", projection.TargetStoreId);
+
+        Assert.NotNull(outboxes);
+        Assert.Single(outboxes);
+        Assert.NotNull(outbox);
+        Assert.Equal("phase8-runtime-catalogs", outbox.SourceModuleId);
+        Assert.Equal("relational", outbox.Provider);
+        Assert.Equal(["audit", "tenant-events"], outbox.ChannelIds);
+
+        Assert.NotNull(inboxes);
+        Assert.Single(inboxes);
+        Assert.NotNull(inbox);
+        Assert.Equal("phase8-runtime-catalogs", inbox.SourceModuleId);
+        Assert.Equal("relational", inbox.Provider);
+        Assert.Equal(["tenant-events"], inbox.ChannelIds);
+
+        Assert.NotNull(auditStores);
+        Assert.Single(auditStores);
+        Assert.NotNull(auditStore);
+        Assert.Equal("phase8-runtime-catalogs", auditStore.SourceModuleId);
+        Assert.Equal("memory", auditStore.Provider);
+        Assert.Equal("volatile-buffer", auditStore.Mode);
+
+        Assert.NotNull(policies);
+        Assert.Equal(2, policies.Length);
+        Assert.NotNull(policy);
+        Assert.Contains(AuthorizationMode.Rbac, policy.Modes);
+        Assert.Equal("phase8-runtime-catalogs", policy.Metadata["sourceModuleId"]);
+
+        Assert.NotNull(snapshot);
+        Assert.Single(snapshot.Projections);
+        Assert.Single(snapshot.Inboxes);
+        Assert.Single(snapshot.Outboxes);
+        Assert.Single(snapshot.AuditStores);
+        Assert.Equal(2, snapshot.AuthorizationPolicies.Count);
+        Assert.Contains(snapshot.Inboxes, item => item.Id == "tenant-event-inbox");
+        Assert.Contains(snapshot.Outboxes, item => item.Id == "tenant-event-outbox");
+        Assert.Contains(snapshot.AuditStores, item => item.Id == "tenant-audit-store");
+        Assert.Contains(snapshot.AuthorizationPolicies, item => item.Id == "tenant-boundary");
+    }
+
+    [Fact]
+    public async Task MapCephalonHonorsConfigurationDrivenAuditWriterDisablement()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:EnableInMemoryWriter"] = "false";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new AuditCaptureModule());
+            cephalon.AddAudit();
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var auditStores = await client.GetFromJsonAsync<AuditStoreDescriptor[]>("/engine/audit-stores");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(auditStores);
+        Assert.Empty(auditStores);
+        Assert.NotNull(snapshot);
+        Assert.Empty(snapshot.AuditStores);
     }
 
     [Fact]
@@ -1737,6 +1901,89 @@ note: visible
     }
 
     [Fact]
+    public async Task MapCephalonLoadsStagedExternalPackageDirectoryAndExposesTrustAndPolicy()
+    {
+        var stagedPackage = CreateStagedReferenceModulePackage();
+
+        try
+        {
+            var builder = WebApplication.CreateSlimBuilder();
+            builder.WebHost.UseTestServer();
+            builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+            builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+            builder.Configuration[$"{EngineSettings.SectionName}:Discovery:PackageDirectories:0:Path"] = stagedPackage.PluginsRootPath;
+            builder.Configuration[$"{EngineSettings.SectionName}:Discovery:PackageDirectories:0:IncludeSubdirectories"] = "true";
+            builder.Configuration[$"{EngineSettings.SectionName}:PackagePolicy:AllowAssemblyPathPackages"] = "false";
+            builder.Configuration[$"{EngineSettings.SectionName}:PackagePolicy:RequireVersion"] = "true";
+            builder.Configuration[$"{EngineSettings.SectionName}:PackagePolicy:RequireMinimumEngineVersion"] = "true";
+            builder.Configuration[$"{EngineSettings.SectionName}:PackagePolicy:RequireSupportedTargetFrameworks"] = "true";
+            builder.Configuration[$"{EngineSettings.SectionName}:PackagePolicy:RequirePublisherId"] = "true";
+            builder.Configuration[$"{EngineSettings.SectionName}:Trust:RequireTrustedPackages"] = "true";
+            builder.Configuration[$"{EngineSettings.SectionName}:Trust:TrustedPublishers:0"] = "cephalon-labs";
+            builder.AddCephalon();
+
+            await using var app = builder.Build();
+            app.MapCephalon();
+
+            await app.StartAsync();
+            var client = app.GetTestClient();
+
+            var packages = await client.GetFromJsonAsync<PackageManifest[]>("/engine/packages");
+            var packagePolicy = await client.GetFromJsonAsync<PackagePolicy>("/engine/package-policy");
+            var trustSnapshot = await client.GetFromJsonAsync<TrustSnapshot>("/engine/trust-policy");
+            var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+            var operationsStatus = await client.GetStringAsync("/api/operations/status");
+
+            Assert.NotNull(packages);
+            var package = Assert.Single(packages);
+            Assert.Equal("reference-operations", package.Id);
+            Assert.Equal(ModulePackageReference.DirectoryManifestKind, package.Kind);
+            Assert.Equal("1.0.0", package.Version);
+            Assert.Equal("cephalon-labs", package.PublisherId);
+            Assert.True(package.IsTrusted);
+            Assert.Equal("Package publisher is explicitly trusted by the current trust policy.", package.TrustReason);
+            Assert.StartsWith(stagedPackage.PackageDirectoryPath, package.SourcePath, StringComparison.OrdinalIgnoreCase);
+            Assert.EndsWith("cephalon.package.json", package.SourcePath, StringComparison.OrdinalIgnoreCase);
+            Assert.StartsWith(stagedPackage.PackageDirectoryPath, package.Path, StringComparison.OrdinalIgnoreCase);
+            Assert.EndsWith("Cephalon.ReferenceModule.Operations.dll", package.Path, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains("net10.0", package.SupportedTargetFrameworks);
+            Assert.Contains("operations", package.Modules);
+
+            Assert.NotNull(packagePolicy);
+            Assert.False(packagePolicy.AllowAssemblyPathPackages);
+            Assert.True(packagePolicy.RequireVersion);
+            Assert.True(packagePolicy.RequireMinimumEngineVersion);
+            Assert.True(packagePolicy.RequireSupportedTargetFrameworks);
+            Assert.True(packagePolicy.RequirePublisherId);
+
+            Assert.NotNull(trustSnapshot);
+            Assert.True(trustSnapshot.Policy.RequireTrustedPackages);
+            Assert.Contains(trustSnapshot.Policy.TrustedPublishers, publisher => string.Equals(publisher, "cephalon-labs", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(trustSnapshot.Packages, decision =>
+                decision.PackageId == "reference-operations" &&
+                decision.IsTrusted &&
+                decision.PublisherId == "cephalon-labs" &&
+                decision.Reason == "Package publisher is explicitly trusted by the current trust policy.");
+
+            Assert.NotNull(snapshot);
+            Assert.Contains(snapshot.Manifest.Packages, staged =>
+                staged.Id == "reference-operations" &&
+                staged.IsTrusted &&
+                string.Equals(staged.TrustReason, "Package publisher is explicitly trusted by the current trust policy.", StringComparison.Ordinal));
+            Assert.Contains(snapshot.Manifest.Modules, module =>
+                module.Id == "operations" &&
+                module.PackageId == "reference-operations" &&
+                module.IsTrusted);
+
+            Assert.Contains("Operations module is running.", operationsStatus, StringComparison.Ordinal);
+        }
+        finally
+        {
+            TryDeleteDirectory(stagedPackage.WorkspacePath);
+        }
+    }
+
+    [Fact]
     public async Task MapCephalonEnforcesCapabilityTrustPolicyOnRestEndpoints()
     {
         var builder = WebApplication.CreateSlimBuilder();
@@ -1809,6 +2056,40 @@ note: visible
         }
     }
 
+    [Fact]
+    public async Task MapCephalonPreservesConsumerAuditStoreWhenBuiltInAuditWriterIsDisabled()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:EnableInMemoryWriter"] = "false";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddAudit();
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var auditStoreCatalog = app.Services.GetRequiredService<IAuditStoreCatalog>();
+        var snapshot = app.Services.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+
+        Assert.Single(auditStoreCatalog.AuditStores);
+        Assert.Equal("tenant-audit-store", auditStoreCatalog.AuditStores[0].Id);
+        Assert.Single(snapshot.AuditStores);
+        Assert.Equal("tenant-audit-store", snapshot.AuditStores[0].Id);
+        Assert.DoesNotContain(auditStoreCatalog.AuditStores, item => item.Id == "audit-default");
+        Assert.DoesNotContain(snapshot.AuditStores, item => item.Id == "audit-default");
+
+        await app.StopAsync();
+    }
+
     private static string GetReferenceModuleAssemblyPath()
     {
         var path = typeof(OperationsModule).Assembly.Location;
@@ -1844,6 +2125,55 @@ note: visible
         return outputPath;
     }
 
+    private static StagedPackageResult CreateStagedReferenceModulePackage()
+    {
+        var workspacePath = Path.Combine(Path.GetTempPath(), $"cephalon-staged-package-{Guid.NewGuid():N}");
+        var packageOutputPath = Path.Combine(workspacePath, "packages");
+        var pluginsRootPath = Path.Combine(workspacePath, "plugins");
+        var packageDirectoryPath = Path.Combine(pluginsRootPath, "reference-operations");
+
+        Directory.CreateDirectory(packageOutputPath);
+        Directory.CreateDirectory(pluginsRootPath);
+
+        var projectPath = Path.Combine(
+            GetRepositoryRoot(),
+            "samples",
+            "Cephalon.ReferenceModule.Operations",
+            "Cephalon.ReferenceModule.Operations.csproj");
+        var packResult = RunProcess(
+            "dotnet",
+            $"pack \"{projectPath}\" -c {GetCurrentBuildConfiguration()} -o \"{packageOutputPath}\" --no-build",
+            GetRepositoryRoot());
+
+        if (packResult.ExitCode != 0)
+        {
+            throw new InvalidOperationException(
+                $"dotnet pack failed with exit code {packResult.ExitCode}.{Environment.NewLine}Output:{Environment.NewLine}{packResult.Output}{Environment.NewLine}Error:{Environment.NewLine}{packResult.Error}");
+        }
+
+        var packagePath = Directory.GetFiles(packageOutputPath, "Cephalon.ReferenceModule.Operations.*.nupkg", SearchOption.TopDirectoryOnly)
+            .Single(path => !path.EndsWith(".symbols.nupkg", StringComparison.OrdinalIgnoreCase));
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+        var exitCode = CliApplication.RunAsync(
+            [
+                "package",
+                "stage",
+                "--package", packagePath,
+                "--output", packageDirectoryPath
+            ],
+            stdout,
+            stderr).GetAwaiter().GetResult();
+
+        if (exitCode != 0)
+        {
+            throw new InvalidOperationException(
+                $"cephalon package stage failed with exit code {exitCode}.{Environment.NewLine}Output:{Environment.NewLine}{stdout}{Environment.NewLine}Error:{Environment.NewLine}{stderr}");
+        }
+
+        return new StagedPackageResult(workspacePath, pluginsRootPath, packageDirectoryPath);
+    }
+
     private static string GetRepositoryRoot()
     {
         return Path.GetFullPath(Path.Combine(
@@ -1863,4 +2193,52 @@ note: visible
             ? "Release"
             : "Debug";
     }
+
+    private static ProcessResult RunProcess(string fileName, string arguments, string workingDirectory)
+    {
+        var startInfo = new System.Diagnostics.ProcessStartInfo
+        {
+            FileName = fileName,
+            Arguments = arguments,
+            WorkingDirectory = workingDirectory,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false
+        };
+
+        using var process = System.Diagnostics.Process.Start(startInfo)
+            ?? throw new InvalidOperationException($"Could not start '{fileName}'.");
+
+        var output = process.StandardOutput.ReadToEnd();
+        var error = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+
+        return new ProcessResult(process.ExitCode, output, error);
+    }
+
+    private static void TryDeleteDirectory(string path)
+    {
+        if (!Directory.Exists(path))
+        {
+            return;
+        }
+
+        try
+        {
+            Directory.Delete(path, recursive: true);
+        }
+        catch (IOException)
+        {
+        }
+        catch (UnauthorizedAccessException)
+        {
+        }
+    }
+
+    private sealed record ProcessResult(int ExitCode, string Output, string Error);
+
+    private sealed record StagedPackageResult(
+        string WorkspacePath,
+        string PluginsRootPath,
+        string PackageDirectoryPath);
 }

@@ -12,6 +12,7 @@ public sealed class TechnologyDescriptor
     /// <param name="displayName">The human-readable technology name.</param>
     /// <param name="description">The technology description.</param>
     /// <param name="kind">The category of the technology.</param>
+    /// <param name="aliases">Optional aliases that can resolve to the same technology.</param>
     /// <param name="tags">The tags associated with the technology.</param>
     /// <param name="requiresPatterns">The pattern identifiers required by the technology.</param>
     /// <param name="requiresTransports">The transport identifiers required by the technology.</param>
@@ -25,6 +26,7 @@ public sealed class TechnologyDescriptor
         string displayName,
         string description,
         TechnologyKind kind,
+        IReadOnlyList<string>? aliases = null,
         IReadOnlyList<string>? tags = null,
         IReadOnlyList<string>? requiresPatterns = null,
         IReadOnlyList<string>? requiresTransports = null,
@@ -53,6 +55,7 @@ public sealed class TechnologyDescriptor
         DisplayName = displayName.Trim();
         Description = description.Trim();
         Kind = kind;
+        Aliases = Normalize(aliases);
         Tags = Normalize(tags);
         RequiresPatterns = Normalize(requiresPatterns);
         RequiresTransports = Normalize(requiresTransports);
@@ -84,6 +87,11 @@ public sealed class TechnologyDescriptor
     /// Gets the category of the technology.
     /// </summary>
     public TechnologyKind Kind { get; }
+
+    /// <summary>
+    /// Gets optional aliases that can resolve to the same technology.
+    /// </summary>
+    public IReadOnlyList<string> Aliases { get; }
 
     /// <summary>
     /// Gets the tags associated with the technology.

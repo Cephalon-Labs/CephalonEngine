@@ -15,14 +15,14 @@ Quick links:
 
 ### Core
 
-- [Cephalon.Abstractions](cephalon-abstractions.md): Host-agnostic contracts that module and package authors build against. Contains 10 namespaces and 50 public types. [Browse](browse.html?assembly=Cephalon.Abstractions)
-- [Cephalon.Engine](cephalon-engine.md): Composition, runtime, policy, manifest, and introspection services. Contains 12 namespaces and 61 public types. [Browse](browse.html?assembly=Cephalon.Engine)
+- [Cephalon.Abstractions](cephalon-abstractions.md): Host-agnostic contracts that module and package authors build against. Contains 15 namespaces and 106 public types. [Browse](browse.html?assembly=Cephalon.Abstractions)
+- [Cephalon.Engine](cephalon-engine.md): Composition, runtime, policy, manifest, and introspection services. Contains 12 namespaces and 66 public types. [Browse](browse.html?assembly=Cephalon.Engine)
 
 ### Technology Packs
 
 - [Cephalon.Agentics](cephalon-agentics.md): Agentic workload runtime services and extension points. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Agentics)
 - [Cephalon.Edge](cephalon-edge.md): Edge-native delivery runtime services and extension points. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Edge)
-- [Cephalon.Eventing](cephalon-eventing.md): Event-driven integration runtime services and extension points. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Eventing)
+- [Cephalon.Eventing](cephalon-eventing.md): Event-driven integration runtime services and extension points. Contains 3 namespaces and 27 public types. [Browse](browse.html?assembly=Cephalon.Eventing)
 - [Cephalon.Retrieval](cephalon-retrieval.md): Knowledge retrieval runtime services and extension points. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Retrieval)
 
 ### Hosts
@@ -65,6 +65,17 @@ Quick links:
 - [Cephalon.Observability.SqlServerDependencies](cephalon-observability-sqlserverdependencies.md): SQL Server and Azure SQL dependency-health integration for Cephalon hosts. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Observability.SqlServerDependencies)
 - [Cephalon.Observability.Tanzu](cephalon-observability-tanzu.md): VMware Tanzu proxy handoff and hosted OTLP integration guidance for Cephalon hosts. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Observability.Tanzu)
 - [Cephalon.Worker](cephalon-worker.md): Generic-host worker adapter for non-HTTP runtime execution. Contains 1 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Worker)
+
+### Phase 8 Companion Packs
+
+- [Cephalon.Audit](cephalon-audit.md): Host-agnostic audit recording baseline with audit-store cataloging for Cephalon runtimes. Contains 4 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Audit)
+- [Cephalon.Data](cephalon-data.md): Runtime-neutral data dispatching services for Cephalon workloads. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Data)
+- [Cephalon.Data.EntityFramework](cephalon-data-entityframework.md): Entity Framework Core read/write, inbox, and outbox integration for Cephalon data workloads. Contains 3 namespaces and 7 public types. [Browse](browse.html?assembly=Cephalon.Data.EntityFramework)
+- [Cephalon.Eventing.Wolverine](cephalon-eventing-wolverine.md): Official Wolverine adapter and managed dispatch-loop integration for Cephalon eventing workloads. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Eventing.Wolverine)
+- [Cephalon.Identity](cephalon-identity.md): Host-agnostic identity and authorization baseline for Cephalon runtimes. Contains 3 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Identity)
+- [Cephalon.Identity.AspNetCore](cephalon-identity-aspnetcore.md): ASP.NET Core host adapter for Cephalon identity and authorization workloads. Contains 3 namespaces and 5 public types. [Browse](browse.html?assembly=Cephalon.Identity.AspNetCore)
+- [Cephalon.Ids.Sfid](cephalon-ids-sfid.md): Official Sfid.Net-backed identifier generation for Cephalon runtimes. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Ids.Sfid)
+- [Cephalon.MultiTenancy](cephalon-multitenancy.md): Host-agnostic tenant-resolution and ambient tenant-context baseline for Cephalon runtimes. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy)
 
 ### Tooling
 

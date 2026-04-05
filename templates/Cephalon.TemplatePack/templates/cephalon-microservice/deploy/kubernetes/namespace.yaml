@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cephalon-template-app
+  labels:
+    app.kubernetes.io/name: cephalon-template-app
+    app.kubernetes.io/part-of: cephalon

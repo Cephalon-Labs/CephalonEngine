@@ -11,4 +11,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Cephalon.Engine\Cephalon.Engine.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Services\EventPublisher*.cs" />
+    <Compile Remove="Services\IEventPublisherRuntime*.cs" />
+  </ItemGroup>
 </Project>

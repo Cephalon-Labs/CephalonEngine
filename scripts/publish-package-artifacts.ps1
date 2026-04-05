@@ -9,6 +9,19 @@ $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
 
+function Get-DirectoryUri {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    $fullPath = [System.IO.Path]::GetFullPath($Path)
+    $trimChars = [char[]]@([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar) |
+        Select-Object -Unique
+    $normalizedPath = $fullPath.TrimEnd($trimChars) + [System.IO.Path]::DirectorySeparatorChar
+    return [System.Uri]::new($normalizedPath)
+}
+
 function Resolve-FullPath {
     param(
         [Parameter(Mandatory = $true)]
@@ -29,11 +42,10 @@ function Get-RepoRelativePath {
     )
 
     $fullPath = [System.IO.Path]::GetFullPath($Path)
-    $repoRootWithSeparator = $repoRoot.TrimEnd('\') + '\'
-    $repoRootUri = [System.Uri]::new($repoRootWithSeparator)
+    $repoRootUri = Get-DirectoryUri -Path $repoRoot
     $pathUri = [System.Uri]::new($fullPath)
     $relativePath = [System.Uri]::UnescapeDataString($repoRootUri.MakeRelativeUri($pathUri).ToString())
-    return $relativePath.Replace('\', '/')
+    return $relativePath.Replace([System.IO.Path]::DirectorySeparatorChar, '/').Replace([System.IO.Path]::AltDirectorySeparatorChar, '/')
 }
 
 function Get-OutputRelativePath {
@@ -44,11 +56,10 @@ function Get-OutputRelativePath {
         [string]$Path
     )
 
-    $rootWithSeparator = [System.IO.Path]::GetFullPath($RootPath).TrimEnd('\') + '\'
-    $rootUri = [System.Uri]::new($rootWithSeparator)
+    $rootUri = Get-DirectoryUri -Path $RootPath
     $pathUri = [System.Uri]::new([System.IO.Path]::GetFullPath($Path))
     $relativePath = [System.Uri]::UnescapeDataString($rootUri.MakeRelativeUri($pathUri).ToString())
-    return $relativePath.Replace('\', '/')
+    return $relativePath.Replace([System.IO.Path]::DirectorySeparatorChar, '/').Replace([System.IO.Path]::AltDirectorySeparatorChar, '/')
 }
 
 function Get-Sha256Hex {
@@ -129,8 +140,8 @@ function Get-ReleasePackageProjects {
     }
 
     foreach ($extraProject in @(
-        (Join-Path $repoRoot "samples\Cephalon.ReferenceModule.Operations\Cephalon.ReferenceModule.Operations.csproj"),
-        (Join-Path $repoRoot "templates\Cephalon.TemplatePack\Cephalon.TemplatePack.csproj")
+        [System.IO.Path]::Combine($repoRoot, "samples", "Cephalon.ReferenceModule.Operations", "Cephalon.ReferenceModule.Operations.csproj"),
+        [System.IO.Path]::Combine($repoRoot, "templates", "Cephalon.TemplatePack", "Cephalon.TemplatePack.csproj")
     )) {
         if (Test-Path -LiteralPath $extraProject) {
             $projects.Add($extraProject)

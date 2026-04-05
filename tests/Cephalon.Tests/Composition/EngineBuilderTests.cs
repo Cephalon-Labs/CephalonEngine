@@ -1,6 +1,7 @@
 using Cephalon.Engine.AppModel;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
+using Cephalon.Engine.Diagnostics;
 using Cephalon.Engine.Patterns;
 using Cephalon.Engine.Runtime;
 using Cephalon.Engine.Technologies;
@@ -8,10 +9,13 @@ using Cephalon.Engine.Trust;
 using Cephalon.Engine.Transports;
 using Cephalon.Agentics.Registration;
 using Cephalon.Agentics.Services;
+using Cephalon.Abstractions.Audit;
+using Cephalon.Abstractions.Authorization;
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Abstractions.AppModel.Scaffolding;
 using Cephalon.Abstractions.Capabilities;
+using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Localization;
 using Cephalon.Edge.Registration;
 using Cephalon.Edge.Services;
@@ -265,7 +269,16 @@ public sealed class EngineBuilderTests
                 ["Engine:Options:Modules:dependency-health:Enabled"] = "false",
                 ["Engine:Options:Modules:throwing-dependency-health:Enabled"] = "false",
                 ["Engine:Options:Modules:restricted:Enabled"] = "false",
-                ["Engine:Options:Modules:technology-catalog:Enabled"] = "false"
+                ["Engine:Options:Modules:technology-catalog:Enabled"] = "false",
+                ["Engine:Options:Modules:phase8-runtime-catalogs:Enabled"] = "false",
+                ["Engine:Options:Modules:invalid-phase8-projection:Enabled"] = "false",
+                ["Engine:Options:Modules:invalid-phase8-outbox:Enabled"] = "false",
+                ["Engine:Options:Modules:invalid-phase8-inbox:Enabled"] = "false",
+                ["Engine:Options:Modules:invalid-phase8-audit-store:Enabled"] = "false",
+                ["Engine:Options:Modules:entity-framework-single-context-tests:Enabled"] = "false",
+                ["Engine:Options:Modules:entity-framework-split-context-tests:Enabled"] = "false",
+                ["Engine:Options:Modules:entity-framework-outbox-tests:Enabled"] = "false",
+                ["Engine:Options:Modules:entity-framework-sfid-tests:Enabled"] = "false"
             })
             .Build();
 
@@ -339,7 +352,7 @@ public sealed class EngineBuilderTests
         Assert.Equal("reference-operations", package.Id);
         Assert.Equal(ModulePackageReference.ManifestFileKind, package.Kind);
         Assert.Equal("1.0.0", package.Version);
-        Assert.Equal("1.0.0", package.MinimumEngineVersion);
+        Assert.Equal(GetCurrentEngineCompatibilityVersion(), package.MinimumEngineVersion);
         Assert.EndsWith("cephalon.package.json", package.SourcePath, StringComparison.OrdinalIgnoreCase);
         Assert.EndsWith("Cephalon.ReferenceModule.Operations.dll", package.Path, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("net10.0", package.SupportedTargetFrameworks);
@@ -612,7 +625,7 @@ public sealed class EngineBuilderTests
                 }
               ],
               "compatibility": {
-                "minimumEngineVersion": "1.0.0"
+                "minimumEngineVersion": "0.1.0-preview"
               }
             }
             """);
@@ -652,7 +665,7 @@ public sealed class EngineBuilderTests
                 }
               ],
               "compatibility": {
-                "minimumEngineVersion": "1.0.0"
+                "minimumEngineVersion": "0.1.0-preview"
               }
             }
             """);
@@ -690,7 +703,7 @@ public sealed class EngineBuilderTests
                 }
               ],
               "compatibility": {
-                "minimumEngineVersion": "1.0.0"
+                "minimumEngineVersion": "0.1.0-preview"
               }
             }
             """);
@@ -729,7 +742,7 @@ public sealed class EngineBuilderTests
                 }
               ],
               "compatibility": {
-                "minimumEngineVersion": "1.0.0"
+                "minimumEngineVersion": "0.1.0-preview"
               }
             }
             """);
@@ -894,7 +907,7 @@ public sealed class EngineBuilderTests
               "assembly": "__ASSEMBLY__",
               "version": "1.0.0",
               "compatibility": {
-                "minimumEngineVersion": "1.0.0",
+                "minimumEngineVersion": "0.1.0-preview",
                 "supportedTargetFrameworks": [ "net10.0" ]
               }
             }
@@ -1026,7 +1039,7 @@ public sealed class EngineBuilderTests
 
         Assert.Equal("reference-operations", package.Id);
         Assert.Equal("1.0.0", package.Version);
-        Assert.Equal("1.0.0", package.MinimumEngineVersion);
+        Assert.Equal(GetCurrentEngineCompatibilityVersion(), package.MinimumEngineVersion);
         Assert.Contains("net10.0", package.SupportedTargetFrameworks);
         Assert.Equal("cephalon-labs", package.PublisherId);
         Assert.Equal("cephalon-labs-reference-operations", package.SignatureFingerprint);
@@ -1274,6 +1287,243 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void BuildIncludesPhase8SelectionsInTheResolvedAppProfile()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularVerticalSlice",
+            patterns: ["Hexagonal", "CleanArchitecture", "DDD", "CQRS", "Outbox"],
+            transports: ["RestApi"],
+            technologies: ["IdentityAccess", "MultiTenancy", "EventDrivenIntegration", "Serverless"],
+            data: new DataSettings(
+                provider: "EntityFramework",
+                readWriteSplit: true,
+                outboxEnabled: true,
+                idGenerator: "Sfid"),
+            identity: new IdentitySettings(
+                enabled: true,
+                authorizationModes: ["RBAC", "Policy"]),
+            tenancy: new TenancySettings(
+                enabled: true,
+                mode: "SharedDatabase"),
+            audit: new AuditSettings(enabled: true),
+            messaging: new MessagingSettings(provider: "Wolverine")));
+        builder.AddModule(new PlatformTestModule());
+        builder.AddModule(new DiscoveryTestModule());
+
+        var runtime = builder.Build();
+        var appProfile = runtime.Manifest.AppProfile;
+        var scaffold = Assert.IsType<ScaffoldPlan>(appProfile.Scaffold);
+
+        Assert.Contains(appProfile.Patterns, pattern => pattern.Id == "hexagonal-architecture");
+        Assert.Contains(appProfile.Patterns, pattern => pattern.Id == "clean-architecture");
+        Assert.Contains(appProfile.Patterns, pattern => pattern.Id == "domain-driven-design");
+        Assert.Contains(appProfile.Patterns, pattern => pattern.Id == "cqrs");
+        Assert.Contains(appProfile.Patterns, pattern => pattern.Id == "outbox");
+        Assert.Contains(appProfile.Technologies, technology => technology.Id == "identity-access");
+        Assert.Contains(appProfile.Technologies, technology => technology.Id == "multi-tenancy");
+        Assert.Contains(appProfile.Technologies, technology => technology.Id == "event-driven-integration");
+        Assert.Contains(appProfile.Technologies, technology => technology.Id == "serverless-hosting");
+        Assert.Equal("EntityFramework", appProfile.Data.Provider);
+        Assert.True(appProfile.Data.ReadWriteSplit);
+        Assert.True(appProfile.Data.OutboxEnabled);
+        Assert.Equal("Sfid", appProfile.Data.IdGenerator);
+        Assert.True(appProfile.Identity.Enabled);
+        Assert.Equal(["RBAC", "Policy"], appProfile.Identity.AuthorizationModes);
+        Assert.True(appProfile.Tenancy.Enabled);
+        Assert.Equal("SharedDatabase", appProfile.Tenancy.Mode);
+        Assert.True(appProfile.Audit.Enabled);
+        Assert.Equal("Wolverine", appProfile.Messaging.Provider);
+        Assert.Contains(scaffold.Projects, project =>
+            project.Role == ProjectRoles.Host &&
+            project.Packages.Contains("Cephalon.Identity", StringComparer.OrdinalIgnoreCase) &&
+            project.Packages.Contains("Cephalon.MultiTenancy", StringComparer.OrdinalIgnoreCase) &&
+            project.Packages.Contains("Cephalon.Eventing", StringComparer.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public void BuildThrowsWhenReadWriteSplitIsConfiguredWithoutCqrsPattern()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularMonolith",
+            data: new DataSettings(readWriteSplit: true)));
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("cqrs", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildThrowsWhenMessagingProviderIsConfiguredWithoutEventDrivenTechnology()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularMonolith",
+            messaging: new MessagingSettings(provider: "Wolverine")));
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("event-driven-integration", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildThrowsWhenIdentityUsesUnsupportedAuthorizationMode()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularMonolith",
+            technologies: ["IdentityAccess"],
+            identity: new IdentitySettings(
+                enabled: true,
+                authorizationModes: ["CustomMode"])));
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("CustomMode", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("RBAC", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void BuildExposesPhase8ProjectionInboxOutboxAndAuthorizationCatalogsThroughRuntimeSnapshot()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"],
+                technologies: ["IdentityAccess"],
+                transports: ["RestApi"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var projectionCatalog = provider.GetRequiredService<IProjectionCatalog>();
+        var inboxCatalog = provider.GetRequiredService<IInboxCatalog>();
+        var outboxCatalog = provider.GetRequiredService<IOutboxCatalog>();
+        var auditStoreCatalog = provider.GetRequiredService<IAuditStoreCatalog>();
+        var authorizationCatalog = provider.GetRequiredService<IAuthorizationPolicyCatalog>();
+        var snapshot = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+
+        var projection = Assert.Single(projectionCatalog.Projections);
+        Assert.Equal("tenant-summary", projection.Id);
+        Assert.Equal("phase8-runtime-catalogs", projection.SourceModuleId);
+        Assert.Equal("tenant-summary-read-model", projection.TargetStoreId);
+        Assert.Equal("eventual", projection.Metadata["consistency"]);
+        Assert.Same(projection, projectionCatalog.GetById("tenant-summary"));
+        Assert.Single(projectionCatalog.GetBySourceModule("phase8-runtime-catalogs"));
+        Assert.Single(projectionCatalog.GetByTargetStore("tenant-summary-read-model"));
+
+        var outbox = Assert.Single(outboxCatalog.Outboxes);
+        Assert.Equal("tenant-event-outbox", outbox.Id);
+        Assert.Equal("phase8-runtime-catalogs", outbox.SourceModuleId);
+        Assert.Equal("relational", outbox.Provider);
+        Assert.Equal(["audit", "tenant-events"], outbox.ChannelIds);
+        Assert.Equal("durable", outbox.Metadata["consistency"]);
+        Assert.Same(outbox, outboxCatalog.GetById("tenant-event-outbox"));
+        Assert.Single(outboxCatalog.GetBySourceModule("phase8-runtime-catalogs"));
+        Assert.Single(outboxCatalog.GetByProvider("relational"));
+        Assert.Single(outboxCatalog.GetByChannelId("audit"));
+
+        var inbox = Assert.Single(inboxCatalog.Inboxes);
+        Assert.Equal("tenant-event-inbox", inbox.Id);
+        Assert.Equal("phase8-runtime-catalogs", inbox.SourceModuleId);
+        Assert.Equal("relational", inbox.Provider);
+        Assert.Equal(["tenant-events"], inbox.ChannelIds);
+        Assert.Equal("message-id", inbox.Metadata["idempotency"]);
+        Assert.Same(inbox, inboxCatalog.GetById("tenant-event-inbox"));
+        Assert.Single(inboxCatalog.GetBySourceModule("phase8-runtime-catalogs"));
+        Assert.Single(inboxCatalog.GetByProvider("relational"));
+        Assert.Single(inboxCatalog.GetByChannelId("tenant-events"));
+
+        var auditStore = Assert.Single(auditStoreCatalog.AuditStores);
+        Assert.Equal("tenant-audit-store", auditStore.Id);
+        Assert.Equal("phase8-runtime-catalogs", auditStore.SourceModuleId);
+        Assert.Equal("memory", auditStore.Provider);
+        Assert.Equal("volatile-buffer", auditStore.Mode);
+        Assert.Equal("application-managed", auditStore.Metadata["writeMode"]);
+        Assert.Same(auditStore, auditStoreCatalog.GetById("tenant-audit-store"));
+        Assert.Single(auditStoreCatalog.GetBySourceModule("phase8-runtime-catalogs"));
+        Assert.Single(auditStoreCatalog.GetByProvider("memory"));
+
+        Assert.Equal(2, authorizationCatalog.Policies.Count);
+        var tenantAdminPolicy = authorizationCatalog.GetById("tenant-admin");
+        Assert.NotNull(tenantAdminPolicy);
+        Assert.Equal("phase8-runtime-catalogs", tenantAdminPolicy!.Metadata["sourceModuleId"]);
+        Assert.Single(authorizationCatalog.GetByMode(AuthorizationMode.Rbac));
+        Assert.Equal(2, authorizationCatalog.GetByMode(AuthorizationMode.Policy).Count);
+
+        Assert.Single(snapshot.Projections);
+        Assert.Single(snapshot.Inboxes);
+        Assert.Single(snapshot.Outboxes);
+        Assert.Single(snapshot.AuditStores);
+        Assert.Equal(2, snapshot.AuthorizationPolicies.Count);
+        Assert.Contains(snapshot.Projections, item => item.Id == "tenant-summary");
+        Assert.Contains(snapshot.Inboxes, item => item.Id == "tenant-event-inbox");
+        Assert.Contains(snapshot.Outboxes, item => item.Id == "tenant-event-outbox");
+        Assert.Contains(snapshot.AuditStores, item => item.Id == "tenant-audit-store");
+        Assert.Contains(snapshot.AuthorizationPolicies, item => item.Id == "tenant-boundary");
+    }
+
+    [Fact]
+    public void BuildRejectsPhase8ProjectionThatSpoofsItsSourceModule()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+        builder.AddModule(new PlatformTestModule());
+        builder.AddModule(new InvalidProjectionSourceModule());
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("broken-projection", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("another-module", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildRejectsPhase8OutboxThatSpoofsItsSourceModule()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+        builder.AddModule(new PlatformTestModule());
+        builder.AddModule(new InvalidOutboxSourceModule());
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("broken-outbox", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("another-module", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildRejectsPhase8InboxThatSpoofsItsSourceModule()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+        builder.AddModule(new PlatformTestModule());
+        builder.AddModule(new InvalidInboxSourceModule());
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("broken-inbox", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("another-module", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildRejectsPhase8AuditStoreThatSpoofsItsSourceModule()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+        builder.AddModule(new PlatformTestModule());
+        builder.AddModule(new InvalidAuditStoreSourceModule());
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("broken-audit-store", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("another-module", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void BuildAllowsCustomTechnologyDescriptorsAndValidatesRequirements()
     {
         var builder = new EngineBuilder(new ServiceCollection());
@@ -1366,7 +1616,7 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
-    public void AddTechnologyPacksRegisterServicesAndCapabilitiesWhenSelectionsAreActive()
+    public async Task AddTechnologyPacksRegisterServicesAndCapabilitiesWhenSelectionsAreActive()
     {
         var services = new ServiceCollection();
         services.AddCephalon(engine =>
@@ -1414,9 +1664,36 @@ public sealed class EngineBuilderTests
         var runtime = provider.GetRequiredService<IRuntime>();
         var toolCatalog = provider.GetRequiredService<IAgentToolCatalog>();
         var knowledgeCatalog = provider.GetRequiredService<IKnowledgeCatalog>();
+        var diagnosticsCatalog = provider.GetRequiredService<IRuntimeDiagnosticsCatalog>();
         var eventChannelCatalog = provider.GetRequiredService<IEventChannelCatalog>();
+        var eventSubscriptionCatalog = provider.GetRequiredService<IEventSubscriptionCatalog>();
+        var subscriptionRuntimeCatalog = provider.GetRequiredService<IEventSubscriptionRuntimeCatalog>();
+        var subscriptionRuntimeReporter = provider.GetRequiredService<IEventSubscriptionRuntimeReporter>();
         var edgeNodeCatalog = provider.GetRequiredService<IEdgeNodeCatalog>();
         var technologySurfaces = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var eventPublisher = provider.GetService<IEventPublisher>();
+
+        await subscriptionRuntimeReporter.ReportAsync(
+            new EventSubscriptionExecutionReport(
+                subscriptionId: "audit-projector",
+                outcome: EventSubscriptionExecutionOutcomes.Started,
+                observedAtUtc: new DateTimeOffset(2026, 04, 04, 9, 30, 0, TimeSpan.Zero),
+                messageId: "audit-msg-001",
+                attempt: 1));
+        await subscriptionRuntimeReporter.ReportAsync(
+            new EventSubscriptionExecutionReport(
+                subscriptionId: "audit-projector",
+                outcome: EventSubscriptionExecutionOutcomes.RetryScheduled,
+                observedAtUtc: new DateTimeOffset(2026, 04, 04, 9, 31, 0, TimeSpan.Zero),
+                messageId: "audit-msg-001",
+                attempt: 2,
+                error: "Transient projection failure",
+                metadata: new Dictionary<string, string>
+                {
+                    ["nextRetryAtUtc"] = "2026-04-04T09:36:00.0000000+00:00",
+                    ["retryPolicy"] = "exponential"
+                }));
+
         var snapshotProvider = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>();
         var snapshot = snapshotProvider.CreateSnapshot();
 
@@ -1429,28 +1706,105 @@ public sealed class EngineBuilderTests
         Assert.Equal(2, eventChannelCatalog.Channels.Count);
         Assert.Contains(eventChannelCatalog.Channels, channel => channel.Id == "orders");
         Assert.Contains(eventChannelCatalog.Channels, channel => channel.Id == "audit");
+        Assert.Single(eventSubscriptionCatalog.Subscriptions);
+        Assert.Contains(eventSubscriptionCatalog.Subscriptions, subscription => subscription.Id == "audit-projector");
         Assert.Equal(2, edgeNodeCatalog.Nodes.Count);
         Assert.Contains(edgeNodeCatalog.Nodes, node => node.Id == "storefront-edge");
         Assert.Contains(edgeNodeCatalog.Nodes, node => node.Id == "warehouse-edge");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "agentics.runtime");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "agentics.tools");
-        Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish");
+        Assert.Null(eventPublisher);
+        Assert.DoesNotContain(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.channels");
+        Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.subscriptions");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "retrieval.query");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "retrieval.collections");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "edge.offline");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "edge.nodes");
-        Assert.Equal(4, technologySurfaces.Surfaces.Count);
+        var subscriptionState = Assert.Single(subscriptionRuntimeCatalog.States);
+        Assert.Equal("audit-projector", subscriptionState.SubscriptionId);
+        Assert.Equal(EventSubscriptionExecutionOutcomes.RetryScheduled, subscriptionState.LastOutcome);
+        Assert.Equal("audit-msg-001", subscriptionState.LastMessageId);
+        Assert.Equal(2, subscriptionState.LastAttempt);
+        Assert.Equal(1, subscriptionState.StartedCount);
+        Assert.Equal(1, subscriptionState.RetryScheduledCount);
+        Assert.Equal(2, subscriptionState.TotalReports);
+        Assert.True(subscriptionState.RetryPending);
+        var eventingConvention = Assert.Single(diagnosticsCatalog.Conventions, convention => convention.Source == "Cephalon.Eventing");
+        Assert.Equal(4200, eventingConvention.MinimumEventId);
+        Assert.Equal(4210, eventingConvention.MaximumEventId);
+        Assert.Contains(eventingConvention.Events, entry => entry.Id == 4200 && entry.Name == "EventPublicationStaged");
+        Assert.Contains(eventingConvention.Events, entry => entry.Id == 4204 && entry.Name == "EventSubscriptionRetryScheduled");
+        Assert.Contains(eventingConvention.Events, entry => entry.Id == 4209 && entry.Name == "EventPublicationDispatchRetryScheduled");
+        Assert.Equal(5, technologySurfaces.Surfaces.Count);
         Assert.Single(technologySurfaces.GetByTechnology("agentic-workloads"));
         Assert.Contains(
-            technologySurfaces.GetByTechnology("event-driven-integration").Single().Entries,
+            technologySurfaces.GetByTechnology("event-driven-integration")
+                .Single(surface => surface.SurfaceId == "event-channels")
+                .Entries,
             entry => entry.Id == "audit");
+        Assert.Contains(
+            technologySurfaces.GetByTechnology("event-driven-integration")
+                .Single(surface => surface.SurfaceId == "event-subscriptions")
+                .Entries,
+                entry => entry.Id == "audit-projector" &&
+                    entry.Metadata["channelId"] == "audit" &&
+                    entry.Metadata["dispatchRuntime"] == "application-managed" &&
+                    entry.Metadata["runtimeState"] == "reported" &&
+                    entry.Metadata["subscriptionRuntime"] == "hosted-execution-linked" &&
+                    entry.Metadata["hostedExecutionId"] == "audit-projector-pump" &&
+                    entry.Metadata["executionGraphId"] == "audit-subscription-flow" &&
+                    entry.Metadata["executionGraphDisplayName"] == "Audit Subscription Flow" &&
+                    entry.Metadata["lastOutcome"] == "retry-scheduled" &&
+                    entry.Metadata["lastMessageId"] == "audit-msg-001" &&
+                    entry.Metadata["lastAttempt"] == "2" &&
+                    entry.Metadata["retryScheduledCount"] == "1" &&
+                    entry.Metadata["totalReports"] == "2" &&
+                    entry.Metadata["retryPending"] == "true" &&
+                    entry.Metadata["reported.nextRetryAtUtc"] == "2026-04-04T09:36:00.0000000+00:00" &&
+                    entry.Metadata["reported.retryPolicy"] == "exponential" &&
+                    entry.Metadata["lastError"] == "Transient projection failure");
         Assert.Same(runtime.Manifest, snapshot.Manifest);
         Assert.Equal(RuntimeStatus.Created, snapshot.Status.Status);
-        Assert.Equal(4, snapshot.TechnologySurfaces.Count);
+        Assert.Equal(5, snapshot.TechnologySurfaces.Count);
         Assert.Contains(
             snapshot.TechnologySurfaces.Single(surface => surface.TechnologyId == "knowledge-retrieval").Entries,
             entry => entry.Id == "runbooks");
+        Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Eventing");
+        Assert.Contains(
+            snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "event-subscriptions").Entries,
+            entry => entry.Id == "audit-projector" &&
+                entry.Metadata["lastOutcome"] == "retry-scheduled" &&
+                entry.Metadata["retryPending"] == "true");
+    }
+
+    [Fact]
+    public void AddTechnologyPacksRejectHostedExecutionsThatReferenceUnknownEventSubscriptions()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                transports: ["WebSocket"],
+                technologies: ["EventDrivenIntegration"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new InvalidEventSubscriptionHostedExecutionModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "audit",
+                    displayName: "Audit",
+                    description: "Audit event stream."));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            provider.GetRequiredService<ITechnologyRuntimeCatalog>().Surfaces);
+
+        Assert.Contains("broken-subscription-pump", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("missing-subscription", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -1570,12 +1924,143 @@ public sealed class EngineBuilderTests
 
         Assert.Null(provider.GetService<IAgentToolCatalog>());
         Assert.Null(provider.GetService<IEventChannelCatalog>());
+        Assert.Null(provider.GetService<IEventSubscriptionCatalog>());
+        Assert.Null(provider.GetService<IEventDispatchRuntimeCatalog>());
+        Assert.Null(provider.GetService<IEventDispatchRuntimeReporter>());
+        Assert.Null(provider.GetService<IEventSubscriptionRuntimeCatalog>());
+        Assert.Null(provider.GetService<IEventSubscriptionRuntimeReporter>());
         Assert.Null(provider.GetService<IKnowledgeCatalog>());
         Assert.Null(provider.GetService<IEdgeNodeCatalog>());
         Assert.DoesNotContain(runtime.Manifest.Capabilities, capability => capability.Key.StartsWith("agentics.", StringComparison.Ordinal));
         Assert.DoesNotContain(runtime.Manifest.Capabilities, capability => capability.Key.StartsWith("eventing.", StringComparison.Ordinal));
         Assert.DoesNotContain(runtime.Manifest.Capabilities, capability => capability.Key.StartsWith("retrieval.", StringComparison.Ordinal));
         Assert.DoesNotContain(runtime.Manifest.Capabilities, capability => capability.Key.StartsWith("edge.", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void AddTechnologyPacksRejectSubscriptionsThatReferenceUnknownChannels()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                transports: ["WebSocket"],
+                technologies: ["EventDrivenIntegration"]));
+            engine.AddEventing(options =>
+            {
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "broken-subscription",
+                    displayName: "Broken Subscription",
+                    description: "References a missing channel.",
+                    channelId: "missing-channel",
+                    handlerId: "missing-handler",
+                    deliveryMode: "background-service"));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+
+        var exception = Assert.Throws<InvalidOperationException>(() => provider.GetRequiredService<IEventSubscriptionCatalog>());
+
+        Assert.Contains("broken-subscription", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("missing-channel", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task AddTechnologyPacksCanReportSubscriptionRuntimeStateWithoutHostedExecutionLink()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                transports: ["WebSocket"],
+                technologies: ["EventDrivenIntegration"]));
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "audit",
+                    displayName: "Audit",
+                    description: "Audit integration events."));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "audit-projection",
+                    displayName: "Audit Projection",
+                    description: "Projects audit events into a read model.",
+                    channelId: "audit",
+                    handlerId: "audit-projection-handler",
+                    deliveryMode: "application-service"));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var reporter = provider.GetRequiredService<IEventSubscriptionRuntimeReporter>();
+        var surfaces = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        await reporter.ReportAsync(
+            new EventSubscriptionExecutionReport(
+                subscriptionId: "audit-projection",
+                outcome: EventSubscriptionExecutionOutcomes.Failed,
+                observedAtUtc: new DateTimeOffset(2026, 04, 04, 10, 15, 0, TimeSpan.Zero),
+                messageId: "audit-msg-404",
+                attempt: 3,
+                error: "Projection store unavailable",
+                metadata: new Dictionary<string, string>
+                {
+                    ["retryPolicy"] = "linear",
+                    ["retryWindow"] = "00:00:30"
+                }));
+
+        var eventingSubscriptionSurface = Assert.Single(
+            surfaces.GetByTechnology("event-driven-integration"),
+            surface => surface.SurfaceId == "event-subscriptions");
+        var runtimeEntry = Assert.Single(eventingSubscriptionSurface.Entries, entry => entry.Id == "audit-projection");
+
+        Assert.Equal("application-managed", runtimeEntry.Metadata["dispatchRuntime"]);
+        Assert.Equal("application-managed-state", runtimeEntry.Metadata["subscriptionRuntime"]);
+        Assert.Equal("reported", runtimeEntry.Metadata["runtimeState"]);
+        Assert.Equal("failed", runtimeEntry.Metadata["lastOutcome"]);
+        Assert.Equal("audit-msg-404", runtimeEntry.Metadata["lastMessageId"]);
+        Assert.Equal("3", runtimeEntry.Metadata["lastAttempt"]);
+        Assert.Equal("1", runtimeEntry.Metadata["failedCount"]);
+        Assert.Equal("1", runtimeEntry.Metadata["totalReports"]);
+        Assert.Equal("linear", runtimeEntry.Metadata["reported.retryPolicy"]);
+        Assert.Equal("00:00:30", runtimeEntry.Metadata["reported.retryWindow"]);
+        Assert.Equal("Projection store unavailable", runtimeEntry.Metadata["lastError"]);
+    }
+
+    [Fact]
+    public async Task AddTechnologyPacksRejectSubscriptionRuntimeReportsForUnknownSubscriptions()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                transports: ["WebSocket"],
+                technologies: ["EventDrivenIntegration"]));
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "audit",
+                    displayName: "Audit",
+                    description: "Audit integration events."));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var reporter = provider.GetRequiredService<IEventSubscriptionRuntimeReporter>();
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            await reporter.ReportAsync(
+                new EventSubscriptionExecutionReport(
+                    subscriptionId: "missing-subscription",
+                    outcome: EventSubscriptionExecutionOutcomes.Started,
+                    observedAtUtc: new DateTimeOffset(2026, 04, 04, 10, 30, 0, TimeSpan.Zero),
+                    messageId: "audit-msg-500",
+                    attempt: 1)));
+
+        Assert.Contains("missing-subscription", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -2098,7 +2583,7 @@ public sealed class EngineBuilderTests
             string.Join(",\n", signatureProperties) + "\n" +
             "  },\n" +
             "  \"compatibility\": {\n" +
-            "    \"minimumEngineVersion\": \"1.0.0\",\n" +
+            $"    \"minimumEngineVersion\": \"{GetCurrentEngineCompatibilityVersion()}\",\n" +
             "    \"supportedTargetFrameworks\": [ \"net10.0\" ]\n" +
             "  }\n" +
             "}";
@@ -2161,7 +2646,7 @@ public sealed class EngineBuilderTests
             signaturesJson + "\n" +
             "  ],\n" +
             "  \"compatibility\": {\n" +
-            "    \"minimumEngineVersion\": \"1.0.0\",\n" +
+            $"    \"minimumEngineVersion\": \"{GetCurrentEngineCompatibilityVersion()}\",\n" +
             "    \"supportedTargetFrameworks\": [ \"net10.0\" ]\n" +
             "  }\n" +
             "}";
@@ -2243,7 +2728,7 @@ public sealed class EngineBuilderTests
             $"    \"value\": \"{Convert.ToBase64String(signatureBytes)}\"\n" +
             "  },\n" +
             "  \"compatibility\": {\n" +
-            "    \"minimumEngineVersion\": \"1.0.0\",\n" +
+            $"    \"minimumEngineVersion\": \"{GetCurrentEngineCompatibilityVersion()}\",\n" +
             "    \"supportedTargetFrameworks\": [ \"net10.0\" ]\n" +
             "  }\n" +
             "}";
@@ -2263,6 +2748,20 @@ public sealed class EngineBuilderTests
     private static string GetReferenceModuleManifestPath()
     {
         return Path.Combine(GetReferenceModulePackageDirectory(), ModulePackageDirectory.DefaultManifestFileName);
+    }
+
+    private static string GetCurrentEngineCompatibilityVersion()
+    {
+        var version = typeof(EngineBuilder).Assembly
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+            .InformationalVersion
+            ?? typeof(EngineBuilder).Assembly.GetName().Version?.ToString()
+            ?? "0.0.0";
+        var buildMetadataSeparator = version.IndexOf('+', StringComparison.Ordinal);
+
+        return buildMetadataSeparator >= 0
+            ? version[..buildMetadataSeparator]
+            : version;
     }
 
     private static string GetAdditionalPackageAssemblyPath()
@@ -2300,6 +2799,14 @@ public sealed class EngineBuilderTests
             .Replace(
                 "__PACKAGE_ASSEMBLY__",
                 EscapeJson(GetAdditionalPackageAssemblyPath()),
+                StringComparison.Ordinal)
+            .Replace(
+                "\"minimumEngineVersion\": \"1.0.0\"",
+                $"\"minimumEngineVersion\": \"{GetCurrentEngineCompatibilityVersion()}\"",
+                StringComparison.Ordinal)
+            .Replace(
+                "\"minimumEngineVersion\": \"0.1.0-preview\"",
+                $"\"minimumEngineVersion\": \"{GetCurrentEngineCompatibilityVersion()}\"",
                 StringComparison.Ordinal);
         File.WriteAllText(manifestPath, manifestContents);
 

@@ -11,6 +11,9 @@ using Cephalon.Sample.ModularMonolith;
 using Cephalon.Sample.ModularVerticalSlice;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 
 namespace Cephalon.Tests.Hosting;
 
@@ -30,8 +33,42 @@ public sealed class SampleSuiteHostingTests
 
         Assert.NotNull(profile);
         Assert.Equal("modular-monolith", profile.BlueprintId);
+        Assert.Equal("Sfid", profile.Data.IdGenerator);
+        Assert.True(profile.Audit.Enabled);
         Assert.Contains("ModularMonolith", overview, StringComparison.Ordinal);
         Assert.Contains("starter-kit", overview, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task ModularMonolithSampleAcceptsLateTelemetryOverridesForContainerScenarios()
+    {
+        string? telemetryEndpoint = null;
+        string? environmentName = null;
+
+        await using var app = ModularMonolithSampleApp.Build(
+            args:
+            [
+                "--environment=ContainerSmoke",
+                "--Engine:Observability:Telemetry:Provider=OpenTelemetry",
+                "--Engine:Observability:Telemetry:Protocol=otlp/http",
+                "--Engine:Observability:Telemetry:Endpoint=http://collector:4318",
+                "--Engine:Observability:Telemetry:ExportLogs=true",
+                "--Engine:Observability:Telemetry:ExportMetrics=true",
+                "--Engine:Observability:Telemetry:ExportTraces=true"
+            ],
+            configureBuilder: builder =>
+            {
+                builder.WebHost.UseTestServer();
+                telemetryEndpoint = builder.Configuration["Engine:Observability:Telemetry:Endpoint"];
+                environmentName = builder.Environment.EnvironmentName;
+            });
+
+        await app.StartAsync();
+
+        Assert.Equal("ContainerSmoke", environmentName);
+        Assert.Equal("http://collector:4318", telemetryEndpoint);
+        Assert.NotNull(app.Services.GetService<TracerProvider>());
+        Assert.NotNull(app.Services.GetService<MeterProvider>());
     }
 
     [Fact]
@@ -48,6 +85,8 @@ public sealed class SampleSuiteHostingTests
 
         Assert.NotNull(profile);
         Assert.Equal("modular-vertical-slice", profile.BlueprintId);
+        Assert.Equal("Sfid", profile.Data.IdGenerator);
+        Assert.True(profile.Audit.Enabled);
         Assert.Contains("ModularVerticalSlice", preview, StringComparison.Ordinal);
         Assert.Contains("vip-fast-lane", preview, StringComparison.Ordinal);
     }
@@ -66,6 +105,8 @@ public sealed class SampleSuiteHostingTests
 
         Assert.NotNull(profile);
         Assert.Equal("microservice", profile.BlueprintId);
+        Assert.Equal("Sfid", profile.Data.IdGenerator);
+        Assert.True(profile.Audit.Enabled);
         Assert.Contains("enterprise-boundary", welcome, StringComparison.Ordinal);
         Assert.Contains("Cephalon microservice sample", welcome, StringComparison.Ordinal);
     }
