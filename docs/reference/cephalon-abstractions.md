@@ -11,6 +11,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 - `Cephalon.Abstractions.Authorization`
 - `Cephalon.Abstractions.Capabilities`
 - `Cephalon.Abstractions.Data`
+- `Cephalon.Abstractions.EventSourcing`
 - `Cephalon.Abstractions.Execution`
 - `Cephalon.Abstractions.Health`
 - `Cephalon.Abstractions.Ids`
@@ -4184,6 +4185,523 @@ string TargetStoreId { get; }
 ```
 
 Gets the logical target store or read-model identifier populated by the projection.
+
+<a id="namespace-cephalon-abstractions-eventsourcing"></a>
+
+## Namespace Cephalon.Abstractions.EventSourcing
+
+<a id="type-cephalon-abstractions-eventsourcing-domainevent"></a>
+
+### `DomainEvent`
+
+Provides a minimal record base for immutable domain events.
+
+#### Declaration
+```csharp
+public abstract class DomainEvent
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-eventsourcing-domainevent-occurredatutc"></a>
+
+##### `OccurredAtUtc`
+
+```csharp
+DateTime OccurredAtUtc { get; set; }
+```
+
+Gets the time at which the event occurred in UTC.
+
+<a id="member-p-cephalon-abstractions-eventsourcing-domainevent-streamid"></a>
+
+##### `StreamId`
+
+```csharp
+string StreamId { get; set; }
+```
+
+Gets the stable stream identifier that owns the event.
+
+<a id="member-p-cephalon-abstractions-eventsourcing-domainevent-streamversion"></a>
+
+##### `StreamVersion`
+
+```csharp
+long StreamVersion { get; set; }
+```
+
+Gets the optimistic stream version assigned to the event.
+
+<a id="type-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception"></a>
+
+### `EventStreamConcurrencyException`
+
+Represents an optimistic concurrency failure while appending events to a stream.
+
+#### Declaration
+```csharp
+public sealed class EventStreamConcurrencyException
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception-ctor-system-string-system-int64-system-int64"></a>
+
+##### `EventStreamConcurrencyException`
+
+```csharp
+EventStreamConcurrencyException(string streamId, long expectedVersion, long actualVersion)
+```
+
+Initializes a new instance of the `EventStreamConcurrencyException` class.
+
+Parameters:
+- `streamId`: The stream identifier that failed the concurrency check.
+- `expectedVersion`: The version that the caller expected.
+- `actualVersion`: The version that currently exists in the store.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception-actualversion"></a>
+
+##### `ActualVersion`
+
+```csharp
+long ActualVersion { get; }
+```
+
+Gets the version that currently exists in the store.
+
+<a id="member-p-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception-expectedversion"></a>
+
+##### `ExpectedVersion`
+
+```csharp
+long ExpectedVersion { get; }
+```
+
+Gets the version that the caller expected.
+
+<a id="member-p-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception-streamid"></a>
+
+##### `StreamId`
+
+```csharp
+string StreamId { get; }
+```
+
+Gets the stream identifier that failed the concurrency check.
+
+<a id="type-cephalon-abstractions-eventsourcing-eventstreamdescriptor"></a>
+
+### `EventStreamDescriptor`
+
+Describes one logical event stream visible to the current runtime.
+
+#### Declaration
+```csharp
+public sealed class EventStreamDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-eventsourcing-eventstreamdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventStreamDescriptor`
+
+```csharp
+EventStreamDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string mode, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Initializes a new instance of the `EventStreamDescriptor` class.
+
+Parameters:
+- `id`: The stable event-stream identifier.
+- `displayName`: The operator-facing event-stream name.
+- `description`: The human-readable event-stream description.
+- `sourceModuleId`: The module identifier that owns the event stream.
+- `provider`: The provider identifier that persists the stream.
+- `mode`: The stream persistence mode. The default is `append-only`.
+- `tags`: The descriptive tags associated with the stream.
+- `metadata`: The provider-specific metadata associated with the stream.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the normalized human-readable description.
+
+<a id="member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the normalized operator-facing name.
+
+<a id="member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the normalized event-stream identifier.
+
+<a id="member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets the normalized provider-specific metadata associated with the stream.
+
+<a id="member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-mode"></a>
+
+##### `Mode`
+
+```csharp
+string Mode { get; }
+```
+
+Gets the normalized stream persistence mode.
+
+<a id="member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; }
+```
+
+Gets the normalized provider identifier.
+
+<a id="member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the normalized source module identifier.
+
+<a id="member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets the normalized descriptive tags associated with the stream.
+
+<a id="type-cephalon-abstractions-eventsourcing-iaggregate-tstate"></a>
+
+### `IAggregate<TState>`
+
+Applies domain events to an aggregate state projection.
+
+#### Declaration
+```csharp
+public interface IAggregate<TState>
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-eventsourcing-iaggregate-1-apply-0-cephalon-abstractions-eventsourcing-idomainevent"></a>
+
+##### `Apply`
+
+```csharp
+TState Apply(TState current, IDomainEvent evt)
+```
+
+Applies one event to the current state and returns the next state snapshot.
+
+Returns: The updated aggregate state.
+
+Parameters:
+- `current`: The current aggregate state.
+- `evt`: The event to apply.
+
+<a id="type-cephalon-abstractions-eventsourcing-idomainevent"></a>
+
+### `IDomainEvent`
+
+Represents one immutable domain event stored in an append-only stream.
+
+#### Declaration
+```csharp
+public interface IDomainEvent
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-eventsourcing-idomainevent-occurredatutc"></a>
+
+##### `OccurredAtUtc`
+
+```csharp
+DateTime OccurredAtUtc { get; }
+```
+
+Gets the time at which the event occurred in UTC.
+
+<a id="member-p-cephalon-abstractions-eventsourcing-idomainevent-streamid"></a>
+
+##### `StreamId`
+
+```csharp
+string StreamId { get; }
+```
+
+Gets the stable stream identifier that owns the event.
+
+<a id="member-p-cephalon-abstractions-eventsourcing-idomainevent-streamversion"></a>
+
+##### `StreamVersion`
+
+```csharp
+long StreamVersion { get; }
+```
+
+Gets the optimistic stream version assigned to the event.
+
+<a id="type-cephalon-abstractions-eventsourcing-ieventstore"></a>
+
+### `IEventStore`
+
+Appends and replays immutable domain events for one logical event store.
+
+#### Declaration
+```csharp
+public interface IEventStore
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-eventsourcing-ieventstore-appendasync-system-string-system-collections-generic-ireadonlycollection-cephalon-abstractions-eventsourcing-idomainevent-system-int64-system-threading-cancellationtoken"></a>
+
+##### `AppendAsync`
+
+```csharp
+Task AppendAsync(string streamId, IReadOnlyCollection<IDomainEvent> events, long expectedVersion, CancellationToken cancellationToken)
+```
+
+Appends one or more events to the requested stream after checking the expected version.
+
+Returns: A task that completes when the append finishes.
+
+Parameters:
+- `streamId`: The stable stream identifier.
+- `events`: The events to append.
+- `expectedVersion`: The current stream version expected by the caller. Use `-1` to require a brand-new stream.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="member-m-cephalon-abstractions-eventsourcing-ieventstore-getversionasync-system-string-system-threading-cancellationtoken"></a>
+
+##### `GetVersionAsync`
+
+```csharp
+Task<long> GetVersionAsync(string streamId, CancellationToken cancellationToken)
+```
+
+Gets the latest version known for the requested stream.
+
+Returns: A task that returns the current stream version, or `-1` when the stream does not exist.
+
+Parameters:
+- `streamId`: The stable stream identifier.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="member-m-cephalon-abstractions-eventsourcing-ieventstore-readstreamasync-system-string-system-int64-system-threading-cancellationtoken"></a>
+
+##### `ReadStreamAsync`
+
+```csharp
+IAsyncEnumerable<IDomainEvent> ReadStreamAsync(string streamId, long fromVersion, CancellationToken cancellationToken)
+```
+
+Reads the requested stream from the supplied version onward.
+
+Returns: An async sequence of domain events in ascending stream-version order.
+
+Parameters:
+- `streamId`: The stable stream identifier.
+- `fromVersion`: The first stream version to include. The default is `0`.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-abstractions-eventsourcing-ieventstorecatalog"></a>
+
+### `IEventStoreCatalog`
+
+Exposes the event-stream surfaces visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IEventStoreCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-eventsourcing-ieventstorecatalog-all"></a>
+
+##### `All`
+
+```csharp
+IReadOnlyList<EventStreamDescriptor> All { get; }
+```
+
+Gets all event-stream descriptors visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-eventsourcing-ieventstorecatalog-findbyid-system-string"></a>
+
+##### `FindById`
+
+```csharp
+EventStreamDescriptor FindById(string id)
+```
+
+Finds one event stream by its stable identifier.
+
+Returns: The matching event stream, or `null` when it is not active.
+
+Parameters:
+- `id`: The event-stream identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-eventsourcing-ieventstorecatalog-getbyprovider-system-string"></a>
+
+##### `GetByProvider`
+
+```csharp
+IReadOnlyList<EventStreamDescriptor> GetByProvider(string provider)
+```
+
+Gets all event streams backed by the requested provider identifier.
+
+Returns: The matching event streams, or an empty list when the provider contributes none.
+
+Parameters:
+- `provider`: The provider identifier to filter by.
+
+<a id="type-cephalon-abstractions-eventsourcing-ieventstorecontributor"></a>
+
+### `IEventStoreContributor`
+
+Contributes one or more event-stream descriptors to the active runtime.
+
+#### Declaration
+```csharp
+public interface IEventStoreContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-eventsourcing-ieventstorecontributor-contribute"></a>
+
+##### `Contribute`
+
+```csharp
+IReadOnlyList<EventStreamDescriptor> Contribute()
+```
+
+Returns the event-stream descriptors contributed by the current module or package.
+
+Returns: The contributed event-stream descriptors.
+
+<a id="type-cephalon-abstractions-eventsourcing-ieventstoreregistry"></a>
+
+### `IEventStoreRegistry`
+
+Receives event-stream descriptors contributed by active modules or packages.
+
+#### Declaration
+```csharp
+public interface IEventStoreRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-eventsourcing-ieventstoreregistry-register-cephalon-abstractions-eventsourcing-eventstreamdescriptor"></a>
+
+##### `Register`
+
+```csharp
+void Register(EventStreamDescriptor descriptor)
+```
+
+Registers one event stream with the current runtime composition.
+
+Parameters:
+- `descriptor`: The event-stream descriptor to register.
+
+<a id="type-cephalon-abstractions-eventsourcing-isnapshotstore"></a>
+
+### `ISnapshotStore`
+
+Persists and rehydrates optional aggregate snapshots for event-sourced workloads.
+
+#### Declaration
+```csharp
+public interface ISnapshotStore
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-eventsourcing-isnapshotstore-loadsnapshotasync-1-system-string-system-threading-cancellationtoken"></a>
+
+##### `LoadSnapshotAsync`
+
+```csharp
+Task<ValueTuple<TState, long>> LoadSnapshotAsync<TState>(string streamId, CancellationToken cancellationToken)
+```
+
+Loads the latest snapshot for the requested stream.
+
+Returns: A task that returns the snapshot state and version, or the default state and `-1` when none exists.
+
+Type parameters:
+- `TState`: The aggregate state type.
+
+Parameters:
+- `streamId`: The stable stream identifier.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="member-m-cephalon-abstractions-eventsourcing-isnapshotstore-savesnapshotasync-1-system-string-system-int64-0-system-threading-cancellationtoken"></a>
+
+##### `SaveSnapshotAsync`
+
+```csharp
+Task SaveSnapshotAsync<TState>(string streamId, long version, TState state, CancellationToken cancellationToken)
+```
+
+Saves one snapshot for the requested stream.
+
+Returns: A task that completes when the snapshot has been persisted.
+
+Type parameters:
+- `TState`: The aggregate state type.
+
+Parameters:
+- `streamId`: The stable stream identifier.
+- `version`: The stream version represented by the snapshot.
+- `state`: The state payload to persist.
+- `cancellationToken`: The token that cancels the operation.
 
 <a id="namespace-cephalon-abstractions-execution"></a>
 

@@ -28,6 +28,10 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-data): 25 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data)
 
+## `Cephalon.Abstractions.EventSourcing`
+
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-eventsourcing): 10 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing)
+
 ## `Cephalon.Abstractions.Execution`
 
 - [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-execution): 10 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution)
@@ -255,6 +259,34 @@ Browse the published API surface by namespace.
 ## `Cephalon.Eventing.Wolverine.Registration`
 
 - [Cephalon.Eventing.Wolverine](cephalon-eventing-wolverine.md#namespace-cephalon-eventing-wolverine-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Registration)
+
+## `Cephalon.EventSourcing.Configuration`
+
+- [Cephalon.EventSourcing](cephalon-eventsourcing.md#namespace-cephalon-eventsourcing-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Configuration)
+
+## `Cephalon.EventSourcing.EntityFramework`
+
+- [Cephalon.EventSourcing.EntityFramework](cephalon-eventsourcing-entityframework.md#namespace-cephalon-eventsourcing-entityframework): 3 public types [Browse](browse.html?assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework)
+
+## `Cephalon.EventSourcing.EntityFramework.Hosting`
+
+- [Cephalon.EventSourcing.EntityFramework](cephalon-eventsourcing-entityframework.md#namespace-cephalon-eventsourcing-entityframework-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework.Hosting)
+
+## `Cephalon.EventSourcing.EntityFramework.Registration`
+
+- [Cephalon.EventSourcing.EntityFramework](cephalon-eventsourcing-entityframework.md#namespace-cephalon-eventsourcing-entityframework-registration): 1 public types [Browse](browse.html?assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework.Registration)
+
+## `Cephalon.EventSourcing.Hosting`
+
+- [Cephalon.EventSourcing](cephalon-eventsourcing.md#namespace-cephalon-eventsourcing-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Hosting)
+
+## `Cephalon.EventSourcing.Registration`
+
+- [Cephalon.EventSourcing](cephalon-eventsourcing.md#namespace-cephalon-eventsourcing-registration): 1 public types [Browse](browse.html?assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Registration)
+
+## `Cephalon.EventSourcing.Services`
+
+- [Cephalon.EventSourcing](cephalon-eventsourcing.md#namespace-cephalon-eventsourcing-services): 3 public types [Browse](browse.html?assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services)
 
 ## `Cephalon.Identity.AspNetCore.Configuration`
 

@@ -128,6 +128,10 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("IInboxCatalog", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("OutboxDescriptor", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("IOutboxCatalog", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Abstractions.EventSourcing", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IDomainEvent", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EventStreamConcurrencyException", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IEventStoreCatalog", abstractionsPage.Contents, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -204,6 +208,46 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("EntityFrameworkOutboxEntry", dataPage.Contents, StringComparison.Ordinal);
         Assert.Contains("IEntityFrameworkOutboxContext", dataPage.Contents, StringComparison.Ordinal);
         Assert.Contains("EnableSfidIdentifiers", dataPage.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GenerateBuildsPageForEventSourcingAssembly()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-event-sourcing-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies: ["Cephalon.EventSourcing"]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var eventSourcingPage = Assert.Single(rendered.Files, file => file.Path == "cephalon-eventsourcing.md");
+
+        Assert.Contains("EventSourcingOptions", eventSourcingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EventSourcingEngineBuilderExtensions", eventSourcingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EventSourcingServiceCollectionExtensions", eventSourcingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("AggregateHydrator", eventSourcingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EventStreamCatalog", eventSourcingPage.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GenerateBuildsPageForEventSourcingEntityFrameworkAssembly()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-event-sourcing-ef-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies: ["Cephalon.EventSourcing.EntityFramework"]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var eventSourcingPage = Assert.Single(rendered.Files, file => file.Path == "cephalon-eventsourcing-entityframework.md");
+
+        Assert.Contains("EntityFrameworkEventEntry", eventSourcingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EntityFrameworkEventSourcingConfiguration", eventSourcingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IEntityFrameworkEventContext", eventSourcingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EntityFrameworkEventSourcingEngineBuilderExtensions", eventSourcingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EntityFrameworkEventSourcingServiceCollectionExtensions", eventSourcingPage.Contents, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -345,6 +389,8 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.Data.EntityFramework",
                 "Cephalon.Edge",
                 "Cephalon.Engine",
+                "Cephalon.EventSourcing",
+                "Cephalon.EventSourcing.EntityFramework",
                 "Cephalon.Eventing",
                 "Cephalon.Eventing.Wolverine",
                 "Cephalon.Identity",
@@ -430,6 +476,8 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-audit.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-identity-aspnetcore.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-eventsourcing.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-eventsourcing-entityframework.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-cassandradependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-clickhousedependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-consuldependencies.md");
@@ -469,6 +517,12 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.MultiTenancy", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.EventSourcing", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.EventSourcing.EntityFramework", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.CassandraDependencies", StringComparison.Ordinal));

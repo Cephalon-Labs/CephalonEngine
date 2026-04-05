@@ -1,14 +1,14 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-04T21:44:23.4718027+00:00",
+  "GeneratedAtUtc": "2026-04-05T21:17:47.5547659+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
       "Category": "Core",
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
-      "NamespaceCount": 15,
-      "TypeCount": 106
+      "NamespaceCount": 16,
+      "TypeCount": 116
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -113,6 +113,22 @@
       "FileName": "cephalon-eventing-wolverine.md",
       "NamespaceCount": 2,
       "TypeCount": 2
+    },
+    {
+      "AssemblyName": "Cephalon.EventSourcing",
+      "Category": "Event-Sourcing Companion Packs",
+      "Description": "Runtime-neutral event-store contracts, aggregate hydration, and event-stream cataloging for Cephalon runtimes.",
+      "FileName": "cephalon-eventsourcing.md",
+      "NamespaceCount": 4,
+      "TypeCount": 6
+    },
+    {
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "Category": "Event-Sourcing Companion Packs",
+      "Description": "Entity Framework Core append/read event-store provider for Cephalon event-sourcing workloads.",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "NamespaceCount": 3,
+      "TypeCount": 5
     },
     {
       "AssemblyName": "Cephalon.Identity",
@@ -485,6 +501,13 @@
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
       "TypeCount": 25
+    },
+    {
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "namespace-cephalon-abstractions-eventsourcing",
+      "TypeCount": 10
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Execution",
@@ -884,6 +907,55 @@
       "FileName": "cephalon-eventing-wolverine.md",
       "AnchorId": "namespace-cephalon-eventing-wolverine-registration",
       "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.EventSourcing.Configuration",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "namespace-cephalon-eventsourcing-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "namespace-cephalon-eventsourcing-entityframework",
+      "TypeCount": 3
+    },
+    {
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework.Hosting",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "namespace-cephalon-eventsourcing-entityframework-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework.Registration",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "namespace-cephalon-eventsourcing-entityframework-registration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.EventSourcing.Hosting",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "namespace-cephalon-eventsourcing-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.EventSourcing.Registration",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "namespace-cephalon-eventsourcing-registration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "namespace-cephalon-eventsourcing-services",
+      "TypeCount": 3
     },
     {
       "NamespaceName": "Cephalon.Identity.AspNetCore.Configuration",
@@ -1511,6 +1583,21 @@
         "Fields": 0,
         "Properties": 8,
         "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "AggregateHydrator\u003CTAggregate, TState\u003E",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "type-cephalon-eventsourcing-services-aggregatehydrator-taggregate-tstate",
+      "Declaration": "public sealed class AggregateHydrator\u003CTAggregate, TState\u003E",
+      "Summary": "Rehydrates aggregate state by replaying domain events from an event store.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
       }
     },
     {
@@ -2459,6 +2546,21 @@
       }
     },
     {
+      "DisplayName": "DomainEvent",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-eventsourcing-domainevent",
+      "Declaration": "public abstract class DomainEvent",
+      "Summary": "Provides a minimal record base for immutable domain events.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EdgeEngineBuilderExtensions",
       "NamespaceName": "Cephalon.Edge.Registration",
       "AssemblyName": "Cephalon.Edge",
@@ -2699,6 +2801,66 @@
       }
     },
     {
+      "DisplayName": "EntityFrameworkEventEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "type-cephalon-eventsourcing-entityframework-entityframeworkevententry",
+      "Declaration": "public sealed class EntityFrameworkEventEntry",
+      "Summary": "Represents one persisted domain event row stored by the Entity Framework event-store provider.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 9,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EntityFrameworkEventSourcingConfiguration",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "type-cephalon-eventsourcing-entityframework-entityframeworkeventsourcingconfiguration",
+      "Declaration": "public static class EntityFrameworkEventSourcingConfiguration",
+      "Summary": "Applies the Cephalon event-store schema to an Entity Framework model.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "EntityFrameworkEventSourcingEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework.Registration",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "type-cephalon-eventsourcing-entityframework-registration-entityframeworkeventsourcingenginebuilderextensions",
+      "Declaration": "public static class EntityFrameworkEventSourcingEngineBuilderExtensions",
+      "Summary": "Registers the Entity Framework event-store provider with an \u0060EngineBuilder\u0060.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "EntityFrameworkEventSourcingServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework.Hosting",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "type-cephalon-eventsourcing-entityframework-hosting-entityframeworkeventsourcingservicecollectionextensions",
+      "Declaration": "public static class EntityFrameworkEventSourcingServiceCollectionExtensions",
+      "Summary": "Registers the Entity Framework event-store provider used by Cephalon hosts.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "EntityFrameworkInboxEntry",
       "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
       "AssemblyName": "Cephalon.Data.EntityFramework",
@@ -2876,6 +3038,111 @@
         "Fields": 0,
         "Properties": 10,
         "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventSourcingEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.EventSourcing.Registration",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "type-cephalon-eventsourcing-registration-eventsourcingenginebuilderextensions",
+      "Declaration": "public static class EventSourcingEngineBuilderExtensions",
+      "Summary": "Registers the runtime-neutral Cephalon event-sourcing companion pack with an \u0060EngineBuilder\u0060.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "EventSourcingOptions",
+      "NamespaceName": "Cephalon.EventSourcing.Configuration",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "type-cephalon-eventsourcing-configuration-eventsourcingoptions",
+      "Declaration": "public sealed class EventSourcingOptions",
+      "Summary": "Describes the host-owned options for the runtime-neutral Cephalon event-sourcing pack.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 1,
+        "Properties": 2,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventSourcingServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.EventSourcing.Hosting",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "type-cephalon-eventsourcing-hosting-eventsourcingservicecollectionextensions",
+      "Declaration": "public static class EventSourcingServiceCollectionExtensions",
+      "Summary": "Registers the runtime-neutral event-sourcing services used by Cephalon hosts.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "EventStreamCatalog",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "type-cephalon-eventsourcing-services-eventstreamcatalog",
+      "Declaration": "public sealed class EventStreamCatalog",
+      "Summary": "Exposes the merged set of event-stream descriptors contributed to the active runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "EventStreamConcurrencyException",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception",
+      "Declaration": "public sealed class EventStreamConcurrencyException",
+      "Summary": "Represents an optimistic concurrency failure while appending events to a stream.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventStreamDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-eventsourcing-eventstreamdescriptor",
+      "Declaration": "public sealed class EventStreamDescriptor",
+      "Summary": "Describes one logical event stream visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventStreamRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "type-cephalon-eventsourcing-services-eventstreamregistry",
+      "Declaration": "public sealed class EventStreamRegistry",
+      "Summary": "Collects event-stream descriptors registered by the active host and companion packs.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
       }
     },
     {
@@ -3299,6 +3566,21 @@
       }
     },
     {
+      "DisplayName": "IAggregate\u003CTState\u003E",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-eventsourcing-iaggregate-tstate",
+      "Declaration": "public interface IAggregate\u003CTState\u003E",
+      "Summary": "Applies domain events to an aggregate state projection.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "IAuditActorAccessor",
       "NamespaceName": "Cephalon.Audit.Services",
       "AssemblyName": "Cephalon.Audit",
@@ -3704,6 +3986,21 @@
       }
     },
     {
+      "DisplayName": "IDomainEvent",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-eventsourcing-idomainevent",
+      "Declaration": "public interface IDomainEvent",
+      "Summary": "Represents one immutable domain event stored in an append-only stream.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "IEdgeNodeCatalog",
       "NamespaceName": "Cephalon.Edge.Services",
       "AssemblyName": "Cephalon.Edge",
@@ -3761,6 +4058,21 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEntityFrameworkEventContext",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "type-cephalon-eventsourcing-entityframework-ientityframeworkeventcontext",
+      "Declaration": "public interface IEntityFrameworkEventContext",
+      "Summary": "Represents the minimum Entity Framework context contract required by the Cephalon event-store provider.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 0
       }
     },
     {
@@ -3921,6 +4233,66 @@
       "AnchorId": "type-cephalon-eventing-services-ieventpublisher",
       "Declaration": "public interface IEventPublisher",
       "Summary": "Accepts integration events for the active eventing runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventStore",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-eventsourcing-ieventstore",
+      "Declaration": "public interface IEventStore",
+      "Summary": "Appends and replays immutable domain events for one logical event store.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 3
+      }
+    },
+    {
+      "DisplayName": "IEventStoreCatalog",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-eventsourcing-ieventstorecatalog",
+      "Declaration": "public interface IEventStoreCatalog",
+      "Summary": "Exposes the event-stream surfaces visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "IEventStoreContributor",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-eventsourcing-ieventstorecontributor",
+      "Declaration": "public interface IEventStoreContributor",
+      "Summary": "Contributes one or more event-stream descriptors to the active runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventStoreRegistry",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-eventsourcing-ieventstoreregistry",
+      "Declaration": "public interface IEventStoreRegistry",
+      "Summary": "Receives event-stream descriptors contributed by active modules or packages.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -4601,6 +4973,21 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ISnapshotStore",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-eventsourcing-isnapshotstore",
+      "Declaration": "public interface ISnapshotStore",
+      "Summary": "Persists and rehydrates optional aggregate snapshots for event-sourced workloads.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
       }
     },
     {
@@ -7271,6 +7658,17 @@
       "Summary": "Gets the logical actor type when one is known."
     },
     {
+      "DisplayName": "ActualVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamConcurrencyException",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception-actualversion",
+      "Signature": "long ActualVersion { get; }",
+      "Summary": "Gets the version that currently exists in the store."
+    },
+    {
       "DisplayName": "Add",
       "Category": "Methods",
       "DeclaringTypeName": "IAgentToolRegistry",
@@ -7676,6 +8074,28 @@
       "AnchorId": "member-m-cephalon-observability-elasticsearchdependencies-hosting-elasticsearchdependencyhealthservicecollectionextensions-addcephalonelasticsearchdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions",
       "Signature": "IServiceCollection AddCephalonElasticsearchDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CElasticsearchDependencyHealthOptions\u003E configure)",
       "Summary": "Adds Elasticsearch dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
+      "DisplayName": "AddCephalonEntityFrameworkEventSourcing",
+      "Category": "Methods",
+      "DeclaringTypeName": "EntityFrameworkEventSourcingServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework.Hosting",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-entityframework-hosting-entityframeworkeventsourcingservicecollectionextensions-addcephalonentityframeworkeventsourcing-1-microsoft-extensions-dependencyinjection-iservicecollection",
+      "Signature": "IServiceCollection AddCephalonEntityFrameworkEventSourcing\u003CTContext\u003E(this IServiceCollection services)",
+      "Summary": "Adds the Entity Framework event-store provider to the service collection."
+    },
+    {
+      "DisplayName": "AddCephalonEventSourcing",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSourcingServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.EventSourcing.Hosting",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-hosting-eventsourcingservicecollectionextensions-addcephaloneventsourcing-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-eventsourcing-configuration-eventsourcingoptions",
+      "Signature": "IServiceCollection AddCephalonEventSourcing(this IServiceCollection services, Action\u003CEventSourcingOptions\u003E configure)",
+      "Summary": "Adds the Cephalon event-sourcing baseline services to the service collection."
     },
     {
       "DisplayName": "AddCephalonGcp",
@@ -8250,6 +8670,17 @@
       "Summary": "Adds the Entity Framework Core data pack with explicit read and write \u0060DbContext\u0060 types."
     },
     {
+      "DisplayName": "AddEntityFrameworkEventSourcing",
+      "Category": "Methods",
+      "DeclaringTypeName": "EntityFrameworkEventSourcingEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework.Registration",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-entityframework-registration-entityframeworkeventsourcingenginebuilderextensions-addentityframeworkeventsourcing-1-cephalon-engine-composition-enginebuilder",
+      "Signature": "EngineBuilder AddEntityFrameworkEventSourcing\u003CTContext\u003E(this EngineBuilder builder)",
+      "Summary": "Adds the Entity Framework event-store provider to the engine."
+    },
+    {
       "DisplayName": "AddEventing",
       "Category": "Methods",
       "DeclaringTypeName": "EventingEngineBuilderExtensions",
@@ -8259,6 +8690,17 @@
       "AnchorId": "member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventing-cephalon-engine-composition-enginebuilder-system-action-cephalon-eventing-configuration-eventingoptions",
       "Signature": "EngineBuilder AddEventing(this EngineBuilder builder, Action\u003CEventingOptions\u003E configure)",
       "Summary": "Adds the eventing runtime pack to the engine."
+    },
+    {
+      "DisplayName": "AddEventSourcing",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSourcingEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.EventSourcing.Registration",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-registration-eventsourcingenginebuilderextensions-addeventsourcing-cephalon-engine-composition-enginebuilder-system-action-cephalon-eventsourcing-configuration-eventsourcingoptions",
+      "Signature": "EngineBuilder AddEventSourcing(this EngineBuilder builder, Action\u003CEventSourcingOptions\u003E configure)",
+      "Summary": "Adds the Cephalon event-sourcing companion pack to the engine."
     },
     {
       "DisplayName": "AddGraphQLTransport",
@@ -8602,6 +9044,17 @@
       "Summary": "Creates a new agent tool descriptor."
     },
     {
+      "DisplayName": "AggregateHydrator\u003CTAggregate, TState\u003E",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AggregateHydrator\u003CTAggregate, TState\u003E",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-aggregatehydrator-2-ctor",
+      "Signature": "AggregateHydrator\u003CTAggregate, TState\u003E()",
+      "Summary": "Initializes a new instance of the \u0060AggregateHydrator\u003CT1, T2\u003E\u0060 class."
+    },
+    {
       "DisplayName": "Algorithm",
       "Category": "Properties",
       "DeclaringTypeName": "PackageSignatureManifest",
@@ -8699,6 +9152,28 @@
       "AnchorId": "member-p-cephalon-engine-transports-builtintransports-all",
       "Signature": "IReadOnlyList\u003CTransportDescriptor\u003E All { get; }",
       "Summary": "Gets all built-in transport descriptors."
+    },
+    {
+      "DisplayName": "All",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamCatalog",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamcatalog-all",
+      "Signature": "IReadOnlyList\u003CEventStreamDescriptor\u003E All { get; }",
+      "Summary": "Gets all event-stream descriptors contributed to the current runtime."
+    },
+    {
+      "DisplayName": "All",
+      "Category": "Properties",
+      "DeclaringTypeName": "IEventStoreCatalog",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-ieventstorecatalog-all",
+      "Signature": "IReadOnlyList\u003CEventStreamDescriptor\u003E All { get; }",
+      "Summary": "Gets all event-stream descriptors visible to the current runtime."
     },
     {
       "DisplayName": "Allow",
@@ -8833,6 +9308,28 @@
       "Summary": "Creates a blueprint with optional scaffold metadata."
     },
     {
+      "DisplayName": "AppendAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventStore",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-eventsourcing-ieventstore-appendasync-system-string-system-collections-generic-ireadonlycollection-cephalon-abstractions-eventsourcing-idomainevent-system-int64-system-threading-cancellationtoken",
+      "Signature": "Task AppendAsync(string streamId, IReadOnlyCollection\u003CIDomainEvent\u003E events, long expectedVersion, CancellationToken cancellationToken)",
+      "Summary": "Appends one or more events to the requested stream after checking the expected version."
+    },
+    {
+      "DisplayName": "AppendedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-appendedatutc",
+      "Signature": "DateTime AppendedAtUtc { get; set; }",
+      "Summary": "Gets or sets the UTC time at which the event was appended to the store."
+    },
+    {
       "DisplayName": "AppId",
       "Category": "Properties",
       "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
@@ -8842,6 +9339,17 @@
       "AnchorId": "member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-appid",
       "Signature": "string AppId { get; set; }",
       "Summary": "Gets or sets the App Platform application identifier to stamp onto exported resources."
+    },
+    {
+      "DisplayName": "Apply",
+      "Category": "Methods",
+      "DeclaringTypeName": "IAggregate\u003CTState\u003E",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-eventsourcing-iaggregate-1-apply-0-cephalon-abstractions-eventsourcing-idomainevent",
+      "Signature": "TState Apply(TState current, IDomainEvent evt)",
+      "Summary": "Applies one event to the current state and returns the next state snapshot."
     },
     {
       "DisplayName": "ApplyReportAsync",
@@ -10307,6 +10815,17 @@
       "Summary": "Gets the build configuration to read from."
     },
     {
+      "DisplayName": "ConfigureCephalonEvents",
+      "Category": "Methods",
+      "DeclaringTypeName": "EntityFrameworkEventSourcingConfiguration",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-entityframework-entityframeworkeventsourcingconfiguration-configurecephalonevents-microsoft-entityframeworkcore-modelbuilder",
+      "Signature": "void ConfigureCephalonEvents(ModelBuilder modelBuilder)",
+      "Summary": "Configures the \u0060CephalonEvents\u0060 table and indexes required by the Entity Framework event-store provider."
+    },
+    {
       "DisplayName": "ConfigureCephalonInbox",
       "Category": "Methods",
       "DeclaringTypeName": "EntityFrameworkModelBuilderExtensions",
@@ -10681,6 +11200,28 @@
       "Summary": "Identifies the contracts project."
     },
     {
+      "DisplayName": "Contribute",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventStreamRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventstreamregistry-contribute",
+      "Signature": "IReadOnlyList\u003CEventStreamDescriptor\u003E Contribute()",
+      "Summary": "Returns the descriptors that have been registered with the current registry instance."
+    },
+    {
+      "DisplayName": "Contribute",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventStoreContributor",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-eventsourcing-ieventstorecontributor-contribute",
+      "Signature": "IReadOnlyList\u003CEventStreamDescriptor\u003E Contribute()",
+      "Summary": "Returns the event-stream descriptors contributed by the current module or package."
+    },
+    {
       "DisplayName": "Conventions",
       "Category": "Properties",
       "DeclaringTypeName": "DiagnosticsSurface",
@@ -10767,6 +11308,17 @@
       "AnchorId": "member-p-cephalon-abstractions-authorization-authorizationcontext-correlationid",
       "Signature": "string CorrelationId { get; }",
       "Summary": "Gets the correlation identifier associated with the current operation."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-correlationid",
+      "Signature": "string CorrelationId { get; set; }",
+      "Summary": "Gets or sets the correlation identifier associated with the event when known."
     },
     {
       "DisplayName": "CorrelationId",
@@ -11352,6 +11904,17 @@
       "Summary": "Gets the default manifest file name expected inside package directories."
     },
     {
+      "DisplayName": "DefaultProvider",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSourcingOptions",
+      "NamespaceName": "Cephalon.EventSourcing.Configuration",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-configuration-eventsourcingoptions-defaultprovider",
+      "Signature": "string DefaultProvider { get; set; }",
+      "Summary": "Gets or sets the default event-store provider identifier."
+    },
+    {
       "DisplayName": "DefaultRootFolderName",
       "Category": "Fields",
       "DeclaringTypeName": "ProjectConfigurationBuilderExtensions",
@@ -11889,6 +12452,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventdispatchruntimedescriptor-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets the human-readable dispatch-runtime description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the normalized human-readable description."
     },
     {
       "DisplayName": "Description",
@@ -12538,6 +13112,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventdispatchruntimedescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing dispatch-runtime name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the normalized operator-facing name."
     },
     {
       "DisplayName": "DisplayName",
@@ -13552,6 +14137,17 @@
       "Summary": "Gets or sets a value indicating whether the pack should enable official \u0060Sfid.EntityFramework\u0060 conventions and key generation."
     },
     {
+      "DisplayName": "EnableSnapshots",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSourcingOptions",
+      "NamespaceName": "Cephalon.EventSourcing.Configuration",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-configuration-eventsourcingoptions-enablesnapshots",
+      "Signature": "bool EnableSnapshots { get; set; }",
+      "Summary": "Gets or sets a value indicating whether snapshot-aware paths are enabled."
+    },
+    {
       "DisplayName": "EnableSubscriptions",
       "Category": "Properties",
       "DeclaringTypeName": "EventingOptions",
@@ -13748,6 +14344,17 @@
       "AnchorId": "member-m-cephalon-data-entityframework-configuration-entityframeworkdataoptions-ctor-system-type-system-type",
       "Signature": "EntityFrameworkDataOptions(Type readDbContextType, Type writeDbContextType)",
       "Summary": "Initializes a new instance of the \u0060EntityFrameworkDataOptions\u0060 class."
+    },
+    {
+      "DisplayName": "EntityFrameworkEventEntry",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EntityFrameworkEventEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-entityframework-entityframeworkevententry-ctor",
+      "Signature": "EntityFrameworkEventEntry()",
+      "Summary": "Initializes a new instance of the \u0060EntityFrameworkEventEntry\u0060 class."
     },
     {
       "DisplayName": "EntityFrameworkInboxEntry",
@@ -13992,6 +14599,28 @@
       "Summary": "The published event definitions that belong to the convention."
     },
     {
+      "DisplayName": "Events",
+      "Category": "Properties",
+      "DeclaringTypeName": "IEntityFrameworkEventContext",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-entityframework-ientityframeworkeventcontext-events",
+      "Signature": "DbSet\u003CEntityFrameworkEventEntry\u003E Events { get; }",
+      "Summary": "Gets the event rows persisted by the active event-store context."
+    },
+    {
+      "DisplayName": "EventSourcingOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventSourcingOptions",
+      "NamespaceName": "Cephalon.EventSourcing.Configuration",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-configuration-eventsourcingoptions-ctor",
+      "Signature": "EventSourcingOptions()",
+      "Summary": "Initializes a new instance of the \u0060EventSourcingOptions\u0060 class."
+    },
+    {
       "DisplayName": "EventSourcingPattern",
       "Category": "Properties",
       "DeclaringTypeName": "BuiltInPatterns",
@@ -14001,6 +14630,50 @@
       "AnchorId": "member-p-cephalon-engine-patterns-builtinpatterns-eventsourcingpattern",
       "Signature": "PatternDescriptor EventSourcingPattern { get; }",
       "Summary": "Gets the event-sourcing pattern."
+    },
+    {
+      "DisplayName": "EventStreamCatalog",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventStreamCatalog",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventstreamcatalog-ctor-system-collections-generic-ienumerable-cephalon-abstractions-eventsourcing-ieventstorecontributor",
+      "Signature": "EventStreamCatalog(IEnumerable\u003CIEventStoreContributor\u003E contributors)",
+      "Summary": "Initializes a new instance of the \u0060EventStreamCatalog\u0060 class."
+    },
+    {
+      "DisplayName": "EventStreamConcurrencyException",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventStreamConcurrencyException",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception-ctor-system-string-system-int64-system-int64",
+      "Signature": "EventStreamConcurrencyException(string streamId, long expectedVersion, long actualVersion)",
+      "Summary": "Initializes a new instance of the \u0060EventStreamConcurrencyException\u0060 class."
+    },
+    {
+      "DisplayName": "EventStreamDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventStreamDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-eventsourcing-eventstreamdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "EventStreamDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string mode, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Initializes a new instance of the \u0060EventStreamDescriptor\u0060 class."
+    },
+    {
+      "DisplayName": "EventStreamRegistry",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventStreamRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventstreamregistry-ctor",
+      "Signature": "EventStreamRegistry()",
+      "Summary": "Initializes a new instance of the \u0060EventStreamRegistry\u0060 class."
     },
     {
       "DisplayName": "EventSubscriptionDescriptor",
@@ -14034,6 +14707,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionruntimestate-ctor-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "EventSubscriptionRuntimeState(string SubscriptionId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastMessageId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int RetryScheduledCount, int SkippedCount, string LastError, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
       "Summary": "Describes the latest operator-facing runtime state reported for one declared event subscription."
+    },
+    {
+      "DisplayName": "EventType",
+      "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-eventtype",
+      "Signature": "string EventType { get; set; }",
+      "Summary": "Gets or sets the assembly-qualified CLR event type."
     },
     {
       "DisplayName": "EventType",
@@ -14265,6 +14949,17 @@
       "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-expectedstatuscodes",
       "Signature": "IReadOnlyList\u003Cint\u003E ExpectedStatusCodes { get; set; }",
       "Summary": "Gets or sets the explicit HTTP status codes that should be treated as healthy."
+    },
+    {
+      "DisplayName": "ExpectedVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamConcurrencyException",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception-expectedversion",
+      "Signature": "long ExpectedVersion { get; }",
+      "Summary": "Gets the version that the caller expected."
     },
     {
       "DisplayName": "Experience",
@@ -14518,6 +15213,28 @@
       "AnchorId": "member-p-cephalon-scaffolding-generation-renderedscaffold-files",
       "Signature": "IReadOnlyList\u003CRenderedFile\u003E Files { get; }",
       "Summary": "Gets the rendered files."
+    },
+    {
+      "DisplayName": "FindById",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventStreamCatalog",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventstreamcatalog-findbyid-system-string",
+      "Signature": "EventStreamDescriptor FindById(string id)",
+      "Summary": "Finds one event-stream descriptor by its stable identifier."
+    },
+    {
+      "DisplayName": "FindById",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventStoreCatalog",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-eventsourcing-ieventstorecatalog-findbyid-system-string",
+      "Signature": "EventStreamDescriptor FindById(string id)",
+      "Summary": "Finds one event stream by its stable identifier."
     },
     {
       "DisplayName": "Fingerprint",
@@ -15402,6 +16119,17 @@
     {
       "DisplayName": "GetByProvider",
       "Category": "Methods",
+      "DeclaringTypeName": "EventStreamCatalog",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventstreamcatalog-getbyprovider-system-string",
+      "Signature": "IReadOnlyList\u003CEventStreamDescriptor\u003E GetByProvider(string provider)",
+      "Summary": "Gets the event-stream descriptors backed by the requested provider identifier."
+    },
+    {
+      "DisplayName": "GetByProvider",
+      "Category": "Methods",
       "DeclaringTypeName": "IAuditStoreCatalog",
       "NamespaceName": "Cephalon.Abstractions.Audit",
       "AssemblyName": "Cephalon.Abstractions",
@@ -15409,6 +16137,17 @@
       "AnchorId": "member-m-cephalon-abstractions-audit-iauditstorecatalog-getbyprovider-system-string",
       "Signature": "IReadOnlyList\u003CAuditStoreDescriptor\u003E GetByProvider(string provider)",
       "Summary": "Gets all audit stores backed by the requested provider identifier."
+    },
+    {
+      "DisplayName": "GetByProvider",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventStoreCatalog",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-eventsourcing-ieventstorecatalog-getbyprovider-system-string",
+      "Signature": "IReadOnlyList\u003CEventStreamDescriptor\u003E GetByProvider(string provider)",
+      "Summary": "Gets all event streams backed by the requested provider identifier."
     },
     {
       "DisplayName": "GetByProvider",
@@ -15574,6 +16313,17 @@
       "AnchorId": "member-m-cephalon-engine-localization-localizedtextcatalog-getresources-system-string",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E GetResources(string culture)",
       "Summary": "Gets the merged resources visible for the specified culture."
+    },
+    {
+      "DisplayName": "GetVersionAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventStore",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-eventsourcing-ieventstore-getversionasync-system-string-system-threading-cancellationtoken",
+      "Signature": "Task\u003Clong\u003E GetVersionAsync(string streamId, CancellationToken cancellationToken)",
+      "Summary": "Gets the latest version known for the requested stream."
     },
     {
       "DisplayName": "GrafanaCloudTelemetryExportOptions",
@@ -16555,6 +17305,17 @@
       "Summary": "Gets the built-in hybrid-cloud-runtime technology profile."
     },
     {
+      "DisplayName": "HydrateAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "AggregateHydrator\u003CTAggregate, TState\u003E",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-aggregatehydrator-2-hydrateasync-cephalon-abstractions-eventsourcing-ieventstore-system-string-system-int64-system-threading-cancellationtoken",
+      "Signature": "Task\u003CValueTuple\u003CTState, long\u003E\u003E HydrateAsync(IEventStore eventStore, string streamId, long fromVersion, CancellationToken cancellationToken)",
+      "Summary": "Rehydrates one aggregate state by replaying the requested event stream."
+    },
+    {
       "DisplayName": "Id",
       "Category": "Properties",
       "DeclaringTypeName": "AgentToolDescriptor",
@@ -16689,6 +17450,17 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-id",
+      "Signature": "long Id { get; set; }",
+      "Summary": "Gets or sets the database-assigned row identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "EntityFrameworkInboxEntry",
       "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
       "AssemblyName": "Cephalon.Data.EntityFramework",
@@ -16740,6 +17512,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventpublication-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable publication identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the normalized event-stream identifier."
     },
     {
       "DisplayName": "Id",
@@ -18425,6 +19208,17 @@
       "Summary": "The packages currently visible to the runtime story."
     },
     {
+      "DisplayName": "LoadSnapshotAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "ISnapshotStore",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-eventsourcing-isnapshotstore-loadsnapshotasync-1-system-string-system-threading-cancellationtoken",
+      "Signature": "Task\u003CValueTuple\u003CTState, long\u003E\u003E LoadSnapshotAsync\u003CTState\u003E(string streamId, CancellationToken cancellationToken)",
+      "Summary": "Loads the latest snapshot for the requested stream."
+    },
+    {
       "DisplayName": "Localization",
       "Category": "Properties",
       "DeclaringTypeName": "EngineSettings",
@@ -19252,6 +20046,17 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "EventStreamDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets the normalized provider-specific metadata associated with the stream."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionDescriptor",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -19710,6 +20515,17 @@
       "AnchorId": "member-p-cephalon-abstractions-audit-auditstoredescriptor-mode",
       "Signature": "string Mode { get; }",
       "Summary": "Gets the audit-store mode."
+    },
+    {
+      "DisplayName": "Mode",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-mode",
+      "Signature": "string Mode { get; }",
+      "Summary": "Gets the normalized stream persistence mode."
     },
     {
       "DisplayName": "Mode",
@@ -20495,6 +21311,28 @@
     {
       "DisplayName": "OccurredAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "DomainEvent",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-domainevent-occurredatutc",
+      "Signature": "DateTime OccurredAtUtc { get; set; }",
+      "Summary": "Gets the time at which the event occurred in UTC."
+    },
+    {
+      "DisplayName": "OccurredAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-occurredatutc",
+      "Signature": "DateTime OccurredAtUtc { get; set; }",
+      "Summary": "Gets or sets the UTC time at which the domain event occurred."
+    },
+    {
+      "DisplayName": "OccurredAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "EntityFrameworkOutboxEntry",
       "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
       "AssemblyName": "Cephalon.Data.EntityFramework",
@@ -20524,6 +21362,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventpublication-occurredatutc",
       "Signature": "DateTimeOffset OccurredAtUtc { get; }",
       "Summary": "Gets the time at which the event occurred."
+    },
+    {
+      "DisplayName": "OccurredAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "IDomainEvent",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-idomainevent-occurredatutc",
+      "Signature": "DateTime OccurredAtUtc { get; }",
+      "Summary": "Gets the time at which the event occurred in UTC."
     },
     {
       "DisplayName": "OccurredAtUtc",
@@ -21507,6 +22356,17 @@
     {
       "DisplayName": "Payload",
       "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-payload",
+      "Signature": "string Payload { get; set; }",
+      "Summary": "Gets or sets the serialized event payload."
+    },
+    {
+      "DisplayName": "Payload",
+      "Category": "Properties",
       "DeclaringTypeName": "EntityFrameworkInboxEntry",
       "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
       "AssemblyName": "Cephalon.Data.EntityFramework",
@@ -22079,6 +22939,17 @@
     {
       "DisplayName": "Provider",
       "Category": "Properties",
+      "DeclaringTypeName": "EventStreamDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-provider",
+      "Signature": "string Provider { get; }",
+      "Summary": "Gets the normalized provider identifier."
+    },
+    {
+      "DisplayName": "Provider",
+      "Category": "Properties",
       "DeclaringTypeName": "InboxDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -22372,6 +23243,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-ieventdispatchstore-readpendingasync-system-int32-system-threading-cancellationtoken",
       "Signature": "ValueTask\u003CIReadOnlyList\u003CEventDispatchItem\u003E\u003E ReadPendingAsync(int maximumCount, CancellationToken cancellationToken)",
       "Summary": "Reads pending staged events that are eligible for dispatch."
+    },
+    {
+      "DisplayName": "ReadStreamAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventStore",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-eventsourcing-ieventstore-readstreamasync-system-string-system-int64-system-threading-cancellationtoken",
+      "Signature": "IAsyncEnumerable\u003CIDomainEvent\u003E ReadStreamAsync(string streamId, long fromVersion, CancellationToken cancellationToken)",
+      "Summary": "Reads the requested stream from the supplied version onward."
     },
     {
       "DisplayName": "ReadWriteSplit",
@@ -22845,6 +23727,28 @@
       "AnchorId": "member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-region",
       "Signature": "string Region { get; set; }",
       "Summary": "Gets or sets the Oracle Cloud region to stamp onto exported resources when one should be explicit."
+    },
+    {
+      "DisplayName": "Register",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventStreamRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventstreamregistry-register-cephalon-abstractions-eventsourcing-eventstreamdescriptor",
+      "Signature": "void Register(EventStreamDescriptor descriptor)",
+      "Summary": "Registers one event-stream descriptor with the registry."
+    },
+    {
+      "DisplayName": "Register",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventStoreRegistry",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-eventsourcing-ieventstoreregistry-register-cephalon-abstractions-eventsourcing-eventstreamdescriptor",
+      "Signature": "void Register(EventStreamDescriptor descriptor)",
+      "Summary": "Registers one event stream with the current runtime composition."
     },
     {
       "DisplayName": "RegisterAuditStores",
@@ -24453,6 +25357,17 @@
       "Summary": "Gets or sets the optional SASL mechanism, such as \u0060Plain\u0060, \u0060ScramSha256\u0060, or \u0060ScramSha512\u0060."
     },
     {
+      "DisplayName": "SaveSnapshotAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "ISnapshotStore",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-eventsourcing-isnapshotstore-savesnapshotasync-1-system-string-system-int64-0-system-threading-cancellationtoken",
+      "Signature": "Task SaveSnapshotAsync\u003CTState\u003E(string streamId, long version, TState state, CancellationToken cancellationToken)",
+      "Summary": "Saves one snapshot for the requested stream."
+    },
+    {
       "DisplayName": "SayHello",
       "Category": "Methods",
       "DeclaringTypeName": "DiscoveryServiceBase",
@@ -24671,6 +25586,17 @@
       "AnchorId": "member-f-cephalon-engine-configuration-enginesettings-sectionname",
       "Signature": "const string SectionName",
       "Summary": "Gets the default root configuration section name for engine settings."
+    },
+    {
+      "DisplayName": "SectionName",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSourcingOptions",
+      "NamespaceName": "Cephalon.EventSourcing.Configuration",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-f-cephalon-eventsourcing-configuration-eventsourcingoptions-sectionname",
+      "Signature": "const string SectionName",
+      "Summary": "The configuration section that owns the host-level event-sourcing settings."
     },
     {
       "DisplayName": "SectionName",
@@ -25221,6 +26147,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-capabilitypolicydecision-sourcemoduleid",
       "Signature": "string SourceModuleId { get; set; }",
       "Summary": "The module that contributed the capability."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the normalized source module identifier."
     },
     {
       "DisplayName": "SourceModuleId",
@@ -25916,6 +26853,50 @@
       "Summary": "Gets the strategy design pattern."
     },
     {
+      "DisplayName": "StreamId",
+      "Category": "Properties",
+      "DeclaringTypeName": "DomainEvent",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-domainevent-streamid",
+      "Signature": "string StreamId { get; set; }",
+      "Summary": "Gets the stable stream identifier that owns the event."
+    },
+    {
+      "DisplayName": "StreamId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-streamid",
+      "Signature": "string StreamId { get; set; }",
+      "Summary": "Gets or sets the stable logical stream identifier."
+    },
+    {
+      "DisplayName": "StreamId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamConcurrencyException",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception-streamid",
+      "Signature": "string StreamId { get; }",
+      "Summary": "Gets the stream identifier that failed the concurrency check."
+    },
+    {
+      "DisplayName": "StreamId",
+      "Category": "Properties",
+      "DeclaringTypeName": "IDomainEvent",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-idomainevent-streamid",
+      "Signature": "string StreamId { get; }",
+      "Summary": "Gets the stable stream identifier that owns the event."
+    },
+    {
       "DisplayName": "StreamPrinciples",
       "Category": "Methods",
       "DeclaringTypeName": "DiscoveryServiceBase",
@@ -25947,6 +26928,39 @@
       "AnchorId": "member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-streamprinciples-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken",
       "Signature": "AsyncServerStreamingCall\u003CPrincipleReply\u003E StreamPrinciples(PrinciplesRequest request, Metadata headers, DateTime? deadline, CancellationToken cancellationToken)",
       "Summary": "Streams the host principles that describe the Cephalon runtime shape."
+    },
+    {
+      "DisplayName": "StreamVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "DomainEvent",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-domainevent-streamversion",
+      "Signature": "long StreamVersion { get; set; }",
+      "Summary": "Gets the optimistic stream version assigned to the event."
+    },
+    {
+      "DisplayName": "StreamVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-streamversion",
+      "Signature": "long StreamVersion { get; set; }",
+      "Summary": "Gets or sets the optimistic stream version for the event."
+    },
+    {
+      "DisplayName": "StreamVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "IDomainEvent",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-idomainevent-streamversion",
+      "Signature": "long StreamVersion { get; }",
+      "Summary": "Gets the optimistic stream version assigned to the event."
     },
     {
       "DisplayName": "SubjectAttributePrefix",
@@ -26420,6 +27434,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventchanneldescriptor-tags",
       "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
       "Summary": "Gets the normalized tag set associated with the channel."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.EventSourcing",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-tags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets the normalized descriptive tags associated with the stream."
     },
     {
       "DisplayName": "Tags",
@@ -26926,6 +27951,17 @@
       "AnchorId": "member-p-cephalon-abstractions-authorization-authorizationresource-tenantid",
       "Signature": "string TenantId { get; }",
       "Summary": "Gets the tenant identifier associated with the resource."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-tenantid",
+      "Signature": "string TenantId { get; set; }",
+      "Summary": "Gets or sets the tenant identifier associated with the event when known."
     },
     {
       "DisplayName": "TenantId",

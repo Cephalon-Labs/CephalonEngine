@@ -66,6 +66,9 @@ Browse the published API surface by public member.
 - [ActorType](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditactor-actortype): `Properties` on `AuditActor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the logical actor type when one is known.
   - `string ActorType { get; }`
+- [ActualVersion](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception-actualversion): `Properties` on `EventStreamConcurrencyException` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActualVersion&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the version that currently exists in the store.
+  - `long ActualVersion { get; }`
 - [Add](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttoolregistry-add-cephalon-agentics-services-agenttooldescriptor): `Methods` on `IAgentToolRegistry` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Add&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Adds a tool descriptor to the registry.
   - `void Add(AgentToolDescriptor tool)`
@@ -177,6 +180,12 @@ Browse the published API surface by public member.
 - [AddCephalonElasticsearchDependencyHealth](cephalon-observability-elasticsearchdependencies.md#member-m-cephalon-observability-elasticsearchdependencies-hosting-elasticsearchdependencyhealthservicecollectionextensions-addcephalonelasticsearchdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions): `Methods` on `ElasticsearchDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.ElasticsearchDependencies.Hosting` (`Cephalon.Observability.ElasticsearchDependencies`) [Browse](browse.html?q=AddCephalonElasticsearchDependencyHealth&assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Hosting&scope=members)
   - Adds Elasticsearch dependency-health services using configuration as the primary source of probe settings.
   - `IServiceCollection AddCephalonElasticsearchDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<ElasticsearchDependencyHealthOptions> configure)`
+- [AddCephalonEntityFrameworkEventSourcing](cephalon-eventsourcing-entityframework.md#member-m-cephalon-eventsourcing-entityframework-hosting-entityframeworkeventsourcingservicecollectionextensions-addcephalonentityframeworkeventsourcing-1-microsoft-extensions-dependencyinjection-iservicecollection): `Methods` on `EntityFrameworkEventSourcingServiceCollectionExtensions` in `Cephalon.EventSourcing.EntityFramework.Hosting` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=AddCephalonEntityFrameworkEventSourcing&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework.Hosting&scope=members)
+  - Adds the Entity Framework event-store provider to the service collection.
+  - `IServiceCollection AddCephalonEntityFrameworkEventSourcing<TContext>(this IServiceCollection services)`
+- [AddCephalonEventSourcing](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-hosting-eventsourcingservicecollectionextensions-addcephaloneventsourcing-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-eventsourcing-configuration-eventsourcingoptions): `Methods` on `EventSourcingServiceCollectionExtensions` in `Cephalon.EventSourcing.Hosting` (`Cephalon.EventSourcing`) [Browse](browse.html?q=AddCephalonEventSourcing&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Hosting&scope=members)
+  - Adds the Cephalon event-sourcing baseline services to the service collection.
+  - `IServiceCollection AddCephalonEventSourcing(this IServiceCollection services, Action<EventSourcingOptions> configure)`
 - [AddCephalonGcp](cephalon-observability-gcp.md#member-m-cephalon-observability-gcp-hosting-gcphostapplicationbuilderextensions-addcephalongcp-1-0-system-action-cephalon-observability-gcp-configuration-gcptelemetryexportoptions): `Methods` on `GcpHostApplicationBuilderExtensions` in `Cephalon.Observability.Gcp.Hosting` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=AddCephalonGcp&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Hosting&scope=members)
   - Adds GCP-aware OpenTelemetry registration for the Cephalon engine diagnostics surface.
   - `TBuilder AddCephalonGcp<TBuilder>(this TBuilder builder, Action<GcpTelemetryExportOptions> configure)`
@@ -333,9 +342,15 @@ Browse the published API surface by public member.
 - [AddEntityFrameworkData](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-registration-entityframeworkdataenginebuilderextensions-addentityframeworkdata-2-cephalon-engine-composition-enginebuilder-system-action-microsoft-entityframeworkcore-dbcontextoptionsbuilder-system-action-microsoft-entityframeworkcore-dbcontextoptionsbuilder-system-action-cephalon-data-entityframework-configuration-entityframeworkdataoptions): `Methods` on `EntityFrameworkDataEngineBuilderExtensions` in `Cephalon.Data.EntityFramework.Registration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=AddEntityFrameworkData&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Registration&scope=members)
   - Adds the Entity Framework Core data pack with explicit read and write `DbContext` types.
   - `EngineBuilder AddEntityFrameworkData<TReadDbContext, TWriteDbContext>(this EngineBuilder builder, Action<DbContextOptionsBuilder> configureReadDbContext, Action<DbContextOptionsBuilder> configureWriteDbContext, Action<EntityFrameworkDataOptions> configure)`
+- [AddEntityFrameworkEventSourcing](cephalon-eventsourcing-entityframework.md#member-m-cephalon-eventsourcing-entityframework-registration-entityframeworkeventsourcingenginebuilderextensions-addentityframeworkeventsourcing-1-cephalon-engine-composition-enginebuilder): `Methods` on `EntityFrameworkEventSourcingEngineBuilderExtensions` in `Cephalon.EventSourcing.EntityFramework.Registration` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=AddEntityFrameworkEventSourcing&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework.Registration&scope=members)
+  - Adds the Entity Framework event-store provider to the engine.
+  - `EngineBuilder AddEntityFrameworkEventSourcing<TContext>(this EngineBuilder builder)`
 - [AddEventing](cephalon-eventing.md#member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventing-cephalon-engine-composition-enginebuilder-system-action-cephalon-eventing-configuration-eventingoptions): `Methods` on `EventingEngineBuilderExtensions` in `Cephalon.Eventing.Registration` (`Cephalon.Eventing`) [Browse](browse.html?q=AddEventing&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Registration&scope=members)
   - Adds the eventing runtime pack to the engine.
   - `EngineBuilder AddEventing(this EngineBuilder builder, Action<EventingOptions> configure)`
+- [AddEventSourcing](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-registration-eventsourcingenginebuilderextensions-addeventsourcing-cephalon-engine-composition-enginebuilder-system-action-cephalon-eventsourcing-configuration-eventsourcingoptions): `Methods` on `EventSourcingEngineBuilderExtensions` in `Cephalon.EventSourcing.Registration` (`Cephalon.EventSourcing`) [Browse](browse.html?q=AddEventSourcing&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Registration&scope=members)
+  - Adds the Cephalon event-sourcing companion pack to the engine.
+  - `EngineBuilder AddEventSourcing(this EngineBuilder builder, Action<EventSourcingOptions> configure)`
 - [AddGraphQLTransport](cephalon-aspnetcore-graphql.md#member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-addgraphqltransport-microsoft-extensions-dependencyinjection-iservicecollection): `Methods` on `GraphQLTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.GraphQL.Hosting` (`Cephalon.AspNetCore.GraphQL`) [Browse](browse.html?q=AddGraphQLTransport&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting&scope=members)
   - Adds the GraphQL transport mapper and GraphQL server services to the service collection.
   - `IServiceCollection AddGraphQLTransport(this IServiceCollection services)`
@@ -429,6 +444,9 @@ Browse the published API surface by public member.
 - [AgentToolDescriptor](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttooldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolDescriptor&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Creates a new agent tool descriptor.
   - `AgentToolDescriptor(string id, string displayName, string description, IReadOnlyList<string> tags, IReadOnlyList<string> capabilityKeys, string executionGraphId, string hostedExecutionId, IReadOnlyDictionary<string, string> metadata)`
+- [AggregateHydrator<TAggregate, TState>](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-aggregatehydrator-2-ctor): `Constructors` on `AggregateHydrator<TAggregate, TState>` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=AggregateHydrator%3CTAggregate%2C%20TState%3E&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Initializes a new instance of the `AggregateHydrator<T1, T2>` class.
+  - `AggregateHydrator<TAggregate, TState>()`
 - [Algorithm](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-algorithm): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Algorithm&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared signature algorithm.
   - `string Algorithm { get; }`
@@ -456,6 +474,12 @@ Browse the published API surface by public member.
 - [All](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-all): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=All&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
   - Gets all built-in transport descriptors.
   - `IReadOnlyList<TransportDescriptor> All { get; }`
+- [All](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamcatalog-all): `Properties` on `EventStreamCatalog` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=All&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets all event-stream descriptors contributed to the current runtime.
+  - `IReadOnlyList<EventStreamDescriptor> All { get; }`
+- [All](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-ieventstorecatalog-all): `Properties` on `IEventStoreCatalog` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=All&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets all event-stream descriptors visible to the current runtime.
+  - `IReadOnlyList<EventStreamDescriptor> All { get; }`
 - [Allow](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-authorizationdecision-allow-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-authorization-authorizationmode-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AuthorizationDecision` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Allow&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Creates an allowed authorization decision.
   - `AuthorizationDecision Allow(string policyId, string reason, IReadOnlyList<AuthorizationMode> modes, IReadOnlyDictionary<string, string> metadata)`
@@ -492,9 +516,18 @@ Browse the published API surface by public member.
 - [AppBlueprint](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appblueprint-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AppBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppBlueprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Creates a blueprint with optional scaffold metadata.
   - `AppBlueprint(string id, string displayName, string description, IReadOnlyList<PatternDescriptor> patterns, ScaffoldPlan scaffold, IReadOnlyDictionary<string, string> metadata)`
+- [AppendAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-ieventstore-appendasync-system-string-system-collections-generic-ireadonlycollection-cephalon-abstractions-eventsourcing-idomainevent-system-int64-system-threading-cancellationtoken): `Methods` on `IEventStore` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppendAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Appends one or more events to the requested stream after checking the expected version.
+  - `Task AppendAsync(string streamId, IReadOnlyCollection<IDomainEvent> events, long expectedVersion, CancellationToken cancellationToken)`
+- [AppendedAtUtc](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-appendedatutc): `Properties` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=AppendedAtUtc&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Gets or sets the UTC time at which the event was appended to the store.
+  - `DateTime AppendedAtUtc { get; set; }`
 - [AppId](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-appid): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=AppId&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the App Platform application identifier to stamp onto exported resources.
   - `string AppId { get; set; }`
+- [Apply](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-iaggregate-1-apply-0-cephalon-abstractions-eventsourcing-idomainevent): `Methods` on `IAggregate<TState>` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Apply&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Applies one event to the current state and returns the next state snapshot.
+  - `TState Apply(TState current, IDomainEvent evt)`
 - [ApplyReportAsync](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventdispatchstore-applyreportasync-cephalon-eventing-services-eventdispatchexecutionreport-system-threading-cancellationtoken): `Methods` on `IEventDispatchStore` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ApplyReportAsync&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Applies one durable dispatch outcome to the active staged-event store.
   - `ValueTask ApplyReportAsync(EventDispatchExecutionReport report, CancellationToken cancellationToken)`
@@ -900,6 +933,9 @@ Browse the published API surface by public member.
 - [Configuration](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-configuration): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Configuration&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the build configuration to read from.
   - `string Configuration { get; }`
+- [ConfigureCephalonEvents](cephalon-eventsourcing-entityframework.md#member-m-cephalon-eventsourcing-entityframework-entityframeworkeventsourcingconfiguration-configurecephalonevents-microsoft-entityframeworkcore-modelbuilder): `Methods` on `EntityFrameworkEventSourcingConfiguration` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=ConfigureCephalonEvents&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Configures the `CephalonEvents` table and indexes required by the Entity Framework event-store provider.
+  - `void ConfigureCephalonEvents(ModelBuilder modelBuilder)`
 - [ConfigureCephalonInbox](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-modeling-entityframeworkmodelbuilderextensions-configurecephaloninbox-microsoft-entityframeworkcore-modelbuilder-system-string): `Methods` on `EntityFrameworkModelBuilderExtensions` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ConfigureCephalonInbox&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Adds the Cephalon inbox entity mapping to the supplied model.
   - `ModelBuilder ConfigureCephalonInbox(this ModelBuilder modelBuilder, string tableName)`
@@ -1002,6 +1038,12 @@ Browse the published API surface by public member.
 - [Contracts](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-contracts): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Contracts&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies the contracts project.
   - `const string Contracts`
+- [Contribute](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventstreamregistry-contribute): `Methods` on `EventStreamRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Contribute&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Returns the descriptors that have been registered with the current registry instance.
+  - `IReadOnlyList<EventStreamDescriptor> Contribute()`
+- [Contribute](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-ieventstorecontributor-contribute): `Methods` on `IEventStoreContributor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Contribute&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Returns the event-stream descriptors contributed by the current module or package.
+  - `IReadOnlyList<EventStreamDescriptor> Contribute()`
 - [Conventions](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-conventions): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Conventions&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The published diagnostics conventions and event-id catalogs visible to the current host.
   - `IReadOnlyList<DiagnosticsConvention> Conventions { get; set; }`
@@ -1026,6 +1068,9 @@ Browse the published API surface by public member.
 - [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationcontext-correlationid): `Properties` on `AuthorizationContext` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the correlation identifier associated with the current operation.
   - `string CorrelationId { get; }`
+- [CorrelationId](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-correlationid): `Properties` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Gets or sets the correlation identifier associated with the event when known.
+  - `string CorrelationId { get; set; }`
 - [CorrelationId](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkinboxentry-correlationid): `Properties` on `EntityFrameworkInboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the correlation identifier associated with the message.
   - `string CorrelationId { get; set; }`
@@ -1188,6 +1233,9 @@ Browse the published API surface by public member.
 - [DefaultManifestFileName](cephalon-engine.md#member-f-cephalon-engine-configuration-modulepackagedirectory-defaultmanifestfilename): `Fields` on `ModulePackageDirectory` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultManifestFileName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the default manifest file name expected inside package directories.
   - `const string DefaultManifestFileName`
+- [DefaultProvider](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-configuration-eventsourcingoptions-defaultprovider): `Properties` on `EventSourcingOptions` in `Cephalon.EventSourcing.Configuration` (`Cephalon.EventSourcing`) [Browse](browse.html?q=DefaultProvider&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Configuration&scope=members)
+  - Gets or sets the default event-store provider identifier.
+  - `string DefaultProvider { get; set; }`
 - [DefaultRootFolderName](cephalon-engine.md#member-f-cephalon-engine-configuration-projectconfigurationbuilderextensions-defaultrootfoldername): `Fields` on `ProjectConfigurationBuilderExtensions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultRootFolderName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the default root folder name used for split project configuration files.
   - `const string DefaultRootFolderName`
@@ -1334,6 +1382,9 @@ Browse the published API surface by public member.
   - `string Description { get; }`
 - [Description](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimedescriptor-description): `Properties` on `EventDispatchRuntimeDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Description&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the human-readable dispatch-runtime description.
+  - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-description): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the normalized human-readable description.
   - `string Description { get; }`
 - [Description](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-description): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Description&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the human-readable description of the subscription.
@@ -1511,6 +1562,9 @@ Browse the published API surface by public member.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimedescriptor-displayname): `Properties` on `EventDispatchRuntimeDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the operator-facing dispatch-runtime name.
+  - `string DisplayName { get; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-displayname): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the normalized operator-facing name.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-displayname): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the operator-facing display name for the subscription.
@@ -1791,6 +1845,9 @@ Browse the published API surface by public member.
 - [EnableSfidIdentifiers](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-enablesfididentifiers): `Properties` on `EntityFrameworkDataOptions` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=EnableSfidIdentifiers&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets or sets a value indicating whether the pack should enable official `Sfid.EntityFramework` conventions and key generation.
   - `bool EnableSfidIdentifiers { get; set; }`
+- [EnableSnapshots](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-configuration-eventsourcingoptions-enablesnapshots): `Properties` on `EventSourcingOptions` in `Cephalon.EventSourcing.Configuration` (`Cephalon.EventSourcing`) [Browse](browse.html?q=EnableSnapshots&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Configuration&scope=members)
+  - Gets or sets a value indicating whether snapshot-aware paths are enabled.
+  - `bool EnableSnapshots { get; set; }`
 - [EnableSubscriptions](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-enablesubscriptions): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=EnableSubscriptions&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Gets or sets a value indicating whether subscription features are enabled.
   - `bool EnableSubscriptions { get; set; }`
@@ -1845,6 +1902,9 @@ Browse the published API surface by public member.
 - [EntityFrameworkDataOptions](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-configuration-entityframeworkdataoptions-ctor-system-type-system-type): `Constructors` on `EntityFrameworkDataOptions` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=EntityFrameworkDataOptions&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Initializes a new instance of the `EntityFrameworkDataOptions` class.
   - `EntityFrameworkDataOptions(Type readDbContextType, Type writeDbContextType)`
+- [EntityFrameworkEventEntry](cephalon-eventsourcing-entityframework.md#member-m-cephalon-eventsourcing-entityframework-entityframeworkevententry-ctor): `Constructors` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=EntityFrameworkEventEntry&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Initializes a new instance of the `EntityFrameworkEventEntry` class.
+  - `EntityFrameworkEventEntry()`
 - [EntityFrameworkInboxEntry](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-modeling-entityframeworkinboxentry-ctor): `Constructors` on `EntityFrameworkInboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=EntityFrameworkInboxEntry&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Initializes a new instance of the `EntityFrameworkInboxEntry` class.
   - `EntityFrameworkInboxEntry()`
@@ -1911,9 +1971,27 @@ Browse the published API surface by public member.
 - [Events](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticsconvention-events): `Properties` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Events&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The published event definitions that belong to the convention.
   - `IReadOnlyList<DiagnosticEventDefinition> Events { get; set; }`
+- [Events](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-ientityframeworkeventcontext-events): `Properties` on `IEntityFrameworkEventContext` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=Events&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Gets the event rows persisted by the active event-store context.
+  - `DbSet<EntityFrameworkEventEntry> Events { get; }`
+- [EventSourcingOptions](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-configuration-eventsourcingoptions-ctor): `Constructors` on `EventSourcingOptions` in `Cephalon.EventSourcing.Configuration` (`Cephalon.EventSourcing`) [Browse](browse.html?q=EventSourcingOptions&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Configuration&scope=members)
+  - Initializes a new instance of the `EventSourcingOptions` class.
+  - `EventSourcingOptions()`
 - [EventSourcingPattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-eventsourcingpattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=EventSourcingPattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the event-sourcing pattern.
   - `PatternDescriptor EventSourcingPattern { get; }`
+- [EventStreamCatalog](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventstreamcatalog-ctor-system-collections-generic-ienumerable-cephalon-abstractions-eventsourcing-ieventstorecontributor): `Constructors` on `EventStreamCatalog` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=EventStreamCatalog&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Initializes a new instance of the `EventStreamCatalog` class.
+  - `EventStreamCatalog(IEnumerable<IEventStoreContributor> contributors)`
+- [EventStreamConcurrencyException](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception-ctor-system-string-system-int64-system-int64): `Constructors` on `EventStreamConcurrencyException` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventStreamConcurrencyException&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Initializes a new instance of the `EventStreamConcurrencyException` class.
+  - `EventStreamConcurrencyException(string streamId, long expectedVersion, long actualVersion)`
+- [EventStreamDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-eventstreamdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventStreamDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Initializes a new instance of the `EventStreamDescriptor` class.
+  - `EventStreamDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string mode, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
+- [EventStreamRegistry](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventstreamregistry-ctor): `Constructors` on `EventStreamRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=EventStreamRegistry&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Initializes a new instance of the `EventStreamRegistry` class.
+  - `EventStreamRegistry()`
 - [EventSubscriptionDescriptor](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptiondescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventSubscriptionDescriptor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a new event subscription descriptor.
   - `EventSubscriptionDescriptor(string id, string displayName, string description, string channelId, string handlerId, string deliveryMode, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
@@ -1923,6 +2001,9 @@ Browse the published API surface by public member.
 - [EventSubscriptionRuntimeState](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionruntimestate-ctor-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventSubscriptionRuntimeState&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Describes the latest operator-facing runtime state reported for one declared event subscription.
   - `EventSubscriptionRuntimeState(string SubscriptionId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastMessageId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int RetryScheduledCount, int SkippedCount, string LastError, IReadOnlyDictionary<string, string> Metadata)`
+- [EventType](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-eventtype): `Properties` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=EventType&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Gets or sets the assembly-qualified CLR event type.
+  - `string EventType { get; set; }`
 - [EventType](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchitem-eventtype): `Properties` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventType&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the logical event type identifier.
   - `string EventType { get; }`
@@ -1986,6 +2067,9 @@ Browse the published API surface by public member.
 - [ExpectedStatusCodes](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-expectedstatuscodes): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=ExpectedStatusCodes&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the explicit HTTP status codes that should be treated as healthy.
   - `IReadOnlyList<int> ExpectedStatusCodes { get; set; }`
+- [ExpectedVersion](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception-expectedversion): `Properties` on `EventStreamConcurrencyException` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExpectedVersion&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the version that the caller expected.
+  - `long ExpectedVersion { get; }`
 - [Experience](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-experience): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Experience&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Identifies an experience-oriented technology.
   - `const TechnologyKind Experience`
@@ -2058,6 +2142,12 @@ Browse the published API surface by public member.
 - [Files](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedscaffold-files): `Properties` on `RenderedScaffold` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Files&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the rendered files.
   - `IReadOnlyList<RenderedFile> Files { get; }`
+- [FindById](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventstreamcatalog-findbyid-system-string): `Methods` on `EventStreamCatalog` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=FindById&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Finds one event-stream descriptor by its stable identifier.
+  - `EventStreamDescriptor FindById(string id)`
+- [FindById](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-ieventstorecatalog-findbyid-system-string): `Methods` on `IEventStoreCatalog` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=FindById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Finds one event stream by its stable identifier.
+  - `EventStreamDescriptor FindById(string id)`
 - [Fingerprint](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-fingerprint): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Fingerprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared signer fingerprint.
   - `string Fingerprint { get; }`
@@ -2301,9 +2391,15 @@ Browse the published API surface by public member.
 - [GetByOutboxId](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventdispatchruntimecatalog-getbyoutboxid-system-string): `Methods` on `IEventDispatchRuntimeCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=GetByOutboxId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the latest reported dispatch state for one outbox-backed publication path.
   - `EventDispatchRuntimeState GetByOutboxId(string outboxId)`
+- [GetByProvider](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventstreamcatalog-getbyprovider-system-string): `Methods` on `EventStreamCatalog` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the event-stream descriptors backed by the requested provider identifier.
+  - `IReadOnlyList<EventStreamDescriptor> GetByProvider(string provider)`
 - [GetByProvider](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iauditstorecatalog-getbyprovider-system-string): `Methods` on `IAuditStoreCatalog` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets all audit stores backed by the requested provider identifier.
   - `IReadOnlyList<AuditStoreDescriptor> GetByProvider(string provider)`
+- [GetByProvider](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-ieventstorecatalog-getbyprovider-system-string): `Methods` on `IEventStoreCatalog` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets all event streams backed by the requested provider identifier.
+  - `IReadOnlyList<EventStreamDescriptor> GetByProvider(string provider)`
 - [GetByProvider](cephalon-abstractions.md#member-m-cephalon-abstractions-data-iinboxcatalog-getbyprovider-system-string): `Methods` on `IInboxCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all inboxes backed by the requested provider identifier.
   - `IReadOnlyList<InboxDescriptor> GetByProvider(string provider)`
@@ -2349,6 +2445,9 @@ Browse the published API surface by public member.
 - [GetResources](cephalon-engine.md#member-m-cephalon-engine-localization-localizedtextcatalog-getresources-system-string): `Methods` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=GetResources&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
   - Gets the merged resources visible for the specified culture.
   - `IReadOnlyDictionary<string, string> GetResources(string culture)`
+- [GetVersionAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-ieventstore-getversionasync-system-string-system-threading-cancellationtoken): `Methods` on `IEventStore` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetVersionAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the latest version known for the requested stream.
+  - `Task<long> GetVersionAsync(string streamId, CancellationToken cancellationToken)`
 - [GrafanaCloudTelemetryExportOptions](cephalon-observability-grafanacloud.md#member-m-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-ctor): `Constructors` on `GrafanaCloudTelemetryExportOptions` in `Cephalon.Observability.GrafanaCloud.Configuration` (`Cephalon.Observability.GrafanaCloud`) [Browse](browse.html?q=GrafanaCloudTelemetryExportOptions&assembly=Cephalon.Observability.GrafanaCloud&namespace=Cephalon.Observability.GrafanaCloud.Configuration&scope=members)
   - Initializes a new instance of the `GrafanaCloudTelemetryExportOptions` class.
   - `GrafanaCloudTelemetryExportOptions()`
@@ -2619,6 +2718,9 @@ Browse the published API surface by public member.
 - [HybridCloudRuntime](cephalon-engine.md#member-p-cephalon-engine-technologies-builtintechnologies-hybridcloudruntime): `Properties` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=HybridCloudRuntime&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
   - Gets the built-in hybrid-cloud-runtime technology profile.
   - `TechnologyDescriptor HybridCloudRuntime { get; }`
+- [HydrateAsync](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-aggregatehydrator-2-hydrateasync-cephalon-abstractions-eventsourcing-ieventstore-system-string-system-int64-system-threading-cancellationtoken): `Methods` on `AggregateHydrator<TAggregate, TState>` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=HydrateAsync&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Rehydrates one aggregate state by replaying the requested event stream.
+  - `Task<ValueTuple<TState, long>> HydrateAsync(IEventStore eventStore, string streamId, long fromVersion, CancellationToken cancellationToken)`
 
 ## I
 
@@ -2658,6 +2760,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-observability-elasticsearchdependencies.md#member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-id): `Properties` on `ElasticsearchDependencyDefinition` in `Cephalon.Observability.ElasticsearchDependencies.Configuration` (`Cephalon.Observability.ElasticsearchDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Configuration&scope=members)
   - Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
   - `string Id { get; set; }`
+- [Id](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-id): `Properties` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=Id&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Gets or sets the database-assigned row identifier.
+  - `long Id { get; set; }`
 - [Id](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkinboxentry-id): `Properties` on `EntityFrameworkInboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=Id&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the stable inbound message identifier.
   - `string Id { get; set; }`
@@ -2672,6 +2777,9 @@ Browse the published API surface by public member.
   - `string Id { get; }`
 - [Id](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-id): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Id&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable publication identifier.
+  - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-id): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the normalized event-stream identifier.
   - `string Id { get; }`
 - [Id](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-id): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Id&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable subscription identifier.
@@ -3141,6 +3249,9 @@ Browse the published API surface by public member.
 - [LoadedPackages](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperationalstory-loadedpackages): `Properties` on `RuntimeOperationalStory` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LoadedPackages&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The packages currently visible to the runtime story.
   - `IReadOnlyList<PackageManifest> LoadedPackages { get; set; }`
+- [LoadSnapshotAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-isnapshotstore-loadsnapshotasync-1-system-string-system-threading-cancellationtoken): `Methods` on `ISnapshotStore` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=LoadSnapshotAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Loads the latest snapshot for the requested stream.
+  - `Task<ValueTuple<TState, long>> LoadSnapshotAsync<TState>(string streamId, CancellationToken cancellationToken)`
 - [Localization](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-localization): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Localization&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets localization configuration values.
   - `LocalizationSettings Localization { get; }`
@@ -3369,6 +3480,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-metadata): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the event metadata associated with the publication.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-metadata): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the normalized provider-specific metadata associated with the stream.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-metadata): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets normalized metadata associated with the subscription.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -3494,6 +3608,9 @@ Browse the published API surface by public member.
   - `string MinimumVersion { get; }`
 - [Mode](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditstoredescriptor-mode): `Properties` on `AuditStoreDescriptor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the audit-store mode.
+  - `string Mode { get; }`
+- [Mode](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-mode): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the normalized stream persistence mode.
   - `string Mode { get; }`
 - [Mode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-inboxdescriptor-mode): `Properties` on `InboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the inbox mode.
@@ -3714,6 +3831,12 @@ Browse the published API surface by public member.
 - [OccurredAtUtc](cephalon-audit.md#member-p-cephalon-audit-services-auditrecordrequest-occurredatutc): `Properties` on `AuditRecordRequest` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
   - Gets the caller-supplied occurrence time when one is known.
   - `DateTimeOffset? OccurredAtUtc { get; }`
+- [OccurredAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-domainevent-occurredatutc): `Properties` on `DomainEvent` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the time at which the event occurred in UTC.
+  - `DateTime OccurredAtUtc { get; set; }`
+- [OccurredAtUtc](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-occurredatutc): `Properties` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Gets or sets the UTC time at which the domain event occurred.
+  - `DateTime OccurredAtUtc { get; set; }`
 - [OccurredAtUtc](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkoutboxentry-occurredatutc): `Properties` on `EntityFrameworkOutboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the time at which the message became visible to the outbox.
   - `DateTimeOffset OccurredAtUtc { get; set; }`
@@ -3723,6 +3846,9 @@ Browse the published API surface by public member.
 - [OccurredAtUtc](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-occurredatutc): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the time at which the event occurred.
   - `DateTimeOffset OccurredAtUtc { get; }`
+- [OccurredAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-idomainevent-occurredatutc): `Properties` on `IDomainEvent` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the time at which the event occurred in UTC.
+  - `DateTime OccurredAtUtc { get; }`
 - [OccurredAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-occurredatutc): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the time at which the message became visible to the outbox.
   - `DateTimeOffset OccurredAtUtc { get; }`
@@ -3993,6 +4119,9 @@ Browse the published API surface by public member.
 - [Patterns](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-patterns): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Patterns&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the selected pattern identifiers.
   - `IReadOnlyList<string> Patterns { get; }`
+- [Payload](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-payload): `Properties` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=Payload&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Gets or sets the serialized event payload.
+  - `string Payload { get; set; }`
 - [Payload](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkinboxentry-payload): `Properties` on `EntityFrameworkInboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=Payload&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the serialized payload that was received.
   - `string Payload { get; set; }`
@@ -4149,6 +4278,9 @@ Browse the published API surface by public member.
 - [Provider](cephalon-engine.md#member-p-cephalon-engine-configuration-datasettings-provider): `Properties` on `DataSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Provider&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the selected primary data-provider family or implementation identifier.
   - `string Provider { get; }`
+- [Provider](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-provider): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Provider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the normalized provider identifier.
+  - `string Provider { get; }`
 - [Provider](cephalon-abstractions.md#member-p-cephalon-abstractions-data-inboxdescriptor-provider): `Properties` on `InboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Provider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the logical provider identifier that backs the inbox.
   - `string Provider { get; }`
@@ -4236,6 +4368,9 @@ Browse the published API surface by public member.
 - [ReadPendingAsync](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventdispatchstore-readpendingasync-system-int32-system-threading-cancellationtoken): `Methods` on `IEventDispatchStore` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ReadPendingAsync&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Reads pending staged events that are eligible for dispatch.
   - `ValueTask<IReadOnlyList<EventDispatchItem>> ReadPendingAsync(int maximumCount, CancellationToken cancellationToken)`
+- [ReadStreamAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-ieventstore-readstreamasync-system-string-system-int64-system-threading-cancellationtoken): `Methods` on `IEventStore` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReadStreamAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Reads the requested stream from the supplied version onward.
+  - `IAsyncEnumerable<IDomainEvent> ReadStreamAsync(string streamId, long fromVersion, CancellationToken cancellationToken)`
 - [ReadWriteSplit](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-dataselection-readwritesplit): `Properties` on `DataSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReadWriteSplit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether distinct read and write paths were explicitly selected.
   - `bool? ReadWriteSplit { get; }`
@@ -4365,6 +4500,12 @@ Browse the published API surface by public member.
 - [Region](cephalon-observability-oraclecloud.md#member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-region): `Properties` on `OracleCloudTelemetryExportOptions` in `Cephalon.Observability.OracleCloud.Configuration` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=Region&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration&scope=members)
   - Gets or sets the Oracle Cloud region to stamp onto exported resources when one should be explicit.
   - `string Region { get; set; }`
+- [Register](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventstreamregistry-register-cephalon-abstractions-eventsourcing-eventstreamdescriptor): `Methods` on `EventStreamRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Register&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Registers one event-stream descriptor with the registry.
+  - `void Register(EventStreamDescriptor descriptor)`
+- [Register](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-ieventstoreregistry-register-cephalon-abstractions-eventsourcing-eventstreamdescriptor): `Methods` on `IEventStoreRegistry` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Register&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Registers one event stream with the current runtime composition.
+  - `void Register(EventStreamDescriptor descriptor)`
 - [RegisterAuditStores](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iauditstorecontributor-registerauditstores-cephalon-abstractions-audit-iauditstoreregistry): `Methods` on `IAuditStoreContributor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterAuditStores&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Registers one or more audit-store descriptors with the supplied registry.
   - `void RegisterAuditStores(IAuditStoreRegistry auditStores)`
@@ -4806,6 +4947,9 @@ Browse the published API surface by public member.
 - [SaslMechanism](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-saslmechanism): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=SaslMechanism&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
   - Gets or sets the optional SASL mechanism, such as `Plain`, `ScramSha256`, or `ScramSha512`.
   - `string SaslMechanism { get; set; }`
+- [SaveSnapshotAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-isnapshotstore-savesnapshotasync-1-system-string-system-int64-0-system-threading-cancellationtoken): `Methods` on `ISnapshotStore` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=SaveSnapshotAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Saves one snapshot for the requested stream.
+  - `Task SaveSnapshotAsync<TState>(string streamId, long version, TState state, CancellationToken cancellationToken)`
 - [SayHello](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryservicebase-sayhello-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-grpc-core-servercallcontext): `Methods` on `DiscoveryServiceBase` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=SayHello&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Returns a single greeting for the requested caller.
   - `Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)`
@@ -4865,6 +5009,9 @@ Browse the published API surface by public member.
   - `string Scope { get; }`
 - [SectionName](cephalon-engine.md#member-f-cephalon-engine-configuration-enginesettings-sectionname): `Fields` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=SectionName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the default root configuration section name for engine settings.
+  - `const string SectionName`
+- [SectionName](cephalon-eventsourcing.md#member-f-cephalon-eventsourcing-configuration-eventsourcingoptions-sectionname): `Fields` on `EventSourcingOptions` in `Cephalon.EventSourcing.Configuration` (`Cephalon.EventSourcing`) [Browse](browse.html?q=SectionName&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Configuration&scope=members)
+  - The configuration section that owns the host-level event-sourcing settings.
   - `const string SectionName`
 - [SectionName](cephalon-aspnetcore.md#member-f-cephalon-aspnetcore-documentation-referencedocshostingoptions-sectionname): `Fields` on `ReferenceDocsHostingOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=SectionName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Gets the default configuration section used for reference-doc hosting.
@@ -5016,6 +5163,9 @@ Browse the published API surface by public member.
 - [SourceModuleId](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-sourcemoduleid): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The module that contributed the capability.
   - `string SourceModuleId { get; set; }`
+- [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-sourcemoduleid): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the normalized source module identifier.
+  - `string SourceModuleId { get; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphdescriptor-sourcemoduleid): `Properties` on `ExecutionGraphDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the identifier of the module that contributed the graph.
   - `string SourceModuleId { get; }`
@@ -5205,6 +5355,18 @@ Browse the published API surface by public member.
 - [StrategyPattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-strategypattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=StrategyPattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the strategy design pattern.
   - `PatternDescriptor StrategyPattern { get; }`
+- [StreamId](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-domainevent-streamid): `Properties` on `DomainEvent` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=StreamId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the stable stream identifier that owns the event.
+  - `string StreamId { get; set; }`
+- [StreamId](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-streamid): `Properties` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=StreamId&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Gets or sets the stable logical stream identifier.
+  - `string StreamId { get; set; }`
+- [StreamId](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception-streamid): `Properties` on `EventStreamConcurrencyException` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=StreamId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the stream identifier that failed the concurrency check.
+  - `string StreamId { get; }`
+- [StreamId](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-idomainevent-streamid): `Properties` on `IDomainEvent` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=StreamId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the stable stream identifier that owns the event.
+  - `string StreamId { get; }`
 - [StreamPrinciples](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryservicebase-streamprinciples-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-grpc-core-iserverstreamwriter-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-grpc-core-servercallcontext): `Methods` on `DiscoveryServiceBase` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=StreamPrinciples&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Streams the host principles that describe the Cephalon runtime shape.
   - `Task StreamPrinciples(PrinciplesRequest request, IServerStreamWriter<PrincipleReply> responseStream, ServerCallContext context)`
@@ -5214,6 +5376,15 @@ Browse the published API surface by public member.
 - [StreamPrinciples](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-streamprinciples-cephalon-aspnetcore-grpc-contracts-discovery-principlesrequest-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken): `Methods` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=StreamPrinciples&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Streams the host principles that describe the Cephalon runtime shape.
   - `AsyncServerStreamingCall<PrincipleReply> StreamPrinciples(PrinciplesRequest request, Metadata headers, DateTime? deadline, CancellationToken cancellationToken)`
+- [StreamVersion](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-domainevent-streamversion): `Properties` on `DomainEvent` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=StreamVersion&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the optimistic stream version assigned to the event.
+  - `long StreamVersion { get; set; }`
+- [StreamVersion](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-streamversion): `Properties` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=StreamVersion&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Gets or sets the optimistic stream version for the event.
+  - `long StreamVersion { get; set; }`
+- [StreamVersion](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-idomainevent-streamversion): `Properties` on `IDomainEvent` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=StreamVersion&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the optimistic stream version assigned to the event.
+  - `long StreamVersion { get; }`
 - [SubjectAttributePrefix](cephalon-identity.md#member-f-cephalon-identity-policies-identitypolicymetadatakeys-subjectattributeprefix): `Fields` on `IdentityPolicyMetadataKeys` in `Cephalon.Identity.Policies` (`Cephalon.Identity`) [Browse](browse.html?q=SubjectAttributePrefix&assembly=Cephalon.Identity&namespace=Cephalon.Identity.Policies&scope=members)
   - The metadata key prefix for required subject attributes.
   - `const string SubjectAttributePrefix`
@@ -5345,6 +5516,9 @@ Browse the published API surface by public member.
   - `IReadOnlyList<string> Tags { get; }`
 - [Tags](cephalon-eventing.md#member-p-cephalon-eventing-services-eventchanneldescriptor-tags): `Properties` on `EventChannelDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Tags&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the normalized tag set associated with the channel.
+  - `IReadOnlyList<string> Tags { get; }`
+- [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-tags): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
+  - Gets the normalized descriptive tags associated with the stream.
   - `IReadOnlyList<string> Tags { get; }`
 - [Tags](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-tags): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Tags&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the normalized tag set associated with the subscription.
@@ -5484,6 +5658,9 @@ Browse the published API surface by public member.
 - [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationresource-tenantid): `Properties` on `AuthorizationResource` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the tenant identifier associated with the resource.
   - `string TenantId { get; }`
+- [TenantId](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-tenantid): `Properties` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=TenantId&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Gets or sets the tenant identifier associated with the event when known.
+  - `string TenantId { get; set; }`
 - [TenantId](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkinboxentry-tenantid): `Properties` on `EntityFrameworkInboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the tenant identifier associated with the message.
   - `string TenantId { get; set; }`
