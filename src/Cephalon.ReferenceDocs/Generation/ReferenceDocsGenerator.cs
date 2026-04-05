@@ -22,6 +22,7 @@ public static class ReferenceDocsGenerator
     private static readonly AssemblyMetadata[] AssemblyCatalog =
     [
         new("Cephalon.Abstractions", "Core", "Host-agnostic contracts that module and package authors build against."),
+        new("Cephalon.Audit", "Phase 8 Companion Packs", "Host-agnostic audit recording baseline with audit-store cataloging for Cephalon runtimes."),
         new("Cephalon.Engine", "Core", "Composition, runtime, policy, manifest, and introspection services."),
         new("Cephalon.AspNetCore", "Hosts", "ASP.NET Core host core, REST surface, docs, health, and runtime endpoints."),
         new("Cephalon.AspNetCore.GraphQL", "Hosts", "GraphQL transport adapter for ASP.NET Core hosts."),
@@ -62,7 +63,14 @@ public static class ReferenceDocsGenerator
         new("Cephalon.Observability.AzureMonitor", "Hosts", "Azure Monitor exporter integration for Cephalon hosts."),
         new("Cephalon.Observability.Serilog", "Hosts", "Serilog provider integration for Cephalon hosts."),
         new("Cephalon.Agentics", "Technology Packs", "Agentic workload runtime services and extension points."),
+        new("Cephalon.Data", "Phase 8 Companion Packs", "Runtime-neutral data dispatching services for Cephalon workloads."),
+        new("Cephalon.Data.EntityFramework", "Phase 8 Companion Packs", "Entity Framework Core read/write, inbox, and outbox integration for Cephalon data workloads."),
         new("Cephalon.Eventing", "Technology Packs", "Event-driven integration runtime services and extension points."),
+        new("Cephalon.Eventing.Wolverine", "Phase 8 Companion Packs", "Official Wolverine adapter and managed dispatch-loop integration for Cephalon eventing workloads."),
+        new("Cephalon.Identity", "Phase 8 Companion Packs", "Host-agnostic identity and authorization baseline for Cephalon runtimes."),
+        new("Cephalon.Identity.AspNetCore", "Phase 8 Companion Packs", "ASP.NET Core host adapter for Cephalon identity and authorization workloads."),
+        new("Cephalon.Ids.Sfid", "Phase 8 Companion Packs", "Official Sfid.Net-backed identifier generation for Cephalon runtimes."),
+        new("Cephalon.MultiTenancy", "Phase 8 Companion Packs", "Host-agnostic tenant-resolution and ambient tenant-context baseline for Cephalon runtimes."),
         new("Cephalon.Retrieval", "Technology Packs", "Knowledge retrieval runtime services and extension points."),
         new("Cephalon.Edge", "Technology Packs", "Edge-native delivery runtime services and extension points."),
         new("Cephalon.Cli", "Tooling", "Command-line surface for blueprint-aware generation."),
@@ -74,14 +82,22 @@ public static class ReferenceDocsGenerator
     [
         "Cephalon.Abstractions",
         "Cephalon.Agentics",
+        "Cephalon.Audit",
         "Cephalon.AspNetCore",
         "Cephalon.AspNetCore.GraphQL",
         "Cephalon.AspNetCore.Grpc",
         "Cephalon.AspNetCore.JsonRpc",
         "Cephalon.Cli",
+        "Cephalon.Data",
+        "Cephalon.Data.EntityFramework",
         "Cephalon.Edge",
         "Cephalon.Engine",
         "Cephalon.Eventing",
+        "Cephalon.Eventing.Wolverine",
+        "Cephalon.Identity",
+        "Cephalon.Identity.AspNetCore",
+        "Cephalon.Ids.Sfid",
+        "Cephalon.MultiTenancy",
         "Cephalon.Observability",
         "Cephalon.Observability.CassandraDependencies",
         "Cephalon.Observability.ClickHouseDependencies",
@@ -739,7 +755,7 @@ public static class ReferenceDocsGenerator
 
     private static string GetTypeDocId(Type type)
     {
-        return $"T:{GetDocumentationTypeName(type)}";
+        return $"T:{GetDeclaringTypeDocumentationName(type)}";
     }
 
     private static string GetMemberDocId(MemberInfo member)
@@ -753,8 +769,8 @@ public static class ReferenceDocsGenerator
                 method.Name,
                 method.GetParameters(),
                 method.IsGenericMethodDefinition ? method.GetGenericArguments().Length : 0),
-            PropertyInfo property => $"P:{GetDocumentationTypeName(property.DeclaringType!)}.{property.Name}",
-            FieldInfo field => $"F:{GetDocumentationTypeName(field.DeclaringType!)}.{field.Name}",
+            PropertyInfo property => $"P:{GetDeclaringTypeDocumentationName(property.DeclaringType!)}.{property.Name}",
+            FieldInfo field => $"F:{GetDeclaringTypeDocumentationName(field.DeclaringType!)}.{field.Name}",
             _ => throw new InvalidOperationException($"Member '{member.Name}' is not supported by the reference docs generator.")
         };
     }
@@ -767,7 +783,7 @@ public static class ReferenceDocsGenerator
     {
         var builder = new StringBuilder();
         builder.Append("M:")
-            .Append(GetDocumentationTypeName(declaringType))
+            .Append(GetDeclaringTypeDocumentationName(declaringType))
             .Append('.')
             .Append(methodName);
 
@@ -784,6 +800,18 @@ public static class ReferenceDocsGenerator
         }
 
         return builder.ToString();
+    }
+
+    private static string GetDeclaringTypeDocumentationName(Type type)
+    {
+        if (type.IsGenericType)
+        {
+            type = type.IsGenericTypeDefinition
+                ? type
+                : type.GetGenericTypeDefinition();
+        }
+
+        return (type.FullName ?? type.Name).Replace('+', '.');
     }
 
     private static string GetDocumentationTypeName(Type type)

@@ -7,6 +7,7 @@
 - module contracts such as `IModule`, `IModuleLifecycle`, `ModuleBase`, `ModuleDescriptor`, and `ModuleContext`
 - capability contracts such as `Capability`, `CapabilityAccess`, and `ICapabilityRegistry`
 - app-model contracts such as `AppBlueprint`, `AppProfile`, and scaffold-plan types
+- phase-8 runtime-neutral contracts for data, authorization, tenancy, audit, and id generation
 - health contracts used across hosts and packages
 - localization contracts used by engine resources and package language packs
 - pattern, technology, and transport descriptors shared by the whole stack
@@ -22,6 +23,23 @@
 - `AppModel/Scaffolding/ScaffoldPlan.cs`
 - `AppModel/Scaffolding/SuiteScaffoldPlan.cs`
 - `AppModel/Scaffolding/SuiteScaffoldService.cs`
+- `Data/ICommand.cs`
+- `Data/IReadStore.cs`
+- `Data/ProjectionDescriptor.cs`
+- `Data/InboxDescriptor.cs`
+- `Data/IInbox.cs`
+- `Data/IInboxCatalog.cs`
+- `Data/OutboxDescriptor.cs`
+- `Data/IOutbox.cs`
+- `Data/IOutboxCatalog.cs`
+- `Authorization/AuthorizationPolicyDescriptor.cs`
+- `Authorization/IAuthorizationEvaluator.cs`
+- `Tenancy/TenantContext.cs`
+- `Tenancy/ITenantResolver.cs`
+- `Audit/AuditEntry.cs`
+- `Audit/AuditStoreDescriptor.cs`
+- `Audit/IAuditStoreCatalog.cs`
+- `Ids/IIdGenerator.cs`
 - `Health/DependencyHealthReport.cs`
 - `Localization/ILocalizedResourceContributor.cs`
 - `Technologies/ITechnologyRuntimeCatalog.cs`
@@ -31,17 +49,30 @@
 
 - `AppModel`
 - `AppModel/Scaffolding`
+- `Audit`
+- `Authorization`
 - `Capabilities`
+- `Data`
 - `Health`
+- `Ids`
 - `Localization`
 - `Modules`
 - `Patterns`
+- `Tenancy`
 - `Technologies`
 - `Transports`
 
 ## How it fits
 
 The engine should depend on this package for contracts only. New runtime behavior belongs in `Cephalon.Engine` or a companion package unless it must become part of the public module authoring surface.
+
+The phase-8 families stay runtime-neutral on purpose:
+
+- `Data` defines CQRS, projection, outbox/inbox, and outbox-catalog contracts without picking Entity Framework, Wolverine, or any storage engine.
+- `Authorization` defines subjects, resources, policies, and evaluation contracts without binding to ASP.NET Core identity types.
+- `Tenancy` defines tenant context and resolution contracts without assuming HTTP, DNS, or a single tenancy topology.
+- `Audit` defines audit actors, entries, write contracts, and audit-store descriptors without hard-coding storage or observability sinks.
+- `Ids` defines identifier-generation hints and the generator contract without choosing a concrete strategy such as `Sfid`.
 
 ## Related docs
 

@@ -28,6 +28,119 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void AbstractionsAssemblyExposesOnlyTheDocumentedContractSurface()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Abstractions.AppModel.AppBlueprint).Assembly,
+            typeof(global::Cephalon.Abstractions.AppModel.AppBlueprint),
+            typeof(global::Cephalon.Abstractions.AppModel.AppProfile),
+            typeof(global::Cephalon.Abstractions.AppModel.AuditSelection),
+            typeof(global::Cephalon.Abstractions.AppModel.DataSelection),
+            typeof(global::Cephalon.Abstractions.AppModel.IdentitySelection),
+            typeof(global::Cephalon.Abstractions.AppModel.MessagingSelection),
+            typeof(global::Cephalon.Abstractions.AppModel.Scaffolding.ProjectRoles),
+            typeof(global::Cephalon.Abstractions.AppModel.Scaffolding.ScaffoldFolder),
+            typeof(global::Cephalon.Abstractions.AppModel.Scaffolding.ScaffoldPlan),
+            typeof(global::Cephalon.Abstractions.AppModel.Scaffolding.ScaffoldProject),
+            typeof(global::Cephalon.Abstractions.AppModel.Scaffolding.ScaffoldScopes),
+            typeof(global::Cephalon.Abstractions.AppModel.Scaffolding.SuiteScaffoldPlan),
+            typeof(global::Cephalon.Abstractions.AppModel.Scaffolding.SuiteScaffoldService),
+            typeof(global::Cephalon.Abstractions.AppModel.SuiteBlueprint),
+            typeof(global::Cephalon.Abstractions.AppModel.TenancySelection),
+            typeof(global::Cephalon.Abstractions.Audit.AuditActor),
+            typeof(global::Cephalon.Abstractions.Audit.AuditChange),
+            typeof(global::Cephalon.Abstractions.Audit.AuditEntry),
+            typeof(global::Cephalon.Abstractions.Audit.AuditOutcome),
+            typeof(global::Cephalon.Abstractions.Audit.AuditStoreDescriptor),
+            typeof(global::Cephalon.Abstractions.Audit.IAuditStoreCatalog),
+            typeof(global::Cephalon.Abstractions.Audit.IAuditStoreContributor),
+            typeof(global::Cephalon.Abstractions.Audit.IAuditStoreRegistry),
+            typeof(global::Cephalon.Abstractions.Audit.IAuditWriter),
+            typeof(global::Cephalon.Abstractions.Authorization.AuthorizationContext),
+            typeof(global::Cephalon.Abstractions.Authorization.AuthorizationDecision),
+            typeof(global::Cephalon.Abstractions.Authorization.AuthorizationMode),
+            typeof(global::Cephalon.Abstractions.Authorization.AuthorizationPolicyDescriptor),
+            typeof(global::Cephalon.Abstractions.Authorization.AuthorizationResource),
+            typeof(global::Cephalon.Abstractions.Authorization.AuthorizationSubject),
+            typeof(global::Cephalon.Abstractions.Authorization.IAuthorizationEvaluator),
+            typeof(global::Cephalon.Abstractions.Authorization.IAuthorizationPolicyCatalog),
+            typeof(global::Cephalon.Abstractions.Authorization.IAuthorizationPolicyContributor),
+            typeof(global::Cephalon.Abstractions.Authorization.IAuthorizationPolicyRegistry),
+            typeof(global::Cephalon.Abstractions.Capabilities.Capability),
+            typeof(global::Cephalon.Abstractions.Capabilities.CapabilityAccess),
+            typeof(global::Cephalon.Abstractions.Capabilities.ICapabilityRegistry),
+            typeof(global::Cephalon.Abstractions.Data.ICommand),
+            typeof(global::Cephalon.Abstractions.Data.ICommand<>),
+            typeof(global::Cephalon.Abstractions.Data.ICommandHandler<>),
+            typeof(global::Cephalon.Abstractions.Data.ICommandHandler<,>),
+            typeof(global::Cephalon.Abstractions.Data.IInbox),
+            typeof(global::Cephalon.Abstractions.Data.IInboxCatalog),
+            typeof(global::Cephalon.Abstractions.Data.IInboxContributor),
+            typeof(global::Cephalon.Abstractions.Data.IInboxRegistry),
+            typeof(global::Cephalon.Abstractions.Data.InboxDescriptor),
+            typeof(global::Cephalon.Abstractions.Data.InboxMessage),
+            typeof(global::Cephalon.Abstractions.Data.IOutbox),
+            typeof(global::Cephalon.Abstractions.Data.IOutboxCatalog),
+            typeof(global::Cephalon.Abstractions.Data.IOutboxContributor),
+            typeof(global::Cephalon.Abstractions.Data.IOutboxRegistry),
+            typeof(global::Cephalon.Abstractions.Data.IProjection<>),
+            typeof(global::Cephalon.Abstractions.Data.IProjectionCatalog),
+            typeof(global::Cephalon.Abstractions.Data.IProjectionContributor),
+            typeof(global::Cephalon.Abstractions.Data.IProjectionRegistry),
+            typeof(global::Cephalon.Abstractions.Data.IQuery<>),
+            typeof(global::Cephalon.Abstractions.Data.IQueryHandler<,>),
+            typeof(global::Cephalon.Abstractions.Data.IReadStore),
+            typeof(global::Cephalon.Abstractions.Data.IWriteStore),
+            typeof(global::Cephalon.Abstractions.Data.OutboxDescriptor),
+            typeof(global::Cephalon.Abstractions.Data.OutboxMessage),
+            typeof(global::Cephalon.Abstractions.Data.ProjectionDescriptor),
+            typeof(global::Cephalon.Abstractions.Execution.ExecutionGraphDescriptor),
+            typeof(global::Cephalon.Abstractions.Execution.ExecutionGraphEdgeDescriptor),
+            typeof(global::Cephalon.Abstractions.Execution.ExecutionGraphNodeDescriptor),
+            typeof(global::Cephalon.Abstractions.Execution.HostedExecutionDescriptor),
+            typeof(global::Cephalon.Abstractions.Execution.IExecutionGraphContributor),
+            typeof(global::Cephalon.Abstractions.Execution.IExecutionGraphRegistry),
+            typeof(global::Cephalon.Abstractions.Execution.IExecutionRuntimeCatalog),
+            typeof(global::Cephalon.Abstractions.Execution.IHostedExecutionContributor),
+            typeof(global::Cephalon.Abstractions.Execution.IHostedExecutionRegistry),
+            typeof(global::Cephalon.Abstractions.Execution.IHostedExecutionRuntimeCatalog),
+            typeof(global::Cephalon.Abstractions.Health.DependencyHealthReport),
+            typeof(global::Cephalon.Abstractions.Health.HealthState),
+            typeof(global::Cephalon.Abstractions.Health.IDependencyHealthContributor),
+            typeof(global::Cephalon.Abstractions.Ids.IdGenerationRequest),
+            typeof(global::Cephalon.Abstractions.Ids.IIdGenerator),
+            typeof(global::Cephalon.Abstractions.Localization.ILocalizedResourceContributor),
+            typeof(global::Cephalon.Abstractions.Localization.ILocalizedResourceRegistry),
+            typeof(global::Cephalon.Abstractions.Localization.ILocalizedTextCatalog),
+            typeof(global::Cephalon.Abstractions.Localization.LocalizedResourcesSnapshot),
+            typeof(global::Cephalon.Abstractions.Modules.IModule),
+            typeof(global::Cephalon.Abstractions.Modules.IModuleLifecycle),
+            typeof(global::Cephalon.Abstractions.Modules.ModuleBase),
+            typeof(global::Cephalon.Abstractions.Modules.ModuleContext),
+            typeof(global::Cephalon.Abstractions.Modules.ModuleDescriptor),
+            typeof(global::Cephalon.Abstractions.Patterns.PatternDescriptor),
+            typeof(global::Cephalon.Abstractions.Patterns.PatternKind),
+            typeof(global::Cephalon.Abstractions.Technologies.ITechnologyCapabilityContributor),
+            typeof(global::Cephalon.Abstractions.Technologies.ITechnologyContributor),
+            typeof(global::Cephalon.Abstractions.Technologies.ITechnologyRegistry),
+            typeof(global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeCatalog),
+            typeof(global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeContributor),
+            typeof(global::Cephalon.Abstractions.Technologies.ITechnologyServiceContributor),
+            typeof(global::Cephalon.Abstractions.Technologies.TechnologyDescriptor),
+            typeof(global::Cephalon.Abstractions.Technologies.TechnologyKind),
+            typeof(global::Cephalon.Abstractions.Technologies.TechnologyRuntimeEntry),
+            typeof(global::Cephalon.Abstractions.Technologies.TechnologyRuntimeSurface),
+            typeof(global::Cephalon.Abstractions.Technologies.TechnologySelection),
+            typeof(global::Cephalon.Abstractions.Tenancy.ITenantContextAccessor),
+            typeof(global::Cephalon.Abstractions.Tenancy.ITenantResolver),
+            typeof(global::Cephalon.Abstractions.Tenancy.TenantContext),
+            typeof(global::Cephalon.Abstractions.Tenancy.TenantResolutionRequest),
+            typeof(global::Cephalon.Abstractions.Tenancy.TenantResolutionResult),
+            typeof(global::Cephalon.Abstractions.Transports.TransportDescriptor),
+            typeof(global::Cephalon.Abstractions.Transports.TransportFeatures));
+    }
+
+    [Fact]
     public void AspNetCoreAssemblyExposesOnlyTheDocumentedHostContracts()
     {
         AssertExportedTypes(
@@ -357,11 +470,64 @@ public sealed class PackageSurfaceTests
         AssertExportedTypes(
             typeof(global::Cephalon.Eventing.Registration.EventingEngineBuilderExtensions).Assembly,
             typeof(global::Cephalon.Eventing.Configuration.EventingOptions),
+            typeof(global::Cephalon.Eventing.Services.EventDispatchItem),
+            typeof(global::Cephalon.Eventing.Services.EventDispatchExecutionOutcomes),
+            typeof(global::Cephalon.Eventing.Services.EventDispatchExecutionReport),
+            typeof(global::Cephalon.Eventing.Services.EventDispatchRuntimeState),
+            typeof(global::Cephalon.Eventing.Services.EventDispatchRuntimeDescriptor),
+            typeof(global::Cephalon.Eventing.Services.EventPublication),
             typeof(global::Cephalon.Eventing.Registration.EventingEngineBuilderExtensions),
             typeof(global::Cephalon.Eventing.Services.EventChannelDescriptor),
+            typeof(global::Cephalon.Eventing.Services.EventSubscriptionExecutionOutcomes),
+            typeof(global::Cephalon.Eventing.Services.EventSubscriptionExecutionReport),
+            typeof(global::Cephalon.Eventing.Services.EventSubscriptionDescriptor),
             typeof(global::Cephalon.Eventing.Services.IEventChannelCatalog),
             typeof(global::Cephalon.Eventing.Services.IEventChannelContributor),
-            typeof(global::Cephalon.Eventing.Services.IEventChannelRegistry));
+            typeof(global::Cephalon.Eventing.Services.IEventChannelRegistry),
+            typeof(global::Cephalon.Eventing.Services.IEventDispatchStore),
+            typeof(global::Cephalon.Eventing.Services.IEventDispatchRuntimeCatalog),
+            typeof(global::Cephalon.Eventing.Services.IEventDispatchRuntimeContributor),
+            typeof(global::Cephalon.Eventing.Services.IEventDispatchRuntimeRegistry),
+            typeof(global::Cephalon.Eventing.Services.IEventDispatchRuntimeReporter),
+            typeof(global::Cephalon.Eventing.Services.IEventSubscriptionCatalog),
+            typeof(global::Cephalon.Eventing.Services.IEventSubscriptionContributor),
+            typeof(global::Cephalon.Eventing.Services.IEventSubscriptionRegistry),
+            typeof(global::Cephalon.Eventing.Services.IEventPublisher),
+            typeof(global::Cephalon.Eventing.Services.IEventSubscriptionRuntimeCatalog),
+            typeof(global::Cephalon.Eventing.Services.IEventSubscriptionRuntimeReporter),
+            typeof(global::Cephalon.Eventing.Services.EventSubscriptionRuntimeState));
+    }
+
+    [Fact]
+    public void WolverineEventingAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Eventing.Wolverine.Registration.WolverineEventingEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions),
+            typeof(global::Cephalon.Eventing.Wolverine.Registration.WolverineEventingEngineBuilderExtensions));
+    }
+
+    [Fact]
+    public void DataAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Data.Registration.DataEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Data.Configuration.DataRuntimeOptions),
+            typeof(global::Cephalon.Data.Registration.DataEngineBuilderExtensions));
+    }
+
+    [Fact]
+    public void DataEntityFrameworkAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Data.EntityFramework.Registration.EntityFrameworkDataEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions),
+            typeof(global::Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry),
+            typeof(global::Cephalon.Data.EntityFramework.Modeling.EntityFrameworkModelBuilderExtensions),
+            typeof(global::Cephalon.Data.EntityFramework.Modeling.IEntityFrameworkInboxContext),
+            typeof(global::Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry),
+            typeof(global::Cephalon.Data.EntityFramework.Modeling.IEntityFrameworkOutboxContext),
+            typeof(global::Cephalon.Data.EntityFramework.Registration.EntityFrameworkDataEngineBuilderExtensions));
     }
 
     [Fact]
@@ -388,6 +554,59 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Edge.Services.IEdgeNodeCatalog),
             typeof(global::Cephalon.Edge.Services.IEdgeNodeContributor),
             typeof(global::Cephalon.Edge.Services.IEdgeNodeRegistry));
+    }
+
+    [Fact]
+    public void SfidIdsAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Ids.Sfid.Registration.SfidEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Ids.Sfid.Configuration.SfidIdOptions),
+            typeof(global::Cephalon.Ids.Sfid.Registration.SfidEngineBuilderExtensions));
+    }
+
+    [Fact]
+    public void IdentityAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Identity.Registration.IdentityEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Identity.Configuration.IdentityRuntimeOptions),
+            typeof(global::Cephalon.Identity.Policies.IdentityPolicyMetadataKeys),
+            typeof(global::Cephalon.Identity.Registration.IdentityEngineBuilderExtensions));
+    }
+
+    [Fact]
+    public void IdentityAspNetCoreAssemblyExposesOnlyTheDocumentedHostContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Identity.AspNetCore.Hosting.IdentityAspNetCoreServiceCollectionExtensions).Assembly,
+            typeof(global::Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions),
+            typeof(global::Cephalon.Identity.AspNetCore.Hosting.IdentityAspNetCoreServiceCollectionExtensions),
+            typeof(global::Cephalon.Identity.AspNetCore.Hosting.IdentityAspNetCoreWebApplicationBuilderExtensions),
+            typeof(global::Cephalon.Identity.AspNetCore.Transports.Rest.IdentityEndpointConventionBuilderExtensions),
+            typeof(global::Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute));
+    }
+
+    [Fact]
+    public void MultiTenancyAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.MultiTenancy.Registration.MultiTenancyEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.MultiTenancy.Configuration.MultiTenancyRuntimeOptions),
+            typeof(global::Cephalon.MultiTenancy.Registration.MultiTenancyEngineBuilderExtensions));
+    }
+
+    [Fact]
+    public void AuditAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Audit.Registration.AuditEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Audit.Configuration.AuditRuntimeOptions),
+            typeof(global::Cephalon.Audit.Conventions.AuditMetadataKeys),
+            typeof(global::Cephalon.Audit.Registration.AuditEngineBuilderExtensions),
+            typeof(global::Cephalon.Audit.Services.AuditRecordRequest),
+            typeof(global::Cephalon.Audit.Services.IAuditActorAccessor),
+            typeof(global::Cephalon.Audit.Services.IAuditRecorder));
     }
 
     private static void AssertExportedTypes(Assembly assembly, params Type[] expectedTypes)

@@ -7,7 +7,8 @@ namespace Cephalon.Engine.Technologies;
 /// </summary>
 public sealed class TechnologyRuntimeCatalogSnapshot : ITechnologyRuntimeCatalog
 {
-    private readonly Dictionary<string, TechnologyRuntimeSurface[]> index;
+    private readonly ITechnologyRuntimeContributor[]? contributors;
+    private readonly IReadOnlyList<TechnologyRuntimeSurface>? frozenSurfaces;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TechnologyRuntimeCatalogSnapshot" /> class.
@@ -15,19 +16,23 @@ public sealed class TechnologyRuntimeCatalogSnapshot : ITechnologyRuntimeCatalog
     /// <param name="surfaces">The active technology runtime surfaces.</param>
     public TechnologyRuntimeCatalogSnapshot(IReadOnlyList<TechnologyRuntimeSurface> surfaces)
     {
-        Surfaces = surfaces ?? throw new ArgumentNullException(nameof(surfaces));
-        index = Surfaces
-            .GroupBy(static surface => surface.TechnologyId, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
+        frozenSurfaces = surfaces ?? throw new ArgumentNullException(nameof(surfaces));
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TechnologyRuntimeCatalogSnapshot" /> class from runtime contributors.
+    /// </summary>
+    /// <param name="contributors">The technology runtime contributors that should be projected on demand.</param>
+    public TechnologyRuntimeCatalogSnapshot(IEnumerable<ITechnologyRuntimeContributor> contributors)
+    {
+        ArgumentNullException.ThrowIfNull(contributors);
+        this.contributors = contributors.ToArray();
     }
 
     /// <summary>
     /// Gets the active technology runtime surfaces.
     /// </summary>
-    public IReadOnlyList<TechnologyRuntimeSurface> Surfaces { get; }
+    public IReadOnlyList<TechnologyRuntimeSurface> Surfaces => frozenSurfaces ?? BuildSurfaces();
 
     /// <summary>
     /// Gets the runtime surfaces for a specific technology.
@@ -38,8 +43,17 @@ public sealed class TechnologyRuntimeCatalogSnapshot : ITechnologyRuntimeCatalog
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(technologyId);
 
-        return index.TryGetValue(technologyId.Trim(), out var surfaces)
-            ? surfaces
-            : Array.Empty<TechnologyRuntimeSurface>();
+        return Surfaces
+            .Where(surface => string.Equals(surface.TechnologyId, technologyId.Trim(), StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+    }
+
+    private TechnologyRuntimeSurface[] BuildSurfaces()
+    {
+        return contributors?
+            .Select(static contributor => contributor.DescribeRuntimeSurface())
+            .Where(static surface => surface.Entries.Count > 0)
+            .OrderBy(static surface => surface.DisplayName, StringComparer.OrdinalIgnoreCase)
+            .ToArray() ?? [];
     }
 }

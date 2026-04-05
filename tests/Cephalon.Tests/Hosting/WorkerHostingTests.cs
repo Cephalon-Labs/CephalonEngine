@@ -1,3 +1,5 @@
+using Cephalon.Abstractions.Audit;
+using Cephalon.Audit.Registration;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Runtime;
 using Cephalon.Tests.Support;
@@ -101,6 +103,15 @@ public sealed class WorkerHostingTests
         builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:failing-stop:Enabled"] = "false";
         builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:stop-observer:Enabled"] = "false";
         builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:slow-stop:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:phase8-runtime-catalogs:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:invalid-phase8-projection:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:invalid-phase8-outbox:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:invalid-phase8-inbox:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:invalid-phase8-audit-store:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:entity-framework-single-context-tests:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:entity-framework-split-context-tests:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:entity-framework-outbox-tests:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:entity-framework-sfid-tests:Enabled"] = "false";
         builder.AddCephalon();
 
         using var host = builder.Build();
@@ -171,5 +182,65 @@ public sealed class WorkerHostingTests
         var stoppedHostedExecution = Assert.Single(runtime.OperationalStory.HostedExecutions);
         Assert.True(stoppedHostedExecution.IsDeactivated);
         Assert.False(stoppedHostedExecution.IsActive);
+    }
+
+    [Fact]
+    public async Task AddCephalonHonorsConfigurationDrivenAuditWriterDisablementWithinGenericHost()
+    {
+        var builder = Host.CreateApplicationBuilder();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:EnableInMemoryWriter"] = "false";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new AuditCaptureModule());
+            cephalon.AddAudit();
+        });
+
+        using var host = builder.Build();
+        var auditStoreCatalog = host.Services.GetRequiredService<IAuditStoreCatalog>();
+        var snapshotProvider = host.Services.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>();
+
+        await host.StartAsync();
+
+        var snapshot = snapshotProvider.CreateSnapshot();
+
+        Assert.Empty(auditStoreCatalog.AuditStores);
+        Assert.Empty(snapshot.AuditStores);
+
+        await host.StopAsync();
+    }
+
+    [Fact]
+    public async Task AddCephalonPreservesConsumerAuditStoreWhenBuiltInAuditWriterIsDisabledWithinGenericHost()
+    {
+        var builder = Host.CreateApplicationBuilder();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:EnableInMemoryWriter"] = "false";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new Phase8CatalogModule());
+            cephalon.AddAudit();
+        });
+
+        using var host = builder.Build();
+        var auditStoreCatalog = host.Services.GetRequiredService<IAuditStoreCatalog>();
+        var snapshotProvider = host.Services.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>();
+
+        await host.StartAsync();
+
+        var snapshot = snapshotProvider.CreateSnapshot();
+
+        Assert.Single(auditStoreCatalog.AuditStores);
+        Assert.Equal("tenant-audit-store", auditStoreCatalog.AuditStores[0].Id);
+        Assert.Single(snapshot.AuditStores);
+        Assert.Equal("tenant-audit-store", snapshot.AuditStores[0].Id);
+        Assert.DoesNotContain(auditStoreCatalog.AuditStores, item => item.Id == "audit-default");
+        Assert.DoesNotContain(snapshot.AuditStores, item => item.Id == "audit-default");
+
+        await host.StopAsync();
     }
 }

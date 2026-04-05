@@ -20,13 +20,23 @@ public sealed class AppProfile
     /// <param name="patterns">The patterns active for the app.</param>
     /// <param name="technologies">The selected technology profiles.</param>
     /// <param name="transports">The selected transports.</param>
+    /// <param name="data">The selected data inputs.</param>
+    /// <param name="identity">The selected identity and authorization inputs.</param>
+    /// <param name="tenancy">The selected multi-tenancy inputs.</param>
+    /// <param name="audit">The selected audit inputs.</param>
+    /// <param name="messaging">The selected messaging inputs.</param>
     public AppProfile(
         string blueprintId,
         string blueprintDisplayName,
         string blueprintDescription,
         IReadOnlyList<PatternDescriptor> patterns,
         IReadOnlyList<TechnologyDescriptor>? technologies = null,
-        IReadOnlyList<TransportDescriptor>? transports = null)
+        IReadOnlyList<TransportDescriptor>? transports = null,
+        DataSelection? data = null,
+        IdentitySelection? identity = null,
+        TenancySelection? tenancy = null,
+        AuditSelection? audit = null,
+        MessagingSelection? messaging = null)
         : this(
             blueprintId,
             blueprintDisplayName,
@@ -34,7 +44,12 @@ public sealed class AppProfile
             patterns,
             scaffold: null,
             technologies: technologies,
-            transports)
+            transports: transports,
+            data: data,
+            identity: identity,
+            tenancy: tenancy,
+            audit: audit,
+            messaging: messaging)
     {
     }
 
@@ -48,6 +63,11 @@ public sealed class AppProfile
     /// <param name="scaffold">The scaffold plan associated with the app shape.</param>
     /// <param name="technologies">The selected technology profiles.</param>
     /// <param name="transports">The selected transports.</param>
+    /// <param name="data">The selected data inputs.</param>
+    /// <param name="identity">The selected identity and authorization inputs.</param>
+    /// <param name="tenancy">The selected multi-tenancy inputs.</param>
+    /// <param name="audit">The selected audit inputs.</param>
+    /// <param name="messaging">The selected messaging inputs.</param>
     [JsonConstructor]
     public AppProfile(
         string blueprintId,
@@ -56,7 +76,12 @@ public sealed class AppProfile
         IReadOnlyList<PatternDescriptor> patterns,
         ScaffoldPlan? scaffold,
         IReadOnlyList<TechnologyDescriptor>? technologies = null,
-        IReadOnlyList<TransportDescriptor>? transports = null)
+        IReadOnlyList<TransportDescriptor>? transports = null,
+        DataSelection? data = null,
+        IdentitySelection? identity = null,
+        TenancySelection? tenancy = null,
+        AuditSelection? audit = null,
+        MessagingSelection? messaging = null)
     {
         if (string.IsNullOrWhiteSpace(blueprintId))
         {
@@ -80,6 +105,11 @@ public sealed class AppProfile
         Scaffold = scaffold;
         Technologies = technologies ?? [];
         Transports = transports ?? [];
+        Data = data ?? DataSelection.Empty;
+        Identity = identity ?? IdentitySelection.Empty;
+        Tenancy = tenancy ?? TenancySelection.Empty;
+        Audit = audit ?? AuditSelection.Empty;
+        Messaging = messaging ?? MessagingSelection.Empty;
     }
 
     /// <summary>
@@ -116,4 +146,29 @@ public sealed class AppProfile
     /// Gets the selected transports.
     /// </summary>
     public IReadOnlyList<TransportDescriptor> Transports { get; }
+
+    /// <summary>
+    /// Gets the selected data inputs.
+    /// </summary>
+    public DataSelection Data { get; }
+
+    /// <summary>
+    /// Gets the selected identity and authorization inputs.
+    /// </summary>
+    public IdentitySelection Identity { get; }
+
+    /// <summary>
+    /// Gets the selected multi-tenancy inputs.
+    /// </summary>
+    public TenancySelection Tenancy { get; }
+
+    /// <summary>
+    /// Gets the selected audit inputs.
+    /// </summary>
+    public AuditSelection Audit { get; }
+
+    /// <summary>
+    /// Gets the selected messaging inputs.
+    /// </summary>
+    public MessagingSelection Messaging { get; }
 }

@@ -12,6 +12,7 @@ public sealed class PatternDescriptor
     /// <param name="displayName">The human-readable pattern name.</param>
     /// <param name="description">The pattern description.</param>
     /// <param name="kind">The category of the pattern.</param>
+    /// <param name="aliases">Optional aliases that can resolve to the same pattern.</param>
     /// <param name="tags">The tags associated with the pattern.</param>
     /// <param name="requires">The pattern identifiers required by this pattern.</param>
     /// <param name="conflictsWith">The pattern identifiers that conflict with this pattern.</param>
@@ -21,6 +22,7 @@ public sealed class PatternDescriptor
         string displayName,
         string description,
         PatternKind kind,
+        IReadOnlyList<string>? aliases = null,
         IReadOnlyList<string>? tags = null,
         IReadOnlyList<string>? requires = null,
         IReadOnlyList<string>? conflictsWith = null,
@@ -45,6 +47,7 @@ public sealed class PatternDescriptor
         DisplayName = displayName.Trim();
         Description = description.Trim();
         Kind = kind;
+        Aliases = Normalize(aliases);
         Tags = Normalize(tags);
         Requires = Normalize(requires);
         ConflictsWith = Normalize(conflictsWith);
@@ -72,6 +75,11 @@ public sealed class PatternDescriptor
     /// Gets the category of the pattern.
     /// </summary>
     public PatternKind Kind { get; }
+
+    /// <summary>
+    /// Gets optional aliases that can resolve to the same pattern.
+    /// </summary>
+    public IReadOnlyList<string> Aliases { get; }
 
     /// <summary>
     /// Gets the tags associated with the pattern.

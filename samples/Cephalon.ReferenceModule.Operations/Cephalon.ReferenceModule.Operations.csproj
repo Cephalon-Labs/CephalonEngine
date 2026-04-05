@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <Content Include="cephalon.package.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 </Project>

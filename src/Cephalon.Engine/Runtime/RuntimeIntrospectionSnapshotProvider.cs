@@ -1,3 +1,6 @@
+using Cephalon.Abstractions.Audit;
+using Cephalon.Abstractions.Authorization;
+using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Diagnostics;
@@ -8,6 +11,11 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
     IRuntime runtime,
     IExecutionRuntimeCatalog executionRuntimeCatalog,
     IHostedExecutionRuntimeCatalog hostedExecutionRuntimeCatalog,
+    IProjectionCatalog projectionCatalog,
+    IOutboxCatalog outboxCatalog,
+    IInboxCatalog inboxCatalog,
+    IAuditStoreCatalog auditStoreCatalog,
+    IAuthorizationPolicyCatalog authorizationPolicyCatalog,
     ITechnologyRuntimeCatalog technologyRuntimeCatalog,
     IRuntimeDiagnosticsCatalog diagnosticsCatalog) : IRuntimeIntrospectionSnapshotProvider
 {
@@ -21,7 +29,12 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             diagnosticsCatalog.Conventions,
             runtime.OperationalStory)
         {
-            HostedExecutions = hostedExecutionRuntimeCatalog.HostedExecutions
+            HostedExecutions = hostedExecutionRuntimeCatalog.HostedExecutions,
+            Projections = projectionCatalog.Projections,
+            Outboxes = outboxCatalog.Outboxes,
+            Inboxes = inboxCatalog.Inboxes,
+            AuditStores = auditStoreCatalog.AuditStores,
+            AuthorizationPolicies = authorizationPolicyCatalog.Policies
         };
     }
 }

@@ -82,7 +82,7 @@ The chained `docs publish --enable-hosting` flow follows the same override rules
 Build and publish the full reference set:
 
 ```powershell
-.\scripts\publish-reference-docs.ps1
+pwsh ./scripts/publish-reference-docs.ps1
 ```
 
 Publish through the main Cephalon CLI:
@@ -141,13 +141,13 @@ dotnet run --project src/Cephalon.Cli -- docs validate-hosting `
 Publish a narrowed set of assemblies:
 
 ```powershell
-.\scripts\publish-reference-docs.ps1 -Assemblies Cephalon.Engine,Cephalon.Agentics
+pwsh ./scripts/publish-reference-docs.ps1 -Assemblies Cephalon.Engine,Cephalon.Agentics
 ```
 
 Skip the build when the solution has already been compiled:
 
 ```powershell
-.\scripts\publish-reference-docs.ps1 -SkipBuild
+pwsh ./scripts/publish-reference-docs.ps1 -SkipBuild
 ```
 
 ## Output
@@ -172,5 +172,6 @@ The browser UI can switch between type search and member search, while the JSON 
 - keep shared test-harness types internal and leave only framework-required xUnit classes plus rare reflective transport-contract exceptions public while the test project remains outside the supported published docs set
 - keep hand-authored guide docs in `README.md` and `docs/` focused on capability explanation and adoption guidance
 - regenerate `docs/reference/` after changing public API docs
+- keep the checked-in `docs/reference/` bundle aligned with the current generator output; the reference-doc test suite now treats bundle drift as a failure and expects `pwsh ./scripts/publish-reference-docs.ps1` to be the repair path
 - keep `artifacts/reference-docs-release/` as pipeline output, not as hand-edited source content
 - keep the generator, publish script, and generated output aligned with the current solution layout

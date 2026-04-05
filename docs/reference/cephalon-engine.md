@@ -779,6 +779,191 @@ Parameters:
 
 ## Namespace Cephalon.Engine.Configuration
 
+<a id="type-cephalon-engine-configuration-auditsettings"></a>
+
+### `AuditSettings`
+
+Describes configuration-driven audit settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class AuditSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-auditsettings-ctor-system-nullable-system-boolean"></a>
+
+##### `AuditSettings`
+
+```csharp
+AuditSettings(bool? enabled)
+```
+
+Initializes a new instance of the `AuditSettings` class.
+
+Parameters:
+- `enabled`: Whether audit support was explicitly enabled.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-auditsettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+AuditSettings Empty { get; }
+```
+
+Gets an empty audit-settings instance.
+
+<a id="member-p-cephalon-engine-configuration-auditsettings-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether audit support was explicitly enabled.
+
+<a id="member-p-cephalon-engine-configuration-auditsettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any audit settings were explicitly supplied.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-auditsettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
+
+##### `FromConfiguration`
+
+```csharp
+AuditSettings FromConfiguration(IConfiguration configuration, string sectionPath)
+```
+
+Reads audit settings from configuration.
+
+Returns: The parsed audit settings.
+
+Parameters:
+- `configuration`: The configuration source that contains the engine section.
+- `sectionPath`: The root configuration section path to read from.
+
+<a id="type-cephalon-engine-configuration-datasettings"></a>
+
+### `DataSettings`
+
+Describes configuration-driven data settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class DataSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-datasettings-ctor-system-string-system-nullable-system-boolean-system-nullable-system-boolean-system-string"></a>
+
+##### `DataSettings`
+
+```csharp
+DataSettings(string provider, bool? readWriteSplit, bool? outboxEnabled, string idGenerator)
+```
+
+Initializes a new instance of the `DataSettings` class.
+
+Parameters:
+- `provider`: The selected primary data-provider family or implementation identifier.
+- `readWriteSplit`: Whether distinct read and write paths were explicitly selected.
+- `outboxEnabled`: Whether the outbox pattern was explicitly enabled.
+- `idGenerator`: The selected identifier-generation strategy.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-datasettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+DataSettings Empty { get; }
+```
+
+Gets an empty data-settings instance.
+
+<a id="member-p-cephalon-engine-configuration-datasettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any data settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-datasettings-idgenerator"></a>
+
+##### `IdGenerator`
+
+```csharp
+string IdGenerator { get; }
+```
+
+Gets the selected identifier-generation strategy.
+
+<a id="member-p-cephalon-engine-configuration-datasettings-outboxenabled"></a>
+
+##### `OutboxEnabled`
+
+```csharp
+bool? OutboxEnabled { get; }
+```
+
+Gets a value indicating whether the outbox pattern was explicitly enabled.
+
+<a id="member-p-cephalon-engine-configuration-datasettings-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; }
+```
+
+Gets the selected primary data-provider family or implementation identifier.
+
+<a id="member-p-cephalon-engine-configuration-datasettings-readwritesplit"></a>
+
+##### `ReadWriteSplit`
+
+```csharp
+bool? ReadWriteSplit { get; }
+```
+
+Gets a value indicating whether distinct read and write paths were explicitly selected.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-datasettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
+
+##### `FromConfiguration`
+
+```csharp
+DataSettings FromConfiguration(IConfiguration configuration, string sectionPath)
+```
+
+Reads data settings from configuration.
+
+Returns: The parsed data settings.
+
+Parameters:
+- `configuration`: The configuration source that contains the engine section.
+- `sectionPath`: The root configuration section path to read from.
+
 <a id="type-cephalon-engine-configuration-engineoptions"></a>
 
 ### `EngineOptions`
@@ -924,12 +1109,12 @@ public sealed class EngineSettings
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy"></a>
+<a id="member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings"></a>
 
 ##### `EngineSettings`
 
 ```csharp
-EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy)
+EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging)
 ```
 
 Initializes a new instance of the `EngineSettings` class.
@@ -945,6 +1130,11 @@ Parameters:
 - `failurePolicy`: Runtime failure policy values.
 - `trustPolicy`: Capability and package trust policy values.
 - `packagePolicy`: Package metadata and integrity policy values.
+- `data`: Configuration-driven data settings.
+- `identity`: Configuration-driven identity and authorization settings.
+- `tenancy`: Configuration-driven multi-tenancy settings.
+- `audit`: Configuration-driven audit settings.
+- `messaging`: Configuration-driven messaging settings.
 
 #### Fields
 
@@ -960,6 +1150,16 @@ Gets the default root configuration section name for engine settings.
 
 #### Properties
 
+<a id="member-p-cephalon-engine-configuration-enginesettings-audit"></a>
+
+##### `Audit`
+
+```csharp
+AuditSettings Audit { get; }
+```
+
+Gets configuration-driven audit settings.
+
 <a id="member-p-cephalon-engine-configuration-enginesettings-blueprint"></a>
 
 ##### `Blueprint`
@@ -969,6 +1169,16 @@ string Blueprint { get; }
 ```
 
 Gets the selected blueprint identifier.
+
+<a id="member-p-cephalon-engine-configuration-enginesettings-data"></a>
+
+##### `Data`
+
+```csharp
+DataSettings Data { get; }
+```
+
+Gets configuration-driven data settings.
 
 <a id="member-p-cephalon-engine-configuration-enginesettings-discovery"></a>
 
@@ -1000,6 +1210,16 @@ bool HasValues { get; }
 
 Gets a value indicating whether any engine settings were explicitly supplied.
 
+<a id="member-p-cephalon-engine-configuration-enginesettings-identity"></a>
+
+##### `Identity`
+
+```csharp
+IdentitySettings Identity { get; }
+```
+
+Gets configuration-driven identity and authorization settings.
+
 <a id="member-p-cephalon-engine-configuration-enginesettings-localization"></a>
 
 ##### `Localization`
@@ -1009,6 +1229,16 @@ LocalizationSettings Localization { get; }
 ```
 
 Gets localization configuration values.
+
+<a id="member-p-cephalon-engine-configuration-enginesettings-messaging"></a>
+
+##### `Messaging`
+
+```csharp
+MessagingSettings Messaging { get; }
+```
+
+Gets configuration-driven messaging settings.
 
 <a id="member-p-cephalon-engine-configuration-enginesettings-options"></a>
 
@@ -1049,6 +1279,16 @@ IReadOnlyList<string> Technologies { get; }
 ```
 
 Gets the selected technology identifiers.
+
+<a id="member-p-cephalon-engine-configuration-enginesettings-tenancy"></a>
+
+##### `Tenancy`
+
+```csharp
+TenancySettings Tenancy { get; }
+```
+
+Gets configuration-driven multi-tenancy settings.
 
 <a id="member-p-cephalon-engine-configuration-enginesettings-transports"></a>
 
@@ -1230,6 +1470,93 @@ Parameters:
 - `configuration`: The configuration source that contains the engine section.
 - `sectionPath`: The root configuration section path to read from.
 
+<a id="type-cephalon-engine-configuration-identitysettings"></a>
+
+### `IdentitySettings`
+
+Describes configuration-driven identity and authorization settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class IdentitySettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-identitysettings-ctor-system-nullable-system-boolean-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `IdentitySettings`
+
+```csharp
+IdentitySettings(bool? enabled, IReadOnlyList<string> authorizationModes)
+```
+
+Initializes a new instance of the `IdentitySettings` class.
+
+Parameters:
+- `enabled`: Whether identity and authorization support was explicitly enabled.
+- `authorizationModes`: The selected authorization modes.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-identitysettings-authorizationmodes"></a>
+
+##### `AuthorizationModes`
+
+```csharp
+IReadOnlyList<string> AuthorizationModes { get; }
+```
+
+Gets the selected authorization modes.
+
+<a id="member-p-cephalon-engine-configuration-identitysettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+IdentitySettings Empty { get; }
+```
+
+Gets an empty identity-settings instance.
+
+<a id="member-p-cephalon-engine-configuration-identitysettings-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether identity and authorization support was explicitly enabled.
+
+<a id="member-p-cephalon-engine-configuration-identitysettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any identity settings were explicitly supplied.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-identitysettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
+
+##### `FromConfiguration`
+
+```csharp
+IdentitySettings FromConfiguration(IConfiguration configuration, string sectionPath)
+```
+
+Reads identity settings from configuration.
+
+Returns: The parsed identity settings.
+
+Parameters:
+- `configuration`: The configuration source that contains the engine section.
+- `sectionPath`: The root configuration section path to read from.
+
 <a id="type-cephalon-engine-configuration-localizationsettings"></a>
 
 ### `LocalizationSettings`
@@ -1342,6 +1669,82 @@ Returns: A merged localization settings instance.
 
 Parameters:
 - `other`: The localization settings to overlay on top of the current values.
+
+<a id="type-cephalon-engine-configuration-messagingsettings"></a>
+
+### `MessagingSettings`
+
+Describes configuration-driven messaging settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class MessagingSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-messagingsettings-ctor-system-string"></a>
+
+##### `MessagingSettings`
+
+```csharp
+MessagingSettings(string provider)
+```
+
+Initializes a new instance of the `MessagingSettings` class.
+
+Parameters:
+- `provider`: The selected messaging provider or runtime adapter.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-messagingsettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+MessagingSettings Empty { get; }
+```
+
+Gets an empty messaging-settings instance.
+
+<a id="member-p-cephalon-engine-configuration-messagingsettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any messaging settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-messagingsettings-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; }
+```
+
+Gets the selected messaging provider or runtime adapter.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-messagingsettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
+
+##### `FromConfiguration`
+
+```csharp
+MessagingSettings FromConfiguration(IConfiguration configuration, string sectionPath)
+```
+
+Reads messaging settings from configuration.
+
+Returns: The parsed messaging settings.
+
+Parameters:
+- `configuration`: The configuration source that contains the engine section.
+- `sectionPath`: The root configuration section path to read from.
 
 <a id="type-cephalon-engine-configuration-modulediscoverysettings"></a>
 
@@ -1947,6 +2350,93 @@ const StopFailureBehavior FailFast
 ```
 
 Stop shutdown immediately and rethrow the failure.
+
+<a id="type-cephalon-engine-configuration-tenancysettings"></a>
+
+### `TenancySettings`
+
+Describes configuration-driven multi-tenancy settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class TenancySettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-tenancysettings-ctor-system-nullable-system-boolean-system-string"></a>
+
+##### `TenancySettings`
+
+```csharp
+TenancySettings(bool? enabled, string mode)
+```
+
+Initializes a new instance of the `TenancySettings` class.
+
+Parameters:
+- `enabled`: Whether multi-tenancy was explicitly enabled.
+- `mode`: The selected tenancy mode.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-tenancysettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+TenancySettings Empty { get; }
+```
+
+Gets an empty tenancy-settings instance.
+
+<a id="member-p-cephalon-engine-configuration-tenancysettings-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether multi-tenancy was explicitly enabled.
+
+<a id="member-p-cephalon-engine-configuration-tenancysettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any tenancy settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-tenancysettings-mode"></a>
+
+##### `Mode`
+
+```csharp
+string Mode { get; }
+```
+
+Gets the selected tenancy mode.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-tenancysettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
+
+##### `FromConfiguration`
+
+```csharp
+TenancySettings FromConfiguration(IConfiguration configuration, string sectionPath)
+```
+
+Reads tenancy settings from configuration.
+
+Returns: The parsed tenancy settings.
+
+Parameters:
+- `configuration`: The configuration source that contains the engine section.
+- `sectionPath`: The root configuration section path to read from.
 
 <a id="type-cephalon-engine-configuration-trustpolicy"></a>
 
@@ -3765,6 +4255,66 @@ IReadOnlyList<PatternDescriptor> All { get; }
 
 Gets all built-in pattern descriptors.
 
+<a id="member-p-cephalon-engine-patterns-builtinpatterns-cleanarchitecture"></a>
+
+##### `CleanArchitecture`
+
+```csharp
+PatternDescriptor CleanArchitecture { get; }
+```
+
+Gets the clean-architecture pattern.
+
+<a id="member-p-cephalon-engine-patterns-builtinpatterns-cqrspattern"></a>
+
+##### `CqrsPattern`
+
+```csharp
+PatternDescriptor CqrsPattern { get; }
+```
+
+Gets the CQRS pattern.
+
+<a id="member-p-cephalon-engine-patterns-builtinpatterns-domaindrivendesign"></a>
+
+##### `DomainDrivenDesign`
+
+```csharp
+PatternDescriptor DomainDrivenDesign { get; }
+```
+
+Gets the domain-driven-design pattern.
+
+<a id="member-p-cephalon-engine-patterns-builtinpatterns-eventsourcingpattern"></a>
+
+##### `EventSourcingPattern`
+
+```csharp
+PatternDescriptor EventSourcingPattern { get; }
+```
+
+Gets the event-sourcing pattern.
+
+<a id="member-p-cephalon-engine-patterns-builtinpatterns-hexagonalarchitecture"></a>
+
+##### `HexagonalArchitecture`
+
+```csharp
+PatternDescriptor HexagonalArchitecture { get; }
+```
+
+Gets the hexagonal-architecture pattern.
+
+<a id="member-p-cephalon-engine-patterns-builtinpatterns-layeredarchitecture"></a>
+
+##### `LayeredArchitecture`
+
+```csharp
+PatternDescriptor LayeredArchitecture { get; }
+```
+
+Gets the layered-architecture pattern.
+
 <a id="member-p-cephalon-engine-patterns-builtinpatterns-mediatorpattern"></a>
 
 ##### `MediatorPattern`
@@ -3804,6 +4354,16 @@ PatternDescriptor ModuleFirstOrganization { get; }
 ```
 
 Gets the module-first organization pattern.
+
+<a id="member-p-cephalon-engine-patterns-builtinpatterns-outboxpattern"></a>
+
+##### `OutboxPattern`
+
+```csharp
+PatternDescriptor OutboxPattern { get; }
+```
+
+Gets the outbox pattern.
 
 <a id="member-p-cephalon-engine-patterns-builtinpatterns-pipelinepattern"></a>
 
@@ -5042,7 +5602,7 @@ A value indicating whether the hosted execution is expected to become active whe
 
 Combines the main operator-facing runtime views into a single payload.
 
-Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, and lifecycle story data.
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data projection details, outbox details, inbox details, authorization-policy details, and lifecycle story data.
 
 #### Declaration
 ```csharp
@@ -5061,7 +5621,7 @@ RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Sta
 
 Combines the main operator-facing runtime views into a single payload.
 
-Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, and lifecycle story data.
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data projection details, outbox details, inbox details, authorization-policy details, and lifecycle story data.
 
 Parameters:
 - `Manifest`: The immutable manifest that describes the built runtime shape.
@@ -5072,6 +5632,26 @@ Parameters:
 - `OperationalStory`: The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, hosted-execution state, module state, and the ordered runtime timeline.
 
 #### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-auditstores"></a>
+
+##### `AuditStores`
+
+```csharp
+IReadOnlyList<AuditStoreDescriptor> AuditStores { get; set; }
+```
+
+Gets the audit-store surfaces contributed by active modules and visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-authorizationpolicies"></a>
+
+##### `AuthorizationPolicies`
+
+```csharp
+IReadOnlyList<AuthorizationPolicyDescriptor> AuthorizationPolicies { get; set; }
+```
+
+Gets the authorization policies contributed by active modules and visible to the runtime at the time the snapshot was created.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-diagnosticsconventions"></a>
 
@@ -5103,6 +5683,16 @@ IReadOnlyList<HostedExecutionDescriptor> HostedExecutions { get; set; }
 
 Gets the hosted executions contributed by active modules and visible to the runtime at the time the snapshot was created.
 
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-inboxes"></a>
+
+##### `Inboxes`
+
+```csharp
+IReadOnlyList<InboxDescriptor> Inboxes { get; set; }
+```
+
+Gets the inbox surfaces contributed by active modules and visible to the runtime at the time the snapshot was created.
+
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-manifest"></a>
 
 ##### `Manifest`
@@ -5122,6 +5712,26 @@ RuntimeOperationalStory OperationalStory { get; set; }
 ```
 
 The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, hosted-execution state, module state, and the ordered runtime timeline.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-outboxes"></a>
+
+##### `Outboxes`
+
+```csharp
+IReadOnlyList<OutboxDescriptor> Outboxes { get; set; }
+```
+
+Gets the outbox surfaces contributed by active modules and visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-projections"></a>
+
+##### `Projections`
+
+```csharp
+IReadOnlyList<ProjectionDescriptor> Projections { get; set; }
+```
+
+Gets the projections contributed by active modules and visible to the runtime at the time the snapshot was created.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-status"></a>
 
@@ -5920,6 +6530,26 @@ TechnologyDescriptor EventDrivenIntegration { get; }
 
 Gets the built-in event-driven-integration technology profile.
 
+<a id="member-p-cephalon-engine-technologies-builtintechnologies-hybridcloudruntime"></a>
+
+##### `HybridCloudRuntime`
+
+```csharp
+TechnologyDescriptor HybridCloudRuntime { get; }
+```
+
+Gets the built-in hybrid-cloud-runtime technology profile.
+
+<a id="member-p-cephalon-engine-technologies-builtintechnologies-identityaccess"></a>
+
+##### `IdentityAccess`
+
+```csharp
+TechnologyDescriptor IdentityAccess { get; }
+```
+
+Gets the built-in identity-access technology profile.
+
 <a id="member-p-cephalon-engine-technologies-builtintechnologies-knowledgeretrieval"></a>
 
 ##### `KnowledgeRetrieval`
@@ -5930,6 +6560,16 @@ TechnologyDescriptor KnowledgeRetrieval { get; }
 
 Gets the built-in knowledge-retrieval technology profile.
 
+<a id="member-p-cephalon-engine-technologies-builtintechnologies-multitenancy"></a>
+
+##### `MultiTenancy`
+
+```csharp
+TechnologyDescriptor MultiTenancy { get; }
+```
+
+Gets the built-in multi-tenancy technology profile.
+
 <a id="member-p-cephalon-engine-technologies-builtintechnologies-realtimeexperience"></a>
 
 ##### `RealtimeExperience`
@@ -5939,6 +6579,26 @@ TechnologyDescriptor RealtimeExperience { get; }
 ```
 
 Gets the built-in realtime-experience technology profile.
+
+<a id="member-p-cephalon-engine-technologies-builtintechnologies-serverlesshosting"></a>
+
+##### `ServerlessHosting`
+
+```csharp
+TechnologyDescriptor ServerlessHosting { get; }
+```
+
+Gets the built-in serverless-hosting technology profile.
+
+<a id="member-p-cephalon-engine-technologies-builtintechnologies-servicemeshintegration"></a>
+
+##### `ServiceMeshIntegration`
+
+```csharp
+TechnologyDescriptor ServiceMeshIntegration { get; }
+```
+
+Gets the built-in service-mesh-integration technology profile.
 
 #### Methods
 
@@ -6036,6 +6696,19 @@ Initializes a new instance of the `TechnologyRuntimeCatalogSnapshot` class.
 
 Parameters:
 - `surfaces`: The active technology runtime surfaces.
+
+<a id="member-m-cephalon-engine-technologies-technologyruntimecatalogsnapshot-ctor-system-collections-generic-ienumerable-cephalon-abstractions-technologies-itechnologyruntimecontributor"></a>
+
+##### `TechnologyRuntimeCatalogSnapshot`
+
+```csharp
+TechnologyRuntimeCatalogSnapshot(IEnumerable<ITechnologyRuntimeContributor> contributors)
+```
+
+Initializes a new instance of the `TechnologyRuntimeCatalogSnapshot` class from runtime contributors.
+
+Parameters:
+- `contributors`: The technology runtime contributors that should be projected on demand.
 
 #### Properties
 

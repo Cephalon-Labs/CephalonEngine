@@ -116,7 +116,16 @@ public sealed class ProjectConfigurationConventionTests
                         "flaky-start": { "Enabled": false },
                         "failing-stop": { "Enabled": false },
                         "stop-observer": { "Enabled": false },
-                        "slow-stop": { "Enabled": false }
+                        "slow-stop": { "Enabled": false },
+                        "phase8-runtime-catalogs": { "Enabled": false },
+                        "invalid-phase8-projection": { "Enabled": false },
+                        "invalid-phase8-outbox": { "Enabled": false },
+                        "invalid-phase8-inbox": { "Enabled": false },
+                        "invalid-phase8-audit-store": { "Enabled": false },
+                        "entity-framework-single-context-tests": { "Enabled": false },
+                        "entity-framework-split-context-tests": { "Enabled": false },
+                        "entity-framework-outbox-tests": { "Enabled": false },
+                        "entity-framework-sfid-tests": { "Enabled": false }
                       }
                     }
                   }

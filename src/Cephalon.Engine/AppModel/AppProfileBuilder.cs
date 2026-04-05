@@ -18,6 +18,11 @@ internal sealed class AppProfileBuilder
         new(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<string> selectedTechnologies =
         new(StringComparer.OrdinalIgnoreCase);
+    private DataSelection dataSelection = DataSelection.Empty;
+    private IdentitySelection identitySelection = IdentitySelection.Empty;
+    private TenancySelection tenancySelection = TenancySelection.Empty;
+    private AuditSelection auditSelection = AuditSelection.Empty;
+    private MessagingSelection messagingSelection = MessagingSelection.Empty;
 
     private AppBlueprint blueprint = BuiltInBlueprints.ModularMonolith;
 
@@ -96,6 +101,31 @@ internal sealed class AppProfileBuilder
         selectedTechnologies.Add(technology.Trim());
     }
 
+    public void UseDataSelection(DataSelection selection)
+    {
+        dataSelection = selection ?? throw new ArgumentNullException(nameof(selection));
+    }
+
+    public void UseIdentitySelection(IdentitySelection selection)
+    {
+        identitySelection = selection ?? throw new ArgumentNullException(nameof(selection));
+    }
+
+    public void UseTenancySelection(TenancySelection selection)
+    {
+        tenancySelection = selection ?? throw new ArgumentNullException(nameof(selection));
+    }
+
+    public void UseAuditSelection(AuditSelection selection)
+    {
+        auditSelection = selection ?? throw new ArgumentNullException(nameof(selection));
+    }
+
+    public void UseMessagingSelection(MessagingSelection selection)
+    {
+        messagingSelection = selection ?? throw new ArgumentNullException(nameof(selection));
+    }
+
     public IReadOnlyList<TechnologyDescriptor> GetTechnologyCatalog()
     {
         return technologyCatalog.Values
@@ -125,6 +155,13 @@ internal sealed class AppProfileBuilder
             .ToDictionary(technology => technology.Id, StringComparer.OrdinalIgnoreCase);
 
         Validate(selected, transports, resolvedTechnologies);
+        AppProfileSelectionValidator.Validate(
+            dataSelection,
+            identitySelection,
+            tenancySelection,
+            messagingSelection,
+            selected,
+            resolvedTechnologies);
 
         var orderedPatterns = selected.Values
             .OrderBy(pattern => pattern.Kind)
@@ -143,9 +180,14 @@ internal sealed class AppProfileBuilder
             blueprintDisplayName: blueprint.DisplayName,
             blueprintDescription: blueprint.Description,
             patterns: orderedPatterns,
-            scaffold: BuildScaffold(orderedTransports, orderedTechnologies),
+            scaffold: BuildScaffold(orderedPatterns, orderedTransports, orderedTechnologies),
             technologies: orderedTechnologies,
-            transports: orderedTransports);
+            transports: orderedTransports,
+            data: dataSelection,
+            identity: identitySelection,
+            tenancy: tenancySelection,
+            audit: auditSelection,
+            messaging: messagingSelection);
     }
 
     private static void Validate(
@@ -224,7 +266,9 @@ internal sealed class AppProfileBuilder
         var normalizedKey = NormalizeTechnologyKey(value);
         technology = technologyCatalog.Values.FirstOrDefault(candidate =>
             string.Equals(NormalizeTechnologyKey(candidate.Id), normalizedKey, StringComparison.Ordinal) ||
-            string.Equals(NormalizeTechnologyKey(candidate.DisplayName), normalizedKey, StringComparison.Ordinal));
+            string.Equals(NormalizeTechnologyKey(candidate.DisplayName), normalizedKey, StringComparison.Ordinal) ||
+            candidate.Aliases.Any(alias =>
+                string.Equals(NormalizeTechnologyKey(alias), normalizedKey, StringComparison.Ordinal)));
 
         if (technology is not null)
         {
@@ -241,6 +285,7 @@ internal sealed class AppProfileBuilder
     }
 
     private ScaffoldPlan? BuildScaffold(
+        IReadOnlyList<PatternDescriptor> selectedPatterns,
         IReadOnlyList<TransportDescriptor> selectedTransports,
         IReadOnlyList<TechnologyDescriptor> selectedTechnologies)
     {
@@ -275,7 +320,7 @@ internal sealed class AppProfileBuilder
             displayName: blueprint.Scaffold.DisplayName,
             description: blueprint.Scaffold.Description,
             projects: blueprint.Scaffold.Projects
-                .Select(project => CloneProject(project, selectedTransports, selectedTechnologies))
+                .Select(project => CloneProject(project, selectedPatterns, selectedTransports, selectedTechnologies))
                 .ToArray(),
             folders: blueprint.Scaffold.Folders
                 .Select(CloneFolder)
@@ -284,8 +329,9 @@ internal sealed class AppProfileBuilder
             metadata: blueprint.Scaffold.Metadata);
     }
 
-    private static ScaffoldProject CloneProject(
+    private ScaffoldProject CloneProject(
         ScaffoldProject project,
+        IReadOnlyList<PatternDescriptor> selectedPatterns,
         IReadOnlyList<TransportDescriptor> selectedTransports,
         IReadOnlyList<TechnologyDescriptor> selectedTechnologies)
     {
@@ -313,6 +359,56 @@ internal sealed class AppProfileBuilder
                     packages.Add(package);
                 }
             }
+
+            var includeDataPack = ShouldHintDataPack(selectedPatterns);
+            var includeSfidPack = ShouldHintSfidPack(selectedPatterns);
+            var includeIdentityPack = ShouldHintIdentityPack(selectedTechnologies);
+            var includeMultiTenancyPack = ShouldHintMultiTenancyPack(selectedTechnologies);
+            var includeAuditPack = ShouldHintAuditPack();
+            var includeEventingPack = ShouldHintEventingPack(selectedTechnologies);
+            var includeWolverinePack = ShouldHintWolverinePack(selectedTechnologies);
+
+            if (includeDataPack)
+            {
+                packages.Add("Cephalon.Data");
+            }
+
+            if (includeSfidPack)
+            {
+                packages.Add("Cephalon.Ids.Sfid");
+            }
+
+            if (includeIdentityPack)
+            {
+                packages.Add("Cephalon.Identity");
+            }
+
+            if (includeMultiTenancyPack)
+            {
+                packages.Add("Cephalon.MultiTenancy");
+            }
+
+            if (includeAuditPack)
+            {
+                packages.Add("Cephalon.Audit");
+            }
+
+            if (includeEventingPack)
+            {
+                packages.Add("Cephalon.Eventing");
+            }
+
+            if (includeWolverinePack)
+            {
+                packages.Add("Cephalon.Eventing.Wolverine");
+            }
+
+            if (includeIdentityPack &&
+                project.Metadata.TryGetValue("hostKind", out hostKind) &&
+                string.Equals(hostKind, "aspnet-core", StringComparison.OrdinalIgnoreCase))
+            {
+                packages.Add("Cephalon.Identity.AspNetCore");
+            }
         }
 
         return new ScaffoldProject(
@@ -337,12 +433,79 @@ internal sealed class AppProfileBuilder
             metadata: folder.Metadata);
     }
 
+    private bool ShouldHintDataPack(IReadOnlyList<PatternDescriptor> selectedPatterns)
+    {
+        return dataSelection.HasValues ||
+            HasPattern(selectedPatterns, "cqrs") ||
+            HasPattern(selectedPatterns, "outbox");
+    }
+
+    private bool ShouldHintSfidPack(IReadOnlyList<PatternDescriptor> selectedPatterns)
+    {
+        return !string.IsNullOrWhiteSpace(dataSelection.IdGenerator) ||
+            ShouldHintDataPack(selectedPatterns);
+    }
+
+    private bool ShouldHintIdentityPack(IReadOnlyList<TechnologyDescriptor> selectedTechnologies)
+    {
+        return identitySelection.HasValues ||
+            HasTechnology(selectedTechnologies, "identity-access");
+    }
+
+    private bool ShouldHintMultiTenancyPack(IReadOnlyList<TechnologyDescriptor> selectedTechnologies)
+    {
+        return tenancySelection.HasValues ||
+            HasTechnology(selectedTechnologies, "multi-tenancy");
+    }
+
+    private bool ShouldHintAuditPack()
+    {
+        return auditSelection.Enabled == true;
+    }
+
+    private bool ShouldHintEventingPack(IReadOnlyList<TechnologyDescriptor> selectedTechnologies)
+    {
+        return messagingSelection.HasValues ||
+            HasTechnology(selectedTechnologies, "event-driven-integration");
+    }
+
+    private bool ShouldHintWolverinePack(IReadOnlyList<TechnologyDescriptor> selectedTechnologies)
+    {
+        var provider = ResolveGeneratedMessagingProvider(selectedTechnologies);
+        return string.Equals(provider, "Wolverine", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private string? ResolveGeneratedMessagingProvider(IReadOnlyList<TechnologyDescriptor> selectedTechnologies)
+    {
+        if (!string.IsNullOrWhiteSpace(messagingSelection.Provider))
+        {
+            return messagingSelection.Provider;
+        }
+
+        return ShouldHintEventingPack(selectedTechnologies)
+            ? "Wolverine"
+            : null;
+    }
+
+    private static bool HasPattern(IReadOnlyList<PatternDescriptor> selectedPatterns, string patternId)
+    {
+        return selectedPatterns.Any(pattern =>
+            string.Equals(pattern.Id, patternId, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static bool HasTechnology(IReadOnlyList<TechnologyDescriptor> selectedTechnologies, string technologyId)
+    {
+        return selectedTechnologies.Any(technology =>
+            string.Equals(technology.Id, technologyId, StringComparison.OrdinalIgnoreCase));
+    }
+
     private static bool AreEquivalent(TechnologyDescriptor left, TechnologyDescriptor right)
     {
         return string.Equals(left.Id, right.Id, StringComparison.OrdinalIgnoreCase) &&
             string.Equals(left.DisplayName, right.DisplayName, StringComparison.Ordinal) &&
             string.Equals(left.Description, right.Description, StringComparison.Ordinal) &&
             left.Kind == right.Kind &&
+            left.Aliases.SequenceEqual(right.Aliases, StringComparer.OrdinalIgnoreCase) &&
             left.Tags.SequenceEqual(right.Tags, StringComparer.OrdinalIgnoreCase) &&
             left.RequiresPatterns.SequenceEqual(right.RequiresPatterns, StringComparer.OrdinalIgnoreCase) &&
             left.RequiresTransports.SequenceEqual(right.RequiresTransports, StringComparer.OrdinalIgnoreCase) &&

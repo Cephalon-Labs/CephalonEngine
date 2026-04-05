@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Description>Host-agnostic multi-tenancy companion package for Cephalon.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cephalon.Abstractions\Cephalon.Abstractions.csproj" />
+    <ProjectReference Include="..\Cephalon.Engine\Cephalon.Engine.csproj" />
+  </ItemGroup>
+</Project>

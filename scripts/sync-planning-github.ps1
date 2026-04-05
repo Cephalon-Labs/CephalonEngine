@@ -199,6 +199,19 @@ function Get-BacklogPhaseMap {
         "ENG-013" = 4
         "ENG-022" = 5
         "ENG-029" = 6
+        "ENG-033" = 7
+        "ENG-034" = 7
+        "ENG-035" = 7
+        "ENG-036" = 7
+        "ENG-037" = 7
+        "ENG-038" = 7
+        "ENG-039" = 7
+        "ENG-040" = 7
+        "ENG-041" = 7
+        "ENG-042" = 7
+        "ENG-043" = 7
+        "ENG-044" = 7
+        "ENG-045" = 7
     }
 }
 
@@ -707,6 +720,7 @@ function Get-PhaseLabelName {
         4 { return "phase:4-orchestration" }
         5 { return "phase:5-solution-platform" }
         6 { return "phase:6-cloud-platform" }
+        7 { return "phase:7-adoption-ops" }
         default { return $null }
     }
 }
@@ -722,6 +736,7 @@ function Get-PhaseLabelDescription {
         4 { return "Planning work aligned to Phase 4 execution and orchestration." }
         5 { return "Planning work aligned to Phase 5 solution-level platform work." }
         6 { return "Planning work aligned to Phase 6 cloud and platform integrations." }
+        7 { return "Planning work aligned to Phase 7 external adoption and operator readiness." }
         default { return "Planning work aligned to a roadmap phase." }
     }
 }
@@ -737,6 +752,7 @@ function Get-PhaseLabelColor {
         4 { return "d93f0b" }
         5 { return "b60205" }
         6 { return "0052cc" }
+        7 { return "5319e7" }
         default { return "cfd3d7" }
     }
 }
@@ -786,6 +802,18 @@ function Get-IterationLabelColor {
         "sprint 1" { return "c2e0c6" }
         "sprint 2" { return "c5def5" }
         "sprint 3" { return "fef2c0" }
+        "sprint 4" { return "f9d0c4" }
+        "sprint 5" { return "bfdadc" }
+        "sprint 6" { return "d4c5f9" }
+        "sprint 7" { return "ead1dc" }
+        "sprint 8" { return "d0e0e3" }
+        "sprint 9" { return "d9ead3" }
+        "sprint 10" { return "fff2cc" }
+        "sprint 11" { return "cfe2f3" }
+        "sprint 12" { return "fce5cd" }
+        "sprint 13" { return "b4a7d6" }
+        "sprint 14" { return "c9daf8" }
+        "sprint 15" { return "d9ead3" }
         "later / not scheduled yet" { return "f9d0c4" }
     }
 

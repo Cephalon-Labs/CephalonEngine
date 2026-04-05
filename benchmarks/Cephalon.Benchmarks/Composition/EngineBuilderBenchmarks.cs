@@ -13,8 +13,10 @@ public class EngineBuilderBenchmarks
 {
     private const int BuildsPerIteration = 4096;
     private readonly Func<EngineBuilder> builderFactory = BenchmarkScenarioFactory.CreateEngineBuilder;
+    private readonly Func<EngineBuilder> phase8BuilderFactory = BenchmarkScenarioFactory.CreatePhase8EngineBuilder;
     private readonly Func<EngineBuilder> strictTrustBuilderFactory = BenchmarkScenarioFactory.CreateStrictTrustEngineBuilder;
     private EngineBuilder[] builders = [];
+    private EngineBuilder[] phase8Builders = [];
     private EngineBuilder[] strictTrustBuilders = [];
 
     /// <summary>
@@ -24,10 +26,12 @@ public class EngineBuilderBenchmarks
     public void PrepareIteration()
     {
         builders = new EngineBuilder[BuildsPerIteration];
+        phase8Builders = new EngineBuilder[BuildsPerIteration];
         strictTrustBuilders = new EngineBuilder[BuildsPerIteration];
         for (var index = 0; index < builders.Length; index++)
         {
             builders[index] = builderFactory();
+            phase8Builders[index] = phase8BuilderFactory();
             strictTrustBuilders[index] = strictTrustBuilderFactory();
         }
     }
@@ -39,6 +43,7 @@ public class EngineBuilderBenchmarks
     public void CleanupIteration()
     {
         builders = [];
+        phase8Builders = [];
         strictTrustBuilders = [];
     }
 
@@ -87,6 +92,33 @@ public class EngineBuilderBenchmarks
         var capabilityCount = 0;
 
         foreach (var builder in strictTrustBuilders)
+        {
+            using var runtime = builder.Build();
+            moduleCount += runtime.Manifest.Modules.Count;
+            capabilityCount += runtime.Manifest.Capabilities.Count;
+        }
+
+        return (moduleCount, capabilityCount);
+    }
+
+    /// <summary>
+    /// Builds the runtime manifest for the prepared phase-8 composition that includes the low-ceremony companion-pack path.
+    /// </summary>
+    /// <returns>
+    /// The total number of modules and capabilities surfaced across the measured phase-8 runtime builds.
+    /// </returns>
+    [Benchmark(OperationsPerInvoke = BuildsPerIteration)]
+    public (int Modules, int Capabilities) BuildPhase8RuntimeManifest()
+    {
+        if (phase8Builders.Length == 0)
+        {
+            throw new InvalidOperationException("Benchmark iteration was not initialized.");
+        }
+
+        var moduleCount = 0;
+        var capabilityCount = 0;
+
+        foreach (var builder in phase8Builders)
         {
             using var runtime = builder.Build();
             moduleCount += runtime.Manifest.Modules.Count;

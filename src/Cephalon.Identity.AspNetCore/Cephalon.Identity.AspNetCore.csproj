@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Description>ASP.NET Core identity and authorization adapter for Cephalon.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cephalon.Abstractions\Cephalon.Abstractions.csproj" />
+    <ProjectReference Include="..\Cephalon.Audit\Cephalon.Audit.csproj" />
+    <ProjectReference Include="..\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj" />
+    <ProjectReference Include="..\Cephalon.Engine\Cephalon.Engine.csproj" />
+    <ProjectReference Include="..\Cephalon.Identity\Cephalon.Identity.csproj" />
+  </ItemGroup>
+</Project>

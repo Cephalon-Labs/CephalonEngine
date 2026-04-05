@@ -1,6 +1,7 @@
 using Cephalon.ReferenceDocs.Generation;
 using Cephalon.ReferenceDocs.IO;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace Cephalon.Tests.Tooling;
 
@@ -105,6 +106,224 @@ public sealed class ReferenceDocsGeneratorTests
     }
 
     [Fact]
+    public void GenerateBuildsPageForAbstractionsAssemblyWithPhase8Contracts()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-abstractions-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies: ["Cephalon.Abstractions"]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var abstractionsPage = Assert.Single(rendered.Files, file => file.Path == "cephalon-abstractions.md");
+
+        Assert.Contains("Cephalon.Abstractions.Authorization", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("AuthorizationPolicyDescriptor", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Abstractions.Tenancy", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("TenantContext", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Abstractions.Ids", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IIdGenerator", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("InboxDescriptor", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IInboxCatalog", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("OutboxDescriptor", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IOutboxCatalog", abstractionsPage.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GenerateBuildsPageForEngineAssemblyWithPhase8RuntimeSnapshotMembers()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-engine-phase8-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies: ["Cephalon.Engine"]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var enginePage = Assert.Single(rendered.Files, file => file.Path == "cephalon-engine.md");
+
+        Assert.Contains("RuntimeIntrospectionSnapshot", enginePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("Projections", enginePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("Inboxes", enginePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("Outboxes", enginePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("AuthorizationPolicies", enginePage.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GenerateBuildsPageForSfidIdsAssembly()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-sfid-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies: ["Cephalon.Ids.Sfid"]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var idsPage = Assert.Single(rendered.Files, file => file.Path == "cephalon-ids-sfid.md");
+
+        Assert.Contains("SfidIdOptions", idsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("SfidEngineBuilderExtensions", idsPage.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GenerateBuildsPageForDataAssembly()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-data-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies: ["Cephalon.Data"]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var dataPage = Assert.Single(rendered.Files, file => file.Path == "cephalon-data.md");
+
+        Assert.Contains("DataRuntimeOptions", dataPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("DataEngineBuilderExtensions", dataPage.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GenerateBuildsPageForDataEntityFrameworkAssembly()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-data-ef-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies: ["Cephalon.Data.EntityFramework"]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var dataPage = Assert.Single(rendered.Files, file => file.Path == "cephalon-data-entityframework.md");
+
+        Assert.Contains("EntityFrameworkDataOptions", dataPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EntityFrameworkDataEngineBuilderExtensions", dataPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EntityFrameworkInboxEntry", dataPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IEntityFrameworkInboxContext", dataPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EntityFrameworkOutboxEntry", dataPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IEntityFrameworkOutboxContext", dataPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EnableSfidIdentifiers", dataPage.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GenerateBuildsPageForEventingAssembly()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-eventing-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies: ["Cephalon.Eventing"]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var eventingPage = Assert.Single(rendered.Files, file => file.Path == "cephalon-eventing.md");
+
+        Assert.Contains("EventPublication", eventingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IEventPublisher", eventingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EventDispatchItem", eventingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EventDispatchExecutionReport", eventingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IEventDispatchStore", eventingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IEventDispatchRuntimeReporter", eventingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EventChannelDescriptor", eventingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EventSubscriptionExecutionReport", eventingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IEventSubscriptionRuntimeReporter", eventingPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EventSubscriptionDescriptor", eventingPage.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GenerateBuildsPageForWolverineEventingAssembly()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-eventing-wolverine-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies: ["Cephalon.Eventing.Wolverine"]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var wolverinePage = Assert.Single(rendered.Files, file => file.Path == "cephalon-eventing-wolverine.md");
+
+        Assert.Contains("WolverineEventingOptions", wolverinePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("WolverineEventingEngineBuilderExtensions", wolverinePage.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GenerateBuildsPageForIdentityAssembly()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-identity-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies: ["Cephalon.Identity"]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var identityPage = Assert.Single(rendered.Files, file => file.Path == "cephalon-identity.md");
+
+        Assert.Contains("IdentityRuntimeOptions", identityPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IdentityPolicyMetadataKeys", identityPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IdentityEngineBuilderExtensions", identityPage.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GenerateBuildsPageForIdentityAspNetCoreAssembly()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-identity-aspnetcore-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies: ["Cephalon.Identity.AspNetCore"]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var identityPage = Assert.Single(rendered.Files, file => file.Path == "cephalon-identity-aspnetcore.md");
+
+        Assert.Contains("IdentityAspNetCoreOptions", identityPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IdentityAspNetCoreServiceCollectionExtensions", identityPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IdentityEndpointConventionBuilderExtensions", identityPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("RequireCephalonAuthorizationAttribute", identityPage.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GenerateBuildsPageForMultiTenancyAssembly()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-multi-tenancy-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies: ["Cephalon.MultiTenancy"]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var tenancyPage = Assert.Single(rendered.Files, file => file.Path == "cephalon-multitenancy.md");
+
+        Assert.Contains("MultiTenancyRuntimeOptions", tenancyPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("MultiTenancyEngineBuilderExtensions", tenancyPage.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GenerateBuildsPageForAuditAssembly()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-audit-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies: ["Cephalon.Audit"]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var auditPage = Assert.Single(rendered.Files, file => file.Path == "cephalon-audit.md");
+
+        Assert.Contains("AuditRuntimeOptions", auditPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("AuditMetadataKeys", auditPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("AuditRecordRequest", auditPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IAuditActorAccessor", auditPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IAuditRecorder", auditPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("AuditEngineBuilderExtensions", auditPage.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void GenerateIncludesSummariesForCurrentDocumentedPublicAssemblies()
     {
         var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-coverage-{Guid.NewGuid():N}");
@@ -116,14 +335,22 @@ public sealed class ReferenceDocsGeneratorTests
             [
                 "Cephalon.Abstractions",
                 "Cephalon.Agentics",
+                "Cephalon.Audit",
                 "Cephalon.AspNetCore",
                 "Cephalon.AspNetCore.GraphQL",
                 "Cephalon.AspNetCore.Grpc",
                 "Cephalon.AspNetCore.JsonRpc",
                 "Cephalon.Cli",
+                "Cephalon.Data",
+                "Cephalon.Data.EntityFramework",
                 "Cephalon.Edge",
                 "Cephalon.Engine",
                 "Cephalon.Eventing",
+                "Cephalon.Eventing.Wolverine",
+                "Cephalon.Identity",
+                "Cephalon.Identity.AspNetCore",
+                "Cephalon.Ids.Sfid",
+                "Cephalon.MultiTenancy",
                 "Cephalon.Observability",
                 "Cephalon.Observability.CassandraDependencies",
                 "Cephalon.Observability.ClickHouseDependencies",
@@ -200,6 +427,9 @@ public sealed class ReferenceDocsGeneratorTests
         var rendered = ReferenceDocsGenerator.Generate(request);
 
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-aspnetcore-graphql.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-audit.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-identity-aspnetcore.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-cassandradependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-clickhousedependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-consuldependencies.md");
@@ -229,7 +459,16 @@ public sealed class ReferenceDocsGeneratorTests
 
         Assert.Contains(
             assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Audit", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.AspNetCore.GraphQL", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Identity.AspNetCore", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.MultiTenancy", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.CassandraDependencies", StringComparison.Ordinal));
@@ -299,6 +538,51 @@ public sealed class ReferenceDocsGeneratorTests
     }
 
     [Fact]
+    public void GenerateDefaultCatalogMatchesCheckedInReferenceBundle()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var checkedInReferenceRoot = Path.Combine(repositoryRoot, "docs", "reference");
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-checked-in-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: repositoryRoot,
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration());
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var renderedFiles = rendered.Files
+            .ToDictionary(static file => file.Path, static file => file.Contents, StringComparer.Ordinal);
+        var checkedInFiles = Directory
+            .GetFiles(checkedInReferenceRoot, "*", SearchOption.AllDirectories)
+            .ToDictionary(
+                path => Path.GetRelativePath(checkedInReferenceRoot, path).Replace('\\', '/'),
+                static path => File.ReadAllText(path),
+                StringComparer.Ordinal);
+
+        var renderedPaths = renderedFiles.Keys.OrderBy(static path => path, StringComparer.Ordinal).ToArray();
+        var checkedInPaths = checkedInFiles.Keys.OrderBy(static path => path, StringComparer.Ordinal).ToArray();
+
+        Assert.True(
+            renderedPaths.SequenceEqual(checkedInPaths, StringComparer.Ordinal),
+            CreateReferenceBundleDriftMessage(
+                "file-set",
+                [
+                    .. renderedPaths.Except(checkedInPaths, StringComparer.Ordinal).Select(static path => $"+ {path}"),
+                    .. checkedInPaths.Except(renderedPaths, StringComparer.Ordinal).Select(static path => $"- {path}")
+                ]));
+
+        foreach (var renderedFile in renderedFiles)
+        {
+            var checkedInContents = checkedInFiles[renderedFile.Key];
+            Assert.True(
+                string.Equals(
+                    NormalizeReferenceDocContents(renderedFile.Key, renderedFile.Value),
+                    NormalizeReferenceDocContents(renderedFile.Key, checkedInContents),
+                    StringComparison.Ordinal),
+                CreateReferenceBundleDriftMessage("content", [$"~ {renderedFile.Key}"]));
+        }
+    }
+
+    [Fact]
     public async Task WriteAsyncWritesRenderedReferenceDocsToDisk()
     {
         var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-write-{Guid.NewGuid():N}");
@@ -353,6 +637,52 @@ public sealed class ReferenceDocsGeneratorTests
             : "Debug";
     }
 
+    private static string NormalizeReferenceDocContents(string path, string contents)
+    {
+        var normalized = contents
+            .Replace("\r\n", "\n", StringComparison.Ordinal)
+            .Replace('\r', '\n');
+
+        return path switch
+        {
+            "reference-manifest.json" => NormalizeReferenceManifestJson(normalized),
+            "browse.html" => NormalizeReferenceBrowserHtml(normalized),
+            _ => normalized
+        };
+    }
+
+    private static string NormalizeReferenceManifestJson(string manifestJson)
+    {
+        var manifest = JsonNode.Parse(manifestJson)?.AsObject()
+            ?? throw new InvalidOperationException("Reference manifest could not be parsed.");
+
+        manifest["GeneratedAtUtc"] = "__GENERATED_AT_UTC__";
+
+        return manifest.ToJsonString(new JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
+    }
+
+    private static string NormalizeReferenceBrowserHtml(string html)
+    {
+        const string startToken = "<script id=\"reference-manifest\" type=\"application/json\">";
+        const string endToken = "</script>";
+
+        var startIndex = html.IndexOf(startToken, StringComparison.Ordinal);
+        Assert.True(startIndex >= 0, "Checked-in reference browser HTML is missing the inline manifest script.");
+
+        startIndex += startToken.Length;
+
+        var endIndex = html.IndexOf(endToken, startIndex, StringComparison.Ordinal);
+        Assert.True(endIndex >= 0, "Checked-in reference browser HTML is missing the inline manifest terminator.");
+
+        var manifestJson = html[startIndex..endIndex];
+        var normalizedManifest = NormalizeReferenceManifestJson(manifestJson);
+
+        return string.Concat(html.AsSpan(0, startIndex), normalizedManifest, html.AsSpan(endIndex));
+    }
+
     private static string CreateMissingSummaryMessage(string scope, string[] entries)
     {
         const int previewCount = 20;
@@ -365,5 +695,14 @@ public sealed class ReferenceDocsGeneratorTests
             : string.Empty;
 
         return $"Reference docs are missing XML summaries for {scope}:{Environment.NewLine}{string.Join(Environment.NewLine, preview)}{suffix}";
+    }
+
+    private static string CreateReferenceBundleDriftMessage(string scope, string[] entries)
+    {
+        var preview = entries.Length == 0
+            ? string.Empty
+            : $"{Environment.NewLine}{string.Join(Environment.NewLine, entries)}";
+
+        return $"Checked-in docs/reference bundle drift detected for {scope}. Run `pwsh ./scripts/publish-reference-docs.ps1` and commit the refreshed docs/reference output.{preview}";
     }
 }

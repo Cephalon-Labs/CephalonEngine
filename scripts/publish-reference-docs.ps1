@@ -11,9 +11,9 @@ $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $solutionPath = Join-Path $repoRoot "CephalonEngine.slnx"
-$projectPath = Join-Path $repoRoot "src\Cephalon.ReferenceDocs\Cephalon.ReferenceDocs.csproj"
+$projectPath = [System.IO.Path]::Combine($repoRoot, "src", "Cephalon.ReferenceDocs", "Cephalon.ReferenceDocs.csproj")
 $resolvedOutputPath = if ([string]::IsNullOrWhiteSpace($OutputPath)) {
-    Join-Path $repoRoot "docs\reference"
+    [System.IO.Path]::Combine($repoRoot, "docs", "reference")
 }
 else {
     [System.IO.Path]::GetFullPath($OutputPath)

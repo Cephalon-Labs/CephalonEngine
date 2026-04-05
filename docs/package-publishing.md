@@ -38,20 +38,29 @@ Packable Cephalon packages now inherit shared NuGet metadata from `Directory.Bui
 Publish the intended release package set:
 
 ```powershell
-.\scripts\publish-package-artifacts.ps1
+pwsh ./scripts/publish-package-artifacts.ps1
 ```
 
 Skip the build when the repository has already been compiled:
 
 ```powershell
-.\scripts\publish-package-artifacts.ps1 -SkipBuild
+pwsh ./scripts/publish-package-artifacts.ps1 -SkipBuild
 ```
 
 Choose a custom output directory:
 
 ```powershell
-.\scripts\publish-package-artifacts.ps1 -OutputPath artifacts\packages-preview
+pwsh ./scripts/publish-package-artifacts.ps1 -OutputPath artifacts/packages-preview
 ```
+
+Seed the local package feed emitted by a generated app:
+
+```powershell
+$generatedRoot = (Resolve-Path ./Acme.Store).Path
+pwsh ./scripts/publish-package-artifacts.ps1 -OutputPath (Join-Path $generatedRoot '.cephalon/packages')
+```
+
+That path aligns with the `NuGet.config` emitted by `cephalon new` and the app-focused `dotnet new` starters, so `dotnet build` and `docker compose up --build` can restore Cephalon packages without editing the generated host first.
 
 Install the packaged CLI tool from a locally published artifact:
 
@@ -59,10 +68,35 @@ Install the packaged CLI tool from a locally published artifact:
 dotnet tool install --tool-path .\.tools\cephalon Cephalon.Cli `
   --add-source .\artifacts\packages-release `
   --ignore-failed-sources `
-  --no-cache
+  --no-cache `
+  --prerelease
 
 .\.tools\cephalon\cephalon --help
 ```
+
+## External module package staging
+
+Published module `.nupkg` artifacts are distribution packages, not the final directory shape that `Engine:Discovery:PackageDirectories` loads directly.
+
+Stage a published module package into a loadable package directory with the CLI:
+
+```powershell
+cephalon package stage `
+  --package ./artifacts/packages-release/Cephalon.ReferenceModule.Operations.1.0.0.nupkg `
+  --output ./plugins/reference-operations
+```
+
+If you are working inside this repository before installing the tool package, run the same flow with:
+
+```powershell
+dotnet run --project ./src/Cephalon.Cli -- package stage `
+  --package ./artifacts/packages-release/Cephalon.ReferenceModule.Operations.1.0.0.nupkg `
+  --output ./plugins/reference-operations
+```
+
+That command stages the selected `lib/<tfm>` surface plus `cephalon.package.json` into a directory the engine can load through `Engine:Discovery:PackageDirectories` or `Engine:Discovery:Packages:ManifestPath`.
+
+For the full author -> publish -> trust -> load -> inspect walkthrough, see [External package lifecycle](external-package-lifecycle.md).
 
 ## Output
 
@@ -80,7 +114,7 @@ The JSON manifest now carries:
 
 ## Release validation
 
-`.\scripts\validate-release.ps1` now includes package-artifact publishing by default alongside:
+`pwsh ./scripts/validate-release.ps1` now includes package-artifact publishing by default alongside:
 
 - solution build
 - test execution
@@ -88,7 +122,7 @@ The JSON manifest now carries:
 - benchmark smoke coverage and guardrails
 - reference-doc publishing
 
-The GitHub Actions release-validation workflow uploads `artifacts/packages-release/` as the `package-artifacts` workflow artifact.
+The GitHub Actions release-validation workflow now proves this package-publishing path on both Windows and Ubuntu through the same repo-native script entry point. The current Ubuntu leg uses `-SkipBenchmarks` while benchmark guardrails remain Windows-baselined.
 
 ## Maintenance rules
 
@@ -97,4 +131,5 @@ The GitHub Actions release-validation workflow uploads `artifacts/packages-relea
 - keep shared package metadata and any package-specific readmes aligned with the actual release surface
 - keep the stable `cephalon` tool command name aligned across CLI packaging, docs, and validation coverage
 - keep release checksum/provenance metadata aligned with the actual repository source revision and package file set
+- keep the published-module staging flow aligned with the CLI package-stage command and external package lifecycle guide
 - keep package-publishing docs, the publish script, and release-validation automation aligned when the package boundary changes

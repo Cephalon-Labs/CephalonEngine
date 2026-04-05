@@ -1,13 +1,34 @@
 {
   "Engine": {
-    "Blueprint": "Microservice",
+    "Blueprint": "microservice",
     "Discovery": {
       "Assemblies": [
         "Cephalon.Sample.Microservice"
       ]
     },
+    "Data": {
+      "Ids": {
+        "Generator": "Sfid"
+      }
+    },
+    "Identity": {
+      "Enabled": false,
+      "AuthorizationModes": []
+    },
+    "Tenancy": {
+      "Enabled": false
+    },
+    "Audit": {
+      "Enabled": true
+    },
+    "Messaging": {},
+    "Observability": {
+      "LogManifestSummary": true,
+      "LogModuleSummary": true,
+      "LogCapabilitySummary": true
+    },
     "Transports": [
-      "RestApi"
+      "rest-api"
     ]
   },
   "OpenApi": {

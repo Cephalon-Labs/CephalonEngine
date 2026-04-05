@@ -25,6 +25,11 @@ public sealed class EngineSettings
     /// <param name="failurePolicy">Runtime failure policy values.</param>
     /// <param name="trustPolicy">Capability and package trust policy values.</param>
     /// <param name="packagePolicy">Package metadata and integrity policy values.</param>
+    /// <param name="data">Configuration-driven data settings.</param>
+    /// <param name="identity">Configuration-driven identity and authorization settings.</param>
+    /// <param name="tenancy">Configuration-driven multi-tenancy settings.</param>
+    /// <param name="audit">Configuration-driven audit settings.</param>
+    /// <param name="messaging">Configuration-driven messaging settings.</param>
     public EngineSettings(
         string? blueprint = null,
         IReadOnlyList<string>? patterns = null,
@@ -35,7 +40,12 @@ public sealed class EngineSettings
         LocalizationSettings? localization = null,
         FailurePolicy? failurePolicy = null,
         TrustPolicy? trustPolicy = null,
-        PackagePolicy? packagePolicy = null)
+        PackagePolicy? packagePolicy = null,
+        DataSettings? data = null,
+        IdentitySettings? identity = null,
+        TenancySettings? tenancy = null,
+        AuditSettings? audit = null,
+        MessagingSettings? messaging = null)
     {
         Blueprint = string.IsNullOrWhiteSpace(blueprint) ? null : blueprint.Trim();
         Patterns = patterns?
@@ -56,6 +66,11 @@ public sealed class EngineSettings
         FailurePolicy = failurePolicy ?? FailurePolicy.Default;
         TrustPolicy = trustPolicy ?? TrustPolicy.Default;
         PackagePolicy = packagePolicy ?? PackagePolicy.Default;
+        Data = data ?? DataSettings.Empty;
+        Identity = identity ?? IdentitySettings.Empty;
+        Tenancy = tenancy ?? TenancySettings.Empty;
+        Audit = audit ?? AuditSettings.Empty;
+        Messaging = messaging ?? MessagingSettings.Empty;
     }
 
     /// <summary>
@@ -109,6 +124,31 @@ public sealed class EngineSettings
     public PackagePolicy PackagePolicy { get; }
 
     /// <summary>
+    /// Gets configuration-driven data settings.
+    /// </summary>
+    public DataSettings Data { get; }
+
+    /// <summary>
+    /// Gets configuration-driven identity and authorization settings.
+    /// </summary>
+    public IdentitySettings Identity { get; }
+
+    /// <summary>
+    /// Gets configuration-driven multi-tenancy settings.
+    /// </summary>
+    public TenancySettings Tenancy { get; }
+
+    /// <summary>
+    /// Gets configuration-driven audit settings.
+    /// </summary>
+    public AuditSettings Audit { get; }
+
+    /// <summary>
+    /// Gets configuration-driven messaging settings.
+    /// </summary>
+    public MessagingSettings Messaging { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any engine settings were explicitly supplied.
     /// </summary>
     public bool HasValues =>
@@ -121,7 +161,12 @@ public sealed class EngineSettings
         Localization.HasValues ||
         FailurePolicy.HasValues ||
         TrustPolicy.HasValues ||
-        PackagePolicy.HasValues;
+        PackagePolicy.HasValues ||
+        Data.HasValues ||
+        Identity.HasValues ||
+        Tenancy.HasValues ||
+        Audit.HasValues ||
+        Messaging.HasValues;
 
     /// <summary>
     /// Reads engine settings from configuration.
@@ -165,6 +210,11 @@ public sealed class EngineSettings
             localization: LocalizationSettings.FromConfiguration(configuration, sectionPath),
             failurePolicy: FailurePolicy.FromConfiguration(configuration, sectionPath),
             trustPolicy: TrustPolicy.FromConfiguration(configuration, sectionPath),
-            packagePolicy: PackagePolicy.FromConfiguration(configuration, sectionPath));
+            packagePolicy: PackagePolicy.FromConfiguration(configuration, sectionPath),
+            data: DataSettings.FromConfiguration(configuration, sectionPath),
+            identity: IdentitySettings.FromConfiguration(configuration, sectionPath),
+            tenancy: TenancySettings.FromConfiguration(configuration, sectionPath),
+            audit: AuditSettings.FromConfiguration(configuration, sectionPath),
+            messaging: MessagingSettings.FromConfiguration(configuration, sectionPath));
     }
 }
