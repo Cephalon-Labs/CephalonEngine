@@ -34,6 +34,29 @@ internal sealed class AuditCaptureModule : ModuleBase
     }
 }
 
+internal sealed class AuditCaptureWriterModule : ModuleBase
+{
+    private static readonly ModuleDescriptor DescriptorInstance = new(
+        id: "audit-capture-writer-tests",
+        displayName: "Audit Capture Writer Tests",
+        description: "Provides capture writers for Cephalon.Audit tests without overriding the ambient actor accessor.",
+        tags: ["audit", "tests"],
+        version: "1.0.0");
+
+    public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+    public override void ConfigureServices(IServiceCollection services)
+    {
+        services.AddSingleton<CaptureAuditWriter>();
+        services.AddSingleton<IAuditWriter>(serviceProvider =>
+            serviceProvider.GetRequiredService<CaptureAuditWriter>());
+    }
+
+    public override void RegisterCapabilities(ICapabilityRegistry capabilities)
+    {
+    }
+}
+
 internal sealed class CaptureAuditWriter : IAuditWriter
 {
     private readonly List<AuditEntry> entries = [];

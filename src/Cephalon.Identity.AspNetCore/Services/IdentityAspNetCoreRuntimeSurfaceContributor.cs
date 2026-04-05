@@ -1,5 +1,6 @@
 using System.Globalization;
 using Cephalon.Abstractions.Technologies;
+using Cephalon.Audit.Services;
 using Cephalon.Identity.AspNetCore.Configuration;
 using Cephalon.Identity.AspNetCore.Transports.Rest;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +10,9 @@ namespace Cephalon.Identity.AspNetCore.Services;
 
 internal sealed class IdentityAspNetCoreRuntimeSurfaceContributor(
     IEnumerable<EndpointDataSource> endpointDataSources,
-    IdentityAspNetCoreOptions options) : ITechnologyRuntimeContributor
+    IdentityAspNetCoreOptions options,
+    IEnumerable<IAuditActorAccessor> auditActorAccessors,
+    IEnumerable<IAuditRecorder> auditRecorders) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -30,6 +33,8 @@ internal sealed class IdentityAspNetCoreRuntimeSurfaceContributor(
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(static mode => mode, StringComparer.OrdinalIgnoreCase)
             .ToArray();
+        var auditActorBridgeActive = auditActorAccessors.Any(static accessor => accessor is HttpContextAuditActorAccessor);
+        var auditPackActive = auditRecorders.Any();
         var minimalApiCount = protectedEndpoints.Count(static endpoint => endpoint.IntegrationModes.Contains("minimal-api", StringComparer.OrdinalIgnoreCase));
         var mvcCount = protectedEndpoints.Count(static endpoint => endpoint.IntegrationModes.Contains("mvc", StringComparer.OrdinalIgnoreCase));
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -46,6 +51,10 @@ internal sealed class IdentityAspNetCoreRuntimeSurfaceContributor(
             ["subjectIdClaimTypeCount"] = options.SubjectIdClaimTypes.Count.ToString(CultureInfo.InvariantCulture),
             ["tenantRouteKeyCount"] = options.TenantRouteKeys.Count.ToString(CultureInfo.InvariantCulture),
             ["resourceIdRouteKeyCount"] = options.ResourceIdRouteKeys.Count.ToString(CultureInfo.InvariantCulture),
+            ["auditActorBridgeStatus"] = auditActorBridgeActive
+                ? (auditPackActive ? "active" : "available")
+                : (auditPackActive ? "custom-or-disabled" : "not-configured"),
+            ["auditActorBridgeSource"] = auditActorBridgeActive ? "claims-principal" : "none",
             ["includeAllClaimsAsSubjectAttributes"] = options.IncludeAllClaimsAsSubjectAttributes ? "true" : "false",
             ["includeRouteValuesAsResourceAttributes"] = options.IncludeRouteValuesAsResourceAttributes ? "true" : "false",
             ["includeQueryStringAsContextAttributes"] = options.IncludeQueryStringAsContextAttributes ? "true" : "false",
@@ -62,7 +71,7 @@ internal sealed class IdentityAspNetCoreRuntimeSurfaceContributor(
                 new TechnologyRuntimeEntry(
                     id: "identity-aspnetcore-boundary",
                     displayName: "Identity ASP.NET Core Boundary",
-                    description: "Summarizes protected ASP.NET Core endpoints, policy ids, anonymous overrides, and adapter integration modes.",
+                    description: "Summarizes protected ASP.NET Core endpoints, policy ids, anonymous overrides, adapter integration modes, and the low-ceremony audit actor bridge state.",
                     metadata: metadata)
             ]);
     }

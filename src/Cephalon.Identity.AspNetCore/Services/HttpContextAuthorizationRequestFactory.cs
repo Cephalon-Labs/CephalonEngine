@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Security.Claims;
 using Cephalon.Abstractions.Authorization;
 using Cephalon.Identity.AspNetCore.Configuration;
 using Microsoft.AspNetCore.Http;
@@ -7,8 +6,27 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Cephalon.Identity.AspNetCore.Services;
 
-internal sealed class HttpContextAuthorizationRequestFactory(IdentityAspNetCoreOptions options)
+internal sealed class HttpContextAuthorizationRequestFactory
 {
+    private readonly IdentityAspNetCoreOptions options;
+    private readonly IdentityPrincipalDescriptorFactory principalDescriptorFactory;
+
+    public HttpContextAuthorizationRequestFactory(IdentityAspNetCoreOptions options)
+        : this(options, new IdentityPrincipalDescriptorFactory(options))
+    {
+    }
+
+    public HttpContextAuthorizationRequestFactory(
+        IdentityAspNetCoreOptions options,
+        IdentityPrincipalDescriptorFactory principalDescriptorFactory)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(principalDescriptorFactory);
+
+        this.options = options;
+        this.principalDescriptorFactory = principalDescriptorFactory;
+    }
+
     public bool TryCreate(
         HttpContext httpContext,
         RestAuthorizationRequestMetadata metadata,
@@ -22,23 +40,12 @@ internal sealed class HttpContextAuthorizationRequestFactory(IdentityAspNetCoreO
         failureReason = null;
 
         var principal = httpContext.User;
-        if (principal?.Identity?.IsAuthenticated != true)
+        if (!principalDescriptorFactory.TryCreate(principal, out var principalDescriptor, out failureReason))
         {
-            failureReason = "An authenticated user is required for this endpoint.";
             return false;
         }
 
-        var subjectId = ResolveSubjectId(principal);
-        if (subjectId is null)
-        {
-            failureReason = "The authenticated user did not provide a subject identifier that the Cephalon ASP.NET Core identity adapter could resolve.";
-            return false;
-        }
-
-        var displayName = ResolveDisplayName(principal);
-        var subjectRoles = ResolveClaimValues(principal, options.RoleClaimTypes);
-        var subjectTenantIds = ResolveClaimValues(principal, options.TenantClaimTypes);
-        var subjectAttributes = CreateSubjectAttributes(principal);
+        var subjectDescriptor = principalDescriptor!;
 
         var resourceType = metadata.ResourceType ?? ResolveResourceType(httpContext);
         if (resourceType is null)
@@ -51,57 +58,25 @@ internal sealed class HttpContextAuthorizationRequestFactory(IdentityAspNetCoreO
         var resourceTenantId =
             ResolveRouteValue(httpContext, metadata.TenantRouteKey, options.TenantRouteKeys) ??
             ResolveHeaderValue(httpContext, options.TenantHeaderNames) ??
-            (subjectTenantIds.Length == 1 ? subjectTenantIds[0] : null);
+            (subjectDescriptor.TenantIds.Length == 1 ? subjectDescriptor.TenantIds[0] : null);
         var ownerSubjectId = ResolveRouteValue(httpContext, metadata.OwnerSubjectIdRouteKey, options.OwnerSubjectIdRouteKeys);
         var resourceAttributes = CreateResourceAttributes(httpContext, resourceId, resourceTenantId, ownerSubjectId);
 
         var action = metadata.Action ?? ResolveAction(httpContext.Request.Method);
         var contextAttributes = CreateContextAttributes(httpContext, action);
-        var contextTenantId = resourceTenantId ?? (subjectTenantIds.Length == 1 ? subjectTenantIds[0] : null);
+        var contextTenantId = resourceTenantId ?? (subjectDescriptor.TenantIds.Length == 1 ? subjectDescriptor.TenantIds[0] : null);
         var correlationId = Activity.Current?.TraceId.ToString() ?? httpContext.TraceIdentifier;
 
         request = new AuthorizationEvaluationRequest(
-            new AuthorizationSubject(subjectId, displayName, subjectRoles, subjectTenantIds, subjectAttributes),
+            new AuthorizationSubject(
+                subjectDescriptor.SubjectId,
+                subjectDescriptor.DisplayName,
+                subjectDescriptor.Roles,
+                subjectDescriptor.TenantIds,
+                subjectDescriptor.SubjectAttributes),
             new AuthorizationResource(resourceType, resourceId, resourceTenantId, ownerSubjectId, resourceAttributes),
             new AuthorizationContext(action, metadata.PolicyId, contextTenantId, correlationId, contextAttributes));
         return true;
-    }
-
-    private Dictionary<string, string> CreateSubjectAttributes(ClaimsPrincipal principal)
-    {
-        var attributes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        if (!options.IncludeAllClaimsAsSubjectAttributes)
-        {
-            return attributes;
-        }
-
-        var excludedClaimTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        AddRange(excludedClaimTypes, options.SubjectIdClaimTypes);
-        AddRange(excludedClaimTypes, options.DisplayNameClaimTypes);
-        AddRange(excludedClaimTypes, options.RoleClaimTypes);
-        AddRange(excludedClaimTypes, options.TenantClaimTypes);
-
-        foreach (var group in principal.Claims
-                     .Where(claim => !excludedClaimTypes.Contains(claim.Type))
-                     .GroupBy(claim => claim.Type, StringComparer.OrdinalIgnoreCase)
-                     .OrderBy(static group => group.Key, StringComparer.OrdinalIgnoreCase))
-        {
-            var values = group
-                .Select(static claim => Normalize(claim.Value))
-                .Where(static value => value is not null)
-                .Select(static value => value!)
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
-                .ToArray();
-            if (values.Length == 0)
-            {
-                continue;
-            }
-
-            attributes[group.Key] = string.Join(",", values);
-        }
-
-        return attributes;
     }
 
     private Dictionary<string, string> CreateResourceAttributes(
@@ -214,17 +189,6 @@ internal sealed class HttpContextAuthorizationRequestFactory(IdentityAspNetCoreO
         return attributes;
     }
 
-    private string? ResolveSubjectId(ClaimsPrincipal principal)
-    {
-        return ResolveClaimValue(principal, options.SubjectIdClaimTypes) ??
-            (options.AllowIdentityNameAsSubjectIdFallback ? Normalize(principal.Identity?.Name) : null);
-    }
-
-    private string? ResolveDisplayName(ClaimsPrincipal principal)
-    {
-        return ResolveClaimValue(principal, options.DisplayNameClaimTypes) ?? Normalize(principal.Identity?.Name);
-    }
-
     private static string ResolveAction(string method)
     {
         return method.Trim().ToUpperInvariant() switch
@@ -251,34 +215,6 @@ internal sealed class HttpContextAuthorizationRequestFactory(IdentityAspNetCoreO
             .ToArray();
 
         return segments.LastOrDefault();
-    }
-
-    private static string? ResolveClaimValue(ClaimsPrincipal principal, IReadOnlyCollection<string> claimTypes)
-    {
-        foreach (var claimType in claimTypes)
-        {
-            var value = principal.Claims
-                .Where(claim => string.Equals(claim.Type, claimType, StringComparison.OrdinalIgnoreCase))
-                .Select(static claim => Normalize(claim.Value))
-                .FirstOrDefault(static value => value is not null);
-            if (value is not null)
-            {
-                return value;
-            }
-        }
-
-        return null;
-    }
-
-    private static string[] ResolveClaimValues(ClaimsPrincipal principal, IReadOnlyCollection<string> claimTypes)
-    {
-        return claimTypes
-            .SelectMany(claimType => principal.Claims.Where(claim =>
-                string.Equals(claim.Type, claimType, StringComparison.OrdinalIgnoreCase)))
-            .SelectMany(static claim => SplitValues(claim.Value))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
     }
 
     private static string? ResolveRouteValue(
@@ -344,28 +280,6 @@ internal sealed class HttpContextAuthorizationRequestFactory(IdentityAspNetCoreO
         return null;
     }
 
-    private static string[] SplitValues(string? value)
-    {
-        return value?
-            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Select(static item => Normalize(item))
-            .Where(static item => item is not null)
-            .Select(static item => item!)
-            .ToArray() ?? [];
-    }
-
-    private static void AddRange(HashSet<string> target, IEnumerable<string> values)
-    {
-        foreach (var value in values)
-        {
-            var normalizedValue = Normalize(value);
-            if (normalizedValue is not null)
-            {
-                target.Add(normalizedValue);
-            }
-        }
-    }
-
     private static string? NormalizeRouteValue(object? value)
     {
         return value switch
@@ -381,6 +295,18 @@ internal sealed class HttpContextAuthorizationRequestFactory(IdentityAspNetCoreO
         return string.IsNullOrWhiteSpace(value)
             ? null
             : value.Trim();
+    }
+
+    private static void AddRange(HashSet<string> target, IEnumerable<string> values)
+    {
+        foreach (var value in values)
+        {
+            var normalizedValue = Normalize(value);
+            if (normalizedValue is not null)
+            {
+                target.Add(normalizedValue);
+            }
+        }
     }
 }
 
