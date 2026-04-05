@@ -17,6 +17,8 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.Data.EntityFramework"] = "data-entityframework.md",
             ["Cephalon.Edge"] = "edge.md",
             ["Cephalon.Engine"] = "engine.md",
+            ["Cephalon.EventSourcing"] = "event-sourcing.md",
+            ["Cephalon.EventSourcing.EntityFramework"] = "event-sourcing-entityframework.md",
             ["Cephalon.Eventing"] = "eventing.md",
             ["Cephalon.Eventing.Wolverine"] = "eventing-wolverine.md",
             ["Cephalon.Identity"] = "identity.md",

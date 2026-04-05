@@ -16,9 +16,11 @@ See also: [Docs hub](../README.md)
 - [Cephalon.AspNetCore.Grpc](aspnetcore-grpc.md)
 - [Cephalon.Worker](worker.md)
 
-## Technology packs
+## Technology and follow-through packs
 
 - [Cephalon.Agentics](agentics.md)
+- [Cephalon.EventSourcing](event-sourcing.md)
+- [Cephalon.EventSourcing.EntityFramework](event-sourcing-entityframework.md)
 - [Cephalon.Eventing](eventing.md)
 - [Cephalon.Retrieval](retrieval.md)
 - [Cephalon.Edge](edge.md)

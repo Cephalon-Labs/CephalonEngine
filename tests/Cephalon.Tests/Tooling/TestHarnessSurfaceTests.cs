@@ -11,7 +11,8 @@ public sealed class TestHarnessSurfaceTests
         var exportedTypes = typeof(TestHarnessSurfaceTests).Assembly.GetExportedTypes();
         var allowedFrameworkVisibleTypes = new HashSet<string>(StringComparer.Ordinal)
         {
-            typeof(global::Cephalon.Tests.Support.GreetingEnvelope).FullName!
+            typeof(global::Cephalon.Tests.Support.GreetingEnvelope).FullName!,
+            typeof(global::Cephalon.Tests.Hosting.IdentityAspNetCoreDocumentsController).FullName!
         };
 
         Assert.NotEmpty(exportedTypes);

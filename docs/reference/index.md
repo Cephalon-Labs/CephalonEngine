@@ -15,7 +15,7 @@ Quick links:
 
 ### Core
 
-- [Cephalon.Abstractions](cephalon-abstractions.md): Host-agnostic contracts that module and package authors build against. Contains 15 namespaces and 106 public types. [Browse](browse.html?assembly=Cephalon.Abstractions)
+- [Cephalon.Abstractions](cephalon-abstractions.md): Host-agnostic contracts that module and package authors build against. Contains 16 namespaces and 116 public types. [Browse](browse.html?assembly=Cephalon.Abstractions)
 - [Cephalon.Engine](cephalon-engine.md): Composition, runtime, policy, manifest, and introspection services. Contains 12 namespaces and 66 public types. [Browse](browse.html?assembly=Cephalon.Engine)
 
 ### Technology Packs
@@ -82,6 +82,11 @@ Quick links:
 - [Cephalon.Cli](cephalon-cli.md): Command-line surface for blueprint-aware generation. Contains 1 namespaces and 1 public types. [Browse](browse.html?assembly=Cephalon.Cli)
 - [Cephalon.ReferenceDocs](cephalon-referencedocs.md): Reference-doc generation pipeline for XML comments and public APIs. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.ReferenceDocs)
 - [Cephalon.Scaffolding](cephalon-scaffolding.md): Blueprint scaffold generation primitives and filesystem output. Contains 2 namespaces and 7 public types. [Browse](browse.html?assembly=Cephalon.Scaffolding)
+
+### Event-Sourcing Companion Packs
+
+- [Cephalon.EventSourcing](cephalon-eventsourcing.md): Runtime-neutral event-store contracts, aggregate hydration, and event-stream cataloging for Cephalon runtimes. Contains 4 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.EventSourcing)
+- [Cephalon.EventSourcing.EntityFramework](cephalon-eventsourcing-entityframework.md): Entity Framework Core append/read event-store provider for Cephalon event-sourcing workloads. Contains 3 namespaces and 5 public types. [Browse](browse.html?assembly=Cephalon.EventSourcing.EntityFramework)
 
 ## Reading order
 

@@ -94,6 +94,16 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.OutboxDescriptor),
             typeof(global::Cephalon.Abstractions.Data.OutboxMessage),
             typeof(global::Cephalon.Abstractions.Data.ProjectionDescriptor),
+            typeof(global::Cephalon.Abstractions.EventSourcing.DomainEvent),
+            typeof(global::Cephalon.Abstractions.EventSourcing.EventStreamConcurrencyException),
+            typeof(global::Cephalon.Abstractions.EventSourcing.EventStreamDescriptor),
+            typeof(global::Cephalon.Abstractions.EventSourcing.IAggregate<>),
+            typeof(global::Cephalon.Abstractions.EventSourcing.IDomainEvent),
+            typeof(global::Cephalon.Abstractions.EventSourcing.IEventStore),
+            typeof(global::Cephalon.Abstractions.EventSourcing.IEventStoreCatalog),
+            typeof(global::Cephalon.Abstractions.EventSourcing.IEventStoreContributor),
+            typeof(global::Cephalon.Abstractions.EventSourcing.IEventStoreRegistry),
+            typeof(global::Cephalon.Abstractions.EventSourcing.ISnapshotStore),
             typeof(global::Cephalon.Abstractions.Execution.ExecutionGraphDescriptor),
             typeof(global::Cephalon.Abstractions.Execution.ExecutionGraphEdgeDescriptor),
             typeof(global::Cephalon.Abstractions.Execution.ExecutionGraphNodeDescriptor),
@@ -496,6 +506,31 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Eventing.Services.IEventSubscriptionRuntimeCatalog),
             typeof(global::Cephalon.Eventing.Services.IEventSubscriptionRuntimeReporter),
             typeof(global::Cephalon.Eventing.Services.EventSubscriptionRuntimeState));
+    }
+
+    [Fact]
+    public void EventSourcingAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.EventSourcing.Registration.EventSourcingEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.EventSourcing.Configuration.EventSourcingOptions),
+            typeof(global::Cephalon.EventSourcing.Hosting.EventSourcingServiceCollectionExtensions),
+            typeof(global::Cephalon.EventSourcing.Registration.EventSourcingEngineBuilderExtensions),
+            typeof(global::Cephalon.EventSourcing.Services.AggregateHydrator<,>),
+            typeof(global::Cephalon.EventSourcing.Services.EventStreamCatalog),
+            typeof(global::Cephalon.EventSourcing.Services.EventStreamRegistry));
+    }
+
+    [Fact]
+    public void EventSourcingEntityFrameworkAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.EventSourcing.EntityFramework.Registration.EntityFrameworkEventSourcingEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry),
+            typeof(global::Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSourcingConfiguration),
+            typeof(global::Cephalon.EventSourcing.EntityFramework.Hosting.EntityFrameworkEventSourcingServiceCollectionExtensions),
+            typeof(global::Cephalon.EventSourcing.EntityFramework.IEntityFrameworkEventContext),
+            typeof(global::Cephalon.EventSourcing.EntityFramework.Registration.EntityFrameworkEventSourcingEngineBuilderExtensions));
     }
 
     [Fact]
