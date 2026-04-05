@@ -13,6 +13,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit" />
@@ -80,6 +81,8 @@
     <ProjectReference Include="..\..\src\Cephalon.Observability.OpenTelemetry\Cephalon.Observability.OpenTelemetry.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.Serilog\Cephalon.Observability.Serilog.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.ReferenceDocs\Cephalon.ReferenceDocs.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.EventSourcing\Cephalon.EventSourcing.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.EventSourcing.EntityFramework\Cephalon.EventSourcing.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Retrieval\Cephalon.Retrieval.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Scaffolding\Cephalon.Scaffolding.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Worker\Cephalon.Worker.csproj" />

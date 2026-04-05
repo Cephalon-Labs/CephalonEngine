@@ -223,6 +223,8 @@ IServiceCollection AddCephalonIdentityAspNetCore(this IServiceCollection service
 
 Adds the Cephalon ASP.NET Core identity adapter to the service collection.
 
+Remarks: When `Cephalon.Audit` is also active and the host has not already supplied a custom `IAuditActorAccessor`, this registration also bridges the current authenticated `User` into the ambient audit actor contract.
+
 Returns: The same service collection for fluent registration.
 
 Parameters:
@@ -253,7 +255,7 @@ WebApplicationBuilder AddCephalonIdentityAspNetCore(this WebApplicationBuilder b
 
 Adds the Cephalon ASP.NET Core identity adapter to the target application builder.
 
-Remarks: This keeps ASP.NET Core-specific principal, claim, and route-bound authorization mapping in the host layer while still feeding the host-agnostic Cephalon authorization contracts.
+Remarks: This keeps ASP.NET Core-specific principal, claim, and route-bound authorization mapping in the host layer while still feeding the host-agnostic Cephalon authorization contracts. When `Cephalon.Audit` is also active and no custom `IAuditActorAccessor` has been registered, the same adapter also bridges the current authenticated principal into the ambient audit actor contract.
 
 Returns: The same builder instance for fluent composition.
 
