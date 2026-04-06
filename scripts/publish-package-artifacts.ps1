@@ -134,9 +134,15 @@ function Get-ReleasePackageProjects {
 
     foreach ($srcDirectory in Get-ChildItem -Path (Join-Path $repoRoot "src") -Directory -Filter "Cephalon.*" | Sort-Object Name) {
         $projectPath = Join-Path $srcDirectory.FullName ($srcDirectory.Name + ".csproj")
-        if (Test-Path -LiteralPath $projectPath) {
-            $projects.Add($projectPath)
+        if (-not (Test-Path -LiteralPath $projectPath)) {
+            continue
         }
+        # Skip projects that explicitly opt out of NuGet packaging.
+        $content = Get-Content -LiteralPath $projectPath -Raw
+        if ($content -match '<IsPackable>\s*false\s*</IsPackable>') {
+            continue
+        }
+        $projects.Add($projectPath)
     }
 
     foreach ($extraProject in @(
