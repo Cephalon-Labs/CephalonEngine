@@ -1,10 +1,6 @@
-using Cephalon.Abstractions.Behaviors;
-using Cephalon.Behaviors.Configuration;
-using Cephalon.Behaviors.Rules;
+using Cephalon.Behaviors.Modules;
 using Cephalon.Behaviors.Services;
 using Cephalon.Engine.Composition;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Behaviors.Hosting;
 
@@ -15,7 +11,7 @@ public static class BehaviorEngineBuilderExtensions
     /// Adds the behavior topology system to the engine, including catalog, dispatcher, compatibility matrix, and built-in rules.
     /// </summary>
     /// <param name="engine">The engine builder to extend.</param>
-    /// <param name="configure">An optional callback to register behaviors and configure defaults.</param>
+    /// <param name="configure">An optional callback to register behaviors fluently.</param>
     /// <returns>The same engine builder for fluent composition.</returns>
     public static EngineBuilder AddBehaviors(
         this EngineBuilder engine,
@@ -23,47 +19,26 @@ public static class BehaviorEngineBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(engine);
 
-        // Register config-driven defaults resolver
-        engine.Services.AddSingleton<BehaviorTopologyResolver>(sp =>
-        {
-            var configuration = sp.GetService<IConfiguration>();
-            var defaults = new BehaviorOptions();
-            if (configuration is not null)
-            {
-                var section = configuration.GetSection(BehaviorOptions.DefaultsSectionName);
-                var pattern = section[nameof(BehaviorOptions.Pattern)];
-                if (!string.IsNullOrWhiteSpace(pattern))
-                    defaults.Pattern = pattern;
-                var transportSection = section.GetSection(nameof(BehaviorOptions.Transport));
-                foreach (var t in transportSection.GetChildren())
-                {
-                    if (!string.IsNullOrWhiteSpace(t.Value))
-                        defaults.Transport.Add(t.Value);
-                }
-            }
-            return new BehaviorTopologyResolver(defaults);
-        });
+        engine.AddModule(new BehaviorModule(configureOptions: null, configureBehaviors: configure));
 
-        // Register core services
-        engine.Services.AddSingleton<IBehaviorCatalog, BehaviorCatalog>();
-        engine.Services.AddSingleton<BehaviorDispatcher>();
-        engine.Services.AddSingleton<CompatibilityMatrix>();
+        return engine;
+    }
 
-        // Register built-in rules
-        engine.Services.AddSingleton<IBehaviorCompatibilityRule, Abt001SagaRequiresStatefulTransportRule>();
-        engine.Services.AddSingleton<IBehaviorCompatibilityRule, Abt002EventDrivenWithHttpRestRule>();
-        engine.Services.AddSingleton<IBehaviorCompatibilityRule, Abt003ProcessManagerRequiresInboxRule>();
-        engine.Services.AddSingleton<IBehaviorCompatibilityRule, Abt004CqrsMultipleTransportsRule>();
+    /// <summary>
+    /// Adds the behavior topology system to the engine with custom options and behavior registration.
+    /// </summary>
+    /// <param name="engine">The engine builder to extend.</param>
+    /// <param name="configureOptions">An optional callback to configure behavior topology options.</param>
+    /// <param name="configure">An optional callback to register behaviors fluently.</param>
+    /// <returns>The same engine builder for fluent composition.</returns>
+    public static EngineBuilder AddBehaviors(
+        this EngineBuilder engine,
+        Action<Cephalon.Behaviors.Configuration.BehaviorOptions>? configureOptions,
+        Action<IBehaviorCollectionBuilder>? configure = null)
+    {
+        ArgumentNullException.ThrowIfNull(engine);
 
-        // Register config contributor
-        engine.Services.AddSingleton<IBehaviorContributor, ConfigBehaviorContributor>();
-
-        // Apply fluent overrides
-        if (configure is not null)
-        {
-            var builder = new BehaviorCollectionBuilder(engine.Services);
-            configure(builder);
-        }
+        engine.AddModule(new BehaviorModule(configureOptions, configure));
 
         return engine;
     }

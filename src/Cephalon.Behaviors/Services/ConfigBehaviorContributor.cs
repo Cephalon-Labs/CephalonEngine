@@ -20,38 +20,18 @@ internal sealed class ConfigBehaviorContributor : IBehaviorContributor
     }
 
     /// <inheritdoc />
-    public void RegisterBehaviors(IBehaviorRegistry registry)
+    public IReadOnlyList<BehaviorTopologyDescriptor> Contribute()
     {
-        ArgumentNullException.ThrowIfNull(registry);
+        var results = new List<BehaviorTopologyDescriptor>();
 
-        var behaviorsSection = _configuration.GetSection(BehaviorOptions.SectionName);
+        var behaviorsSection = _configuration.GetSection("Engine:Behaviors");
         foreach (var child in behaviorsSection.GetChildren())
         {
             var behaviorId = child.Key;
-            var entry = ReadEntry(child);
-
-            var descriptor = _resolver.Resolve(behaviorId, entry);
-            registry.Add(descriptor);
-        }
-    }
-
-    private static BehaviorConfigEntry ReadEntry(IConfigurationSection section)
-    {
-        var entry = new BehaviorConfigEntry
-        {
-            Pattern = section[nameof(BehaviorConfigEntry.Pattern)],
-            InboxEnabled = string.Equals(section[nameof(BehaviorConfigEntry.InboxEnabled)], "true", StringComparison.OrdinalIgnoreCase),
-            OutboxEnabled = string.Equals(section[nameof(BehaviorConfigEntry.OutboxEnabled)], "true", StringComparison.OrdinalIgnoreCase),
-            EventSourcingEnabled = string.Equals(section[nameof(BehaviorConfigEntry.EventSourcingEnabled)], "true", StringComparison.OrdinalIgnoreCase),
-        };
-
-        var transportSection = section.GetSection(nameof(BehaviorConfigEntry.Transport));
-        foreach (var t in transportSection.GetChildren())
-        {
-            if (!string.IsNullOrWhiteSpace(t.Value))
-                entry.Transport.Add(t.Value);
+            var descriptor = _resolver.Resolve(behaviorId);
+            results.Add(descriptor);
         }
 
-        return entry;
+        return results;
     }
 }

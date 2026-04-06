@@ -1,48 +1,89 @@
-using System.Linq.Expressions;
+using System.Reflection;
 using Cephalon.Abstractions.Behaviors;
 
 namespace Cephalon.Behaviors.Services;
 
-/// <summary>Compiled Expression.Lambda invoker for a behavior handler. Zero reflection at runtime.</summary>
+/// <summary>
+/// A compiled, type-safe invocation delegate for a concrete <see cref="IAppBehavior{TIn,TOut}" /> implementation.
+/// Slots are created once at dispatcher construction time and reused for every dispatch call.
+/// </summary>
 public sealed class BehaviorExecutionSlot
 {
-    private readonly Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> _invoker;
+    private readonly Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> _invoke;
 
-    private BehaviorExecutionSlot(Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> invoker)
-        => _invoker = invoker;
-
-    /// <summary>Compiles an invoker for the specified behavior type. Call once at startup; cache the result.</summary>
-    public static BehaviorExecutionSlot For<TBehavior, TIn, TOut>()
-        where TBehavior : IAppBehavior<TIn, TOut>
+    private BehaviorExecutionSlot(Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> invoke)
     {
-        // Compile Expression.Lambda once
-        var behaviorParam = Expression.Parameter(typeof(object), "behavior");
-        var inputParam    = Expression.Parameter(typeof(object), "input");
-        var ctxParam      = Expression.Parameter(typeof(IBehaviorContext), "ctx");
-        var ctParam       = Expression.Parameter(typeof(CancellationToken), "ct");
-
-        var castBehavior = Expression.Convert(behaviorParam, typeof(TBehavior));
-        var castInput    = Expression.Convert(inputParam, typeof(TIn));
-        var call         = Expression.Call(castBehavior,
-            typeof(TBehavior).GetMethod(nameof(IAppBehavior<TIn, TOut>.HandleAsync))!,
-            castInput, ctxParam, ctParam);
-
-        // Wrap Task<TOut> → Task<object?>
-        var wrapper = Expression.Call(
-            typeof(BehaviorExecutionSlot),
-            nameof(WrapAsync),
-            [typeof(TOut)],
-            call);
-
-        var lambda = Expression.Lambda<Func<object, object, IBehaviorContext, CancellationToken, Task<object?>>>(
-            wrapper, behaviorParam, inputParam, ctxParam, ctParam);
-
-        return new BehaviorExecutionSlot(lambda.Compile());
+        _invoke = invoke;
     }
 
-    private static async Task<object?> WrapAsync<TOut>(Task<TOut> task) => await task;
+    /// <summary>
+    /// Creates a <see cref="BehaviorExecutionSlot" /> for a behavior whose generic type arguments are known at compile time.
+    /// </summary>
+    /// <typeparam name="TBehavior">The concrete behavior type.</typeparam>
+    /// <typeparam name="TIn">The input message type.</typeparam>
+    /// <typeparam name="TOut">The output message type.</typeparam>
+    /// <returns>A compiled execution slot for the behavior.</returns>
+    public static BehaviorExecutionSlot For<TBehavior, TIn, TOut>()
+        where TBehavior : IAppBehavior<TIn, TOut>
+        where TIn : notnull
+    {
+        return new BehaviorExecutionSlot(async (behavior, input, context, ct) =>
+        {
+            var result = await ((TBehavior)behavior).HandleAsync((TIn)input, context, ct).ConfigureAwait(false);
+            return result;
+        });
+    }
 
-    /// <summary>Invokes the compiled behavior handler asynchronously.</summary>
-    public Task<object?> InvokeAsync(object behavior, object input, IBehaviorContext ctx, CancellationToken ct)
-        => _invoker(behavior, input, ctx, ct);
+    /// <summary>
+    /// Creates a <see cref="BehaviorExecutionSlot" /> for a behavior type discovered at runtime via reflection.
+    /// The <c>IAppBehavior&lt;TIn, TOut&gt;</c> interface is located on <paramref name="behaviorType" />
+    /// and the generic <see cref="For{TBehavior,TIn,TOut}" /> factory is invoked via reflection once
+    /// to build a closed delegate.
+    /// </summary>
+    /// <param name="behaviorType">The concrete behavior implementation type.</param>
+    /// <returns>A compiled execution slot for the behavior.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when <paramref name="behaviorType" /> does not implement <c>IAppBehavior&lt;TIn, TOut&gt;</c>.
+    /// </exception>
+    public static BehaviorExecutionSlot ForType(Type behaviorType)
+    {
+        ArgumentNullException.ThrowIfNull(behaviorType);
+
+        var behaviorInterface = behaviorType.GetInterfaces()
+            .FirstOrDefault(static i => i.IsGenericType &&
+                i.GetGenericTypeDefinition() == typeof(IAppBehavior<,>));
+
+        if (behaviorInterface is null)
+        {
+            throw new InvalidOperationException(
+                $"Type '{behaviorType.Name}' does not implement IAppBehavior<TIn, TOut>.");
+        }
+
+        var typeArgs = behaviorInterface.GetGenericArguments();
+        var tIn = typeArgs[0];
+        var tOut = typeArgs[1];
+
+        var forMethod = typeof(BehaviorExecutionSlot)
+            .GetMethod(nameof(For), BindingFlags.Public | BindingFlags.Static)!
+            .MakeGenericMethod(behaviorType, tIn, tOut);
+
+        return (BehaviorExecutionSlot)forMethod.Invoke(null, null)!;
+    }
+
+    /// <summary>
+    /// Invokes the compiled behavior delegate.
+    /// </summary>
+    /// <param name="behavior">The resolved behavior instance.</param>
+    /// <param name="input">The input message object.</param>
+    /// <param name="context">The behavior execution context.</param>
+    /// <param name="ct">A token that cancels the invocation.</param>
+    /// <returns>A task that resolves to the behavior output, boxed as <see cref="object" />.</returns>
+    public Task<object?> InvokeAsync(
+        object behavior,
+        object input,
+        IBehaviorContext context,
+        CancellationToken ct = default)
+    {
+        return _invoke(behavior, input, context, ct);
+    }
 }

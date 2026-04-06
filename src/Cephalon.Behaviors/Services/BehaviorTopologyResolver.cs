@@ -3,80 +3,84 @@ using Cephalon.Behaviors.Configuration;
 
 namespace Cephalon.Behaviors.Services;
 
-/// <summary>Resolves final topology per behavior by merging compiled defaults, config defaults, per-behavior config, and fluent overrides.</summary>
-internal sealed class BehaviorTopologyResolver
+/// <summary>
+/// Resolves the final <see cref="BehaviorTopologyDescriptor" /> for a given behavior identifier
+/// by merging four priority layers from lowest to highest:
+/// <list type="number">
+///   <item><description>Layer 1 (lowest): compiled defaults — pattern=<c>direct</c>, transport=[].</description></item>
+///   <item><description>Layer 2: engine-level defaults from the <c>BehaviorDefaults</c> configuration.</description></item>
+///   <item><description>Layer 3: per-behavior entry from the <c>Behaviors</c> configuration (transport override replaces, not merges).</description></item>
+///   <item><description>Layer 4 (highest): fluent DI registration via <c>FluentBehaviorContributor</c>.</description></item>
+/// </list>
+/// </summary>
+public sealed class BehaviorTopologyResolver
 {
-    private readonly BehaviorOptions _defaults;
+    private readonly BehaviorOptions _options;
+    private readonly IReadOnlyDictionary<string, BehaviorTopologyDescriptor> _fluentOverrides;
 
-    /// <summary>Initializes a new instance of <see cref="BehaviorTopologyResolver"/>.</summary>
-    public BehaviorTopologyResolver(BehaviorOptions defaults)
+    /// <summary>
+    /// Initializes the resolver with the active behavior options and any fluent overrides.
+    /// </summary>
+    /// <param name="options">The behavior topology options read from configuration.</param>
+    /// <param name="fluentOverrides">
+    /// Per-behavior topology descriptors contributed via fluent DI registration.
+    /// These override all configuration-layer entries.
+    /// </param>
+    public BehaviorTopologyResolver(
+        BehaviorOptions options,
+        IReadOnlyDictionary<string, BehaviorTopologyDescriptor> fluentOverrides)
     {
-        ArgumentNullException.ThrowIfNull(defaults);
-        _defaults = defaults;
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(fluentOverrides);
+        _options = options;
+        _fluentOverrides = fluentOverrides;
     }
 
     /// <summary>
-    /// Resolves a <see cref="BehaviorTopologyDescriptor"/> for the given behavior id by merging:
-    /// 1. Compiled defaults (pattern="direct", transport=[])
-    /// 2. BehaviorOptions defaults (from Engine:BehaviorDefaults)
-    /// 3. Per-behavior BehaviorConfigEntry (from Engine:Behaviors)
-    /// 4. Fluent DI registration overrides (via the builder callback)
+    /// Resolves the topology descriptor for the given behavior identifier by applying all four layers.
     /// </summary>
-    public BehaviorTopologyDescriptor Resolve(
-        string behaviorId,
-        BehaviorConfigEntry? entry,
-        Action<IBehaviorTopologyBuilder>? fluentOverride = null)
+    /// <param name="behaviorId">The stable behavior identifier.</param>
+    /// <returns>The fully resolved <see cref="BehaviorTopologyDescriptor" />.</returns>
+    public BehaviorTopologyDescriptor Resolve(string behaviorId)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentNullException.ThrowIfNull(behaviorId);
+
+        // Layer 4 (highest): fluent DI registration wins entirely
+        if (_fluentOverrides.TryGetValue(behaviorId, out var fluentDescriptor))
+        {
+            return fluentDescriptor;
+        }
 
         // Layer 1: compiled defaults
         var pattern = "direct";
-        var transports = new List<string>();
+        IReadOnlyList<string> transport = [];
 
-        // Layer 2: global defaults from configuration
-        if (!string.IsNullOrWhiteSpace(_defaults.Pattern))
-            pattern = _defaults.Pattern;
-        if (_defaults.Transport.Count > 0)
-            transports = [.._defaults.Transport];
+        // Layer 2: engine defaults from config
+        var defaults = _options.BehaviorDefaults;
+        if (!string.IsNullOrWhiteSpace(defaults.Pattern))
+        {
+            pattern = defaults.Pattern;
+        }
 
-        // Layer 3: per-behavior config entry
-        var inboxEnabled = false;
-        var outboxEnabled = false;
-        var eventSourcingEnabled = false;
+        if (defaults.Transport is { Count: > 0 })
+        {
+            transport = defaults.Transport;
+        }
 
-        if (entry is not null)
+        // Layer 3: per-behavior config entry (transport override = replace, not merge)
+        if (_options.Behaviors.TryGetValue(behaviorId, out var entry))
         {
             if (!string.IsNullOrWhiteSpace(entry.Pattern))
+            {
                 pattern = entry.Pattern;
-            if (entry.Transport.Count > 0)
-                transports = [..entry.Transport];
-            inboxEnabled = entry.InboxEnabled;
-            outboxEnabled = entry.OutboxEnabled;
-            eventSourcingEnabled = entry.EventSourcingEnabled;
+            }
+
+            if (entry.Transport is { Count: > 0 })
+            {
+                transport = entry.Transport;
+            }
         }
 
-        // Layer 4: fluent DI registration overrides
-        if (fluentOverride is not null)
-        {
-            var builder = new BehaviorTopologyBuilder();
-            // Pre-seed with resolved values so fluent can selectively override
-            fluentOverride(builder);
-            var fluentDesc = builder.Build(behaviorId);
-            // Fluent always wins if it explicitly set values
-            pattern = fluentDesc.Pattern;
-            if (fluentDesc.TransportIds.Count > 0)
-                transports = [..fluentDesc.TransportIds];
-            inboxEnabled = fluentDesc.InboxEnabled || inboxEnabled;
-            outboxEnabled = fluentDesc.OutboxEnabled || outboxEnabled;
-            eventSourcingEnabled = fluentDesc.EventSourcingEnabled || eventSourcingEnabled;
-        }
-
-        return new BehaviorTopologyDescriptor(
-            id: behaviorId,
-            pattern: pattern,
-            transportIds: transports.ToArray(),
-            inboxEnabled: inboxEnabled,
-            outboxEnabled: outboxEnabled,
-            eventSourcingEnabled: eventSourcingEnabled);
+        return new BehaviorTopologyDescriptor(behaviorId, pattern, transport);
     }
 }

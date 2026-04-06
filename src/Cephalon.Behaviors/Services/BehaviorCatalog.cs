@@ -2,23 +2,26 @@ using Cephalon.Abstractions.Behaviors;
 
 namespace Cephalon.Behaviors.Services;
 
-/// <summary>Provides read access to all registered behavior topology descriptors, built from all <see cref="IBehaviorContributor"/> instances.</summary>
+/// <summary>
+/// Exposes the merged set of behavior topology descriptors contributed to the active runtime.
+/// Contributors are discovered via DI enumeration over <see cref="IBehaviorContributor" />.
+/// </summary>
 public sealed class BehaviorCatalog : IBehaviorCatalog
 {
     private readonly Dictionary<string, BehaviorTopologyDescriptor> _byId;
     private readonly Dictionary<string, IReadOnlyList<BehaviorTopologyDescriptor>> _byPattern;
     private readonly Dictionary<string, IReadOnlyList<BehaviorTopologyDescriptor>> _byTransport;
 
-    /// <summary>Initializes a new instance of <see cref="BehaviorCatalog"/>.</summary>
+    /// <summary>
+    /// Initializes a new <see cref="BehaviorCatalog" /> by collecting contributions from all registered contributors.
+    /// </summary>
+    /// <param name="contributors">The contributors that project behavior topology descriptors.</param>
     public BehaviorCatalog(IEnumerable<IBehaviorContributor> contributors)
     {
         ArgumentNullException.ThrowIfNull(contributors);
 
-        var registry = new BehaviorRegistry();
-        foreach (var contributor in contributors)
-            contributor.RegisterBehaviors(registry);
-
-        All = registry.GetAll()
+        All = contributors
+            .SelectMany(static c => c.Contribute())
             .GroupBy(static d => d.Id, StringComparer.OrdinalIgnoreCase)
             .Select(static g => g.Last())
             .OrderBy(static d => d.Id, StringComparer.OrdinalIgnoreCase)

@@ -1,8 +1,14 @@
 namespace Cephalon.Abstractions.Behaviors;
 
-/// <summary>Contributes behavior topology descriptors to the engine registry at startup.</summary>
+/// <summary>
+/// Contributes behavior topology descriptors to the active runtime's catalog.
+/// Implementations are collected via dependency injection enumeration.
+/// </summary>
 public interface IBehaviorContributor
 {
-    /// <summary>Registers behaviors into the provided registry.</summary>
-    void RegisterBehaviors(IBehaviorRegistry registry);
+    /// <summary>
+    /// Returns the behavior topology descriptors contributed by this instance.
+    /// </summary>
+    /// <returns>The contributed descriptors.</returns>
+    IReadOnlyList<BehaviorTopologyDescriptor> Contribute();
 }

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-06T02:31:47.4882839+00:00",
+  "GeneratedAtUtc": "2026-04-06T03:54:20.7034863+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 17,
-      "TypeCount": 131
+      "TypeCount": 133
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -596,7 +596,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-behaviors",
-      "TypeCount": 15
+      "TypeCount": 17
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Capabilities",
@@ -1747,11 +1747,11 @@
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "type-cephalon-abstractions-behaviors-appbehaviorattribute",
       "Declaration": "public sealed class AppBehaviorAttribute",
-      "Summary": "Maps an \u0060IAppBehavior\u003CT1, T2\u003E\u0060 class to its configuration entry id.",
+      "Summary": "Marks a class as a registered application behavior and assigns its stable identifier. This attribute is required on all types registered via \u0060IBehaviorCollectionBuilder.Register\u003CTBehavior\u003E()\u0060.",
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 1,
+        "Properties": 2,
         "Methods": 0
       }
     },
@@ -2172,6 +2172,36 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "BehaviorNotFoundException",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-behaviors-behaviornotfoundexception",
+      "Declaration": "public sealed class BehaviorNotFoundException",
+      "Summary": "Thrown when a behavior cannot be located in the active runtime\u0027s behavior catalog.",
+      "MemberCounts": {
+        "Constructors": 2,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "BehaviorSecurityException",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-behaviors-behaviorsecurityexception",
+      "Declaration": "public sealed class BehaviorSecurityException",
+      "Summary": "Thrown when a behavior\u0027s resolved topology violates an allowlist constraint declared via \u0060BehaviorAllowedPatternsAttribute\u0060 or \u0060BehaviorAllowedTransportsAttribute\u0060.",
+      "MemberCounts": {
+        "Constructors": 2,
+        "Fields": 0,
+        "Properties": 1,
         "Methods": 0
       }
     },
@@ -4012,12 +4042,12 @@
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "type-cephalon-abstractions-behaviors-ibehaviorcontext",
       "Declaration": "public interface IBehaviorContext",
-      "Summary": "Transport-neutral ambient API available inside a behavior handler. Provides correlation, publishing, and saga state without coupling to a specific transport.",
+      "Summary": "Provides ambient context to a behavior during its execution. The context exposes reply semantics, metadata, and cancellation.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
-        "Properties": 8,
-        "Methods": 5
+        "Properties": 2,
+        "Methods": 1
       }
     },
     {
@@ -4027,7 +4057,7 @@
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "type-cephalon-abstractions-behaviors-ibehaviorcontributor",
       "Declaration": "public interface IBehaviorContributor",
-      "Summary": "Contributes behavior topology descriptors to the engine registry at startup.",
+      "Summary": "Contributes behavior topology descriptors to the active runtime\u0027s catalog. Implementations are collected via dependency injection enumeration.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -9661,8 +9691,8 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-m-cephalon-abstractions-behaviors-appbehaviorattribute-ctor-system-string",
-      "Signature": "AppBehaviorAttribute(string behaviorId)",
-      "Summary": "Initializes a new instance of \u0060AppBehaviorAttribute\u0060."
+      "Signature": "AppBehaviorAttribute(string id)",
+      "Summary": "Initializes the attribute with the behavior\u0027s stable identifier."
     },
     {
       "DisplayName": "AppBlueprint",
@@ -10421,7 +10451,7 @@
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-behaviors-appbehaviorattribute-behaviorid",
       "Signature": "string BehaviorId { get; }",
-      "Summary": "Gets the behavior configuration entry id."
+      "Summary": "Gets the stable behavior identifier."
     },
     {
       "DisplayName": "BehaviorId",
@@ -10437,13 +10467,79 @@
     {
       "DisplayName": "BehaviorId",
       "Category": "Properties",
+      "DeclaringTypeName": "BehaviorNotFoundException",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviornotfoundexception-behaviorid",
+      "Signature": "string BehaviorId { get; }",
+      "Summary": "Gets the behavior identifier that could not be resolved."
+    },
+    {
+      "DisplayName": "BehaviorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorSecurityException",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviorsecurityexception-behaviorid",
+      "Signature": "string BehaviorId { get; }",
+      "Summary": "Gets the behavior identifier that triggered the security violation."
+    },
+    {
+      "DisplayName": "BehaviorId",
+      "Category": "Properties",
       "DeclaringTypeName": "IBehaviorContext",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-behaviors-ibehaviorcontext-behaviorid",
       "Signature": "string BehaviorId { get; }",
-      "Summary": "Gets the behavior identifier being executed."
+      "Summary": "Gets the stable identifier of the behavior being executed."
+    },
+    {
+      "DisplayName": "BehaviorNotFoundException",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BehaviorNotFoundException",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-behaviornotfoundexception-ctor-system-string",
+      "Signature": "BehaviorNotFoundException(string behaviorId)",
+      "Summary": "Initializes the exception for the given behavior identifier."
+    },
+    {
+      "DisplayName": "BehaviorNotFoundException",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BehaviorNotFoundException",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-behaviornotfoundexception-ctor-system-string-system-exception",
+      "Signature": "BehaviorNotFoundException(string behaviorId, Exception innerException)",
+      "Summary": "Initializes the exception for the given behavior identifier with an inner exception."
+    },
+    {
+      "DisplayName": "BehaviorSecurityException",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BehaviorSecurityException",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-behaviorsecurityexception-ctor-system-string-system-string",
+      "Signature": "BehaviorSecurityException(string behaviorId, string message)",
+      "Summary": "Initializes the exception with the behavior identifier and a descriptive message."
+    },
+    {
+      "DisplayName": "BehaviorSecurityException",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BehaviorSecurityException",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-behaviorsecurityexception-ctor-system-string-system-string-system-exception",
+      "Signature": "BehaviorSecurityException(string behaviorId, string message, Exception innerException)",
+      "Summary": "Initializes the exception with the behavior identifier, a descriptive message, and an inner exception."
     },
     {
       "DisplayName": "BehaviorTopologyDescriptor",
@@ -10620,17 +10716,6 @@
       "AnchorId": "member-p-cephalon-engine-manifest-packageprovenancemanifest-builduri",
       "Signature": "string BuildUri { get; }",
       "Summary": "Gets the declared build or pipeline URI, when available."
-    },
-    {
-      "DisplayName": "CancellationToken",
-      "Category": "Properties",
-      "DeclaringTypeName": "IBehaviorContext",
-      "NamespaceName": "Cephalon.Abstractions.Behaviors",
-      "AssemblyName": "Cephalon.Abstractions",
-      "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-p-cephalon-abstractions-behaviors-ibehaviorcontext-cancellationtoken",
-      "Signature": "CancellationToken CancellationToken { get; }",
-      "Summary": "Gets the cancellation token for the current request."
     },
     {
       "DisplayName": "CanRestart",
@@ -11801,6 +11886,17 @@
     {
       "DisplayName": "Contribute",
       "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorContributor",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviorcontributor-contribute",
+      "Signature": "IReadOnlyList\u003CBehaviorTopologyDescriptor\u003E Contribute()",
+      "Summary": "Returns the behavior topology descriptors contributed by this instance."
+    },
+    {
+      "DisplayName": "Contribute",
+      "Category": "Methods",
       "DeclaringTypeName": "IEventStoreContributor",
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
       "AssemblyName": "Cephalon.Abstractions",
@@ -11951,17 +12047,6 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventpublication-correlationid",
       "Signature": "string CorrelationId { get; }",
       "Summary": "Gets the correlation identifier associated with the event."
-    },
-    {
-      "DisplayName": "CorrelationId",
-      "Category": "Properties",
-      "DeclaringTypeName": "IBehaviorContext",
-      "NamespaceName": "Cephalon.Abstractions.Behaviors",
-      "AssemblyName": "Cephalon.Abstractions",
-      "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-p-cephalon-abstractions-behaviors-ibehaviorcontext-correlationid",
-      "Signature": "string CorrelationId { get; }",
-      "Summary": "Gets the correlation identifier for the current request."
     },
     {
       "DisplayName": "CorrelationId",
@@ -15825,17 +15910,6 @@
       "Summary": "Gets the failure policy that governs startup, stop, and restart behavior."
     },
     {
-      "DisplayName": "Fault",
-      "Category": "Properties",
-      "DeclaringTypeName": "IBehaviorContext",
-      "NamespaceName": "Cephalon.Abstractions.Behaviors",
-      "AssemblyName": "Cephalon.Abstractions",
-      "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-p-cephalon-abstractions-behaviors-ibehaviorcontext-fault",
-      "Signature": "BehaviorFault Fault { get; }",
-      "Summary": "Gets the fault set by the execution strategy on error, or \u0060null\u0060 if no fault occurred."
-    },
-    {
       "DisplayName": "Feature",
       "Category": "Fields",
       "DeclaringTypeName": "ScaffoldScopes",
@@ -17035,17 +17109,6 @@
       "Summary": "Gets the merged resources visible for the specified culture."
     },
     {
-      "DisplayName": "GetSagaState",
-      "Category": "Methods",
-      "DeclaringTypeName": "IBehaviorContext",
-      "NamespaceName": "Cephalon.Abstractions.Behaviors",
-      "AssemblyName": "Cephalon.Abstractions",
-      "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviorcontext-getsagastate-1",
-      "Signature": "T GetSagaState\u003CT\u003E()",
-      "Summary": "Gets saga state of type \u0060T\u0060, or \u0060null\u0060 if not set."
-    },
-    {
       "DisplayName": "GetVersionAsync",
       "Category": "Methods",
       "DeclaringTypeName": "IEventStore",
@@ -18067,6 +18130,17 @@
       "AnchorId": "member-p-cephalon-agentics-services-agenttooldescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable tool identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "AppBehaviorAttribute",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-appbehaviorattribute-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable behavior identifier."
     },
     {
       "DisplayName": "Id",
@@ -20959,7 +21033,7 @@
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-behaviors-ibehaviorcontext-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
-      "Summary": "Gets additional metadata associated with the current request."
+      "Summary": "Gets ambient metadata associated with the current execution (e.g. correlation id, tenant id)."
     },
     {
       "DisplayName": "Metadata",
@@ -23945,17 +24019,6 @@
     {
       "DisplayName": "PublishAsync",
       "Category": "Methods",
-      "DeclaringTypeName": "IBehaviorContext",
-      "NamespaceName": "Cephalon.Abstractions.Behaviors",
-      "AssemblyName": "Cephalon.Abstractions",
-      "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviorcontext-publishasync-1-0-system-threading-cancellationtoken",
-      "Signature": "Task PublishAsync\u003CTEvent\u003E(TEvent evt, CancellationToken ct)",
-      "Summary": "Publishes a domain event to all configured transport bindings for this behavior."
-    },
-    {
-      "DisplayName": "PublishAsync",
-      "Category": "Methods",
       "DeclaringTypeName": "IEventPublisher",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -24647,17 +24710,6 @@
       "Summary": "Registers one or more audit-store descriptors with the supplied registry."
     },
     {
-      "DisplayName": "RegisterBehaviors",
-      "Category": "Methods",
-      "DeclaringTypeName": "IBehaviorContributor",
-      "NamespaceName": "Cephalon.Abstractions.Behaviors",
-      "AssemblyName": "Cephalon.Abstractions",
-      "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviorcontributor-registerbehaviors-cephalon-abstractions-behaviors-ibehaviorregistry",
-      "Signature": "void RegisterBehaviors(IBehaviorRegistry registry)",
-      "Summary": "Registers behaviors into the provided registry."
-    },
-    {
       "DisplayName": "RegisterCapabilities",
       "Category": "Methods",
       "DeclaringTypeName": "IModule",
@@ -24983,9 +25035,9 @@
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviorcontext-replyasync-1-0-system-threading-cancellationtoken",
-      "Signature": "Task ReplyAsync\u003CTResult\u003E(TResult result, CancellationToken ct)",
-      "Summary": "Replies with a result. Only valid in CQRS and saga patterns."
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviorcontext-replyasync-system-object-system-threading-cancellationtoken",
+      "Signature": "Task ReplyAsync(object reply, CancellationToken cancellationToken)",
+      "Summary": "Sends a reply message back to the caller through the active transport."
     },
     {
       "DisplayName": "ReportAsync",
@@ -26572,17 +26624,6 @@
       "Summary": "Gets the technology profiles currently selected for the app."
     },
     {
-      "DisplayName": "SendAsync",
-      "Category": "Methods",
-      "DeclaringTypeName": "IBehaviorContext",
-      "NamespaceName": "Cephalon.Abstractions.Behaviors",
-      "AssemblyName": "Cephalon.Abstractions",
-      "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviorcontext-sendasync-1-0-system-threading-cancellationtoken",
-      "Signature": "Task SendAsync\u003CTCommand\u003E(TCommand command, CancellationToken ct)",
-      "Summary": "Sends a command to another behavior."
-    },
-    {
       "DisplayName": "ServerlessHosting",
       "Category": "Properties",
       "DeclaringTypeName": "BuiltInTechnologies",
@@ -26702,17 +26743,6 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-services",
       "Signature": "IReadOnlyList\u003CSuiteScaffoldService\u003E Services { get; }",
       "Summary": "Gets the service slots emitted by the suite scaffold."
-    },
-    {
-      "DisplayName": "SetSagaState",
-      "Category": "Methods",
-      "DeclaringTypeName": "IBehaviorContext",
-      "NamespaceName": "Cephalon.Abstractions.Behaviors",
-      "AssemblyName": "Cephalon.Abstractions",
-      "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviorcontext-setsagastate-1-0",
-      "Signature": "void SetSagaState\u003CT\u003E(T state)",
-      "Summary": "Sets saga state of type \u0060T\u0060."
     },
     {
       "DisplayName": "Severity",
@@ -28972,17 +29002,6 @@
     {
       "DisplayName": "TenantId",
       "Category": "Properties",
-      "DeclaringTypeName": "IBehaviorContext",
-      "NamespaceName": "Cephalon.Abstractions.Behaviors",
-      "AssemblyName": "Cephalon.Abstractions",
-      "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-p-cephalon-abstractions-behaviors-ibehaviorcontext-tenantid",
-      "Signature": "string TenantId { get; }",
-      "Summary": "Gets the tenant identifier for the current request."
-    },
-    {
-      "DisplayName": "TenantId",
-      "Category": "Properties",
       "DeclaringTypeName": "IdGenerationRequest",
       "NamespaceName": "Cephalon.Abstractions.Ids",
       "AssemblyName": "Cephalon.Abstractions",
@@ -29441,17 +29460,6 @@
       "AnchorId": "member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-tracedatakey",
       "Signature": "string TraceDataKey { get; set; }",
       "Summary": "Gets or sets the Oracle Cloud APM trace data key used for direct managed trace ingestion."
-    },
-    {
-      "DisplayName": "TraceId",
-      "Category": "Properties",
-      "DeclaringTypeName": "IBehaviorContext",
-      "NamespaceName": "Cephalon.Abstractions.Behaviors",
-      "AssemblyName": "Cephalon.Abstractions",
-      "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-p-cephalon-abstractions-behaviors-ibehaviorcontext-traceid",
-      "Signature": "string TraceId { get; }",
-      "Summary": "Gets the trace identifier for the current request."
     },
     {
       "DisplayName": "Traits",
@@ -30222,17 +30230,6 @@
       "AnchorId": "member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-usepublictracedatakey",
       "Signature": "bool UsePublicTraceDataKey { get; set; }",
       "Summary": "Gets or sets a value indicating whether trace ingestion should use the public Oracle Cloud APM data key path instead of the private data key path."
-    },
-    {
-      "DisplayName": "UserId",
-      "Category": "Properties",
-      "DeclaringTypeName": "IBehaviorContext",
-      "NamespaceName": "Cephalon.Abstractions.Behaviors",
-      "AssemblyName": "Cephalon.Abstractions",
-      "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-p-cephalon-abstractions-behaviors-ibehaviorcontext-userid",
-      "Signature": "string UserId { get; }",
-      "Summary": "Gets the user identifier for the current request."
     },
     {
       "DisplayName": "UserId",

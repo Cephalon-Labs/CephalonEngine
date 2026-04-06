@@ -2,7 +2,7 @@ using Cephalon.Abstractions.Behaviors;
 
 namespace Cephalon.Behaviors.Hosting;
 
-/// <summary>A no-op contributor used as a marker to carry fluent default settings. Actual defaults are applied via the resolver.</summary>
+/// <summary>A no-op contributor used as a marker to carry fluent default settings.</summary>
 internal sealed class FluentDefaultsContributor : IBehaviorContributor
 {
     /// <summary>Initializes a new instance of <see cref="FluentDefaultsContributor"/>.</summary>
@@ -19,10 +19,9 @@ internal sealed class FluentDefaultsContributor : IBehaviorContributor
     public List<string> Transports { get; }
 
     /// <inheritdoc />
-    public void RegisterBehaviors(IBehaviorRegistry registry)
+    public IReadOnlyList<BehaviorTopologyDescriptor> Contribute()
     {
         // This contributor carries defaults — it does not register behaviors directly.
-        // The BehaviorTopologyResolver reads defaults from IConfiguration (Engine:BehaviorDefaults).
-        // Fluent defaults are provided here for integration scenarios where IConfiguration is not available.
+        return [];
     }
 }

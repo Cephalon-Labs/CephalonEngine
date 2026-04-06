@@ -22,7 +22,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Behaviors`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-behaviors): 15 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-behaviors): 17 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors)
 
 ## `Cephalon.Abstractions.Capabilities`
 

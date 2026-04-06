@@ -2696,7 +2696,7 @@ Parameters:
 
 ### `AppBehaviorAttribute`
 
-Maps an `IAppBehavior<T1, T2>` class to its configuration entry id.
+Marks a class as a registered application behavior and assigns its stable identifier. This attribute is required on all types registered via `IBehaviorCollectionBuilder.Register<TBehavior>()`.
 
 #### Declaration
 ```csharp
@@ -2710,10 +2710,13 @@ public sealed class AppBehaviorAttribute
 ##### `AppBehaviorAttribute`
 
 ```csharp
-AppBehaviorAttribute(string behaviorId)
+AppBehaviorAttribute(string id)
 ```
 
-Initializes a new instance of `AppBehaviorAttribute`.
+Initializes the attribute with the behavior's stable identifier.
+
+Parameters:
+- `id`: The stable, unique behavior identifier used for dispatch and configuration lookup.
 
 #### Properties
 
@@ -2725,7 +2728,19 @@ Initializes a new instance of `AppBehaviorAttribute`.
 string BehaviorId { get; }
 ```
 
-Gets the behavior configuration entry id.
+Gets the stable behavior identifier.
+
+Remarks: Alias for `Id` retained for source compatibility.
+
+<a id="member-p-cephalon-abstractions-behaviors-appbehaviorattribute-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable behavior identifier.
 
 <a id="type-cephalon-abstractions-behaviors-behaviorallowedpatternsattribute"></a>
 
@@ -2926,6 +2941,112 @@ string Message { get; set; }
 ```
 
 Gets or sets the fault message.
+
+<a id="type-cephalon-abstractions-behaviors-behaviornotfoundexception"></a>
+
+### `BehaviorNotFoundException`
+
+Thrown when a behavior cannot be located in the active runtime's behavior catalog.
+
+#### Declaration
+```csharp
+public sealed class BehaviorNotFoundException
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviornotfoundexception-ctor-system-string"></a>
+
+##### `BehaviorNotFoundException`
+
+```csharp
+BehaviorNotFoundException(string behaviorId)
+```
+
+Initializes the exception for the given behavior identifier.
+
+Parameters:
+- `behaviorId`: The behavior identifier that could not be resolved.
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviornotfoundexception-ctor-system-string-system-exception"></a>
+
+##### `BehaviorNotFoundException`
+
+```csharp
+BehaviorNotFoundException(string behaviorId, Exception innerException)
+```
+
+Initializes the exception for the given behavior identifier with an inner exception.
+
+Parameters:
+- `behaviorId`: The behavior identifier that could not be resolved.
+- `innerException`: The exception that caused this exception.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviornotfoundexception-behaviorid"></a>
+
+##### `BehaviorId`
+
+```csharp
+string BehaviorId { get; }
+```
+
+Gets the behavior identifier that could not be resolved.
+
+<a id="type-cephalon-abstractions-behaviors-behaviorsecurityexception"></a>
+
+### `BehaviorSecurityException`
+
+Thrown when a behavior's resolved topology violates an allowlist constraint declared via `BehaviorAllowedPatternsAttribute` or `BehaviorAllowedTransportsAttribute`.
+
+#### Declaration
+```csharp
+public sealed class BehaviorSecurityException
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorsecurityexception-ctor-system-string-system-string"></a>
+
+##### `BehaviorSecurityException`
+
+```csharp
+BehaviorSecurityException(string behaviorId, string message)
+```
+
+Initializes the exception with the behavior identifier and a descriptive message.
+
+Parameters:
+- `behaviorId`: The behavior identifier that triggered the violation.
+- `message`: A human-readable description of the security violation.
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorsecurityexception-ctor-system-string-system-string-system-exception"></a>
+
+##### `BehaviorSecurityException`
+
+```csharp
+BehaviorSecurityException(string behaviorId, string message, Exception innerException)
+```
+
+Initializes the exception with the behavior identifier, a descriptive message, and an inner exception.
+
+Parameters:
+- `behaviorId`: The behavior identifier that triggered the violation.
+- `message`: A human-readable description of the security violation.
+- `innerException`: The exception that caused this exception.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorsecurityexception-behaviorid"></a>
+
+##### `BehaviorId`
+
+```csharp
+string BehaviorId { get; }
+```
+
+Gets the behavior identifier that triggered the security violation.
 
 <a id="type-cephalon-abstractions-behaviors-behaviortopologydescriptor"></a>
 
@@ -3277,7 +3398,9 @@ Checks the descriptor and returns a violation if the rule is violated, or `null`
 
 ### `IBehaviorContext`
 
-Transport-neutral ambient API available inside a behavior handler. Provides correlation, publishing, and saga state without coupling to a specific transport.
+Provides ambient context to a behavior during its execution. The context exposes reply semantics, metadata, and cancellation.
+
+Remarks: When the behavior topology uses the `direct` pattern, `ReplyAsync` is not supported and will throw `NotSupportedException`. Use the behavior's return value to communicate results in the direct pattern.
 
 #### Declaration
 ```csharp
@@ -3294,37 +3417,7 @@ public interface IBehaviorContext
 string BehaviorId { get; }
 ```
 
-Gets the behavior identifier being executed.
-
-<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-cancellationtoken"></a>
-
-##### `CancellationToken`
-
-```csharp
-CancellationToken CancellationToken { get; }
-```
-
-Gets the cancellation token for the current request.
-
-<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-correlationid"></a>
-
-##### `CorrelationId`
-
-```csharp
-string CorrelationId { get; }
-```
-
-Gets the correlation identifier for the current request.
-
-<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-fault"></a>
-
-##### `Fault`
-
-```csharp
-BehaviorFault Fault { get; }
-```
-
-Gets the fault set by the execution strategy on error, or `null` if no fault occurred.
+Gets the stable identifier of the behavior being executed.
 
 <a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-metadata"></a>
 
@@ -3334,95 +3427,31 @@ Gets the fault set by the execution strategy on error, or `null` if no fault occ
 IReadOnlyDictionary<string, string> Metadata { get; }
 ```
 
-Gets additional metadata associated with the current request.
-
-<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-tenantid"></a>
-
-##### `TenantId`
-
-```csharp
-string TenantId { get; }
-```
-
-Gets the tenant identifier for the current request.
-
-<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-traceid"></a>
-
-##### `TraceId`
-
-```csharp
-string TraceId { get; }
-```
-
-Gets the trace identifier for the current request.
-
-<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-userid"></a>
-
-##### `UserId`
-
-```csharp
-string UserId { get; }
-```
-
-Gets the user identifier for the current request.
+Gets ambient metadata associated with the current execution (e.g. correlation id, tenant id).
 
 #### Methods
 
-<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcontext-getsagastate-1"></a>
-
-##### `GetSagaState`
-
-```csharp
-T GetSagaState<T>()
-```
-
-Gets saga state of type `T`, or `null` if not set.
-
-<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcontext-publishasync-1-0-system-threading-cancellationtoken"></a>
-
-##### `PublishAsync`
-
-```csharp
-Task PublishAsync<TEvent>(TEvent evt, CancellationToken ct)
-```
-
-Publishes a domain event to all configured transport bindings for this behavior.
-
-<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcontext-replyasync-1-0-system-threading-cancellationtoken"></a>
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcontext-replyasync-system-object-system-threading-cancellationtoken"></a>
 
 ##### `ReplyAsync`
 
 ```csharp
-Task ReplyAsync<TResult>(TResult result, CancellationToken ct)
+Task ReplyAsync(object reply, CancellationToken cancellationToken)
 ```
 
-Replies with a result. Only valid in CQRS and saga patterns.
+Sends a reply message back to the caller through the active transport.
 
-<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcontext-sendasync-1-0-system-threading-cancellationtoken"></a>
+Returns: A task that completes when the reply has been dispatched.
 
-##### `SendAsync`
-
-```csharp
-Task SendAsync<TCommand>(TCommand command, CancellationToken ct)
-```
-
-Sends a command to another behavior.
-
-<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcontext-setsagastate-1-0"></a>
-
-##### `SetSagaState`
-
-```csharp
-void SetSagaState<T>(T state)
-```
-
-Sets saga state of type `T`.
+Parameters:
+- `reply`: The reply object to send.
+- `cancellationToken`: A token that cancels the reply.
 
 <a id="type-cephalon-abstractions-behaviors-ibehaviorcontributor"></a>
 
 ### `IBehaviorContributor`
 
-Contributes behavior topology descriptors to the engine registry at startup.
+Contributes behavior topology descriptors to the active runtime's catalog. Implementations are collected via dependency injection enumeration.
 
 #### Declaration
 ```csharp
@@ -3431,15 +3460,17 @@ public interface IBehaviorContributor
 
 #### Methods
 
-<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcontributor-registerbehaviors-cephalon-abstractions-behaviors-ibehaviorregistry"></a>
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcontributor-contribute"></a>
 
-##### `RegisterBehaviors`
+##### `Contribute`
 
 ```csharp
-void RegisterBehaviors(IBehaviorRegistry registry)
+IReadOnlyList<BehaviorTopologyDescriptor> Contribute()
 ```
 
-Registers behaviors into the provided registry.
+Returns the behavior topology descriptors contributed by this instance.
+
+Returns: The contributed descriptors.
 
 <a id="type-cephalon-abstractions-behaviors-ibehaviorregistry"></a>
 

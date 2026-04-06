@@ -1,115 +1,500 @@
-using System.Diagnostics.CodeAnalysis;
 using Cephalon.Abstractions.Behaviors;
-using Cephalon.Behaviors.Rules;
+using Cephalon.Behaviors.Builders;
+using Cephalon.Behaviors.Compatibility;
+using Cephalon.Behaviors.Configuration;
 using Cephalon.Behaviors.Services;
+using Cephalon.Behaviors.Validation;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Behaviors;
 
 public sealed class BehaviorBaselineTests
 {
-    [Fact]
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Scenario_result naming improves test readability.")]
-    public void AppBehaviorAttribute_RejectsEmptyId()
+    // ─────────────────────────────────────────────────────────────────────────
+    // Fixtures
+    // ─────────────────────────────────────────────────────────────────────────
+
+    [AppBehavior("greeting.direct")]
+    private sealed class DirectGreetingBehavior : IAppBehavior<string, string>
     {
-        Assert.Throws<ArgumentException>(() => new AppBehaviorAttribute(""));
-        Assert.Throws<ArgumentException>(() => new AppBehaviorAttribute("  "));
+        public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
+            => Task.FromResult($"Hello, {input}!");
+    }
+
+    [AppBehavior("greeting.cqrs")]
+    [BehaviorAllowedPatterns("cqrs", "direct")]
+    private sealed class CqrsGreetingBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
+            => Task.FromResult($"CQRS: {input}");
+    }
+
+    [AppBehavior("greeting.restricted")]
+    [BehaviorAllowedPatterns("cqrs", "direct")]
+    private sealed class AllowlistViolatingBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
+            => Task.FromResult(input);
+    }
+
+    [AppBehavior("greeting.no-allowlist")]
+    private sealed class NoAllowlistBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
+            => Task.FromResult(input);
+    }
+
+    private sealed class NoAttributeBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
+            => Task.FromResult(input);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // BehaviorTopologyBuilder / Via* transport IDs
+    // ─────────────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void ViaTransportMethodsProduceCorrectIds()
+    {
+        var b = new BehaviorTopologyBuilder();
+        b.ViaHttpRest().ViaRabbitMq().ViaKafka().ViaInMemory().ViaGrpc();
+        var desc = b.Build("test");
+
+        Assert.Contains("http.rest", desc.TransportIds);
+        Assert.Contains("rabbitmq", desc.TransportIds);
+        Assert.Contains("kafka", desc.TransportIds);
+        Assert.Contains("in-memory", desc.TransportIds);
+        Assert.Contains("grpc", desc.TransportIds);
     }
 
     [Fact]
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Scenario_result naming improves test readability.")]
-    public void BehaviorTopologyDescriptor_StoresValues()
+    public void BehaviorTopologyBuilderAllTransportIdsAreCorrect()
     {
-        var d = new BehaviorTopologyDescriptor("order.place", "cqrs", ["http.rest"]);
-        Assert.Equal("order.place", d.Id);
-        Assert.Equal("cqrs", d.Pattern);
-        Assert.Contains("http.rest", d.TransportIds);
+        var b = new BehaviorTopologyBuilder();
+        b.ViaHttpRest()
+         .ViaHttpJsonRpc()
+         .ViaHttpGraphQl()
+         .ViaHttpGraphQlSse()
+         .ViaHttpGraphQlWs()
+         .ViaHttpSse()
+         .ViaWebSocket()
+         .ViaRabbitMq()
+         .ViaKafka()
+         .ViaInMemory()
+         .ViaGrpc();
+
+        var desc = b.Build("all-transports");
+
+        Assert.Contains("http.rest", desc.TransportIds);
+        Assert.Contains("http.jsonrpc", desc.TransportIds);
+        Assert.Contains("http.graphql", desc.TransportIds);
+        Assert.Contains("http.graphql-sse", desc.TransportIds);
+        Assert.Contains("http.graphql-ws", desc.TransportIds);
+        Assert.Contains("http.sse", desc.TransportIds);
+        Assert.Contains("http.ws", desc.TransportIds);
+        Assert.Contains("rabbitmq", desc.TransportIds);
+        Assert.Contains("kafka", desc.TransportIds);
+        Assert.Contains("in-memory", desc.TransportIds);
+        Assert.Contains("grpc", desc.TransportIds);
+        Assert.Equal(11, desc.TransportIds.Count);
     }
 
     [Fact]
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Scenario_result naming improves test readability.")]
-    public void BehaviorTopologyBuilder_AsCqrs_SetsPattern()
+    public void BehaviorTopologyBuilderSetsDefaultPatternToDirect()
     {
-        var builder = new BehaviorTopologyBuilder();
-        builder.AsCqrs().ViaHttpRest().ViaRabbitMq();
-        var desc = builder.Build("order.place");
+        var desc = new BehaviorTopologyBuilder().Build("x");
+        Assert.Equal("direct", desc.Pattern);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // BehaviorTopologyResolver — 4-layer priority
+    // ─────────────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void BehaviorTopologyResolverInheritsDefaultsWhenBehaviorEntryEmpty()
+    {
+        var options = new BehaviorOptions
+        {
+            BehaviorDefaults = new BehaviorDefaultsOptions
+            {
+                Pattern = "cqrs",
+                Transport = ["http.rest"]
+            },
+            Behaviors = new Dictionary<string, BehaviorEntryOptions>(StringComparer.OrdinalIgnoreCase)
+            {
+                // Entry exists but has no pattern or transport overrides
+                ["my-behavior"] = new BehaviorEntryOptions()
+            }
+        };
+
+        var resolver = new BehaviorTopologyResolver(options, new Dictionary<string, BehaviorTopologyDescriptor>());
+        var desc = resolver.Resolve("my-behavior");
+
         Assert.Equal("cqrs", desc.Pattern);
         Assert.Contains("http.rest", desc.TransportIds);
+    }
+
+    [Fact]
+    public void BehaviorTopologyResolverOverridesTransportWhenBehaviorEntrySpecifiesTransport()
+    {
+        var options = new BehaviorOptions
+        {
+            BehaviorDefaults = new BehaviorDefaultsOptions
+            {
+                Transport = ["http.rest"]
+            },
+            Behaviors = new Dictionary<string, BehaviorEntryOptions>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["my-behavior"] = new BehaviorEntryOptions { Transport = ["rabbitmq"] }
+            }
+        };
+
+        var resolver = new BehaviorTopologyResolver(options, new Dictionary<string, BehaviorTopologyDescriptor>());
+        var desc = resolver.Resolve("my-behavior");
+
+        Assert.Contains("rabbitmq", desc.TransportIds);
+        Assert.DoesNotContain("http.rest", desc.TransportIds);
+    }
+
+    [Fact]
+    public void BehaviorTopologyResolverFluentOverrideWinsOverConfig()
+    {
+        var options = new BehaviorOptions
+        {
+            BehaviorDefaults = new BehaviorDefaultsOptions { Pattern = "cqrs" }
+        };
+
+        var fluentDescriptor = new BehaviorTopologyDescriptor("my-behavior", "event-driven", ["rabbitmq"]);
+        var fluentOverrides = new Dictionary<string, BehaviorTopologyDescriptor>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["my-behavior"] = fluentDescriptor
+        };
+
+        var resolver = new BehaviorTopologyResolver(options, fluentOverrides);
+        var desc = resolver.Resolve("my-behavior");
+
+        Assert.Equal("event-driven", desc.Pattern);
         Assert.Contains("rabbitmq", desc.TransportIds);
     }
 
     [Fact]
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Scenario_result naming improves test readability.")]
-    public void BehaviorTopologyBuilder_AsDirect_SetsPattern()
+    public void BehaviorTopologyResolverUsesCompiledDefaultsWhenNoConfig()
     {
-        var builder = new BehaviorTopologyBuilder();
-        builder.AsDirect();
-        var desc = builder.Build("ping");
+        var options = new BehaviorOptions();
+        var resolver = new BehaviorTopologyResolver(options, new Dictionary<string, BehaviorTopologyDescriptor>());
+        var desc = resolver.Resolve("unknown");
+
         Assert.Equal("direct", desc.Pattern);
+        Assert.Empty(desc.TransportIds);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // BehaviorAllowlistValidator
+    // ─────────────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void BehaviorAllowlistValidatorPassesWhenPatternInAllowlist()
+    {
+        var desc = new BehaviorTopologyDescriptor("greeting.cqrs", "cqrs", []);
+        BehaviorAllowlistValidator.Validate(desc, typeof(CqrsGreetingBehavior));
     }
 
     [Fact]
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Scenario_result naming improves test readability.")]
-    public void CompatibilityMatrix_Abt001_Error_SagaWithoutStatefulTransport()
+    public void BehaviorAllowlistValidatorThrowsWhenPatternNotInAllowlist()
     {
-        var rule = new Abt001SagaRequiresStatefulTransportRule();
+        // AllowlistViolatingBehavior allows ["cqrs","direct"] but resolved pattern is "event-driven"
+        var desc = new BehaviorTopologyDescriptor("greeting.restricted", "event-driven", []);
+
+        Assert.Throws<BehaviorSecurityException>(() =>
+            BehaviorAllowlistValidator.Validate(desc, typeof(AllowlistViolatingBehavior)));
+    }
+
+    [Fact]
+    public void BehaviorAllowlistValidatorPassesWhenNoAllowlistDefined()
+    {
+        var desc = new BehaviorTopologyDescriptor("greeting.no-allowlist", "saga-step", []);
+        BehaviorAllowlistValidator.Validate(desc, typeof(NoAllowlistBehavior));
+    }
+
+    [Fact]
+    public void BehaviorAllowlistValidatorPassesWhenBehaviorTypeIsNull()
+    {
+        var desc = new BehaviorTopologyDescriptor("x", "direct", []);
+        BehaviorAllowlistValidator.Validate(desc, null);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Compatibility matrix — ABT-001
+    // ─────────────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void CompatibilityMatrixAbt001ErrorSagaStepWithNoStatefulTransport()
+    {
+        var rule = new Abt001SagaStepStatefulTransportRule();
         var desc = new BehaviorTopologyDescriptor("s", "saga-step", ["http.rest"]);
         var violation = rule.Check(desc);
+
         Assert.NotNull(violation);
         Assert.Equal(CompatibilitySeverity.Error, violation!.Severity);
+        Assert.Equal("ABT-001", violation.RuleId);
     }
 
     [Fact]
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Scenario_result naming improves test readability.")]
-    public void CompatibilityMatrix_Abt001_NoViolation_SagaWithRabbitMq()
+    public void CompatibilityMatrixAbt001PassesSagaStepWithRabbitMq()
     {
-        var rule = new Abt001SagaRequiresStatefulTransportRule();
+        var rule = new Abt001SagaStepStatefulTransportRule();
         var desc = new BehaviorTopologyDescriptor("s", "saga-step", ["rabbitmq"]);
         Assert.Null(rule.Check(desc));
     }
 
     [Fact]
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Scenario_result naming improves test readability.")]
-    public void CompatibilityMatrix_Abt003_Error_ProcessManagerWithoutInbox()
+    public void CompatibilityMatrixAbt001PassesSagaStepWithKafka()
     {
-        var rule = new Abt003ProcessManagerRequiresInboxRule();
-        var desc = new BehaviorTopologyDescriptor("pm", "process-manager", ["http.rest"], inboxEnabled: false);
-        var violation = rule.Check(desc);
-        Assert.NotNull(violation);
-        Assert.Equal(CompatibilitySeverity.Error, violation!.Severity);
+        var rule = new Abt001SagaStepStatefulTransportRule();
+        var desc = new BehaviorTopologyDescriptor("s", "saga-step", ["kafka"]);
+        Assert.Null(rule.Check(desc));
     }
 
     [Fact]
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Scenario_result naming improves test readability.")]
-    public async Task BehaviorExecutionSlot_InvokesHandler()
+    public void CompatibilityMatrixAbt001PassesSagaStepWithInMemory()
     {
-        var slot = BehaviorExecutionSlot.For<TestDirectBehavior, string, string>();
-        var ctx = new TestBehaviorContext();
-        var result = await slot.InvokeAsync(new TestDirectBehavior(), "hello", ctx, CancellationToken.None);
-        Assert.Equal("HELLO", result);
+        var rule = new Abt001SagaStepStatefulTransportRule();
+        var desc = new BehaviorTopologyDescriptor("s", "saga-step", ["in-memory"]);
+        Assert.Null(rule.Check(desc));
     }
 
-    // Private test support types (must be private — TestHarnessSurfaceTests convention)
-    private sealed class TestDirectBehavior : IAppBehavior<string, string>
+    [Fact]
+    public void CompatibilityMatrixAbt001PassesNonSagaPattern()
     {
-        public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken ct = default)
-            => Task.FromResult(input.ToUpperInvariant());
+        var rule = new Abt001SagaStepStatefulTransportRule();
+        var desc = new BehaviorTopologyDescriptor("s", "cqrs", ["http.rest"]);
+        Assert.Null(rule.Check(desc));
     }
 
-    private sealed class TestBehaviorContext : IBehaviorContext
+    // ─────────────────────────────────────────────────────────────────────────
+    // Compatibility matrix — ABT-002
+    // ─────────────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void CompatibilityMatrixAbt002WarningEventDrivenWithHttpRest()
     {
-        public string BehaviorId => "test";
-        public string? CorrelationId => null;
-        public string? TenantId => null;
-        public string? UserId => null;
-        public string? TraceId => null;
-        public CancellationToken CancellationToken => CancellationToken.None;
-        public BehaviorFault? Fault => null;
-        public IReadOnlyDictionary<string, string> Metadata => new Dictionary<string, string>();
-        public Task PublishAsync<TEvent>(TEvent evt, CancellationToken ct = default) => Task.CompletedTask;
-        public Task SendAsync<TCommand>(TCommand command, CancellationToken ct = default) => Task.CompletedTask;
-        public Task ReplyAsync<TResult>(TResult result, CancellationToken ct = default)
-            => throw new NotSupportedException("ReplyAsync is not supported in direct pattern.");
-        public T? GetSagaState<T>() => default;
-        public void SetSagaState<T>(T state) { }
+        var rule = new Abt002EventDrivenWithHttpRestRule();
+        var desc = new BehaviorTopologyDescriptor("e", "event-driven", ["http.rest"]);
+        var v = rule.Check(desc);
+
+        Assert.NotNull(v);
+        Assert.Equal(CompatibilitySeverity.Warning, v!.Severity);
+    }
+
+    [Fact]
+    public void CompatibilityMatrixAbt002NoViolationEventDrivenWithSse()
+    {
+        var rule = new Abt002EventDrivenWithHttpRestRule();
+        var desc = new BehaviorTopologyDescriptor("e", "event-driven", ["http.sse"]);
+        Assert.Null(rule.Check(desc));
+    }
+
+    [Fact]
+    public void CompatibilityMatrixAbt002NoViolationCqrsWithHttpRest()
+    {
+        var rule = new Abt002EventDrivenWithHttpRestRule();
+        var desc = new BehaviorTopologyDescriptor("e", "cqrs", ["http.rest"]);
+        Assert.Null(rule.Check(desc));
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // BehaviorDispatcher — end-to-end dispatch
+    // ─────────────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task BehaviorDispatcherDispatchesKnownBehavior()
+    {
+        var services = new ServiceCollection();
+        services.AddTransient<DirectGreetingBehavior>();
+
+        var typeRegistry = new BehaviorTypeRegistry();
+        typeRegistry.Register("greeting.direct", typeof(DirectGreetingBehavior));
+
+        var descriptor = new BehaviorTopologyDescriptor("greeting.direct", "direct", []);
+        var contributor = new FluentBehaviorContributor(descriptor);
+        services.AddSingleton<IBehaviorContributor>(contributor);
+        services.AddSingleton<IBehaviorTypeRegistry>(typeRegistry);
+        services.AddSingleton<IBehaviorCatalog>(sp =>
+            new BehaviorCatalog(sp.GetServices<IBehaviorContributor>()));
+
+        var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IBehaviorCatalog>();
+        var dispatcher = new BehaviorDispatcher(catalog, typeRegistry, provider);
+
+        var ctx = new TestBehaviorContext("greeting.direct", isDirect: true);
+        var result = await dispatcher.DispatchAsync("greeting.direct", "World", ctx);
+
+        Assert.Equal("Hello, World!", result);
+    }
+
+    [Fact]
+    public async Task BehaviorDispatcherThrowsBehaviorNotFoundExceptionForUnknownId()
+    {
+        var services = new ServiceCollection();
+        var typeRegistry = new BehaviorTypeRegistry();
+        services.AddSingleton<IBehaviorCatalog>(new BehaviorCatalog([]));
+
+        var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IBehaviorCatalog>();
+        var dispatcher = new BehaviorDispatcher(catalog, typeRegistry, provider);
+
+        var ctx = new TestBehaviorContext("missing");
+        await Assert.ThrowsAsync<BehaviorNotFoundException>(() =>
+            dispatcher.DispatchAsync("missing", "input", ctx));
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // TestBehaviorContext — direct pattern throws NotSupportedException
+    // ─────────────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task TestBehaviorContextReplyAsyncThrowsNotSupportedExceptionForDirectPattern()
+    {
+        var ctx = new TestBehaviorContext("greeting.direct", isDirect: true);
+        await Assert.ThrowsAsync<NotSupportedException>(() =>
+            ctx.ReplyAsync("reply"));
+    }
+
+    [Fact]
+    public async Task TestBehaviorContextReplyAsyncSucceedsForNonDirectPattern()
+    {
+        var ctx = new TestBehaviorContext("greeting.cqrs", isDirect: false);
+        await ctx.ReplyAsync("reply");
+        Assert.Single(ctx.Replies);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // BehaviorExecutionSlot — ForType factory
+    // ─────────────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task BehaviorExecutionSlotForTypeCompilesAndInvokes()
+    {
+        var slot = BehaviorExecutionSlot.ForType(typeof(DirectGreetingBehavior));
+        var behavior = new DirectGreetingBehavior();
+        var ctx = new TestBehaviorContext("greeting.direct", isDirect: true);
+
+        var result = await slot.InvokeAsync(behavior, "Claude", ctx);
+        Assert.Equal("Hello, Claude!", result);
+    }
+
+    [Fact]
+    public void BehaviorExecutionSlotForTypeThrowsWhenTypeDoesNotImplementInterface()
+    {
+        Assert.Throws<InvalidOperationException>(() =>
+            BehaviorExecutionSlot.ForType(typeof(string)));
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // BehaviorCatalog
+    // ─────────────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void BehaviorCatalogReturnsAllContributedOrderedById()
+    {
+        var d1 = new BehaviorTopologyDescriptor("z-behavior", "direct", []);
+        var d2 = new BehaviorTopologyDescriptor("a-behavior", "cqrs", []);
+        var catalog = new BehaviorCatalog(
+        [
+            new FluentBehaviorContributor(d1),
+            new FluentBehaviorContributor(d2)
+        ]);
+
+        Assert.Equal(2, catalog.All.Count);
+        Assert.Equal("a-behavior", catalog.All[0].Id);
+        Assert.Equal("z-behavior", catalog.All[1].Id);
+    }
+
+    [Fact]
+    public void BehaviorCatalogFindByIdReturnsNullForUnknownId()
+    {
+        var catalog = new BehaviorCatalog([]);
+        Assert.Null(catalog.FindById("unknown"));
+    }
+
+    [Fact]
+    public void BehaviorCatalogFindByIdIsCaseInsensitive()
+    {
+        var desc = new BehaviorTopologyDescriptor("My-Behavior", "direct", []);
+        var catalog = new BehaviorCatalog([new FluentBehaviorContributor(desc)]);
+
+        Assert.NotNull(catalog.FindById("MY-BEHAVIOR"));
+        Assert.NotNull(catalog.FindById("my-behavior"));
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // AppBehaviorAttribute
+    // ─────────────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void AppBehaviorAttributeStoresId()
+    {
+        var attr = new AppBehaviorAttribute("my.behavior");
+        Assert.Equal("my.behavior", attr.Id);
+    }
+
+    [Fact]
+    public void AppBehaviorAttributeThrowsWhenIdIsEmpty()
+    {
+        Assert.Throws<ArgumentException>(() => new AppBehaviorAttribute(""));
+        Assert.Throws<ArgumentException>(() => new AppBehaviorAttribute("  "));
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // BehaviorCollectionBuilder — Register wires up DI + type registry
+    // ─────────────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void BehaviorCollectionBuilderRegisterWiresDiAndTypeRegistry()
+    {
+        var services = new ServiceCollection();
+        var typeRegistry = new BehaviorTypeRegistry();
+        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+
+        builder.Register<DirectGreetingBehavior>();
+
+        Assert.True(typeRegistry.TryGetType("greeting.direct", out var type));
+        Assert.Equal(typeof(DirectGreetingBehavior), type);
+
+        var provider = services.BuildServiceProvider();
+        var resolved = provider.GetService<DirectGreetingBehavior>();
+        Assert.NotNull(resolved);
+    }
+
+    [Fact]
+    public void BehaviorCollectionBuilderRegisterThrowsWhenNoAppBehaviorAttribute()
+    {
+        var services = new ServiceCollection();
+        var typeRegistry = new BehaviorTypeRegistry();
+        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+
+        Assert.Throws<InvalidOperationException>(() =>
+            builder.Register<NoAttributeBehavior>());
+    }
+
+    [Fact]
+    public void BehaviorCollectionBuilderRegisterWithFluentTopologyAddsContributor()
+    {
+        var services = new ServiceCollection();
+        var typeRegistry = new BehaviorTypeRegistry();
+        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+
+        builder.Register<DirectGreetingBehavior>(b => b.ViaHttpRest().ViaInMemory());
+
+        var provider = services.BuildServiceProvider();
+        var contributors = provider.GetServices<IBehaviorContributor>().ToList();
+        Assert.NotEmpty(contributors);
+
+        var catalog = new BehaviorCatalog(contributors);
+        var desc = catalog.FindById("greeting.direct");
+        Assert.NotNull(desc);
+        Assert.Contains("http.rest", desc!.TransportIds);
+        Assert.Contains("in-memory", desc.TransportIds);
     }
 }
