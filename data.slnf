@@ -1,0 +1,22 @@
+{
+  "solution": {
+    "path": "CephalonEngine.slnx",
+    "projects": [
+      "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
+      "src/Cephalon.Engine/Cephalon.Engine.csproj",
+      "src/Cephalon.Data/Cephalon.Data.csproj",
+      "src/Cephalon.Data.EntityFramework/Cephalon.Data.EntityFramework.csproj",
+      "src/Cephalon.Data.MongoDB/Cephalon.Data.MongoDB.csproj",
+      "src/Cephalon.Data.Redis/Cephalon.Data.Redis.csproj",
+      "src/Cephalon.Data.Cassandra/Cephalon.Data.Cassandra.csproj",
+      "src/Cephalon.Data.ClickHouse/Cephalon.Data.ClickHouse.csproj",
+      "src/Cephalon.EventSourcing/Cephalon.EventSourcing.csproj",
+      "src/Cephalon.EventSourcing.EntityFramework/Cephalon.EventSourcing.EntityFramework.csproj",
+      "src/Cephalon.EventSourcing.MongoDB/Cephalon.EventSourcing.MongoDB.csproj",
+      "src/Cephalon.EventSourcing.Redis/Cephalon.EventSourcing.Redis.csproj",
+      "src/Cephalon.EventSourcing.Cassandra/Cephalon.EventSourcing.Cassandra.csproj",
+      "src/Cephalon.EventSourcing.ClickHouse/Cephalon.EventSourcing.ClickHouse.csproj",
+      "tests/Cephalon.Tests/Cephalon.Tests.csproj"
+    ]
+  }
+}

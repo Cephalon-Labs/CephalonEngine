@@ -1,0 +1,43 @@
+{
+  "solution": {
+    "path": "CephalonEngine.slnx",
+    "projects": [
+      "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
+      "src/Cephalon.Engine/Cephalon.Engine.csproj",
+      "src/Cephalon.Observability/Cephalon.Observability.csproj",
+      "src/Cephalon.Observability.CassandraDependencies/Cephalon.Observability.CassandraDependencies.csproj",
+      "src/Cephalon.Observability.ClickHouseDependencies/Cephalon.Observability.ClickHouseDependencies.csproj",
+      "src/Cephalon.Observability.ConsulDependencies/Cephalon.Observability.ConsulDependencies.csproj",
+      "src/Cephalon.Observability.ElasticsearchDependencies/Cephalon.Observability.ElasticsearchDependencies.csproj",
+      "src/Cephalon.Observability.HttpDependencies/Cephalon.Observability.HttpDependencies.csproj",
+      "src/Cephalon.Observability.KafkaDependencies/Cephalon.Observability.KafkaDependencies.csproj",
+      "src/Cephalon.Observability.MemcachedDependencies/Cephalon.Observability.MemcachedDependencies.csproj",
+      "src/Cephalon.Observability.MongoDbDependencies/Cephalon.Observability.MongoDbDependencies.csproj",
+      "src/Cephalon.Observability.MqttDependencies/Cephalon.Observability.MqttDependencies.csproj",
+      "src/Cephalon.Observability.MySqlDependencies/Cephalon.Observability.MySqlDependencies.csproj",
+      "src/Cephalon.Observability.NatsDependencies/Cephalon.Observability.NatsDependencies.csproj",
+      "src/Cephalon.Observability.Neo4jDependencies/Cephalon.Observability.Neo4jDependencies.csproj",
+      "src/Cephalon.Observability.OpenSearchDependencies/Cephalon.Observability.OpenSearchDependencies.csproj",
+      "src/Cephalon.Observability.OracleDependencies/Cephalon.Observability.OracleDependencies.csproj",
+      "src/Cephalon.Observability.PostgresDependencies/Cephalon.Observability.PostgresDependencies.csproj",
+      "src/Cephalon.Observability.RabbitMqDependencies/Cephalon.Observability.RabbitMqDependencies.csproj",
+      "src/Cephalon.Observability.RedisDependencies/Cephalon.Observability.RedisDependencies.csproj",
+      "src/Cephalon.Observability.SqlServerDependencies/Cephalon.Observability.SqlServerDependencies.csproj",
+      "src/Cephalon.Observability.OpenTelemetry/Cephalon.Observability.OpenTelemetry.csproj",
+      "src/Cephalon.Observability.AlibabaCloud/Cephalon.Observability.AlibabaCloud.csproj",
+      "src/Cephalon.Observability.Aws/Cephalon.Observability.Aws.csproj",
+      "src/Cephalon.Observability.AzureMonitor/Cephalon.Observability.AzureMonitor.csproj",
+      "src/Cephalon.Observability.DigitalOcean/Cephalon.Observability.DigitalOcean.csproj",
+      "src/Cephalon.Observability.Gcp/Cephalon.Observability.Gcp.csproj",
+      "src/Cephalon.Observability.GrafanaCloud/Cephalon.Observability.GrafanaCloud.csproj",
+      "src/Cephalon.Observability.HuaweiCloud/Cephalon.Observability.HuaweiCloud.csproj",
+      "src/Cephalon.Observability.NewRelic/Cephalon.Observability.NewRelic.csproj",
+      "src/Cephalon.Observability.OracleCloud/Cephalon.Observability.OracleCloud.csproj",
+      "src/Cephalon.Observability.Kubernetes/Cephalon.Observability.Kubernetes.csproj",
+      "src/Cephalon.Observability.OpenShift/Cephalon.Observability.OpenShift.csproj",
+      "src/Cephalon.Observability.Tanzu/Cephalon.Observability.Tanzu.csproj",
+      "src/Cephalon.Observability.Serilog/Cephalon.Observability.Serilog.csproj",
+      "tests/Cephalon.Tests/Cephalon.Tests.csproj"
+    ]
+  }
+}

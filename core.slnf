@@ -1,0 +1,32 @@
+{
+  "solution": {
+    "path": "CephalonEngine.slnx",
+    "projects": [
+      "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
+      "src/Cephalon.Engine/Cephalon.Engine.csproj",
+      "src/Cephalon.Data/Cephalon.Data.csproj",
+      "src/Cephalon.EventSourcing/Cephalon.EventSourcing.csproj",
+      "src/Cephalon.Eventing/Cephalon.Eventing.csproj",
+      "src/Cephalon.Eventing.Wolverine/Cephalon.Eventing.Wolverine.csproj",
+      "src/Cephalon.Identity/Cephalon.Identity.csproj",
+      "src/Cephalon.Identity.AspNetCore/Cephalon.Identity.AspNetCore.csproj",
+      "src/Cephalon.MultiTenancy/Cephalon.MultiTenancy.csproj",
+      "src/Cephalon.Audit/Cephalon.Audit.csproj",
+      "src/Cephalon.Ids.Sfid/Cephalon.Ids.Sfid.csproj",
+      "src/Cephalon.Behaviors/Cephalon.Behaviors.csproj",
+      "src/Cephalon.Behaviors.Http/Cephalon.Behaviors.Http.csproj",
+      "src/Cephalon.Behaviors.Messaging/Cephalon.Behaviors.Messaging.csproj",
+      "src/Cephalon.Behaviors.Patterns/Cephalon.Behaviors.Patterns.csproj",
+      "src/Cephalon.Behaviors.SourceGen/Cephalon.Behaviors.SourceGen.csproj",
+      "src/Cephalon.Worker/Cephalon.Worker.csproj",
+      "src/Cephalon.Edge/Cephalon.Edge.csproj",
+      "src/Cephalon.Retrieval/Cephalon.Retrieval.csproj",
+      "src/Cephalon.Scaffolding/Cephalon.Scaffolding.csproj",
+      "src/Cephalon.Cli/Cephalon.Cli.csproj",
+      "src/Cephalon.Agentics/Cephalon.Agentics.csproj",
+      "src/Cephalon.ReferenceDocs/Cephalon.ReferenceDocs.csproj",
+      "tests/Cephalon.Tests/Cephalon.Tests.csproj",
+      "benchmarks/Cephalon.Benchmarks/Cephalon.Benchmarks.csproj"
+    ]
+  }
+}

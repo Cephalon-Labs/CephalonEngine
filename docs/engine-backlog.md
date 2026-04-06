@@ -1444,3 +1444,8 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 - ENG-054 ClickHouse analytics non-relational provider: `Cephalon.Data.ClickHouse` (IOutbox + IInbox backed by ClickHouse ReplacingMergeTree tables, eventual idempotency via ORDER BY deduplication + FINAL reads, `data.clickhouse` / `data.analytics-store` capabilities), `Cephalon.EventSourcing.ClickHouse` (IEventStore with MergeTree ORDER BY (stream_id, stream_version), application-layer optimistic concurrency, System.Text.Json serialization, IAsyncEnumerable stream replay), ClickHouse.Driver 1.0.2 already in CPM, 8 composition tests (no live ClickHouse required — connection created per-operation), full component docs — **Shipped** · 632/632 tests
 
+### Infrastructure — Phase 1 Developer Experience
+
+- Solution filter files: `core.slnf`, `data.slnf`, `observability.slnf`, `aspnetcore.slnf` added to repo root for IDE-level project filtering
+- Scaffolding scripts: `scripts/New-ProviderPack.ps1` and `scripts/New-ObservabilityPack.ps1` automate the artifact creation steps when adding new provider companion packs
+
