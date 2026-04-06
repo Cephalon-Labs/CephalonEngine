@@ -133,6 +133,34 @@
       "maxMeanNanoseconds": 10000,
       "maxAllocatedBytes": 10000,
       "notes": "Configuration-driven tenant resolution falling back to the configured default tenant should stay below 10 us and under roughly 10 KB allocated per call."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.EventSourcingBenchmarks-report.csv",
+      "benchmark": "AppendSingleEvent",
+      "maxMeanNanoseconds": 10000,
+      "maxAllocatedBytes": 10000,
+      "notes": "In-memory event store single-event append with optimistic concurrency check should stay below 10 us and under roughly 10 KB allocated per call."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.EventSourcingBenchmarks-report.csv",
+      "benchmark": "ReadStream",
+      "maxMeanNanoseconds": 50000,
+      "maxAllocatedBytes": 20000,
+      "notes": "In-memory event store read of a 100-event stream via async enumeration should stay below 50 us and under roughly 20 KB allocated per call."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.EventSourcingBenchmarks-report.csv",
+      "benchmark": "GetStreamVersion",
+      "maxMeanNanoseconds": 5000,
+      "maxAllocatedBytes": 5000,
+      "notes": "In-memory event store version lookup should stay below 5 us and under roughly 5 KB allocated per call."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.OutboxStagingBenchmarks-report.csv",
+      "benchmark": "StageOutboxMessage",
+      "maxMeanNanoseconds": 10000,
+      "maxAllocatedBytes": 10000,
+      "notes": "In-memory outbox message staging including message construction should stay below 10 us and under roughly 10 KB allocated per call."
     }
   ]
 }

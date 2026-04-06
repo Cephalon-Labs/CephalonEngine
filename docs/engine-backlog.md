@@ -1321,9 +1321,9 @@ Delivered:
 
 ### ENG-059 Runtime hot-path benchmark expansion
 
-Status: in progress
+Status: done
 Estimate: 13
-Progress: April 7, 2026
+Completed: April 7, 2026
 
 Why:
 
@@ -1345,16 +1345,16 @@ Delivered:
 - `HotPath/BehaviorDispatchBenchmarks.cs`: BehaviorDispatcher.DispatchAsync with frozen-dictionary lookup and compiled delegate invocation (DispatchBehavior) — 8192 ops/iteration with stub catalog/registry
 - `HotPath/AuthorizationEvaluationBenchmarks.cs`: MetadataDrivenAuthorizationEvaluator RBAC allow path (EvaluateRbacAllow) and deny path (EvaluateRbacDeny) — 8192 ops/iteration with policy module contributing RBAC policies
 - `HotPath/TenantResolutionBenchmarks.cs`: ConfiguredTenantResolver by explicit tenant id (ResolveByTenantId), hostname domain matching (ResolveByHostName), and default-tenant fallback (ResolveDefaultTenant) — 8192 ops/iteration with 3-tenant directory
-- `Support/BenchmarkHotPathTypes.cs`: data layer stubs (BenchmarkQuery/Command/ResultCommand + handlers), behavior stubs (EchoBenchmarkBehavior, StubBehaviorContext/Catalog/TypeRegistry), authorization policy module (BenchmarkAuthorizationPolicyModule)
-- guardrail catalog expanded from 10 to 19 entries covering all new hot-path benchmarks
-- `GuardrailValidatorTests` updated for 19-entry catalog
+- `HotPath/EventSourcingBenchmarks.cs`: in-memory IEventStore single-event append (AppendSingleEvent), 100-event stream read (ReadStream), version lookup (GetStreamVersion) — 4096 ops/iteration with in-memory event store
+- `HotPath/OutboxStagingBenchmarks.cs`: in-memory IOutbox enqueue staging (StageOutboxMessage) — 4096 ops/iteration with in-memory outbox
+- `Support/BenchmarkHotPathTypes.cs`: data layer stubs (BenchmarkQuery/Command/ResultCommand + handlers), behavior stubs (EchoBenchmarkBehavior, StubBehaviorContext/Catalog/TypeRegistry), authorization policy module (BenchmarkAuthorizationPolicyModule), InMemoryBenchmarkEventStore, InMemoryBenchmarkOutbox, BenchmarkDomainEvent
+- guardrail catalog expanded from 10 to 23 entries covering all new hot-path benchmarks
+- `GuardrailValidatorTests` updated for 23-entry catalog
 - benchmark project now references `Cephalon.Behaviors` for behavior dispatch measurement
 
 Follow-up later:
 
-- event sourcing benchmarks (IEventStore append/read/hydrate) — requires in-memory event store or test-friendly provider
-- outbox benchmarks (IOutbox.EnqueueAsync) — requires in-memory outbox implementation
-- transport handler benchmarks — requires HTTP test infrastructure per transport
+- transport handler benchmarks — requires HTTP test infrastructure per transport (partially covered by existing AspNetCoreRequestLoggingBenchmarks)
 
 ## Sprint history and next 4 sprints
 
@@ -1572,7 +1572,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 ### Sprint 35
 
-- ENG-059 runtime hot-path benchmark expansion: 4 new benchmark classes covering data layer dispatch (query/command/result-command), behavior dispatch (frozen-dictionary + compiled delegate), authorization evaluation (RBAC allow/deny paths), tenant resolution (by-id/hostname/default-fallback) — 9 new benchmarks with 8192 ops/iteration each
-- benchmark support: `BenchmarkHotPathTypes.cs` with data stubs (BenchmarkQuery/Command/ResultCommand + handlers), behavior stubs (EchoBenchmarkBehavior, StubBehaviorContext/Catalog/TypeRegistry), authorization policy module (BenchmarkAuthorizationPolicyModule)
-- guardrail catalog expanded from 10 to 19 entries, `GuardrailValidatorTests` updated
+- ENG-059 runtime hot-path benchmark expansion: 6 new benchmark classes covering data layer dispatch (query/command/result-command), behavior dispatch (frozen-dictionary + compiled delegate), authorization evaluation (RBAC allow/deny paths), tenant resolution (by-id/hostname/default-fallback), event sourcing (append/read/version), outbox staging — 13 new benchmarks
+- benchmark support: `BenchmarkHotPathTypes.cs` with data stubs, behavior stubs, authorization policy module, InMemoryBenchmarkEventStore, InMemoryBenchmarkOutbox, BenchmarkDomainEvent
+- guardrail catalog expanded from 10 to 23 entries, `GuardrailValidatorTests` updated
 - benchmark project now references `Cephalon.Behaviors` for behavior dispatch measurement — **Shipped** · 648/648 tests

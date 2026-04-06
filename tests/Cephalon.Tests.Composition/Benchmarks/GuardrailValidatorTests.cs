@@ -14,7 +14,7 @@ public sealed class GuardrailValidatorTests
             "performance-guardrails.json"));
 
         Assert.Equal("1.0", catalog.Version);
-        Assert.Equal(19, catalog.Entries.Count);
+        Assert.Equal(23, catalog.Entries.Count);
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifest");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifestWithStrictTrustPolicy");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildPhase8RuntimeManifest");
@@ -34,6 +34,10 @@ public sealed class GuardrailValidatorTests
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "ResolveByTenantId");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "ResolveByHostName");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "ResolveDefaultTenant");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "AppendSingleEvent");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "ReadStream");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "GetStreamVersion");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "StageOutboxMessage");
     }
 
     [Fact]

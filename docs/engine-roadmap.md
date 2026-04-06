@@ -94,7 +94,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 32`: backlog and roadmap alignment for all completed work through Sprint 31, status closeout for ENG-054/056/057
 - `Sprint 33`: EF projection contributor (`IProjectionContributor`), Wolverine dispatch observability (`ActivitySource` + `Meter`), validation script fix for post-test-split environment, ENG-051 closeout — 648/648 tests
 - `Sprint 34`: comprehensive engine audit — WebSocket `[LoggerMessage]` logging fix, flaky test fix, architecture inventory/recommendations docs, ENG-049/050/052/053/055 closeout (all phase-8 baseline acceptance met), ENG-059 benchmark expansion planned — 648/648 tests
-- `Sprint 35`: ENG-059 runtime hot-path benchmark expansion — data layer dispatch (query/command/result-command), behavior dispatch (frozen-dictionary + compiled delegate), authorization evaluation (RBAC allow/deny), tenant resolution (by-id/hostname/default) — 9 new benchmarks, guardrails 10→19, 648/648 tests
+- `Sprint 35`: **shipped** ENG-059 runtime hot-path benchmark expansion — data layer dispatch, behavior dispatch, authorization evaluation, tenant resolution, event sourcing, outbox staging — 13 new benchmarks across 6 classes, guardrails 10→23, 648/648 tests
 - `Sprint 36–37 (Phase 11)`: planned resilience foundation — circuit breaker, retry/timeout/bulkhead, rate limiting, `onion-architecture` and `anti-corruption-layer` pattern descriptors
 - `Sprint 38–39 (Phase 12)`: planned migration and advanced coordination — strangler fig, saga choreography, BFF pattern, feature flags, durable execution foundations
 - `Sprint 40–41 (Phase 13)`: planned next-generation patterns — cell-based architecture, data mesh, CDC

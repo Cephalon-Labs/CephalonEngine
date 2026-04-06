@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 using Cephalon.Abstractions.Authorization;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
@@ -154,4 +156,102 @@ internal sealed class BenchmarkAuthorizationPolicyModule : ModuleBase, IAuthoriz
                 [IdentityPolicyMetadataKeys.RequiredRoleMatch] = IdentityPolicyMetadataKeys.RequiredRoleMatchAny
             }));
     }
+}
+
+// ───── In-Memory Event Store ─────
+
+/// <summary>
+/// Lightweight in-memory event store for benchmarking append, read, and version lookup
+/// without external database dependencies. Provides correct optimistic concurrency semantics.
+/// </summary>
+internal sealed class InMemoryBenchmarkEventStore : IEventStore
+{
+    private readonly ConcurrentDictionary<string, List<IDomainEvent>> _streams = new(StringComparer.Ordinal);
+    private readonly object _appendLock = new();
+
+    public Task AppendAsync(
+        string streamId,
+        IReadOnlyCollection<IDomainEvent> events,
+        long expectedVersion,
+        CancellationToken cancellationToken = default)
+    {
+        lock (_appendLock)
+        {
+            var stream = _streams.GetOrAdd(streamId, static _ => []);
+            var currentVersion = stream.Count == 0 ? -1L : stream[^1].StreamVersion;
+
+            if (currentVersion != expectedVersion)
+            {
+                throw new EventStreamConcurrencyException(streamId, expectedVersion, currentVersion);
+            }
+
+            stream.AddRange(events);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public async IAsyncEnumerable<IDomainEvent> ReadStreamAsync(
+        string streamId,
+        long fromVersion = 0,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        if (!_streams.TryGetValue(streamId, out var stream))
+        {
+            yield break;
+        }
+
+        foreach (var evt in stream)
+        {
+            if (evt.StreamVersion >= fromVersion)
+            {
+                yield return evt;
+            }
+        }
+
+        await Task.CompletedTask;
+    }
+
+    public Task<long> GetVersionAsync(string streamId, CancellationToken cancellationToken = default)
+    {
+        if (!_streams.TryGetValue(streamId, out var stream) || stream.Count == 0)
+        {
+            return Task.FromResult(-1L);
+        }
+
+        return Task.FromResult(stream[^1].StreamVersion);
+    }
+
+    /// <summary>Resets all streams for benchmark iteration cleanup.</summary>
+    public void Clear() => _streams.Clear();
+}
+
+/// <summary>Trivial domain event for event-sourcing benchmarks.</summary>
+internal sealed class BenchmarkDomainEvent(string streamId, long streamVersion) : IDomainEvent
+{
+    public string StreamId { get; } = streamId;
+    public long StreamVersion { get; } = streamVersion;
+    public DateTime OccurredAtUtc { get; } = new(2042, 4, 2, 10, 0, 0, DateTimeKind.Utc);
+}
+
+// ───── In-Memory Outbox ─────
+
+/// <summary>
+/// Lightweight in-memory outbox for benchmarking enqueue staging without external database dependencies.
+/// </summary>
+internal sealed class InMemoryBenchmarkOutbox : IOutbox
+{
+    private readonly List<OutboxMessage> _messages = [];
+
+    public ValueTask EnqueueAsync(OutboxMessage message, CancellationToken cancellationToken = default)
+    {
+        _messages.Add(message);
+        return ValueTask.CompletedTask;
+    }
+
+    /// <summary>Gets the number of staged messages.</summary>
+    public int Count => _messages.Count;
+
+    /// <summary>Resets the outbox for benchmark iteration cleanup.</summary>
+    public void Clear() => _messages.Clear();
 }
