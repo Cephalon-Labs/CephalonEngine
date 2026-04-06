@@ -1436,3 +1436,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 - ENG-054 Neo4j graph-store non-relational provider: `Cephalon.Data.Neo4j` (IOutbox + IInbox backed by Neo4j graph nodes, idempotent staging via Cypher MERGE on messageId, `data.neo4j` / `data.graph-store` capabilities), `Cephalon.EventSourcing.Neo4j` (IEventStore with optimistic concurrency via IS NODE KEY constraint on streamId+streamVersion, System.Text.Json serialization, IAsyncEnumerable stream replay), Neo4j.Driver 6.0.0 already in CPM, 8 composition tests (no live Neo4j required — driver connects lazily), full component docs — **Shipped** · 615/615 tests
 
+### Sprint 28
+
+- ENG-054 Cassandra wide-column non-relational provider: `Cephalon.Data.Cassandra` (IOutbox + IInbox backed by Cassandra tables, idempotent staging via LWT `INSERT IF NOT EXISTS`, `data.cassandra` / `data.wide-column-store` capabilities), `Cephalon.EventSourcing.Cassandra` (IEventStore with composite PK on stream_id+stream_version, LWT concurrency detection, System.Text.Json serialization, IAsyncEnumerable stream replay), CassandraCSharpDriver 3.22.0 already in CPM, 8 composition tests (no live Cassandra required — driver connects lazily), full component docs — **Shipped** · 624/624 tests
+

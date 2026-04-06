@@ -41,6 +41,8 @@ See also: [Docs hub](../README.md)
 - [Cephalon.EventSourcing.Redis](event-sourcing-redis.md)
 - [Cephalon.Data.Neo4j](data-neo4j.md)
 - [Cephalon.EventSourcing.Neo4j](event-sourcing-neo4j.md)
+- [Cephalon.Data.Cassandra](data-cassandra.md)
+- [Cephalon.EventSourcing.Cassandra](event-sourcing-cassandra.md)
 
 ## Phase 8 companion packs
 
