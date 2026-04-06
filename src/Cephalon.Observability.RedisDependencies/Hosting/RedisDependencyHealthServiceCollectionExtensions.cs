@@ -1,11 +1,10 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.RedisDependencies.Configuration;
 using Cephalon.Observability.RedisDependencies.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.RedisDependencies.Hosting;
 
@@ -64,12 +63,15 @@ public static class RedisDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
-        services.TryAddSingleton<RedisDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, RedisDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, RedisDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, RedisDependencyHealthProbeHostedService>());
-
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            RedisDependencyHealthOptions,
+            RedisDependencyDefinition,
+            RedisDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new RedisDependencyHealthProbeHostedService(
+                options,
+                store,
+                sp.GetRequiredService<ILogger<RedisDependencyHealthProbeHostedService>>()));
     }
 }

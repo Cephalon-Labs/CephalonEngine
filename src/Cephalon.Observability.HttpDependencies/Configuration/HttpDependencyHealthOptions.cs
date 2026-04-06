@@ -1,4 +1,5 @@
 using Cephalon.Engine.Configuration;
+using Cephalon.Observability.DependencyHealth.Core.Configuration;
 using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.Observability.HttpDependencies.Configuration;
@@ -6,25 +7,8 @@ namespace Cephalon.Observability.HttpDependencies.Configuration;
 /// <summary>
 /// Configures HTTP and external API dependency probes contributed to Cephalon runtime health.
 /// </summary>
-public sealed class HttpDependencyHealthOptions
+public sealed class HttpDependencyHealthOptions : DependencyHealthOptionsBase<HttpDependencyDefinition>
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="HttpDependencyHealthOptions" /> class.
-    /// </summary>
-    public HttpDependencyHealthOptions()
-    {
-    }
-
-    /// <summary>
-    /// Gets or sets the interval, in seconds, between background refresh attempts.
-    /// </summary>
-    public int RefreshIntervalSeconds { get; set; } = 30;
-
-    /// <summary>
-    /// Gets or sets the configured HTTP dependencies that should contribute to runtime health.
-    /// </summary>
-    public IReadOnlyList<HttpDependencyDefinition> Dependencies { get; set; } = Array.Empty<HttpDependencyDefinition>();
-
     /// <summary>
     /// Binds HTTP dependency-health options from configuration.
     /// </summary>
@@ -96,10 +80,4 @@ public sealed class HttpDependencyHealthOptions
             .Where(static value => value > 0)
             .ToArray();
     }
-
-    private static bool GetBoolean(string? value, bool defaultValue) =>
-        bool.TryParse(value, out var parsed) ? parsed : defaultValue;
-
-    private static int GetInt32(string? value, int defaultValue) =>
-        int.TryParse(value, out var parsed) && parsed > 0 ? parsed : defaultValue;
 }

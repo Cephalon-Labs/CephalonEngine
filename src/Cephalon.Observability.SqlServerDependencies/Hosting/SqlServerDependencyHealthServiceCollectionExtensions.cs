@@ -1,11 +1,11 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.SqlServerDependencies.Configuration;
 using Cephalon.Observability.SqlServerDependencies.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.SqlServerDependencies.Hosting;
 
@@ -64,13 +64,18 @@ public static class SqlServerDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
         services.TryAddSingleton<ISqlServerDependencyProbeClient, SqlServerDependencyProbeClient>();
-        services.TryAddSingleton<SqlServerDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, SqlServerDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, SqlServerDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, SqlServerDependencyHealthProbeHostedService>());
 
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            SqlServerDependencyHealthOptions,
+            SqlServerDependencyDefinition,
+            SqlServerDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new SqlServerDependencyHealthProbeHostedService(
+                options,
+                sp.GetRequiredService<ISqlServerDependencyProbeClient>(),
+                store,
+                sp.GetRequiredService<ILogger<SqlServerDependencyHealthProbeHostedService>>()));
     }
 }

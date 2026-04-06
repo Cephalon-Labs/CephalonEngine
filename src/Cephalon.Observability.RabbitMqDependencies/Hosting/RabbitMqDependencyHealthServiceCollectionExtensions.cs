@@ -1,11 +1,11 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.RabbitMqDependencies.Configuration;
 using Cephalon.Observability.RabbitMqDependencies.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.RabbitMqDependencies.Hosting;
 
@@ -64,13 +64,18 @@ public static class RabbitMqDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
         services.TryAddSingleton<IRabbitMqDependencyProbeClient, RabbitMqDependencyProbeClient>();
-        services.TryAddSingleton<RabbitMqDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, RabbitMqDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, RabbitMqDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, RabbitMqDependencyHealthProbeHostedService>());
 
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            RabbitMqDependencyHealthOptions,
+            RabbitMqDependencyDefinition,
+            RabbitMqDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new RabbitMqDependencyHealthProbeHostedService(
+                options,
+                sp.GetRequiredService<IRabbitMqDependencyProbeClient>(),
+                store,
+                sp.GetRequiredService<ILogger<RabbitMqDependencyHealthProbeHostedService>>()));
     }
 }

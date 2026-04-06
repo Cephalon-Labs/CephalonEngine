@@ -19,9 +19,7 @@ public sealed class OpenSearchDependencyHealthHostingTests
     public async Task AddCephalonOpenSearchDependencyHealthReportsHealthyCluster()
     {
         var probeClient = new FakeOpenSearchDependencyProbeClient(dependency =>
-            new OpenSearchProbeResult(
-                HealthState.Healthy,
-                $"OpenSearch cluster 'search-prod' at {dependency.Endpoint} reported green health across 4 nodes."));
+            $"OpenSearch cluster 'search-prod' at {dependency.Endpoint} reported green health across 4 nodes.");
 
         var builder = Host.CreateApplicationBuilder();
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
@@ -59,8 +57,7 @@ public sealed class OpenSearchDependencyHealthHostingTests
     public async Task AddCephalonOpenSearchDependencyHealthTreatsRequiredFailuresAsReadinessFailures()
     {
         var probeClient = new FakeOpenSearchDependencyProbeClient(_ =>
-            new OpenSearchProbeResult(
-                HealthState.Unhealthy,
+            throw new InvalidOperationException(
                 "OpenSearch cluster 'search-prod' at https://search.internal.example:9200/_cluster/health/orders reported red health across 2 nodes."));
 
         var builder = Host.CreateApplicationBuilder();
@@ -102,7 +99,7 @@ public sealed class OpenSearchDependencyHealthHostingTests
     }
 
     [Fact]
-    public async Task ProbeAsyncUsesBasicAuthAndParsesYellowClusterHealth()
+    public async Task ProbeAsyncUsesBasicAuthAndThrowsForYellowClusterHealth()
     {
         await using var server = new OpenSearchHealthHttpServer("""
             {
@@ -122,30 +119,30 @@ public sealed class OpenSearchDependencyHealthHostingTests
         using var provider = services.BuildServiceProvider();
         var probeClient = provider.GetRequiredService<IOpenSearchDependencyProbeClient>();
 
-        var result = await probeClient.ProbeAsync(
-            new OpenSearchDependencyDefinition
-            {
-                Endpoint = server.BaseUrl,
-                Index = "catalog-items",
-                Username = "cephalon-runtime",
-                Password = "super-secret"
-            },
-            CancellationToken.None);
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            probeClient.ProbeAsync(
+                new OpenSearchDependencyDefinition
+                {
+                    Endpoint = server.BaseUrl,
+                    Index = "catalog-items",
+                    Username = "cephalon-runtime",
+                    Password = "super-secret"
+                },
+                CancellationToken.None).AsTask());
 
-        Assert.Equal(HealthState.Degraded, result.State);
-        Assert.Contains("yellow health", result.Description, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("yellow health", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Equal("/_cluster/health/catalog-items", server.LastPath);
 
         var expectedAuthorization = $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes("cephalon-runtime:super-secret"))}";
         Assert.Equal(expectedAuthorization, server.LastAuthorizationHeader);
     }
 
-    private sealed class FakeOpenSearchDependencyProbeClient(Func<OpenSearchDependencyDefinition, OpenSearchProbeResult> onProbe)
+    private sealed class FakeOpenSearchDependencyProbeClient(Func<OpenSearchDependencyDefinition, string> onProbe)
         : IOpenSearchDependencyProbeClient
     {
         public List<OpenSearchDependencyDefinition> CapturedDependencies { get; } = [];
 
-        public ValueTask<OpenSearchProbeResult> ProbeAsync(
+        public ValueTask<string> ProbeAsync(
             OpenSearchDependencyDefinition dependency,
             CancellationToken cancellationToken)
         {

@@ -1,11 +1,11 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.Neo4jDependencies.Configuration;
 using Cephalon.Observability.Neo4jDependencies.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.Neo4jDependencies.Hosting;
 
@@ -64,13 +64,18 @@ public static class Neo4jDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
         services.TryAddSingleton<INeo4jDependencyProbeClient, Neo4jDependencyProbeClient>();
-        services.TryAddSingleton<Neo4jDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, Neo4jDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, Neo4jDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, Neo4jDependencyHealthProbeHostedService>());
 
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            Neo4jDependencyHealthOptions,
+            Neo4jDependencyDefinition,
+            Neo4jDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new Neo4jDependencyHealthProbeHostedService(
+                options,
+                sp.GetRequiredService<INeo4jDependencyProbeClient>(),
+                store,
+                sp.GetRequiredService<ILogger<Neo4jDependencyHealthProbeHostedService>>()));
     }
 }

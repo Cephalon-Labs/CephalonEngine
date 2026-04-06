@@ -1,27 +1,12 @@
+using Cephalon.Observability.DependencyHealth.Core.Configuration;
+
 namespace Cephalon.Observability.MongoDbDependencies.Configuration;
 
 /// <summary>
 /// Describes one MongoDB dependency that should contribute to runtime health.
 /// </summary>
-public sealed class MongoDbDependencyDefinition
+public sealed class MongoDbDependencyDefinition : DependencyDefinitionBase
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MongoDbDependencyDefinition" /> class.
-    /// </summary>
-    public MongoDbDependencyDefinition()
-    {
-    }
-
-    /// <summary>
-    /// Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
-    /// </summary>
-    public string Id { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the human-readable dependency name shown to operators.
-    /// </summary>
-    public string? DisplayName { get; set; }
-
     /// <summary>
     /// Gets or sets the optional full MongoDB connection string used for the probe.
     /// </summary>
@@ -76,14 +61,4 @@ public sealed class MongoDbDependencyDefinition
     /// Gets or sets the MongoDB database command executed to verify the dependency.
     /// </summary>
     public string HealthCommand { get; set; } = "ping";
-
-    /// <summary>
-    /// Gets or sets a value indicating whether this dependency is required for readiness.
-    /// </summary>
-    public bool Required { get; set; }
-
-    /// <summary>
-    /// Gets or sets the per-probe timeout in seconds.
-    /// </summary>
-    public int TimeoutSeconds { get; set; } = 5;
 }

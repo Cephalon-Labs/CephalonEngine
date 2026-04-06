@@ -1,11 +1,11 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.OracleDependencies.Configuration;
 using Cephalon.Observability.OracleDependencies.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.OracleDependencies.Hosting;
 
@@ -64,13 +64,18 @@ public static class OracleDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
         services.TryAddSingleton<IOracleDependencyProbeClient, OracleDependencyProbeClient>();
-        services.TryAddSingleton<OracleDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, OracleDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, OracleDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, OracleDependencyHealthProbeHostedService>());
 
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            OracleDependencyHealthOptions,
+            OracleDependencyDefinition,
+            OracleDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new OracleDependencyHealthProbeHostedService(
+                options,
+                sp.GetRequiredService<IOracleDependencyProbeClient>(),
+                store,
+                sp.GetRequiredService<ILogger<OracleDependencyHealthProbeHostedService>>()));
     }
 }

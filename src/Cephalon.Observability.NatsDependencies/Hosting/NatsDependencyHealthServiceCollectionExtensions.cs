@@ -1,11 +1,11 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.NatsDependencies.Configuration;
 using Cephalon.Observability.NatsDependencies.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.NatsDependencies.Hosting;
 
@@ -64,13 +64,18 @@ public static class NatsDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
         services.TryAddSingleton<INatsDependencyProbeClient, NatsDependencyProbeClient>();
-        services.TryAddSingleton<NatsDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, NatsDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, NatsDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, NatsDependencyHealthProbeHostedService>());
 
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            NatsDependencyHealthOptions,
+            NatsDependencyDefinition,
+            NatsDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new NatsDependencyHealthProbeHostedService(
+                options,
+                sp.GetRequiredService<INatsDependencyProbeClient>(),
+                store,
+                sp.GetRequiredService<ILogger<NatsDependencyHealthProbeHostedService>>()));
     }
 }

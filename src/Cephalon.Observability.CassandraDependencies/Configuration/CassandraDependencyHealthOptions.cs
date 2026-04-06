@@ -1,4 +1,5 @@
 using Cephalon.Engine.Configuration;
+using Cephalon.Observability.DependencyHealth.Core.Configuration;
 using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.Observability.CassandraDependencies.Configuration;
@@ -6,25 +7,8 @@ namespace Cephalon.Observability.CassandraDependencies.Configuration;
 /// <summary>
 /// Configures Cassandra dependency probes contributed to Cephalon runtime health.
 /// </summary>
-public sealed class CassandraDependencyHealthOptions
+public sealed class CassandraDependencyHealthOptions : DependencyHealthOptionsBase<CassandraDependencyDefinition>
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CassandraDependencyHealthOptions" /> class.
-    /// </summary>
-    public CassandraDependencyHealthOptions()
-    {
-    }
-
-    /// <summary>
-    /// Gets or sets the interval, in seconds, between background refresh attempts.
-    /// </summary>
-    public int RefreshIntervalSeconds { get; set; } = 30;
-
-    /// <summary>
-    /// Gets or sets the configured Cassandra dependencies that should contribute to runtime health.
-    /// </summary>
-    public IReadOnlyList<CassandraDependencyDefinition> Dependencies { get; set; } = Array.Empty<CassandraDependencyDefinition>();
-
     /// <summary>
     /// Binds Cassandra dependency-health options from configuration.
     /// </summary>
@@ -110,10 +94,4 @@ public sealed class CassandraDependencyHealthOptions
             .Where(static entry => !string.IsNullOrWhiteSpace(entry))
             .ToArray();
     }
-
-    private static bool GetBoolean(string? value, bool defaultValue) =>
-        bool.TryParse(value, out var parsed) ? parsed : defaultValue;
-
-    private static int GetInt32(string? value, int defaultValue) =>
-        int.TryParse(value, out var parsed) && parsed > 0 ? parsed : defaultValue;
 }

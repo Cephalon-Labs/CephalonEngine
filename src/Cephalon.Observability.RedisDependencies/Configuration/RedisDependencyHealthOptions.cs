@@ -1,4 +1,5 @@
 using Cephalon.Engine.Configuration;
+using Cephalon.Observability.DependencyHealth.Core.Configuration;
 using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.Observability.RedisDependencies.Configuration;
@@ -6,25 +7,8 @@ namespace Cephalon.Observability.RedisDependencies.Configuration;
 /// <summary>
 /// Configures Redis dependency probes contributed to Cephalon runtime health.
 /// </summary>
-public sealed class RedisDependencyHealthOptions
+public sealed class RedisDependencyHealthOptions : DependencyHealthOptionsBase<RedisDependencyDefinition>
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RedisDependencyHealthOptions" /> class.
-    /// </summary>
-    public RedisDependencyHealthOptions()
-    {
-    }
-
-    /// <summary>
-    /// Gets or sets the interval, in seconds, between background refresh attempts.
-    /// </summary>
-    public int RefreshIntervalSeconds { get; set; } = 30;
-
-    /// <summary>
-    /// Gets or sets the configured Redis dependencies that should contribute to runtime health.
-    /// </summary>
-    public IReadOnlyList<RedisDependencyDefinition> Dependencies { get; set; } = Array.Empty<RedisDependencyDefinition>();
-
     /// <summary>
     /// Binds Redis dependency-health options from configuration.
     /// </summary>
@@ -78,12 +62,6 @@ public sealed class RedisDependencyHealthOptions
             Database = GetNullableInt32(section["Database"])
         };
     }
-
-    private static bool GetBoolean(string? value, bool defaultValue) =>
-        bool.TryParse(value, out var parsed) ? parsed : defaultValue;
-
-    private static int GetInt32(string? value, int defaultValue) =>
-        int.TryParse(value, out var parsed) && parsed > 0 ? parsed : defaultValue;
 
     private static int? GetNullableInt32(string? value) =>
         int.TryParse(value, out var parsed) && parsed >= 0 ? parsed : null;

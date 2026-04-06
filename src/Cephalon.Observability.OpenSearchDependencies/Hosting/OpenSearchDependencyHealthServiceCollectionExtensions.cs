@@ -1,11 +1,11 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.OpenSearchDependencies.Configuration;
 using Cephalon.Observability.OpenSearchDependencies.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.OpenSearchDependencies.Hosting;
 
@@ -66,15 +66,20 @@ public static class OpenSearchDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
         services.AddHttpClient(HttpClientName)
             .ConfigureHttpClient(client => client.Timeout = Timeout.InfiniteTimeSpan);
         services.TryAddSingleton<IOpenSearchDependencyProbeClient, OpenSearchDependencyProbeClient>();
-        services.TryAddSingleton<OpenSearchDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, OpenSearchDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, OpenSearchDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, OpenSearchDependencyHealthProbeHostedService>());
 
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            OpenSearchDependencyHealthOptions,
+            OpenSearchDependencyDefinition,
+            OpenSearchDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new OpenSearchDependencyHealthProbeHostedService(
+                options,
+                sp.GetRequiredService<IOpenSearchDependencyProbeClient>(),
+                store,
+                sp.GetRequiredService<ILogger<OpenSearchDependencyHealthProbeHostedService>>()));
     }
 }

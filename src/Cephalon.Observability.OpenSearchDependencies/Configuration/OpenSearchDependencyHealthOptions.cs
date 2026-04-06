@@ -1,4 +1,5 @@
 using Cephalon.Engine.Configuration;
+using Cephalon.Observability.DependencyHealth.Core.Configuration;
 using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.Observability.OpenSearchDependencies.Configuration;
@@ -6,25 +7,8 @@ namespace Cephalon.Observability.OpenSearchDependencies.Configuration;
 /// <summary>
 /// Configures OpenSearch dependency probes contributed to Cephalon runtime health.
 /// </summary>
-public sealed class OpenSearchDependencyHealthOptions
+public sealed class OpenSearchDependencyHealthOptions : DependencyHealthOptionsBase<OpenSearchDependencyDefinition>
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="OpenSearchDependencyHealthOptions" /> class.
-    /// </summary>
-    public OpenSearchDependencyHealthOptions()
-    {
-    }
-
-    /// <summary>
-    /// Gets or sets the interval, in seconds, between background refresh attempts.
-    /// </summary>
-    public int RefreshIntervalSeconds { get; set; } = 30;
-
-    /// <summary>
-    /// Gets or sets the configured OpenSearch dependencies that should contribute to runtime health.
-    /// </summary>
-    public IReadOnlyList<OpenSearchDependencyDefinition> Dependencies { get; set; } = Array.Empty<OpenSearchDependencyDefinition>();
-
     /// <summary>
     /// Binds OpenSearch dependency-health options from configuration.
     /// </summary>
@@ -78,10 +62,4 @@ public sealed class OpenSearchDependencyHealthOptions
             TimeoutSeconds = GetInt32(section["TimeoutSeconds"], defaultValue: 5)
         };
     }
-
-    private static bool GetBoolean(string? value, bool defaultValue) =>
-        bool.TryParse(value, out var parsed) ? parsed : defaultValue;
-
-    private static int GetInt32(string? value, int defaultValue) =>
-        int.TryParse(value, out var parsed) && parsed > 0 ? parsed : defaultValue;
 }

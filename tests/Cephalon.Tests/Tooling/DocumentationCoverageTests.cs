@@ -2,6 +2,13 @@ namespace Cephalon.Tests.Tooling;
 
 public sealed class DocumentationCoverageTests
 {
+    // Projects that are internal implementation helpers (IsPackable=false) — not shipped as NuGet packages
+    // and therefore do not require component documentation.
+    private static readonly HashSet<string> NonPackableProjects = new(StringComparer.Ordinal)
+    {
+        "Cephalon.Observability.DependencyHealth.Core"
+    };
+
     // Projects whose doc filename does not follow the default convention
     // (strip "Cephalon." prefix, replace "." with "-", lowercase, append ".md").
     // Keep this list as short as possible — only add entries when the convention
@@ -72,6 +79,7 @@ public sealed class DocumentationCoverageTests
         var projectDirectories = Directory
             .GetDirectories(sourceRoot, "Cephalon.*", SearchOption.TopDirectoryOnly)
             .Select(Path.GetFileName)
+            .Where(name => !NonPackableProjects.Contains(name!))
             .OrderBy(name => name, StringComparer.Ordinal)
             .ToArray();
 

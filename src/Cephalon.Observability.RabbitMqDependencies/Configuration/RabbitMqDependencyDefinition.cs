@@ -1,69 +1,30 @@
+using Cephalon.Observability.DependencyHealth.Core.Configuration;
+
 namespace Cephalon.Observability.RabbitMqDependencies.Configuration;
 
 /// <summary>
 /// Describes one RabbitMQ dependency that should contribute to runtime health.
 /// </summary>
-public sealed class RabbitMqDependencyDefinition
+public sealed class RabbitMqDependencyDefinition : DependencyDefinitionBase
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RabbitMqDependencyDefinition" /> class.
-    /// </summary>
-    public RabbitMqDependencyDefinition()
-    {
-    }
-
-    /// <summary>
-    /// Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
-    /// </summary>
-    public string Id { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the human-readable dependency name shown to operators.
-    /// </summary>
-    public string? DisplayName { get; set; }
-
-    /// <summary>
-    /// Gets or sets the optional AMQP connection string used for the probe.
-    /// </summary>
+    /// <summary>Gets or sets the optional AMQP connection string used for the probe.</summary>
     public string? ConnectionString { get; set; }
 
-    /// <summary>
-    /// Gets or sets the RabbitMQ host name or IP address to probe when no full connection string is supplied.
-    /// </summary>
+    /// <summary>Gets or sets the RabbitMQ host name or IP address to probe when no full connection string is supplied.</summary>
     public string Host { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Gets or sets the RabbitMQ TCP port.
-    /// </summary>
+    /// <summary>Gets or sets the RabbitMQ TCP port.</summary>
     public int Port { get; set; } = 5672;
 
-    /// <summary>
-    /// Gets or sets the RabbitMQ virtual host used for the probe connection.
-    /// </summary>
+    /// <summary>Gets or sets the RabbitMQ virtual host used for the probe connection.</summary>
     public string VirtualHost { get; set; } = "/";
 
-    /// <summary>
-    /// Gets or sets the optional user name used for authentication when no full connection string is supplied.
-    /// </summary>
+    /// <summary>Gets or sets the optional user name used for authentication when no full connection string is supplied.</summary>
     public string? Username { get; set; }
 
-    /// <summary>
-    /// Gets or sets the optional password used for authentication when no full connection string is supplied.
-    /// </summary>
+    /// <summary>Gets or sets the optional password used for authentication when no full connection string is supplied.</summary>
     public string? Password { get; set; }
 
-    /// <summary>
-    /// Gets or sets a value indicating whether TLS should be enabled for the broker probe.
-    /// </summary>
+    /// <summary>Gets or sets a value indicating whether TLS should be enabled for the broker probe.</summary>
     public bool UseTls { get; set; }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether this dependency is required for readiness.
-    /// </summary>
-    public bool Required { get; set; }
-
-    /// <summary>
-    /// Gets or sets the per-probe timeout in seconds.
-    /// </summary>
-    public int TimeoutSeconds { get; set; } = 5;
 }

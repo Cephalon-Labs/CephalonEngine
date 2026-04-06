@@ -1,163 +1,56 @@
-using System.IO;
 using System.Net.Sockets;
 using System.Text;
-using Cephalon.Abstractions.Health;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.MemcachedDependencies.Configuration;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.MemcachedDependencies.Services;
 
 internal sealed class MemcachedDependencyHealthProbeHostedService(
     MemcachedDependencyHealthOptions options,
-    MemcachedDependencyHealthStore store,
-    ILogger<MemcachedDependencyHealthProbeHostedService> logger) : IHostedService, IDisposable
+    DependencyHealthStore store,
+    ILogger<MemcachedDependencyHealthProbeHostedService> logger)
+    : DependencyHealthProbeHostedServiceBase<MemcachedDependencyHealthOptions, MemcachedDependencyDefinition>(options, store, logger)
 {
-    private const string SourceName = "Cephalon.Observability.MemcachedDependencies";
-    private CancellationTokenSource? loopCancellation;
-    private Task? loopTask;
+    protected override string SourceName => "Cephalon.Observability.MemcachedDependencies";
+    protected override string DefaultDependencyId => "memcached-dependency";
+    protected override string ProviderLabel => "Memcached";
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    protected override string? ValidateDependency(MemcachedDependencyDefinition definition)
     {
-        if (options.Dependencies.Count == 0)
-        {
-            return;
-        }
-
-        await RefreshAsync(cancellationToken).ConfigureAwait(false);
-
-        loopCancellation = new CancellationTokenSource();
-        loopTask = Task.Run(() => RunLoopAsync(loopCancellation.Token), CancellationToken.None);
+        return string.IsNullOrWhiteSpace(definition.Host?.Trim())
+            ? "Memcached host is not configured."
+            : null;
     }
 
-    public async Task StopAsync(CancellationToken cancellationToken)
+    protected override async ValueTask<string> ProbeAsync(MemcachedDependencyDefinition dependency, CancellationToken cancellationToken)
     {
-        if (loopCancellation is null || loopTask is null)
-        {
-            return;
-        }
+        ArgumentNullException.ThrowIfNull(dependency);
 
-        loopCancellation.Cancel();
-
-        try
-        {
-            await loopTask.WaitAsync(cancellationToken).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException)
-        {
-        }
-    }
-
-    public void Dispose()
-    {
-        loopCancellation?.Cancel();
-        loopCancellation?.Dispose();
-    }
-
-    private async Task RunLoopAsync(CancellationToken cancellationToken)
-    {
-        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(Math.Max(1, options.RefreshIntervalSeconds)));
-
-        try
-        {
-            while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
-            {
-                await RefreshAsync(cancellationToken).ConfigureAwait(false);
-            }
-        }
-        catch (OperationCanceledException)
-        {
-        }
-    }
-
-    private async Task RefreshAsync(CancellationToken cancellationToken)
-    {
-        var reports = await Task
-            .WhenAll(options.Dependencies.Select(dependency => ProbeDependencyAsync(dependency, cancellationToken)))
-            .ConfigureAwait(false);
-
-        store.SetReports(reports
-            .OrderBy(static report => report.Required ? 0 : 1)
-            .ThenBy(static report => report.Source, StringComparer.OrdinalIgnoreCase)
-            .ThenBy(static report => report.Id, StringComparer.OrdinalIgnoreCase));
-    }
-
-    private async Task<DependencyHealthReport> ProbeDependencyAsync(
-        MemcachedDependencyDefinition dependency,
-        CancellationToken cancellationToken)
-    {
-        var id = string.IsNullOrWhiteSpace(dependency.Id)
-            ? "memcached-dependency"
-            : dependency.Id.Trim();
-        var displayName = string.IsNullOrWhiteSpace(dependency.DisplayName)
-            ? id
-            : dependency.DisplayName.Trim();
-        var host = dependency.Host?.Trim() ?? string.Empty;
+        var host = dependency.Host.Trim();
         var port = dependency.Port > 0 ? dependency.Port : 11211;
-        var timeoutSeconds = Math.Max(1, dependency.TimeoutSeconds);
 
-        if (string.IsNullOrWhiteSpace(host))
+        using var client = new TcpClient();
+        await client.ConnectAsync(host, port, cancellationToken).ConfigureAwait(false);
+
+        await using var stream = client.GetStream();
+        await WriteCommandAsync(stream, "version", cancellationToken).ConfigureAwait(false);
+        var response = await ReadLineAsync(stream, cancellationToken).ConfigureAwait(false);
+
+        if (!response.StartsWith("VERSION ", StringComparison.OrdinalIgnoreCase))
         {
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: "Memcached host is not configured.",
-                Required: dependency.Required,
-                Source: SourceName);
+            throw new InvalidOperationException($"Expected VERSION response but received '{response}'.");
         }
 
-        try
-        {
-            using var timeoutSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            timeoutSource.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
-
-            using var client = new TcpClient();
-            await client.ConnectAsync(host, port, timeoutSource.Token).ConfigureAwait(false);
-
-            await using var stream = client.GetStream();
-            await WriteCommandAsync(stream, "version", timeoutSource.Token).ConfigureAwait(false);
-            var response = await ReadLineAsync(stream, timeoutSource.Token).ConfigureAwait(false);
-
-            if (!response.StartsWith("VERSION ", StringComparison.OrdinalIgnoreCase))
-            {
-                throw new InvalidOperationException($"Expected VERSION response but received '{response}'.");
-            }
-
-            var version = response["VERSION ".Length..].Trim();
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Healthy,
-                Description: $"Memcached endpoint '{host}:{port}' responded to version probe with '{version}'.",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
-        {
-            MemcachedDependencyHealthLogs.ProbeTimedOut(logger, id, timeoutSeconds, host, port);
-
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: $"Memcached endpoint '{host}:{port}' timed out after {timeoutSeconds} seconds.",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-        catch (Exception exception)
-        {
-            MemcachedDependencyHealthLogs.ProbeFailed(logger, exception, id, host, port);
-
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: $"Memcached endpoint '{host}:{port}' failed: {exception.Message}",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
+        var version = response["VERSION ".Length..].Trim();
+        return $"Memcached endpoint '{host}:{port}' responded to version probe with '{version}'.";
     }
+
+    protected override void LogProbeTimedOut(string dependencyId, int timeoutSeconds) =>
+        MemcachedDependencyHealthLogs.ProbeTimedOut(logger, dependencyId, timeoutSeconds);
+
+    protected override void LogProbeFailed(Exception exception, string dependencyId) =>
+        MemcachedDependencyHealthLogs.ProbeFailed(logger, exception, dependencyId);
 
     private static async Task WriteCommandAsync(NetworkStream stream, string command, CancellationToken cancellationToken)
     {
@@ -207,19 +100,19 @@ internal sealed class MemcachedDependencyHealthProbeHostedService(
 
 internal static class MemcachedDependencyHealthLogs
 {
-    private static readonly Action<ILogger, string, int, string, int, Exception?> ProbeTimedOutMessage = LoggerMessage.Define<string, int, string, int>(
+    private static readonly Action<ILogger, string, int, Exception?> ProbeTimedOutMessage = LoggerMessage.Define<string, int>(
         LogLevel.Warning,
         new EventId(MemcachedDependencyHealthDiagnosticsConventions.ProbeTimedOut.Id, MemcachedDependencyHealthDiagnosticsConventions.ProbeTimedOut.Name),
-        MemcachedDependencyHealthDiagnosticsConventions.ProbeTimedOut.MessageTemplate);
+        "Memcached dependency probe '{DependencyId}' timed out after {TimeoutSeconds}s.");
 
-    private static readonly Action<ILogger, string, string, int, Exception?> ProbeFailedMessage = LoggerMessage.Define<string, string, int>(
+    private static readonly Action<ILogger, string, Exception?> ProbeFailedMessage = LoggerMessage.Define<string>(
         LogLevel.Warning,
         new EventId(MemcachedDependencyHealthDiagnosticsConventions.ProbeFailed.Id, MemcachedDependencyHealthDiagnosticsConventions.ProbeFailed.Name),
-        MemcachedDependencyHealthDiagnosticsConventions.ProbeFailed.MessageTemplate);
+        "Memcached dependency probe '{DependencyId}' failed.");
 
-    public static void ProbeTimedOut(ILogger logger, string dependencyId, int timeoutSeconds, string host, int port) =>
-        ProbeTimedOutMessage(logger, dependencyId, timeoutSeconds, host, port, null);
+    public static void ProbeTimedOut(ILogger logger, string dependencyId, int timeoutSeconds) =>
+        ProbeTimedOutMessage(logger, dependencyId, timeoutSeconds, null);
 
-    public static void ProbeFailed(ILogger logger, Exception exception, string dependencyId, string host, int port) =>
-        ProbeFailedMessage(logger, dependencyId, host, port, exception);
+    public static void ProbeFailed(ILogger logger, Exception exception, string dependencyId) =>
+        ProbeFailedMessage(logger, dependencyId, exception);
 }

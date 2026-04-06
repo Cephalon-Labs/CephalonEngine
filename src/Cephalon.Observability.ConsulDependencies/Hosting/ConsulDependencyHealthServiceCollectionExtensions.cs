@@ -1,11 +1,11 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
 using Cephalon.Observability.ConsulDependencies.Configuration;
 using Cephalon.Observability.ConsulDependencies.Services;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.ConsulDependencies.Hosting;
 
@@ -66,15 +66,20 @@ public static class ConsulDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
         services.AddHttpClient(HttpClientName)
             .ConfigureHttpClient(client => client.Timeout = Timeout.InfiniteTimeSpan);
         services.TryAddSingleton<IConsulDependencyProbeClient, ConsulDependencyProbeClient>();
-        services.TryAddSingleton<ConsulDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, ConsulDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, ConsulDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, ConsulDependencyHealthProbeHostedService>());
 
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            ConsulDependencyHealthOptions,
+            ConsulDependencyDefinition,
+            ConsulDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new ConsulDependencyHealthProbeHostedService(
+                options,
+                sp.GetRequiredService<IConsulDependencyProbeClient>(),
+                store,
+                sp.GetRequiredService<ILogger<ConsulDependencyHealthProbeHostedService>>()));
     }
 }

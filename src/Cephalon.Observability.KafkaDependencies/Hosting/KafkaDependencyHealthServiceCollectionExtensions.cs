@@ -1,11 +1,11 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.KafkaDependencies.Configuration;
 using Cephalon.Observability.KafkaDependencies.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.KafkaDependencies.Hosting;
 
@@ -64,13 +64,18 @@ public static class KafkaDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
         services.TryAddSingleton<IKafkaDependencyProbeClient, KafkaDependencyProbeClient>();
-        services.TryAddSingleton<KafkaDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, KafkaDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, KafkaDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, KafkaDependencyHealthProbeHostedService>());
 
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            KafkaDependencyHealthOptions,
+            KafkaDependencyDefinition,
+            KafkaDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new KafkaDependencyHealthProbeHostedService(
+                options,
+                sp.GetRequiredService<IKafkaDependencyProbeClient>(),
+                store,
+                sp.GetRequiredService<ILogger<KafkaDependencyHealthProbeHostedService>>()));
     }
 }

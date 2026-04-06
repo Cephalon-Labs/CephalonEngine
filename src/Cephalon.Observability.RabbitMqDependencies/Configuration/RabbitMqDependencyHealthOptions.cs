@@ -1,4 +1,5 @@
 using Cephalon.Engine.Configuration;
+using Cephalon.Observability.DependencyHealth.Core.Configuration;
 using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.Observability.RabbitMqDependencies.Configuration;
@@ -6,25 +7,8 @@ namespace Cephalon.Observability.RabbitMqDependencies.Configuration;
 /// <summary>
 /// Configures RabbitMQ dependency probes contributed to Cephalon runtime health.
 /// </summary>
-public sealed class RabbitMqDependencyHealthOptions
+public sealed class RabbitMqDependencyHealthOptions : DependencyHealthOptionsBase<RabbitMqDependencyDefinition>
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RabbitMqDependencyHealthOptions" /> class.
-    /// </summary>
-    public RabbitMqDependencyHealthOptions()
-    {
-    }
-
-    /// <summary>
-    /// Gets or sets the interval, in seconds, between background refresh attempts.
-    /// </summary>
-    public int RefreshIntervalSeconds { get; set; } = 30;
-
-    /// <summary>
-    /// Gets or sets the configured RabbitMQ dependencies that should contribute to runtime health.
-    /// </summary>
-    public IReadOnlyList<RabbitMqDependencyDefinition> Dependencies { get; set; } = Array.Empty<RabbitMqDependencyDefinition>();
-
     /// <summary>
     /// Binds RabbitMQ dependency-health options from configuration.
     /// </summary>
@@ -80,10 +64,4 @@ public sealed class RabbitMqDependencyHealthOptions
             TimeoutSeconds = GetInt32(section["TimeoutSeconds"], defaultValue: 5)
         };
     }
-
-    private static bool GetBoolean(string? value, bool defaultValue) =>
-        bool.TryParse(value, out var parsed) ? parsed : defaultValue;
-
-    private static int GetInt32(string? value, int defaultValue) =>
-        int.TryParse(value, out var parsed) && parsed > 0 ? parsed : defaultValue;
 }

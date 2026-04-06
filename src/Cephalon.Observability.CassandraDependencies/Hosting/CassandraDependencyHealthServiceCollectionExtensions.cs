@@ -1,11 +1,11 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
 using Cephalon.Observability.CassandraDependencies.Configuration;
 using Cephalon.Observability.CassandraDependencies.Services;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.CassandraDependencies.Hosting;
 
@@ -64,13 +64,18 @@ public static class CassandraDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
         services.TryAddSingleton<ICassandraDependencyProbeClient, CassandraDependencyProbeClient>();
-        services.TryAddSingleton<CassandraDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, CassandraDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, CassandraDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, CassandraDependencyHealthProbeHostedService>());
 
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            CassandraDependencyHealthOptions,
+            CassandraDependencyDefinition,
+            CassandraDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new CassandraDependencyHealthProbeHostedService(
+                options,
+                sp.GetRequiredService<ICassandraDependencyProbeClient>(),
+                store,
+                sp.GetRequiredService<ILogger<CassandraDependencyHealthProbeHostedService>>()));
     }
 }

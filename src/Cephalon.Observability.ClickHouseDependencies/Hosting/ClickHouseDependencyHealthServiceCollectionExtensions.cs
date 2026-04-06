@@ -1,11 +1,11 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
 using Cephalon.Observability.ClickHouseDependencies.Configuration;
 using Cephalon.Observability.ClickHouseDependencies.Services;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.ClickHouseDependencies.Hosting;
 
@@ -64,13 +64,18 @@ public static class ClickHouseDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
         services.TryAddSingleton<IClickHouseDependencyProbeClient, ClickHouseDependencyProbeClient>();
-        services.TryAddSingleton<ClickHouseDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, ClickHouseDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, ClickHouseDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, ClickHouseDependencyHealthProbeHostedService>());
 
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            ClickHouseDependencyHealthOptions,
+            ClickHouseDependencyDefinition,
+            ClickHouseDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new ClickHouseDependencyHealthProbeHostedService(
+                options,
+                sp.GetRequiredService<IClickHouseDependencyProbeClient>(),
+                store,
+                sp.GetRequiredService<ILogger<ClickHouseDependencyHealthProbeHostedService>>()));
     }
 }

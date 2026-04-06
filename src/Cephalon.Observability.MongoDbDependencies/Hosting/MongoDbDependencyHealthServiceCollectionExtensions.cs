@@ -1,11 +1,11 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.MongoDbDependencies.Configuration;
 using Cephalon.Observability.MongoDbDependencies.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.MongoDbDependencies.Hosting;
 
@@ -64,13 +64,18 @@ public static class MongoDbDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
         services.TryAddSingleton<IMongoDbDependencyProbeClient, MongoDbDependencyProbeClient>();
-        services.TryAddSingleton<MongoDbDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, MongoDbDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, MongoDbDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, MongoDbDependencyHealthProbeHostedService>());
 
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            MongoDbDependencyHealthOptions,
+            MongoDbDependencyDefinition,
+            MongoDbDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new MongoDbDependencyHealthProbeHostedService(
+                options,
+                sp.GetRequiredService<IMongoDbDependencyProbeClient>(),
+                store,
+                sp.GetRequiredService<ILogger<MongoDbDependencyHealthProbeHostedService>>()));
     }
 }

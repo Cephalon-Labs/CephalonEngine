@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -20,9 +19,7 @@ public sealed class ElasticsearchDependencyHealthHostingTests
     public async Task AddCephalonElasticsearchDependencyHealthReportsGreenCluster()
     {
         var probeClient = new FakeElasticsearchDependencyProbeClient(dependency =>
-            new ElasticsearchProbeResult(
-                HealthState.Healthy,
-                $"Elasticsearch cluster 'search-prod' at {dependency.Endpoint} reported green health across 3 nodes."));
+            $"Elasticsearch cluster 'search-prod' at {dependency.Endpoint} reported green health across 3 nodes.");
 
         var builder = Host.CreateApplicationBuilder();
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
@@ -59,8 +56,7 @@ public sealed class ElasticsearchDependencyHealthHostingTests
     public async Task AddCephalonElasticsearchDependencyHealthTreatsRequiredRedClusterAsReadinessFailure()
     {
         var probeClient = new FakeElasticsearchDependencyProbeClient(_ =>
-            new ElasticsearchProbeResult(
-                HealthState.Unhealthy,
+            throw new InvalidOperationException(
                 "Elasticsearch cluster 'search-prod' at https://search.internal.example:9200/_cluster/health reported red health across 2 nodes."));
 
         var builder = Host.CreateApplicationBuilder();
@@ -96,7 +92,7 @@ public sealed class ElasticsearchDependencyHealthHostingTests
     }
 
     [Fact]
-    public async Task ProbeAsyncUsesApiKeyAuthAndParsesYellowClusterHealth()
+    public async Task ProbeAsyncUsesApiKeyAuthAndThrowsForYellowClusterHealth()
     {
         await using var server = new ElasticsearchHealthHttpServer("""
             {
@@ -115,26 +111,26 @@ public sealed class ElasticsearchDependencyHealthHostingTests
         using var provider = services.BuildServiceProvider();
         var probeClient = provider.GetRequiredService<IElasticsearchDependencyProbeClient>();
 
-        var result = await probeClient.ProbeAsync(
-            new ElasticsearchDependencyDefinition
-            {
-                Endpoint = server.BaseUrl,
-                ApiKey = "elastic-api-key"
-            },
-            CancellationToken.None);
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            probeClient.ProbeAsync(
+                new ElasticsearchDependencyDefinition
+                {
+                    Endpoint = server.BaseUrl,
+                    ApiKey = "elastic-api-key"
+                },
+                CancellationToken.None).AsTask());
 
-        Assert.Equal(HealthState.Degraded, result.State);
-        Assert.Contains("yellow health", result.Description, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("yellow health", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Equal("/_cluster/health", server.LastPath);
         Assert.Equal("ApiKey elastic-api-key", server.LastAuthorizationHeader);
     }
 
-    private sealed class FakeElasticsearchDependencyProbeClient(Func<ElasticsearchDependencyDefinition, ElasticsearchProbeResult> onProbe)
+    private sealed class FakeElasticsearchDependencyProbeClient(Func<ElasticsearchDependencyDefinition, string> onProbe)
         : IElasticsearchDependencyProbeClient
     {
         public List<ElasticsearchDependencyDefinition> CapturedDependencies { get; } = [];
 
-        public ValueTask<ElasticsearchProbeResult> ProbeAsync(
+        public ValueTask<string> ProbeAsync(
             ElasticsearchDependencyDefinition dependency,
             CancellationToken cancellationToken)
         {

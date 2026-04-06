@@ -2,183 +2,74 @@ using System.Globalization;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
-using Cephalon.Abstractions.Health;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.RedisDependencies.Configuration;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.RedisDependencies.Services;
 
 internal sealed class RedisDependencyHealthProbeHostedService(
     RedisDependencyHealthOptions options,
-    RedisDependencyHealthStore store,
-    ILogger<RedisDependencyHealthProbeHostedService> logger) : IHostedService, IDisposable
+    DependencyHealthStore store,
+    ILogger<RedisDependencyHealthProbeHostedService> logger)
+    : DependencyHealthProbeHostedServiceBase<RedisDependencyHealthOptions, RedisDependencyDefinition>(options, store, logger)
 {
-    private const string SourceName = "Cephalon.Observability.RedisDependencies";
-    private CancellationTokenSource? loopCancellation;
-    private Task? loopTask;
+    protected override string SourceName => "Cephalon.Observability.RedisDependencies";
+    protected override string DefaultDependencyId => "redis-dependency";
+    protected override string ProviderLabel => "Redis";
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    protected override string? ValidateDependency(RedisDependencyDefinition definition)
     {
-        if (options.Dependencies.Count == 0)
-        {
-            return;
-        }
-
-        await RefreshAsync(cancellationToken).ConfigureAwait(false);
-
-        loopCancellation = new CancellationTokenSource();
-        loopTask = Task.Run(() => RunLoopAsync(loopCancellation.Token), CancellationToken.None);
+        var host = definition.Host?.Trim() ?? string.Empty;
+        return string.IsNullOrWhiteSpace(host) ? "Redis host is not configured." : null;
     }
 
-    public async Task StopAsync(CancellationToken cancellationToken)
+    protected override async ValueTask<string> ProbeAsync(RedisDependencyDefinition definition, CancellationToken cancellationToken)
     {
-        if (loopCancellation is null || loopTask is null)
+        var host = definition.Host.Trim();
+        var port = definition.Port > 0 ? definition.Port : 6379;
+
+        using var client = new TcpClient();
+        await client.ConnectAsync(host, port, cancellationToken).ConfigureAwait(false);
+
+        await using var stream = client.GetStream();
+
+        if (!string.IsNullOrWhiteSpace(definition.Password))
         {
-            return;
+            await SendCommandAsync(
+                stream,
+                string.IsNullOrWhiteSpace(definition.Username)
+                    ? ["AUTH", definition.Password]
+                    : ["AUTH", definition.Username!, definition.Password],
+                cancellationToken).ConfigureAwait(false);
+
+            var authResponse = await ReadSimpleResponseAsync(stream, cancellationToken).ConfigureAwait(false);
+            EnsureOkResponse(authResponse, "AUTH");
         }
 
-        loopCancellation.Cancel();
+        if (definition.Database is int database && database > 0)
+        {
+            await SendCommandAsync(stream, ["SELECT", database.ToString(CultureInfo.InvariantCulture)], cancellationToken).ConfigureAwait(false);
+            var selectResponse = await ReadSimpleResponseAsync(stream, cancellationToken).ConfigureAwait(false);
+            EnsureOkResponse(selectResponse, "SELECT");
+        }
 
-        try
+        await SendCommandAsync(stream, ["PING"], cancellationToken).ConfigureAwait(false);
+        var pingResponse = await ReadSimpleResponseAsync(stream, cancellationToken).ConfigureAwait(false);
+
+        if (!string.Equals(pingResponse, "PONG", StringComparison.OrdinalIgnoreCase))
         {
-            await loopTask.WaitAsync(cancellationToken).ConfigureAwait(false);
+            throw new InvalidOperationException($"Expected PONG but received '{pingResponse}'.");
         }
-        catch (OperationCanceledException)
-        {
-        }
+
+        return $"Redis endpoint '{host}:{port}' responded to PING.";
     }
 
-    public void Dispose()
-    {
-        loopCancellation?.Cancel();
-        loopCancellation?.Dispose();
-    }
+    protected override void LogProbeTimedOut(string dependencyId, int timeoutSeconds) =>
+        RedisDependencyHealthLogs.ProbeTimedOut(logger, dependencyId, timeoutSeconds);
 
-    private async Task RunLoopAsync(CancellationToken cancellationToken)
-    {
-        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(Math.Max(1, options.RefreshIntervalSeconds)));
-
-        try
-        {
-            while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
-            {
-                await RefreshAsync(cancellationToken).ConfigureAwait(false);
-            }
-        }
-        catch (OperationCanceledException)
-        {
-        }
-    }
-
-    private async Task RefreshAsync(CancellationToken cancellationToken)
-    {
-        var reports = await Task
-            .WhenAll(options.Dependencies.Select(dependency => ProbeDependencyAsync(dependency, cancellationToken)))
-            .ConfigureAwait(false);
-
-        store.SetReports(reports
-            .OrderBy(static report => report.Required ? 0 : 1)
-            .ThenBy(static report => report.Source, StringComparer.OrdinalIgnoreCase)
-            .ThenBy(static report => report.Id, StringComparer.OrdinalIgnoreCase));
-    }
-
-    private async Task<DependencyHealthReport> ProbeDependencyAsync(
-        RedisDependencyDefinition dependency,
-        CancellationToken cancellationToken)
-    {
-        var id = string.IsNullOrWhiteSpace(dependency.Id)
-            ? "redis-dependency"
-            : dependency.Id.Trim();
-        var displayName = string.IsNullOrWhiteSpace(dependency.DisplayName)
-            ? id
-            : dependency.DisplayName.Trim();
-        var host = dependency.Host?.Trim() ?? string.Empty;
-        var port = dependency.Port > 0 ? dependency.Port : 6379;
-        var timeoutSeconds = Math.Max(1, dependency.TimeoutSeconds);
-
-        if (string.IsNullOrWhiteSpace(host))
-        {
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: "Redis host is not configured.",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-
-        try
-        {
-            using var timeoutSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            timeoutSource.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
-
-            using var client = new TcpClient();
-            await client.ConnectAsync(host, port, timeoutSource.Token).ConfigureAwait(false);
-
-            await using var stream = client.GetStream();
-
-            if (!string.IsNullOrWhiteSpace(dependency.Password))
-            {
-                await SendCommandAsync(
-                    stream,
-                    string.IsNullOrWhiteSpace(dependency.Username)
-                        ? ["AUTH", dependency.Password]
-                        : ["AUTH", dependency.Username!, dependency.Password],
-                    timeoutSource.Token).ConfigureAwait(false);
-
-                var authResponse = await ReadSimpleResponseAsync(stream, timeoutSource.Token).ConfigureAwait(false);
-                EnsureOkResponse(authResponse, "AUTH");
-            }
-
-            if (dependency.Database is int database && database > 0)
-            {
-                await SendCommandAsync(stream, ["SELECT", database.ToString(CultureInfo.InvariantCulture)], timeoutSource.Token).ConfigureAwait(false);
-                var selectResponse = await ReadSimpleResponseAsync(stream, timeoutSource.Token).ConfigureAwait(false);
-                EnsureOkResponse(selectResponse, "SELECT");
-            }
-
-            await SendCommandAsync(stream, ["PING"], timeoutSource.Token).ConfigureAwait(false);
-            var pingResponse = await ReadSimpleResponseAsync(stream, timeoutSource.Token).ConfigureAwait(false);
-
-            if (!string.Equals(pingResponse, "PONG", StringComparison.OrdinalIgnoreCase))
-            {
-                throw new InvalidOperationException($"Expected PONG but received '{pingResponse}'.");
-            }
-
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Healthy,
-                Description: $"Redis endpoint '{host}:{port}' responded to PING.",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
-        {
-            RedisDependencyHealthLogs.ProbeTimedOut(logger, id, timeoutSeconds, host, port);
-
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: $"Redis endpoint '{host}:{port}' timed out after {timeoutSeconds} seconds.",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-        catch (Exception exception)
-        {
-            RedisDependencyHealthLogs.ProbeFailed(logger, exception, id, host, port);
-
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: $"Redis endpoint '{host}:{port}' failed: {exception.Message}",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-    }
+    protected override void LogProbeFailed(Exception exception, string dependencyId) =>
+        RedisDependencyHealthLogs.ProbeFailed(logger, exception, dependencyId);
 
     private static async Task SendCommandAsync(NetworkStream stream, IReadOnlyList<string> parts, CancellationToken cancellationToken)
     {
@@ -257,19 +148,19 @@ internal sealed class RedisDependencyHealthProbeHostedService(
 
 internal static class RedisDependencyHealthLogs
 {
-    private static readonly Action<ILogger, string, int, string, int, Exception?> ProbeTimedOutMessage = LoggerMessage.Define<string, int, string, int>(
+    private static readonly Action<ILogger, string, int, Exception?> ProbeTimedOutMessage = LoggerMessage.Define<string, int>(
         LogLevel.Warning,
         new EventId(RedisDependencyHealthDiagnosticsConventions.ProbeTimedOut.Id, RedisDependencyHealthDiagnosticsConventions.ProbeTimedOut.Name),
-        RedisDependencyHealthDiagnosticsConventions.ProbeTimedOut.MessageTemplate);
+        "Redis dependency probe '{DependencyId}' timed out after {TimeoutSeconds}s.");
 
-    private static readonly Action<ILogger, string, string, int, Exception?> ProbeFailedMessage = LoggerMessage.Define<string, string, int>(
+    private static readonly Action<ILogger, string, Exception?> ProbeFailedMessage = LoggerMessage.Define<string>(
         LogLevel.Warning,
         new EventId(RedisDependencyHealthDiagnosticsConventions.ProbeFailed.Id, RedisDependencyHealthDiagnosticsConventions.ProbeFailed.Name),
-        RedisDependencyHealthDiagnosticsConventions.ProbeFailed.MessageTemplate);
+        "Redis dependency probe '{DependencyId}' failed.");
 
-    public static void ProbeTimedOut(ILogger logger, string dependencyId, int timeoutSeconds, string host, int port) =>
-        ProbeTimedOutMessage(logger, dependencyId, timeoutSeconds, host, port, null);
+    public static void ProbeTimedOut(ILogger logger, string dependencyId, int timeoutSeconds) =>
+        ProbeTimedOutMessage(logger, dependencyId, timeoutSeconds, null);
 
-    public static void ProbeFailed(ILogger logger, Exception exception, string dependencyId, string host, int port) =>
-        ProbeFailedMessage(logger, dependencyId, host, port, exception);
+    public static void ProbeFailed(ILogger logger, Exception exception, string dependencyId) =>
+        ProbeFailedMessage(logger, dependencyId, exception);
 }

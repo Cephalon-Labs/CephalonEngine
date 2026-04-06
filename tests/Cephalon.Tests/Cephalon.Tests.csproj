@@ -53,6 +53,7 @@
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy\Cephalon.MultiTenancy.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability\Cephalon.Observability.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.CassandraDependencies\Cephalon.Observability.CassandraDependencies.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.DependencyHealth.Core\Cephalon.Observability.DependencyHealth.Core.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.ClickHouseDependencies\Cephalon.Observability.ClickHouseDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.HttpDependencies\Cephalon.Observability.HttpDependencies.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.KafkaDependencies\Cephalon.Observability.KafkaDependencies.csproj" />

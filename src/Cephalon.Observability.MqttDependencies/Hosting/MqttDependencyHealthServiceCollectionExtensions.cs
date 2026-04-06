@@ -1,11 +1,11 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.MqttDependencies.Configuration;
 using Cephalon.Observability.MqttDependencies.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.MqttDependencies.Hosting;
 
@@ -64,13 +64,18 @@ public static class MqttDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
         services.TryAddSingleton<IMqttDependencyProbeClient, MqttDependencyProbeClient>();
-        services.TryAddSingleton<MqttDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, MqttDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, MqttDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, MqttDependencyHealthProbeHostedService>());
 
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            MqttDependencyHealthOptions,
+            MqttDependencyDefinition,
+            MqttDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new MqttDependencyHealthProbeHostedService(
+                options,
+                sp.GetRequiredService<IMqttDependencyProbeClient>(),
+                store,
+                sp.GetRequiredService<ILogger<MqttDependencyHealthProbeHostedService>>()));
     }
 }

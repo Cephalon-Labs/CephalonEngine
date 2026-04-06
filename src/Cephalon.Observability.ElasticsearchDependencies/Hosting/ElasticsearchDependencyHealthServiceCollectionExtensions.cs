@@ -1,11 +1,11 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.ElasticsearchDependencies.Configuration;
 using Cephalon.Observability.ElasticsearchDependencies.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.ElasticsearchDependencies.Hosting;
 
@@ -66,15 +66,20 @@ public static class ElasticsearchDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
         services.AddHttpClient(HttpClientName)
             .ConfigureHttpClient(client => client.Timeout = Timeout.InfiniteTimeSpan);
         services.TryAddSingleton<IElasticsearchDependencyProbeClient, ElasticsearchDependencyProbeClient>();
-        services.TryAddSingleton<ElasticsearchDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, ElasticsearchDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, ElasticsearchDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, ElasticsearchDependencyHealthProbeHostedService>());
 
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            ElasticsearchDependencyHealthOptions,
+            ElasticsearchDependencyDefinition,
+            ElasticsearchDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new ElasticsearchDependencyHealthProbeHostedService(
+                options,
+                sp.GetRequiredService<IElasticsearchDependencyProbeClient>(),
+                store,
+                sp.GetRequiredService<ILogger<ElasticsearchDependencyHealthProbeHostedService>>()));
     }
 }

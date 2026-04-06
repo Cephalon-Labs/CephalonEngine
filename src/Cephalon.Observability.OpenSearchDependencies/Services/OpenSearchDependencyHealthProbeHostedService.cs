@@ -2,10 +2,9 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Cephalon.Abstractions.Health;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.OpenSearchDependencies.Configuration;
 using Cephalon.Observability.OpenSearchDependencies.Hosting;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.OpenSearchDependencies.Services;
@@ -13,153 +12,39 @@ namespace Cephalon.Observability.OpenSearchDependencies.Services;
 internal sealed class OpenSearchDependencyHealthProbeHostedService(
     OpenSearchDependencyHealthOptions options,
     IOpenSearchDependencyProbeClient probeClient,
-    OpenSearchDependencyHealthStore store,
-    ILogger<OpenSearchDependencyHealthProbeHostedService> logger) : IHostedService, IDisposable
+    DependencyHealthStore store,
+    ILogger<OpenSearchDependencyHealthProbeHostedService> logger)
+    : DependencyHealthProbeHostedServiceBase<OpenSearchDependencyHealthOptions, OpenSearchDependencyDefinition>(options, store, logger)
 {
-    private const string SourceName = "Cephalon.Observability.OpenSearchDependencies";
-    private CancellationTokenSource? loopCancellation;
-    private Task? loopTask;
+    protected override string SourceName => "Cephalon.Observability.OpenSearchDependencies";
+    protected override string DefaultDependencyId => "opensearch-dependency";
+    protected override string ProviderLabel => "OpenSearch";
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    protected override string? ValidateDependency(OpenSearchDependencyDefinition definition)
     {
-        if (options.Dependencies.Count == 0)
-        {
-            return;
-        }
-
-        await RefreshAsync(cancellationToken).ConfigureAwait(false);
-
-        loopCancellation = new CancellationTokenSource();
-        loopTask = Task.Run(() => RunLoopAsync(loopCancellation.Token), CancellationToken.None);
+        return string.IsNullOrWhiteSpace(definition.Endpoint)
+            ? "OpenSearch endpoint is not configured."
+            : null;
     }
 
-    public async Task StopAsync(CancellationToken cancellationToken)
-    {
-        if (loopCancellation is null || loopTask is null)
-        {
-            return;
-        }
+    protected override ValueTask<string> ProbeAsync(OpenSearchDependencyDefinition definition, CancellationToken cancellationToken) =>
+        probeClient.ProbeAsync(definition, cancellationToken);
 
-        loopCancellation.Cancel();
+    protected override void LogProbeTimedOut(string dependencyId, int timeoutSeconds) =>
+        OpenSearchDependencyHealthLogs.ProbeTimedOut(logger, dependencyId, timeoutSeconds);
 
-        try
-        {
-            await loopTask.WaitAsync(cancellationToken).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException)
-        {
-        }
-    }
-
-    public void Dispose()
-    {
-        loopCancellation?.Cancel();
-        loopCancellation?.Dispose();
-    }
-
-    private async Task RunLoopAsync(CancellationToken cancellationToken)
-    {
-        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(Math.Max(1, options.RefreshIntervalSeconds)));
-
-        try
-        {
-            while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
-            {
-                await RefreshAsync(cancellationToken).ConfigureAwait(false);
-            }
-        }
-        catch (OperationCanceledException)
-        {
-        }
-    }
-
-    private async Task RefreshAsync(CancellationToken cancellationToken)
-    {
-        var reports = await Task
-            .WhenAll(options.Dependencies.Select(dependency => ProbeDependencyAsync(dependency, cancellationToken)))
-            .ConfigureAwait(false);
-
-        store.SetReports(reports
-            .OrderBy(static report => report.Required ? 0 : 1)
-            .ThenBy(static report => report.Source, StringComparer.OrdinalIgnoreCase)
-            .ThenBy(static report => report.Id, StringComparer.OrdinalIgnoreCase));
-    }
-
-    private async Task<DependencyHealthReport> ProbeDependencyAsync(
-        OpenSearchDependencyDefinition dependency,
-        CancellationToken cancellationToken)
-    {
-        var id = string.IsNullOrWhiteSpace(dependency.Id)
-            ? "opensearch-dependency"
-            : dependency.Id.Trim();
-        var displayName = string.IsNullOrWhiteSpace(dependency.DisplayName)
-            ? id
-            : dependency.DisplayName.Trim();
-        var timeoutSeconds = Math.Max(1, dependency.TimeoutSeconds);
-
-        if (string.IsNullOrWhiteSpace(dependency.Endpoint))
-        {
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: "OpenSearch endpoint is not configured.",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-
-        try
-        {
-            using var timeoutSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            timeoutSource.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
-
-            var result = await probeClient.ProbeAsync(dependency, timeoutSource.Token).ConfigureAwait(false);
-
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: result.State,
-                Description: result.Description,
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
-        {
-            var endpoint = dependency.Endpoint.Trim();
-            OpenSearchDependencyHealthLogs.ProbeTimedOut(logger, id, timeoutSeconds, endpoint);
-
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: $"OpenSearch dependency '{displayName}' timed out after {timeoutSeconds} seconds against {endpoint}.",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-        catch (Exception exception)
-        {
-            var endpoint = dependency.Endpoint.Trim();
-            OpenSearchDependencyHealthLogs.ProbeFailed(logger, exception, id, endpoint);
-
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: $"OpenSearch dependency '{displayName}' failed against {endpoint}: {exception.Message}",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-    }
+    protected override void LogProbeFailed(Exception exception, string dependencyId) =>
+        OpenSearchDependencyHealthLogs.ProbeFailed(logger, exception, dependencyId);
 }
 
 internal interface IOpenSearchDependencyProbeClient
 {
-    ValueTask<OpenSearchProbeResult> ProbeAsync(OpenSearchDependencyDefinition dependency, CancellationToken cancellationToken);
+    ValueTask<string> ProbeAsync(OpenSearchDependencyDefinition dependency, CancellationToken cancellationToken);
 }
 
 internal sealed class OpenSearchDependencyProbeClient(IHttpClientFactory httpClientFactory) : IOpenSearchDependencyProbeClient
 {
-    public async ValueTask<OpenSearchProbeResult> ProbeAsync(
+    public async ValueTask<string> ProbeAsync(
         OpenSearchDependencyDefinition dependency,
         CancellationToken cancellationToken)
     {
@@ -198,29 +83,23 @@ internal sealed class OpenSearchDependencyProbeClient(IHttpClientFactory httpCli
 
         if (payload.TimedOut)
         {
-            return new OpenSearchProbeResult(
-                HealthState.Unhealthy,
+            throw new InvalidOperationException(
                 $"OpenSearch cluster '{clusterName}' at {endpoint} timed out while reporting {status} health{nodeSuffix}.");
         }
 
         if (discoveredClusterManager.HasValue && !discoveredClusterManager.Value)
         {
-            return new OpenSearchProbeResult(
-                HealthState.Unhealthy,
+            throw new InvalidOperationException(
                 $"OpenSearch cluster '{clusterName}' at {endpoint} did not report a discovered cluster manager while reporting {status} health{nodeSuffix}.");
         }
 
-        var state = status switch
+        if (status is "yellow" or "red" or "unknown")
         {
-            "green" => HealthState.Healthy,
-            "yellow" => HealthState.Degraded,
-            "red" => HealthState.Unhealthy,
-            _ => HealthState.Unhealthy
-        };
+            throw new InvalidOperationException(
+                $"OpenSearch cluster '{clusterName}' at {endpoint} reported {status} health{nodeSuffix}.");
+        }
 
-        return new OpenSearchProbeResult(
-            state,
-            $"OpenSearch cluster '{clusterName}' at {endpoint} reported {status} health{nodeSuffix}.");
+        return $"OpenSearch cluster '{clusterName}' at {endpoint} reported {status} health{nodeSuffix}.";
     }
 
     internal static Uri ResolveClusterHealthEndpoint(OpenSearchDependencyDefinition dependency)
@@ -262,8 +141,6 @@ internal sealed class OpenSearchDependencyProbeClient(IHttpClientFactory httpCli
     }
 }
 
-internal sealed record OpenSearchProbeResult(HealthState State, string Description);
-
 internal sealed class OpenSearchClusterHealthResponse
 {
     [JsonPropertyName("cluster_name")]
@@ -287,19 +164,19 @@ internal sealed class OpenSearchClusterHealthResponse
 
 internal static class OpenSearchDependencyHealthLogs
 {
-    private static readonly Action<ILogger, string, int, string, Exception?> ProbeTimedOutMessage = LoggerMessage.Define<string, int, string>(
+    private static readonly Action<ILogger, string, int, Exception?> ProbeTimedOutMessage = LoggerMessage.Define<string, int>(
         LogLevel.Warning,
         new EventId(OpenSearchDependencyHealthDiagnosticsConventions.ProbeTimedOut.Id, OpenSearchDependencyHealthDiagnosticsConventions.ProbeTimedOut.Name),
-        OpenSearchDependencyHealthDiagnosticsConventions.ProbeTimedOut.MessageTemplate);
+        "OpenSearch dependency probe '{DependencyId}' timed out after {TimeoutSeconds}s.");
 
-    private static readonly Action<ILogger, string, string, Exception?> ProbeFailedMessage = LoggerMessage.Define<string, string>(
+    private static readonly Action<ILogger, string, Exception?> ProbeFailedMessage = LoggerMessage.Define<string>(
         LogLevel.Warning,
         new EventId(OpenSearchDependencyHealthDiagnosticsConventions.ProbeFailed.Id, OpenSearchDependencyHealthDiagnosticsConventions.ProbeFailed.Name),
-        OpenSearchDependencyHealthDiagnosticsConventions.ProbeFailed.MessageTemplate);
+        "OpenSearch dependency probe '{DependencyId}' failed.");
 
-    public static void ProbeTimedOut(ILogger logger, string dependencyId, int timeoutSeconds, string endpoint) =>
-        ProbeTimedOutMessage(logger, dependencyId, timeoutSeconds, endpoint, null);
+    public static void ProbeTimedOut(ILogger logger, string dependencyId, int timeoutSeconds) =>
+        ProbeTimedOutMessage(logger, dependencyId, timeoutSeconds, null);
 
-    public static void ProbeFailed(ILogger logger, Exception exception, string dependencyId, string endpoint) =>
-        ProbeFailedMessage(logger, dependencyId, endpoint, exception);
+    public static void ProbeFailed(ILogger logger, Exception exception, string dependencyId) =>
+        ProbeFailedMessage(logger, dependencyId, exception);
 }

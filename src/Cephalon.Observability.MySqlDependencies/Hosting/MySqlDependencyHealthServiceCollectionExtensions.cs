@@ -1,11 +1,11 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.MySqlDependencies.Configuration;
 using Cephalon.Observability.MySqlDependencies.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.MySqlDependencies.Hosting;
 
@@ -64,13 +64,18 @@ public static class MySqlDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
         services.TryAddSingleton<IMySqlDependencyProbeClient, MySqlDependencyProbeClient>();
-        services.TryAddSingleton<MySqlDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, MySqlDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, MySqlDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, MySqlDependencyHealthProbeHostedService>());
 
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            MySqlDependencyHealthOptions,
+            MySqlDependencyDefinition,
+            MySqlDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new MySqlDependencyHealthProbeHostedService(
+                options,
+                sp.GetRequiredService<IMySqlDependencyProbeClient>(),
+                store,
+                sp.GetRequiredService<ILogger<MySqlDependencyHealthProbeHostedService>>()));
     }
 }

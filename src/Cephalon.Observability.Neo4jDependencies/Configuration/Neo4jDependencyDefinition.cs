@@ -1,27 +1,12 @@
+using Cephalon.Observability.DependencyHealth.Core.Configuration;
+
 namespace Cephalon.Observability.Neo4jDependencies.Configuration;
 
 /// <summary>
 /// Describes one Neo4j dependency that should contribute to runtime health.
 /// </summary>
-public sealed class Neo4jDependencyDefinition
+public sealed class Neo4jDependencyDefinition : DependencyDefinitionBase
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Neo4jDependencyDefinition" /> class.
-    /// </summary>
-    public Neo4jDependencyDefinition()
-    {
-    }
-
-    /// <summary>
-    /// Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
-    /// </summary>
-    public string Id { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the human-readable dependency name shown to operators.
-    /// </summary>
-    public string? DisplayName { get; set; }
-
     /// <summary>
     /// Gets or sets the optional full Neo4j endpoint URI such as <c>neo4j://graph.internal.example:7687</c> or <c>neo4j+s://graph.internal.example:7687</c>.
     /// </summary>
@@ -61,14 +46,4 @@ public sealed class Neo4jDependencyDefinition
     /// Gets or sets the Cypher statement executed to verify the dependency.
     /// </summary>
     public string HealthQuery { get; set; } = "RETURN 1 AS health";
-
-    /// <summary>
-    /// Gets or sets a value indicating whether this dependency is required for readiness.
-    /// </summary>
-    public bool Required { get; set; }
-
-    /// <summary>
-    /// Gets or sets the per-probe timeout in seconds.
-    /// </summary>
-    public int TimeoutSeconds { get; set; } = 5;
 }

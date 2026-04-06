@@ -1,7 +1,6 @@
-using Cephalon.Abstractions.Health;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.SqlServerDependencies.Configuration;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.SqlServerDependencies.Services;
@@ -9,141 +8,29 @@ namespace Cephalon.Observability.SqlServerDependencies.Services;
 internal sealed class SqlServerDependencyHealthProbeHostedService(
     SqlServerDependencyHealthOptions options,
     ISqlServerDependencyProbeClient probeClient,
-    SqlServerDependencyHealthStore store,
-    ILogger<SqlServerDependencyHealthProbeHostedService> logger) : IHostedService, IDisposable
+    DependencyHealthStore store,
+    ILogger<SqlServerDependencyHealthProbeHostedService> logger)
+    : DependencyHealthProbeHostedServiceBase<SqlServerDependencyHealthOptions, SqlServerDependencyDefinition>(options, store, logger)
 {
-    private const string SourceName = "Cephalon.Observability.SqlServerDependencies";
-    private CancellationTokenSource? loopCancellation;
-    private Task? loopTask;
+    protected override string SourceName => "Cephalon.Observability.SqlServerDependencies";
+    protected override string DefaultDependencyId => "sqlserver-dependency";
+    protected override string ProviderLabel => "SQL Server";
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    protected override string? ValidateDependency(SqlServerDependencyDefinition definition)
     {
-        if (options.Dependencies.Count == 0)
-        {
-            return;
-        }
-
-        await RefreshAsync(cancellationToken).ConfigureAwait(false);
-
-        loopCancellation = new CancellationTokenSource();
-        loopTask = Task.Run(() => RunLoopAsync(loopCancellation.Token), CancellationToken.None);
+        return string.IsNullOrWhiteSpace(definition.ConnectionString) && string.IsNullOrWhiteSpace(definition.Host)
+            ? "SQL Server host or connection string is not configured."
+            : null;
     }
 
-    public async Task StopAsync(CancellationToken cancellationToken)
-    {
-        if (loopCancellation is null || loopTask is null)
-        {
-            return;
-        }
+    protected override ValueTask<string> ProbeAsync(SqlServerDependencyDefinition definition, CancellationToken cancellationToken) =>
+        probeClient.ProbeAsync(definition, cancellationToken);
 
-        loopCancellation.Cancel();
+    protected override void LogProbeTimedOut(string dependencyId, int timeoutSeconds) =>
+        SqlServerDependencyHealthLogs.ProbeTimedOut(logger, dependencyId, timeoutSeconds);
 
-        try
-        {
-            await loopTask.WaitAsync(cancellationToken).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException)
-        {
-        }
-    }
-
-    public void Dispose()
-    {
-        loopCancellation?.Cancel();
-        loopCancellation?.Dispose();
-    }
-
-    private async Task RunLoopAsync(CancellationToken cancellationToken)
-    {
-        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(Math.Max(1, options.RefreshIntervalSeconds)));
-
-        try
-        {
-            while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
-            {
-                await RefreshAsync(cancellationToken).ConfigureAwait(false);
-            }
-        }
-        catch (OperationCanceledException)
-        {
-        }
-    }
-
-    private async Task RefreshAsync(CancellationToken cancellationToken)
-    {
-        var reports = await Task
-            .WhenAll(options.Dependencies.Select(dependency => ProbeDependencyAsync(dependency, cancellationToken)))
-            .ConfigureAwait(false);
-
-        store.SetReports(reports
-            .OrderBy(static report => report.Required ? 0 : 1)
-            .ThenBy(static report => report.Source, StringComparer.OrdinalIgnoreCase)
-            .ThenBy(static report => report.Id, StringComparer.OrdinalIgnoreCase));
-    }
-
-    private async Task<DependencyHealthReport> ProbeDependencyAsync(
-        SqlServerDependencyDefinition dependency,
-        CancellationToken cancellationToken)
-    {
-        var id = string.IsNullOrWhiteSpace(dependency.Id)
-            ? "sqlserver-dependency"
-            : dependency.Id.Trim();
-        var displayName = string.IsNullOrWhiteSpace(dependency.DisplayName)
-            ? id
-            : dependency.DisplayName.Trim();
-        var timeoutSeconds = Math.Max(1, dependency.TimeoutSeconds);
-
-        if (string.IsNullOrWhiteSpace(dependency.ConnectionString) && string.IsNullOrWhiteSpace(dependency.Host))
-        {
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: "SQL Server host or connection string is not configured.",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-
-        try
-        {
-            using var timeoutSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            timeoutSource.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
-
-            var description = await probeClient.ProbeAsync(dependency, timeoutSource.Token).ConfigureAwait(false);
-
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Healthy,
-                Description: description,
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
-        {
-            SqlServerDependencyHealthLogs.ProbeTimedOut(logger, id, timeoutSeconds);
-
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: $"SQL Server dependency '{displayName}' timed out after {timeoutSeconds} seconds.",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-        catch (Exception exception)
-        {
-            SqlServerDependencyHealthLogs.ProbeFailed(logger, exception, id);
-
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: $"SQL Server dependency '{displayName}' failed: {exception.Message}",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-    }
+    protected override void LogProbeFailed(Exception exception, string dependencyId) =>
+        SqlServerDependencyHealthLogs.ProbeFailed(logger, exception, dependencyId);
 }
 
 internal interface ISqlServerDependencyProbeClient

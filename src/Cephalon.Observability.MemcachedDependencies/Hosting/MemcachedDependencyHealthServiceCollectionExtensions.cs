@@ -1,11 +1,10 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.MemcachedDependencies.Configuration;
 using Cephalon.Observability.MemcachedDependencies.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.MemcachedDependencies.Hosting;
 
@@ -64,12 +63,15 @@ public static class MemcachedDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
-        services.TryAddSingleton<MemcachedDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, MemcachedDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, MemcachedDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, MemcachedDependencyHealthProbeHostedService>());
-
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            MemcachedDependencyHealthOptions,
+            MemcachedDependencyDefinition,
+            MemcachedDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new MemcachedDependencyHealthProbeHostedService(
+                options,
+                store,
+                sp.GetRequiredService<ILogger<MemcachedDependencyHealthProbeHostedService>>()));
     }
 }

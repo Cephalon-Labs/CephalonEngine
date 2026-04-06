@@ -1,11 +1,10 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.HttpDependencies.Configuration;
 using Cephalon.Observability.HttpDependencies.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.HttpDependencies.Hosting;
 
@@ -66,14 +65,19 @@ public static class HttpDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
         services.AddHttpClient(HttpClientName)
             .ConfigureHttpClient(client => client.Timeout = Timeout.InfiniteTimeSpan);
-        services.TryAddSingleton<HttpDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, HttpDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, HttpDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, HttpDependencyHealthProbeHostedService>());
 
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            HttpDependencyHealthOptions,
+            HttpDependencyDefinition,
+            HttpDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new HttpDependencyHealthProbeHostedService(
+                sp.GetRequiredService<IHttpClientFactory>(),
+                options,
+                store,
+                sp.GetRequiredService<ILogger<HttpDependencyHealthProbeHostedService>>()));
     }
 }

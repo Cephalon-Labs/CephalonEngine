@@ -1,9 +1,7 @@
-using System.Net.Http;
 using System.Text.Json;
-using Cephalon.Abstractions.Health;
 using Cephalon.Observability.ConsulDependencies.Configuration;
 using Cephalon.Observability.ConsulDependencies.Hosting;
-using Microsoft.Extensions.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.ConsulDependencies.Services;
@@ -11,153 +9,39 @@ namespace Cephalon.Observability.ConsulDependencies.Services;
 internal sealed class ConsulDependencyHealthProbeHostedService(
     ConsulDependencyHealthOptions options,
     IConsulDependencyProbeClient probeClient,
-    ConsulDependencyHealthStore store,
-    ILogger<ConsulDependencyHealthProbeHostedService> logger) : IHostedService, IDisposable
+    DependencyHealthStore store,
+    ILogger<ConsulDependencyHealthProbeHostedService> logger)
+    : DependencyHealthProbeHostedServiceBase<ConsulDependencyHealthOptions, ConsulDependencyDefinition>(options, store, logger)
 {
-    private const string SourceName = "Cephalon.Observability.ConsulDependencies";
-    private CancellationTokenSource? loopCancellation;
-    private Task? loopTask;
+    protected override string SourceName => "Cephalon.Observability.ConsulDependencies";
+    protected override string DefaultDependencyId => "consul-dependency";
+    protected override string ProviderLabel => "Consul";
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    protected override string? ValidateDependency(ConsulDependencyDefinition definition)
     {
-        if (options.Dependencies.Count == 0)
-        {
-            return;
-        }
-
-        await RefreshAsync(cancellationToken).ConfigureAwait(false);
-
-        loopCancellation = new CancellationTokenSource();
-        loopTask = Task.Run(() => RunLoopAsync(loopCancellation.Token), CancellationToken.None);
+        return string.IsNullOrWhiteSpace(definition.Endpoint)
+            ? "Consul endpoint is not configured."
+            : null;
     }
 
-    public async Task StopAsync(CancellationToken cancellationToken)
-    {
-        if (loopCancellation is null || loopTask is null)
-        {
-            return;
-        }
+    protected override ValueTask<string> ProbeAsync(ConsulDependencyDefinition definition, CancellationToken cancellationToken) =>
+        probeClient.ProbeAsync(definition, cancellationToken);
 
-        loopCancellation.Cancel();
+    protected override void LogProbeTimedOut(string dependencyId, int timeoutSeconds) =>
+        ConsulDependencyHealthLogs.ProbeTimedOut(logger, dependencyId, timeoutSeconds);
 
-        try
-        {
-            await loopTask.WaitAsync(cancellationToken).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException)
-        {
-        }
-    }
-
-    public void Dispose()
-    {
-        loopCancellation?.Cancel();
-        loopCancellation?.Dispose();
-    }
-
-    private async Task RunLoopAsync(CancellationToken cancellationToken)
-    {
-        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(Math.Max(1, options.RefreshIntervalSeconds)));
-
-        try
-        {
-            while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
-            {
-                await RefreshAsync(cancellationToken).ConfigureAwait(false);
-            }
-        }
-        catch (OperationCanceledException)
-        {
-        }
-    }
-
-    private async Task RefreshAsync(CancellationToken cancellationToken)
-    {
-        var reports = await Task
-            .WhenAll(options.Dependencies.Select(dependency => ProbeDependencyAsync(dependency, cancellationToken)))
-            .ConfigureAwait(false);
-
-        store.SetReports(reports
-            .OrderBy(static report => report.Required ? 0 : 1)
-            .ThenBy(static report => report.Source, StringComparer.OrdinalIgnoreCase)
-            .ThenBy(static report => report.Id, StringComparer.OrdinalIgnoreCase));
-    }
-
-    private async Task<DependencyHealthReport> ProbeDependencyAsync(
-        ConsulDependencyDefinition dependency,
-        CancellationToken cancellationToken)
-    {
-        var id = string.IsNullOrWhiteSpace(dependency.Id)
-            ? "consul-dependency"
-            : dependency.Id.Trim();
-        var displayName = string.IsNullOrWhiteSpace(dependency.DisplayName)
-            ? id
-            : dependency.DisplayName.Trim();
-        var timeoutSeconds = Math.Max(1, dependency.TimeoutSeconds);
-
-        if (string.IsNullOrWhiteSpace(dependency.Endpoint))
-        {
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: "Consul endpoint is not configured.",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-
-        try
-        {
-            using var timeoutSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            timeoutSource.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
-
-            var result = await probeClient.ProbeAsync(dependency, timeoutSource.Token).ConfigureAwait(false);
-
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: result.State,
-                Description: result.Description,
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
-        {
-            var endpoint = dependency.Endpoint.Trim();
-            ConsulDependencyHealthLogs.ProbeTimedOut(logger, id, timeoutSeconds, endpoint);
-
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: $"Consul dependency '{displayName}' timed out after {timeoutSeconds} seconds against {endpoint}.",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-        catch (Exception exception)
-        {
-            var endpoint = dependency.Endpoint.Trim();
-            ConsulDependencyHealthLogs.ProbeFailed(logger, exception, id, endpoint);
-
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: $"Consul dependency '{displayName}' failed against {endpoint}: {exception.Message}",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-    }
+    protected override void LogProbeFailed(Exception exception, string dependencyId) =>
+        ConsulDependencyHealthLogs.ProbeFailed(logger, exception, dependencyId);
 }
 
 internal interface IConsulDependencyProbeClient
 {
-    ValueTask<ConsulProbeResult> ProbeAsync(ConsulDependencyDefinition dependency, CancellationToken cancellationToken);
+    ValueTask<string> ProbeAsync(ConsulDependencyDefinition dependency, CancellationToken cancellationToken);
 }
 
 internal sealed class ConsulDependencyProbeClient(IHttpClientFactory httpClientFactory) : IConsulDependencyProbeClient
 {
-    public async ValueTask<ConsulProbeResult> ProbeAsync(
+    public async ValueTask<string> ProbeAsync(
         ConsulDependencyDefinition dependency,
         CancellationToken cancellationToken)
     {
@@ -189,8 +73,7 @@ internal sealed class ConsulDependencyProbeClient(IHttpClientFactory httpClientF
         leader = leader.Trim();
         if (string.IsNullOrWhiteSpace(leader))
         {
-            return new ConsulProbeResult(
-                HealthState.Unhealthy,
+            throw new InvalidOperationException(
                 dependency.Datacenter is null
                     ? $"Consul endpoint '{endpoint}' reported no active leader."
                     : $"Consul endpoint '{endpoint}' reported no active leader for datacenter '{dependency.Datacenter.Trim()}'.");
@@ -200,9 +83,7 @@ internal sealed class ConsulDependencyProbeClient(IHttpClientFactory httpClientF
             ? string.Empty
             : $" for datacenter '{dependency.Datacenter.Trim()}'";
 
-        return new ConsulProbeResult(
-            HealthState.Healthy,
-            $"Consul endpoint '{endpoint}' reported leader '{leader}'{datacenterSuffix}.");
+        return $"Consul endpoint '{endpoint}' reported leader '{leader}'{datacenterSuffix}.";
     }
 
     internal static Uri ResolveLeaderEndpoint(string endpointText, string? datacenter)
@@ -239,23 +120,21 @@ internal sealed class ConsulDependencyProbeClient(IHttpClientFactory httpClientF
     }
 }
 
-internal sealed record ConsulProbeResult(HealthState State, string Description);
-
 internal static class ConsulDependencyHealthLogs
 {
-    private static readonly Action<ILogger, string, int, string, Exception?> ProbeTimedOutMessage = LoggerMessage.Define<string, int, string>(
+    private static readonly Action<ILogger, string, int, Exception?> ProbeTimedOutMessage = LoggerMessage.Define<string, int>(
         LogLevel.Warning,
         new EventId(ConsulDependencyHealthDiagnosticsConventions.ProbeTimedOut.Id, ConsulDependencyHealthDiagnosticsConventions.ProbeTimedOut.Name),
-        ConsulDependencyHealthDiagnosticsConventions.ProbeTimedOut.MessageTemplate);
+        "Consul dependency probe '{DependencyId}' timed out after {TimeoutSeconds}s.");
 
-    private static readonly Action<ILogger, string, string, Exception?> ProbeFailedMessage = LoggerMessage.Define<string, string>(
+    private static readonly Action<ILogger, string, Exception?> ProbeFailedMessage = LoggerMessage.Define<string>(
         LogLevel.Warning,
         new EventId(ConsulDependencyHealthDiagnosticsConventions.ProbeFailed.Id, ConsulDependencyHealthDiagnosticsConventions.ProbeFailed.Name),
-        ConsulDependencyHealthDiagnosticsConventions.ProbeFailed.MessageTemplate);
+        "Consul dependency probe '{DependencyId}' failed.");
 
-    public static void ProbeTimedOut(ILogger logger, string dependencyId, int timeoutSeconds, string endpoint) =>
-        ProbeTimedOutMessage(logger, dependencyId, timeoutSeconds, endpoint, null);
+    public static void ProbeTimedOut(ILogger logger, string dependencyId, int timeoutSeconds) =>
+        ProbeTimedOutMessage(logger, dependencyId, timeoutSeconds, null);
 
-    public static void ProbeFailed(ILogger logger, Exception exception, string dependencyId, string endpoint) =>
-        ProbeFailedMessage(logger, dependencyId, endpoint, exception);
+    public static void ProbeFailed(ILogger logger, Exception exception, string dependencyId) =>
+        ProbeFailedMessage(logger, dependencyId, exception);
 }

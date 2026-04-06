@@ -2,10 +2,9 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Cephalon.Abstractions.Health;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.ElasticsearchDependencies.Configuration;
 using Cephalon.Observability.ElasticsearchDependencies.Hosting;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.ElasticsearchDependencies.Services;
@@ -13,153 +12,39 @@ namespace Cephalon.Observability.ElasticsearchDependencies.Services;
 internal sealed class ElasticsearchDependencyHealthProbeHostedService(
     ElasticsearchDependencyHealthOptions options,
     IElasticsearchDependencyProbeClient probeClient,
-    ElasticsearchDependencyHealthStore store,
-    ILogger<ElasticsearchDependencyHealthProbeHostedService> logger) : IHostedService, IDisposable
+    DependencyHealthStore store,
+    ILogger<ElasticsearchDependencyHealthProbeHostedService> logger)
+    : DependencyHealthProbeHostedServiceBase<ElasticsearchDependencyHealthOptions, ElasticsearchDependencyDefinition>(options, store, logger)
 {
-    private const string SourceName = "Cephalon.Observability.ElasticsearchDependencies";
-    private CancellationTokenSource? loopCancellation;
-    private Task? loopTask;
+    protected override string SourceName => "Cephalon.Observability.ElasticsearchDependencies";
+    protected override string DefaultDependencyId => "elasticsearch-dependency";
+    protected override string ProviderLabel => "Elasticsearch";
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    protected override string? ValidateDependency(ElasticsearchDependencyDefinition definition)
     {
-        if (options.Dependencies.Count == 0)
-        {
-            return;
-        }
-
-        await RefreshAsync(cancellationToken).ConfigureAwait(false);
-
-        loopCancellation = new CancellationTokenSource();
-        loopTask = Task.Run(() => RunLoopAsync(loopCancellation.Token), CancellationToken.None);
+        return string.IsNullOrWhiteSpace(definition.Endpoint)
+            ? "Elasticsearch endpoint is not configured."
+            : null;
     }
 
-    public async Task StopAsync(CancellationToken cancellationToken)
-    {
-        if (loopCancellation is null || loopTask is null)
-        {
-            return;
-        }
+    protected override ValueTask<string> ProbeAsync(ElasticsearchDependencyDefinition definition, CancellationToken cancellationToken) =>
+        probeClient.ProbeAsync(definition, cancellationToken);
 
-        loopCancellation.Cancel();
+    protected override void LogProbeTimedOut(string dependencyId, int timeoutSeconds) =>
+        ElasticsearchDependencyHealthLogs.ProbeTimedOut(logger, dependencyId, timeoutSeconds);
 
-        try
-        {
-            await loopTask.WaitAsync(cancellationToken).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException)
-        {
-        }
-    }
-
-    public void Dispose()
-    {
-        loopCancellation?.Cancel();
-        loopCancellation?.Dispose();
-    }
-
-    private async Task RunLoopAsync(CancellationToken cancellationToken)
-    {
-        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(Math.Max(1, options.RefreshIntervalSeconds)));
-
-        try
-        {
-            while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
-            {
-                await RefreshAsync(cancellationToken).ConfigureAwait(false);
-            }
-        }
-        catch (OperationCanceledException)
-        {
-        }
-    }
-
-    private async Task RefreshAsync(CancellationToken cancellationToken)
-    {
-        var reports = await Task
-            .WhenAll(options.Dependencies.Select(dependency => ProbeDependencyAsync(dependency, cancellationToken)))
-            .ConfigureAwait(false);
-
-        store.SetReports(reports
-            .OrderBy(static report => report.Required ? 0 : 1)
-            .ThenBy(static report => report.Source, StringComparer.OrdinalIgnoreCase)
-            .ThenBy(static report => report.Id, StringComparer.OrdinalIgnoreCase));
-    }
-
-    private async Task<DependencyHealthReport> ProbeDependencyAsync(
-        ElasticsearchDependencyDefinition dependency,
-        CancellationToken cancellationToken)
-    {
-        var id = string.IsNullOrWhiteSpace(dependency.Id)
-            ? "elasticsearch-dependency"
-            : dependency.Id.Trim();
-        var displayName = string.IsNullOrWhiteSpace(dependency.DisplayName)
-            ? id
-            : dependency.DisplayName.Trim();
-        var timeoutSeconds = Math.Max(1, dependency.TimeoutSeconds);
-
-        if (string.IsNullOrWhiteSpace(dependency.Endpoint))
-        {
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: "Elasticsearch endpoint is not configured.",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-
-        try
-        {
-            using var timeoutSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            timeoutSource.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
-
-            var result = await probeClient.ProbeAsync(dependency, timeoutSource.Token).ConfigureAwait(false);
-
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: result.State,
-                Description: result.Description,
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
-        {
-            var endpoint = dependency.Endpoint.Trim();
-            ElasticsearchDependencyHealthLogs.ProbeTimedOut(logger, id, timeoutSeconds, endpoint);
-
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: $"Elasticsearch dependency '{displayName}' timed out after {timeoutSeconds} seconds against {endpoint}.",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-        catch (Exception exception)
-        {
-            var endpoint = dependency.Endpoint.Trim();
-            ElasticsearchDependencyHealthLogs.ProbeFailed(logger, exception, id, endpoint);
-
-            return new DependencyHealthReport(
-                Id: id,
-                DisplayName: displayName,
-                State: HealthState.Unhealthy,
-                Description: $"Elasticsearch dependency '{displayName}' failed against {endpoint}: {exception.Message}",
-                Required: dependency.Required,
-                Source: SourceName);
-        }
-    }
+    protected override void LogProbeFailed(Exception exception, string dependencyId) =>
+        ElasticsearchDependencyHealthLogs.ProbeFailed(logger, exception, dependencyId);
 }
 
 internal interface IElasticsearchDependencyProbeClient
 {
-    ValueTask<ElasticsearchProbeResult> ProbeAsync(ElasticsearchDependencyDefinition dependency, CancellationToken cancellationToken);
+    ValueTask<string> ProbeAsync(ElasticsearchDependencyDefinition dependency, CancellationToken cancellationToken);
 }
 
 internal sealed class ElasticsearchDependencyProbeClient(IHttpClientFactory httpClientFactory) : IElasticsearchDependencyProbeClient
 {
-    public async ValueTask<ElasticsearchProbeResult> ProbeAsync(
+    public async ValueTask<string> ProbeAsync(
         ElasticsearchDependencyDefinition dependency,
         CancellationToken cancellationToken)
     {
@@ -197,22 +82,17 @@ internal sealed class ElasticsearchDependencyProbeClient(IHttpClientFactory http
 
         if (payload.TimedOut)
         {
-            return new ElasticsearchProbeResult(
-                HealthState.Unhealthy,
+            throw new InvalidOperationException(
                 $"Elasticsearch cluster '{clusterName}' at {endpoint} timed out while reporting {status} health{nodeSuffix}.");
         }
 
-        var state = status switch
+        if (status is "yellow" or "red" or "unknown")
         {
-            "green" => HealthState.Healthy,
-            "yellow" => HealthState.Degraded,
-            "red" => HealthState.Unhealthy,
-            _ => HealthState.Unhealthy
-        };
+            throw new InvalidOperationException(
+                $"Elasticsearch cluster '{clusterName}' at {endpoint} reported {status} health{nodeSuffix}.");
+        }
 
-        return new ElasticsearchProbeResult(
-            state,
-            $"Elasticsearch cluster '{clusterName}' at {endpoint} reported {status} health{nodeSuffix}.");
+        return $"Elasticsearch cluster '{clusterName}' at {endpoint} reported {status} health{nodeSuffix}.";
     }
 
     internal static Uri ResolveClusterHealthEndpoint(string endpointText)
@@ -254,8 +134,6 @@ internal sealed class ElasticsearchDependencyProbeClient(IHttpClientFactory http
     }
 }
 
-internal sealed record ElasticsearchProbeResult(HealthState State, string Description);
-
 internal sealed class ElasticsearchClusterHealthResponse
 {
     [JsonPropertyName("cluster_name")]
@@ -273,19 +151,19 @@ internal sealed class ElasticsearchClusterHealthResponse
 
 internal static class ElasticsearchDependencyHealthLogs
 {
-    private static readonly Action<ILogger, string, int, string, Exception?> ProbeTimedOutMessage = LoggerMessage.Define<string, int, string>(
+    private static readonly Action<ILogger, string, int, Exception?> ProbeTimedOutMessage = LoggerMessage.Define<string, int>(
         LogLevel.Warning,
         new EventId(ElasticsearchDependencyHealthDiagnosticsConventions.ProbeTimedOut.Id, ElasticsearchDependencyHealthDiagnosticsConventions.ProbeTimedOut.Name),
-        ElasticsearchDependencyHealthDiagnosticsConventions.ProbeTimedOut.MessageTemplate);
+        $"Elasticsearch dependency probe '{{DependencyId}}' timed out after {{TimeoutSeconds}}s.");
 
-    private static readonly Action<ILogger, string, string, Exception?> ProbeFailedMessage = LoggerMessage.Define<string, string>(
+    private static readonly Action<ILogger, string, Exception?> ProbeFailedMessage = LoggerMessage.Define<string>(
         LogLevel.Warning,
         new EventId(ElasticsearchDependencyHealthDiagnosticsConventions.ProbeFailed.Id, ElasticsearchDependencyHealthDiagnosticsConventions.ProbeFailed.Name),
-        ElasticsearchDependencyHealthDiagnosticsConventions.ProbeFailed.MessageTemplate);
+        "Elasticsearch dependency probe '{DependencyId}' failed.");
 
-    public static void ProbeTimedOut(ILogger logger, string dependencyId, int timeoutSeconds, string endpoint) =>
-        ProbeTimedOutMessage(logger, dependencyId, timeoutSeconds, endpoint, null);
+    public static void ProbeTimedOut(ILogger logger, string dependencyId, int timeoutSeconds) =>
+        ProbeTimedOutMessage(logger, dependencyId, timeoutSeconds, null);
 
-    public static void ProbeFailed(ILogger logger, Exception exception, string dependencyId, string endpoint) =>
-        ProbeFailedMessage(logger, dependencyId, endpoint, exception);
+    public static void ProbeFailed(ILogger logger, Exception exception, string dependencyId) =>
+        ProbeFailedMessage(logger, dependencyId, exception);
 }

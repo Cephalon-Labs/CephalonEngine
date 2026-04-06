@@ -1,11 +1,11 @@
-using Cephalon.Abstractions.Health;
-using Cephalon.Engine.Diagnostics;
+using Cephalon.Observability.DependencyHealth.Core.Hosting;
+using Cephalon.Observability.DependencyHealth.Core.Services;
 using Cephalon.Observability.PostgresDependencies.Configuration;
 using Cephalon.Observability.PostgresDependencies.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Observability.PostgresDependencies.Hosting;
 
@@ -64,13 +64,18 @@ public static class PostgresDependencyHealthServiceCollectionExtensions
             return services;
         }
 
-        services.TryAddSingleton(options);
         services.TryAddSingleton<IPostgresDependencyProbeClient, NpgsqlPostgresDependencyProbeClient>();
-        services.TryAddSingleton<PostgresDependencyHealthStore>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, PostgresDependencyHealthDiagnosticsConventionContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDependencyHealthContributor, PostgresDependencyHealthContributor>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, PostgresDependencyHealthProbeHostedService>());
 
-        return services;
+        return DependencyHealthServiceRegistration.AddDependencyHealth<
+            PostgresDependencyHealthOptions,
+            PostgresDependencyDefinition,
+            PostgresDependencyHealthDiagnosticsConventionContributor>(
+            services,
+            options,
+            (sp, store) => new PostgresDependencyHealthProbeHostedService(
+                options,
+                sp.GetRequiredService<IPostgresDependencyProbeClient>(),
+                store,
+                sp.GetRequiredService<ILogger<PostgresDependencyHealthProbeHostedService>>()));
     }
 }

@@ -12,5 +12,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Cephalon.Abstractions\Cephalon.Abstractions.csproj" />
     <ProjectReference Include="..\Cephalon.Engine\Cephalon.Engine.csproj" />
+    <ProjectReference Include="..\Cephalon.Observability.DependencyHealth.Core\Cephalon.Observability.DependencyHealth.Core.csproj" />
   </ItemGroup>
 </Project>

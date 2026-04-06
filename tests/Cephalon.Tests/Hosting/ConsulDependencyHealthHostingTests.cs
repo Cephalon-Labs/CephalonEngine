@@ -19,9 +19,7 @@ public sealed class ConsulDependencyHealthHostingTests
     public async Task AddCephalonConsulDependencyHealthReportsLeader()
     {
         var probeClient = new FakeConsulDependencyProbeClient(dependency =>
-            new ConsulProbeResult(
-                HealthState.Healthy,
-                $"Consul endpoint '{dependency.Endpoint}' reported leader '10.0.0.5:8300' for datacenter 'ops-dc'."));
+            $"Consul endpoint '{dependency.Endpoint}' reported leader '10.0.0.5:8300' for datacenter 'ops-dc'.");
 
         var builder = Host.CreateApplicationBuilder();
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
@@ -60,8 +58,7 @@ public sealed class ConsulDependencyHealthHostingTests
     public async Task AddCephalonConsulDependencyHealthTreatsRequiredMissingLeaderAsReadinessFailure()
     {
         var probeClient = new FakeConsulDependencyProbeClient(_ =>
-            new ConsulProbeResult(
-                HealthState.Unhealthy,
+            throw new InvalidOperationException(
                 "Consul endpoint 'https://consul.internal.example:8501/v1/status/leader' reported no active leader."));
 
         var builder = Host.CreateApplicationBuilder();
@@ -120,19 +117,18 @@ public sealed class ConsulDependencyHealthHostingTests
             },
             CancellationToken.None);
 
-        Assert.Equal(HealthState.Healthy, result.State);
-        Assert.Contains("10.0.0.5:8300", result.Description, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("10.0.0.5:8300", result, StringComparison.OrdinalIgnoreCase);
         Assert.Equal("/v1/status/leader", server.LastPath);
         Assert.Equal("dc=ops-dc", server.LastQueryString);
         Assert.Equal("consul-acl-token", server.LastAclToken);
     }
 
-    private sealed class FakeConsulDependencyProbeClient(Func<ConsulDependencyDefinition, ConsulProbeResult> onProbe)
+    private sealed class FakeConsulDependencyProbeClient(Func<ConsulDependencyDefinition, string> onProbe)
         : IConsulDependencyProbeClient
     {
         public List<ConsulDependencyDefinition> CapturedDependencies { get; } = [];
 
-        public ValueTask<ConsulProbeResult> ProbeAsync(
+        public ValueTask<string> ProbeAsync(
             ConsulDependencyDefinition dependency,
             CancellationToken cancellationToken)
         {
