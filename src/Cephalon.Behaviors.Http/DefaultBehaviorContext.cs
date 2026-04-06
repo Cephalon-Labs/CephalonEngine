@@ -45,6 +45,7 @@ internal sealed class DefaultBehaviorContext : IBehaviorContext
         return new DefaultBehaviorContext
         {
             BehaviorId = behaviorId,
+            CorrelationId = correlationId,
             Metadata = metadata,
             CancellationToken = ctx.RequestAborted,
             _isDirect = true
@@ -53,6 +54,9 @@ internal sealed class DefaultBehaviorContext : IBehaviorContext
 
     /// <inheritdoc />
     public string BehaviorId { get; private init; } = string.Empty;
+
+    /// <inheritdoc />
+    public string? CorrelationId { get; private init; }
 
     /// <inheritdoc />
     public IReadOnlyDictionary<string, string> Metadata { get; private init; } =

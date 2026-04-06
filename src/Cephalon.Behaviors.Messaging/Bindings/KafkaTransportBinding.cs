@@ -291,7 +291,13 @@ public sealed class KafkaTransportBinding : IMessagingBehaviorBinding, IAsyncDis
             {
                 foreach (var h in result.Message.Headers)
                 {
-                    metadata[h.Key] = System.Text.Encoding.UTF8.GetString(h.GetValueBytes());
+                    var val = System.Text.Encoding.UTF8.GetString(h.GetValueBytes());
+                    metadata[h.Key] = val;
+                    if (string.Equals(h.Key, "X-Correlation-Id", StringComparison.OrdinalIgnoreCase)
+                        || string.Equals(h.Key, "CorrelationId", StringComparison.OrdinalIgnoreCase))
+                    {
+                        CorrelationId ??= val;
+                    }
                 }
             }
 
@@ -300,6 +306,9 @@ public sealed class KafkaTransportBinding : IMessagingBehaviorBinding, IAsyncDis
 
         /// <inheritdoc />
         public string BehaviorId { get; }
+
+        /// <inheritdoc />
+        public string? CorrelationId { get; }
 
         /// <inheritdoc />
         public IReadOnlyDictionary<string, string> Metadata { get; }

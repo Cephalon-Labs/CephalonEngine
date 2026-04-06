@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-06T04:35:14.5271412+00:00",
+  "GeneratedAtUtc": "2026-04-06T05:39:58.752132+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 17,
-      "TypeCount": 133
+      "TypeCount": 134
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -493,7 +493,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-behaviors",
-      "TypeCount": 17
+      "TypeCount": 18
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Capabilities",
@@ -3943,7 +3943,7 @@
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 3,
         "Methods": 1
       }
     },
@@ -5055,6 +5055,21 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IProcessCompletion",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-behaviors-iprocesscompletion",
+      "Declaration": "public interface IProcessCompletion",
+      "Summary": "Marker interface that signals a process manager behavior has reached its final step.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 0
       }
     },
     {
@@ -11944,6 +11959,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventpublication-correlationid",
       "Signature": "string CorrelationId { get; }",
       "Summary": "Gets the correlation identifier associated with the event."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "IBehaviorContext",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-ibehaviorcontext-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the correlation identifier for the current execution, or \u0060null\u0060 if not provided."
     },
     {
       "DisplayName": "CorrelationId",

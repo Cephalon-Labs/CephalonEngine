@@ -83,6 +83,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Behaviors.IBehaviorContributor),
             typeof(global::Cephalon.Abstractions.Behaviors.IBehaviorRegistry),
             typeof(global::Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder),
+            typeof(global::Cephalon.Abstractions.Behaviors.IProcessCompletion),
             typeof(global::Cephalon.Abstractions.Capabilities.Capability),
             typeof(global::Cephalon.Abstractions.Capabilities.CapabilityAccess),
             typeof(global::Cephalon.Abstractions.Capabilities.ICapabilityRegistry),
@@ -683,6 +684,45 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Behaviors.Http.Registry.HttpBehaviorBindingRegistry),
             typeof(global::Cephalon.Behaviors.Http.LazyTransportBinding),
             typeof(global::Cephalon.Behaviors.Http.Hosting.HttpBehaviorBindingExtensions));
+    }
+
+    [Fact]
+    public void BehaviorsPatternsAssemblyExposesOnlyTheDocumentedContractSurface()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Behaviors.Patterns.Abstractions.IBehaviorExecutionStrategy).Assembly,
+            typeof(global::Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext),
+            typeof(global::Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionResult),
+            typeof(global::Cephalon.Behaviors.Patterns.Abstractions.IBehaviorExecutionStrategy),
+            typeof(global::Cephalon.Behaviors.Patterns.Abstractions.IProcessCheckpointStore),
+            typeof(global::Cephalon.Behaviors.Patterns.Abstractions.ISagaStateStore),
+            typeof(global::Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint),
+            typeof(global::Cephalon.Behaviors.Patterns.Hosting.PatternBehaviorExtensions),
+            typeof(global::Cephalon.Behaviors.Patterns.Registry.ExecutionStrategyRegistry),
+            typeof(global::Cephalon.Behaviors.Patterns.Stores.InMemoryProcessCheckpointStore),
+            typeof(global::Cephalon.Behaviors.Patterns.Stores.InMemorySagaStateStore),
+            typeof(global::Cephalon.Behaviors.Patterns.Strategies.CqrsExecutionStrategy),
+            typeof(global::Cephalon.Behaviors.Patterns.Strategies.DirectExecutionStrategy),
+            typeof(global::Cephalon.Behaviors.Patterns.Strategies.EventDrivenExecutionStrategy),
+            typeof(global::Cephalon.Behaviors.Patterns.Strategies.ProcessManagerExecutionStrategy),
+            typeof(global::Cephalon.Behaviors.Patterns.Strategies.SagaExecutionStrategy));
+    }
+
+    [Fact]
+    public void BehaviorsMessagingAssemblyExposesOnlyTheDocumentedContractSurface()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Behaviors.Messaging.Abstractions.IMessagingBehaviorBinding).Assembly,
+            typeof(global::Cephalon.Behaviors.Messaging.Abstractions.IMessagingBehaviorBinding),
+            typeof(global::Cephalon.Behaviors.Messaging.Abstractions.IMessagingBehaviorBindingRegistry),
+            typeof(global::Cephalon.Behaviors.Messaging.Bindings.InMemoryTransportBinding),
+            typeof(global::Cephalon.Behaviors.Messaging.Bindings.KafkaTransportBinding),
+            typeof(global::Cephalon.Behaviors.Messaging.Bindings.RabbitMqTransportBinding),
+            typeof(global::Cephalon.Behaviors.Messaging.Hosting.MessagingBehaviorBindingServiceCollectionExtensions),
+            typeof(global::Cephalon.Behaviors.Messaging.Options.InMemoryTransportOptions),
+            typeof(global::Cephalon.Behaviors.Messaging.Options.KafkaTransportOptions),
+            typeof(global::Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions),
+            typeof(global::Cephalon.Behaviors.Messaging.Registry.MessagingBehaviorBindingRegistry));
     }
 
     private static void AssertExportedTypes(Assembly assembly, params Type[] expectedTypes)

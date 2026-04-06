@@ -370,6 +370,7 @@ public sealed class RabbitMqTransportBinding : IMessagingBehaviorBinding, IAsync
             if (ea.BasicProperties?.CorrelationId is { } corrId)
             {
                 metadata["CorrelationId"] = corrId;
+                CorrelationId = corrId;
             }
 
             if (ea.BasicProperties?.Headers is { } headers)
@@ -388,6 +389,9 @@ public sealed class RabbitMqTransportBinding : IMessagingBehaviorBinding, IAsync
 
         /// <inheritdoc />
         public string BehaviorId { get; }
+
+        /// <inheritdoc />
+        public string? CorrelationId { get; }
 
         /// <inheritdoc />
         public IReadOnlyDictionary<string, string> Metadata { get; }

@@ -11,14 +11,17 @@ internal sealed class TestBehaviorContext : IBehaviorContext
     private readonly bool _isDirect;
     private readonly List<object> _replies = [];
 
-    internal TestBehaviorContext(string behaviorId, bool isDirect = false, IReadOnlyDictionary<string, string>? metadata = null)
+    internal TestBehaviorContext(string behaviorId, bool isDirect = false, IReadOnlyDictionary<string, string>? metadata = null, string? correlationId = null)
     {
         BehaviorId = behaviorId;
         _isDirect = isDirect;
         Metadata = metadata ?? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        CorrelationId = correlationId;
     }
 
     public string BehaviorId { get; }
+
+    public string? CorrelationId { get; }
 
     public IReadOnlyDictionary<string, string> Metadata { get; }
 

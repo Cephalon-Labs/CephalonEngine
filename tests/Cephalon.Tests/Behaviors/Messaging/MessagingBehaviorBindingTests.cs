@@ -281,6 +281,8 @@ public sealed class MessagingBehaviorBindingTests
 
         public string BehaviorId { get; }
 
+        public string? CorrelationId => null;
+
         public IReadOnlyDictionary<string, string> Metadata { get; }
 
         public Task ReplyAsync(object reply, CancellationToken cancellationToken = default)

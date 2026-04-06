@@ -19,6 +19,11 @@ public interface IBehaviorContext
     string BehaviorId { get; }
 
     /// <summary>
+    /// Gets the correlation identifier for the current execution, or <see langword="null"/> if not provided.
+    /// </summary>
+    string? CorrelationId { get; }
+
+    /// <summary>
     /// Gets ambient metadata associated with the current execution (e.g. correlation id, tenant id).
     /// </summary>
     IReadOnlyDictionary<string, string> Metadata { get; }

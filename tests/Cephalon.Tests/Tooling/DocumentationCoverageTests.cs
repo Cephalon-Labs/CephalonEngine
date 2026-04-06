@@ -11,6 +11,7 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.Behaviors"] = "behaviors.md",
             ["Cephalon.Behaviors.Http"] = "behaviors-http.md",
             ["Cephalon.Behaviors.Messaging"] = "behaviors-messaging.md",
+            ["Cephalon.Behaviors.Patterns"] = "behaviors-patterns.md",
             ["Cephalon.AspNetCore"] = "aspnetcore.md",
             ["Cephalon.AspNetCore.GraphQL"] = "aspnetcore-graphql.md",
             ["Cephalon.AspNetCore.Grpc"] = "aspnetcore-grpc.md",

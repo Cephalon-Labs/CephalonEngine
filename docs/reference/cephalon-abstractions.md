@@ -3419,6 +3419,16 @@ string BehaviorId { get; }
 
 Gets the stable identifier of the behavior being executed.
 
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the correlation identifier for the current execution, or `null` if not provided.
+
 <a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-metadata"></a>
 
 ##### `Metadata`
@@ -3687,6 +3697,17 @@ IBehaviorTopologyBuilder WithOptions(Action<BehaviorTopologyOptions> configure)
 ```
 
 Configures optional feature flags for this behavior (outbox, inbox, event sourcing).
+
+<a id="type-cephalon-abstractions-behaviors-iprocesscompletion"></a>
+
+### `IProcessCompletion`
+
+Marker interface that signals a process manager behavior has reached its final step.
+
+#### Declaration
+```csharp
+public interface IProcessCompletion
+```
 
 <a id="namespace-cephalon-abstractions-capabilities"></a>
 
