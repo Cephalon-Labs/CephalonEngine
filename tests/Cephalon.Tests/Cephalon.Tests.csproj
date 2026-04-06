@@ -85,6 +85,7 @@
     <ProjectReference Include="..\..\src\Cephalon.ReferenceDocs\Cephalon.ReferenceDocs.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Behaviors\Cephalon.Behaviors.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Behaviors.Http\Cephalon.Behaviors.Http.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Behaviors.Messaging\Cephalon.Behaviors.Messaging.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.EventSourcing\Cephalon.EventSourcing.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.EventSourcing.EntityFramework\Cephalon.EventSourcing.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Retrieval\Cephalon.Retrieval.csproj" />

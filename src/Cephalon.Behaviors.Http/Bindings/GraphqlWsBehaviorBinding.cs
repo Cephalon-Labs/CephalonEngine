@@ -138,15 +138,17 @@ public sealed class GraphqlWsBehaviorBinding : IHttpBehaviorBinding
                         var id = message?["id"]?.GetValue<string>() ?? "1";
 
                         // G-GQL-WS-04: duplicate subscription id → close code 4409
-                        if (!activeSubscriptions.TryAdd(id, new CancellationTokenSource()))
+                        var newCts = new CancellationTokenSource();
+                        if (!activeSubscriptions.TryAdd(id, newCts))
                         {
+                            newCts.Dispose();
                             await ws.CloseAsync((WebSocketCloseStatus)4409,
                                 $"Subscriber for '{id}' already exists",
                                 CancellationToken.None).ConfigureAwait(false);
                             return;
                         }
 
-                        var subCts = activeSubscriptions[id];
+                        var subCts = newCts;
                         using var subLinked = CancellationTokenSource.CreateLinkedTokenSource(
                             ctx.RequestAborted, subCts.Token);
 
