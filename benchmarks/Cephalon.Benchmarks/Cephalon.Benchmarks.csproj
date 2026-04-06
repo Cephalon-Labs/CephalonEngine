@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Cephalon.Audit\Cephalon.Audit.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Behaviors\Cephalon.Behaviors.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data\Cephalon.Data.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Engine\Cephalon.Engine.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Eventing\Cephalon.Eventing.csproj" />

@@ -14,7 +14,7 @@ public sealed class GuardrailValidatorTests
             "performance-guardrails.json"));
 
         Assert.Equal("1.0", catalog.Version);
-        Assert.Equal(10, catalog.Entries.Count);
+        Assert.Equal(19, catalog.Entries.Count);
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifest");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifestWithStrictTrustPolicy");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildPhase8RuntimeManifest");
@@ -25,6 +25,15 @@ public sealed class GuardrailValidatorTests
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "HandleConcurrentLoggedJsonRequest");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "GenerateBlueprintScaffold");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "GeneratePhase8BlueprintScaffold");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "DispatchQuery");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "DispatchCommand");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "DispatchCommandWithResult");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "DispatchBehavior");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "EvaluateRbacAllow");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "EvaluateRbacDeny");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "ResolveByTenantId");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "ResolveByHostName");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "ResolveDefaultTenant");
     }
 
     [Fact]

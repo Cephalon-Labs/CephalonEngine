@@ -1321,8 +1321,9 @@ Delivered:
 
 ### ENG-059 Runtime hot-path benchmark expansion
 
-Status: planned
+Status: in progress
 Estimate: 13
+Progress: April 7, 2026
 
 Why:
 
@@ -1338,14 +1339,22 @@ Acceptance:
 - guardrail thresholds defined for all new benchmark scenarios
 - `scripts/validate-release.ps1` validates the expanded guardrail catalog
 
-Planned benchmarks:
+Delivered:
 
-- `DataLayerBenchmarks`: IReadStore query dispatch, IWriteStore command dispatch, command-with-result dispatch
-- `EventSourcingBenchmarks`: IEventStore append (single/batch), stream read/replay, version lookup, aggregate hydration
-- `BehaviorDispatchBenchmarks`: BehaviorDispatcher.DispatchAsync, execution slot invocation, catalog resolution
-- `AuthorizationBenchmarks`: IAuthorizationEvaluator.EvaluateAsync, metadata-driven policy evaluation
-- `MultiTenancyBenchmarks`: ITenantContextAccessor access, configuration-driven tenant resolution
-- `OutboxBenchmarks`: IOutbox.EnqueueAsync staging, batch retrieval
+- `HotPath/DataDispatchBenchmarks.cs`: IReadStore query dispatch (DispatchQuery), IWriteStore void command dispatch (DispatchCommand), result-returning command dispatch (DispatchCommandWithResult) — 8192 ops/iteration, warm-cache steady-state measurement
+- `HotPath/BehaviorDispatchBenchmarks.cs`: BehaviorDispatcher.DispatchAsync with frozen-dictionary lookup and compiled delegate invocation (DispatchBehavior) — 8192 ops/iteration with stub catalog/registry
+- `HotPath/AuthorizationEvaluationBenchmarks.cs`: MetadataDrivenAuthorizationEvaluator RBAC allow path (EvaluateRbacAllow) and deny path (EvaluateRbacDeny) — 8192 ops/iteration with policy module contributing RBAC policies
+- `HotPath/TenantResolutionBenchmarks.cs`: ConfiguredTenantResolver by explicit tenant id (ResolveByTenantId), hostname domain matching (ResolveByHostName), and default-tenant fallback (ResolveDefaultTenant) — 8192 ops/iteration with 3-tenant directory
+- `Support/BenchmarkHotPathTypes.cs`: data layer stubs (BenchmarkQuery/Command/ResultCommand + handlers), behavior stubs (EchoBenchmarkBehavior, StubBehaviorContext/Catalog/TypeRegistry), authorization policy module (BenchmarkAuthorizationPolicyModule)
+- guardrail catalog expanded from 10 to 19 entries covering all new hot-path benchmarks
+- `GuardrailValidatorTests` updated for 19-entry catalog
+- benchmark project now references `Cephalon.Behaviors` for behavior dispatch measurement
+
+Follow-up later:
+
+- event sourcing benchmarks (IEventStore append/read/hydrate) — requires in-memory event store or test-friendly provider
+- outbox benchmarks (IOutbox.EnqueueAsync) — requires in-memory outbox implementation
+- transport handler benchmarks — requires HTTP test infrastructure per transport
 
 ## Sprint history and next 4 sprints
 
@@ -1560,3 +1569,10 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - comprehensive engine audit: WebSocket binding empty catch blocks replaced with high-performance `[LoggerMessage]` source-generated logging delegates (CA1848/CA1873 compliant), flaky test fix for `MapCephalonExposesCapturedStartupFailuresWhenPolicyDoesNotFailFast` using `TryGetProperty` pattern, architecture inventory and recommendations docs
 - backlog alignment: ENG-049, ENG-050, ENG-052, ENG-053, ENG-055 status updated to done (all baseline acceptance criteria met, remaining work moved to follow-up sections), ENG-059 created for runtime hot-path benchmark expansion
 - docs: `docs/architecture-inventory.md` (comprehensive engine component inventory), `docs/architecture-recommendations.md` (future pattern recommendations, deferred), `docs/architecture.md` cross-references, `docs/engine-roadmap.md` Sprint 33 entry and Phase 11/12/13 planning — **Shipped** · 648/648 tests
+
+### Sprint 35
+
+- ENG-059 runtime hot-path benchmark expansion: 4 new benchmark classes covering data layer dispatch (query/command/result-command), behavior dispatch (frozen-dictionary + compiled delegate), authorization evaluation (RBAC allow/deny paths), tenant resolution (by-id/hostname/default-fallback) — 9 new benchmarks with 8192 ops/iteration each
+- benchmark support: `BenchmarkHotPathTypes.cs` with data stubs (BenchmarkQuery/Command/ResultCommand + handlers), behavior stubs (EchoBenchmarkBehavior, StubBehaviorContext/Catalog/TypeRegistry), authorization policy module (BenchmarkAuthorizationPolicyModule)
+- guardrail catalog expanded from 10 to 19 entries, `GuardrailValidatorTests` updated
+- benchmark project now references `Cephalon.Behaviors` for behavior dispatch measurement — **Shipped** · 648/648 tests

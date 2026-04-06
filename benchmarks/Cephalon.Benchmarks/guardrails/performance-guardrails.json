@@ -70,6 +70,69 @@
       "maxMeanNanoseconds": 375000,
       "maxAllocatedBytes": 625000,
       "notes": "Phase-8 scaffolding should stay below 375 us and under roughly 625 KB allocated while emitting the structured config, additive pack hints, and starter-test baseline."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.DataDispatchBenchmarks-report.csv",
+      "benchmark": "DispatchQuery",
+      "maxMeanNanoseconds": 5000,
+      "maxAllocatedBytes": 5000,
+      "notes": "Handler-dispatching read store query dispatch with a warm cache should stay below 5 us and under roughly 5 KB allocated per call."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.DataDispatchBenchmarks-report.csv",
+      "benchmark": "DispatchCommand",
+      "maxMeanNanoseconds": 5000,
+      "maxAllocatedBytes": 5000,
+      "notes": "Handler-dispatching write store void command dispatch with a warm cache should stay below 5 us and under roughly 5 KB allocated per call."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.DataDispatchBenchmarks-report.csv",
+      "benchmark": "DispatchCommandWithResult",
+      "maxMeanNanoseconds": 5000,
+      "maxAllocatedBytes": 5000,
+      "notes": "Handler-dispatching write store result command dispatch with a warm cache should stay below 5 us and under roughly 5 KB allocated per call."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv",
+      "benchmark": "DispatchBehavior",
+      "maxMeanNanoseconds": 10000,
+      "maxAllocatedBytes": 10000,
+      "notes": "Behavior dispatcher frozen-dictionary lookup and compiled delegate invocation should stay below 10 us and under roughly 10 KB allocated per call."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.AuthorizationEvaluationBenchmarks-report.csv",
+      "benchmark": "EvaluateRbacAllow",
+      "maxMeanNanoseconds": 15000,
+      "maxAllocatedBytes": 15000,
+      "notes": "Metadata-driven RBAC authorization evaluation on the allow path should stay below 15 us and under roughly 15 KB allocated per call."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.AuthorizationEvaluationBenchmarks-report.csv",
+      "benchmark": "EvaluateRbacDeny",
+      "maxMeanNanoseconds": 15000,
+      "maxAllocatedBytes": 15000,
+      "notes": "Metadata-driven RBAC authorization evaluation on the deny path should stay below 15 us and under roughly 15 KB allocated per call."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.TenantResolutionBenchmarks-report.csv",
+      "benchmark": "ResolveByTenantId",
+      "maxMeanNanoseconds": 10000,
+      "maxAllocatedBytes": 10000,
+      "notes": "Configuration-driven tenant resolution by explicit tenant id should stay below 10 us and under roughly 10 KB allocated per call."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.TenantResolutionBenchmarks-report.csv",
+      "benchmark": "ResolveByHostName",
+      "maxMeanNanoseconds": 10000,
+      "maxAllocatedBytes": 10000,
+      "notes": "Configuration-driven tenant resolution by hostname domain matching should stay below 10 us and under roughly 10 KB allocated per call."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.TenantResolutionBenchmarks-report.csv",
+      "benchmark": "ResolveDefaultTenant",
+      "maxMeanNanoseconds": 10000,
+      "maxAllocatedBytes": 10000,
+      "notes": "Configuration-driven tenant resolution falling back to the configured default tenant should stay below 10 us and under roughly 10 KB allocated per call."
     }
   ]
 }
