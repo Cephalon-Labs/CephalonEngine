@@ -22,6 +22,7 @@
     <Project Path="src/Cephalon.Audit/Cephalon.Audit.csproj" />
     <Project Path="src/Cephalon.Cli/Cephalon.Cli.csproj" />
     <Project Path="src/Cephalon.Data.EntityFramework/Cephalon.Data.EntityFramework.csproj" />
+    <Project Path="src/Cephalon.Data.MongoDB/Cephalon.Data.MongoDB.csproj" />
     <Project Path="src/Cephalon.Data/Cephalon.Data.csproj" />
     <Project Path="src/Cephalon.Edge/Cephalon.Edge.csproj" />
     <Project Path="src/Cephalon.Behaviors/Cephalon.Behaviors.csproj" />
@@ -31,6 +32,7 @@
     <Project Path="src/Cephalon.Behaviors.SourceGen/Cephalon.Behaviors.SourceGen.csproj" />
     <Project Path="src/Cephalon.EventSourcing/Cephalon.EventSourcing.csproj" />
     <Project Path="src/Cephalon.EventSourcing.EntityFramework/Cephalon.EventSourcing.EntityFramework.csproj" />
+    <Project Path="src/Cephalon.EventSourcing.MongoDB/Cephalon.EventSourcing.MongoDB.csproj" />
     <Project Path="src/Cephalon.Eventing.Wolverine/Cephalon.Eventing.Wolverine.csproj" />
     <Project Path="src/Cephalon.Eventing/Cephalon.Eventing.csproj" />
     <Project Path="src/Cephalon.AspNetCore.GraphQL/Cephalon.AspNetCore.GraphQL.csproj" />

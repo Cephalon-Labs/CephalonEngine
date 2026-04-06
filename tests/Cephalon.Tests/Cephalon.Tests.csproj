@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EphemeralMongo7" />
     <PackageReference Include="Grpc.Net.Client" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
@@ -89,8 +90,10 @@
     <ProjectReference Include="..\..\src\Cephalon.Behaviors.Messaging\Cephalon.Behaviors.Messaging.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Behaviors.Patterns\Cephalon.Behaviors.Patterns.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Behaviors.SourceGen\Cephalon.Behaviors.SourceGen.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.MongoDB\Cephalon.Data.MongoDB.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.EventSourcing\Cephalon.EventSourcing.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.EventSourcing.EntityFramework\Cephalon.EventSourcing.EntityFramework.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.EventSourcing.MongoDB\Cephalon.EventSourcing.MongoDB.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Retrieval\Cephalon.Retrieval.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Scaffolding\Cephalon.Scaffolding.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Worker\Cephalon.Worker.csproj" />
