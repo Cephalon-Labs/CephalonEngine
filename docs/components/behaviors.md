@@ -81,3 +81,19 @@ Resolved topology is the result of a four-layer merge (lowest → highest priori
 - Transport bindings live in future `Cephalon.Behaviors.Http` (M2), `Cephalon.Behaviors.Messaging` (M3)
 - Pattern execution strategies live in future `Cephalon.Behaviors.Patterns` (M4)
 - Source generator lives in future `Cephalon.Behaviors.SourceGen` (M5)
+
+## M2 HTTP Transport Pack (`Cephalon.Behaviors.Http`)
+
+> Status: 🚧 In Progress (Sprint 21)
+
+Adds HTTP transport bindings. Each binding implements `IHttpBehaviorBinding` and is lazily initialized on first request.
+
+| Transport ID | Binding | Route pattern |
+|---|---|---|
+| `http.rest` | `RestHttpBehaviorBinding` | `POST/GET /behaviors/{id}` |
+| `http.jsonrpc` | `JsonRpcHttpBehaviorBinding` | `POST /behaviors/{id}/jsonrpc` |
+| `http.graphql` | `GraphqlHttpBehaviorBinding` | `POST /behaviors/{id}/graphql` |
+| `http.graphql-sse` | `GraphqlSseBehaviorBinding` | `POST /behaviors/{id}/graphql/sse` |
+| `http.graphql-ws` | `GraphqlWsBehaviorBinding` | `GET /behaviors/{id}/graphql/ws` |
+| `http.sse` | `SseBehaviorBinding` | `GET /behaviors/{id}/events` |
+| `http.ws` | `WebSocketBehaviorBinding` | `GET /behaviors/{id}/ws` |
