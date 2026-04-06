@@ -1,0 +1,149 @@
+using System.Buffers;
+using System.Net.WebSockets;
+using System.Text;
+using System.Text.Json;
+using Cephalon.Abstractions.Behaviors;
+using Cephalon.Behaviors.Http.Abstractions;
+using Cephalon.Behaviors.Services;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+
+namespace Cephalon.Behaviors.Http.Bindings;
+
+/// <summary>
+/// Bidirectional WebSocket transport binding (transport ID: <c>http.ws</c>).
+/// Upgrades <c>GET /behaviors/{id}/ws</c> to a full-duplex WebSocket connection.
+/// Each received JSON text frame is dispatched to the behavior and the result
+/// is sent back as a JSON text frame. The connection is closed gracefully on
+/// client close or cancellation.
+/// </summary>
+public sealed class WebSocketBehaviorBinding : IHttpBehaviorBinding
+{
+    /// <inheritdoc />
+    public string TransportId => "http.ws";
+
+    /// <inheritdoc />
+    public Task MapAsync(
+        WebApplication app,
+        BehaviorTopologyDescriptor descriptor,
+        BehaviorDispatcher dispatcher)
+    {
+        ArgumentNullException.ThrowIfNull(app);
+        ArgumentNullException.ThrowIfNull(descriptor);
+        ArgumentNullException.ThrowIfNull(dispatcher);
+
+        var route = $"/behaviors/{descriptor.Id}/ws";
+
+        app.MapGet(route, async (HttpContext ctx) =>
+        {
+            // G-WS-01: must be a WebSocket upgrade request
+            if (!ctx.WebSockets.IsWebSocketRequest)
+            {
+                ctx.Response.StatusCode = StatusCodes.Status400BadRequest;
+                return;
+            }
+
+            using var ws = await ctx.WebSockets.AcceptWebSocketAsync().ConfigureAwait(false);
+            await HandleWebSocketAsync(ws, ctx, descriptor.Id, dispatcher).ConfigureAwait(false);
+        });
+
+        return Task.CompletedTask;
+    }
+
+    private static async Task HandleWebSocketAsync(
+        WebSocket ws,
+        HttpContext ctx,
+        string behaviorId,
+        BehaviorDispatcher dispatcher)
+    {
+        // G-WS-05: rent from ArrayPool, release in finally
+        var buffer = ArrayPool<byte>.Shared.Rent(4096);
+        try
+        {
+            while (ws.State == WebSocketState.Open && !ctx.RequestAborted.IsCancellationRequested)
+            {
+                WebSocketReceiveResult result;
+                var messageBuffer = new List<byte>();
+
+                try
+                {
+                    do
+                    {
+                        result = await ws.ReceiveAsync(buffer, ctx.RequestAborted).ConfigureAwait(false);
+                        messageBuffer.AddRange(buffer[..result.Count]);
+                    } while (!result.EndOfMessage);
+                }
+                catch (OperationCanceledException)
+                {
+                    // G-WS-04: let OperationCanceledException propagate out of the loop
+                    break;
+                }
+                catch (Exception)
+                {
+                    // G-WS-03: abort on unexpected receive error
+                    ws.Abort();
+                    return;
+                }
+
+                // G-WS-02: handle CloseReceived state
+                if (result.MessageType == WebSocketMessageType.Close ||
+                    ws.State == WebSocketState.CloseReceived)
+                {
+                    await ws.CloseAsync(
+                        result.CloseStatus ?? WebSocketCloseStatus.NormalClosure,
+                        result.CloseStatusDescription ?? "Closed",
+                        CancellationToken.None).ConfigureAwait(false);
+                    return;
+                }
+
+                if (result.MessageType != WebSocketMessageType.Text) continue;
+
+                object? input;
+                try
+                {
+                    input = JsonSerializer.Deserialize<object>(messageBuffer.ToArray());
+                }
+                catch
+                {
+                    var errBytes = Encoding.UTF8.GetBytes(
+                        JsonSerializer.Serialize(new { error = "Invalid JSON frame" }));
+                    await ws.SendAsync(errBytes, WebSocketMessageType.Text, endOfMessage: true, ctx.RequestAborted)
+                        .ConfigureAwait(false);
+                    continue;
+                }
+
+                if (input is null) continue;
+
+                try
+                {
+                    var context = DefaultBehaviorContext.From(ctx, behaviorId);
+                    var dispatchResult = await dispatcher.DispatchAsync(behaviorId, input, context, ctx.RequestAborted)
+                        .ConfigureAwait(false);
+
+                    var responseJson = JsonSerializer.Serialize(dispatchResult);
+                    var responseBytes = Encoding.UTF8.GetBytes(responseJson);
+                    await ws.SendAsync(responseBytes, WebSocketMessageType.Text, endOfMessage: true, ctx.RequestAborted)
+                        .ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    var errBytes = Encoding.UTF8.GetBytes(
+                        JsonSerializer.Serialize(new { error = ex.Message }));
+                    await ws.SendAsync(errBytes, WebSocketMessageType.Text, endOfMessage: true, CancellationToken.None)
+                        .ConfigureAwait(false);
+                }
+            }
+
+            if (ws.State == WebSocketState.Open)
+            {
+                await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None)
+                    .ConfigureAwait(false);
+            }
+        }
+        finally
+        {
+            // G-WS-05: always return the rented buffer
+            ArrayPool<byte>.Shared.Return(buffer);
+        }
+    }
+}

@@ -12,7 +12,6 @@ namespace Cephalon.Behaviors.Services;
 /// </summary>
 public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
 {
-    private readonly IServiceCollection _services;
     private readonly BehaviorTypeRegistry _typeRegistry;
 
     /// <summary>
@@ -24,9 +23,12 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(typeRegistry);
-        _services = services;
+        Services = services;
         _typeRegistry = typeRegistry;
     }
+
+    /// <inheritdoc />
+    public IServiceCollection Services { get; }
 
     /// <summary>
     /// Registers a behavior of type <typeparamref name="TBehavior" /> with the runtime.
@@ -67,7 +69,7 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
         var behaviorId = attr.Id;
 
         // 1. Register the type in DI as transient
-        _services.TryAddTransient<TBehavior>();
+        Services.TryAddTransient<TBehavior>();
 
         // 2. Populate the type registry
         _typeRegistry.Register(behaviorId, behaviorType);
@@ -79,7 +81,7 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
             configureTopology(builder);
             var descriptor = builder.Build(behaviorId);
             var contributor = new FluentBehaviorContributor(descriptor);
-            _services.AddSingleton<IBehaviorContributor>(contributor);
+            Services.AddSingleton<IBehaviorContributor>(contributor);
         }
 
         return this;

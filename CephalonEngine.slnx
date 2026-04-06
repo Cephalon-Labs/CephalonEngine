@@ -25,6 +25,7 @@
     <Project Path="src/Cephalon.Data/Cephalon.Data.csproj" />
     <Project Path="src/Cephalon.Edge/Cephalon.Edge.csproj" />
     <Project Path="src/Cephalon.Behaviors/Cephalon.Behaviors.csproj" />
+    <Project Path="src/Cephalon.Behaviors.Http/Cephalon.Behaviors.Http.csproj" />
     <Project Path="src/Cephalon.EventSourcing/Cephalon.EventSourcing.csproj" />
     <Project Path="src/Cephalon.EventSourcing.EntityFramework/Cephalon.EventSourcing.EntityFramework.csproj" />
     <Project Path="src/Cephalon.Eventing.Wolverine/Cephalon.Eventing.Wolverine.csproj" />

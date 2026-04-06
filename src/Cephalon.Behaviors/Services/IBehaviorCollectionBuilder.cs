@@ -1,4 +1,5 @@
 using Cephalon.Behaviors.Builders;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Behaviors.Services;
 
@@ -8,6 +9,12 @@ namespace Cephalon.Behaviors.Services;
 /// </summary>
 public interface IBehaviorCollectionBuilder
 {
+    /// <summary>
+    /// Gets the underlying <see cref="IServiceCollection" /> so that transport packs
+    /// and other extensions can register their own services.
+    /// </summary>
+    IServiceCollection Services { get; }
+
     /// <summary>
     /// Registers a behavior of type <typeparamref name="TBehavior" /> with the runtime.
     /// </summary>
