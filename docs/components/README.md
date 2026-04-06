@@ -31,6 +31,7 @@ See also: [Docs hub](../README.md)
 - [Cephalon.Behaviors.Http](behaviors-http.md)
 - [Cephalon.Behaviors.Messaging](behaviors-messaging.md)
 - [Cephalon.Behaviors.Patterns](behaviors-patterns.md)
+- [Cephalon.Behaviors.SourceGen](behaviors-sourcegen.md)
 
 ## Phase 8 companion packs
 

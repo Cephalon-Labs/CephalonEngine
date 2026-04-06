@@ -725,6 +725,14 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Behaviors.Messaging.Registry.MessagingBehaviorBindingRegistry));
     }
 
+    [Fact]
+    public void BehaviorsSourceGenAssemblyExposesOnlyTheDocumentedContractSurface()
+    {
+        var asm = typeof(Cephalon.Behaviors.SourceGen.BehaviorSourceGenerator).Assembly;
+        AssertExportedTypes(asm,
+            typeof(Cephalon.Behaviors.SourceGen.BehaviorSourceGenerator));
+    }
+
     private static void AssertExportedTypes(Assembly assembly, params Type[] expectedTypes)
     {
         var exportedTypes = assembly

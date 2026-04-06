@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Grpc.Net.Client" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="coverlet.collector">
       <PrivateAssets>all</PrivateAssets>
@@ -87,6 +88,7 @@
     <ProjectReference Include="..\..\src\Cephalon.Behaviors.Http\Cephalon.Behaviors.Http.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Behaviors.Messaging\Cephalon.Behaviors.Messaging.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Behaviors.Patterns\Cephalon.Behaviors.Patterns.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Behaviors.SourceGen\Cephalon.Behaviors.SourceGen.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.EventSourcing\Cephalon.EventSourcing.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.EventSourcing.EntityFramework\Cephalon.EventSourcing.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Retrieval\Cephalon.Retrieval.csproj" />
