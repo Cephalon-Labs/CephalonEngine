@@ -78,9 +78,10 @@ Resolved topology is the result of a four-layer merge (lowest → highest priori
 
 ## Related components
 
-- Transport bindings live in future `Cephalon.Behaviors.Http` (M2), `Cephalon.Behaviors.Messaging` (M3)
-- Pattern execution strategies live in future `Cephalon.Behaviors.Patterns` (M4)
-- Source generator lives in future `Cephalon.Behaviors.SourceGen` (M5)
+- Transport bindings: `Cephalon.Behaviors.Http` (M2 — shipped), `Cephalon.Behaviors.Messaging` (M3 — shipped)
+- Pattern execution strategies: `Cephalon.Behaviors.Patterns` (M4 — shipped)
+- Source generator: `Cephalon.Behaviors.SourceGen` (M5 — shipped)
+- Runtime integration: `BehaviorRuntimeContributor`, `IBehaviorAdvisory`, `BehaviorDiagnostics` (M6 — shipped)
 
 ## M2 HTTP Transport Pack (`Cephalon.Behaviors.Http`)
 
@@ -97,3 +98,51 @@ Adds HTTP transport bindings. Each binding implements `IHttpBehaviorBinding` and
 | `http.graphql-ws` | `GraphqlWsBehaviorBinding` | `GET /behaviors/{id}/graphql/ws` |
 | `http.sse` | `SseBehaviorBinding` | `GET /behaviors/{id}/events` |
 | `http.ws` | `WebSocketBehaviorBinding` | `GET /behaviors/{id}/ws` |
+
+## M6 Runtime Integration
+
+> Status: Shipped — commit `62d386c` · 592/592 tests
+
+Adds runtime observability, advisory system, EventStore wiring, and structured diagnostics to the ABT stack.
+
+### BehaviorRuntimeContributor
+
+Implements `ITechnologyRuntimeContributor` and reports the behavior subsystem surface to `/engine/snapshot`:
+
+- Total registered behavior count
+- Pattern distribution (cqrs / event-driven / saga-step / process-manager / direct)
+- Transport distribution across all registered behaviors
+
+### IBehaviorAdvisory system
+
+| Type | Description |
+|------|-------------|
+| `IBehaviorAdvisory` | Immutable advisory record: behavior ID, message, severity, optional exception |
+| `IBehaviorAdvisoryContributor` | Extension point — implement to emit advisories at startup or runtime |
+| `IBehaviorAdvisoryCatalog` | Read surface — enumerate all advisories raised across contributors |
+| `BehaviorAdvisorySeverity` | `Info` / `Warning` / `Error` severity enum |
+| `BehaviorAdvisoryCatalog` | Default implementation aggregating all registered `IBehaviorAdvisoryContributor` instances |
+
+### IBehaviorContext.EventStore
+
+`IBehaviorContext` gains an `EventStore` property (`IEventStore?`). Wired automatically when `IEventStore` is registered:
+
+- `DefaultBehaviorContext` — resolves from DI
+- `KafkaBehaviorContext` — resolves from DI
+- `RabbitMqBehaviorContext` — resolves from DI
+- `TestBehaviorContext` — accepts injected `IEventStore?` for test scenarios
+
+### BehaviorDiagnostics EventId constants (5100-5109)
+
+| Constant | EventId | Meaning |
+|----------|---------|---------|
+| `Dispatching` | 5100 | Behavior dispatch starting |
+| `Dispatched` | 5101 | Behavior dispatch completed |
+| `DispatchFailed` | 5102 | Behavior dispatch threw |
+| `CompatibilityViolation` | 5103 | Compatibility rule triggered |
+| `TopologyResolved` | 5104 | Per-behavior topology resolved |
+| `BehaviorRegistered` | 5105 | Behavior added to catalog |
+| `TransportBound` | 5106 | Transport binding succeeded |
+| `TransportBindFailed` | 5107 | Transport binding failed |
+| `AdvisoryRaised` | 5108 | Advisory emitted by a contributor |
+| `SlotCompiled` | 5109 | `BehaviorExecutionSlot` compiled |

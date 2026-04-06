@@ -81,7 +81,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 22`: **shipped** `ENG-058 M3` Messaging Transport Pack — InMemory, RabbitMQ, Kafka bindings; M2 CTS leak fix — 527/527 tests (commit `9183407`)
 - `Sprint 23`: **shipped** `ENG-058 M4` Pattern Execution Strategies — 5 strategies (`cqrs`, `event-driven`, `saga-step`, `process-manager`, `direct`), `ISagaStateStore`, `IProcessCheckpointStore`, `FrozenDictionary` registry, `IBehaviorContext.CorrelationId`, `IProcessCompletion` — 575/575 tests (commit `cc2ab0a`)
 - `Sprint 24 (M5)`: **shipped** `ENG-058 M5` Source Generator — `BehaviorSourceGenerator` (analyzer + incremental generator), ABT0010–ABT0013, `BehaviorRegistrationHints.g.cs`, 584/584 tests (commit `8455b9a`)
-- `Sprint 24 (M6)`: deliver `ENG-058 M6` Runtime Integration (`BehaviorRuntimeContributor`, `IBehaviorAdvisory`, EventSourcing wiring, diagnostics 5100-5109)
+- `Sprint 24 (M6)`: **shipped** `ENG-058 M6` Runtime Integration — `BehaviorRuntimeContributor`, `IBehaviorAdvisory` system, `IBehaviorContext.EventStore`, `BehaviorDiagnostics` 5100-5109, 592/592 tests (commit `62d386c`)
 - `Later / not scheduled yet`: further cloud/platform integrations beyond the shipped phase 6 baseline, `ENG-054` hybrid-runtime and provider-family expansion, `ENG-057` event-sourcing follow-through, and future solution-level expansion only when an explicit adoption scenario needs them
 
 ## Planning principles
