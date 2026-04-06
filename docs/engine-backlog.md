@@ -1175,8 +1175,8 @@ Progress:
 
 ### ENG-054 Provider-family and hybrid-runtime follow-through
 
-Status: later
-Estimate: 21
+Status: in progress
+Estimate: 80
 
 Why:
 
@@ -1190,6 +1190,13 @@ Acceptance:
 - `HybridCloudRuntime`, `ServiceMeshIntegration`, and `ServerlessHosting` remain additive technology follow-through instead of new blueprints or engine-core branches
 - docs, runtime surfaces, and observability stay truthful about which provider families and deployment runtimes are actually shipped
 - expansion work starts only after the relational-first phase-8 golden path is complete
+
+Progress:
+
+- `Cephalon.Data.MongoDB` now exists as the first non-relational data companion pack: registers `IMongoClient` + `IMongoDatabase`, delivers `IOutbox` and `IInbox` backed by MongoDB collections with idempotent staging via unique index on `MessageId`, publishes `data.mongodb` / `data.document-store` / `data.outbox.mongodb` / `data.inbox.mongodb` capabilities, and projects `outbox-producers` and `inbox-stores` through the `event-driven-integration` technology surface — no changes to `Cephalon.Engine` or `Cephalon.Abstractions`
+- `Cephalon.EventSourcing.MongoDB` now exists as the first non-relational event-store provider: implements `IEventStore` against a `event_streams` collection with optimistic concurrency enforced by a compound unique index on `(StreamId, StreamVersion)`, exposes `GetVersionAsync` / `AppendAsync` / `ReadStreamAsync`, serializes through `System.Text.Json`, and round-trips event types via `AssemblyQualifiedName`
+- both packages ship 12 integration tests via EphemeralMongo in-process runner and full component-guide docs
+- companion-pack pattern proven for document-oriented stores — commit `f94dc28` · 599 tests green
 
 ### ENG-055 Phase 8 validation, benchmark, and runtime-truth matrix
 
@@ -1412,4 +1419,8 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 - ENG-058 M5 Source Generator: Roslyn `IIncrementalGenerator` + `DiagnosticAnalyzer` (`Cephalon.Behaviors.SourceGen`); ABT0010–ABT0013 diagnostics; `ForAttributeWithMetadataName`; emits `BehaviorRegistrationHints.g.cs` — **Shipped** commit `8455b9a` · 584/584 tests
 - ENG-058 M6 Runtime Integration: `BehaviorRuntimeContributor` (ITechnologyRuntimeContributor), `IBehaviorAdvisory` system (contributor/catalog/severity), `IBehaviorContext.EventStore` (IEventStore? wiring), `BehaviorDiagnostics` EventId 5100-5109 — **Shipped** commit `62d386c` · 592/592 tests
+
+### Sprint 25
+
+- ENG-054 Phase 10 non-relational provider baseline: `Cephalon.Data.MongoDB` (IOutbox + IInbox backed by MongoDB collections, idempotent staging via unique index, outbox/inbox runtime surface contribution, `data.mongodb` / `data.document-store` capabilities), `Cephalon.EventSourcing.MongoDB` (IEventStore with optimistic concurrency via compound unique index on StreamId+StreamVersion, System.Text.Json serialization, IAsyncEnumerable stream replay), MongoDB.Driver 3.4.0 in CPM, 12 integration tests via EphemeralMongo, full component docs — **Shipped** commit `f94dc28` · 599/599 tests
 
