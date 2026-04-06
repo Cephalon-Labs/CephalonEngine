@@ -45,6 +45,8 @@ services.AddCephalon(config, engine => engine
 | `Authorization` (sub claim) | `Metadata["UserId"]` |
 | `X-Meta-*` | `Metadata[key-without-prefix]` |
 
+> Status: ✅ Shipped — commit c957966 · 516/516 tests
+
 ## Related components
 
 - `Cephalon.Behaviors` — dispatcher, catalog, resolver, compatibility rules (required dependency)

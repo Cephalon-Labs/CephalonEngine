@@ -661,6 +661,30 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Audit.Services.IAuditRecorder));
     }
 
+    [Fact]
+    public void BehaviorsHttpAssemblyExposesOnlyTheDocumentedContractSurface()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Behaviors.Http.Bindings.RestHttpBehaviorBinding).Assembly,
+            typeof(global::Cephalon.Behaviors.Http.Abstractions.IHttpBehaviorBinding),
+            typeof(global::Cephalon.Behaviors.Http.Abstractions.IHttpBehaviorBindingRegistry),
+            typeof(global::Cephalon.Behaviors.Http.Bindings.RestHttpBehaviorBinding),
+            typeof(global::Cephalon.Behaviors.Http.Bindings.JsonRpcRequest),
+            typeof(global::Cephalon.Behaviors.Http.Bindings.JsonRpcSuccessResponse),
+            typeof(global::Cephalon.Behaviors.Http.Bindings.JsonRpcErrorResponse),
+            typeof(global::Cephalon.Behaviors.Http.Bindings.JsonRpcError),
+            typeof(global::Cephalon.Behaviors.Http.Bindings.JsonRpcHttpBehaviorBinding),
+            typeof(global::Cephalon.Behaviors.Http.Bindings.GraphqlRequest),
+            typeof(global::Cephalon.Behaviors.Http.Bindings.GraphqlHttpBehaviorBinding),
+            typeof(global::Cephalon.Behaviors.Http.Bindings.GraphqlSseBehaviorBinding),
+            typeof(global::Cephalon.Behaviors.Http.Bindings.GraphqlWsBehaviorBinding),
+            typeof(global::Cephalon.Behaviors.Http.Bindings.SseBehaviorBinding),
+            typeof(global::Cephalon.Behaviors.Http.Bindings.WebSocketBehaviorBinding),
+            typeof(global::Cephalon.Behaviors.Http.Registry.HttpBehaviorBindingRegistry),
+            typeof(global::Cephalon.Behaviors.Http.LazyTransportBinding),
+            typeof(global::Cephalon.Behaviors.Http.Hosting.HttpBehaviorBindingExtensions));
+    }
+
     private static void AssertExportedTypes(Assembly assembly, params Type[] expectedTypes)
     {
         var exportedTypes = assembly

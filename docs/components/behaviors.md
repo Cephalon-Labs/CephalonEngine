@@ -84,7 +84,7 @@ Resolved topology is the result of a four-layer merge (lowest → highest priori
 
 ## M2 HTTP Transport Pack (`Cephalon.Behaviors.Http`)
 
-> Status: 🚧 In Progress (Sprint 21)
+> Status: ✅ Shipped — commit c957966 · 516/516 tests
 
 Adds HTTP transport bindings. Each binding implements `IHttpBehaviorBinding` and is lazily initialized on first request.
 
