@@ -1457,3 +1457,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 ### Sprint 31
 
 - ENG-054 Qdrant vector-store + NATS ledger non-relational provider: `Cephalon.Data.Qdrant` (IOutbox + IInbox backed by Qdrant vector collections using 1D dummy vectors and payload-field storage, idempotent staging via point-ID existence check, `data.qdrant` / `data.vector-store` capabilities), `Cephalon.EventSourcing.Qdrant` (IEventStore with compound point-ID `{streamId}:{version}` hash, application-layer optimistic concurrency, Scroll-based stream replay), `Cephalon.Data.Nats` (IOutbox + IInbox backed by NATS JetStream KV, idempotent via KV CreateAsync with NatsKVCreateException swallow, `data.nats` / `data.ledger-store` capabilities), `Cephalon.EventSourcing.Nats` (IEventStore via JetStream KV with zero-padded keys `{streamId}/{version:D20}`, lexicographic-safe ordering, CreateAsync for concurrency), Qdrant.Client 1.17.0 + NATS.Net 2.7.3 in CPM, 8 composition tests (no live server — both clients connect lazily), full component docs — **Shipped**
+
+### Infrastructure — Phase 2 Developer Experience
+
+- Test assembly split: `Cephalon.Tests` monolith (648 tests) split into `Cephalon.Tests.Support` (shared lib), `Cephalon.Tests.Composition` (Composition + Behaviors + EventSourcing + Benchmarks), `Cephalon.Tests.Hosting` (Hosting/Observability), `Cephalon.Tests.Tooling` (Tooling + Scaffolding) — enables parallel test execution per assembly, faster incremental builds, and cleaner dependency boundaries

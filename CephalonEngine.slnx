@@ -100,7 +100,10 @@
     <Project Path="src/Cephalon.Worker/Cephalon.Worker.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Cephalon.Tests/Cephalon.Tests.csproj" />
+    <Project Path="tests/Cephalon.Tests.Support/Cephalon.Tests.Support.csproj" />
+    <Project Path="tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj" />
+    <Project Path="tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj" />
+    <Project Path="tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj" />
   </Folder>
   <Folder Name="/templates/">
     <Project Path="templates/Cephalon.TemplatePack/Cephalon.TemplatePack.csproj" />
