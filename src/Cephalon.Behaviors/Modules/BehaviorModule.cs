@@ -1,8 +1,10 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Behaviors.Compatibility;
 using Cephalon.Behaviors.Configuration;
+using Cephalon.Behaviors.Runtime;
 using Cephalon.Behaviors.Services;
 using Cephalon.Behaviors.Validation;
 using Microsoft.Extensions.DependencyInjection;
@@ -78,6 +80,12 @@ internal sealed class BehaviorModule(
 
         // Validation
         services.TryAddSingleton<BehaviorAllowlistValidator>();
+
+        // Advisory catalog — aggregates from all IBehaviorAdvisoryContributor registrations
+        services.TryAddSingleton<IBehaviorAdvisoryCatalog, BehaviorAdvisoryCatalog>();
+
+        // Runtime surface contributor — exposes behavior topology to /engine/snapshot
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, BehaviorRuntimeContributor>());
     }
 
     /// <summary>

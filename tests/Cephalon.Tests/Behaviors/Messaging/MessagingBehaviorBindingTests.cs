@@ -285,6 +285,8 @@ public sealed class MessagingBehaviorBindingTests
 
         public IReadOnlyDictionary<string, string> Metadata { get; }
 
+        public Cephalon.Abstractions.EventSourcing.IEventStore? EventStore => null;
+
         public Task ReplyAsync(object reply, CancellationToken cancellationToken = default)
         {
             _results.Add(reply);

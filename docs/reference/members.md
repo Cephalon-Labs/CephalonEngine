@@ -483,6 +483,9 @@ Browse the published API surface by public member.
 - [All](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamcatalog-all): `Properties` on `EventStreamCatalog` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=All&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Gets all event-stream descriptors contributed to the current runtime.
   - `IReadOnlyList<EventStreamDescriptor> All { get; }`
+- [All](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehavioradvisorycatalog-all): `Properties` on `IBehaviorAdvisoryCatalog` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=All&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets all active advisories.
+  - `IReadOnlyList<IBehaviorAdvisory> All { get; }`
 - [All](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorcatalog-all): `Properties` on `IBehaviorCatalog` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=All&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets all registered behavior topology descriptors.
   - `IReadOnlyList<BehaviorTopologyDescriptor> All { get; }`
@@ -740,6 +743,9 @@ Browse the published API surface by public member.
   - `string BehaviorId { get; }`
 - [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorsecurityexception-behaviorid): `Properties` on `BehaviorSecurityException` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the behavior identifier that triggered the security violation.
+  - `string BehaviorId { get; }`
+- [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehavioradvisory-behaviorid): `Properties` on `IBehaviorAdvisory` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the behavior identifier this advisory applies to, or `null` if global.
   - `string BehaviorId { get; }`
 - [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorcontext-behaviorid): `Properties` on `IBehaviorContext` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the stable identifier of the behavior being executed.
@@ -1125,6 +1131,9 @@ Browse the published API surface by public member.
 - [Contribute](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventstreamregistry-contribute): `Methods` on `EventStreamRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Contribute&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Returns the descriptors that have been registered with the current registry instance.
   - `IReadOnlyList<EventStreamDescriptor> Contribute()`
+- [Contribute](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehavioradvisorycontributor-contribute): `Methods` on `IBehaviorAdvisoryContributor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Contribute&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Contributes advisories for the current runtime state.
+  - `IReadOnlyList<IBehaviorAdvisory> Contribute()`
 - [Contribute](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviorcontributor-contribute): `Methods` on `IBehaviorContributor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Contribute&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Returns the behavior topology descriptors contributed by this instance.
   - `IReadOnlyList<BehaviorTopologyDescriptor> Contribute()`
@@ -1212,6 +1221,9 @@ Browse the published API surface by public member.
 - [CreateSnapshot](cephalon-engine.md#member-m-cephalon-engine-localization-localizedtextcatalog-createsnapshot-system-string): `Methods` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=CreateSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
   - Creates a serialization-friendly snapshot of the merged localized resources.
   - `LocalizedResourcesSnapshot CreateSnapshot(string culture)`
+- [Critical](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behavioradvisoryseverity-critical): `Fields` on `BehaviorAdvisorySeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Critical&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Critical — immediate attention recommended.
+  - `const BehaviorAdvisorySeverity Critical`
 - [Critical](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-critical): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Critical&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The event indicates a critical condition that usually requires immediate attention.
   - `const DiagnosticSeverity Critical`
@@ -1491,6 +1503,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-description): `Properties` on `HostedExecutionDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the human-readable description of the hosted execution.
   - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehavioradvisory-description): `Properties` on `IBehaviorAdvisory` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the advisory description.
+  - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorcompatibilityrule-description): `Properties` on `IBehaviorCompatibilityRule` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets a human-readable description of the rule.
   - `string Description { get; }`
@@ -1686,6 +1701,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-displayname): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the human-readable dependency name shown to operators.
   - `string DisplayName { get; set; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehavioradvisory-displayname): `Properties` on `IBehaviorAdvisory` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the display name shown in runtime surfaces.
+  - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-data-inboxdescriptor-displayname): `Properties` on `InboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing inbox name.
   - `string DisplayName { get; }`
@@ -2091,6 +2109,9 @@ Browse the published API surface by public member.
 - [EventSourcingPattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-eventsourcingpattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=EventSourcingPattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the event-sourcing pattern.
   - `PatternDescriptor EventSourcingPattern { get; }`
+- [EventStore](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorcontext-eventstore): `Properties` on `IBehaviorContext` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventStore&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the event store for the current behavior context, or `null` if event sourcing is not configured for this behavior.
+  - `IEventStore EventStore { get; }`
 - [EventStreamCatalog](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventstreamcatalog-ctor-system-collections-generic-ienumerable-cephalon-abstractions-eventsourcing-ieventstorecontributor): `Constructors` on `EventStreamCatalog` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=EventStreamCatalog&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Initializes a new instance of the `EventStreamCatalog` class.
   - `EventStreamCatalog(IEnumerable<IEventStoreContributor> contributors)`
@@ -2463,6 +2484,9 @@ Browse the published API surface by public member.
 - [GeneratedAtUtcFieldNumber](cephalon-aspnetcore-grpc.md#member-f-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-generatedatutcfieldnumber): `Fields` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=GeneratedAtUtcFieldNumber&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Field number for the "generated_at_utc" field.
   - `const int GeneratedAtUtcFieldNumber`
+- [GetByBehavior](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehavioradvisorycatalog-getbybehavior-system-string): `Methods` on `IBehaviorAdvisoryCatalog` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByBehavior&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets advisories for a specific behavior identifier.
+  - `IReadOnlyList<IBehaviorAdvisory> GetByBehavior(string behaviorId)`
 - [GetByChannelId](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventsubscriptioncatalog-getbychannelid-system-string): `Methods` on `IEventSubscriptionCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=GetByChannelId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the subscriptions currently bound to one event channel identifier.
   - `IReadOnlyList<EventSubscriptionDescriptor> GetByChannelId(string channelId)`
@@ -2523,6 +2547,9 @@ Browse the published API surface by public member.
 - [GetByProvider](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ioutboxcatalog-getbyprovider-system-string): `Methods` on `IOutboxCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all outboxes backed by the requested provider identifier.
   - `IReadOnlyList<OutboxDescriptor> GetByProvider(string provider)`
+- [GetBySeverity](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehavioradvisorycatalog-getbyseverity-cephalon-abstractions-behaviors-behavioradvisoryseverity): `Methods` on `IBehaviorAdvisoryCatalog` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySeverity&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets advisories at or above the specified severity.
+  - `IReadOnlyList<IBehaviorAdvisory> GetBySeverity(BehaviorAdvisorySeverity minimumSeverity)`
 - [GetBySource](cephalon-engine.md#member-m-cephalon-engine-diagnostics-iruntimediagnosticscatalog-getbysource-system-string): `Methods` on `IRuntimeDiagnosticsCatalog` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=GetBySource&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Gets the diagnostics conventions owned by the requested source.
   - `IReadOnlyList<DiagnosticsConvention> GetBySource(string source)`
@@ -2925,6 +2952,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-id): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
   - `string Id { get; set; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehavioradvisory-id): `Properties` on `IBehaviorAdvisory` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the stable advisory identifier.
+  - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-inboxdescriptor-id): `Properties` on `InboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable inbox identifier.
   - `string Id { get; }`
@@ -3093,6 +3123,9 @@ Browse the published API surface by public member.
 - [Index](cephalon-observability-opensearchdependencies.md#member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-index): `Properties` on `OpenSearchDependencyDefinition` in `Cephalon.Observability.OpenSearchDependencies.Configuration` (`Cephalon.Observability.OpenSearchDependencies`) [Browse](browse.html?q=Index&assembly=Cephalon.Observability.OpenSearchDependencies&namespace=Cephalon.Observability.OpenSearchDependencies.Configuration&scope=members)
   - Gets or sets the optional index name or comma-delimited index list that should be checked through the cluster-health API.
   - `string Index { get; set; }`
+- [Info](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behavioradvisoryseverity-info): `Fields` on `BehaviorAdvisorySeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Info&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Informational — no action required.
+  - `const BehaviorAdvisorySeverity Info`
 - [Information](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-information): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Information&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The event describes expected informational runtime behavior.
   - `const DiagnosticSeverity Information`
@@ -5235,6 +5268,9 @@ Browse the published API surface by public member.
 - [Severity](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-severity): `Properties` on `DiagnosticEventDefinition` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Severity&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The intended severity for the event.
   - `DiagnosticSeverity Severity { get; set; }`
+- [Severity](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehavioradvisory-severity): `Properties` on `IBehaviorAdvisory` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Severity&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the severity of this advisory.
+  - `BehaviorAdvisorySeverity Severity { get; }`
 - [SfidIdOptions](cephalon-ids-sfid.md#member-m-cephalon-ids-sfid-configuration-sfididoptions-ctor-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `SfidIdOptions` in `Cephalon.Ids.Sfid.Configuration` (`Cephalon.Ids.Sfid`) [Browse](browse.html?q=SfidIdOptions&assembly=Cephalon.Ids.Sfid&namespace=Cephalon.Ids.Sfid.Configuration&scope=members)
   - Initializes a new instance of the `SfidIdOptions` class.
   - `SfidIdOptions(int? datacenterId, int? workerId, int? workerCapacity, int? clockRegressionToleranceMilliseconds)`
@@ -6330,6 +6366,9 @@ Browse the published API surface by public member.
 
 ## W
 
+- [Warning](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behavioradvisoryseverity-warning): `Fields` on `BehaviorAdvisorySeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Warning&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Warning — review recommended.
+  - `const BehaviorAdvisorySeverity Warning`
 - [Warning](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-compatibilityseverity-warning): `Fields` on `CompatibilitySeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Warning&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - The violation may cause runtime issues but does not prevent startup.
   - `const CompatibilitySeverity Warning`

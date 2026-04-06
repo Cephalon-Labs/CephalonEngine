@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Behaviors;
+using Cephalon.Abstractions.EventSourcing;
 using Microsoft.AspNetCore.Http;
 
 namespace Cephalon.Behaviors.Http;
@@ -61,6 +62,9 @@ internal sealed class DefaultBehaviorContext : IBehaviorContext
     /// <inheritdoc />
     public IReadOnlyDictionary<string, string> Metadata { get; private init; } =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+    /// <inheritdoc />
+    public IEventStore? EventStore { get; private init; }
 
     /// <summary>
     /// Gets the cancellation token from the underlying HTTP request.

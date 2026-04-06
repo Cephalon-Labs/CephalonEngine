@@ -2742,6 +2742,49 @@ string Id { get; }
 
 Gets the stable behavior identifier.
 
+<a id="type-cephalon-abstractions-behaviors-behavioradvisoryseverity"></a>
+
+### `BehaviorAdvisorySeverity`
+
+Severity levels for behavior advisories.
+
+#### Declaration
+```csharp
+public enum BehaviorAdvisorySeverity
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-behaviors-behavioradvisoryseverity-critical"></a>
+
+##### `Critical`
+
+```csharp
+const BehaviorAdvisorySeverity Critical
+```
+
+Critical — immediate attention recommended.
+
+<a id="member-f-cephalon-abstractions-behaviors-behavioradvisoryseverity-info"></a>
+
+##### `Info`
+
+```csharp
+const BehaviorAdvisorySeverity Info
+```
+
+Informational — no action required.
+
+<a id="member-f-cephalon-abstractions-behaviors-behavioradvisoryseverity-warning"></a>
+
+##### `Warning`
+
+```csharp
+const BehaviorAdvisorySeverity Warning
+```
+
+Warning — review recommended.
+
 <a id="type-cephalon-abstractions-behaviors-behaviorallowedpatternsattribute"></a>
 
 ### `BehaviorAllowedPatternsAttribute`
@@ -3294,6 +3337,139 @@ Task<TOut> HandleAsync(TIn input, IBehaviorContext context, CancellationToken ct
 
 Handles the behavior input and returns the output.
 
+<a id="type-cephalon-abstractions-behaviors-ibehavioradvisory"></a>
+
+### `IBehaviorAdvisory`
+
+Represents a runtime advisory that describes a recommendation or observation about behavior topology. Advisories are informational — they do not block dispatch.
+
+#### Declaration
+```csharp
+public interface IBehaviorAdvisory
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehavioradvisory-behaviorid"></a>
+
+##### `BehaviorId`
+
+```csharp
+string BehaviorId { get; }
+```
+
+Gets the behavior identifier this advisory applies to, or `null` if global.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehavioradvisory-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the advisory description.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehavioradvisory-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the display name shown in runtime surfaces.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehavioradvisory-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable advisory identifier.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehavioradvisory-severity"></a>
+
+##### `Severity`
+
+```csharp
+BehaviorAdvisorySeverity Severity { get; }
+```
+
+Gets the severity of this advisory.
+
+<a id="type-cephalon-abstractions-behaviors-ibehavioradvisorycatalog"></a>
+
+### `IBehaviorAdvisoryCatalog`
+
+Provides read access to all active behavior advisories.
+
+#### Declaration
+```csharp
+public interface IBehaviorAdvisoryCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehavioradvisorycatalog-all"></a>
+
+##### `All`
+
+```csharp
+IReadOnlyList<IBehaviorAdvisory> All { get; }
+```
+
+Gets all active advisories.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehavioradvisorycatalog-getbybehavior-system-string"></a>
+
+##### `GetByBehavior`
+
+```csharp
+IReadOnlyList<IBehaviorAdvisory> GetByBehavior(string behaviorId)
+```
+
+Gets advisories for a specific behavior identifier.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehavioradvisorycatalog-getbyseverity-cephalon-abstractions-behaviors-behavioradvisoryseverity"></a>
+
+##### `GetBySeverity`
+
+```csharp
+IReadOnlyList<IBehaviorAdvisory> GetBySeverity(BehaviorAdvisorySeverity minimumSeverity)
+```
+
+Gets advisories at or above the specified severity.
+
+<a id="type-cephalon-abstractions-behaviors-ibehavioradvisorycontributor"></a>
+
+### `IBehaviorAdvisoryContributor`
+
+Contributes behavior advisories to the active runtime's advisory catalog. Implementations are collected via dependency injection enumeration.
+
+#### Declaration
+```csharp
+public interface IBehaviorAdvisoryContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehavioradvisorycontributor-contribute"></a>
+
+##### `Contribute`
+
+```csharp
+IReadOnlyList<IBehaviorAdvisory> Contribute()
+```
+
+Contributes advisories for the current runtime state.
+
+Returns: The advisories contributed by this instance.
+
 <a id="type-cephalon-abstractions-behaviors-ibehaviorcatalog"></a>
 
 ### `IBehaviorCatalog`
@@ -3428,6 +3604,16 @@ string CorrelationId { get; }
 ```
 
 Gets the correlation identifier for the current execution, or `null` if not provided.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-eventstore"></a>
+
+##### `EventStore`
+
+```csharp
+IEventStore EventStore { get; }
+```
+
+Gets the event store for the current behavior context, or `null` if event sourcing is not configured for this behavior.
 
 <a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-metadata"></a>
 

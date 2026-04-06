@@ -29,6 +29,12 @@ public interface IBehaviorContext
     IReadOnlyDictionary<string, string> Metadata { get; }
 
     /// <summary>
+    /// Gets the event store for the current behavior context, or <see langword="null"/>
+    /// if event sourcing is not configured for this behavior.
+    /// </summary>
+    Cephalon.Abstractions.EventSourcing.IEventStore? EventStore { get; }
+
+    /// <summary>
     /// Sends a reply message back to the caller through the active transport.
     /// </summary>
     /// <param name="reply">The reply object to send.</param>

@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Behaviors;
+using Cephalon.Abstractions.EventSourcing;
 
 namespace Cephalon.Tests.Behaviors;
 
@@ -24,6 +25,8 @@ internal sealed class TestBehaviorContext : IBehaviorContext
     public string? CorrelationId { get; }
 
     public IReadOnlyDictionary<string, string> Metadata { get; }
+
+    public IEventStore? EventStore => null;
 
     public IReadOnlyList<object> Replies => _replies.AsReadOnly();
 

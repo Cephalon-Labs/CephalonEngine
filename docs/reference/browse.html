@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-06T05:39:58.752132+00:00",
+  "GeneratedAtUtc": "2026-04-06T08:01:34.2260365+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 17,
-      "TypeCount": 134
+      "TypeCount": 138
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -596,7 +596,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-behaviors",
-      "TypeCount": 18
+      "TypeCount": 22
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Capabilities",
@@ -2113,6 +2113,21 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "BehaviorAdvisorySeverity",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-behaviors-behavioradvisoryseverity",
+      "Declaration": "public enum BehaviorAdvisorySeverity",
+      "Summary": "Severity levels for behavior advisories.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 3,
+        "Properties": 0,
+        "Methods": 0
       }
     },
     {
@@ -4006,6 +4021,51 @@
       }
     },
     {
+      "DisplayName": "IBehaviorAdvisory",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-behaviors-ibehavioradvisory",
+      "Declaration": "public interface IBehaviorAdvisory",
+      "Summary": "Represents a runtime advisory that describes a recommendation or observation about behavior topology. Advisories are informational \u2014 they do not block dispatch.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "IBehaviorAdvisoryCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-behaviors-ibehavioradvisorycatalog",
+      "Declaration": "public interface IBehaviorAdvisoryCatalog",
+      "Summary": "Provides read access to all active behavior advisories.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "IBehaviorAdvisoryContributor",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-behaviors-ibehavioradvisorycontributor",
+      "Declaration": "public interface IBehaviorAdvisoryContributor",
+      "Summary": "Contributes behavior advisories to the active runtime\u0027s advisory catalog. Implementations are collected via dependency injection enumeration.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "IBehaviorCatalog",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -4046,7 +4106,7 @@
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
-        "Properties": 3,
+        "Properties": 4,
         "Methods": 1
       }
     },
@@ -9569,6 +9629,17 @@
     {
       "DisplayName": "All",
       "Category": "Properties",
+      "DeclaringTypeName": "IBehaviorAdvisoryCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-ibehavioradvisorycatalog-all",
+      "Signature": "IReadOnlyList\u003CIBehaviorAdvisory\u003E All { get; }",
+      "Summary": "Gets all active advisories."
+    },
+    {
+      "DisplayName": "All",
+      "Category": "Properties",
       "DeclaringTypeName": "IBehaviorCatalog",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -10500,6 +10571,17 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviorsecurityexception-behaviorid",
       "Signature": "string BehaviorId { get; }",
       "Summary": "Gets the behavior identifier that triggered the security violation."
+    },
+    {
+      "DisplayName": "BehaviorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "IBehaviorAdvisory",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-ibehavioradvisory-behaviorid",
+      "Signature": "string BehaviorId { get; }",
+      "Summary": "Gets the behavior identifier this advisory applies to, or \u0060null\u0060 if global."
     },
     {
       "DisplayName": "BehaviorId",
@@ -11901,6 +11983,17 @@
     {
       "DisplayName": "Contribute",
       "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorAdvisoryContributor",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehavioradvisorycontributor-contribute",
+      "Signature": "IReadOnlyList\u003CIBehaviorAdvisory\u003E Contribute()",
+      "Summary": "Contributes advisories for the current runtime state."
+    },
+    {
+      "DisplayName": "Contribute",
+      "Category": "Methods",
       "DeclaringTypeName": "IBehaviorContributor",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -12216,6 +12309,17 @@
       "AnchorId": "member-m-cephalon-engine-localization-localizedtextcatalog-createsnapshot-system-string",
       "Signature": "LocalizedResourcesSnapshot CreateSnapshot(string culture)",
       "Summary": "Creates a serialization-friendly snapshot of the merged localized resources."
+    },
+    {
+      "DisplayName": "Critical",
+      "Category": "Fields",
+      "DeclaringTypeName": "BehaviorAdvisorySeverity",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-behaviors-behavioradvisoryseverity-critical",
+      "Signature": "const BehaviorAdvisorySeverity Critical",
+      "Summary": "Critical \u2014 immediate attention recommended."
     },
     {
       "DisplayName": "Critical",
@@ -13232,6 +13336,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "IBehaviorAdvisory",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-ibehavioradvisory-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the advisory description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "IBehaviorCompatibilityRule",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -13943,6 +14058,17 @@
       "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-displayname",
       "Signature": "string DisplayName { get; set; }",
       "Summary": "Gets or sets the human-readable dependency name shown to operators."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "IBehaviorAdvisory",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-ibehavioradvisory-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the display name shown in runtime surfaces."
     },
     {
       "DisplayName": "DisplayName",
@@ -15419,6 +15545,17 @@
       "Summary": "Gets the event-sourcing pattern."
     },
     {
+      "DisplayName": "EventStore",
+      "Category": "Properties",
+      "DeclaringTypeName": "IBehaviorContext",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-ibehaviorcontext-eventstore",
+      "Signature": "IEventStore EventStore { get; }",
+      "Summary": "Gets the event store for the current behavior context, or \u0060null\u0060 if event sourcing is not configured for this behavior."
+    },
+    {
       "DisplayName": "EventStreamCatalog",
       "Category": "Constructors",
       "DeclaringTypeName": "EventStreamCatalog",
@@ -16761,6 +16898,17 @@
       "Summary": "Field number for the \u0022generated_at_utc\u0022 field."
     },
     {
+      "DisplayName": "GetByBehavior",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorAdvisoryCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehavioradvisorycatalog-getbybehavior-system-string",
+      "Signature": "IReadOnlyList\u003CIBehaviorAdvisory\u003E GetByBehavior(string behaviorId)",
+      "Summary": "Gets advisories for a specific behavior identifier."
+    },
+    {
       "DisplayName": "GetByChannelId",
       "Category": "Methods",
       "DeclaringTypeName": "IEventSubscriptionCatalog",
@@ -16979,6 +17127,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-ioutboxcatalog-getbyprovider-system-string",
       "Signature": "IReadOnlyList\u003COutboxDescriptor\u003E GetByProvider(string provider)",
       "Summary": "Gets all outboxes backed by the requested provider identifier."
+    },
+    {
+      "DisplayName": "GetBySeverity",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorAdvisoryCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehavioradvisorycatalog-getbyseverity-cephalon-abstractions-behaviors-behavioradvisoryseverity",
+      "Signature": "IReadOnlyList\u003CIBehaviorAdvisory\u003E GetBySeverity(BehaviorAdvisorySeverity minimumSeverity)",
+      "Summary": "Gets advisories at or above the specified severity."
     },
     {
       "DisplayName": "GetBySource",
@@ -18435,6 +18594,17 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "IBehaviorAdvisory",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-ibehavioradvisory-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable advisory identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "InboxDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -19047,6 +19217,17 @@
       "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-index",
       "Signature": "string Index { get; set; }",
       "Summary": "Gets or sets the optional index name or comma-delimited index list that should be checked through the cluster-health API."
+    },
+    {
+      "DisplayName": "Info",
+      "Category": "Fields",
+      "DeclaringTypeName": "BehaviorAdvisorySeverity",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-behaviors-behavioradvisoryseverity-info",
+      "Signature": "const BehaviorAdvisorySeverity Info",
+      "Summary": "Informational \u2014 no action required."
     },
     {
       "DisplayName": "Information",
@@ -26793,6 +26974,17 @@
       "Summary": "The intended severity for the event."
     },
     {
+      "DisplayName": "Severity",
+      "Category": "Properties",
+      "DeclaringTypeName": "IBehaviorAdvisory",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-ibehavioradvisory-severity",
+      "Signature": "BehaviorAdvisorySeverity Severity { get; }",
+      "Summary": "Gets the severity of this advisory."
+    },
+    {
       "DisplayName": "SfidIdOptions",
       "Category": "Constructors",
       "DeclaringTypeName": "SfidIdOptions",
@@ -30762,6 +30954,17 @@
       "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-virtualhost",
       "Signature": "string VirtualHost { get; set; }",
       "Summary": "Gets or sets the RabbitMQ virtual host used for the probe connection."
+    },
+    {
+      "DisplayName": "Warning",
+      "Category": "Fields",
+      "DeclaringTypeName": "BehaviorAdvisorySeverity",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-behaviors-behavioradvisoryseverity-warning",
+      "Signature": "const BehaviorAdvisorySeverity Warning",
+      "Summary": "Warning \u2014 review recommended."
     },
     {
       "DisplayName": "Warning",

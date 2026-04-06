@@ -397,6 +397,9 @@ public sealed class RabbitMqTransportBinding : IMessagingBehaviorBinding, IAsync
         public IReadOnlyDictionary<string, string> Metadata { get; }
 
         /// <inheritdoc />
+        public Cephalon.Abstractions.EventSourcing.IEventStore? EventStore => null;
+
+        /// <inheritdoc />
         public Task ReplyAsync(object reply, CancellationToken cancellationToken = default)
             => throw new NotSupportedException("ReplyAsync is not supported for RabbitMQ messaging bindings.");
     }
