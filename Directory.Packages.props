@@ -41,6 +41,7 @@
     <PackageVersion Include="EphemeralMongo7" Version="2.0.0" />
     <PackageVersion Include="MongoDB.Driver" Version="3.7.0" />
     <PackageVersion Include="MySqlConnector" Version="2.5.0" />
+    <PackageVersion Include="NATS.Net" Version="2.7.3" />
     <PackageVersion Include="Neo4j.Driver" Version="6.0.0" />
     <PackageVersion Include="OpenSearch.Client" Version="1.8.0" />
     <PackageVersion Include="Npgsql" Version="10.0.2" />
@@ -53,6 +54,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.1" />
     <PackageVersion Include="OpenTelemetry.Resources.AWS" Version="1.15.0" />
     <PackageVersion Include="Oracle.ManagedDataAccess.Core" Version="23.26.100" />
+    <PackageVersion Include="Qdrant.Client" Version="1.17.0" />
     <PackageVersion Include="RabbitMQ.Client" Version="7.2.1" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.13.18" />
     <PackageVersion Include="Serilog.Extensions.Hosting" Version="10.0.0" />

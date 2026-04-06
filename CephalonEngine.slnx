@@ -26,8 +26,10 @@
     <Project Path="src/Cephalon.Data.ClickHouse/Cephalon.Data.ClickHouse.csproj" />
     <Project Path="src/Cephalon.Data.Elasticsearch/Cephalon.Data.Elasticsearch.csproj" />
     <Project Path="src/Cephalon.Data.MongoDB/Cephalon.Data.MongoDB.csproj" />
+    <Project Path="src/Cephalon.Data.Nats/Cephalon.Data.Nats.csproj" />
     <Project Path="src/Cephalon.Data.Neo4j/Cephalon.Data.Neo4j.csproj" />
     <Project Path="src/Cephalon.Data.OpenSearch/Cephalon.Data.OpenSearch.csproj" />
+    <Project Path="src/Cephalon.Data.Qdrant/Cephalon.Data.Qdrant.csproj" />
     <Project Path="src/Cephalon.Data.Redis/Cephalon.Data.Redis.csproj" />
     <Project Path="src/Cephalon.Data/Cephalon.Data.csproj" />
     <Project Path="src/Cephalon.Edge/Cephalon.Edge.csproj" />
@@ -42,8 +44,10 @@
     <Project Path="src/Cephalon.EventSourcing.ClickHouse/Cephalon.EventSourcing.ClickHouse.csproj" />
     <Project Path="src/Cephalon.EventSourcing.Elasticsearch/Cephalon.EventSourcing.Elasticsearch.csproj" />
     <Project Path="src/Cephalon.EventSourcing.MongoDB/Cephalon.EventSourcing.MongoDB.csproj" />
+    <Project Path="src/Cephalon.EventSourcing.Nats/Cephalon.EventSourcing.Nats.csproj" />
     <Project Path="src/Cephalon.EventSourcing.Neo4j/Cephalon.EventSourcing.Neo4j.csproj" />
     <Project Path="src/Cephalon.EventSourcing.OpenSearch/Cephalon.EventSourcing.OpenSearch.csproj" />
+    <Project Path="src/Cephalon.EventSourcing.Qdrant/Cephalon.EventSourcing.Qdrant.csproj" />
     <Project Path="src/Cephalon.EventSourcing.Redis/Cephalon.EventSourcing.Redis.csproj" />
     <Project Path="src/Cephalon.Eventing.Wolverine/Cephalon.Eventing.Wolverine.csproj" />
     <Project Path="src/Cephalon.Eventing/Cephalon.Eventing.csproj" />

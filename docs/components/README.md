@@ -50,6 +50,13 @@ See also: [Docs hub](../README.md)
 - [Cephalon.Data.OpenSearch](data-opensearch.md)
 - [Cephalon.EventSourcing.OpenSearch](event-sourcing-opensearch.md)
 
+## Sprint 31 companion packs
+
+- [Cephalon.Data.Qdrant](data-qdrant.md)
+- [Cephalon.EventSourcing.Qdrant](event-sourcing-qdrant.md)
+- [Cephalon.Data.Nats](data-nats.md)
+- [Cephalon.EventSourcing.Nats](event-sourcing-nats.md)
+
 ## Phase 8 companion packs
 
 - [Cephalon.Audit](audit.md)

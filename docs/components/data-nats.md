@@ -1,0 +1,109 @@
+# Cephalon.Data.Nats
+
+`Cephalon.Data.Nats` is the NATS JetStream ledger-store companion pack for Cephalon, proving that the companion-pack pattern extends cleanly to NATS-based messaging infrastructure without any changes to `Cephalon.Engine` or `Cephalon.Abstractions`.
+
+## What it owns
+
+- registers a singleton `INatsConnection` using `TryAdd` semantics so a host-owned connection is never displaced; `NatsConnection` does NOT connect on construction — the connection is deferred to the first operation, which allows DI resolution tests without a live NATS server
+- registers a scoped `IOutbox` backed by a NATS JetStream KV bucket when `RegisterOutbox` is enabled
+- registers a scoped `IInbox` backed by a NATS JetStream KV bucket when `RegisterInbox` is enabled
+- ensures idempotent staging for both outbox and inbox via `CreateAsync` — if the key already exists, `NatsKVCreateException` is caught and swallowed as a safe no-op
+- creates or updates the KV bucket on first use via `CreateOrUpdateStoreAsync`
+- exposes operator-facing outbox and inbox descriptors through the engine runtime surfaces
+- projects the outbox descriptor through the `event-driven-integration` technology surface as outbox producers when that technology is active
+- projects the inbox descriptor through the same technology surface as inbox stores when the technology is active
+- publishes capability metadata `data.nats`, `data.ledger-store`, and optionally `data.outbox.nats` and `data.inbox.nats` introspectable at runtime through the manifest
+
+## Main surfaces
+
+- `Configuration/NatsDataOptions.cs`
+- `Modules/NatsDataModule.cs`
+- `Registration/NatsDataEngineBuilderExtensions.cs`
+- `Services/NatsOutbox.cs`
+- `Services/NatsOutboxRuntimeSurfaceContributor.cs`
+- `Services/NatsInbox.cs`
+- `Services/NatsInboxRuntimeSurfaceContributor.cs`
+
+## How it fits
+
+This pack sits on top of `Cephalon.Data`, not in place of it. `Cephalon.Data` still owns the runtime-neutral `IReadStore` / `IWriteStore` dispatching surface. `Cephalon.Data.Nats` adds the NATS-backed outbox and inbox persistence paths that let event-driven workloads stage and track messages against a NATS JetStream KV store without switching to a relational or document-oriented provider.
+
+NATS JetStream KV is modeled as a ledger store: entries are durable, ordered, and replayed by key. This makes it a natural fit for the outbox pattern where message staging must survive process restarts.
+
+## Registration
+
+```csharp
+engine.AddNatsData("nats://localhost:4222");
+```
+
+To enable the outbox and inbox paths:
+
+```csharp
+engine.AddNatsData(
+    url: "nats://localhost:4222",
+    configure: options =>
+    {
+        options.RegisterOutbox = true;
+        options.RegisterInbox = true;
+        options.BucketPrefix = "myapp";  // optional — prefix all Cephalon KV bucket names
+    });
+```
+
+## Configuration options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `Url` | `string` | `"nats://localhost:4222"` | NATS server URL |
+| `BucketPrefix` | `string` | `"cephalon"` | Prefix applied to all managed JetStream KV bucket names |
+| `RegisterOutbox` | `bool` | `false` | Register `IOutbox` backed by a NATS JetStream KV bucket |
+| `RegisterInbox` | `bool` | `false` | Register `IInbox` backed by a NATS JetStream KV bucket |
+
+## Idempotency semantics
+
+Both `IOutbox.EnqueueAsync` and `IInbox.MarkProcessedAsync` use `NatsKVStore.CreateAsync`:
+
+- `CreateAsync` atomically creates a new KV entry for the message ID as the key.
+- If the key already exists, NATS throws `NatsKVCreateException`, which is caught and swallowed — making repeated calls with the same message ID safe no-ops.
+
+`HasProcessedAsync` uses `TryGetEntryAsync` — returns `true` if the key exists and has no error.
+
+## Runtime capabilities
+
+When `NatsDataModule` is active, the following capability keys appear in the runtime manifest:
+
+| Capability key | When registered |
+|----------------|-----------------|
+| `data.nats` | Always |
+| `data.ledger-store` | Always |
+| `data.outbox.nats` | `RegisterOutbox = true` |
+| `data.inbox.nats` | `RegisterInbox = true` |
+
+## Runtime surface entries
+
+When the `event-driven-integration` technology is active, the following entries appear under `/engine/snapshot`:
+
+| Surface | Entry id | `provider` metadata |
+|---------|----------|---------------------|
+| `outbox-producers` | `nats-outbox` | `nats` |
+| `inbox-stores` | `nats-inbox` | `nats` |
+
+## Not shipped in this slice
+
+This pack intentionally does not claim:
+
+- NATS JetStream consumer or publish-subscribe primitives
+- NATS Core (non-JetStream) messaging
+- `IReadStore` / `IWriteStore` dispatch backed by NATS — query handlers should use `INatsConnection` directly
+- transaction-scoped outbox staging spanning multiple NATS operations
+- adapter-owned dispatch loops or broker retry scheduling
+- NATS service API or micro-service primitives
+
+These remain explicit later slices to keep the initial provider claim honest.
+
+## Related docs
+
+- [Cephalon.Data](data.md)
+- [Cephalon.EventSourcing.Nats](event-sourcing-nats.md)
+- [Cephalon.Data.Qdrant](data-qdrant.md)
+- [Cephalon.Engine](engine.md)
+- [Architecture](../architecture.md)
