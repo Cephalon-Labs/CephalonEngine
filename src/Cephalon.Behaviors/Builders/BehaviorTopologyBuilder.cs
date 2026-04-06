@@ -179,6 +179,7 @@ public sealed class BehaviorTopologyBuilder
     /// <returns>The resolved topology descriptor.</returns>
     public BehaviorTopologyDescriptor Build(string behaviorId)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
         return new BehaviorTopologyDescriptor(
             behaviorId,
             _pattern,

@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
 
 namespace Cephalon.Behaviors.Services;
@@ -29,7 +30,11 @@ public sealed class BehaviorExecutionSlot
     {
         return new BehaviorExecutionSlot(async (behavior, input, context, ct) =>
         {
-            var result = await ((TBehavior)behavior).HandleAsync((TIn)input, context, ct).ConfigureAwait(false);
+            // When input arrives as a JsonElement (e.g. from an HTTP transport), coerce it to TIn.
+            TIn typedInput = input is JsonElement je
+                ? JsonSerializer.Deserialize<TIn>(je.GetRawText())!
+                : (TIn)input;
+            var result = await ((TBehavior)behavior).HandleAsync(typedInput, context, ct).ConfigureAwait(false);
             return result;
         });
     }

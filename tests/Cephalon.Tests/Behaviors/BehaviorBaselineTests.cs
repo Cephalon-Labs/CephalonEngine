@@ -497,4 +497,70 @@ public sealed class BehaviorBaselineTests
         Assert.Contains("http.rest", desc!.TransportIds);
         Assert.Contains("in-memory", desc.TransportIds);
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // M1 coverage gap — 5 additional tests
+    // ─────────────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void BehaviorCatalogGetByPatternReturnsCqrsDescriptor()
+    {
+        var d = new BehaviorTopologyDescriptor("greeting.cqrs", "cqrs", ["http.rest"]);
+        var catalog = new BehaviorCatalog([new FluentBehaviorContributor(d)]);
+
+        var results = catalog.GetByPattern("cqrs");
+
+        Assert.Single(results);
+        Assert.Equal("greeting.cqrs", results[0].Id);
+    }
+
+    [Fact]
+    public void BehaviorCatalogGetByTransportReturnsHttpRestDescriptor()
+    {
+        var d = new BehaviorTopologyDescriptor("greeting.direct", "direct", ["http.rest"]);
+        var catalog = new BehaviorCatalog([new FluentBehaviorContributor(d)]);
+
+        var results = catalog.GetByTransport("http.rest");
+
+        Assert.Single(results);
+        Assert.Equal("greeting.direct", results[0].Id);
+    }
+
+    [Fact]
+    public void BehaviorAllowlistValidatorThrowsWhenPatternViolatesAllowlist()
+    {
+        // AllowlistViolatingBehavior declares [BehaviorAllowedPatterns("cqrs","direct")]
+        // but the resolved descriptor uses "saga-step" — must throw BehaviorSecurityException.
+        var desc = new BehaviorTopologyDescriptor("greeting.restricted", "saga-step", []);
+
+        Assert.Throws<BehaviorSecurityException>(() =>
+            BehaviorAllowlistValidator.Validate(desc, typeof(AllowlistViolatingBehavior)));
+    }
+
+    [Fact]
+    public void CompatibilityMatrixAbt003ProcessManagerWithoutInboxReturnsError()
+    {
+        var rule = new Abt003ProcessManagerRequiresInboxRule();
+        // InboxEnabled defaults to false
+        var desc = new BehaviorTopologyDescriptor("pm.order", "process-manager", ["rabbitmq"]);
+
+        var violation = rule.Check(desc);
+
+        Assert.NotNull(violation);
+        Assert.Equal(CompatibilitySeverity.Error, violation!.Severity);
+        Assert.Equal("ABT-003", violation.RuleId);
+    }
+
+    [Fact]
+    public void CompatibilityMatrixAbt004CqrsMultipleTransportsReturnsAdvisory()
+    {
+        var rule = new Abt004CqrsMultipleTransportsRule();
+        var desc = new BehaviorTopologyDescriptor("order.query", "cqrs", ["http.rest", "grpc"]);
+
+        var violation = rule.Check(desc);
+
+        Assert.NotNull(violation);
+        Assert.Equal(CompatibilitySeverity.Advisory, violation!.Severity);
+        Assert.Equal("ABT-004", violation.RuleId);
+    }
 }

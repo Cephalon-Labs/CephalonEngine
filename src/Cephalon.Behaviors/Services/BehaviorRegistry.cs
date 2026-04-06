@@ -3,6 +3,7 @@ using Cephalon.Abstractions.Behaviors;
 namespace Cephalon.Behaviors.Services;
 
 /// <summary>Simple list-backed registry that collects <see cref="BehaviorTopologyDescriptor"/> instances from contributors.</summary>
+// NOT thread-safe: startup only
 public sealed class BehaviorRegistry : IBehaviorRegistry
 {
     private readonly List<BehaviorTopologyDescriptor> _descriptors = [];

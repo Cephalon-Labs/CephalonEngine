@@ -5,6 +5,7 @@ namespace Cephalon.Behaviors.Services;
 /// Populated during DI setup by <c>BehaviorCollectionBuilder.Register&lt;TBehavior&gt;()</c>
 /// and consumed by <see cref="BehaviorDispatcher" /> at construction time.
 /// </summary>
+// NOT thread-safe: startup only
 public sealed class BehaviorTypeRegistry : IBehaviorTypeRegistry
 {
     private readonly Dictionary<string, Type> _map = new(StringComparer.OrdinalIgnoreCase);
