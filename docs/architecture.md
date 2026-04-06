@@ -2,6 +2,8 @@
 
 Editable diagram: `docs/cephalon-architecture.drawio`
 Planning docs: `docs/engine-roadmap.md`, `docs/engine-backlog.md`, `docs/app-models.md`
+Architecture inventory: `docs/architecture-inventory.md`
+Architecture recommendations: `docs/architecture-recommendations.md`
 Docs hub: `docs/README.md`
 Component docs: `docs/components/README.md`
 

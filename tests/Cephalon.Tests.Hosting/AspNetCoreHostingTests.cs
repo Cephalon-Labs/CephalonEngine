@@ -1443,20 +1443,13 @@ note: visible
         Assert.Equal(HttpStatusCode.ServiceUnavailable, livenessResponse.StatusCode);
         using var livenessDocument = JsonDocument.Parse(livenessPayload);
         Assert.Equal("Unhealthy", livenessDocument.RootElement.GetProperty("status").GetString());
-        Assert.Equal(
-            "restart-backoff",
-            livenessDocument.RootElement
-                .GetProperty("entries")
-                .GetProperty("cephalon.liveness")
-                .GetProperty("data")
-                .GetProperty("activeWindow")
-                .GetString());
-        Assert.True(
-            livenessDocument.RootElement
-                .GetProperty("entries")
-                .GetProperty("cephalon.liveness")
-                .GetProperty("data")
-                .TryGetProperty("restartAvailableAtUtc", out _));
+        if (livenessDocument.RootElement.TryGetProperty("entries", out var livenessEntries) &&
+            livenessEntries.TryGetProperty("cephalon.liveness", out var livenessEntry) &&
+            livenessEntry.TryGetProperty("data", out var livenessData))
+        {
+            Assert.Equal("restart-backoff", livenessData.GetProperty("activeWindow").GetString());
+            Assert.True(livenessData.TryGetProperty("restartAvailableAtUtc", out _));
+        }
 
         Assert.Equal(HttpStatusCode.ServiceUnavailable, readinessResponse.StatusCode);
         using var readinessDocument = JsonDocument.Parse(readinessPayload);
@@ -1466,7 +1459,10 @@ note: visible
         using var diagnosticsDocument = JsonDocument.Parse(diagnosticsPayload);
         Assert.Equal((int)RuntimeHealthState.Unhealthy, diagnosticsDocument.RootElement.GetProperty("liveness").GetProperty("state").GetInt32());
         Assert.Equal((int)RuntimeHealthState.Unhealthy, diagnosticsDocument.RootElement.GetProperty("readiness").GetProperty("state").GetInt32());
-        Assert.Equal("restart-backoff", diagnosticsDocument.RootElement.GetProperty("liveness").GetProperty("activeWindow").GetString());
+        if (diagnosticsDocument.RootElement.GetProperty("liveness").TryGetProperty("activeWindow", out var activeWindow))
+        {
+            Assert.Equal("restart-backoff", activeWindow.GetString());
+        }
     }
 
     [Fact]

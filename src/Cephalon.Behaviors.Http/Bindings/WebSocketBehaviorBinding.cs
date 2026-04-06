@@ -7,6 +7,8 @@ using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Behaviors.Http.Bindings;
 
@@ -43,8 +45,10 @@ public sealed class WebSocketBehaviorBinding : IHttpBehaviorBinding
                 return;
             }
 
+            var logger = ctx.RequestServices.GetService<ILoggerFactory>()
+                ?.CreateLogger<WebSocketBehaviorBinding>();
             using var ws = await ctx.WebSockets.AcceptWebSocketAsync().ConfigureAwait(false);
-            await HandleWebSocketAsync(ws, ctx, descriptor.Id, dispatcher).ConfigureAwait(false);
+            await HandleWebSocketAsync(ws, ctx, descriptor.Id, dispatcher, logger).ConfigureAwait(false);
         });
 
         return Task.CompletedTask;
@@ -54,7 +58,8 @@ public sealed class WebSocketBehaviorBinding : IHttpBehaviorBinding
         WebSocket ws,
         HttpContext ctx,
         string behaviorId,
-        BehaviorDispatcher dispatcher)
+        BehaviorDispatcher dispatcher,
+        ILogger? logger)
     {
         // G-WS-05: rent from ArrayPool, release in finally
         var buffer = ArrayPool<byte>.Shared.Rent(4096);
@@ -78,9 +83,10 @@ public sealed class WebSocketBehaviorBinding : IHttpBehaviorBinding
                     // G-WS-04: let OperationCanceledException propagate out of the loop
                     break;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     // G-WS-03: abort on unexpected receive error
+                    if (logger is not null) WebSocketBehaviorBindingLogs.UnexpectedReceiveError(logger, ex, behaviorId);
                     ws.Abort();
                     return;
                 }
@@ -103,8 +109,9 @@ public sealed class WebSocketBehaviorBinding : IHttpBehaviorBinding
                 {
                     input = JsonSerializer.Deserialize<object>(messageBuffer.ToArray());
                 }
-                catch
+                catch (Exception ex)
                 {
+                    if (logger is not null) WebSocketBehaviorBindingLogs.MalformedJsonFrame(logger, ex, behaviorId);
                     var errBytes = Encoding.UTF8.GetBytes(
                         JsonSerializer.Serialize(new { error = "Invalid JSON frame" }));
                     await ws.SendAsync(errBytes, WebSocketMessageType.Text, endOfMessage: true, ctx.RequestAborted)
@@ -146,4 +153,17 @@ public sealed class WebSocketBehaviorBinding : IHttpBehaviorBinding
             ArrayPool<byte>.Shared.Return(buffer);
         }
     }
+}
+
+internal static partial class WebSocketBehaviorBindingLogs
+{
+    [LoggerMessage(
+        Level = LogLevel.Warning,
+        Message = "Unexpected error receiving WebSocket message for behavior '{BehaviorId}', aborting connection.")]
+    public static partial void UnexpectedReceiveError(ILogger logger, Exception exception, string behaviorId);
+
+    [LoggerMessage(
+        Level = LogLevel.Debug,
+        Message = "Skipping malformed JSON frame on WebSocket for behavior '{BehaviorId}'.")]
+    public static partial void MalformedJsonFrame(ILogger logger, Exception exception, string behaviorId);
 }

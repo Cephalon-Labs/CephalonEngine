@@ -9,6 +9,8 @@ using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Behaviors.Http.Bindings;
 
@@ -47,8 +49,10 @@ public sealed class GraphqlWsBehaviorBinding : IHttpBehaviorBinding
             }
 
             // G-GQL-WS-01: correct subprotocol name
+            var logger = ctx.RequestServices.GetService<ILoggerFactory>()
+                ?.CreateLogger<GraphqlWsBehaviorBinding>();
             using var ws = await ctx.WebSockets.AcceptWebSocketAsync("graphql-transport-ws").ConfigureAwait(false);
-            await HandleGraphqlWsAsync(ws, ctx, descriptor.Id, dispatcher).ConfigureAwait(false);
+            await HandleGraphqlWsAsync(ws, ctx, descriptor.Id, dispatcher, logger).ConfigureAwait(false);
         });
 
         return Task.CompletedTask;
@@ -58,7 +62,8 @@ public sealed class GraphqlWsBehaviorBinding : IHttpBehaviorBinding
         WebSocket ws,
         HttpContext ctx,
         string behaviorId,
-        BehaviorDispatcher dispatcher)
+        BehaviorDispatcher dispatcher,
+        ILogger? logger)
     {
         // G-GQL-WS-04: track active subscription ids
         var activeSubscriptions = new ConcurrentDictionary<string, CancellationTokenSource>(StringComparer.Ordinal);
@@ -99,8 +104,9 @@ public sealed class GraphqlWsBehaviorBinding : IHttpBehaviorBinding
                 {
                     return;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    if (logger is not null) GraphqlWsBehaviorBindingLogs.UnexpectedReceiveError(logger, ex, behaviorId);
                     ws.Abort();
                     return;
                 }
@@ -118,8 +124,9 @@ public sealed class GraphqlWsBehaviorBinding : IHttpBehaviorBinding
                 {
                     message = JsonNode.Parse(messageBuffer.ToArray());
                 }
-                catch
+                catch (Exception ex)
                 {
+                    if (logger is not null) GraphqlWsBehaviorBindingLogs.MalformedJsonFrame(logger, ex, behaviorId);
                     continue;
                 }
 
@@ -245,4 +252,17 @@ public sealed class GraphqlWsBehaviorBinding : IHttpBehaviorBinding
         var bytes = Encoding.UTF8.GetBytes(json);
         await ws.SendAsync(bytes, WebSocketMessageType.Text, endOfMessage: true, ct).ConfigureAwait(false);
     }
+}
+
+internal static partial class GraphqlWsBehaviorBindingLogs
+{
+    [LoggerMessage(
+        Level = LogLevel.Warning,
+        Message = "Unexpected error receiving GraphQL WebSocket message for behavior '{BehaviorId}', aborting connection.")]
+    public static partial void UnexpectedReceiveError(ILogger logger, Exception exception, string behaviorId);
+
+    [LoggerMessage(
+        Level = LogLevel.Debug,
+        Message = "Skipping malformed JSON frame on GraphQL WebSocket for behavior '{BehaviorId}'.")]
+    public static partial void MalformedJsonFrame(ILogger logger, Exception exception, string behaviorId);
 }

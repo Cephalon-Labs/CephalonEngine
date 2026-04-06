@@ -92,6 +92,12 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Infrastructure Phase 1`: solution filter files (`core.slnf`, `data.slnf`, `observability.slnf`, `aspnetcore.slnf`) + scaffolding scripts (`New-ProviderPack.ps1`, `New-ObservabilityPack.ps1`)
 - `Infrastructure Phase 2`: test assembly split — `Cephalon.Tests` monolith (648 tests) split into `Cephalon.Tests.Support` + `Cephalon.Tests.Composition` (327) + `Cephalon.Tests.Hosting` (200) + `Cephalon.Tests.Tooling` (121) — 648/648 tests
 - `Sprint 32`: backlog and roadmap alignment for all completed work through Sprint 31, status closeout for ENG-054/056/057
+- `Sprint 33`: EF projection contributor (`IProjectionContributor`), Wolverine dispatch observability (`ActivitySource` + `Meter`), validation script fix for post-test-split environment, ENG-051 closeout — 648/648 tests
+- `Sprint 34`: comprehensive engine audit — WebSocket `[LoggerMessage]` logging fix, flaky test fix, architecture inventory/recommendations docs, ENG-049/050/052/053/055 closeout (all phase-8 baseline acceptance met), ENG-059 benchmark expansion planned — 648/648 tests
+- `Sprint 35 (Phase 11 prep)`: ENG-059 runtime hot-path benchmark expansion — data layer, event sourcing, behavior dispatch, authorization, multi-tenancy, outbox benchmarks + guardrails
+- `Sprint 36–37 (Phase 11)`: planned resilience foundation — circuit breaker, retry/timeout/bulkhead, rate limiting, `onion-architecture` and `anti-corruption-layer` pattern descriptors
+- `Sprint 38–39 (Phase 12)`: planned migration and advanced coordination — strangler fig, saga choreography, BFF pattern, feature flags, durable execution foundations
+- `Sprint 40–41 (Phase 13)`: planned next-generation patterns — cell-based architecture, data mesh, CDC
 - `Later / not scheduled yet`: further cloud/platform integrations beyond the shipped phase 6 baseline, `ENG-054` hybrid-runtime service-mesh and serverless expansion, and future solution-level expansion only when an explicit adoption scenario needs them
 
 ## Planning principles
@@ -533,6 +539,76 @@ Updated priority order as of `April 7, 2026`:
 18. then deliver `ENG-051`, `ENG-052`, and `ENG-053` so identity/authorization, multi-tenancy/audit, and CLI/scaffolding/template/sample follow-through land on the same frozen phase-8 contract
 19. then deliver `ENG-055` and `ENG-056` so benchmarks, validation, docs, XML comments, and reference-doc alignment prove the phase-8 claims before the repo widens the public story
 20. `ENG-054` Track 1 (non-relational providers) and `ENG-057` (event-sourcing follow-through) are now complete; keep hybrid-cloud, service-mesh, and serverless expansion as explicit later slices until an adopter needs them beyond the proven golden path
+21. open phase 11 with resilience foundation (circuit breaker, retry/timeout/bulkhead, rate limiting) plus `onion-architecture` and `anti-corruption-layer` pattern descriptors so production microservice deployments have configuration-driven fault tolerance
+22. follow with phase 12 for migration and advanced coordination (strangler fig, saga choreography, BFF pattern, feature flags, durable execution) so enterprise adoption and distributed coordination stories are complete
+23. then phase 13 for next-generation patterns (cell-based architecture, data mesh, CDC) when explicit adoption scenarios justify the investment
+
+## Phase 11: Resilience Foundation
+
+Status: planned
+
+Goal: add production-critical resilience infrastructure so consumer microservices can handle cascading failures, transient faults, and traffic spikes through configuration-driven policies.
+
+Target: Sprint 36–37
+
+Planned deliverables:
+
+- `onion-architecture` pattern descriptor in `BuiltInPatterns.cs` for taxonomy completeness alongside Clean and Hexagonal
+- `anti-corruption-layer` pattern descriptor in `BuiltInPatterns.cs` for explicit DDD integration boundary support
+- circuit breaker abstraction (`ICircuitBreaker` with open/half-open/closed state machine) integrated into the behavior pipeline
+- retry with exponential backoff and jitter, timeout enforcement, and bulkhead isolation policies through `Microsoft.Extensions.Resilience` (Polly v8)
+- rate limiting middleware integration through `Microsoft.AspNetCore.RateLimiting` wired into the ASP.NET Core host adapter
+- `Engine:Resilience` configuration section covering circuit-breaker, retry, timeout, bulkhead, and rate-limit policies
+- capabilities: `resilience.circuit-breaker`, `resilience.retry`, `resilience.timeout`, `resilience.bulkhead`, `resilience.rate-limiting`
+
+Exit criteria:
+
+- a consumer app can configure per-behavior resilience policies through `Engine:Resilience` without writing custom middleware
+- health probes and circuit breakers compose together to prevent cascading failures
+- rate limiting can be configured per behavior or per transport
+
+## Phase 12: Migration and Advanced Coordination
+
+Status: planned
+
+Goal: expand the distributed coordination story with choreography-based sagas, incremental migration support, progressive delivery, and durable execution foundations.
+
+Target: Sprint 38–39
+
+Planned deliverables:
+
+- `strangler-fig` pattern descriptor and `IStranglerFigRouter` for incremental migration from legacy systems
+- `backend-for-frontend` pattern descriptor for explicit per-client transport binding configuration
+- saga choreography execution strategy (`ChoreographySagaExecutionStrategy`) for event-reaction-based coordination alongside the existing orchestration-based saga
+- feature flags abstraction (`IFeatureToggle`) with per-behavior, per-module, and per-tenant evaluation
+- durable execution foundations (`IDurableExecution<TState>`) on top of the existing process-manager and event-sourcing contracts
+
+Exit criteria:
+
+- a consumer app can migrate incrementally from a legacy system using the strangler fig router
+- sagas can coordinate through events (choreography) in addition to state (orchestration)
+- feature flags can gate behavior availability per tenant
+- durable execution workflows survive process restarts through replay semantics
+
+## Phase 13: Next-Generation Patterns
+
+Status: planned
+
+Goal: add differentiation-grade patterns that position CephalonEngine for the next generation of distributed application architecture.
+
+Target: Sprint 40–41
+
+Planned deliverables:
+
+- cell-based architecture technology descriptor and `ICellBoundary` abstraction for blast-radius isolation and cell-to-cell routing
+- data mesh `IDataProduct<T>` abstraction where modules own queryable data products surfaced through the runtime catalog
+- change data capture `ICdcCapture` abstraction for automated database-change publication through the outbox without explicit staging
+
+Exit criteria:
+
+- modules can declare cell boundaries with explicit blast-radius isolation
+- modules can expose queryable data products through the runtime catalog
+- database changes can be captured and published through the outbox without explicit staging
 
 ## Decision guardrails
 
