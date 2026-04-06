@@ -58,7 +58,9 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$testsProjectPath = [System.IO.Path]::Combine($repoRoot, "tests", "Cephalon.Tests", "Cephalon.Tests.csproj")
+$compositionProjectPath = [System.IO.Path]::Combine($repoRoot, "tests", "Cephalon.Tests.Composition", "Cephalon.Tests.Composition.csproj")
+$hostingProjectPath = [System.IO.Path]::Combine($repoRoot, "tests", "Cephalon.Tests.Hosting", "Cephalon.Tests.Hosting.csproj")
+$toolingProjectPath = [System.IO.Path]::Combine($repoRoot, "tests", "Cephalon.Tests.Tooling", "Cephalon.Tests.Tooling.csproj")
 
 function Invoke-DotNet {
     param(
@@ -79,19 +81,26 @@ Write-Host "Focused suite covers phase-8 settings and app-profile truth, host-ag
 
 Push-Location $repoRoot
 try {
-    $arguments = @(
-        "test",
-        $testsProjectPath,
-        "-c",
-        $Configuration,
-        "--filter",
-        $filterExpression)
+    foreach ($projectPath in @($compositionProjectPath, $hostingProjectPath, $toolingProjectPath)) {
+        if (-not (Test-Path -LiteralPath $projectPath)) {
+            Write-Host "Skipping missing test project: $projectPath" -ForegroundColor Yellow
+            continue
+        }
 
-    if ($NoBuild) {
-        $arguments += "--no-build"
+        $arguments = @(
+            "test",
+            $projectPath,
+            "-c",
+            $Configuration,
+            "--filter",
+            $filterExpression)
+
+        if ($NoBuild) {
+            $arguments += "--no-build"
+        }
+
+        Invoke-DotNet $arguments
     }
-
-    Invoke-DotNet $arguments
 
     Write-Host ""
     Write-Host "Phase-8 convention validation completed successfully." -ForegroundColor Green

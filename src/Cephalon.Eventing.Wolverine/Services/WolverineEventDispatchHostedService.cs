@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Cephalon.Eventing.Services;
 using Cephalon.Eventing.Wolverine.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -126,6 +127,29 @@ internal sealed class WolverineEventDispatchHostedService(
         var deliveryOptions = CreateDeliveryOptions(item, attempt);
         var publication = CreatePublication(item);
 
+        using var activity = WolverineDispatchInstrumentation.Source.StartActivity(
+            "wolverine.dispatch",
+            ActivityKind.Producer);
+
+        if (activity is not null)
+        {
+            activity.SetTag("cephalon.message_id", item.MessageId);
+            activity.SetTag("cephalon.event_type", item.EventType);
+            activity.SetTag("cephalon.channel_id", item.ChannelId);
+            activity.SetTag("cephalon.dispatch_attempt", attempt);
+            if (!string.IsNullOrWhiteSpace(item.CorrelationId))
+            {
+                activity.SetTag("cephalon.correlation_id", item.CorrelationId);
+            }
+            if (!string.IsNullOrWhiteSpace(item.TenantId))
+            {
+                activity.SetTag("cephalon.tenant_id", item.TenantId);
+            }
+        }
+
+        WolverineDispatchInstrumentation.DispatchAttempts.Add(1);
+        var stopwatch = Stopwatch.StartNew();
+
         await ApplyObservationAsync(
             dispatchStore,
             runtimeReporter,
@@ -141,6 +165,10 @@ internal sealed class WolverineEventDispatchHostedService(
             var destinations = messageBus.PreviewSubscriptions(publication, deliveryOptions);
             if (destinations.Count == 0)
             {
+                WolverineDispatchInstrumentation.DispatchRetries.Add(1);
+                activity?.SetTag("cephalon.dispatch_result", "no-destinations");
+                activity?.SetStatus(ActivityStatusCode.Error, "No configured destinations");
+
                 await ApplyObservationAsync(
                     dispatchStore,
                     runtimeReporter,
@@ -155,6 +183,11 @@ internal sealed class WolverineEventDispatchHostedService(
             }
 
             await messageBus.PublishAsync(publication, deliveryOptions).ConfigureAwait(false);
+
+            stopwatch.Stop();
+            WolverineDispatchInstrumentation.DispatchSuccesses.Add(1);
+            WolverineDispatchInstrumentation.DispatchDuration.Record(stopwatch.Elapsed.TotalMilliseconds);
+            activity?.SetTag("cephalon.dispatch_result", "succeeded");
 
             await ApplyObservationAsync(
                 dispatchStore,
@@ -172,6 +205,13 @@ internal sealed class WolverineEventDispatchHostedService(
         }
         catch (Exception exception)
         {
+            stopwatch.Stop();
+            WolverineDispatchInstrumentation.DispatchFailures.Add(1);
+            WolverineDispatchInstrumentation.DispatchRetries.Add(1);
+            WolverineDispatchInstrumentation.DispatchDuration.Record(stopwatch.Elapsed.TotalMilliseconds);
+            activity?.SetStatus(ActivityStatusCode.Error, exception.Message);
+            activity?.SetTag("cephalon.dispatch_result", "failed");
+
             await ApplyObservationAsync(
                 dispatchStore,
                 runtimeReporter,

@@ -56,6 +56,11 @@ public sealed class EntityFrameworkDataOptions
     public bool RegisterOutbox { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether the pack should register Entity Framework-backed projection infrastructure.
+    /// </summary>
+    public bool RegisterProjections { get; set; }
+
+    /// <summary>
     /// Gets or sets a value indicating whether the pack should enable official <c>Sfid.EntityFramework</c> conventions and key generation.
     /// </summary>
     public bool EnableSfidIdentifiers { get; set; }

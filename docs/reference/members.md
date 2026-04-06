@@ -4530,6 +4530,9 @@ Browse the published API surface by public member.
 - [RegisterPolicies](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-iauthorizationpolicycontributor-registerpolicies-cephalon-abstractions-authorization-iauthorizationpolicyregistry): `Methods` on `IAuthorizationPolicyContributor` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterPolicies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Registers one or more authorization-policy descriptors with the supplied registry.
   - `void RegisterPolicies(IAuthorizationPolicyRegistry policies)`
+- [RegisterProjections](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-registerprojections): `Properties` on `EntityFrameworkDataOptions` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=RegisterProjections&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Gets or sets a value indicating whether the pack should register Entity Framework-backed projection infrastructure.
+  - `bool RegisterProjections { get; set; }`
 - [RegisterProjections](cephalon-abstractions.md#member-m-cephalon-abstractions-data-iprojectioncontributor-registerprojections-cephalon-abstractions-data-iprojectionregistry): `Methods` on `IProjectionContributor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterProjections&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Registers one or more projection descriptors with the supplied registry.
   - `void RegisterProjections(IProjectionRegistry projections)`

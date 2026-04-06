@@ -104,6 +104,16 @@ bool RegisterOutbox { get; set; }
 
 Gets or sets a value indicating whether the pack should register the Entity Framework-backed outbox implementation.
 
+<a id="member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-registerprojections"></a>
+
+##### `RegisterProjections`
+
+```csharp
+bool RegisterProjections { get; set; }
+```
+
+Gets or sets a value indicating whether the pack should register Entity Framework-backed projection infrastructure.
+
 <a id="member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-registerprovidercapability"></a>
 
 ##### `RegisterProviderCapability`

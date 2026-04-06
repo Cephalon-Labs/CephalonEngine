@@ -18,7 +18,7 @@ namespace Cephalon.Data.EntityFramework.Modules;
 internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>(
     EntityFrameworkDataOptions options,
     Action<DbContextOptionsBuilder> configureReadDbContext,
-    Action<DbContextOptionsBuilder> configureWriteDbContext) : ModuleBase, IInboxContributor, IOutboxContributor, ITechnologyServiceContributor
+    Action<DbContextOptionsBuilder> configureWriteDbContext) : ModuleBase, IInboxContributor, IOutboxContributor, IProjectionContributor, ITechnologyServiceContributor
     where TReadDbContext : DbContext
     where TWriteDbContext : DbContext
 {
@@ -124,19 +124,22 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(technologies);
 
-        if (!technologies.IsSelected("event-driven-integration"))
+        if (technologies.IsSelected("event-driven-integration"))
         {
-            return;
+            if (options.RegisterOutbox)
+            {
+                services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EntityFrameworkOutboxRuntimeSurfaceContributor>());
+            }
+
+            if (options.RegisterInbox)
+            {
+                services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EntityFrameworkInboxRuntimeSurfaceContributor>());
+            }
         }
 
-        if (options.RegisterOutbox)
+        if (options.RegisterProjections)
         {
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EntityFrameworkOutboxRuntimeSurfaceContributor>());
-        }
-
-        if (options.RegisterInbox)
-        {
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EntityFrameworkInboxRuntimeSurfaceContributor>());
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EntityFrameworkProjectionRuntimeSurfaceContributor>());
         }
     }
 
@@ -198,6 +201,20 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
                     ["idempotency"] = "message-id"
                 }));
         }
+
+        if (options.RegisterProjections)
+        {
+            capabilities.Add(new Capability(
+                key: "data.projections.entity-framework",
+                displayName: "Entity Framework Projections",
+                description: "Entity Framework Core-backed projection infrastructure for read-model materialization.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["pack"] = "Cephalon.Data.EntityFramework",
+                    ["provider"] = EntityFrameworkDataOptions.ProviderId,
+                    ["projectionRuntime"] = "application-managed"
+                }));
+        }
     }
 
     public void RegisterInboxes(IInboxRegistry inboxes)
@@ -257,6 +274,36 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
                 ["dispatchStore"] = "available",
                 ["eventingLinked"] = "false",
                 ["channelMode"] = "dynamic",
+                ["idStrategy"] = options.EnableSfidIdentifiers ? "sfid" : "none"
+            }));
+    }
+
+    public void RegisterProjections(IProjectionRegistry projections)
+    {
+        ArgumentNullException.ThrowIfNull(projections);
+
+        if (!options.RegisterProjections)
+        {
+            return;
+        }
+
+        projections.Add(new ProjectionDescriptor(
+            id: "entity-framework-projections",
+            displayName: "Entity Framework Projections",
+            description: "Entity Framework Core-backed projection infrastructure for read-model materialization from staged events.",
+            sourceModuleId: Descriptor.Id,
+            targetStoreId: "entity-framework-read-store",
+            mode: "application-managed",
+            sourceContracts: null,
+            tags: ["data", "entity-framework", "projections", "cqrs"],
+            metadata: new Dictionary<string, string>
+            {
+                ["pack"] = "Cephalon.Data.EntityFramework",
+                ["provider"] = EntityFrameworkDataOptions.ProviderId,
+                ["readDbContext"] = GetTypeName(options.ReadDbContextType),
+                ["writeDbContext"] = GetTypeName(options.WriteDbContextType),
+                ["readWriteSplit"] = options.UsesReadWriteSplit ? "true" : "false",
+                ["projectionRuntime"] = "application-managed",
                 ["idStrategy"] = options.EnableSfidIdentifiers ? "sfid" : "none"
             }));
     }

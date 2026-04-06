@@ -139,9 +139,11 @@ public sealed class WolverineEventingPackTests
             dispatchEntry.Metadata[$"dispatchRuntime.{WolverineEventingRuntimeIds.DispatchRuntimeId}.hostedExecutionId"]);
         var diagnosticsConvention = Assert.Single(diagnosticsCatalog.GetBySource("Cephalon.Eventing.Wolverine"));
         Assert.Equal(4300, diagnosticsConvention.MinimumEventId);
-        Assert.Equal(4303, diagnosticsConvention.MaximumEventId);
+        Assert.Equal(4305, diagnosticsConvention.MaximumEventId);
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4300 && entry.Name == "WolverineDispatchLoopStarted");
         Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4303 && entry.Name == "WolverineDispatchObservationProjectionFailed");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4304 && entry.Name == "WolverineDispatchActivityStarted");
+        Assert.Contains(diagnosticsConvention.Events, entry => entry.Id == 4305 && entry.Name == "WolverineDispatchMetricsRecorded");
         Assert.Equal("wolverine-managed", hostedExecution.Metadata["dispatchOwnership"]);
         Assert.Equal(WolverineEventingRuntimeIds.PublisherId, hostedExecution.Metadata["publisherId"]);
         Assert.Contains(hostedServices, service => service is WolverineEventDispatchHostedService);

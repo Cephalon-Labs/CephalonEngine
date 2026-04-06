@@ -1034,7 +1034,8 @@ Progress:
 - when `EventDrivenIntegration` is active and a real outbox path exists, `Cephalon.Eventing` can now accept `EventPublication` requests through `IEventPublisher` and stage them into the active outbox instead of advertising publish support without a concrete handoff path
 - `Cephalon.Data.EntityFramework` now also exposes an adapter-neutral Entity Framework-backed `IEventDispatchStore` so later first-class adapters can read pending staged outbox rows and apply durable dispatch outcomes without skipping around the Cephalon outbox contract
 - package-surface tests, reference-doc tests, component docs, and solution/test-project wiring now include `Cephalon.Data`, `Cephalon.Data.EntityFramework`, and `Cephalon.Ids.Sfid`
-- remaining work is richer projection persistence/runtime surfaces, broader typed-id/documentation examples on top of the shipped `Sfid.EntityFramework` baseline, and fuller subscription/runtime linkage beyond the shipped staged publication and application-managed idempotency baselines
+- `Cephalon.Data.EntityFramework` now also implements `IProjectionContributor` and registers EF-backed projection descriptors when `RegisterProjections` is enabled, plus a `data.projections.entity-framework` capability and a `projections` runtime surface under `data-management` so operators can see active projection infrastructure through `/engine/technology-surfaces` and `/engine/projections`
+- remaining work is broader typed-id/documentation examples on top of the shipped `Sfid.EntityFramework` baseline, and fuller subscription/runtime linkage beyond the shipped staged publication and application-managed idempotency baselines
 
 ### ENG-050 Eventing runtime uplift and Wolverine companion baseline
 
@@ -1070,16 +1071,18 @@ Progress:
 - the current Entity Framework outbox baseline now persists `next_attempt_at_utc` alongside `dispatch_attempt_count` and `dispatched_at_utc`, so the runtime-neutral dispatch-store contract can honor delayed retry intent instead of re-reading every retried row immediately
 - `Cephalon.Eventing.Wolverine` now exists as the official first-class adapter slice with the `eventing.wolverine` capability plus the `wolverine-adapter` runtime surface, and it truthfully supports two modes: a host-wiring-only baseline that reports `dispatchBridge = consumer-managed`, plus an opt-in `wolverine-managed` durable staged-dispatch loop on top of `IEventDispatchStore`
 - the `event-dispatches` technology surface now also projects configured dispatch-runtime descriptor metadata per outbox path, and the `wolverine-adapter` surface now aggregates latest outcome, retry-pending count, and report totals so operators can see both configuration truth and live runtime follow-through without stitching several surfaces together by hand
-- `Cephalon.Eventing.Wolverine` now also contributes its own diagnostics convention so `/engine/diagnostics` and the runtime snapshot advertise the stable `4300-4303` Wolverine dispatch-loop event ids alongside the shared eventing diagnostics range
+- `Cephalon.Eventing.Wolverine` now also contributes its own diagnostics convention so `/engine/diagnostics` and the runtime snapshot advertise the stable `4300-4305` Wolverine dispatch-loop event ids alongside the shared eventing diagnostics range
+- `Cephalon.Eventing.Wolverine` now also exposes `System.Diagnostics.ActivitySource` (`Cephalon.Eventing.Wolverine.Dispatch`) and `System.Diagnostics.Metrics.Meter` instrumentation for the dispatch loop, with Activity spans per dispatch item (tagged with message_id, event_type, channel_id, dispatch_attempt, correlation_id, tenant_id) and counters for attempts, successes, failures, retries plus a histogram for dispatch duration in milliseconds — enabling OpenTelemetry-instrumented hosts to capture distributed traces and metrics without additional adapter code
 - `eventing.subscriptions` still exposes declared subscription descriptors rather than a pack-owned bus runner, while `eventing.subscribe` remains intentionally absent until a real subscription/dispatch runtime exists instead of over-claiming bus behavior
 - decision lock: phase 8 will treat `Cephalon.Eventing.Wolverine` as the official first-class adapter path, keep `MassTransit` as the tracked-later candidate once that first path is proven, and leave `MediatR`, `LiteBus`, `NServiceBus`, and `SlimMessageBus` as consumer-owned coexistence choices unless a later bridge or adapter package is explicitly shipped
 - coexistence rule: one flow should have one durable-messaging owner, so consumer apps should not layer Cephalon-managed durable messaging semantics and a second bus/runtime on the same publish/consume path
-- remaining work is richer observability and retry/runtime follow-through for the now-shipped `wolverine-managed` dispatch path, plus later subscription/handler-execution truth beyond the current declarative and application-managed reporting model
+- remaining work is later subscription/handler-execution truth beyond the current declarative and application-managed reporting model
 
 ### ENG-051 Identity and authorization companion baseline
 
-Status: in progress
+Status: done
 Estimate: 13
+Completed: April 7, 2026
 
 Why:
 
@@ -1492,3 +1495,10 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 ### Sprint 32
 
 - backlog and roadmap alignment: ENG-054 status updated to done (all 9 non-relational provider families shipped), ENG-056 status updated to done (phase-8 docs and reference-doc alignment complete), ENG-057 status updated to done (event-sourcing follow-through baseline delivered through core contracts plus 10 provider implementations), roadmap sprint alignment extended through Sprint 31, Phase 10 planning notes updated to reflect completion
+
+### Sprint 33
+
+- ENG-049 EF projection contributor: `Cephalon.Data.EntityFramework` now implements `IProjectionContributor` and registers EF-backed projection descriptors with `data.projections.entity-framework` capability plus `projections` runtime surface under `data-management` — closes projection persistence/runtime gap
+- ENG-050 Wolverine dispatch observability: `Cephalon.Eventing.Wolverine` dispatch loop now instrumented with `System.Diagnostics.ActivitySource` (Producer spans per dispatch item) and `System.Diagnostics.Metrics.Meter` (attempts, successes, failures, retries counters + duration histogram), diagnostics convention extended from `4300-4303` to `4300-4305` — enables OpenTelemetry trace/metric capture
+- ENG-051 status updated to done (all acceptance criteria met)
+- ENG-055 validation script fix: `scripts/validate-phase8-conventions.ps1` updated to use new test assembly paths (`Cephalon.Tests.Composition`, `Cephalon.Tests.Hosting`, `Cephalon.Tests.Tooling`) after Infrastructure Phase 2 test split — **Shipped** · 648/648 tests

@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-06T17:38:59.0457543+00:00",
+  "GeneratedAtUtc": "2026-04-06T21:09:25.4605334+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -2968,7 +2968,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 1,
-        "Properties": 8,
+        "Properties": 9,
         "Methods": 0
       }
     },
@@ -24174,6 +24174,17 @@
       "AnchorId": "member-m-cephalon-abstractions-authorization-iauthorizationpolicycontributor-registerpolicies-cephalon-abstractions-authorization-iauthorizationpolicyregistry",
       "Signature": "void RegisterPolicies(IAuthorizationPolicyRegistry policies)",
       "Summary": "Registers one or more authorization-policy descriptors with the supplied registry."
+    },
+    {
+      "DisplayName": "RegisterProjections",
+      "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkDataOptions",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Configuration",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-registerprojections",
+      "Signature": "bool RegisterProjections { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the pack should register Entity Framework-backed projection infrastructure."
     },
     {
       "DisplayName": "RegisterProjections",

@@ -37,6 +37,20 @@ internal static class WolverineEventingDiagnosticsConventions
         MessageTemplate: "Wolverine-managed event dispatch loop could not project runtime observation '{Outcome}' for message '{MessageId}'.",
         Description: "Emitted when the Wolverine-managed staged-event dispatch loop cannot write its runtime observation back into the Cephalon dispatch-runtime reporting surface.");
 
+    public static readonly DiagnosticEventDefinition DispatchActivityStarted = new(
+        Id: 4304,
+        Name: "WolverineDispatchActivityStarted",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Wolverine-managed event dispatch activity started for message '{MessageId}'.",
+        Description: "Emitted when a distributed tracing activity is created for an individual event dispatch operation.");
+
+    public static readonly DiagnosticEventDefinition DispatchMetricsRecorded = new(
+        Id: 4305,
+        Name: "WolverineDispatchMetricsRecorded",
+        Severity: DiagnosticSeverity.Information,
+        MessageTemplate: "Wolverine-managed event dispatch metrics recorded.",
+        Description: "Emitted when dispatch metrics (attempts, successes, failures, retries, duration) are recorded through the OpenTelemetry-compatible meter.");
+
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.Eventing.Wolverine",
         LoggerCategoryPrefix: "Cephalon.Eventing.Wolverine",
@@ -46,6 +60,8 @@ internal static class WolverineEventingDiagnosticsConventions
             DispatchLoopStarted,
             DispatchLoopStopped,
             DispatchReadFailed,
-            DispatchObservationProjectionFailed
+            DispatchObservationProjectionFailed,
+            DispatchActivityStarted,
+            DispatchMetricsRecorded
         ]);
 }
