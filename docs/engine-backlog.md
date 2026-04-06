@@ -1432,3 +1432,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 - ENG-054 Redis non-relational provider: `Cephalon.Data.Redis` (IOutbox backed by Redis Hash + Sorted Set with idempotent KeyNotExists transaction condition, IInbox backed by Redis Set with naturally idempotent SADD, outbox/inbox runtime surface contribution, `data.redis` / `data.key-value-store` capabilities), `Cephalon.EventSourcing.Redis` (IEventStore via Redis Streams with XADD/XRANGE, optimistic pre-insert version check, System.Text.Json serialization, IAsyncEnumerable stream replay), StackExchange.Redis 2.8.16 in CPM, 8 composition tests (abortConnect=false, no live Redis required), full component docs — **Shipped** · 607/607 tests
 
+### Sprint 27
+
+- ENG-054 Neo4j graph-store non-relational provider: `Cephalon.Data.Neo4j` (IOutbox + IInbox backed by Neo4j graph nodes, idempotent staging via Cypher MERGE on messageId, `data.neo4j` / `data.graph-store` capabilities), `Cephalon.EventSourcing.Neo4j` (IEventStore with optimistic concurrency via IS NODE KEY constraint on streamId+streamVersion, System.Text.Json serialization, IAsyncEnumerable stream replay), Neo4j.Driver 6.0.0 already in CPM, 8 composition tests (no live Neo4j required — driver connects lazily), full component docs — **Shipped** · 615/615 tests
+
