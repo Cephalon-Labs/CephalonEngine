@@ -91,9 +91,11 @@
     <ProjectReference Include="..\..\src\Cephalon.Behaviors.Patterns\Cephalon.Behaviors.Patterns.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Behaviors.SourceGen\Cephalon.Behaviors.SourceGen.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.MongoDB\Cephalon.Data.MongoDB.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.Redis\Cephalon.Data.Redis.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.EventSourcing\Cephalon.EventSourcing.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.EventSourcing.EntityFramework\Cephalon.EventSourcing.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.EventSourcing.MongoDB\Cephalon.EventSourcing.MongoDB.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.EventSourcing.Redis\Cephalon.EventSourcing.Redis.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Retrieval\Cephalon.Retrieval.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Scaffolding\Cephalon.Scaffolding.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Worker\Cephalon.Worker.csproj" />

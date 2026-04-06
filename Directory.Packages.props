@@ -57,6 +57,7 @@
     <PackageVersion Include="Serilog.Settings.Configuration" Version="10.0.0" />
     <PackageVersion Include="Sfid.Net" Version="1.0.1" />
     <PackageVersion Include="Sfid.EntityFramework" Version="1.0.1" />
+    <PackageVersion Include="StackExchange.Redis" Version="2.8.16" />
     <PackageVersion Include="WolverineFx" Version="5.27.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />

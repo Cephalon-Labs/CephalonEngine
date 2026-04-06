@@ -1195,8 +1195,12 @@ Progress:
 
 - `Cephalon.Data.MongoDB` now exists as the first non-relational data companion pack: registers `IMongoClient` + `IMongoDatabase`, delivers `IOutbox` and `IInbox` backed by MongoDB collections with idempotent staging via unique index on `MessageId`, publishes `data.mongodb` / `data.document-store` / `data.outbox.mongodb` / `data.inbox.mongodb` capabilities, and projects `outbox-producers` and `inbox-stores` through the `event-driven-integration` technology surface — no changes to `Cephalon.Engine` or `Cephalon.Abstractions`
 - `Cephalon.EventSourcing.MongoDB` now exists as the first non-relational event-store provider: implements `IEventStore` against a `event_streams` collection with optimistic concurrency enforced by a compound unique index on `(StreamId, StreamVersion)`, exposes `GetVersionAsync` / `AppendAsync` / `ReadStreamAsync`, serializes through `System.Text.Json`, and round-trips event types via `AssemblyQualifiedName`
-- both packages ship 12 integration tests via EphemeralMongo in-process runner and full component-guide docs
+- both MongoDB packages ship 12 integration tests via EphemeralMongo in-process runner and full component-guide docs
 - companion-pack pattern proven for document-oriented stores — commit `f94dc28` · 599 tests green
+- `Cephalon.Data.Redis` now exists as the second non-relational data companion pack: registers `IConnectionMultiplexer` via StackExchange.Redis, delivers `IOutbox` backed by Redis Hash + Sorted Set (idempotent staging via `KeyNotExists` transaction condition) and `IInbox` backed by a Redis Set (naturally idempotent `SADD`), publishes `data.redis` / `data.key-value-store` / `data.outbox.redis` / `data.inbox.redis` capabilities, and projects `outbox-producers` and `inbox-stores` through the `event-driven-integration` technology surface — no changes to `Cephalon.Engine` or `Cephalon.Abstractions`
+- `Cephalon.EventSourcing.Redis` now exists as the second non-relational event-store provider: implements `IEventStore` against Redis Streams (`XADD`/`XRANGE`), stores `StreamVersion`, `EventType`, `Payload`, `OccurredAtUtc`, and `AppendedAtUtc` as stream entry fields, performs optimistic pre-insert version check (known limitation: no atomic test-and-set), serializes through `System.Text.Json`, and round-trips event types via `AssemblyQualifiedName`
+- both Redis packages ship 8 composition tests (no live Redis required — `abortConnect=false` enables lazy-connect service resolution) and full component-guide docs
+- companion-pack pattern proven for key-value stores — Sprint 26 · StackExchange.Redis 2.8.16 added to CPM
 
 ### ENG-055 Phase 8 validation, benchmark, and runtime-truth matrix
 
@@ -1423,4 +1427,8 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 ### Sprint 25
 
 - ENG-054 Phase 10 non-relational provider baseline: `Cephalon.Data.MongoDB` (IOutbox + IInbox backed by MongoDB collections, idempotent staging via unique index, outbox/inbox runtime surface contribution, `data.mongodb` / `data.document-store` capabilities), `Cephalon.EventSourcing.MongoDB` (IEventStore with optimistic concurrency via compound unique index on StreamId+StreamVersion, System.Text.Json serialization, IAsyncEnumerable stream replay), MongoDB.Driver 3.4.0 in CPM, 12 integration tests via EphemeralMongo, full component docs — **Shipped** commit `f94dc28` · 599/599 tests
+
+### Sprint 26
+
+- ENG-054 Redis non-relational provider: `Cephalon.Data.Redis` (IOutbox backed by Redis Hash + Sorted Set with idempotent KeyNotExists transaction condition, IInbox backed by Redis Set with naturally idempotent SADD, outbox/inbox runtime surface contribution, `data.redis` / `data.key-value-store` capabilities), `Cephalon.EventSourcing.Redis` (IEventStore via Redis Streams with XADD/XRANGE, optimistic pre-insert version check, System.Text.Json serialization, IAsyncEnumerable stream replay), StackExchange.Redis 2.8.16 in CPM, 8 composition tests (abortConnect=false, no live Redis required), full component docs — **Shipped** · 607/607 tests
 

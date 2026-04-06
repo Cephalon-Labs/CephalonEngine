@@ -22,6 +22,7 @@ See also: [Docs hub](../README.md)
 - [Cephalon.EventSourcing](event-sourcing.md)
 - [Cephalon.EventSourcing.EntityFramework](event-sourcing-entityframework.md)
 - [Cephalon.EventSourcing.MongoDB](event-sourcing-mongodb.md)
+- [Cephalon.EventSourcing.Redis](event-sourcing-redis.md)
 - [Cephalon.Eventing](eventing.md)
 - [Cephalon.Retrieval](retrieval.md)
 - [Cephalon.Edge](edge.md)
@@ -33,6 +34,11 @@ See also: [Docs hub](../README.md)
 - [Cephalon.Behaviors.Messaging](behaviors-messaging.md)
 - [Cephalon.Behaviors.Patterns](behaviors-patterns.md)
 - [Cephalon.Behaviors.SourceGen](behaviors-sourcegen.md)
+
+## Phase 10 companion packs
+
+- [Cephalon.Data.Redis](data-redis.md)
+- [Cephalon.EventSourcing.Redis](event-sourcing-redis.md)
 
 ## Phase 8 companion packs
 
