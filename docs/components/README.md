@@ -29,6 +29,7 @@ See also: [Docs hub](../README.md)
 
 - [Cephalon.Behaviors](behaviors.md)
 - [Cephalon.Behaviors.Http](behaviors-http.md)
+- [Cephalon.Behaviors.Messaging](behaviors-messaging.md)
 
 ## Phase 8 companion packs
 
