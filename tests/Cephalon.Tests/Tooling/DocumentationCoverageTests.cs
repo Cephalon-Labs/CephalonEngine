@@ -23,6 +23,8 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.EventSourcing.EntityFramework"] = "event-sourcing-entityframework.md",
             ["Cephalon.EventSourcing.MongoDB"] = "event-sourcing-mongodb.md",
             ["Cephalon.EventSourcing.Neo4j"] = "event-sourcing-neo4j.md",
+            ["Cephalon.EventSourcing.Elasticsearch"] = "event-sourcing-elasticsearch.md",
+            ["Cephalon.EventSourcing.OpenSearch"] = "event-sourcing-opensearch.md",
             ["Cephalon.EventSourcing.Redis"] = "event-sourcing-redis.md",
             // "MultiTenancy" → "multi-tenancy"
             ["Cephalon.MultiTenancy"] = "multi-tenancy.md",

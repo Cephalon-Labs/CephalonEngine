@@ -92,6 +92,8 @@
     <ProjectReference Include="..\..\src\Cephalon.Behaviors.Patterns\Cephalon.Behaviors.Patterns.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Behaviors.SourceGen\Cephalon.Behaviors.SourceGen.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.Cassandra\Cephalon.Data.Cassandra.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.Elasticsearch\Cephalon.Data.Elasticsearch.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.OpenSearch\Cephalon.Data.OpenSearch.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.ClickHouse\Cephalon.Data.ClickHouse.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.MongoDB\Cephalon.Data.MongoDB.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.Neo4j\Cephalon.Data.Neo4j.csproj" />
@@ -102,6 +104,8 @@
     <ProjectReference Include="..\..\src\Cephalon.EventSourcing.ClickHouse\Cephalon.EventSourcing.ClickHouse.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.EventSourcing.MongoDB\Cephalon.EventSourcing.MongoDB.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.EventSourcing.Neo4j\Cephalon.EventSourcing.Neo4j.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.EventSourcing.Elasticsearch\Cephalon.EventSourcing.Elasticsearch.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.EventSourcing.OpenSearch\Cephalon.EventSourcing.OpenSearch.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.EventSourcing.Redis\Cephalon.EventSourcing.Redis.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Retrieval\Cephalon.Retrieval.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Scaffolding\Cephalon.Scaffolding.csproj" />

@@ -45,6 +45,10 @@ See also: [Docs hub](../README.md)
 - [Cephalon.EventSourcing.Cassandra](event-sourcing-cassandra.md)
 - [Cephalon.Data.ClickHouse](data-clickhouse.md)
 - [Cephalon.EventSourcing.ClickHouse](event-sourcing-clickhouse.md)
+- [Cephalon.Data.Elasticsearch](data-elasticsearch.md)
+- [Cephalon.EventSourcing.Elasticsearch](event-sourcing-elasticsearch.md)
+- [Cephalon.Data.OpenSearch](data-opensearch.md)
+- [Cephalon.EventSourcing.OpenSearch](event-sourcing-opensearch.md)
 
 ## Phase 8 companion packs
 

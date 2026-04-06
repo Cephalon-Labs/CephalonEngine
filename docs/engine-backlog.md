@@ -1449,3 +1449,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - Solution filter files: `core.slnf`, `data.slnf`, `observability.slnf`, `aspnetcore.slnf` added to repo root for IDE-level project filtering
 - Scaffolding scripts: `scripts/New-ProviderPack.ps1` and `scripts/New-ObservabilityPack.ps1` automate the artifact creation steps when adding new provider companion packs
 
+
+### Sprint 30
+
+- ENG-054 Elasticsearch + OpenSearch search-store non-relational provider: `Cephalon.Data.Elasticsearch` (IOutbox + IInbox backed by Elasticsearch indices, idempotent staging via op_type=create (409 swallow), `data.elasticsearch` / `data.search-store` capabilities), `Cephalon.EventSourcing.Elasticsearch` (IEventStore with compound document id `{streamId}#{streamVersion}` for uniqueness, application-layer optimistic concurrency, System.Text.Json serialization, IAsyncEnumerable stream replay), `Cephalon.Data.OpenSearch` (OpenSearch.Client mirror of Elasticsearch data pack, `data.opensearch` / `data.search-store` capabilities), `Cephalon.EventSourcing.OpenSearch` (OpenSearch mirror of Elasticsearch event store), Elastic.Clients.Elasticsearch 8.17.0 + OpenSearch.Client 1.8.0 in CPM, 8 composition tests (no live server required — client connects lazily), full component docs — **Shipped**
