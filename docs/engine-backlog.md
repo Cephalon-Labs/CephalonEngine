@@ -1410,6 +1410,6 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 ### Sprint 24
 
-- ENG-058 M5 Source Generator: Roslyn analyzer ([AppBehavior] compile-time validation), incremental generator (BehaviorDispatchTable.g.cs), benchmark suite
+- ENG-058 M5 Source Generator: Roslyn `IIncrementalGenerator` + `DiagnosticAnalyzer` (`Cephalon.Behaviors.SourceGen`); ABT0010–ABT0013 diagnostics; `ForAttributeWithMetadataName`; emits `BehaviorRegistrationHints.g.cs` — **Shipped** commit `8455b9a` · 584/584 tests
 - ENG-058 M6 Runtime Integration: BehaviorRuntimeContributor, IBehaviorAdvisory, EventSourcing wiring, diagnostics 5100-5109
 

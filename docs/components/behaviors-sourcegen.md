@@ -48,7 +48,7 @@ and diagnostics activate for any project that references `Cephalon.Behaviors`.
 
 ## Status
 
-> Status: Shipped — ENG-058 M5
+> Status: ✅ Shipped — commit 8455b9a · 584/584 tests
 
 ## Related components
 
