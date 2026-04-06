@@ -57,16 +57,6 @@ string Database { get; set; }
 
 Gets or sets the database name used for the health query.
 
-<a id="member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-displayname"></a>
-
-##### `DisplayName`
-
-```csharp
-string DisplayName { get; set; }
-```
-
-Gets or sets the human-readable dependency name shown to operators.
-
 <a id="member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-healthquery"></a>
 
 ##### `HealthQuery`
@@ -86,16 +76,6 @@ string Host { get; set; }
 ```
 
 Gets or sets the Postgres host name or IP address to probe when no full connection string is supplied.
-
-<a id="member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-id"></a>
-
-##### `Id`
-
-```csharp
-string Id { get; set; }
-```
-
-Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
 
 <a id="member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-password"></a>
 
@@ -117,16 +97,6 @@ int Port { get; set; }
 
 Gets or sets the Postgres TCP port.
 
-<a id="member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-required"></a>
-
-##### `Required`
-
-```csharp
-bool Required { get; set; }
-```
-
-Gets or sets a value indicating whether this dependency is required for readiness.
-
 <a id="member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-sslmode"></a>
 
 ##### `SslMode`
@@ -136,16 +106,6 @@ string SslMode { get; set; }
 ```
 
 Gets or sets the optional Postgres SSL mode used when building the probe connection string.
-
-<a id="member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-timeoutseconds"></a>
-
-##### `TimeoutSeconds`
-
-```csharp
-int TimeoutSeconds { get; set; }
-```
-
-Gets or sets the per-probe timeout in seconds.
 
 <a id="member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-username"></a>
 
@@ -179,28 +139,6 @@ PostgresDependencyHealthOptions()
 ```
 
 Initializes a new instance of the `PostgresDependencyHealthOptions` class.
-
-#### Properties
-
-<a id="member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-dependencies"></a>
-
-##### `Dependencies`
-
-```csharp
-IReadOnlyList<PostgresDependencyDefinition> Dependencies { get; set; }
-```
-
-Gets or sets the configured Postgres dependencies that should contribute to runtime health.
-
-<a id="member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-refreshintervalseconds"></a>
-
-##### `RefreshIntervalSeconds`
-
-```csharp
-int RefreshIntervalSeconds { get; set; }
-```
-
-Gets or sets the interval, in seconds, between background refresh attempts.
 
 #### Methods
 

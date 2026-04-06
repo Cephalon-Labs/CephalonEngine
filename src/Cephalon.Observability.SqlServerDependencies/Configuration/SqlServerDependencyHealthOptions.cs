@@ -66,4 +66,11 @@ public sealed class SqlServerDependencyHealthOptions : DependencyHealthOptionsBa
             TimeoutSeconds = GetInt32(section["TimeoutSeconds"], defaultValue: 5)
         };
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SqlServerDependencyHealthOptions" /> class.
+    /// </summary>
+    public SqlServerDependencyHealthOptions()
+    {
+    }
 }

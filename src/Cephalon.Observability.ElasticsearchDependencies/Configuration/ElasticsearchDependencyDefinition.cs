@@ -21,4 +21,11 @@ public sealed class ElasticsearchDependencyDefinition : DependencyDefinitionBase
 
     /// <summary>Gets or sets the optional password used for Elasticsearch basic authentication.</summary>
     public string? Password { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ElasticsearchDependencyDefinition" /> class.
+    /// </summary>
+    public ElasticsearchDependencyDefinition()
+    {
+    }
 }

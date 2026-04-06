@@ -65,4 +65,11 @@ public sealed class RedisDependencyHealthOptions : DependencyHealthOptionsBase<R
 
     private static int? GetNullableInt32(string? value) =>
         int.TryParse(value, out var parsed) && parsed >= 0 ? parsed : null;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RedisDependencyHealthOptions" /> class.
+    /// </summary>
+    public RedisDependencyHealthOptions()
+    {
+    }
 }

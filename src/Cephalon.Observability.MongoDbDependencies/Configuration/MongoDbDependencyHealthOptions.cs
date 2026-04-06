@@ -68,4 +68,11 @@ public sealed class MongoDbDependencyHealthOptions : DependencyHealthOptionsBase
             TimeoutSeconds = GetInt32(section["TimeoutSeconds"], defaultValue: 5)
         };
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MongoDbDependencyHealthOptions" /> class.
+    /// </summary>
+    public MongoDbDependencyHealthOptions()
+    {
+    }
 }

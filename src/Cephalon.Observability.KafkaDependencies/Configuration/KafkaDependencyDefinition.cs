@@ -27,4 +27,11 @@ public sealed class KafkaDependencyDefinition : DependencyDefinitionBase
 
     /// <summary>Gets or sets the optional SASL password used when authenticated broker access is required.</summary>
     public string? Password { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KafkaDependencyDefinition" /> class.
+    /// </summary>
+    public KafkaDependencyDefinition()
+    {
+    }
 }

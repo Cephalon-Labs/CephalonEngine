@@ -27,4 +27,11 @@ public sealed class RabbitMqDependencyDefinition : DependencyDefinitionBase
 
     /// <summary>Gets or sets a value indicating whether TLS should be enabled for the broker probe.</summary>
     public bool UseTls { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RabbitMqDependencyDefinition" /> class.
+    /// </summary>
+    public RabbitMqDependencyDefinition()
+    {
+    }
 }

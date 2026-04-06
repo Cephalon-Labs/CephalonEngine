@@ -80,4 +80,11 @@ public sealed class HttpDependencyHealthOptions : DependencyHealthOptionsBase<Ht
             .Where(static value => value > 0)
             .ToArray();
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HttpDependencyHealthOptions" /> class.
+    /// </summary>
+    public HttpDependencyHealthOptions()
+    {
+    }
 }

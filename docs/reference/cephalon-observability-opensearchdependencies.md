@@ -47,16 +47,6 @@ string BearerToken { get; set; }
 
 Gets or sets the optional bearer token used for OpenSearch bearer-token authentication.
 
-<a id="member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-displayname"></a>
-
-##### `DisplayName`
-
-```csharp
-string DisplayName { get; set; }
-```
-
-Gets or sets the human-readable dependency name shown to operators.
-
 <a id="member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-endpoint"></a>
 
 ##### `Endpoint`
@@ -66,16 +56,6 @@ string Endpoint { get; set; }
 ```
 
 Gets or sets the absolute OpenSearch base URL or cluster-health endpoint that should be probed.
-
-<a id="member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-id"></a>
-
-##### `Id`
-
-```csharp
-string Id { get; set; }
-```
-
-Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
 
 <a id="member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-index"></a>
 
@@ -96,26 +76,6 @@ string Password { get; set; }
 ```
 
 Gets or sets the optional password used for OpenSearch basic authentication.
-
-<a id="member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-required"></a>
-
-##### `Required`
-
-```csharp
-bool Required { get; set; }
-```
-
-Gets or sets a value indicating whether this dependency is required for readiness.
-
-<a id="member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-timeoutseconds"></a>
-
-##### `TimeoutSeconds`
-
-```csharp
-int TimeoutSeconds { get; set; }
-```
-
-Gets or sets the per-request timeout in seconds.
 
 <a id="member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-username"></a>
 
@@ -149,28 +109,6 @@ OpenSearchDependencyHealthOptions()
 ```
 
 Initializes a new instance of the `OpenSearchDependencyHealthOptions` class.
-
-#### Properties
-
-<a id="member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencyhealthoptions-dependencies"></a>
-
-##### `Dependencies`
-
-```csharp
-IReadOnlyList<OpenSearchDependencyDefinition> Dependencies { get; set; }
-```
-
-Gets or sets the configured OpenSearch dependencies that should contribute to runtime health.
-
-<a id="member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencyhealthoptions-refreshintervalseconds"></a>
-
-##### `RefreshIntervalSeconds`
-
-```csharp
-int RefreshIntervalSeconds { get; set; }
-```
-
-Gets or sets the interval, in seconds, between background refresh attempts.
 
 #### Methods
 

@@ -62,4 +62,11 @@ public sealed class OpenSearchDependencyHealthOptions : DependencyHealthOptionsB
             TimeoutSeconds = GetInt32(section["TimeoutSeconds"], defaultValue: 5)
         };
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenSearchDependencyHealthOptions" /> class.
+    /// </summary>
+    public OpenSearchDependencyHealthOptions()
+    {
+    }
 }

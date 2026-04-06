@@ -33,4 +33,11 @@ public sealed class MySqlDependencyDefinition : DependencyDefinitionBase
 
     /// <summary>Gets or sets the SQL statement executed to verify the dependency.</summary>
     public string HealthQuery { get; set; } = "SELECT 1;";
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MySqlDependencyDefinition" /> class.
+    /// </summary>
+    public MySqlDependencyDefinition()
+    {
+    }
 }

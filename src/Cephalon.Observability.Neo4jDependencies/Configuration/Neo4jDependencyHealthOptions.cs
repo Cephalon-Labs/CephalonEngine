@@ -65,4 +65,11 @@ public sealed class Neo4jDependencyHealthOptions : DependencyHealthOptionsBase<N
             TimeoutSeconds = GetInt32(section["TimeoutSeconds"], defaultValue: 5)
         };
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Neo4jDependencyHealthOptions" /> class.
+    /// </summary>
+    public Neo4jDependencyHealthOptions()
+    {
+    }
 }

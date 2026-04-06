@@ -65,4 +65,11 @@ public sealed class PostgresDependencyHealthOptions : DependencyHealthOptionsBas
             TimeoutSeconds = GetInt32(section["TimeoutSeconds"], defaultValue: 5)
         };
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PostgresDependencyHealthOptions" /> class.
+    /// </summary>
+    public PostgresDependencyHealthOptions()
+    {
+    }
 }

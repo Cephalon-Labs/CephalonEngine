@@ -64,4 +64,11 @@ public sealed class KafkaDependencyHealthOptions : DependencyHealthOptionsBase<K
             TimeoutSeconds = GetInt32(section["TimeoutSeconds"], defaultValue: 5)
         };
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KafkaDependencyHealthOptions" /> class.
+    /// </summary>
+    public KafkaDependencyHealthOptions()
+    {
+    }
 }

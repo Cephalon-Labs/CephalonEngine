@@ -47,16 +47,6 @@ string ConnectionString { get; set; }
 
 Gets or sets the optional AMQP connection string used for the probe.
 
-<a id="member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-displayname"></a>
-
-##### `DisplayName`
-
-```csharp
-string DisplayName { get; set; }
-```
-
-Gets or sets the human-readable dependency name shown to operators.
-
 <a id="member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-host"></a>
 
 ##### `Host`
@@ -66,16 +56,6 @@ string Host { get; set; }
 ```
 
 Gets or sets the RabbitMQ host name or IP address to probe when no full connection string is supplied.
-
-<a id="member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-id"></a>
-
-##### `Id`
-
-```csharp
-string Id { get; set; }
-```
-
-Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
 
 <a id="member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-password"></a>
 
@@ -96,26 +76,6 @@ int Port { get; set; }
 ```
 
 Gets or sets the RabbitMQ TCP port.
-
-<a id="member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-required"></a>
-
-##### `Required`
-
-```csharp
-bool Required { get; set; }
-```
-
-Gets or sets a value indicating whether this dependency is required for readiness.
-
-<a id="member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-timeoutseconds"></a>
-
-##### `TimeoutSeconds`
-
-```csharp
-int TimeoutSeconds { get; set; }
-```
-
-Gets or sets the per-probe timeout in seconds.
 
 <a id="member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-username"></a>
 
@@ -169,28 +129,6 @@ RabbitMqDependencyHealthOptions()
 ```
 
 Initializes a new instance of the `RabbitMqDependencyHealthOptions` class.
-
-#### Properties
-
-<a id="member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions-dependencies"></a>
-
-##### `Dependencies`
-
-```csharp
-IReadOnlyList<RabbitMqDependencyDefinition> Dependencies { get; set; }
-```
-
-Gets or sets the configured RabbitMQ dependencies that should contribute to runtime health.
-
-<a id="member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions-refreshintervalseconds"></a>
-
-##### `RefreshIntervalSeconds`
-
-```csharp
-int RefreshIntervalSeconds { get; set; }
-```
-
-Gets or sets the interval, in seconds, between background refresh attempts.
 
 #### Methods
 

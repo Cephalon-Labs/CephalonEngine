@@ -61,4 +61,11 @@ public sealed class MongoDbDependencyDefinition : DependencyDefinitionBase
     /// Gets or sets the MongoDB database command executed to verify the dependency.
     /// </summary>
     public string HealthCommand { get; set; } = "ping";
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MongoDbDependencyDefinition" /> class.
+    /// </summary>
+    public MongoDbDependencyDefinition()
+    {
+    }
 }

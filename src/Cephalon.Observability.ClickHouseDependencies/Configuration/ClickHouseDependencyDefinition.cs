@@ -30,4 +30,11 @@ public sealed class ClickHouseDependencyDefinition : DependencyDefinitionBase
 
     /// <summary>Gets or sets the SQL statement executed to verify the dependency.</summary>
     public string HealthQuery { get; set; } = "SELECT 1";
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClickHouseDependencyDefinition" /> class.
+    /// </summary>
+    public ClickHouseDependencyDefinition()
+    {
+    }
 }

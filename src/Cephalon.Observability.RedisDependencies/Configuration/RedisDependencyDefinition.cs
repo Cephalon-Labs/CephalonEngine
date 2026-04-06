@@ -31,4 +31,11 @@ public sealed class RedisDependencyDefinition : DependencyDefinitionBase
     /// Gets or sets the optional Redis logical database index to select before pinging.
     /// </summary>
     public int? Database { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RedisDependencyDefinition" /> class.
+    /// </summary>
+    public RedisDependencyDefinition()
+    {
+    }
 }

@@ -47,16 +47,6 @@ string ConnectionString { get; set; }
 
 Gets or sets the optional full Oracle connection string used for the probe.
 
-<a id="member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-displayname"></a>
-
-##### `DisplayName`
-
-```csharp
-string DisplayName { get; set; }
-```
-
-Gets or sets the human-readable dependency name shown to operators.
-
 <a id="member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-healthquery"></a>
 
 ##### `HealthQuery`
@@ -76,16 +66,6 @@ string Host { get; set; }
 ```
 
 Gets or sets the Oracle host name or IP address to probe when no full connection string is supplied.
-
-<a id="member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-id"></a>
-
-##### `Id`
-
-```csharp
-string Id { get; set; }
-```
-
-Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
 
 <a id="member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-password"></a>
 
@@ -107,16 +87,6 @@ int Port { get; set; }
 
 Gets or sets the Oracle TCP port.
 
-<a id="member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-required"></a>
-
-##### `Required`
-
-```csharp
-bool Required { get; set; }
-```
-
-Gets or sets a value indicating whether this dependency is required for readiness.
-
 <a id="member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-servicename"></a>
 
 ##### `ServiceName`
@@ -126,16 +96,6 @@ string ServiceName { get; set; }
 ```
 
 Gets or sets the Oracle service name used in the Easy Connect data source when no full connection string is supplied.
-
-<a id="member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-timeoutseconds"></a>
-
-##### `TimeoutSeconds`
-
-```csharp
-int TimeoutSeconds { get; set; }
-```
-
-Gets or sets the per-probe timeout in seconds.
 
 <a id="member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-username"></a>
 
@@ -169,28 +129,6 @@ OracleDependencyHealthOptions()
 ```
 
 Initializes a new instance of the `OracleDependencyHealthOptions` class.
-
-#### Properties
-
-<a id="member-p-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions-dependencies"></a>
-
-##### `Dependencies`
-
-```csharp
-IReadOnlyList<OracleDependencyDefinition> Dependencies { get; set; }
-```
-
-Gets or sets the configured Oracle dependencies that should contribute to runtime health.
-
-<a id="member-p-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions-refreshintervalseconds"></a>
-
-##### `RefreshIntervalSeconds`
-
-```csharp
-int RefreshIntervalSeconds { get; set; }
-```
-
-Gets or sets the interval, in seconds, between background refresh attempts.
 
 #### Methods
 

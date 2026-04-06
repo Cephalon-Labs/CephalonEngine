@@ -36,4 +36,11 @@ public sealed class CassandraDependencyDefinition : DependencyDefinitionBase
     /// Gets or sets the CQL statement executed to verify the dependency.
     /// </summary>
     public string HealthQuery { get; set; } = "SELECT release_version FROM system.local;";
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CassandraDependencyDefinition" /> class.
+    /// </summary>
+    public CassandraDependencyDefinition()
+    {
+    }
 }

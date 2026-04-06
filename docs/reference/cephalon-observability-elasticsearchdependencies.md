@@ -57,16 +57,6 @@ string BearerToken { get; set; }
 
 Gets or sets the optional bearer token used for Elasticsearch bearer-token authentication.
 
-<a id="member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-displayname"></a>
-
-##### `DisplayName`
-
-```csharp
-string DisplayName { get; set; }
-```
-
-Gets or sets the human-readable dependency name shown to operators.
-
 <a id="member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-endpoint"></a>
 
 ##### `Endpoint`
@@ -77,16 +67,6 @@ string Endpoint { get; set; }
 
 Gets or sets the absolute Elasticsearch base URL or cluster-health endpoint that should be probed.
 
-<a id="member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-id"></a>
-
-##### `Id`
-
-```csharp
-string Id { get; set; }
-```
-
-Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
-
 <a id="member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-password"></a>
 
 ##### `Password`
@@ -96,26 +76,6 @@ string Password { get; set; }
 ```
 
 Gets or sets the optional password used for Elasticsearch basic authentication.
-
-<a id="member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-required"></a>
-
-##### `Required`
-
-```csharp
-bool Required { get; set; }
-```
-
-Gets or sets a value indicating whether this dependency is required for readiness.
-
-<a id="member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-timeoutseconds"></a>
-
-##### `TimeoutSeconds`
-
-```csharp
-int TimeoutSeconds { get; set; }
-```
-
-Gets or sets the per-request timeout in seconds.
 
 <a id="member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-username"></a>
 
@@ -149,28 +109,6 @@ ElasticsearchDependencyHealthOptions()
 ```
 
 Initializes a new instance of the `ElasticsearchDependencyHealthOptions` class.
-
-#### Properties
-
-<a id="member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions-dependencies"></a>
-
-##### `Dependencies`
-
-```csharp
-IReadOnlyList<ElasticsearchDependencyDefinition> Dependencies { get; set; }
-```
-
-Gets or sets the configured Elasticsearch dependencies that should contribute to runtime health.
-
-<a id="member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions-refreshintervalseconds"></a>
-
-##### `RefreshIntervalSeconds`
-
-```csharp
-int RefreshIntervalSeconds { get; set; }
-```
-
-Gets or sets the interval, in seconds, between background refresh attempts.
 
 #### Methods
 

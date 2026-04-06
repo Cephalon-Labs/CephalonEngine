@@ -65,4 +65,11 @@ public sealed class MqttDependencyHealthOptions : DependencyHealthOptionsBase<Mq
             TimeoutSeconds = GetInt32(section["TimeoutSeconds"], defaultValue: 5)
         };
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MqttDependencyHealthOptions" /> class.
+    /// </summary>
+    public MqttDependencyHealthOptions()
+    {
+    }
 }

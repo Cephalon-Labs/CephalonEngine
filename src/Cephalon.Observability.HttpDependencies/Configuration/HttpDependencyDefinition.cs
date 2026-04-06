@@ -21,4 +21,11 @@ public sealed class HttpDependencyDefinition : DependencyDefinitionBase
     /// Gets or sets the explicit HTTP status codes that should be treated as healthy.
     /// </summary>
     public IReadOnlyList<int> ExpectedStatusCodes { get; set; } = Array.Empty<int>();
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HttpDependencyDefinition" /> class.
+    /// </summary>
+    public HttpDependencyDefinition()
+    {
+    }
 }

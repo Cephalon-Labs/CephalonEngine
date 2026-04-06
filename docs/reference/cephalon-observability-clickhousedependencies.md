@@ -57,16 +57,6 @@ string Database { get; set; }
 
 Gets or sets the optional ClickHouse database to select for the probe session.
 
-<a id="member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-displayname"></a>
-
-##### `DisplayName`
-
-```csharp
-string DisplayName { get; set; }
-```
-
-Gets or sets the human-readable dependency name shown to operators.
-
 <a id="member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-healthquery"></a>
 
 ##### `HealthQuery`
@@ -86,16 +76,6 @@ string Host { get; set; }
 ```
 
 Gets or sets the ClickHouse host name or IP address to probe when no full connection string is supplied.
-
-<a id="member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-id"></a>
-
-##### `Id`
-
-```csharp
-string Id { get; set; }
-```
-
-Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
 
 <a id="member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-password"></a>
 
@@ -126,26 +106,6 @@ string Protocol { get; set; }
 ```
 
 Gets or sets the ClickHouse protocol used for the probe, such as `http` or `https`.
-
-<a id="member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-required"></a>
-
-##### `Required`
-
-```csharp
-bool Required { get; set; }
-```
-
-Gets or sets a value indicating whether this dependency is required for readiness.
-
-<a id="member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-timeoutseconds"></a>
-
-##### `TimeoutSeconds`
-
-```csharp
-int TimeoutSeconds { get; set; }
-```
-
-Gets or sets the per-probe timeout in seconds.
 
 <a id="member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-username"></a>
 
@@ -179,28 +139,6 @@ ClickHouseDependencyHealthOptions()
 ```
 
 Initializes a new instance of the `ClickHouseDependencyHealthOptions` class.
-
-#### Properties
-
-<a id="member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencyhealthoptions-dependencies"></a>
-
-##### `Dependencies`
-
-```csharp
-IReadOnlyList<ClickHouseDependencyDefinition> Dependencies { get; set; }
-```
-
-Gets or sets the configured ClickHouse dependencies that should contribute to runtime health.
-
-<a id="member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencyhealthoptions-refreshintervalseconds"></a>
-
-##### `RefreshIntervalSeconds`
-
-```csharp
-int RefreshIntervalSeconds { get; set; }
-```
-
-Gets or sets the interval, in seconds, between background refresh attempts.
 
 #### Methods
 

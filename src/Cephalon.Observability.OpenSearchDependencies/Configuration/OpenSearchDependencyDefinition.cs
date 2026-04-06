@@ -21,4 +21,11 @@ public sealed class OpenSearchDependencyDefinition : DependencyDefinitionBase
 
     /// <summary>Gets or sets the optional password used for OpenSearch basic authentication.</summary>
     public string? Password { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenSearchDependencyDefinition" /> class.
+    /// </summary>
+    public OpenSearchDependencyDefinition()
+    {
+    }
 }

@@ -27,4 +27,11 @@ public sealed class OracleDependencyDefinition : DependencyDefinitionBase
 
     /// <summary>Gets or sets the SQL statement executed to verify the dependency.</summary>
     public string HealthQuery { get; set; } = "SELECT 1 FROM DUAL";
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OracleDependencyDefinition" /> class.
+    /// </summary>
+    public OracleDependencyDefinition()
+    {
+    }
 }

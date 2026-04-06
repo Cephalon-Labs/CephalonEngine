@@ -47,16 +47,6 @@ string Database { get; set; }
 
 Gets or sets the optional Neo4j database name used when opening the probe session.
 
-<a id="member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-displayname"></a>
-
-##### `DisplayName`
-
-```csharp
-string DisplayName { get; set; }
-```
-
-Gets or sets the human-readable dependency name shown to operators.
-
 <a id="member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-healthquery"></a>
 
 ##### `HealthQuery`
@@ -76,16 +66,6 @@ string Host { get; set; }
 ```
 
 Gets or sets the Neo4j host name or IP address to probe when no full URI is supplied.
-
-<a id="member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-id"></a>
-
-##### `Id`
-
-```csharp
-string Id { get; set; }
-```
-
-Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
 
 <a id="member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-password"></a>
 
@@ -107,16 +87,6 @@ int Port { get; set; }
 
 Gets or sets the Neo4j Bolt port used when no full URI is supplied.
 
-<a id="member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-required"></a>
-
-##### `Required`
-
-```csharp
-bool Required { get; set; }
-```
-
-Gets or sets a value indicating whether this dependency is required for readiness.
-
 <a id="member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-scheme"></a>
 
 ##### `Scheme`
@@ -126,16 +96,6 @@ string Scheme { get; set; }
 ```
 
 Gets or sets the URI scheme used when building a discrete endpoint, such as `neo4j`, `neo4j+s`, `bolt`, or `bolt+s`.
-
-<a id="member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-timeoutseconds"></a>
-
-##### `TimeoutSeconds`
-
-```csharp
-int TimeoutSeconds { get; set; }
-```
-
-Gets or sets the per-probe timeout in seconds.
 
 <a id="member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-uri"></a>
 
@@ -179,28 +139,6 @@ Neo4jDependencyHealthOptions()
 ```
 
 Initializes a new instance of the `Neo4jDependencyHealthOptions` class.
-
-#### Properties
-
-<a id="member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions-dependencies"></a>
-
-##### `Dependencies`
-
-```csharp
-IReadOnlyList<Neo4jDependencyDefinition> Dependencies { get; set; }
-```
-
-Gets or sets the configured Neo4j dependencies that should contribute to runtime health.
-
-<a id="member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions-refreshintervalseconds"></a>
-
-##### `RefreshIntervalSeconds`
-
-```csharp
-int RefreshIntervalSeconds { get; set; }
-```
-
-Gets or sets the interval, in seconds, between background refresh attempts.
 
 #### Methods
 

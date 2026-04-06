@@ -37,16 +37,6 @@ Initializes a new instance of the `MemcachedDependencyDefinition` class.
 
 #### Properties
 
-<a id="member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-displayname"></a>
-
-##### `DisplayName`
-
-```csharp
-string DisplayName { get; set; }
-```
-
-Gets or sets the human-readable dependency name shown to operators.
-
 <a id="member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-host"></a>
 
 ##### `Host`
@@ -57,16 +47,6 @@ string Host { get; set; }
 
 Gets or sets the Memcached host name or IP address to probe.
 
-<a id="member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-id"></a>
-
-##### `Id`
-
-```csharp
-string Id { get; set; }
-```
-
-Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
-
 <a id="member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-port"></a>
 
 ##### `Port`
@@ -76,26 +56,6 @@ int Port { get; set; }
 ```
 
 Gets or sets the Memcached TCP port.
-
-<a id="member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-required"></a>
-
-##### `Required`
-
-```csharp
-bool Required { get; set; }
-```
-
-Gets or sets a value indicating whether this dependency is required for readiness.
-
-<a id="member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-timeoutseconds"></a>
-
-##### `TimeoutSeconds`
-
-```csharp
-int TimeoutSeconds { get; set; }
-```
-
-Gets or sets the per-probe timeout in seconds.
 
 <a id="type-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions"></a>
 
@@ -119,28 +79,6 @@ MemcachedDependencyHealthOptions()
 ```
 
 Initializes a new instance of the `MemcachedDependencyHealthOptions` class.
-
-#### Properties
-
-<a id="member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions-dependencies"></a>
-
-##### `Dependencies`
-
-```csharp
-IReadOnlyList<MemcachedDependencyDefinition> Dependencies { get; set; }
-```
-
-Gets or sets the configured Memcached dependencies that should contribute to runtime health.
-
-<a id="member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions-refreshintervalseconds"></a>
-
-##### `RefreshIntervalSeconds`
-
-```csharp
-int RefreshIntervalSeconds { get; set; }
-```
-
-Gets or sets the interval, in seconds, between background refresh attempts.
 
 #### Methods
 

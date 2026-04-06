@@ -30,4 +30,11 @@ public sealed class NatsDependencyDefinition : DependencyDefinitionBase
 
     /// <summary>Gets or sets the optional client name sent in the NATS <c>CONNECT</c> payload.</summary>
     public string? ClientName { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NatsDependencyDefinition" /> class.
+    /// </summary>
+    public NatsDependencyDefinition()
+    {
+    }
 }

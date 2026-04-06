@@ -94,4 +94,11 @@ public sealed class CassandraDependencyHealthOptions : DependencyHealthOptionsBa
             .Where(static entry => !string.IsNullOrWhiteSpace(entry))
             .ToArray();
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CassandraDependencyHealthOptions" /> class.
+    /// </summary>
+    public CassandraDependencyHealthOptions()
+    {
+    }
 }

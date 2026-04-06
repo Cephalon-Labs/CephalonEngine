@@ -30,4 +30,11 @@ public sealed class PostgresDependencyDefinition : DependencyDefinitionBase
 
     /// <summary>Gets or sets the SQL statement executed to verify the dependency.</summary>
     public string HealthQuery { get; set; } = "SELECT 1;";
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PostgresDependencyDefinition" /> class.
+    /// </summary>
+    public PostgresDependencyDefinition()
+    {
+    }
 }

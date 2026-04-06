@@ -47,16 +47,6 @@ string ClientId { get; set; }
 
 Gets or sets the MQTT client identifier sent in the `CONNECT` packet.
 
-<a id="member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-displayname"></a>
-
-##### `DisplayName`
-
-```csharp
-string DisplayName { get; set; }
-```
-
-Gets or sets the human-readable dependency name shown to operators.
-
 <a id="member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-host"></a>
 
 ##### `Host`
@@ -66,16 +56,6 @@ string Host { get; set; }
 ```
 
 Gets or sets the MQTT host name or IP address to probe.
-
-<a id="member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-id"></a>
-
-##### `Id`
-
-```csharp
-string Id { get; set; }
-```
-
-Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
 
 <a id="member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-keepaliveseconds"></a>
 
@@ -106,26 +86,6 @@ int Port { get; set; }
 ```
 
 Gets or sets the MQTT broker port.
-
-<a id="member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-required"></a>
-
-##### `Required`
-
-```csharp
-bool Required { get; set; }
-```
-
-Gets or sets a value indicating whether this dependency is required for readiness.
-
-<a id="member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-timeoutseconds"></a>
-
-##### `TimeoutSeconds`
-
-```csharp
-int TimeoutSeconds { get; set; }
-```
-
-Gets or sets the per-probe timeout in seconds.
 
 <a id="member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-tlsservername"></a>
 
@@ -179,28 +139,6 @@ MqttDependencyHealthOptions()
 ```
 
 Initializes a new instance of the `MqttDependencyHealthOptions` class.
-
-#### Properties
-
-<a id="member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions-dependencies"></a>
-
-##### `Dependencies`
-
-```csharp
-IReadOnlyList<MqttDependencyDefinition> Dependencies { get; set; }
-```
-
-Gets or sets the configured MQTT dependencies that should contribute to runtime health.
-
-<a id="member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions-refreshintervalseconds"></a>
-
-##### `RefreshIntervalSeconds`
-
-```csharp
-int RefreshIntervalSeconds { get; set; }
-```
-
-Gets or sets the interval, in seconds, between background refresh attempts.
 
 #### Methods
 

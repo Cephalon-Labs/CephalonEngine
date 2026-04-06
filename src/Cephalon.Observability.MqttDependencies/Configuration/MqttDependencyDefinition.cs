@@ -30,4 +30,11 @@ public sealed class MqttDependencyDefinition : DependencyDefinitionBase
 
     /// <summary>Gets or sets the MQTT keep-alive interval, in seconds, advertised through the <c>CONNECT</c> packet.</summary>
     public int KeepAliveSeconds { get; set; } = 30;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MqttDependencyDefinition" /> class.
+    /// </summary>
+    public MqttDependencyDefinition()
+    {
+    }
 }

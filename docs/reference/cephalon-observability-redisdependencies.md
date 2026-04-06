@@ -47,16 +47,6 @@ int? Database { get; set; }
 
 Gets or sets the optional Redis logical database index to select before pinging.
 
-<a id="member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-displayname"></a>
-
-##### `DisplayName`
-
-```csharp
-string DisplayName { get; set; }
-```
-
-Gets or sets the human-readable dependency name shown to operators.
-
 <a id="member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-host"></a>
 
 ##### `Host`
@@ -66,16 +56,6 @@ string Host { get; set; }
 ```
 
 Gets or sets the Redis host name or IP address to probe.
-
-<a id="member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-id"></a>
-
-##### `Id`
-
-```csharp
-string Id { get; set; }
-```
-
-Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
 
 <a id="member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-password"></a>
 
@@ -96,26 +76,6 @@ int Port { get; set; }
 ```
 
 Gets or sets the Redis TCP port.
-
-<a id="member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-required"></a>
-
-##### `Required`
-
-```csharp
-bool Required { get; set; }
-```
-
-Gets or sets a value indicating whether this dependency is required for readiness.
-
-<a id="member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-timeoutseconds"></a>
-
-##### `TimeoutSeconds`
-
-```csharp
-int TimeoutSeconds { get; set; }
-```
-
-Gets or sets the per-probe timeout in seconds.
 
 <a id="member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-username"></a>
 
@@ -149,28 +109,6 @@ RedisDependencyHealthOptions()
 ```
 
 Initializes a new instance of the `RedisDependencyHealthOptions` class.
-
-#### Properties
-
-<a id="member-p-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions-dependencies"></a>
-
-##### `Dependencies`
-
-```csharp
-IReadOnlyList<RedisDependencyDefinition> Dependencies { get; set; }
-```
-
-Gets or sets the configured Redis dependencies that should contribute to runtime health.
-
-<a id="member-p-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions-refreshintervalseconds"></a>
-
-##### `RefreshIntervalSeconds`
-
-```csharp
-int RefreshIntervalSeconds { get; set; }
-```
-
-Gets or sets the interval, in seconds, between background refresh attempts.
 
 #### Methods
 

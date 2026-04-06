@@ -46,4 +46,11 @@ public sealed class Neo4jDependencyDefinition : DependencyDefinitionBase
     /// Gets or sets the Cypher statement executed to verify the dependency.
     /// </summary>
     public string HealthQuery { get; set; } = "RETURN 1 AS health";
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Neo4jDependencyDefinition" /> class.
+    /// </summary>
+    public Neo4jDependencyDefinition()
+    {
+    }
 }

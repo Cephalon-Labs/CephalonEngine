@@ -87,16 +87,6 @@ bool? DirectConnection { get; set; }
 
 Gets or sets the optional value that controls whether the client should connect directly to the target server.
 
-<a id="member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-displayname"></a>
-
-##### `DisplayName`
-
-```csharp
-string DisplayName { get; set; }
-```
-
-Gets or sets the human-readable dependency name shown to operators.
-
 <a id="member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-healthcommand"></a>
 
 ##### `HealthCommand`
@@ -117,16 +107,6 @@ string Host { get; set; }
 
 Gets or sets the MongoDB host name or IP address to probe when no full connection string is supplied.
 
-<a id="member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-id"></a>
-
-##### `Id`
-
-```csharp
-string Id { get; set; }
-```
-
-Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
-
 <a id="member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-password"></a>
 
 ##### `Password`
@@ -146,26 +126,6 @@ int Port { get; set; }
 ```
 
 Gets or sets the MongoDB TCP port.
-
-<a id="member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-required"></a>
-
-##### `Required`
-
-```csharp
-bool Required { get; set; }
-```
-
-Gets or sets a value indicating whether this dependency is required for readiness.
-
-<a id="member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-timeoutseconds"></a>
-
-##### `TimeoutSeconds`
-
-```csharp
-int TimeoutSeconds { get; set; }
-```
-
-Gets or sets the per-probe timeout in seconds.
 
 <a id="member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-username"></a>
 
@@ -209,28 +169,6 @@ MongoDbDependencyHealthOptions()
 ```
 
 Initializes a new instance of the `MongoDbDependencyHealthOptions` class.
-
-#### Properties
-
-<a id="member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-dependencies"></a>
-
-##### `Dependencies`
-
-```csharp
-IReadOnlyList<MongoDbDependencyDefinition> Dependencies { get; set; }
-```
-
-Gets or sets the configured MongoDB dependencies that should contribute to runtime health.
-
-<a id="member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-refreshintervalseconds"></a>
-
-##### `RefreshIntervalSeconds`
-
-```csharp
-int RefreshIntervalSeconds { get; set; }
-```
-
-Gets or sets the interval, in seconds, between background refresh attempts.
 
 #### Methods
 

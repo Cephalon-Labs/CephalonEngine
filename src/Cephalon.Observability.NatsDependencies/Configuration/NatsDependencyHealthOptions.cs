@@ -65,4 +65,11 @@ public sealed class NatsDependencyHealthOptions : DependencyHealthOptionsBase<Na
             TimeoutSeconds = GetInt32(section["TimeoutSeconds"], defaultValue: 5)
         };
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NatsDependencyHealthOptions" /> class.
+    /// </summary>
+    public NatsDependencyHealthOptions()
+    {
+    }
 }

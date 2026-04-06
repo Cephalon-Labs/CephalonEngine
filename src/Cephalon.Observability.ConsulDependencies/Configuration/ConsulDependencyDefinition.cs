@@ -15,4 +15,11 @@ public sealed class ConsulDependencyDefinition : DependencyDefinitionBase
 
     /// <summary>Gets or sets the optional Consul datacenter name added as the <c>dc</c> query parameter.</summary>
     public string? Datacenter { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConsulDependencyDefinition" /> class.
+    /// </summary>
+    public ConsulDependencyDefinition()
+    {
+    }
 }

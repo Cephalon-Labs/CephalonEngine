@@ -57,16 +57,6 @@ string Database { get; set; }
 
 Gets or sets the database name used for the health query.
 
-<a id="member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-displayname"></a>
-
-##### `DisplayName`
-
-```csharp
-string DisplayName { get; set; }
-```
-
-Gets or sets the human-readable dependency name shown to operators.
-
 <a id="member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-encrypt"></a>
 
 ##### `Encrypt`
@@ -97,16 +87,6 @@ string Host { get; set; }
 
 Gets or sets the SQL Server host name or IP address to probe when no full connection string is supplied.
 
-<a id="member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-id"></a>
-
-##### `Id`
-
-```csharp
-string Id { get; set; }
-```
-
-Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
-
 <a id="member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-password"></a>
 
 ##### `Password`
@@ -126,26 +106,6 @@ int Port { get; set; }
 ```
 
 Gets or sets the SQL Server TCP port.
-
-<a id="member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-required"></a>
-
-##### `Required`
-
-```csharp
-bool Required { get; set; }
-```
-
-Gets or sets a value indicating whether this dependency is required for readiness.
-
-<a id="member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-timeoutseconds"></a>
-
-##### `TimeoutSeconds`
-
-```csharp
-int TimeoutSeconds { get; set; }
-```
-
-Gets or sets the per-probe timeout in seconds.
 
 <a id="member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-trustservercertificate"></a>
 
@@ -189,28 +149,6 @@ SqlServerDependencyHealthOptions()
 ```
 
 Initializes a new instance of the `SqlServerDependencyHealthOptions` class.
-
-#### Properties
-
-<a id="member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions-dependencies"></a>
-
-##### `Dependencies`
-
-```csharp
-IReadOnlyList<SqlServerDependencyDefinition> Dependencies { get; set; }
-```
-
-Gets or sets the configured SQL Server dependencies that should contribute to runtime health.
-
-<a id="member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions-refreshintervalseconds"></a>
-
-##### `RefreshIntervalSeconds`
-
-```csharp
-int RefreshIntervalSeconds { get; set; }
-```
-
-Gets or sets the interval, in seconds, between background refresh attempts.
 
 #### Methods
 

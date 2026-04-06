@@ -62,4 +62,11 @@ public sealed class ElasticsearchDependencyHealthOptions : DependencyHealthOptio
             TimeoutSeconds = GetInt32(section["TimeoutSeconds"], defaultValue: 5)
         };
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ElasticsearchDependencyHealthOptions" /> class.
+    /// </summary>
+    public ElasticsearchDependencyHealthOptions()
+    {
+    }
 }

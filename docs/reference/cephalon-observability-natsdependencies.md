@@ -47,16 +47,6 @@ string ClientName { get; set; }
 
 Gets or sets the optional client name sent in the NATS `CONNECT` payload.
 
-<a id="member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-displayname"></a>
-
-##### `DisplayName`
-
-```csharp
-string DisplayName { get; set; }
-```
-
-Gets or sets the human-readable dependency name shown to operators.
-
 <a id="member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-host"></a>
 
 ##### `Host`
@@ -66,16 +56,6 @@ string Host { get; set; }
 ```
 
 Gets or sets the NATS host name or IP address to probe.
-
-<a id="member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-id"></a>
-
-##### `Id`
-
-```csharp
-string Id { get; set; }
-```
-
-Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
 
 <a id="member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-password"></a>
 
@@ -96,26 +76,6 @@ int Port { get; set; }
 ```
 
 Gets or sets the NATS client port.
-
-<a id="member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-required"></a>
-
-##### `Required`
-
-```csharp
-bool Required { get; set; }
-```
-
-Gets or sets a value indicating whether this dependency is required for readiness.
-
-<a id="member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-timeoutseconds"></a>
-
-##### `TimeoutSeconds`
-
-```csharp
-int TimeoutSeconds { get; set; }
-```
-
-Gets or sets the per-probe timeout in seconds.
 
 <a id="member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-tlsservername"></a>
 
@@ -179,28 +139,6 @@ NatsDependencyHealthOptions()
 ```
 
 Initializes a new instance of the `NatsDependencyHealthOptions` class.
-
-#### Properties
-
-<a id="member-p-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions-dependencies"></a>
-
-##### `Dependencies`
-
-```csharp
-IReadOnlyList<NatsDependencyDefinition> Dependencies { get; set; }
-```
-
-Gets or sets the configured NATS dependencies that should contribute to runtime health.
-
-<a id="member-p-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions-refreshintervalseconds"></a>
-
-##### `RefreshIntervalSeconds`
-
-```csharp
-int RefreshIntervalSeconds { get; set; }
-```
-
-Gets or sets the interval, in seconds, between background refresh attempts.
 
 #### Methods
 

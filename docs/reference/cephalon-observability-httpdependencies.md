@@ -37,16 +37,6 @@ Initializes a new instance of the `HttpDependencyDefinition` class.
 
 #### Properties
 
-<a id="member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-displayname"></a>
-
-##### `DisplayName`
-
-```csharp
-string DisplayName { get; set; }
-```
-
-Gets or sets the human-readable dependency name shown to operators.
-
 <a id="member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-endpoint"></a>
 
 ##### `Endpoint`
@@ -67,16 +57,6 @@ IReadOnlyList<int> ExpectedStatusCodes { get; set; }
 
 Gets or sets the explicit HTTP status codes that should be treated as healthy.
 
-<a id="member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-id"></a>
-
-##### `Id`
-
-```csharp
-string Id { get; set; }
-```
-
-Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
-
 <a id="member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-method"></a>
 
 ##### `Method`
@@ -86,26 +66,6 @@ string Method { get; set; }
 ```
 
 Gets or sets the HTTP method used for the probe request.
-
-<a id="member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-required"></a>
-
-##### `Required`
-
-```csharp
-bool Required { get; set; }
-```
-
-Gets or sets a value indicating whether this dependency is required for readiness.
-
-<a id="member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-timeoutseconds"></a>
-
-##### `TimeoutSeconds`
-
-```csharp
-int TimeoutSeconds { get; set; }
-```
-
-Gets or sets the per-request timeout in seconds.
 
 <a id="type-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions"></a>
 
@@ -129,28 +89,6 @@ HttpDependencyHealthOptions()
 ```
 
 Initializes a new instance of the `HttpDependencyHealthOptions` class.
-
-#### Properties
-
-<a id="member-p-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-dependencies"></a>
-
-##### `Dependencies`
-
-```csharp
-IReadOnlyList<HttpDependencyDefinition> Dependencies { get; set; }
-```
-
-Gets or sets the configured HTTP dependencies that should contribute to runtime health.
-
-<a id="member-p-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-refreshintervalseconds"></a>
-
-##### `RefreshIntervalSeconds`
-
-```csharp
-int RefreshIntervalSeconds { get; set; }
-```
-
-Gets or sets the interval, in seconds, between background refresh attempts.
 
 #### Methods
 

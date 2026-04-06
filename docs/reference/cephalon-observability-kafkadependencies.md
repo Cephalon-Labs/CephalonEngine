@@ -57,26 +57,6 @@ string ClientId { get; set; }
 
 Gets or sets the optional client identifier sent to the Kafka cluster.
 
-<a id="member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-displayname"></a>
-
-##### `DisplayName`
-
-```csharp
-string DisplayName { get; set; }
-```
-
-Gets or sets the human-readable dependency name shown to operators.
-
-<a id="member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-id"></a>
-
-##### `Id`
-
-```csharp
-string Id { get; set; }
-```
-
-Gets or sets the stable dependency identifier surfaced through runtime health endpoints.
-
 <a id="member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-password"></a>
 
 ##### `Password`
@@ -86,16 +66,6 @@ string Password { get; set; }
 ```
 
 Gets or sets the optional SASL password used when authenticated broker access is required.
-
-<a id="member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-required"></a>
-
-##### `Required`
-
-```csharp
-bool Required { get; set; }
-```
-
-Gets or sets a value indicating whether this dependency is required for readiness.
 
 <a id="member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-saslmechanism"></a>
 
@@ -116,16 +86,6 @@ string SecurityProtocol { get; set; }
 ```
 
 Gets or sets the optional Kafka security protocol, such as `Plaintext`, `Ssl`, `SaslPlaintext`, or `SaslSsl`.
-
-<a id="member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-timeoutseconds"></a>
-
-##### `TimeoutSeconds`
-
-```csharp
-int TimeoutSeconds { get; set; }
-```
-
-Gets or sets the per-probe timeout in seconds.
 
 <a id="member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-topic"></a>
 
@@ -169,28 +129,6 @@ KafkaDependencyHealthOptions()
 ```
 
 Initializes a new instance of the `KafkaDependencyHealthOptions` class.
-
-#### Properties
-
-<a id="member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-dependencies"></a>
-
-##### `Dependencies`
-
-```csharp
-IReadOnlyList<KafkaDependencyDefinition> Dependencies { get; set; }
-```
-
-Gets or sets the configured Kafka dependencies that should contribute to runtime health.
-
-<a id="member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-refreshintervalseconds"></a>
-
-##### `RefreshIntervalSeconds`
-
-```csharp
-int RefreshIntervalSeconds { get; set; }
-```
-
-Gets or sets the interval, in seconds, between background refresh attempts.
 
 #### Methods
 

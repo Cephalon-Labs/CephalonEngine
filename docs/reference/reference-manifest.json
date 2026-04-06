@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-06T08:01:34.2260365+00:00",
+  "GeneratedAtUtc": "2026-04-06T17:38:59.0457543+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -2338,7 +2338,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 10,
+        "Properties": 6,
         "Methods": 0
       }
     },
@@ -2353,7 +2353,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -2398,7 +2398,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 12,
+        "Properties": 8,
         "Methods": 0
       }
     },
@@ -2413,7 +2413,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -2458,7 +2458,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 7,
+        "Properties": 3,
         "Methods": 0
       }
     },
@@ -2473,7 +2473,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -2788,7 +2788,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 9,
+        "Properties": 5,
         "Methods": 0
       }
     },
@@ -2803,7 +2803,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -3613,7 +3613,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 7,
+        "Properties": 3,
         "Methods": 0
       }
     },
@@ -3628,7 +3628,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -5518,7 +5518,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 11,
+        "Properties": 7,
         "Methods": 0
       }
     },
@@ -5533,7 +5533,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -5653,7 +5653,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 6,
+        "Properties": 2,
         "Methods": 0
       }
     },
@@ -5668,7 +5668,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -5833,7 +5833,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 15,
+        "Properties": 11,
         "Methods": 0
       }
     },
@@ -5848,7 +5848,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -5878,7 +5878,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 12,
+        "Properties": 8,
         "Methods": 0
       }
     },
@@ -5893,7 +5893,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -5953,7 +5953,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 13,
+        "Properties": 9,
         "Methods": 0
       }
     },
@@ -5968,7 +5968,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -5998,7 +5998,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 12,
+        "Properties": 8,
         "Methods": 0
       }
     },
@@ -6013,7 +6013,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -6043,7 +6043,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 12,
+        "Properties": 8,
         "Methods": 0
       }
     },
@@ -6058,7 +6058,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -6148,7 +6148,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 9,
+        "Properties": 5,
         "Methods": 0
       }
     },
@@ -6163,7 +6163,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -6268,7 +6268,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 11,
+        "Properties": 7,
         "Methods": 0
       }
     },
@@ -6283,7 +6283,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -6493,7 +6493,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 12,
+        "Properties": 8,
         "Methods": 0
       }
     },
@@ -6508,7 +6508,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -6613,7 +6613,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 11,
+        "Properties": 7,
         "Methods": 0
       }
     },
@@ -6628,7 +6628,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -6658,7 +6658,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 9,
+        "Properties": 5,
         "Methods": 0
       }
     },
@@ -6673,7 +6673,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -7303,7 +7303,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 13,
+        "Properties": 9,
         "Methods": 0
       }
     },
@@ -7318,7 +7318,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 2,
+        "Properties": 0,
         "Methods": 1
       }
     },
@@ -12716,160 +12716,6 @@
     {
       "DisplayName": "Dependencies",
       "Category": "Properties",
-      "DeclaringTypeName": "CassandraDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
-      "FileName": "cephalon-observability-cassandradependencies.md",
-      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003CCassandraDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured Cassandra dependencies that should contribute to runtime health."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
-      "DeclaringTypeName": "ClickHouseDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
-      "FileName": "cephalon-observability-clickhousedependencies.md",
-      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003CClickHouseDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured ClickHouse dependencies that should contribute to runtime health."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
-      "DeclaringTypeName": "ConsulDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
-      "FileName": "cephalon-observability-consuldependencies.md",
-      "AnchorId": "member-p-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003CConsulDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured Consul dependencies that should contribute to runtime health."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
-      "DeclaringTypeName": "ElasticsearchDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
-      "FileName": "cephalon-observability-elasticsearchdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003CElasticsearchDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured Elasticsearch dependencies that should contribute to runtime health."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
-      "DeclaringTypeName": "HttpDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.HttpDependencies",
-      "FileName": "cephalon-observability-httpdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003CHttpDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured HTTP dependencies that should contribute to runtime health."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
-      "DeclaringTypeName": "KafkaDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
-      "FileName": "cephalon-observability-kafkadependencies.md",
-      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003CKafkaDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured Kafka dependencies that should contribute to runtime health."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
-      "DeclaringTypeName": "MemcachedDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
-      "FileName": "cephalon-observability-memcacheddependencies.md",
-      "AnchorId": "member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003CMemcachedDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured Memcached dependencies that should contribute to runtime health."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
-      "DeclaringTypeName": "MongoDbDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
-      "FileName": "cephalon-observability-mongodbdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003CMongoDbDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured MongoDB dependencies that should contribute to runtime health."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
-      "DeclaringTypeName": "MqttDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MqttDependencies",
-      "FileName": "cephalon-observability-mqttdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003CMqttDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured MQTT dependencies that should contribute to runtime health."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
-      "DeclaringTypeName": "MySqlDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
-      "FileName": "cephalon-observability-mysqldependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003CMySqlDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured MySQL dependencies that should contribute to runtime health."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
-      "DeclaringTypeName": "NatsDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.NatsDependencies",
-      "FileName": "cephalon-observability-natsdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003CNatsDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured NATS dependencies that should contribute to runtime health."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
-      "DeclaringTypeName": "Neo4jDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
-      "FileName": "cephalon-observability-neo4jdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003CNeo4jDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured Neo4j dependencies that should contribute to runtime health."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
-      "DeclaringTypeName": "OpenSearchDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
-      "FileName": "cephalon-observability-opensearchdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003COpenSearchDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured OpenSearch dependencies that should contribute to runtime health."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
-      "DeclaringTypeName": "OracleDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.OracleDependencies",
-      "FileName": "cephalon-observability-oracledependencies.md",
-      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003COracleDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured Oracle dependencies that should contribute to runtime health."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
       "DeclaringTypeName": "PackageManifest",
       "NamespaceName": "Cephalon.Engine.Manifest",
       "AssemblyName": "Cephalon.Engine",
@@ -12881,39 +12727,6 @@
     {
       "DisplayName": "Dependencies",
       "Category": "Properties",
-      "DeclaringTypeName": "PostgresDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
-      "FileName": "cephalon-observability-postgresdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003CPostgresDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured Postgres dependencies that should contribute to runtime health."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
-      "DeclaringTypeName": "RabbitMqDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
-      "FileName": "cephalon-observability-rabbitmqdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003CRabbitMqDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured RabbitMQ dependencies that should contribute to runtime health."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
-      "DeclaringTypeName": "RedisDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.RedisDependencies",
-      "FileName": "cephalon-observability-redisdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003CRedisDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured Redis dependencies that should contribute to runtime health."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
       "DeclaringTypeName": "RuntimeHealthReport",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -12921,17 +12734,6 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimehealthreport-dependencies",
       "Signature": "IReadOnlyList\u003CDependencyHealthReport\u003E Dependencies { get; set; }",
       "Summary": "The dependency-health reports visible during evaluation."
-    },
-    {
-      "DisplayName": "Dependencies",
-      "Category": "Properties",
-      "DeclaringTypeName": "SqlServerDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
-      "FileName": "cephalon-observability-sqlserverdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions-dependencies",
-      "Signature": "IReadOnlyList\u003CSqlServerDependencyDefinition\u003E Dependencies { get; set; }",
-      "Summary": "Gets or sets the configured SQL Server dependencies that should contribute to runtime health."
     },
     {
       "DisplayName": "DependencyHealthReport",
@@ -13794,39 +13596,6 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
-      "DeclaringTypeName": "CassandraDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
-      "FileName": "cephalon-observability-cassandradependencies.md",
-      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
-      "DeclaringTypeName": "ClickHouseDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
-      "FileName": "cephalon-observability-clickhousedependencies.md",
-      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
-      "DeclaringTypeName": "ConsulDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
-      "FileName": "cephalon-observability-consuldependencies.md",
-      "AnchorId": "member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
       "DeclaringTypeName": "DependencyHealthReport",
       "NamespaceName": "Cephalon.Abstractions.Health",
       "AssemblyName": "Cephalon.Abstractions",
@@ -13845,17 +13614,6 @@
       "AnchorId": "member-p-cephalon-edge-services-edgenodedescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing display name for the node."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
-      "DeclaringTypeName": "ElasticsearchDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
-      "FileName": "cephalon-observability-elasticsearchdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
     },
     {
       "DisplayName": "DisplayName",
@@ -13948,17 +13706,6 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
-      "DeclaringTypeName": "HttpDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.HttpDependencies",
-      "FileName": "cephalon-observability-httpdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
       "DeclaringTypeName": "IBehaviorAdvisory",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -13981,17 +13728,6 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
-      "DeclaringTypeName": "KafkaDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
-      "FileName": "cephalon-observability-kafkadependencies.md",
-      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
       "DeclaringTypeName": "KnowledgeCollectionDescriptor",
       "NamespaceName": "Cephalon.Retrieval.Services",
       "AssemblyName": "Cephalon.Retrieval",
@@ -13999,17 +13735,6 @@
       "AnchorId": "member-p-cephalon-retrieval-services-knowledgecollectiondescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing display name for the collection."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
-      "DeclaringTypeName": "MemcachedDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
-      "FileName": "cephalon-observability-memcacheddependencies.md",
-      "AnchorId": "member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
     },
     {
       "DisplayName": "DisplayName",
@@ -14036,83 +13761,6 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
-      "DeclaringTypeName": "MongoDbDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
-      "FileName": "cephalon-observability-mongodbdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
-      "DeclaringTypeName": "MqttDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MqttDependencies",
-      "FileName": "cephalon-observability-mqttdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
-      "DeclaringTypeName": "MySqlDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
-      "FileName": "cephalon-observability-mysqldependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
-      "DeclaringTypeName": "NatsDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.NatsDependencies",
-      "FileName": "cephalon-observability-natsdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
-      "DeclaringTypeName": "Neo4jDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
-      "FileName": "cephalon-observability-neo4jdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
-      "DeclaringTypeName": "OpenSearchDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
-      "FileName": "cephalon-observability-opensearchdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
-      "DeclaringTypeName": "OracleDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.OracleDependencies",
-      "FileName": "cephalon-observability-oracledependencies.md",
-      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
       "DeclaringTypeName": "OutboxDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -14135,17 +13783,6 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
-      "DeclaringTypeName": "PostgresDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
-      "FileName": "cephalon-observability-postgresdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
       "DeclaringTypeName": "ProjectionDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -14153,28 +13790,6 @@
       "AnchorId": "member-p-cephalon-abstractions-data-projectiondescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing projection name."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
-      "DeclaringTypeName": "RabbitMqDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
-      "FileName": "cephalon-observability-rabbitmqdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
-      "DeclaringTypeName": "RedisDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.RedisDependencies",
-      "FileName": "cephalon-observability-redisdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
     },
     {
       "DisplayName": "DisplayName",
@@ -14219,17 +13834,6 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the human-readable scaffold-plan name."
-    },
-    {
-      "DisplayName": "DisplayName",
-      "Category": "Properties",
-      "DeclaringTypeName": "SqlServerDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
-      "FileName": "cephalon-observability-sqlserverdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-displayname",
-      "Signature": "string DisplayName { get; set; }",
-      "Summary": "Gets or sets the human-readable dependency name shown to operators."
     },
     {
       "DisplayName": "DisplayName",
@@ -18282,39 +17886,6 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
-      "DeclaringTypeName": "CassandraDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
-      "FileName": "cephalon-observability-cassandradependencies.md",
-      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
-      "DeclaringTypeName": "ClickHouseDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
-      "FileName": "cephalon-observability-clickhousedependencies.md",
-      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
-      "DeclaringTypeName": "ConsulDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
-      "FileName": "cephalon-observability-consuldependencies.md",
-      "AnchorId": "member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
       "DeclaringTypeName": "DependencyHealthReport",
       "NamespaceName": "Cephalon.Abstractions.Health",
       "AssemblyName": "Cephalon.Abstractions",
@@ -18344,17 +17915,6 @@
       "AnchorId": "member-p-cephalon-edge-services-edgenodedescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable node identifier."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
-      "DeclaringTypeName": "ElasticsearchDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
-      "FileName": "cephalon-observability-elasticsearchdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
     {
       "DisplayName": "Id",
@@ -18480,17 +18040,6 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
-      "DeclaringTypeName": "HttpDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.HttpDependencies",
-      "FileName": "cephalon-observability-httpdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
       "DeclaringTypeName": "IBehaviorAdvisory",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -18524,17 +18073,6 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
-      "DeclaringTypeName": "KafkaDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
-      "FileName": "cephalon-observability-kafkadependencies.md",
-      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
       "DeclaringTypeName": "KnowledgeCollectionDescriptor",
       "NamespaceName": "Cephalon.Retrieval.Services",
       "AssemblyName": "Cephalon.Retrieval",
@@ -18542,17 +18080,6 @@
       "AnchorId": "member-p-cephalon-retrieval-services-knowledgecollectiondescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable collection identifier."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
-      "DeclaringTypeName": "MemcachedDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
-      "FileName": "cephalon-observability-memcacheddependencies.md",
-      "AnchorId": "member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
     {
       "DisplayName": "Id",
@@ -18586,83 +18113,6 @@
       "AnchorId": "member-p-cephalon-engine-configuration-modulepackagereference-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the optional package identifier override."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
-      "DeclaringTypeName": "MongoDbDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
-      "FileName": "cephalon-observability-mongodbdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
-      "DeclaringTypeName": "MqttDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MqttDependencies",
-      "FileName": "cephalon-observability-mqttdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
-      "DeclaringTypeName": "MySqlDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
-      "FileName": "cephalon-observability-mysqldependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
-      "DeclaringTypeName": "NatsDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.NatsDependencies",
-      "FileName": "cephalon-observability-natsdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
-      "DeclaringTypeName": "Neo4jDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
-      "FileName": "cephalon-observability-neo4jdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
-      "DeclaringTypeName": "OpenSearchDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
-      "FileName": "cephalon-observability-opensearchdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
-      "DeclaringTypeName": "OracleDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.OracleDependencies",
-      "FileName": "cephalon-observability-oracledependencies.md",
-      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
     {
       "DisplayName": "Id",
@@ -18722,17 +18172,6 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
-      "DeclaringTypeName": "PostgresDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
-      "FileName": "cephalon-observability-postgresdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
       "DeclaringTypeName": "ProjectionDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -18740,28 +18179,6 @@
       "AnchorId": "member-p-cephalon-abstractions-data-projectiondescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable projection identifier."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
-      "DeclaringTypeName": "RabbitMqDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
-      "FileName": "cephalon-observability-rabbitmqdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
-      "DeclaringTypeName": "RedisDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.RedisDependencies",
-      "FileName": "cephalon-observability-redisdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
     {
       "DisplayName": "Id",
@@ -18784,17 +18201,6 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable project identifier."
-    },
-    {
-      "DisplayName": "Id",
-      "Category": "Properties",
-      "DeclaringTypeName": "SqlServerDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
-      "FileName": "cephalon-observability-sqlserverdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-id",
-      "Signature": "string Id { get; set; }",
-      "Summary": "Gets or sets the stable dependency identifier surfaced through runtime health endpoints."
     },
     {
       "DisplayName": "Id",
@@ -24528,204 +23934,6 @@
       "Summary": "Describes the operator-facing HTTP surface for hosted Cephalon reference documentation."
     },
     {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "CassandraDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
-      "FileName": "cephalon-observability-cassandradependencies.md",
-      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "ClickHouseDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
-      "FileName": "cephalon-observability-clickhousedependencies.md",
-      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "ConsulDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
-      "FileName": "cephalon-observability-consuldependencies.md",
-      "AnchorId": "member-p-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "ElasticsearchDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
-      "FileName": "cephalon-observability-elasticsearchdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "HttpDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.HttpDependencies",
-      "FileName": "cephalon-observability-httpdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "KafkaDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
-      "FileName": "cephalon-observability-kafkadependencies.md",
-      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "MemcachedDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
-      "FileName": "cephalon-observability-memcacheddependencies.md",
-      "AnchorId": "member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "MongoDbDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
-      "FileName": "cephalon-observability-mongodbdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "MqttDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MqttDependencies",
-      "FileName": "cephalon-observability-mqttdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "MySqlDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
-      "FileName": "cephalon-observability-mysqldependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "NatsDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.NatsDependencies",
-      "FileName": "cephalon-observability-natsdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "Neo4jDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
-      "FileName": "cephalon-observability-neo4jdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "OpenSearchDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
-      "FileName": "cephalon-observability-opensearchdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "OracleDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.OracleDependencies",
-      "FileName": "cephalon-observability-oracledependencies.md",
-      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "PostgresDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
-      "FileName": "cephalon-observability-postgresdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "RabbitMqDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
-      "FileName": "cephalon-observability-rabbitmqdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "RedisDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.RedisDependencies",
-      "FileName": "cephalon-observability-redisdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
-      "DisplayName": "RefreshIntervalSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "SqlServerDependencyHealthOptions",
-      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
-      "FileName": "cephalon-observability-sqlserverdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions-refreshintervalseconds",
-      "Signature": "int RefreshIntervalSeconds { get; set; }",
-      "Summary": "Gets or sets the interval, in seconds, between background refresh attempts."
-    },
-    {
       "DisplayName": "Region",
       "Category": "Properties",
       "DeclaringTypeName": "AlibabaCloudTelemetryExportOptions",
@@ -25278,39 +24486,6 @@
     {
       "DisplayName": "Required",
       "Category": "Properties",
-      "DeclaringTypeName": "CassandraDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
-      "FileName": "cephalon-observability-cassandradependencies.md",
-      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
-      "DeclaringTypeName": "ClickHouseDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
-      "FileName": "cephalon-observability-clickhousedependencies.md",
-      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
-      "DeclaringTypeName": "ConsulDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
-      "FileName": "cephalon-observability-consuldependencies.md",
-      "AnchorId": "member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
       "DeclaringTypeName": "DependencyHealthReport",
       "NamespaceName": "Cephalon.Abstractions.Health",
       "AssemblyName": "Cephalon.Abstractions",
@@ -25318,171 +24493,6 @@
       "AnchorId": "member-p-cephalon-abstractions-health-dependencyhealthreport-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Whether the dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
-      "DeclaringTypeName": "ElasticsearchDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
-      "FileName": "cephalon-observability-elasticsearchdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
-      "DeclaringTypeName": "HttpDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.HttpDependencies",
-      "FileName": "cephalon-observability-httpdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
-      "DeclaringTypeName": "KafkaDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
-      "FileName": "cephalon-observability-kafkadependencies.md",
-      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
-      "DeclaringTypeName": "MemcachedDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
-      "FileName": "cephalon-observability-memcacheddependencies.md",
-      "AnchorId": "member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
-      "DeclaringTypeName": "MongoDbDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
-      "FileName": "cephalon-observability-mongodbdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
-      "DeclaringTypeName": "MqttDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MqttDependencies",
-      "FileName": "cephalon-observability-mqttdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
-      "DeclaringTypeName": "MySqlDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
-      "FileName": "cephalon-observability-mysqldependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
-      "DeclaringTypeName": "NatsDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.NatsDependencies",
-      "FileName": "cephalon-observability-natsdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
-      "DeclaringTypeName": "Neo4jDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
-      "FileName": "cephalon-observability-neo4jdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
-      "DeclaringTypeName": "OpenSearchDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
-      "FileName": "cephalon-observability-opensearchdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
-      "DeclaringTypeName": "OracleDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.OracleDependencies",
-      "FileName": "cephalon-observability-oracledependencies.md",
-      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
-      "DeclaringTypeName": "PostgresDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
-      "FileName": "cephalon-observability-postgresdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
-      "DeclaringTypeName": "RabbitMqDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
-      "FileName": "cephalon-observability-rabbitmqdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
-      "DeclaringTypeName": "RedisDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.RedisDependencies",
-      "FileName": "cephalon-observability-redisdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
-    },
-    {
-      "DisplayName": "Required",
-      "Category": "Properties",
-      "DeclaringTypeName": "SqlServerDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
-      "FileName": "cephalon-observability-sqlserverdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-required",
-      "Signature": "bool Required { get; set; }",
-      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
     {
       "DisplayName": "RequiredRoleMatch",
@@ -29256,204 +28266,6 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperationalstory-timeline",
       "Signature": "IReadOnlyList\u003CRuntimeLifecycleEvent\u003E Timeline { get; set; }",
       "Summary": "The ordered lifecycle narrative for package load, execution-graph transitions, hosted-execution transitions, module transitions, runtime transitions, and failures."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "CassandraDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.CassandraDependencies",
-      "FileName": "cephalon-observability-cassandradependencies.md",
-      "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-probe timeout in seconds."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "ClickHouseDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
-      "FileName": "cephalon-observability-clickhousedependencies.md",
-      "AnchorId": "member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-probe timeout in seconds."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "ConsulDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ConsulDependencies",
-      "FileName": "cephalon-observability-consuldependencies.md",
-      "AnchorId": "member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-request timeout in seconds."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "ElasticsearchDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.ElasticsearchDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.ElasticsearchDependencies",
-      "FileName": "cephalon-observability-elasticsearchdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-request timeout in seconds."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "HttpDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.HttpDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.HttpDependencies",
-      "FileName": "cephalon-observability-httpdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-request timeout in seconds."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "KafkaDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.KafkaDependencies",
-      "FileName": "cephalon-observability-kafkadependencies.md",
-      "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-probe timeout in seconds."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "MemcachedDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MemcachedDependencies",
-      "FileName": "cephalon-observability-memcacheddependencies.md",
-      "AnchorId": "member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-probe timeout in seconds."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "MongoDbDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.MongoDbDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MongoDbDependencies",
-      "FileName": "cephalon-observability-mongodbdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-probe timeout in seconds."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "MqttDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.MqttDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MqttDependencies",
-      "FileName": "cephalon-observability-mqttdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-probe timeout in seconds."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "MySqlDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.MySqlDependencies",
-      "FileName": "cephalon-observability-mysqldependencies.md",
-      "AnchorId": "member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-probe timeout in seconds."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "NatsDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.NatsDependencies",
-      "FileName": "cephalon-observability-natsdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-probe timeout in seconds."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "Neo4jDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.Neo4jDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.Neo4jDependencies",
-      "FileName": "cephalon-observability-neo4jdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-probe timeout in seconds."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "OpenSearchDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.OpenSearchDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.OpenSearchDependencies",
-      "FileName": "cephalon-observability-opensearchdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-request timeout in seconds."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "OracleDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.OracleDependencies",
-      "FileName": "cephalon-observability-oracledependencies.md",
-      "AnchorId": "member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-probe timeout in seconds."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "PostgresDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.PostgresDependencies",
-      "FileName": "cephalon-observability-postgresdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-probe timeout in seconds."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "RabbitMqDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.RabbitMqDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.RabbitMqDependencies",
-      "FileName": "cephalon-observability-rabbitmqdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-probe timeout in seconds."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "RedisDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.RedisDependencies",
-      "FileName": "cephalon-observability-redisdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-redisdependencies-configuration-redisdependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-probe timeout in seconds."
-    },
-    {
-      "DisplayName": "TimeoutSeconds",
-      "Category": "Properties",
-      "DeclaringTypeName": "SqlServerDependencyDefinition",
-      "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
-      "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
-      "FileName": "cephalon-observability-sqlserverdependencies.md",
-      "AnchorId": "member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-timeoutseconds",
-      "Signature": "int TimeoutSeconds { get; set; }",
-      "Summary": "Gets or sets the per-probe timeout in seconds."
     },
     {
       "DisplayName": "TlsServerName",
