@@ -81,6 +81,7 @@
     <ProjectReference Include="..\..\src\Cephalon.Observability.OpenTelemetry\Cephalon.Observability.OpenTelemetry.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.Serilog\Cephalon.Observability.Serilog.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.ReferenceDocs\Cephalon.ReferenceDocs.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Behaviors\Cephalon.Behaviors.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.EventSourcing\Cephalon.EventSourcing.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.EventSourcing.EntityFramework\Cephalon.EventSourcing.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Retrieval\Cephalon.Retrieval.csproj" />
