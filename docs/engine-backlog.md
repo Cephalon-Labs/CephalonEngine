@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `April 5, 2026`.
+Backlog status in this document reflects the repository state as of `April 7, 2026`.
 
 ## Completed foundation work
 
@@ -1175,8 +1175,9 @@ Progress:
 
 ### ENG-054 Provider-family and hybrid-runtime follow-through
 
-Status: in progress
+Status: done
 Estimate: 80
+Completed: April 7, 2026
 
 Why:
 
@@ -1191,16 +1192,24 @@ Acceptance:
 - docs, runtime surfaces, and observability stay truthful about which provider families and deployment runtimes are actually shipped
 - expansion work starts only after the relational-first phase-8 golden path is complete
 
-Progress:
+Delivered:
 
-- `Cephalon.Data.MongoDB` now exists as the first non-relational data companion pack: registers `IMongoClient` + `IMongoDatabase`, delivers `IOutbox` and `IInbox` backed by MongoDB collections with idempotent staging via unique index on `MessageId`, publishes `data.mongodb` / `data.document-store` / `data.outbox.mongodb` / `data.inbox.mongodb` capabilities, and projects `outbox-producers` and `inbox-stores` through the `event-driven-integration` technology surface — no changes to `Cephalon.Engine` or `Cephalon.Abstractions`
-- `Cephalon.EventSourcing.MongoDB` now exists as the first non-relational event-store provider: implements `IEventStore` against a `event_streams` collection with optimistic concurrency enforced by a compound unique index on `(StreamId, StreamVersion)`, exposes `GetVersionAsync` / `AppendAsync` / `ReadStreamAsync`, serializes through `System.Text.Json`, and round-trips event types via `AssemblyQualifiedName`
-- both MongoDB packages ship 12 integration tests via EphemeralMongo in-process runner and full component-guide docs
-- companion-pack pattern proven for document-oriented stores — commit `f94dc28` · 599 tests green
-- `Cephalon.Data.Redis` now exists as the second non-relational data companion pack: registers `IConnectionMultiplexer` via StackExchange.Redis, delivers `IOutbox` backed by Redis Hash + Sorted Set (idempotent staging via `KeyNotExists` transaction condition) and `IInbox` backed by a Redis Set (naturally idempotent `SADD`), publishes `data.redis` / `data.key-value-store` / `data.outbox.redis` / `data.inbox.redis` capabilities, and projects `outbox-producers` and `inbox-stores` through the `event-driven-integration` technology surface — no changes to `Cephalon.Engine` or `Cephalon.Abstractions`
-- `Cephalon.EventSourcing.Redis` now exists as the second non-relational event-store provider: implements `IEventStore` against Redis Streams (`XADD`/`XRANGE`), stores `StreamVersion`, `EventType`, `Payload`, `OccurredAtUtc`, and `AppendedAtUtc` as stream entry fields, performs optimistic pre-insert version check (known limitation: no atomic test-and-set), serializes through `System.Text.Json`, and round-trips event types via `AssemblyQualifiedName`
-- both Redis packages ship 8 composition tests (no live Redis required — `abortConnect=false` enables lazy-connect service resolution) and full component-guide docs
-- companion-pack pattern proven for key-value stores — Sprint 26 · StackExchange.Redis 2.8.16 added to CPM
+- **Sprint 25 — MongoDB (document-store)**: `Cephalon.Data.MongoDB` (IOutbox + IInbox backed by MongoDB collections, idempotent staging via unique index on MessageId, `data.mongodb` / `data.document-store` capabilities) + `Cephalon.EventSourcing.MongoDB` (IEventStore with optimistic concurrency via compound unique index on StreamId+StreamVersion) — MongoDB.Driver 3.4.0 in CPM, 12 integration tests via EphemeralMongo — commit `f94dc28` · 599/599 tests
+- **Sprint 26 — Redis (key-value-store)**: `Cephalon.Data.Redis` (IOutbox backed by Redis Hash + Sorted Set with KeyNotExists transaction condition, IInbox backed by Redis Set with naturally idempotent SADD, `data.redis` / `data.key-value-store` capabilities) + `Cephalon.EventSourcing.Redis` (IEventStore via Redis Streams XADD/XRANGE, optimistic pre-insert version check) — StackExchange.Redis 2.8.16 in CPM, 8 composition tests — 607/607 tests
+- **Sprint 27 — Neo4j (graph-store)**: `Cephalon.Data.Neo4j` (IOutbox + IInbox backed by Neo4j graph nodes, idempotent staging via Cypher MERGE on messageId, `data.neo4j` / `data.graph-store` capabilities) + `Cephalon.EventSourcing.Neo4j` (IEventStore with IS NODE KEY constraint on streamId+streamVersion) — Neo4j.Driver 6.0.0, 8 composition tests — 615/615 tests
+- **Sprint 28 — Cassandra (wide-column-store)**: `Cephalon.Data.Cassandra` (IOutbox + IInbox backed by Cassandra tables, idempotent staging via LWT INSERT IF NOT EXISTS, `data.cassandra` / `data.wide-column-store` capabilities) + `Cephalon.EventSourcing.Cassandra` (IEventStore with composite PK on stream_id+stream_version, LWT concurrency detection) — CassandraCSharpDriver 3.22.0, 8 composition tests — 624/624 tests
+- **Sprint 29 — ClickHouse (analytics-store)**: `Cephalon.Data.ClickHouse` (IOutbox + IInbox backed by ClickHouse ReplacingMergeTree tables, eventual idempotency via ORDER BY deduplication + FINAL reads, `data.clickhouse` / `data.analytics-store` capabilities) + `Cephalon.EventSourcing.ClickHouse` (IEventStore with MergeTree ORDER BY, application-layer optimistic concurrency) — ClickHouse.Driver 1.0.2, 8 composition tests — 632/632 tests
+- **Sprint 30 — Elasticsearch + OpenSearch (search-store)**: `Cephalon.Data.Elasticsearch` (IOutbox + IInbox backed by Elasticsearch indices, op_type=create idempotency with 409 swallow, `data.elasticsearch` / `data.search-store` capabilities) + `Cephalon.EventSourcing.Elasticsearch` (IEventStore with compound document id `{streamId}#{streamVersion}`) + `Cephalon.Data.OpenSearch` (OpenSearch.Client mirror, `data.opensearch` / `data.search-store` capabilities) + `Cephalon.EventSourcing.OpenSearch` (OpenSearch event store mirror) — Elastic.Clients.Elasticsearch 8.17.0 + OpenSearch.Client 1.8.0, 8 composition tests — 640/640 tests
+- **Sprint 31 — Qdrant + NATS (vector-store + ledger-store)**: `Cephalon.Data.Qdrant` (IOutbox + IInbox backed by Qdrant vector collections with 1D dummy vectors and payload-field storage, deterministic UUID from message ID via SHA-256, `data.qdrant` / `data.vector-store` capabilities) + `Cephalon.EventSourcing.Qdrant` (IEventStore with compound point-ID hash, ScrollAsync-based replay) + `Cephalon.Data.Nats` (IOutbox + IInbox backed by NATS JetStream KV, NatsKVCreateException idempotency, `data.nats` / `data.ledger-store` capabilities) + `Cephalon.EventSourcing.Nats` (IEventStore via JetStream KV with zero-padded keys `{streamId}/{version:D20}`) — Qdrant.Client 1.17.0 + NATS.Net 2.7.3, 8 composition tests — 648/648 tests
+- all 9 non-relational provider families shipped as companion packs with no changes to `Cephalon.Engine` or `Cephalon.Abstractions`
+- each provider family delivers both `Cephalon.Data.{Provider}` and `Cephalon.EventSourcing.{Provider}` packages
+- full component-guide docs for all 18 packages (9 data + 9 event-sourcing)
+- `HybridCloudRuntime`, `ServiceMeshIntegration`, and `ServerlessHosting` remain tracked-later until explicit adoption cases
+
+Follow-up later:
+
+- service-mesh and serverless runtime follow-through remain `later` until explicit adoption cases
+- hybrid-cloud deployment runtime beyond the shipped provider breadth
 
 ### ENG-055 Phase 8 validation, benchmark, and runtime-truth matrix
 
@@ -1230,8 +1239,9 @@ Progress:
 
 ### ENG-056 Phase 8 docs, XML comments, component-guide, and reference-doc alignment
 
-Status: in progress
+Status: done
 Estimate: 8
+Completed: April 5, 2026
 
 Why:
 
@@ -1247,10 +1257,18 @@ Acceptance:
 - checked-in `docs/reference/` output stays aligned with the current `Cephalon.ReferenceDocs` generator through a repo-native drift guard instead of manual spot checks alone
 - docs stay explicit about what is shipped now versus what remains later, especially around event sourcing, provider breadth, hybrid runtime, service mesh, and serverless claims
 
+Delivered:
+
+- the checked-in `docs/reference/` bundle has been regenerated for the current phase-8 assembly set
+- the tooling test lane now guards bundle drift by comparing the checked-in output against the current `Cephalon.ReferenceDocs` generator after normalizing volatile timestamps
+- the top-level adoption docs plus blueprint sample READMEs now describe the shipped phase-8 starter baseline truthfully
+- component docs for all phase-8 companion packs (data, eventing, identity, multi-tenancy, audit, Sfid) are published
+
 ### ENG-057 Event-sourcing follow-through baseline
 
-Status: later
+Status: done
 Estimate: 21
+Completed: April 5, 2026
 
 Why:
 
@@ -1264,6 +1282,15 @@ Acceptance:
 - any shipped event-sourcing implementation stays additive through companion packages and does not force a storage model into `Cephalon.Engine` or `Cephalon.Abstractions`
 - docs, runtime surfaces, and observability clearly distinguish shipped event-driven integration from shipped event-sourcing support
 - work starts only after the relational-first phase-8 golden path is complete and its contracts are stable
+
+Delivered:
+
+- `Cephalon.EventSourcing` now exists as the runtime-neutral event-sourcing contract package with `IEventStore` (GetVersionAsync, AppendAsync, ReadStreamAsync), `IDomainEvent`, `EventStreamConcurrencyException`, and System.Text.Json serialization conventions
+- `Cephalon.EventSourcing.EntityFramework` now exists as the relational-first event-store provider with optimistic concurrency via unique constraint on (StreamId, StreamVersion), `IAsyncEnumerable` stream replay, and `AddCephalonEntityFrameworkEventSourcing()` builder extension
+- 9 additional non-relational event-store providers shipped through ENG-054: MongoDB, Redis, Neo4j, Cassandra, ClickHouse, Elasticsearch, OpenSearch, Qdrant, and NATS — each implementing `IEventStore` with provider-appropriate concurrency enforcement and stream replay
+- all event-sourcing implementations stay in companion packages with no changes to `Cephalon.Engine` or `Cephalon.Abstractions`
+- `IBehaviorContext.EventStore` wiring in the ABT foundation (ENG-058 M6) connects behaviors to the active event-store provider
+- full component-guide docs for all 10 event-store providers
 
 ## Sprint history and next 4 sprints
 
@@ -1452,12 +1479,16 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 ### Sprint 30
 
-- ENG-054 Elasticsearch + OpenSearch search-store non-relational provider: `Cephalon.Data.Elasticsearch` (IOutbox + IInbox backed by Elasticsearch indices, idempotent staging via op_type=create (409 swallow), `data.elasticsearch` / `data.search-store` capabilities), `Cephalon.EventSourcing.Elasticsearch` (IEventStore with compound document id `{streamId}#{streamVersion}` for uniqueness, application-layer optimistic concurrency, System.Text.Json serialization, IAsyncEnumerable stream replay), `Cephalon.Data.OpenSearch` (OpenSearch.Client mirror of Elasticsearch data pack, `data.opensearch` / `data.search-store` capabilities), `Cephalon.EventSourcing.OpenSearch` (OpenSearch mirror of Elasticsearch event store), Elastic.Clients.Elasticsearch 8.17.0 + OpenSearch.Client 1.8.0 in CPM, 8 composition tests (no live server required — client connects lazily), full component docs — **Shipped**
+- ENG-054 Elasticsearch + OpenSearch search-store non-relational provider: `Cephalon.Data.Elasticsearch` (IOutbox + IInbox backed by Elasticsearch indices, idempotent staging via op_type=create (409 swallow), `data.elasticsearch` / `data.search-store` capabilities), `Cephalon.EventSourcing.Elasticsearch` (IEventStore with compound document id `{streamId}#{streamVersion}` for uniqueness, application-layer optimistic concurrency, System.Text.Json serialization, IAsyncEnumerable stream replay), `Cephalon.Data.OpenSearch` (OpenSearch.Client mirror of Elasticsearch data pack, `data.opensearch` / `data.search-store` capabilities), `Cephalon.EventSourcing.OpenSearch` (OpenSearch mirror of Elasticsearch event store), Elastic.Clients.Elasticsearch 8.17.0 + OpenSearch.Client 1.8.0 in CPM, 8 composition tests (no live server required — client connects lazily), full component docs — **Shipped** · 640/640 tests
 
 ### Sprint 31
 
-- ENG-054 Qdrant vector-store + NATS ledger non-relational provider: `Cephalon.Data.Qdrant` (IOutbox + IInbox backed by Qdrant vector collections using 1D dummy vectors and payload-field storage, idempotent staging via point-ID existence check, `data.qdrant` / `data.vector-store` capabilities), `Cephalon.EventSourcing.Qdrant` (IEventStore with compound point-ID `{streamId}:{version}` hash, application-layer optimistic concurrency, Scroll-based stream replay), `Cephalon.Data.Nats` (IOutbox + IInbox backed by NATS JetStream KV, idempotent via KV CreateAsync with NatsKVCreateException swallow, `data.nats` / `data.ledger-store` capabilities), `Cephalon.EventSourcing.Nats` (IEventStore via JetStream KV with zero-padded keys `{streamId}/{version:D20}`, lexicographic-safe ordering, CreateAsync for concurrency), Qdrant.Client 1.17.0 + NATS.Net 2.7.3 in CPM, 8 composition tests (no live server — both clients connect lazily), full component docs — **Shipped**
+- ENG-054 Qdrant vector-store + NATS ledger non-relational provider: `Cephalon.Data.Qdrant` (IOutbox + IInbox backed by Qdrant vector collections using 1D dummy vectors and payload-field storage, idempotent staging via point-ID existence check, `data.qdrant` / `data.vector-store` capabilities), `Cephalon.EventSourcing.Qdrant` (IEventStore with compound point-ID `{streamId}:{version}` hash, application-layer optimistic concurrency, Scroll-based stream replay), `Cephalon.Data.Nats` (IOutbox + IInbox backed by NATS JetStream KV, idempotent via KV CreateAsync with NatsKVCreateException swallow, `data.nats` / `data.ledger-store` capabilities), `Cephalon.EventSourcing.Nats` (IEventStore via JetStream KV with zero-padded keys `{streamId}/{version:D20}`, lexicographic-safe ordering, CreateAsync for concurrency), Qdrant.Client 1.17.0 + NATS.Net 2.7.3 in CPM, 8 composition tests (no live server — both clients connect lazily), full component docs — **Shipped** · 648/648 tests
 
 ### Infrastructure — Phase 2 Developer Experience
 
-- Test assembly split: `Cephalon.Tests` monolith (648 tests) split into `Cephalon.Tests.Support` (shared lib), `Cephalon.Tests.Composition` (Composition + Behaviors + EventSourcing + Benchmarks), `Cephalon.Tests.Hosting` (Hosting/Observability), `Cephalon.Tests.Tooling` (Tooling + Scaffolding) — enables parallel test execution per assembly, faster incremental builds, and cleaner dependency boundaries
+- Test assembly split: `Cephalon.Tests` monolith (648 tests) split into `Cephalon.Tests.Support` (shared lib), `Cephalon.Tests.Composition` (327 tests — Composition + Behaviors + EventSourcing + Benchmarks), `Cephalon.Tests.Hosting` (200 tests — Hosting/Observability), `Cephalon.Tests.Tooling` (121 tests — Tooling + Scaffolding) — enables parallel test execution per assembly, faster incremental builds, and cleaner dependency boundaries — **Shipped** · 648/648 tests
+
+### Sprint 32
+
+- backlog and roadmap alignment: ENG-054 status updated to done (all 9 non-relational provider families shipped), ENG-056 status updated to done (phase-8 docs and reference-doc alignment complete), ENG-057 status updated to done (event-sourcing follow-through baseline delivered through core contracts plus 10 provider implementations), roadmap sprint alignment extended through Sprint 31, Phase 10 planning notes updated to reflect completion

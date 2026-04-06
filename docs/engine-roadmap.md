@@ -2,7 +2,7 @@
 
 Editable roadmap diagram: `docs/cephalon-engine-roadmap.drawio`
 
-Planning baseline in this document reflects the repository state as of `April 5, 2026`.
+Planning baseline in this document reflects the repository state as of `April 7, 2026`.
 
 ## Target outcome
 
@@ -82,7 +82,17 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 23`: **shipped** `ENG-058 M4` Pattern Execution Strategies — 5 strategies (`cqrs`, `event-driven`, `saga-step`, `process-manager`, `direct`), `ISagaStateStore`, `IProcessCheckpointStore`, `FrozenDictionary` registry, `IBehaviorContext.CorrelationId`, `IProcessCompletion` — 575/575 tests (commit `cc2ab0a`)
 - `Sprint 24 (M5)`: **shipped** `ENG-058 M5` Source Generator — `BehaviorSourceGenerator` (analyzer + incremental generator), ABT0010–ABT0013, `BehaviorRegistrationHints.g.cs`, 584/584 tests (commit `8455b9a`)
 - `Sprint 24 (M6)`: **shipped** `ENG-058 M6` Runtime Integration — `BehaviorRuntimeContributor`, `IBehaviorAdvisory` system, `IBehaviorContext.EventStore`, `BehaviorDiagnostics` 5100-5109, 592/592 tests (commit `62d386c`)
-- `Later / not scheduled yet`: further cloud/platform integrations beyond the shipped phase 6 baseline, `ENG-054` hybrid-runtime and provider-family expansion, `ENG-057` event-sourcing follow-through, and future solution-level expansion only when an explicit adoption scenario needs them
+- `Sprint 25`: **shipped** `ENG-054` MongoDB document-store provider — `Cephalon.Data.MongoDB` + `Cephalon.EventSourcing.MongoDB`, MongoDB.Driver 3.4.0 — 599/599 tests (commit `f94dc28`)
+- `Sprint 26`: **shipped** `ENG-054` Redis key-value-store provider — `Cephalon.Data.Redis` + `Cephalon.EventSourcing.Redis`, StackExchange.Redis 2.8.16 — 607/607 tests
+- `Sprint 27`: **shipped** `ENG-054` Neo4j graph-store provider — `Cephalon.Data.Neo4j` + `Cephalon.EventSourcing.Neo4j`, Neo4j.Driver 6.0.0 — 615/615 tests
+- `Sprint 28`: **shipped** `ENG-054` Cassandra wide-column-store provider — `Cephalon.Data.Cassandra` + `Cephalon.EventSourcing.Cassandra`, CassandraCSharpDriver 3.22.0 — 624/624 tests
+- `Sprint 29`: **shipped** `ENG-054` ClickHouse analytics-store provider — `Cephalon.Data.ClickHouse` + `Cephalon.EventSourcing.ClickHouse`, ClickHouse.Driver 1.0.2 — 632/632 tests
+- `Sprint 30`: **shipped** `ENG-054` Elasticsearch + OpenSearch search-store provider — 4 packages, Elastic.Clients.Elasticsearch 8.17.0 + OpenSearch.Client 1.8.0 — 640/640 tests
+- `Sprint 31`: **shipped** `ENG-054` Qdrant vector-store + NATS ledger-store provider — 4 packages, Qdrant.Client 1.17.0 + NATS.Net 2.7.3 — 648/648 tests. ENG-054 Track 1 complete: all 9 non-relational provider families delivered
+- `Infrastructure Phase 1`: solution filter files (`core.slnf`, `data.slnf`, `observability.slnf`, `aspnetcore.slnf`) + scaffolding scripts (`New-ProviderPack.ps1`, `New-ObservabilityPack.ps1`)
+- `Infrastructure Phase 2`: test assembly split — `Cephalon.Tests` monolith (648 tests) split into `Cephalon.Tests.Support` + `Cephalon.Tests.Composition` (327) + `Cephalon.Tests.Hosting` (200) + `Cephalon.Tests.Tooling` (121) — 648/648 tests
+- `Sprint 32`: backlog and roadmap alignment for all completed work through Sprint 31, status closeout for ENG-054/056/057
+- `Later / not scheduled yet`: further cloud/platform integrations beyond the shipped phase 6 baseline, `ENG-054` hybrid-runtime service-mesh and serverless expansion, and future solution-level expansion only when an explicit adoption scenario needs them
 
 ## Planning principles
 
@@ -436,7 +446,7 @@ Exit criteria:
 - non-relational provider breadth plus hybrid-cloud, service-mesh, and serverless follow-through remain explicit later slices until the golden path proves the contract
 - consumer apps can keep framework ceremony low by declaring architecture/runtime choices once through configuration and package selection while concentrating hand-written code on business logic, domain rules, and use-case behavior
 
-Current planning note as of `April 5, 2026`:
+Current planning note as of `April 7, 2026`:
 
 - `ENG-046`, `ENG-047`, and `ENG-048` should freeze the phase-8 taxonomy, settings, and contracts before workstream-specific implementation names drift
 - `ENG-049` and `ENG-050` are now actively proving the relational-first data and eventing baseline before broader provider expansion; the next truth gate is moving from application-managed publication/subscription reporting into a truthful first-class adapter path without over-claiming pack-owned dispatch behavior
@@ -446,12 +456,62 @@ Current planning note as of `April 5, 2026`:
 - `ENG-053` is now proving the TDD/BDD-friendly starter-test convention on top of the frozen ids/config/package baseline, and the next follow-through should focus on any remaining sample/template docs parity plus starter polish instead of re-deciding the starter semantics
 - `ENG-055` is now establishing the named validation replay, refreshed benchmark guardrails, and docs/runtime-truth guard for the shipped phase-8 baseline, while `ENG-056` should continue the broader docs, XML-comment, and reference-doc closeout before phase 8 claims broad readiness
 - `ENG-056` is now done locally: the checked-in `docs/reference/` bundle has been regenerated for the current phase-8 assembly set, the tooling test lane now guards bundle drift by comparing the checked-in output against the current `Cephalon.ReferenceDocs` generator after normalizing volatile timestamps, and the top-level adoption docs plus blueprint sample READMEs now describe the shipped phase-8 starter baseline truthfully
-- `ENG-054` should stay later until an adoption case needs broader provider families or explicit hybrid, service-mesh, or serverless follow-through
-- `ENG-057` should stay later until the relational-first golden path proves the event-sourcing contract strongly enough to make storage and replay claims truthfully
+- `ENG-054` Track 1 (non-relational provider families) is now complete: all 9 provider families (MongoDB, Redis, Neo4j, Cassandra, ClickHouse, Elasticsearch, OpenSearch, Qdrant, NATS) shipped across Sprints 25–31 with 18 companion packages (9 data + 9 event-sourcing), 648/648 tests green; hybrid-runtime, service-mesh, and serverless expansion remain `later` until explicit adoption cases
+- `ENG-057` event-sourcing follow-through is now complete: `Cephalon.EventSourcing` core contracts plus 10 provider implementations (EntityFramework + 9 non-relational) are shipped with `IBehaviorContext.EventStore` wiring through ENG-058 M6
+
+## Phase 9: Adaptive Behavior Topology
+
+Status: done
+
+Goal: introduce a unified application-behavior model that composes domain operations across transports, patterns, and execution strategies without requiring per-transport or per-pattern rewrites.
+
+Delivered:
+
+- `ENG-058 M1` ABT foundation: `IAppBehavior`, `IBehaviorContext`, `BehaviorDispatcher`, `BehaviorExecutionSlot`, `CompatibilityMatrix`, 6 compatibility rules (ABT-001 through ABT-006), hosting integration — 499/499 tests (Sprint 20)
+- `ENG-058 M2` HTTP Transport Pack: 7 HTTP bindings (`rest`, `jsonrpc`, `graphql`, `graphql-sse`, `graphql-ws`, `sse`, `ws`), `LazyTransportBinding` — 516/516 tests (Sprint 21)
+- `ENG-058 M3` Messaging Transport Pack: InMemory, RabbitMQ, Kafka bindings; M2 CTS leak fix — 527/527 tests (Sprint 22)
+- `ENG-058 M4` Pattern Execution Strategies: 5 strategies (`cqrs`, `event-driven`, `saga-step`, `process-manager`, `direct`), `ISagaStateStore`, `IProcessCheckpointStore`, `FrozenDictionary` registry, `IBehaviorContext.CorrelationId`, `IProcessCompletion` — 575/575 tests (Sprint 23)
+- `ENG-058 M5` Source Generator: `BehaviorSourceGenerator` (`IIncrementalGenerator` + `DiagnosticAnalyzer`), ABT0010–ABT0013 diagnostics, `BehaviorRegistrationHints.g.cs` — 584/584 tests (Sprint 24)
+- `ENG-058 M6` Runtime Integration: `BehaviorRuntimeContributor`, `IBehaviorAdvisory` system, `IBehaviorContext.EventStore` wiring, `BehaviorDiagnostics` EventId 5100-5109 — 592/592 tests (Sprint 24)
+
+Exit criteria:
+
+- behaviors compose across multiple transports and patterns through a single dispatch model
+- transport bindings stay additive through companion packages
+- pattern execution strategies are selectable per behavior through configuration
+- source generator catches mismatches at build time rather than runtime
+
+## Phase 10: Non-relational provider baseline
+
+Status: done
+
+Goal: prove the companion-pack data provider pattern across all major non-relational store categories without changing `Cephalon.Engine` or `Cephalon.Abstractions`.
+
+Delivered:
+
+- 9 non-relational provider families shipped across Sprints 25–31:
+  - MongoDB (document-store) — Sprint 25, 599/599 tests
+  - Redis (key-value-store) — Sprint 26, 607/607 tests
+  - Neo4j (graph-store) — Sprint 27, 615/615 tests
+  - Cassandra (wide-column-store) — Sprint 28, 624/624 tests
+  - ClickHouse (analytics-store) — Sprint 29, 632/632 tests
+  - Elasticsearch (search-store) — Sprint 30, 640/640 tests
+  - OpenSearch (search-store) — Sprint 30
+  - Qdrant (vector-store) — Sprint 31, 648/648 tests
+  - NATS (ledger-store) — Sprint 31
+- each provider family delivers both `Cephalon.Data.{Provider}` and `Cephalon.EventSourcing.{Provider}` companion packages (18 packages total)
+- full component-guide documentation for all 18 packages
+- test assembly split into 4 focused assemblies (Infrastructure Phase 2): `Cephalon.Tests.Composition` (327), `Cephalon.Tests.Hosting` (200), `Cephalon.Tests.Tooling` (121)
+
+Exit criteria:
+
+- every major store category (document, key-value, graph, wide-column, analytics, search, vector, ledger) has a Cephalon-supported `IOutbox`/`IInbox`/`IEventStore` implementation
+- no changes to `Cephalon.Engine` or `Cephalon.Abstractions` were required
+- all companion packs follow the same module/registration/capability pattern established by `Cephalon.Data.EntityFramework`
 
 ## Recommended implementation order
 
-Updated priority order as of `April 5, 2026`:
+Updated priority order as of `April 7, 2026`:
 
 1. start phase 7 with `ENG-033` cross-platform validation and shell parity so the shipped build, test, publish, and install flows stop assuming Windows-specific shell behavior
 2. follow immediately with `ENG-034` first-run adoption and environment-doctor work so external teams have one clear install, validation, and runtime-smoke path
@@ -472,7 +532,7 @@ Updated priority order as of `April 5, 2026`:
 17. follow with `ENG-049` and `ENG-050` so Cephalon proves a relational Entity Framework plus CQRS plus outbox plus eventing golden path before it claims broader provider breadth
 18. then deliver `ENG-051`, `ENG-052`, and `ENG-053` so identity/authorization, multi-tenancy/audit, and CLI/scaffolding/template/sample follow-through land on the same frozen phase-8 contract
 19. then deliver `ENG-055` and `ENG-056` so benchmarks, validation, docs, XML comments, and reference-doc alignment prove the phase-8 claims before the repo widens the public story
-20. keep `ENG-054`, `ENG-057`, plus any non-relational provider, hybrid-cloud, service-mesh, or serverless expansion as explicit later slices until an adopter needs them beyond the proven golden path
+20. `ENG-054` Track 1 (non-relational providers) and `ENG-057` (event-sourcing follow-through) are now complete; keep hybrid-cloud, service-mesh, and serverless expansion as explicit later slices until an adopter needs them beyond the proven golden path
 
 ## Decision guardrails
 
