@@ -1,6 +1,9 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Cephalon.Tests")]
+[assembly: InternalsVisibleTo("Cephalon.Tests.Composition")]
+[assembly: InternalsVisibleTo("Cephalon.Tests.Hosting")]
+[assembly: InternalsVisibleTo("Cephalon.Tests.Tooling")]
 [assembly: InternalsVisibleTo("Cephalon.Observability.CassandraDependencies")]
 [assembly: InternalsVisibleTo("Cephalon.Observability.ClickHouseDependencies")]
 [assembly: InternalsVisibleTo("Cephalon.Observability.ConsulDependencies")]
