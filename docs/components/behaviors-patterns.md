@@ -56,7 +56,7 @@ builder.Services.AddSingleton<ISagaStateStore, MyDatabaseSagaStateStore>();
 
 ## Status
 
-> Status: Released (ENG-058 M4)
+> Status: ✅ Shipped — commit cc2ab0a · 575/575 tests
 
 ## Related components
 

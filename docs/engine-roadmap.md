@@ -76,6 +76,11 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 17`: deliver `ENG-049` and `ENG-050` so the relational-first data and eventing golden path exists before broader provider or security follow-through
 - `Sprint 18`: deliver `ENG-051`, `ENG-052`, and `ENG-053` so identity/authorization, multi-tenancy/audit, and CLI/scaffolding/template/sample alignment land on top of the frozen phase-8 contract
 - `Sprint 19`: deliver `ENG-055` and `ENG-056` so validation, benchmarks, docs, XML comments, and reference-doc alignment close the phase-8 truthfulness gap before broader expansion claims
+- `Sprint 20`: **shipped** `ENG-058 M1` ABT foundation — `IAppBehavior`, `IBehaviorContext`, `BehaviorDispatcher`, `BehaviorExecutionSlot`, `CompatibilityMatrix`, ABT-001–ABT-006 compatibility rules, hosting — 499/499 tests (commit `9d657da`)
+- `Sprint 21`: **shipped** `ENG-058 M2` HTTP Transport Pack — 7 HTTP bindings (`rest`, `jsonrpc`, `graphql`, `graphql-sse`, `graphql-ws`, `sse`, `ws`), `LazyTransportBinding` — 516/516 tests (commit `c957966`)
+- `Sprint 22`: **shipped** `ENG-058 M3` Messaging Transport Pack — InMemory, RabbitMQ, Kafka bindings; M2 CTS leak fix — 527/527 tests (commit `9183407`)
+- `Sprint 23`: **shipped** `ENG-058 M4` Pattern Execution Strategies — 5 strategies (`cqrs`, `event-driven`, `saga-step`, `process-manager`, `direct`), `ISagaStateStore`, `IProcessCheckpointStore`, `FrozenDictionary` registry, `IBehaviorContext.CorrelationId`, `IProcessCompletion` — 575/575 tests (commit `cc2ab0a`)
+- `Sprint 24`: deliver `ENG-058 M5` Source Generator (Roslyn analyzer + incremental generator) and `ENG-058 M6` Runtime Integration (`BehaviorRuntimeContributor`, `IBehaviorAdvisory`, EventSourcing wiring, diagnostics 5100-5109)
 - `Later / not scheduled yet`: further cloud/platform integrations beyond the shipped phase 6 baseline, `ENG-054` hybrid-runtime and provider-family expansion, `ENG-057` event-sourcing follow-through, and future solution-level expansion only when an explicit adoption scenario needs them
 
 ## Planning principles

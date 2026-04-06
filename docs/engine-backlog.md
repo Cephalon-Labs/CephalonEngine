@@ -1391,3 +1391,25 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 - ENG-055 phase 8 validation, benchmark, and runtime-truth matrix
 - ENG-056 phase 8 docs, XML comments, component-guide, and reference-doc alignment
+
+### Sprint 20
+
+- ENG-058 M1 ABT foundation: IAppBehavior, IBehaviorContext, BehaviorDispatcher, BehaviorExecutionSlot, CompatibilityMatrix, hosting — **Shipped** commit `9d657da` · 499/499 tests
+
+### Sprint 21
+
+- ENG-058 M2 HTTP Transport Pack: 7 HTTP bindings (rest, jsonrpc, graphql, graphql-sse, graphql-ws, sse, ws), LazyTransportBinding — **Shipped** commit `c957966` · 516/516 tests
+
+### Sprint 22
+
+- ENG-058 M3 Messaging Transport Pack: InMemory, RabbitMQ, Kafka bindings; M2 CTS leak fix — **Shipped** commit `9183407` · 527/527 tests
+
+### Sprint 23
+
+- ENG-058 M4 Pattern Execution Strategies: IBehaviorExecutionStrategy, 5 strategies (cqrs, event-driven, saga-step, process-manager, direct), ISagaStateStore, IProcessCheckpointStore, FrozenDictionary registry; IBehaviorContext.CorrelationId; IProcessCompletion — **Shipped** commit `cc2ab0a` · 575/575 tests
+
+### Sprint 24
+
+- ENG-058 M5 Source Generator: Roslyn analyzer ([AppBehavior] compile-time validation), incremental generator (BehaviorDispatchTable.g.cs), benchmark suite
+- ENG-058 M6 Runtime Integration: BehaviorRuntimeContributor, IBehaviorAdvisory, EventSourcing wiring, diagnostics 5100-5109
+
