@@ -9,6 +9,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 - `Cephalon.Abstractions.AppModel.Scaffolding`
 - `Cephalon.Abstractions.Audit`
 - `Cephalon.Abstractions.Authorization`
+- `Cephalon.Abstractions.Behaviors`
 - `Cephalon.Abstractions.Capabilities`
 - `Cephalon.Abstractions.Data`
 - `Cephalon.Abstractions.EventSourcing`
@@ -2686,6 +2687,975 @@ Adds an authorization policy to the current runtime composition.
 
 Parameters:
 - `policy`: The authorization-policy descriptor to register.
+
+<a id="namespace-cephalon-abstractions-behaviors"></a>
+
+## Namespace Cephalon.Abstractions.Behaviors
+
+<a id="type-cephalon-abstractions-behaviors-appbehaviorattribute"></a>
+
+### `AppBehaviorAttribute`
+
+Maps an `IAppBehavior<T1, T2>` class to its configuration entry id.
+
+#### Declaration
+```csharp
+public sealed class AppBehaviorAttribute
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-behaviors-appbehaviorattribute-ctor-system-string"></a>
+
+##### `AppBehaviorAttribute`
+
+```csharp
+AppBehaviorAttribute(string behaviorId)
+```
+
+Initializes a new instance of `AppBehaviorAttribute`.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-appbehaviorattribute-behaviorid"></a>
+
+##### `BehaviorId`
+
+```csharp
+string BehaviorId { get; }
+```
+
+Gets the behavior configuration entry id.
+
+<a id="type-cephalon-abstractions-behaviors-behaviorallowedpatternsattribute"></a>
+
+### `BehaviorAllowedPatternsAttribute`
+
+Restricts which patterns ops config may activate for this behavior. If absent, no allowlist restriction applies.
+
+#### Declaration
+```csharp
+public sealed class BehaviorAllowedPatternsAttribute
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorallowedpatternsattribute-ctor-system-string"></a>
+
+##### `BehaviorAllowedPatternsAttribute`
+
+```csharp
+BehaviorAllowedPatternsAttribute(string[] patterns)
+```
+
+Initializes a new instance of `BehaviorAllowedPatternsAttribute`.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorallowedpatternsattribute-patterns"></a>
+
+##### `Patterns`
+
+```csharp
+IReadOnlyList<string> Patterns { get; }
+```
+
+Gets the set of allowed pattern identifiers.
+
+<a id="type-cephalon-abstractions-behaviors-behaviorallowedtransportsattribute"></a>
+
+### `BehaviorAllowedTransportsAttribute`
+
+Restricts which transports ops config may activate for this behavior. If absent, no allowlist restriction applies.
+
+#### Declaration
+```csharp
+public sealed class BehaviorAllowedTransportsAttribute
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorallowedtransportsattribute-ctor-system-string"></a>
+
+##### `BehaviorAllowedTransportsAttribute`
+
+```csharp
+BehaviorAllowedTransportsAttribute(string[] transports)
+```
+
+Initializes a new instance of `BehaviorAllowedTransportsAttribute`.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorallowedtransportsattribute-transports"></a>
+
+##### `Transports`
+
+```csharp
+IReadOnlyList<string> Transports { get; }
+```
+
+Gets the set of allowed transport identifiers.
+
+<a id="type-cephalon-abstractions-behaviors-behaviorcompatibilityviolation"></a>
+
+### `BehaviorCompatibilityViolation`
+
+Represents a compatibility rule violation for a behavior topology.
+
+#### Declaration
+```csharp
+public sealed class BehaviorCompatibilityViolation
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorcompatibilityviolation-ctor-system-string-system-string-cephalon-abstractions-behaviors-compatibilityseverity-system-string"></a>
+
+##### `BehaviorCompatibilityViolation`
+
+```csharp
+BehaviorCompatibilityViolation(string ruleId, string behaviorId, CompatibilitySeverity severity, string message)
+```
+
+Initializes a new instance of `BehaviorCompatibilityViolation`.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorcompatibilityviolation-behaviorid"></a>
+
+##### `BehaviorId`
+
+```csharp
+string BehaviorId { get; }
+```
+
+Gets the behavior identifier that triggered the violation.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorcompatibilityviolation-message"></a>
+
+##### `Message`
+
+```csharp
+string Message { get; }
+```
+
+Gets the violation message.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorcompatibilityviolation-ruleid"></a>
+
+##### `RuleId`
+
+```csharp
+string RuleId { get; }
+```
+
+Gets the rule identifier that was violated.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorcompatibilityviolation-severity"></a>
+
+##### `Severity`
+
+```csharp
+CompatibilitySeverity Severity { get; }
+```
+
+Gets the violation severity.
+
+<a id="type-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+### `BehaviorFault`
+
+Represents a structured fault from a behavior execution.
+
+#### Declaration
+```csharp
+public sealed class BehaviorFault
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorfault-ctor"></a>
+
+##### `BehaviorFault`
+
+```csharp
+BehaviorFault()
+```
+
+Initializes a new instance of `BehaviorFault`.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorfault-code"></a>
+
+##### `Code`
+
+```csharp
+string Code { get; set; }
+```
+
+Gets or sets the fault code.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorfault-details"></a>
+
+##### `Details`
+
+```csharp
+string Details { get; set; }
+```
+
+Gets or sets additional fault details.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorfault-innerfaults"></a>
+
+##### `InnerFaults`
+
+```csharp
+IReadOnlyList<BehaviorFault> InnerFaults { get; set; }
+```
+
+Gets or sets nested faults.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorfault-message"></a>
+
+##### `Message`
+
+```csharp
+string Message { get; set; }
+```
+
+Gets or sets the fault message.
+
+<a id="type-cephalon-abstractions-behaviors-behaviortopologydescriptor"></a>
+
+### `BehaviorTopologyDescriptor`
+
+Describes the resolved topology for a single behavior: its pattern, transports, and feature flags.
+
+#### Declaration
+```csharp
+public sealed class BehaviorTopologyDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviortopologydescriptor-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean-system-boolean-system-boolean-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `BehaviorTopologyDescriptor`
+
+```csharp
+BehaviorTopologyDescriptor(string id, string pattern, IReadOnlyList<string> transportIds, bool inboxEnabled, bool outboxEnabled, bool eventSourcingEnabled, string displayName, string description, IReadOnlyDictionary<string, string> metadata)
+```
+
+Initializes a new instance of `BehaviorTopologyDescriptor`.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the optional description.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the optional display name.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-eventsourcingenabled"></a>
+
+##### `EventSourcingEnabled`
+
+```csharp
+bool EventSourcingEnabled { get; }
+```
+
+Gets a value indicating whether event sourcing is wired into the behavior context.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the behavior identifier.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-inboxenabled"></a>
+
+##### `InboxEnabled`
+
+```csharp
+bool InboxEnabled { get; }
+```
+
+Gets a value indicating whether inbox deduplication is enabled.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets additional metadata.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-outboxenabled"></a>
+
+##### `OutboxEnabled`
+
+```csharp
+bool OutboxEnabled { get; }
+```
+
+Gets a value indicating whether outbox staging is enabled.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-pattern"></a>
+
+##### `Pattern`
+
+```csharp
+string Pattern { get; }
+```
+
+Gets the pattern identifier (e.g. "cqrs", "event-driven", "saga-step", "process-manager", "direct").
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-transportids"></a>
+
+##### `TransportIds`
+
+```csharp
+IReadOnlyList<string> TransportIds { get; }
+```
+
+Gets the transport identifiers configured for this behavior.
+
+<a id="type-cephalon-abstractions-behaviors-behaviortopologyoptions"></a>
+
+### `BehaviorTopologyOptions`
+
+Optional feature flags for a behavior topology entry.
+
+#### Declaration
+```csharp
+public sealed class BehaviorTopologyOptions
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviortopologyoptions-ctor"></a>
+
+##### `BehaviorTopologyOptions`
+
+```csharp
+BehaviorTopologyOptions()
+```
+
+Initializes a new instance of `BehaviorTopologyOptions`.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviortopologyoptions-eventsourcingenabled"></a>
+
+##### `EventSourcingEnabled`
+
+```csharp
+bool EventSourcingEnabled { get; set; }
+```
+
+Gets or sets a value indicating whether event sourcing is wired into the behavior context.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviortopologyoptions-inboxenabled"></a>
+
+##### `InboxEnabled`
+
+```csharp
+bool InboxEnabled { get; set; }
+```
+
+Gets or sets a value indicating whether inbox deduplication is enabled.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviortopologyoptions-outboxenabled"></a>
+
+##### `OutboxEnabled`
+
+```csharp
+bool OutboxEnabled { get; set; }
+```
+
+Gets or sets a value indicating whether outbox staging is enabled.
+
+<a id="type-cephalon-abstractions-behaviors-compatibilityseverity"></a>
+
+### `CompatibilitySeverity`
+
+Severity level of a behavior compatibility rule violation.
+
+#### Declaration
+```csharp
+public enum CompatibilitySeverity
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-behaviors-compatibilityseverity-advisory"></a>
+
+##### `Advisory`
+
+```csharp
+const CompatibilitySeverity Advisory
+```
+
+The violation is informational only.
+
+<a id="member-f-cephalon-abstractions-behaviors-compatibilityseverity-error"></a>
+
+##### `Error`
+
+```csharp
+const CompatibilitySeverity Error
+```
+
+The violation prevents application startup.
+
+<a id="member-f-cephalon-abstractions-behaviors-compatibilityseverity-warning"></a>
+
+##### `Warning`
+
+```csharp
+const CompatibilitySeverity Warning
+```
+
+The violation may cause runtime issues but does not prevent startup.
+
+<a id="type-cephalon-abstractions-behaviors-iappbehavior-tin-tout"></a>
+
+### `IAppBehavior<TIn, TOut>`
+
+Single interface for all behavior patterns. Developers implement this once; pattern and transport are config-driven.
+
+#### Declaration
+```csharp
+public interface IAppBehavior<TIn, TOut>
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-behaviors-iappbehavior-2-configuretopology-cephalon-abstractions-behaviors-ibehaviortopologybuilder"></a>
+
+##### `ConfigureTopology`
+
+```csharp
+void ConfigureTopology(IBehaviorTopologyBuilder builder)
+```
+
+Optional author-intent topology declaration. Called by source generator at build time. Override to declare pattern/transport defaults in code.
+
+<a id="member-m-cephalon-abstractions-behaviors-iappbehavior-2-handleasync-0-cephalon-abstractions-behaviors-ibehaviorcontext-system-threading-cancellationtoken"></a>
+
+##### `HandleAsync`
+
+```csharp
+Task<TOut> HandleAsync(TIn input, IBehaviorContext context, CancellationToken ct)
+```
+
+Handles the behavior input and returns the output.
+
+<a id="type-cephalon-abstractions-behaviors-ibehaviorcatalog"></a>
+
+### `IBehaviorCatalog`
+
+Provides read access to all registered behavior topology descriptors.
+
+#### Declaration
+```csharp
+public interface IBehaviorCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcatalog-all"></a>
+
+##### `All`
+
+```csharp
+IReadOnlyList<BehaviorTopologyDescriptor> All { get; }
+```
+
+Gets all registered behavior topology descriptors.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcatalog-findbyid-system-string"></a>
+
+##### `FindById`
+
+```csharp
+BehaviorTopologyDescriptor FindById(string behaviorId)
+```
+
+Finds a behavior by identifier (case-insensitive), or returns `null` if not found.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcatalog-getbypattern-system-string"></a>
+
+##### `GetByPattern`
+
+```csharp
+IReadOnlyList<BehaviorTopologyDescriptor> GetByPattern(string pattern)
+```
+
+Gets all behaviors registered with the specified pattern.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcatalog-getbytransport-system-string"></a>
+
+##### `GetByTransport`
+
+```csharp
+IReadOnlyList<BehaviorTopologyDescriptor> GetByTransport(string transportId)
+```
+
+Gets all behaviors registered with the specified transport.
+
+<a id="type-cephalon-abstractions-behaviors-ibehaviorcompatibilityrule"></a>
+
+### `IBehaviorCompatibilityRule`
+
+Validates a behavior topology descriptor against a compatibility constraint.
+
+#### Declaration
+```csharp
+public interface IBehaviorCompatibilityRule
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcompatibilityrule-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets a human-readable description of the rule.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcompatibilityrule-ruleid"></a>
+
+##### `RuleId`
+
+```csharp
+string RuleId { get; }
+```
+
+Gets the unique rule identifier (e.g. "ABT-001").
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcompatibilityrule-check-cephalon-abstractions-behaviors-behaviortopologydescriptor"></a>
+
+##### `Check`
+
+```csharp
+BehaviorCompatibilityViolation Check(BehaviorTopologyDescriptor descriptor)
+```
+
+Checks the descriptor and returns a violation if the rule is violated, or `null` if valid.
+
+<a id="type-cephalon-abstractions-behaviors-ibehaviorcontext"></a>
+
+### `IBehaviorContext`
+
+Transport-neutral ambient API available inside a behavior handler. Provides correlation, publishing, and saga state without coupling to a specific transport.
+
+#### Declaration
+```csharp
+public interface IBehaviorContext
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-behaviorid"></a>
+
+##### `BehaviorId`
+
+```csharp
+string BehaviorId { get; }
+```
+
+Gets the behavior identifier being executed.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-cancellationtoken"></a>
+
+##### `CancellationToken`
+
+```csharp
+CancellationToken CancellationToken { get; }
+```
+
+Gets the cancellation token for the current request.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the correlation identifier for the current request.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-fault"></a>
+
+##### `Fault`
+
+```csharp
+BehaviorFault Fault { get; }
+```
+
+Gets the fault set by the execution strategy on error, or `null` if no fault occurred.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets additional metadata associated with the current request.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier for the current request.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-traceid"></a>
+
+##### `TraceId`
+
+```csharp
+string TraceId { get; }
+```
+
+Gets the trace identifier for the current request.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorcontext-userid"></a>
+
+##### `UserId`
+
+```csharp
+string UserId { get; }
+```
+
+Gets the user identifier for the current request.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcontext-getsagastate-1"></a>
+
+##### `GetSagaState`
+
+```csharp
+T GetSagaState<T>()
+```
+
+Gets saga state of type `T`, or `null` if not set.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcontext-publishasync-1-0-system-threading-cancellationtoken"></a>
+
+##### `PublishAsync`
+
+```csharp
+Task PublishAsync<TEvent>(TEvent evt, CancellationToken ct)
+```
+
+Publishes a domain event to all configured transport bindings for this behavior.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcontext-replyasync-1-0-system-threading-cancellationtoken"></a>
+
+##### `ReplyAsync`
+
+```csharp
+Task ReplyAsync<TResult>(TResult result, CancellationToken ct)
+```
+
+Replies with a result. Only valid in CQRS and saga patterns.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcontext-sendasync-1-0-system-threading-cancellationtoken"></a>
+
+##### `SendAsync`
+
+```csharp
+Task SendAsync<TCommand>(TCommand command, CancellationToken ct)
+```
+
+Sends a command to another behavior.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcontext-setsagastate-1-0"></a>
+
+##### `SetSagaState`
+
+```csharp
+void SetSagaState<T>(T state)
+```
+
+Sets saga state of type `T`.
+
+<a id="type-cephalon-abstractions-behaviors-ibehaviorcontributor"></a>
+
+### `IBehaviorContributor`
+
+Contributes behavior topology descriptors to the engine registry at startup.
+
+#### Declaration
+```csharp
+public interface IBehaviorContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviorcontributor-registerbehaviors-cephalon-abstractions-behaviors-ibehaviorregistry"></a>
+
+##### `RegisterBehaviors`
+
+```csharp
+void RegisterBehaviors(IBehaviorRegistry registry)
+```
+
+Registers behaviors into the provided registry.
+
+<a id="type-cephalon-abstractions-behaviors-ibehaviorregistry"></a>
+
+### `IBehaviorRegistry`
+
+Receives behavior topology descriptors from contributors.
+
+#### Declaration
+```csharp
+public interface IBehaviorRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviorregistry-add-cephalon-abstractions-behaviors-behaviortopologydescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(BehaviorTopologyDescriptor descriptor)
+```
+
+Adds a behavior topology descriptor to the registry.
+
+<a id="type-cephalon-abstractions-behaviors-ibehaviortopologybuilder"></a>
+
+### `IBehaviorTopologyBuilder`
+
+Fluent builder for declaring behavior topology: pattern, transports, and feature options.
+
+#### Declaration
+```csharp
+public interface IBehaviorTopologyBuilder
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-ascqrs"></a>
+
+##### `AsCqrs`
+
+```csharp
+IBehaviorTopologyBuilder AsCqrs()
+```
+
+Declares this behavior as CQRS-shaped (command/query split, 200/202 HTTP semantics).
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-asdirect"></a>
+
+##### `AsDirect`
+
+```csharp
+IBehaviorTopologyBuilder AsDirect()
+```
+
+Declares this behavior as direct (no architectural pattern — input → handler → output, 200/204 HTTP).
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-aseventdriven"></a>
+
+##### `AsEventDriven`
+
+```csharp
+IBehaviorTopologyBuilder AsEventDriven()
+```
+
+Declares this behavior as event-driven (fire-and-forget, 202 HTTP, fanout).
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-asprocessmanager"></a>
+
+##### `AsProcessManager`
+
+```csharp
+IBehaviorTopologyBuilder AsProcessManager()
+```
+
+Declares this behavior as a process manager step (long-running, durable checkpoint).
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-assaga"></a>
+
+##### `AsSaga`
+
+```csharp
+IBehaviorTopologyBuilder AsSaga()
+```
+
+Declares this behavior as a saga step (stateful, compensation chain).
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-build-system-string"></a>
+
+##### `Build`
+
+```csharp
+BehaviorTopologyDescriptor Build(string behaviorId)
+```
+
+Builds the final descriptor. Called internally by the engine — do not call directly.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viagrpc"></a>
+
+##### `ViaGrpc`
+
+```csharp
+IBehaviorTopologyBuilder ViaGrpc()
+```
+
+Adds the gRPC transport.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viahttpgraphql"></a>
+
+##### `ViaHttpGraphQl`
+
+```csharp
+IBehaviorTopologyBuilder ViaHttpGraphQl()
+```
+
+Adds the GraphQL over HTTP transport (queries and mutations).
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viahttpgraphqlsse"></a>
+
+##### `ViaHttpGraphQlSse`
+
+```csharp
+IBehaviorTopologyBuilder ViaHttpGraphQlSse()
+```
+
+Adds the GraphQL subscriptions via Server-Sent Events transport.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viahttpgraphqlws"></a>
+
+##### `ViaHttpGraphQlWs`
+
+```csharp
+IBehaviorTopologyBuilder ViaHttpGraphQlWs()
+```
+
+Adds the GraphQL subscriptions via WebSocket transport.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viahttpjsonrpc"></a>
+
+##### `ViaHttpJsonRpc`
+
+```csharp
+IBehaviorTopologyBuilder ViaHttpJsonRpc()
+```
+
+Adds the JSON-RPC 2.0 over HTTP transport.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viahttprest"></a>
+
+##### `ViaHttpRest`
+
+```csharp
+IBehaviorTopologyBuilder ViaHttpRest()
+```
+
+Adds the HTTP REST transport (GET/POST routing).
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viahttpsse"></a>
+
+##### `ViaHttpSse`
+
+```csharp
+IBehaviorTopologyBuilder ViaHttpSse()
+```
+
+Adds the raw Server-Sent Events push transport.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viainmemory"></a>
+
+##### `ViaInMemory`
+
+```csharp
+IBehaviorTopologyBuilder ViaInMemory()
+```
+
+Adds the in-memory transport (zero-infra, for tests and local dev).
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viakafka"></a>
+
+##### `ViaKafka`
+
+```csharp
+IBehaviorTopologyBuilder ViaKafka()
+```
+
+Adds the Kafka transport.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viarabbitmq"></a>
+
+##### `ViaRabbitMq`
+
+```csharp
+IBehaviorTopologyBuilder ViaRabbitMq()
+```
+
+Adds the RabbitMQ (AMQP) transport.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viawebsocket"></a>
+
+##### `ViaWebSocket`
+
+```csharp
+IBehaviorTopologyBuilder ViaWebSocket()
+```
+
+Adds the raw WebSocket bi-directional transport.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-withoptions-system-action-cephalon-abstractions-behaviors-behaviortopologyoptions"></a>
+
+##### `WithOptions`
+
+```csharp
+IBehaviorTopologyBuilder WithOptions(Action<BehaviorTopologyOptions> configure)
+```
+
+Configures optional feature flags for this behavior (outbox, inbox, event sourcing).
 
 <a id="namespace-cephalon-abstractions-capabilities"></a>
 

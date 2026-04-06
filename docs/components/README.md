@@ -25,6 +25,10 @@ See also: [Docs hub](../README.md)
 - [Cephalon.Retrieval](retrieval.md)
 - [Cephalon.Edge](edge.md)
 
+## Phase 9 companion packs
+
+- [Cephalon.Behaviors](behaviors.md)
+
 ## Phase 8 companion packs
 
 - [Cephalon.Audit](audit.md)

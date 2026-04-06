@@ -8,6 +8,7 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.Abstractions"] = "abstractions.md",
             ["Cephalon.Audit"] = "audit.md",
             ["Cephalon.Agentics"] = "agentics.md",
+            ["Cephalon.Behaviors"] = "behaviors.md",
             ["Cephalon.AspNetCore"] = "aspnetcore.md",
             ["Cephalon.AspNetCore.GraphQL"] = "aspnetcore-graphql.md",
             ["Cephalon.AspNetCore.Grpc"] = "aspnetcore-grpc.md",

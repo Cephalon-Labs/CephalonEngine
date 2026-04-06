@@ -3,6 +3,9 @@ namespace Cephalon.Abstractions.Behaviors;
 /// <summary>Represents a structured fault from a behavior execution.</summary>
 public sealed class BehaviorFault
 {
+    /// <summary>Initializes a new instance of <see cref="BehaviorFault"/>.</summary>
+    public BehaviorFault() { }
+
     /// <summary>Gets or sets the fault code.</summary>
     public string Code { get; init; } = string.Empty;
 

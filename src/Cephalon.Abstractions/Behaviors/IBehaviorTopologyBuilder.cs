@@ -49,6 +49,9 @@ public interface IBehaviorTopologyBuilder
 /// <summary>Optional feature flags for a behavior topology entry.</summary>
 public sealed class BehaviorTopologyOptions
 {
+    /// <summary>Initializes a new instance of <see cref="BehaviorTopologyOptions"/>.</summary>
+    public BehaviorTopologyOptions() { }
+
     /// <summary>Gets or sets a value indicating whether outbox staging is enabled.</summary>
     public bool OutboxEnabled { get; set; }
 
