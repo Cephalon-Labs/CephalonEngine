@@ -2,31 +2,14 @@ namespace Cephalon.Tests.Tooling;
 
 public sealed class DocumentationCoverageTests
 {
-    private static readonly Dictionary<string, string> ComponentDocByProject =
+    // Projects whose doc filename does not follow the default convention
+    // (strip "Cephalon." prefix, replace "." with "-", lowercase, append ".md").
+    // Keep this list as short as possible — only add entries when the convention
+    // produces the wrong filename.
+    private static readonly Dictionary<string, string> SlugOverrides =
         new Dictionary<string, string>(StringComparer.Ordinal)
         {
-            ["Cephalon.Abstractions"] = "abstractions.md",
-            ["Cephalon.Audit"] = "audit.md",
-            ["Cephalon.Agentics"] = "agentics.md",
-            ["Cephalon.Behaviors"] = "behaviors.md",
-            ["Cephalon.Behaviors.Http"] = "behaviors-http.md",
-            ["Cephalon.Behaviors.Messaging"] = "behaviors-messaging.md",
-            ["Cephalon.Behaviors.Patterns"] = "behaviors-patterns.md",
-            ["Cephalon.Behaviors.SourceGen"] = "behaviors-sourcegen.md",
-            ["Cephalon.AspNetCore"] = "aspnetcore.md",
-            ["Cephalon.AspNetCore.GraphQL"] = "aspnetcore-graphql.md",
-            ["Cephalon.AspNetCore.Grpc"] = "aspnetcore-grpc.md",
-            ["Cephalon.AspNetCore.JsonRpc"] = "aspnetcore-jsonrpc.md",
-            ["Cephalon.Cli"] = "cli.md",
-            ["Cephalon.Data"] = "data.md",
-            ["Cephalon.Data.Cassandra"] = "data-cassandra.md",
-            ["Cephalon.Data.ClickHouse"] = "data-clickhouse.md",
-            ["Cephalon.Data.EntityFramework"] = "data-entityframework.md",
-            ["Cephalon.Data.MongoDB"] = "data-mongodb.md",
-            ["Cephalon.Data.Neo4j"] = "data-neo4j.md",
-            ["Cephalon.Data.Redis"] = "data-redis.md",
-            ["Cephalon.Edge"] = "edge.md",
-            ["Cephalon.Engine"] = "engine.md",
+            // "EventSourcing" is one dot-segment but the slug splits the word
             ["Cephalon.EventSourcing"] = "event-sourcing.md",
             ["Cephalon.EventSourcing.Cassandra"] = "event-sourcing-cassandra.md",
             ["Cephalon.EventSourcing.ClickHouse"] = "event-sourcing-clickhouse.md",
@@ -34,50 +17,49 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.EventSourcing.MongoDB"] = "event-sourcing-mongodb.md",
             ["Cephalon.EventSourcing.Neo4j"] = "event-sourcing-neo4j.md",
             ["Cephalon.EventSourcing.Redis"] = "event-sourcing-redis.md",
-            ["Cephalon.Eventing"] = "eventing.md",
-            ["Cephalon.Eventing.Wolverine"] = "eventing-wolverine.md",
-            ["Cephalon.Identity"] = "identity.md",
-            ["Cephalon.Identity.AspNetCore"] = "identity-aspnetcore.md",
-            ["Cephalon.Ids.Sfid"] = "ids-sfid.md",
+            // "MultiTenancy" → "multi-tenancy"
             ["Cephalon.MultiTenancy"] = "multi-tenancy.md",
-            ["Cephalon.Observability"] = "observability.md",
+            // "ReferenceDocs" → "reference-docs"
+            ["Cephalon.ReferenceDocs"] = "reference-docs.md",
+            // Observability slugs that split compound words with a hyphen
             ["Cephalon.Observability.AlibabaCloud"] = "observability-alibaba-cloud.md",
-            ["Cephalon.Observability.Aws"] = "observability-aws.md",
             ["Cephalon.Observability.AzureMonitor"] = "observability-azure-monitor.md",
             ["Cephalon.Observability.CassandraDependencies"] = "observability-cassandra-dependencies.md",
             ["Cephalon.Observability.ClickHouseDependencies"] = "observability-clickhouse-dependencies.md",
             ["Cephalon.Observability.ConsulDependencies"] = "observability-consul-dependencies.md",
-            ["Cephalon.Observability.DigitalOcean"] = "observability-digitalocean.md",
             ["Cephalon.Observability.ElasticsearchDependencies"] = "observability-elasticsearch-dependencies.md",
-            ["Cephalon.Observability.Gcp"] = "observability-gcp.md",
             ["Cephalon.Observability.GrafanaCloud"] = "observability-grafana-cloud.md",
             ["Cephalon.Observability.HttpDependencies"] = "observability-http-dependencies.md",
             ["Cephalon.Observability.HuaweiCloud"] = "observability-huawei-cloud.md",
-            ["Cephalon.Observability.NewRelic"] = "observability-new-relic.md",
-            ["Cephalon.Observability.OracleCloud"] = "observability-oracle-cloud.md",
             ["Cephalon.Observability.KafkaDependencies"] = "observability-kafka-dependencies.md",
-            ["Cephalon.Observability.Kubernetes"] = "observability-kubernetes.md",
             ["Cephalon.Observability.MemcachedDependencies"] = "observability-memcached-dependencies.md",
             ["Cephalon.Observability.MongoDbDependencies"] = "observability-mongodb-dependencies.md",
             ["Cephalon.Observability.MqttDependencies"] = "observability-mqtt-dependencies.md",
             ["Cephalon.Observability.MySqlDependencies"] = "observability-mysql-dependencies.md",
             ["Cephalon.Observability.NatsDependencies"] = "observability-nats-dependencies.md",
             ["Cephalon.Observability.Neo4jDependencies"] = "observability-neo4j-dependencies.md",
+            ["Cephalon.Observability.NewRelic"] = "observability-new-relic.md",
             ["Cephalon.Observability.OpenSearchDependencies"] = "observability-opensearch-dependencies.md",
+            ["Cephalon.Observability.OracleCloud"] = "observability-oracle-cloud.md",
             ["Cephalon.Observability.OracleDependencies"] = "observability-oracle-dependencies.md",
-            ["Cephalon.Observability.OpenShift"] = "observability-openshift.md",
             ["Cephalon.Observability.PostgresDependencies"] = "observability-postgres-dependencies.md",
             ["Cephalon.Observability.RabbitMqDependencies"] = "observability-rabbitmq-dependencies.md",
             ["Cephalon.Observability.RedisDependencies"] = "observability-redis-dependencies.md",
             ["Cephalon.Observability.SqlServerDependencies"] = "observability-sqlserver-dependencies.md",
-            ["Cephalon.Observability.Tanzu"] = "observability-tanzu.md",
-            ["Cephalon.Observability.OpenTelemetry"] = "observability-opentelemetry.md",
-            ["Cephalon.Observability.Serilog"] = "observability-serilog.md",
-            ["Cephalon.ReferenceDocs"] = "reference-docs.md",
-            ["Cephalon.Retrieval"] = "retrieval.md",
-            ["Cephalon.Scaffolding"] = "scaffolding.md",
-            ["Cephalon.Worker"] = "worker.md",
         };
+
+    private static string DeriveComponentDocFileName(string projectName)
+    {
+        if (SlugOverrides.TryGetValue(projectName, out var overrideSlug))
+            return overrideSlug;
+
+        // Convention: strip "Cephalon." prefix, replace "." with "-", lowercase, append ".md"
+        var withoutPrefix = projectName.StartsWith("Cephalon.", StringComparison.Ordinal)
+            ? projectName["Cephalon.".Length..]
+            : projectName;
+
+        return withoutPrefix.Replace('.', '-').ToLowerInvariant() + ".md";
+    }
 
     [Fact]
     public void EveryShippedSourceProjectHasAComponentDocumentAndCatalogEntry()
@@ -93,18 +75,15 @@ public sealed class DocumentationCoverageTests
             .OrderBy(name => name, StringComparer.Ordinal)
             .ToArray();
 
-        Assert.Equal(projectDirectories.Length, ComponentDocByProject.Count);
-
         foreach (var projectName in projectDirectories)
         {
-            Assert.True(
-                ComponentDocByProject.TryGetValue(projectName!, out var componentDocFileName),
-                $"Add a component-doc mapping for '{projectName}' in {nameof(DocumentationCoverageTests)}.");
+            var componentDocFileName = DeriveComponentDocFileName(projectName!);
 
             var componentDocPath = Path.Combine(componentDocsRoot, componentDocFileName);
             Assert.True(
                 File.Exists(componentDocPath),
-                $"Expected a component doc for '{projectName}' at '{componentDocPath}'.");
+                $"Expected a component doc for '{projectName}' at '{componentDocPath}'. " +
+                $"If the filename does not follow convention, add an override in {nameof(SlugOverrides)}.");
 
             var componentDocContents = File.ReadAllText(componentDocPath);
             Assert.Contains(projectName!, componentDocContents, StringComparison.Ordinal);
