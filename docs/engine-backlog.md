@@ -1440,3 +1440,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 - ENG-054 Cassandra wide-column non-relational provider: `Cephalon.Data.Cassandra` (IOutbox + IInbox backed by Cassandra tables, idempotent staging via LWT `INSERT IF NOT EXISTS`, `data.cassandra` / `data.wide-column-store` capabilities), `Cephalon.EventSourcing.Cassandra` (IEventStore with composite PK on stream_id+stream_version, LWT concurrency detection, System.Text.Json serialization, IAsyncEnumerable stream replay), CassandraCSharpDriver 3.22.0 already in CPM, 8 composition tests (no live Cassandra required — driver connects lazily), full component docs — **Shipped** · 624/624 tests
 
+### Sprint 29
+
+- ENG-054 ClickHouse analytics non-relational provider: `Cephalon.Data.ClickHouse` (IOutbox + IInbox backed by ClickHouse ReplacingMergeTree tables, eventual idempotency via ORDER BY deduplication + FINAL reads, `data.clickhouse` / `data.analytics-store` capabilities), `Cephalon.EventSourcing.ClickHouse` (IEventStore with MergeTree ORDER BY (stream_id, stream_version), application-layer optimistic concurrency, System.Text.Json serialization, IAsyncEnumerable stream replay), ClickHouse.Driver 1.0.2 already in CPM, 8 composition tests (no live ClickHouse required — connection created per-operation), full component docs — **Shipped** · 632/632 tests
+

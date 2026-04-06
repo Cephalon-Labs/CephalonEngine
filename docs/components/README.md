@@ -43,6 +43,8 @@ See also: [Docs hub](../README.md)
 - [Cephalon.EventSourcing.Neo4j](event-sourcing-neo4j.md)
 - [Cephalon.Data.Cassandra](data-cassandra.md)
 - [Cephalon.EventSourcing.Cassandra](event-sourcing-cassandra.md)
+- [Cephalon.Data.ClickHouse](data-clickhouse.md)
+- [Cephalon.EventSourcing.ClickHouse](event-sourcing-clickhouse.md)
 
 ## Phase 8 companion packs
 
