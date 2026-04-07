@@ -195,6 +195,7 @@ Current standing examples from this collaboration:
 - treat internet-backed research as the default follow-through for sub-agent learning tasks when accuracy or freshness matters
 - when a coding task is complete and the change is validated, stage only the intended files, create a commit, keep `master` updated as the integration branch, push the finished work to GitHub, and leave project docs aligned with the shipped behavior
 - when a code change affects documented behavior, inspect the related `docs/*` graph and update every impacted hand-authored document that references that surface instead of patching only one nearby page
+- GitHub Project cards should contain enough narrative detail for a reader to understand the work without extra thread context, and they should populate the standard fields `Assignee`, `Label`, `Type`, `Project`, `Estimate`, `Iteration`, `Test`, `Benchmark`, `Milestone`, and `Relationship` when cross-card references exist
 
 ## Working assumptions for contributors
 
@@ -206,6 +207,7 @@ Unless the code clearly proves otherwise, contributors should assume:
 - any public runtime, package, or diagnostics surface may also have docs, sample, scaffold, template, and validation-script follow-through
 - hand-authored docs are part of the product and should be kept truthful when shipped behavior changes
 - documents under `docs/*` often cross-reference one another, so code changes may require multi-file doc updates across hubs, component pages, operations guides, compatibility guidance, roadmap/backlog notes, and related adoption docs
+- GitHub Project tracking should stay readable on its own, with complete card descriptions and the expected planning fields filled in so another contributor can understand scope, validation, timing, and dependencies quickly
 - XML comments on public contracts are not optional polish; they are part of the supported documentation surface
 
 ## Current next-look areas
