@@ -2,7 +2,7 @@
 
 Editable roadmap diagram: `docs/cephalon-engine-roadmap.drawio`
 
-Planning baseline in this document reflects the repository state as of `April 7, 2026`.
+Planning baseline in this document reflects the repository state as of `April 8, 2026`.
 
 ## Target outcome
 
@@ -88,7 +88,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 28`: **shipped** `ENG-054` Cassandra wide-column-store provider — `Cephalon.Data.Cassandra` + `Cephalon.EventSourcing.Cassandra`, CassandraCSharpDriver 3.22.0 — 624/624 tests
 - `Sprint 29`: **shipped** `ENG-054` ClickHouse analytics-store provider — `Cephalon.Data.ClickHouse` + `Cephalon.EventSourcing.ClickHouse`, ClickHouse.Driver 1.0.2 — 632/632 tests
 - `Sprint 30`: **shipped** `ENG-054` Elasticsearch + OpenSearch search-store provider — 4 packages, Elastic.Clients.Elasticsearch 8.17.0 + OpenSearch.Client 1.8.0 — 640/640 tests
-- `Sprint 31`: **shipped** `ENG-054` Qdrant vector-store + NATS ledger-store provider — 4 packages, Qdrant.Client 1.17.0 + NATS.Net 2.7.3 — 648/648 tests. ENG-054 Track 1 complete: all 9 non-relational provider families delivered
+- `Sprint 31`: **shipped** `ENG-054` Qdrant vector-store + NATS ledger-store provider — 4 packages, Qdrant.Client 1.17.0 + NATS.Net 2.7.3 — 648/648 tests. ENG-054 Track 1 complete: all 9 non-relational provider families delivered. The same sprint also shipped `ENG-058-T30` behavior-aware REST endpoint helper follow-through: `MapBehaviorRestGroup(...)`, versioned OpenAPI metadata defaults, XML-comment enrichment, and showcase cart route deduplication over the behavior dispatcher
 - `Infrastructure Phase 1`: solution filter files (`core.slnf`, `data.slnf`, `observability.slnf`, `aspnetcore.slnf`) + scaffolding scripts (`New-ProviderPack.ps1`, `New-ObservabilityPack.ps1`)
 - `Infrastructure Phase 2`: test assembly split — `Cephalon.Tests` monolith (648 tests) split into `Cephalon.Tests.Support` + `Cephalon.Tests.Composition` (327) + `Cephalon.Tests.Hosting` (200) + `Cephalon.Tests.Tooling` (121) — 648/648 tests
 - `Sprint 32`: backlog and roadmap alignment for all completed work through Sprint 31, status closeout for ENG-054/056/057
@@ -452,7 +452,7 @@ Exit criteria:
 - non-relational provider breadth plus hybrid-cloud, service-mesh, and serverless follow-through remain explicit later slices until the golden path proves the contract
 - consumer apps can keep framework ceremony low by declaring architecture/runtime choices once through configuration and package selection while concentrating hand-written code on business logic, domain rules, and use-case behavior
 
-Current planning note as of `April 7, 2026`:
+Current planning note as of `April 8, 2026`:
 
 - `ENG-046`, `ENG-047`, and `ENG-048` should freeze the phase-8 taxonomy, settings, and contracts before workstream-specific implementation names drift
 - `ENG-049` and `ENG-050` are now actively proving the relational-first data and eventing baseline before broader provider expansion; the next truth gate is moving from application-managed publication/subscription reporting into a truthful first-class adapter path without over-claiming pack-owned dispatch behavior
@@ -479,6 +479,7 @@ Delivered:
 - `ENG-058 M4` Pattern Execution Strategies: 5 strategies (`cqrs`, `event-driven`, `saga-step`, `process-manager`, `direct`), `ISagaStateStore`, `IProcessCheckpointStore`, `FrozenDictionary` registry, `IBehaviorContext.CorrelationId`, `IProcessCompletion` — 575/575 tests (Sprint 23)
 - `ENG-058 M5` Source Generator: `BehaviorSourceGenerator` (`IIncrementalGenerator` + `DiagnosticAnalyzer`), ABT0010–ABT0013 diagnostics, `BehaviorRegistrationHints.g.cs` — 584/584 tests (Sprint 24)
 - `ENG-058 M6` Runtime Integration: `BehaviorRuntimeContributor`, `IBehaviorAdvisory` system, `IBehaviorContext.EventStore` wiring, `BehaviorDiagnostics` EventId 5100-5109 — 592/592 tests (Sprint 24)
+- `ENG-058-T30` behavior-aware REST endpoint helper follow-through: `MapBehaviorRestGroup(...)`, `BehaviorRestEndpointGroup.MapBehaviorGet/Post/Put/Patch/Delete(...)`, module-major versioned operation-name defaults, XML-comment-backed OpenAPI enrichment, `DefaultBehaviorContext` event-store DI wiring for HTTP execution, and showcase cart route deduplication — composition HTTP tests 13/13 plus showcase hosting tests 33/33 (Sprint 31)
 
 Exit criteria:
 

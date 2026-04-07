@@ -23,7 +23,7 @@
 | `BehaviorTopologyDescriptor` | Resolved per-behavior config: pattern, transports, feature flags |
 | `[AppBehavior("id")]` | Declares a class as a named behavior |
 | `[BehaviorAllowedPatterns]` | Opt-in security allowlist restricting which patterns config can activate |
-| `[BehaviorAllowedTransports]` | Opt-in security allowlist restricting which transports config can activate |
+| `[BehaviorAllowedTransports]` | Opt-in security allowlist restricting which transports config can activate; not a route-contract or OpenAPI descriptor |
 | `IBehaviorCompatibilityRule` | Author extension point for custom topology validation |
 
 ## Registration
@@ -68,6 +68,14 @@ Resolved topology is the result of a four-layer merge (lowest → highest priori
 ## Transport identifiers
 
 `http.rest` · `http.jsonrpc` · `http.graphql` · `http.graphql-sse` · `http.graphql-ws` · `http.sse` · `http.ws` · `rabbitmq` · `kafka` · `in-memory` · `grpc`
+
+## HTTP route-shape follow-through
+
+Behavior metadata stays transport-neutral on purpose.
+
+- use `[BehaviorAllowedTransports]` and `ConfigureTopology(...)` to declare which transports may activate for a behavior
+- use `Cephalon.Behaviors.Http` route helpers such as `MapBehaviorRestGroup(...)` when a module needs a concrete REST method, route template, and OpenAPI surface
+- keep HTTP-specific route shape in the adapter/helper layer so `Cephalon.Abstractions` and the core ABT contracts remain host-agnostic
 
 ## Performance characteristics
 
@@ -131,6 +139,8 @@ Implements `ITechnologyRuntimeContributor` and reports the behavior subsystem su
 - `KafkaBehaviorContext` — resolves from DI
 - `RabbitMqBehaviorContext` — resolves from DI
 - `TestBehaviorContext` — accepts injected `IEventStore?` for test scenarios
+
+`BehaviorExecutionSlot` now also deserializes `JsonElement` payloads with `JsonSerializerDefaults.Web`, so camelCase HTTP inputs bind cleanly into typical C# DTOs without per-behavior casing workarounds.
 
 ### BehaviorDiagnostics EventId constants (5100-5109)
 

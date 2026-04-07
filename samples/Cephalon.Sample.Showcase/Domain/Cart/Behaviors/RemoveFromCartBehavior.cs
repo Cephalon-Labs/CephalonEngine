@@ -24,6 +24,10 @@ public sealed class RemoveFromCartBehavior : IAppBehavior<RemoveFromCartInput, R
             ?? throw new InvalidOperationException("Event store is required for the cart CQRS pattern.");
 
         var currentVersion = await eventStore.GetVersionAsync(streamId, ct);
+        if (currentVersion < 0)
+        {
+            throw new KeyNotFoundException($"Cart '{input.CartId}' was not found.");
+        }
 
         var evt = new ItemRemovedFromCart(
             StreamId: streamId,

@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.EventSourcing;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Behaviors.Http;
 
@@ -48,6 +49,7 @@ internal sealed class DefaultBehaviorContext : IBehaviorContext
             BehaviorId = behaviorId,
             CorrelationId = correlationId,
             Metadata = metadata,
+            EventStore = ctx.RequestServices.GetService<IEventStore>(),
             CancellationToken = ctx.RequestAborted,
             _isDirect = true
         };

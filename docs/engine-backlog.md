@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `April 7, 2026`.
+Backlog status in this document reflects the repository state as of `April 8, 2026`.
 
 ## Completed foundation work
 
@@ -1548,6 +1548,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 ### Sprint 31
 
 - ENG-054 Qdrant vector-store + NATS ledger non-relational provider: `Cephalon.Data.Qdrant` (IOutbox + IInbox backed by Qdrant vector collections using 1D dummy vectors and payload-field storage, idempotent staging via point-ID existence check, `data.qdrant` / `data.vector-store` capabilities), `Cephalon.EventSourcing.Qdrant` (IEventStore with compound point-ID `{streamId}:{version}` hash, application-layer optimistic concurrency, Scroll-based stream replay), `Cephalon.Data.Nats` (IOutbox + IInbox backed by NATS JetStream KV, idempotent via KV CreateAsync with NatsKVCreateException swallow, `data.nats` / `data.ledger-store` capabilities), `Cephalon.EventSourcing.Nats` (IEventStore via JetStream KV with zero-padded keys `{streamId}/{version:D20}`, lexicographic-safe ordering, CreateAsync for concurrency), Qdrant.Client 1.17.0 + NATS.Net 2.7.3 in CPM, 8 composition tests (no live server — both clients connect lazily), full component docs — **Shipped** · 648/648 tests
+- ENG-058-T30 behavior-aware REST endpoint helpers and OpenAPI follow-through: `MapBehaviorRestGroup(...)` plus `BehaviorRestEndpointGroup.MapBehaviorGet/Post/Put/Patch/Delete(...)` in `Cephalon.Behaviors.Http`, module-major versioned operation names, XML-comment-backed OpenAPI enrichment, route/query/body input composition for behavior DTOs, `DefaultBehaviorContext` event-store DI wiring, showcase cart route deduplication, and sample in-memory event-store coverage — **Shipped** · composition HTTP tests 13/13 + showcase hosting tests 33/33
 
 ### Infrastructure — Phase 2 Developer Experience
 

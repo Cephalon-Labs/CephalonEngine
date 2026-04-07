@@ -55,6 +55,56 @@ That keeps the authoring path close to the same module-first ideas used by Cepha
 14. Use `IOutboxContributor` when the package needs to publish operator-facing outbox descriptors through `/engine/outboxes` and `/engine/snapshot`.
 15. Use `IAuthorizationPolicyContributor` when the package needs to publish operator-facing authorization-policy descriptors through `/engine/authorization-policies` and `/engine/snapshot`.
 16. Add transport contribution interfaces only when the package really owns an external surface.
+17. When a module exposes behavior-driven REST endpoints, keep `[BehaviorAllowedTransports]` as the transport allowlist and map concrete REST routes through `Cephalon.Behaviors.Http` route helpers instead of trying to encode HTTP method or route shape inside the behavior attributes.
+
+## Behavior-first REST authoring
+
+Modules that expose Cephalon behaviors over REST can now keep most of the boilerplate in the helper layer while staying inside normal Minimal API conventions.
+
+Behavior declaration stays transport-neutral:
+
+```csharp
+[AppBehavior("cart.add-item")]
+[BehaviorAllowedPatterns("cqrs")]
+[BehaviorAllowedTransports("http.rest", "http.ws", "http.graphql", "http.sse")]
+public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, AddToCartOutput>
+{
+    public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+    {
+        builder.AsCqrs()
+            .ViaHttpRest()
+            .ViaWebSocket()
+            .ViaHttpGraphQl()
+            .ViaHttpSse()
+            .WithOptions(opts => opts.EventSourcingEnabled = true);
+    }
+}
+```
+
+The owning module then maps the concrete REST surface:
+
+```csharp
+public void MapEndpoints(IEndpointRouteBuilder endpoints)
+{
+    var group = endpoints.MapBehaviorRestGroup(this, "/showcase/cart");
+
+    group.MapBehaviorGet<GetCartBehavior>("/{cartId}");
+    group.MapBehaviorPost<AddToCartBehavior>("/{cartId}/items");
+    group.MapBehaviorDelete<RemoveFromCartBehavior>("/{cartId}/items/{productId}");
+    group.MapBehaviorPost<CheckoutCartBehavior>("/{cartId}/checkout");
+}
+```
+
+Current helper behavior:
+
+- keeps route shape in the ASP.NET Core adapter layer while behavior attributes remain host-agnostic
+- dispatches through `BehaviorDispatcher` and `DefaultBehaviorContext`
+- merges route values, query-string values, and JSON request bodies into the behavior input payload
+- uses the module display name for OpenAPI tags
+- derives the default operation-name version segment from the owning module descriptor major version
+- flows XML comments from the module and behavior assemblies into ASP.NET Core OpenAPI metadata when XML docs are available
+
+The generic `/behaviors/{id}` REST binding still exists and remains useful for low-ceremony or fully dynamic behavior hosts. Use the helper surface when the module owns a stable public REST shape that should read like a normal application API.
 
 ## Workflow and orchestration descriptors
 

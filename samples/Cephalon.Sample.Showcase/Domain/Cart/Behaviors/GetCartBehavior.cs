@@ -23,6 +23,11 @@ public sealed class GetCartBehavior : IAppBehavior<GetCartInput, GetCartOutput>
         var eventStore = context.EventStore
             ?? throw new InvalidOperationException("Event store is required for the cart CQRS pattern.");
 
+        if (await eventStore.GetVersionAsync(streamId, ct).ConfigureAwait(false) < 0)
+        {
+            throw new KeyNotFoundException($"Cart '{input.CartId}' was not found.");
+        }
+
         var cart = await ShowcaseEventSourcingHelper.RebuildCartAsync(eventStore, streamId, input.CartId, ct);
 
         return new GetCartOutput(cart);

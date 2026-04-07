@@ -2,13 +2,17 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
+using Cephalon.Abstractions.EventSourcing;
+using Cephalon.Abstractions.Modules;
 using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Http.Bindings;
 using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Http.Registry;
 using Cephalon.Behaviors.Services;
+using Cephalon.AspNetCore.Modules;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -40,6 +44,73 @@ public sealed class HttpBehaviorBindingTests
     {
         public Task<object> HandleAsync(object input, IBehaviorContext context, CancellationToken cancellationToken = default)
             => Task.FromResult(input);
+    }
+
+    [AppBehavior("rest.helper.echo")]
+    private sealed class RestHelperEchoBehavior : IAppBehavior<RestHelperEchoInput, RestHelperEchoOutput>
+    {
+        public Task<RestHelperEchoOutput> HandleAsync(
+            RestHelperEchoInput input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(new RestHelperEchoOutput(
+                input.CartId,
+                input.ProductName,
+                input.Quantity,
+                context.EventStore is not null));
+        }
+    }
+
+    private sealed record RestHelperEchoInput(string CartId, string ProductName, int Quantity);
+
+    private sealed record RestHelperEchoOutput(
+        string CartId,
+        string ProductName,
+        int Quantity,
+        bool HasEventStore);
+
+    private sealed class RestHelperModule : ModuleBase, IEndpointModule
+    {
+        private static readonly ModuleDescriptor DescriptorInstance = new(
+            id: "tests.cart",
+            displayName: "Test Cart",
+            description: "Test module for behavior-aware REST endpoint helpers.",
+            version: "2.4.0");
+
+        public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+        public void MapEndpoints(IEndpointRouteBuilder endpoints)
+        {
+            var group = endpoints.MapBehaviorRestGroup(this, "/tests/cart");
+            group.MapBehaviorPost<RestHelperEchoBehavior>("/{cartId}/items");
+        }
+    }
+
+    private sealed class StubEventStore : IEventStore
+    {
+        public Task AppendAsync(
+            string streamId,
+            IReadOnlyCollection<IDomainEvent> events,
+            long expectedVersion,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task<long> GetVersionAsync(string streamId, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(-1L);
+        }
+
+        public async IAsyncEnumerable<IDomainEvent> ReadStreamAsync(
+            string streamId,
+            long fromVersion = 0,
+            [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            await Task.CompletedTask;
+            yield break;
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -80,6 +151,30 @@ public sealed class HttpBehaviorBindingTests
         {
             await binding.MapAsync(app, descriptor, dispatcher);
         }
+
+        await app.StartAsync();
+        return (app, app.GetTestClient());
+    }
+
+    private static async Task<(WebApplication App, HttpClient Client)> BuildBehaviorRestHelperAppAsync()
+    {
+        var descriptor = new BehaviorTopologyDescriptor("rest.helper.echo", "direct", ["http.rest"]);
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+
+        builder.Services.AddTransient<RestHelperEchoBehavior>();
+        builder.Services.AddSingleton<IEventStore, StubEventStore>();
+
+        var typeRegistry = new BehaviorTypeRegistry();
+        typeRegistry.Register(descriptor.Id, typeof(RestHelperEchoBehavior));
+        builder.Services.AddSingleton<IBehaviorContributor>(new FluentBehaviorContributor(descriptor));
+        builder.Services.AddSingleton<IBehaviorTypeRegistry>(typeRegistry);
+        builder.Services.AddSingleton<IBehaviorCatalog>(sp =>
+            new BehaviorCatalog(sp.GetServices<IBehaviorContributor>()));
+        builder.Services.AddSingleton<BehaviorDispatcher>();
+
+        var app = builder.Build();
+        new RestHelperModule().MapEndpoints(app);
 
         await app.StartAsync();
         return (app, app.GetTestClient());
@@ -301,7 +396,8 @@ public sealed class HttpBehaviorBindingTests
         var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.sse"]);
         var (app, client) = await BuildAppAsync(descriptor, new SseBehaviorBinding());
 
-        var response = await client.GetAsync("/behaviors/object.echo/events");
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/behaviors/object.echo/events");
+        var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
 
         Assert.NotEqual(HttpStatusCode.NotFound, response.StatusCode);
 
@@ -347,6 +443,37 @@ public sealed class HttpBehaviorBindingTests
         Assert.Equal(7, bindings.Count);
         Assert.NotNull(registry);
         Assert.Equal(7, registry!.All.Count);
+    }
+
+    [Fact]
+    public async Task BehaviorRestEndpointGroupBindsRouteQueryAndBodyAndUsesModuleVersionedName()
+    {
+        var (app, client) = await BuildBehaviorRestHelperAppAsync();
+
+        var response = await client.PostAsJsonAsync(
+            "/tests/cart/cart-001/items?quantity=3",
+            new { productName = "Widget" });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var body = await response.Content.ReadFromJsonAsync<RestHelperEchoOutput>();
+        Assert.NotNull(body);
+        Assert.Equal("cart-001", body!.CartId);
+        Assert.Equal("Widget", body.ProductName);
+        Assert.Equal(3, body.Quantity);
+        Assert.True(body.HasEventStore);
+
+        var endpoint = app.Services.GetRequiredService<EndpointDataSource>()
+            .Endpoints
+            .OfType<RouteEndpoint>()
+            .Single(static candidate =>
+                string.Equals(candidate.RoutePattern.RawText, "/tests/cart/{cartId}/items", StringComparison.Ordinal));
+
+        var endpointName = endpoint.Metadata.GetMetadata<EndpointNameMetadata>();
+        Assert.NotNull(endpointName);
+        Assert.Equal("tests_cart.v2.rest_helper_echo", endpointName!.EndpointName);
+
+        await app.StopAsync();
     }
 
     // ─────────────────────────────────────────────────────────────────────────

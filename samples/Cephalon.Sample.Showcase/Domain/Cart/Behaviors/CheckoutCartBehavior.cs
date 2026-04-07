@@ -23,6 +23,11 @@ public sealed class CheckoutCartBehavior : IAppBehavior<CheckoutCartInput, Check
         var eventStore = context.EventStore
             ?? throw new InvalidOperationException("Event store is required for the cart CQRS pattern.");
 
+        if (await eventStore.GetVersionAsync(streamId, ct).ConfigureAwait(false) < 0)
+        {
+            throw new KeyNotFoundException($"Cart '{input.CartId}' was not found.");
+        }
+
         // Rebuild to get current state and validate
         var cart = await ShowcaseEventSourcingHelper.RebuildCartAsync(eventStore, streamId, input.CartId, ct);
 

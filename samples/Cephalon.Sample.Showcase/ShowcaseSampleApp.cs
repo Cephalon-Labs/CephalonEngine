@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.EventSourcing;
 using Cephalon.Abstractions.Tenancy;
 using Cephalon.AspNetCore.GraphQL.Hosting;
 using Cephalon.AspNetCore.Grpc.Hosting;
@@ -176,6 +177,7 @@ public static class ShowcaseSampleApp
         // --- Observability ---
         builder.Services.AddCephalonObservability(builder.Configuration);
         builder.AddCephalonOpenTelemetry();
+        builder.Services.AddSingleton<IEventStore, ShowcaseInMemoryEventStore>();
 
         var app = builder.Build();
         app.UseExceptionHandler();

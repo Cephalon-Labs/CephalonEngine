@@ -10,6 +10,7 @@ namespace Cephalon.Behaviors.Services;
 /// </summary>
 public sealed class BehaviorExecutionSlot
 {
+    private static readonly JsonSerializerOptions WebJsonSerializerOptions = new(JsonSerializerDefaults.Web);
     private readonly Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> _invoke;
 
     private BehaviorExecutionSlot(Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> invoke)
@@ -32,7 +33,7 @@ public sealed class BehaviorExecutionSlot
         {
             // When input arrives as a JsonElement (e.g. from an HTTP transport), coerce it to TIn.
             TIn typedInput = input is JsonElement je
-                ? JsonSerializer.Deserialize<TIn>(je.GetRawText())!
+                ? JsonSerializer.Deserialize<TIn>(je.GetRawText(), WebJsonSerializerOptions)!
                 : (TIn)input;
             var result = await ((TBehavior)behavior).HandleAsync(typedInput, context, ct).ConfigureAwait(false);
             return result;
