@@ -1,0 +1,228 @@
+# Cephalon Project Memory
+
+Project memory in this document reflects the repository state observed on `April 8, 2026`.
+
+This page is a repo-oriented orientation snapshot. It is meant to help contributors recover context quickly before they change code, docs, planning, or package surfaces.
+
+Cross-references: `README.md`, `docs/README.md`, `docs/architecture.md`, `docs/architecture-inventory.md`, `docs/architecture-recommendations.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`, `docs/compatibility.md`
+
+## Identity
+
+Cephalon is not being positioned as a single application shell.
+
+The repository is aiming at a modular .NET engine/framework foundation that is growing into a modular runtime platform. The recurring design center is:
+
+- host-agnostic contracts first
+- deterministic module and package composition
+- explicit app-model, transport, technology, and policy selection
+- runtime introspection as a product surface
+- additive companion packs instead of engine-core sprawl
+- generated starter output, templates, and samples that stay aligned with the runtime contract
+
+## Current technical baseline
+
+- the repo is pinned to `.NET SDK 10.0.201` through `global.json`
+- the shipped project baseline is `net10.0`
+- notable packaging exceptions are the template pack and source generator surfaces that stay on `netstandard2.0`
+- central package management is enabled through `Directory.Packages.props`
+- repo-wide build defaults enable nullable reference types, implicit usings, XML doc generation, and warnings-as-errors
+- the default Cephalon package version baseline is currently `0.1.0-preview`
+
+## Repo shape at a glance
+
+Current project counts from the workspace scan:
+
+- `src`: 81 projects
+- `tests`: 4 projects
+- `samples`: 9 projects
+- `templates`: 6 projects
+- `playground`: 2 projects
+- `benchmarks`: 1 project
+
+These counts are useful as a scale indicator only. They will drift as new companion packs and samples are added.
+
+## What the repository already ships
+
+The repo is well past an early prototype. The following surfaces are already present and should be treated as part of the living product:
+
+- `Cephalon.Abstractions` as the host-agnostic contract layer
+- `Cephalon.Engine` as the composition, manifest, runtime, policy, package-loading, trust, and app-model center
+- `Cephalon.AspNetCore` and `Cephalon.Worker` as the primary host adapters
+- transport adapters for REST, JSON-RPC, gRPC, GraphQL, Server-Sent Events, and WebSocket
+- `Cephalon.Scaffolding`, `Cephalon.Cli`, and `Cephalon.TemplatePack` as the adoption and generation surfaces
+- `Cephalon.ReferenceDocs` plus the published `docs/reference/` output as the XML-doc publishing path
+- `Cephalon.Observability` plus dependency-health, exporter, cloud, and provider companion packs
+- `Cephalon.Behaviors` plus HTTP, messaging, pattern, and source-generator companion packages
+- `Cephalon.Data` and `Cephalon.EventSourcing` plus relational and non-relational provider families
+- samples that model intended blueprint shapes and reference modules that model intended package authoring
+
+## Runtime and architecture anchors
+
+The architecture docs and the codebase align around a few important truths:
+
+- blueprints are not the same thing as design patterns, deployment topology, or transports
+- Cephalon models app shape through multiple dimensions rather than one overloaded architecture label
+- the built-in app blueprints are `modular-monolith`, `modular-vertical-slice`, and `microservice`
+- the built-in suite blueprint is `microservice-suite`
+- transports are first-class descriptors and are expected to stay aligned across runtime, scaffolding, CLI parsing, templates, samples, and docs
+- technology profiles are additive workload hints, not excuses to explode the blueprint catalog
+- the engine owns the runtime contract and generator surfaces should follow it instead of re-encoding their own semantics
+
+Current built-in transport surface:
+
+- `rest-api`
+- `json-rpc`
+- `grpc`
+- `graphql`
+- `server-sent-events`
+- `websocket`
+
+Current built-in technology profile surface includes:
+
+- `agentic-workloads`
+- `event-driven-integration`
+- `knowledge-retrieval`
+- `realtime-experience`
+- `edge-native-delivery`
+- `serverless-hosting`
+- `identity-access`
+- `multi-tenancy`
+- `hybrid-cloud-runtime`
+- `service-mesh-integration`
+
+## High-value code anchors
+
+When recovering context in code, these are good starting points:
+
+- `src/Cephalon.Abstractions/Modules/IModule.cs`
+- `src/Cephalon.Abstractions/Modules/ModuleDescriptor.cs`
+- `src/Cephalon.Engine/Composition/EngineServiceCollectionExtensions.cs`
+- `src/Cephalon.Engine/Runtime/IRuntime.cs`
+- `src/Cephalon.Engine/Runtime/RuntimeOperationalStory.cs`
+- `src/Cephalon.AspNetCore/Hosting/EngineWebApplicationBuilderExtensions.cs`
+- `src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs`
+- `src/Cephalon.Worker/Hosting/WorkerHostApplicationBuilderExtensions.cs`
+- `src/Cephalon.Cli/CliApplication.cs`
+- `src/Cephalon.Behaviors/Services/BehaviorDispatcher.cs`
+- `src/Cephalon.Abstractions/Behaviors/IBehaviorContext.cs`
+
+These files anchor the public or cross-cutting runtime contract more reliably than any one sample or playground host.
+
+## Introspection is part of the product
+
+Runtime introspection is not secondary documentation. It is an explicit operator-facing surface.
+
+Important routes and concepts that repeatedly appear across docs and code:
+
+- `/engine`
+- `/engine/manifest`
+- `/engine/snapshot`
+- `/engine/runtime-story`
+- `/engine/modules`
+- `/engine/packages`
+- `/engine/diagnostics`
+- `/engine/technologies`
+- `/engine/technology-catalog`
+- `/engine/technology-surfaces`
+- `/engine/capabilities`
+- `/engine/dependencies`
+- `/health`
+- `/health/live`
+- `/health/ready`
+
+If a change impacts lifecycle, packages, diagnostics, technologies, executions, or health semantics, it likely also impacts one or more of these routes and the docs that describe them.
+
+## Adoption surfaces
+
+The repository now treats adoption as a first-class concern, not as a later packaging task.
+
+The main adoption paths are:
+
+- `Cephalon.Cli` as a packaged `.NET tool` with the `cephalon` command
+- `Cephalon.TemplatePack` as the `dotnet new` install surface
+- `Cephalon.Scaffolding` as the shared rendering layer behind generated output
+- `samples/` as adoption-quality blueprint examples
+- `playground/` as freeform experimentation rather than the official starter baseline
+
+The generated app baseline already includes publishing and deployment assets for:
+
+- published output smoke
+- Windows Service
+- IIS
+- Azure App Service
+- container image publishing
+- Azure Container Apps
+- Kubernetes
+- Linux `systemd`
+
+## Documentation model
+
+The repository uses two documentation layers on purpose:
+
+- hand-authored Markdown under `README.md` and `docs/` is the primary human-facing product and adoption documentation
+- XML comments on public contracts are the API explanation layer used by IntelliSense and generated reference-doc publishing
+
+This distinction matters. Hand-authored docs should explain ownership, usage, architecture, and adoption. XML comments should explain supported public API behavior precisely enough for reference generation.
+
+## Planning memory
+
+The roadmap and backlog indicate that Cephalon has already shipped large parts of its foundation, adoption hardening, operational baseline, package-loading baseline, execution/orchestration baseline, and solution-level platform baseline.
+
+The near-term planning center has shifted away from "start the engine" and toward:
+
+- hardening and truthfulness across shipped surfaces
+- resilience and migration patterns
+- keeping docs, templates, CLI behavior, scaffolding, package metadata, and runtime contracts aligned
+
+Recent roadmap memory worth keeping in mind:
+
+- Sprint 35 shipped benchmark expansion for hot paths
+- Phase 11 is planned around resilience foundations such as circuit breaker, retry, timeout, bulkhead, rate limiting, and taxonomy additions such as Onion Architecture and Anti-Corruption Layer
+- Phase 12 is planned around migration and advanced coordination, including strangler fig, saga choreography, BFF, feature flags, and durable execution foundations
+
+## Collaboration agreements
+
+These are explicit working agreements from the current collaboration and should be extended as new standing decisions are made.
+
+- when the team settles on an approach, plan, recurring workflow, or repeated command pattern, record it in project memory so it does not rely on thread-local recall alone
+- when deeper or version-sensitive external research is needed, especially around `.NET`, `.NET 10`, libraries, frameworks, support policy, or official guidance, use internet research instead of relying only on prior model knowledge
+- when delegating research work to sub-agents, prefer primary and official sources first, then synthesize the result back into repo context for Cephalon-specific decisions
+- repo-local memory is the reliable cross-thread source of truth; agreements that matter beyond the current thread should be written down here or in another repo-owned document
+
+Current standing examples from this collaboration:
+
+- keep important collaboration memory in `docs/project-memory.md`
+- treat internet-backed research as the default follow-through for sub-agent learning tasks when accuracy or freshness matters
+- when a coding task is complete and the change is validated, stage only the intended files, create a commit, keep `master` updated as the integration branch, push the finished work to GitHub, and leave project docs aligned with the shipped behavior
+
+## Working assumptions for contributors
+
+Unless the code clearly proves otherwise, contributors should assume:
+
+- host adapters should stay thin
+- reusable behavior belongs in engine services, modules, or companion packs rather than in app hosts
+- deterministic ordering and explicit registration beat ambient discovery magic
+- any public runtime, package, or diagnostics surface may also have docs, sample, scaffold, template, and validation-script follow-through
+- hand-authored docs are part of the product and should be kept truthful when shipped behavior changes
+- XML comments on public contracts are not optional polish; they are part of the supported documentation surface
+
+## Current next-look areas
+
+If you need to resume deeper analysis later, the most likely next focus areas are:
+
+- `Cephalon.Engine` runtime, package, trust, and introspection internals
+- `Cephalon.Behaviors` and the ABT pipeline, strategies, and transport bindings
+- `Cephalon.Data` plus provider families and event-sourcing follow-through
+- `Cephalon.Observability` plus dependency-health and exporter/provider conventions
+- CLI, scaffolding, template, and sample alignment whenever app-model or package contracts change
+
+## Local workspace notes
+
+This snapshot was created from the current local workspace, not from a clean published release artifact.
+
+Observed local notes during the scan:
+
+- the git worktree contains local untracked directories such as `.build/`, `.claude/`, `.dotnet/`, `.dotnet-cli/`, `.dotnet-appdata/`, and `.nuget-appdata/`
+- direct `git status` required a safe-directory override because the repository ownership on disk differs from the current user context
+
+Those notes may be local-environment artifacts rather than repository-intended state.

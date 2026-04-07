@@ -10,6 +10,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 
 ## Start here
 
+- [Project memory](project-memory.md)
 - [Getting started](getting-started.md)
 - [Generated app publishing](generated-app-publishing.md)
 - [Container image publishing](container-image-publishing.md)
