@@ -11,8 +11,10 @@ namespace Cephalon.Behaviors.Http.Bindings;
 /// <summary>
 /// GraphQL HTTP transport binding (transport ID: <c>http.graphql</c>).
 /// Accepts <c>POST /behaviors/{id}/graphql</c> with a
-/// <c>{"query":"...","variables":{...}}</c> payload and returns
-/// <c>{"data":{...}}</c> or <c>{"errors":[...]}</c>.
+/// <c>{"query":"...","variables":{...}}</c> payload. The <c>variables</c> object
+/// is used as the behavior input, which allows standard domain behaviors to work
+/// transparently behind a GraphQL transport.
+/// Returns <c>{"data":{...}}</c> or <c>{"errors":[...]}</c>.
 /// </summary>
 public sealed class GraphqlHttpBehaviorBinding : IHttpBehaviorBinding
 {
@@ -33,13 +35,13 @@ public sealed class GraphqlHttpBehaviorBinding : IHttpBehaviorBinding
 
         app.MapPost(route, async (HttpContext ctx, [FromBody] JsonElement body) =>
         {
-            string? query = null;
-            JsonElement variables = default;
+            // Extract the variables object as the behavior input.
+            // This maps the GraphQL variables to the behavior's typed input model.
+            object input = body.TryGetProperty("variables", out var variables)
+                    && variables.ValueKind == JsonValueKind.Object
+                ? JsonSerializer.Deserialize<object>(variables.GetRawText())!
+                : JsonSerializer.Deserialize<object>("{}")!;
 
-            if (body.TryGetProperty("query", out var q)) query = q.GetString();
-            if (body.TryGetProperty("variables", out var v)) variables = v;
-
-            var input = new GraphqlRequest(query ?? string.Empty, variables);
             var context = DefaultBehaviorContext.From(ctx, descriptor.Id);
 
             try

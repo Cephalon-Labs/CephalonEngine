@@ -1,13 +1,14 @@
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Technologies;
 using System.Globalization;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Eventing.Services;
 
 internal sealed class EventingPublishingRuntimeSurfaceContributor(
     IEventChannelCatalog channels,
     IOutboxCatalog outboxes,
-    IEnumerable<IEventDispatchStore> dispatchStores,
+    IServiceProvider serviceProvider,
     EventDispatchRuntimeDescriptorCatalog dispatchRuntimes) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
@@ -17,7 +18,9 @@ internal sealed class EventingPublishingRuntimeSurfaceContributor(
             .Select(static channel => channel.Id)
             .OrderBy(static channelId => channelId, StringComparer.OrdinalIgnoreCase)
             .ToArray();
-        var hasDispatchStore = dispatchStores.Any();
+
+        using var scope = serviceProvider.CreateScope();
+        var hasDispatchStore = scope.ServiceProvider.GetServices<IEventDispatchStore>().Any();
         var runtimeIds = dispatchRuntimes.Runtimes
             .Select(static runtime => runtime.Id)
             .OrderBy(static runtimeId => runtimeId, StringComparer.OrdinalIgnoreCase)

@@ -11,6 +11,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cephalon.Abstractions\Cephalon.Abstractions.csproj" />
+    <ProjectReference Include="..\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj" />
     <ProjectReference Include="..\Cephalon.Behaviors\Cephalon.Behaviors.csproj" />
   </ItemGroup>
 </Project>

@@ -3,6 +3,7 @@ using Cephalon.Behaviors.Messaging.Bindings;
 using Cephalon.Behaviors.Messaging.Options;
 using Cephalon.Behaviors.Messaging.Registry;
 using Cephalon.Behaviors.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -13,6 +14,60 @@ namespace Cephalon.Behaviors.Messaging.Hosting;
 /// </summary>
 public static class MessagingBehaviorBindingServiceCollectionExtensions
 {
+    /// <summary>
+    /// Returns a <see cref="MessagingBehaviorBindingsBuilder" /> that auto-binds transport options
+    /// from the supplied <paramref name="configuration" /> under the <c>Engine:Messaging</c> section.
+    /// </summary>
+    /// <param name="builder">The behavior collection builder.</param>
+    /// <param name="configuration">
+    /// The application configuration. Each transport reads its options from a conventional section
+    /// (e.g. <c>Engine:Messaging:RabbitMQ</c>, <c>Engine:Messaging:Kafka</c>).
+    /// </param>
+    /// <returns>A fluent builder for registering individual messaging transports.</returns>
+    /// <example>
+    /// <code>
+    /// // Options are auto-bound from config — no manual Bind() needed
+    /// behaviors.AddMessagingBehaviorBindings(config)
+    ///     .AddInMemory()
+    ///     .AddRabbitMq()
+    ///     .AddKafka();
+    /// </code>
+    /// </example>
+    public static MessagingBehaviorBindingsBuilder AddMessagingBehaviorBindings(
+        this IBehaviorCollectionBuilder builder,
+        IConfiguration configuration)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(configuration);
+
+        builder.Services.TryAddSingleton<IMessagingBehaviorBindingRegistry>(sp =>
+            new MessagingBehaviorBindingRegistry(sp.GetServices<IMessagingBehaviorBinding>()));
+
+        return new MessagingBehaviorBindingsBuilder(builder.Services, configuration);
+    }
+
+    /// <summary>
+    /// Returns a <see cref="MessagingBehaviorBindingsBuilder" /> that lets you selectively
+    /// register only the messaging transports your application requires.
+    /// </summary>
+    /// <param name="builder">The behavior collection builder.</param>
+    /// <returns>A fluent builder for registering individual messaging transports.</returns>
+    /// <remarks>
+    /// Transport options use their built-in defaults. To auto-bind from configuration,
+    /// use the <see cref="AddMessagingBehaviorBindings(IBehaviorCollectionBuilder, IConfiguration)" />
+    /// overload instead.
+    /// </remarks>
+    public static MessagingBehaviorBindingsBuilder AddMessagingBehaviorBindings(
+        this IBehaviorCollectionBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        builder.Services.TryAddSingleton<IMessagingBehaviorBindingRegistry>(sp =>
+            new MessagingBehaviorBindingRegistry(sp.GetServices<IMessagingBehaviorBinding>()));
+
+        return new MessagingBehaviorBindingsBuilder(builder.Services);
+    }
+
     /// <summary>
     /// Registers all built-in messaging transport bindings (InMemory, RabbitMQ, Kafka)
     /// and the <see cref="IMessagingBehaviorBindingRegistry" /> as singleton services.
@@ -30,34 +85,10 @@ public static class MessagingBehaviorBindingServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        var services = builder.Services;
-
-        // Configure options
-        var inMemoryOptions = new InMemoryTransportOptions();
-        configureInMemory?.Invoke(inMemoryOptions);
-
-        var rabbitMqOptions = new RabbitMqTransportOptions();
-        configureRabbitMq?.Invoke(rabbitMqOptions);
-
-        var kafkaOptions = new KafkaTransportOptions();
-        configureKafka?.Invoke(kafkaOptions);
-
-        services.TryAddSingleton(inMemoryOptions);
-        services.TryAddSingleton(rabbitMqOptions);
-        services.TryAddSingleton(kafkaOptions);
-
-        // GEN-03: register all bindings as Singleton
-        services.TryAddSingleton<InMemoryTransportBinding>();
-        services.TryAddSingleton<RabbitMqTransportBinding>();
-        services.TryAddSingleton<KafkaTransportBinding>();
-
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IMessagingBehaviorBinding, InMemoryTransportBinding>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IMessagingBehaviorBinding, RabbitMqTransportBinding>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IMessagingBehaviorBinding, KafkaTransportBinding>());
-
-        // Registry
-        services.TryAddSingleton<IMessagingBehaviorBindingRegistry>(sp =>
-            new MessagingBehaviorBindingRegistry(sp.GetServices<IMessagingBehaviorBinding>()));
+        builder.AddMessagingBehaviorBindings()
+            .AddInMemory(configureInMemory)
+            .AddRabbitMq(configureRabbitMq)
+            .AddKafka(configureKafka);
 
         return builder;
     }

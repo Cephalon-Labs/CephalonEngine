@@ -15,6 +15,7 @@
     <Project Path="samples/Cephalon.Sample.MicroserviceSuite/services/OrdersService/Cephalon.Sample.MicroserviceSuite.OrdersService.csproj" />
     <Project Path="samples/Cephalon.Sample.ModularMonolith/Cephalon.Sample.ModularMonolith.csproj" />
     <Project Path="samples/Cephalon.Sample.ModularVerticalSlice/Cephalon.Sample.ModularVerticalSlice.csproj" />
+    <Project Path="samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Cephalon.Abstractions/Cephalon.Abstractions.csproj" />

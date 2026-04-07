@@ -11,8 +11,10 @@ namespace Cephalon.Behaviors.Http.Bindings;
 /// <summary>
 /// Server-Sent Events transport binding (transport ID: <c>http.sse</c>).
 /// Opens a long-lived SSE stream at <c>GET /behaviors/{id}/events</c>.
-/// The behavior is dispatched immediately; its return value is streamed as
-/// a single <c>data: {json}\n\n</c> event, then the connection is closed.
+/// Query-string parameters are parsed into a JSON object and deserialized as the
+/// behavior's typed input. The behavior is dispatched immediately; its return value
+/// is streamed as a <c>data: {json}\n\n</c> event. The connection stays alive with
+/// periodic heartbeat comments until the client disconnects.
 /// </summary>
 public sealed class SseBehaviorBinding : IHttpBehaviorBinding
 {
@@ -39,7 +41,7 @@ public sealed class SseBehaviorBinding : IHttpBehaviorBinding
             ctx.Response.Headers.Connection = "keep-alive";
             ctx.Response.Headers["X-Accel-Buffering"] = "no"; // nginx compat
 
-            var input = new object();
+            var input = ParseQueryAsJsonElement(ctx.Request.Query);
             var context = DefaultBehaviorContext.From(ctx, descriptor.Id);
 
             try
@@ -51,10 +53,20 @@ public sealed class SseBehaviorBinding : IHttpBehaviorBinding
                 {
                     // G-SSE-06: double newline per SSE spec
                     var json = JsonSerializer.Serialize(result);
-                    var sseEvent = $"data: {json}\n\n";
+                    var sseEvent = $"event: result\ndata: {json}\n\n";
                     await ctx.Response.WriteAsync(sseEvent, Encoding.UTF8, ctx.RequestAborted)
                         .ConfigureAwait(false);
                     // G-SSE-04: flush after every event
+                    await ctx.Response.Body.FlushAsync(ctx.RequestAborted).ConfigureAwait(false);
+                }
+
+                // G-SSE-07: keep connection alive with heartbeat comments
+                // until client disconnects, allowing EventSource to stay open
+                while (!ctx.RequestAborted.IsCancellationRequested)
+                {
+                    await Task.Delay(15_000, ctx.RequestAborted).ConfigureAwait(false);
+                    await ctx.Response.WriteAsync(": heartbeat\n\n", Encoding.UTF8, ctx.RequestAborted)
+                        .ConfigureAwait(false);
                     await ctx.Response.Body.FlushAsync(ctx.RequestAborted).ConfigureAwait(false);
                 }
             }
@@ -65,7 +77,7 @@ public sealed class SseBehaviorBinding : IHttpBehaviorBinding
             catch (Exception ex)
             {
                 var errorJson = JsonSerializer.Serialize(new { error = ex.Message });
-                var errorEvent = $"data: {errorJson}\n\n";
+                var errorEvent = $"event: error\ndata: {errorJson}\n\n";
                 await ctx.Response.WriteAsync(errorEvent, Encoding.UTF8, CancellationToken.None)
                     .ConfigureAwait(false);
                 await ctx.Response.Body.FlushAsync(CancellationToken.None).ConfigureAwait(false);
@@ -73,5 +85,70 @@ public sealed class SseBehaviorBinding : IHttpBehaviorBinding
         });
 
         return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Converts query-string parameters into a <see cref="JsonElement" /> object that the
+    /// <see cref="BehaviorExecutionSlot" /> can deserialize into the behavior's typed input.
+    /// </summary>
+    private static JsonElement ParseQueryAsJsonElement(IQueryCollection query)
+    {
+        if (query.Count == 0)
+        {
+            // Return an empty JSON object — behaviors with no required input will accept this.
+            return JsonSerializer.Deserialize<JsonElement>("{}");
+        }
+
+        using var stream = new MemoryStream();
+        using var writer = new Utf8JsonWriter(stream);
+        writer.WriteStartObject();
+
+        foreach (var pair in query)
+        {
+            var values = pair.Value;
+            if (values.Count == 1)
+            {
+                writer.WritePropertyName(pair.Key);
+                WriteJsonValue(writer, values[0]!);
+            }
+            else if (values.Count > 1)
+            {
+                writer.WriteStartArray(pair.Key);
+                foreach (var v in values)
+                {
+                    WriteJsonValue(writer, v!);
+                }
+                writer.WriteEndArray();
+            }
+        }
+
+        writer.WriteEndObject();
+        writer.Flush();
+
+        return JsonSerializer.Deserialize<JsonElement>(stream.ToArray());
+    }
+
+    /// <summary>
+    /// Writes a single query-string value, coercing booleans and numbers where possible.
+    /// </summary>
+    private static void WriteJsonValue(Utf8JsonWriter writer, string value)
+    {
+        if (bool.TryParse(value, out var boolVal))
+        {
+            writer.WriteBooleanValue(boolVal);
+        }
+        else if (long.TryParse(value, out var longVal))
+        {
+            writer.WriteNumberValue(longVal);
+        }
+        else if (double.TryParse(value, out var doubleVal) &&
+                 !double.IsNaN(doubleVal) && !double.IsInfinity(doubleVal))
+        {
+            writer.WriteNumberValue(doubleVal);
+        }
+        else
+        {
+            writer.WriteStringValue(value);
+        }
     }
 }

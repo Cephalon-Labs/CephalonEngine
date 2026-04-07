@@ -1,0 +1,156 @@
+{
+  "ConnectionStrings": {
+    "PostgreSQL": "Host=localhost;Port=5432;Database=showcase_db;Username=showcase;Password=showcase_secret",
+    "MongoDB": "mongodb://showcase:showcase_secret@localhost:27017",
+    "Redis": "localhost:6379"
+  },
+
+  "Engine": {
+    "Blueprint": "modular-monolith",
+    "Discovery": {
+      "Assemblies": [
+        "Cephalon.Sample.Showcase"
+      ]
+    },
+    "Patterns": [
+      "strategy-pattern",
+      "cqrs",
+      "outbox",
+      "event-sourcing"
+    ],
+    "Data": {
+      "Ids": {
+        "Generator": "Sfid"
+      },
+      "MongoDB": {
+        "DatabaseName": "showcase_db",
+        "CollectionPrefix": "showcase_"
+      },
+      "Redis": {
+        "KeyPrefix": "showcase:"
+      }
+    },
+    "Identity": {
+      "Enabled": true,
+      "AuthorizationModes": [
+        "rbac"
+      ]
+    },
+    "Tenancy": {
+      "Enabled": true
+    },
+    "Audit": {
+      "Enabled": true
+    },
+    "EventSourcing": {
+      "Enabled": false
+    },
+    "Messaging": {
+      "RabbitMQ": {
+        "HostName": "localhost",
+        "Port": 5672,
+        "UserName": "showcase",
+        "Password": "showcase_secret",
+        "VirtualHost": "/"
+      },
+      "Kafka": {
+        "BootstrapServers": "localhost:9092",
+        "GroupId": "showcase-behaviors"
+      }
+    },
+    "Behaviors": {
+      "AutoRegister": true,
+      "catalog.get-product": {
+        "pattern": "direct",
+        "transports": [ "http.rest", "http.graphql", "grpc", "http.jsonrpc" ]
+      },
+      "catalog.list-products": {
+        "pattern": "direct",
+        "transports": [ "http.rest", "http.graphql", "grpc", "http.jsonrpc" ]
+      },
+      "catalog.create-product": {
+        "pattern": "direct",
+        "transports": [ "http.rest", "http.jsonrpc" ]
+      },
+      "catalog.update-product": {
+        "pattern": "direct",
+        "transports": [ "http.rest", "http.jsonrpc" ]
+      },
+      "cart.add-item": {
+        "pattern": "cqrs",
+        "transports": [ "http.rest", "http.ws", "http.graphql", "http.sse" ]
+      },
+      "cart.remove-item": {
+        "pattern": "cqrs",
+        "transports": [ "http.rest", "http.ws", "http.graphql", "http.sse" ]
+      },
+      "cart.get": {
+        "pattern": "cqrs",
+        "transports": [ "http.rest", "http.ws", "http.graphql", "http.sse" ]
+      },
+      "cart.checkout": {
+        "pattern": "cqrs",
+        "transports": [ "http.rest", "http.graphql" ]
+      },
+      "orders.place": {
+        "pattern": "event-driven",
+        "transports": [ "rabbitmq", "kafka", "http.graphql-ws", "http.sse", "http.graphql-sse" ]
+      },
+      "orders.cancel": {
+        "pattern": "event-driven",
+        "transports": [ "rabbitmq", "kafka", "http.sse" ]
+      },
+      "orders.get-status": {
+        "pattern": "event-driven",
+        "transports": [ "http.graphql-ws", "http.sse", "http.graphql-sse" ]
+      },
+      "inventory.reserve-stock": {
+        "pattern": "saga-step",
+        "transports": [ "rabbitmq", "in-memory" ]
+      },
+      "inventory.release-stock": {
+        "pattern": "saga-step",
+        "transports": [ "rabbitmq", "in-memory" ]
+      },
+      "shipping.initiate": {
+        "pattern": "process-manager",
+        "transports": [ "kafka", "rabbitmq", "in-memory", "http.rest", "grpc" ]
+      },
+      "shipping.track": {
+        "pattern": "process-manager",
+        "transports": [ "http.rest", "grpc", "in-memory" ]
+      },
+      "shipping.confirm-delivery": {
+        "pattern": "process-manager",
+        "transports": [ "kafka", "rabbitmq", "in-memory", "http.rest" ]
+      }
+    },
+    "Observability": {
+      "LogManifestSummary": true,
+      "LogModuleSummary": true,
+      "LogCapabilitySummary": true,
+      "Telemetry": {
+        "Provider": "OpenTelemetry",
+        "Protocol": "otlp/grpc",
+        "Endpoint": "http://localhost:4317",
+        "UseSelfHostedDefaults": true,
+        "ExportLogs": true,
+        "ExportMetrics": true,
+        "ExportTraces": true
+      }
+    },
+    "Technologies": [
+      "identity-access",
+      "multi-tenancy",
+      "event-driven-integration"
+    ],
+    "Transports": [
+      "rest-api",
+      "behavior-http"
+    ]
+  },
+  "OpenApi": {
+    "Title": "Cephalon Showcase Sample",
+    "Description": "Comprehensive showcase exercising all 5 behavior patterns and 11 transports in CephalonEngine"
+  }
+}

@@ -1,12 +1,15 @@
+using System.Reflection;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Technologies;
+using Cephalon.Behaviors.Builders;
 using Cephalon.Behaviors.Compatibility;
 using Cephalon.Behaviors.Configuration;
 using Cephalon.Behaviors.Runtime;
 using Cephalon.Behaviors.Services;
 using Cephalon.Behaviors.Validation;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -17,6 +20,7 @@ namespace Cephalon.Behaviors.Modules;
 /// exposes the five standard interaction pattern capabilities to the runtime.
 /// </summary>
 internal sealed class BehaviorModule(
+    IConfiguration? configuration,
     Action<BehaviorOptions>? configureOptions,
     Action<IBehaviorCollectionBuilder>? configureBehaviors)
     : ModuleBase
@@ -47,6 +51,11 @@ internal sealed class BehaviorModule(
         ArgumentNullException.ThrowIfNull(services);
 
         var options = new BehaviorOptions();
+
+        // Bind from configuration first (Engine:Behaviors section)
+        configuration?.GetSection("Engine:Behaviors")?.Bind(options);
+
+        // Then apply code-level overrides (code wins over config)
         configureOptions?.Invoke(options);
 
         // Type registry — shared singleton populated by BehaviorCollectionBuilder
@@ -58,6 +67,12 @@ internal sealed class BehaviorModule(
         {
             var builder = new BehaviorCollectionBuilder(services, typeRegistry);
             configureBehaviors(builder);
+        }
+
+        // Auto-register behaviors from assemblies when enabled (default: true)
+        if (options.AutoRegister)
+        {
+            AutoRegisterBehaviors(services, typeRegistry, options);
         }
 
         services.TryAddSingleton(options);
@@ -86,6 +101,180 @@ internal sealed class BehaviorModule(
 
         // Runtime surface contributor — exposes behavior topology to /engine/snapshot
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, BehaviorRuntimeContributor>());
+    }
+
+    private static readonly Type AppBehaviorOpenGeneric = typeof(IAppBehavior<,>);
+
+    /// <summary>
+    /// Scans assemblies for behaviors using a two-phase strategy:
+    /// <list type="number">
+    ///   <item><description>Source-generated path — uses <see cref="ContainsBehaviorsAttribute"/> to find
+    ///   pre-compiled registration code (zero reflection).</description></item>
+    ///   <item><description>Reflection fallback — scans remaining assemblies for types with
+    ///   <see cref="AppBehaviorAttribute"/> via runtime reflection.</description></item>
+    /// </list>
+    /// </summary>
+    private static void AutoRegisterBehaviors(
+        IServiceCollection services,
+        BehaviorTypeRegistry typeRegistry,
+        BehaviorOptions options)
+    {
+        var assemblies = options.ResolveAutoRegisterAssemblies();
+        if (assemblies.Count == 0) return;
+
+        foreach (var assembly in assemblies)
+        {
+            // Phase 1: Try source-generated registration (zero reflection)
+            if (TrySourceGeneratedRegistration(services, typeRegistry, assembly))
+                continue;
+
+            // Phase 2: Reflection fallback for assemblies without source generation
+            ReflectionScanAssembly(services, typeRegistry, assembly);
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Phase 1: Source-generated registration (zero-reflection per-type)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Checks for <c>[assembly: ContainsBehaviors(typeof(RegistrationClass))]</c> and
+    /// invokes the generated <c>Register</c> and <c>GetTopologyDescriptors</c> methods.
+    /// Returns <see langword="true"/> if this assembly was handled via source generation.
+    /// </summary>
+    private static bool TrySourceGeneratedRegistration(
+        IServiceCollection services,
+        BehaviorTypeRegistry typeRegistry,
+        Assembly assembly)
+    {
+        // Single cheap attribute check per assembly — no type scanning needed
+        var attr = assembly.GetCustomAttribute<ContainsBehaviorsAttribute>();
+        if (attr?.RegistrationType is null)
+            return false;
+
+        var regType = attr.RegistrationType;
+
+        // Invoke Register(IServiceCollection, IBehaviorTypeRegistry)
+        var registerMethod = regType.GetMethod("Register",
+            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
+            null,
+            [typeof(IServiceCollection), typeof(IBehaviorTypeRegistry)],
+            null);
+
+        registerMethod?.Invoke(null, [services, typeRegistry]);
+
+        // Invoke GetTopologyDescriptors() → register as contributors
+        var topologyMethod = regType.GetMethod("GetTopologyDescriptors",
+            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
+            null,
+            Type.EmptyTypes,
+            null);
+
+        if (topologyMethod?.Invoke(null, null) is IReadOnlyList<BehaviorTopologyDescriptor> descriptors)
+        {
+            foreach (var descriptor in descriptors)
+            {
+                services.AddSingleton<IBehaviorContributor>(
+                    new FluentBehaviorContributor(descriptor));
+            }
+        }
+
+        // Invoke GetBehaviorsNeedingRuntimeTopology() → fall back to reflection for those
+        var runtimeTopologyMethod = regType.GetMethod("GetBehaviorsNeedingRuntimeTopology",
+            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
+            null,
+            Type.EmptyTypes,
+            null);
+
+        if (runtimeTopologyMethod?.Invoke(null, null) is IReadOnlyList<(string Id, Type Type)> runtimeBehaviors)
+        {
+            foreach (var (id, type) in runtimeBehaviors)
+            {
+                TryRegisterTopologyFromStaticMethod(services, type, id);
+            }
+        }
+
+        return true;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Phase 2: Reflection fallback
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Scans a single assembly using runtime reflection to discover behavior types.
+    /// Used for assemblies without source-generated registration code (e.g., plugins, NuGet packages).
+    /// </summary>
+    private static void ReflectionScanAssembly(
+        IServiceCollection services,
+        BehaviorTypeRegistry typeRegistry,
+        Assembly assembly)
+    {
+        Type[] types;
+        try
+        {
+            types = assembly.DefinedTypes
+                .Select(ti => ti.AsType())
+                .ToArray();
+        }
+        catch (ReflectionTypeLoadException)
+        {
+            return;
+        }
+
+        foreach (var type in types)
+        {
+            if (!type.IsClass || type.IsAbstract || type.ContainsGenericParameters)
+                continue;
+
+            var attr = (AppBehaviorAttribute?)Attribute.GetCustomAttribute(
+                type, typeof(AppBehaviorAttribute));
+            if (attr is null) continue;
+
+            // Must implement IAppBehavior<TIn, TOut>
+            var appBehaviorInterface = type.GetInterfaces()
+                .FirstOrDefault(i => i.IsGenericType &&
+                                    i.GetGenericTypeDefinition() == AppBehaviorOpenGeneric);
+            if (appBehaviorInterface is null) continue;
+
+            // Skip if already registered (manual registration takes precedence)
+            if (typeRegistry.TryGetType(attr.Id, out _)) continue;
+
+            // Register the type in DI as transient
+            services.TryAddTransient(type);
+
+            // Populate the type registry
+            typeRegistry.Register(attr.Id, type);
+
+            // Invoke static ConfigureTopology if the concrete type defines one
+            TryRegisterTopologyFromStaticMethod(services, type, attr.Id);
+        }
+    }
+
+    /// <summary>
+    /// Checks whether the concrete behavior type defines a static <c>ConfigureTopology</c>
+    /// method and, if so, invokes it to build and register a Layer-4 topology contributor.
+    /// </summary>
+    private static void TryRegisterTopologyFromStaticMethod(
+        IServiceCollection services,
+        Type behaviorType,
+        string behaviorId)
+    {
+        var configMethod = behaviorType.GetMethod(
+            "ConfigureTopology",
+            BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy,
+            null,
+            [typeof(IBehaviorTopologyBuilder)],
+            null);
+
+        if (configMethod is null || configMethod.DeclaringType != behaviorType)
+            return;
+
+        var builder = new BehaviorTopologyBuilder();
+        configMethod.Invoke(null, [builder]);
+        var descriptor = builder.Build(behaviorId);
+        var contributor = new FluentBehaviorContributor(descriptor);
+        services.AddSingleton<IBehaviorContributor>(contributor);
     }
 
     /// <summary>

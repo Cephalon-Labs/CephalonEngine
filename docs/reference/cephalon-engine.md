@@ -6766,6 +6766,16 @@ IReadOnlyList<TransportDescriptor> All { get; }
 
 Gets all built-in transport descriptors.
 
+<a id="member-p-cephalon-engine-transports-builtintransports-behaviorhttp"></a>
+
+##### `BehaviorHttp`
+
+```csharp
+TransportDescriptor BehaviorHttp { get; }
+```
+
+Gets the built-in behavior HTTP transport descriptor that bridges behavior topology bindings (REST, SSE, WS, GraphQL, JSON-RPC) to ASP.NET Core endpoints under `/behaviors`.
+
 <a id="member-p-cephalon-engine-transports-builtintransports-graphql"></a>
 
 ##### `GraphQL`

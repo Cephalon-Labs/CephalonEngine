@@ -3304,6 +3304,48 @@ const CompatibilitySeverity Warning
 
 The violation may cause runtime issues but does not prevent startup.
 
+<a id="type-cephalon-abstractions-behaviors-containsbehaviorsattribute"></a>
+
+### `ContainsBehaviorsAttribute`
+
+Assembly-level marker indicating that the assembly contains auto-discovered behavior types. When present, the engine uses the source-generated registration class instead of runtime reflection scanning, resulting in zero-reflection startup.
+
+Remarks: This attribute is automatically emitted by the `Cephalon.Behaviors.SourceGen` source generator when it discovers one or more `[AppBehavior]` classes in the assembly. You do not need to add it manually.
+
+The `RegistrationType` property points to the generated class that provides compile-time registration and topology descriptors, enabling the engine to skip the expensive `DefinedTypes` / `GetCustomAttribute` reflection scan.
+
+#### Declaration
+```csharp
+public sealed class ContainsBehaviorsAttribute
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-behaviors-containsbehaviorsattribute-ctor-system-type"></a>
+
+##### `ContainsBehaviorsAttribute`
+
+```csharp
+ContainsBehaviorsAttribute(Type registrationType)
+```
+
+Initializes a new instance of `ContainsBehaviorsAttribute` pointing to the generated registration class.
+
+Parameters:
+- `registrationType`: The generated type that contains static `Register` and `GetTopologyDescriptors` methods.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-containsbehaviorsattribute-registrationtype"></a>
+
+##### `RegistrationType`
+
+```csharp
+Type RegistrationType { get; }
+```
+
+Gets the generated registration class type emitted by the source generator.
+
 <a id="type-cephalon-abstractions-behaviors-iappbehavior-tin-tout"></a>
 
 ### `IAppBehavior<TIn, TOut>`

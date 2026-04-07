@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Description>Comprehensive showcase sample exercising every architecture pattern, behavior pattern, and transport in CephalonEngine.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Core hosting -->
+    <ProjectReference Include="..\..\src\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj" />
+
+    <!-- Transport adapters -->
+    <ProjectReference Include="..\..\src\Cephalon.AspNetCore.GraphQL\Cephalon.AspNetCore.GraphQL.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.AspNetCore.Grpc\Cephalon.AspNetCore.Grpc.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.AspNetCore.JsonRpc\Cephalon.AspNetCore.JsonRpc.csproj" />
+
+    <!-- Behavior framework -->
+    <ProjectReference Include="..\..\src\Cephalon.Behaviors\Cephalon.Behaviors.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Behaviors.Patterns\Cephalon.Behaviors.Patterns.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Behaviors.Http\Cephalon.Behaviors.Http.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Behaviors.Messaging\Cephalon.Behaviors.Messaging.csproj" />
+
+    <!-- Source generator for zero-reflection behavior registration -->
+    <ProjectReference Include="..\..\src\Cephalon.Behaviors.SourceGen\Cephalon.Behaviors.SourceGen.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
+
+    <!-- Data and event sourcing -->
+    <ProjectReference Include="..\..\src\Cephalon.Data\Cephalon.Data.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.EntityFramework\Cephalon.Data.EntityFramework.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.Redis\Cephalon.Data.Redis.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.MongoDB\Cephalon.Data.MongoDB.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.EventSourcing\Cephalon.EventSourcing.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Eventing\Cephalon.Eventing.csproj" />
+
+    <!-- Cross-cutting concerns -->
+    <ProjectReference Include="..\..\src\Cephalon.Identity\Cephalon.Identity.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.MultiTenancy\Cephalon.MultiTenancy.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Audit\Cephalon.Audit.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Ids.Sfid\Cephalon.Ids.Sfid.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability\Cephalon.Observability.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Observability.OpenTelemetry\Cephalon.Observability.OpenTelemetry.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="showcase.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

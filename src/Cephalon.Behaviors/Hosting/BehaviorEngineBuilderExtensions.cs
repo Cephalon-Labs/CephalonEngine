@@ -1,6 +1,8 @@
 using Cephalon.Behaviors.Modules;
 using Cephalon.Behaviors.Services;
 using Cephalon.Engine.Composition;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Behaviors.Hosting;
 
@@ -19,7 +21,8 @@ public static class BehaviorEngineBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(engine);
 
-        engine.AddModule(new BehaviorModule(configureOptions: null, configureBehaviors: configure));
+        var configuration = ResolveConfiguration(engine.Services);
+        engine.AddModule(new BehaviorModule(configuration, configureOptions: null, configureBehaviors: configure));
 
         return engine;
     }
@@ -38,8 +41,23 @@ public static class BehaviorEngineBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(engine);
 
-        engine.AddModule(new BehaviorModule(configureOptions, configure));
+        var configuration = ResolveConfiguration(engine.Services);
+        engine.AddModule(new BehaviorModule(configuration, configureOptions, configure));
 
         return engine;
+    }
+
+    /// <summary>
+    /// Resolves <see cref="IConfiguration"/> from the service collection if it has been registered
+    /// (e.g. by ASP.NET Core or the generic host). Returns <see langword="null"/> when unavailable.
+    /// </summary>
+    private static IConfiguration? ResolveConfiguration(IServiceCollection services)
+    {
+        // IConfiguration is registered as a singleton instance by the host builder
+        var descriptor = services.FirstOrDefault(sd =>
+            sd.ServiceType == typeof(IConfiguration) &&
+            sd.ImplementationInstance is not null);
+
+        return descriptor?.ImplementationInstance as IConfiguration;
     }
 }

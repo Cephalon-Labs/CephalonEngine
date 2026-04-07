@@ -732,6 +732,9 @@ Browse the published API surface by public member.
 - [BehaviorFault](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorfault-ctor): `Constructors` on `BehaviorFault` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorFault&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes a new instance of `BehaviorFault`.
   - `BehaviorFault()`
+- [BehaviorHttp](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-behaviorhttp): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=BehaviorHttp&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
+  - Gets the built-in behavior HTTP transport descriptor that bridges behavior topology bindings (REST, SSE, WS, GraphQL, JSON-RPC) to ASP.NET Core endpoints under `/behaviors`.
+  - `TransportDescriptor BehaviorHttp { get; }`
 - [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-appbehaviorattribute-behaviorid): `Properties` on `AppBehaviorAttribute` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the stable behavior identifier.
   - `string BehaviorId { get; }`
@@ -1098,6 +1101,9 @@ Browse the published API surface by public member.
 - [ContainerName](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-containername): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=ContainerName&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
   - Gets or sets the container name to stamp onto exported resources.
   - `string ContainerName { get; set; }`
+- [ContainsBehaviorsAttribute](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-containsbehaviorsattribute-ctor-system-type): `Constructors` on `ContainsBehaviorsAttribute` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=ContainsBehaviorsAttribute&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Initializes a new instance of `ContainsBehaviorsAttribute` pointing to the generated registration class.
+  - `ContainsBehaviorsAttribute(Type registrationType)`
 - [Contents](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocfile-contents): `Properties` on `ReferenceDocFile` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Contents&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the markdown contents of the file.
   - `string Contents { get; }`
@@ -4563,6 +4569,9 @@ Browse the published API surface by public member.
 - [RegisterWriteStore](cephalon-data.md#member-p-cephalon-data-configuration-dataruntimeoptions-registerwritestore): `Properties` on `DataRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=RegisterWriteStore&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Gets or sets a value indicating whether the pack should register the default write-store dispatcher.
   - `bool RegisterWriteStore { get; set; }`
+- [RegistrationType](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-containsbehaviorsattribute-registrationtype): `Properties` on `ContainsBehaviorsAttribute` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegistrationType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the generated registration class type emitted by the source generator.
+  - `Type RegistrationType { get; }`
 - [RenderedFile](cephalon-scaffolding.md#member-m-cephalon-scaffolding-generation-renderedfile-ctor-system-string-system-string): `Constructors` on `RenderedFile` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=RenderedFile&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Creates a new rendered file.
   - `RenderedFile(string path, string contents)`

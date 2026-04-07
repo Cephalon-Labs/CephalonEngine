@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-06T21:09:25.4605334+00:00",
+  "GeneratedAtUtc": "2026-04-07T14:25:05.8572635+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 17,
-      "TypeCount": 138
+      "TypeCount": 139
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -493,7 +493,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-behaviors",
-      "TypeCount": 22
+      "TypeCount": 23
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Capabilities",
@@ -2248,7 +2248,7 @@
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
-        "Properties": 7,
+        "Properties": 8,
         "Methods": 2
       }
     },
@@ -2490,6 +2490,21 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "ContainsBehaviorsAttribute",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-behaviors-containsbehaviorsattribute",
+      "Declaration": "public sealed class ContainsBehaviorsAttribute",
+      "Summary": "Assembly-level marker indicating that the assembly contains auto-discovered behavior types. When present, the engine uses the source-generated registration class instead of runtime reflection scanning, resulting in zero-reflection startup.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 0
       }
     },
     {
@@ -10426,6 +10441,17 @@
       "Summary": "Initializes a new instance of \u0060BehaviorFault\u0060."
     },
     {
+      "DisplayName": "BehaviorHttp",
+      "Category": "Properties",
+      "DeclaringTypeName": "BuiltInTransports",
+      "NamespaceName": "Cephalon.Engine.Transports",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-transports-builtintransports-behaviorhttp",
+      "Signature": "TransportDescriptor BehaviorHttp { get; }",
+      "Summary": "Gets the built-in behavior HTTP transport descriptor that bridges behavior topology bindings (REST, SSE, WS, GraphQL, JSON-RPC) to ASP.NET Core endpoints under \u0060/behaviors\u0060."
+    },
+    {
       "DisplayName": "BehaviorId",
       "Category": "Properties",
       "DeclaringTypeName": "AppBehaviorAttribute",
@@ -11755,6 +11781,17 @@
       "AnchorId": "member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-containername",
       "Signature": "string ContainerName { get; set; }",
       "Summary": "Gets or sets the container name to stamp onto exported resources."
+    },
+    {
+      "DisplayName": "ContainsBehaviorsAttribute",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ContainsBehaviorsAttribute",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-containsbehaviorsattribute-ctor-system-type",
+      "Signature": "ContainsBehaviorsAttribute(Type registrationType)",
+      "Summary": "Initializes a new instance of \u0060ContainsBehaviorsAttribute\u0060 pointing to the generated registration class."
     },
     {
       "DisplayName": "Contents",
@@ -24295,6 +24332,17 @@
       "AnchorId": "member-p-cephalon-data-configuration-dataruntimeoptions-registerwritestore",
       "Signature": "bool RegisterWriteStore { get; set; }",
       "Summary": "Gets or sets a value indicating whether the pack should register the default write-store dispatcher."
+    },
+    {
+      "DisplayName": "RegistrationType",
+      "Category": "Properties",
+      "DeclaringTypeName": "ContainsBehaviorsAttribute",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-containsbehaviorsattribute-registrationtype",
+      "Signature": "Type RegistrationType { get; }",
+      "Summary": "Gets the generated registration class type emitted by the source generator."
     },
     {
       "DisplayName": "RenderedFile",

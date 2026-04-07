@@ -1,28 +1,32 @@
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Technologies;
 using System.Globalization;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Eventing.Services;
 
 internal sealed class EventingDispatchRuntimeSurfaceContributor(
     IOutboxCatalog outboxes,
     IEventDispatchRuntimeCatalog runtimeCatalog,
-    IEnumerable<IEventDispatchStore> dispatchStores,
+    IServiceProvider serviceProvider,
     EventDispatchRuntimeDescriptorCatalog dispatchRuntimes) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
+        using var scope = serviceProvider.CreateScope();
+        var dispatchStores = scope.ServiceProvider.GetServices<IEventDispatchStore>();
+
         return new TechnologyRuntimeSurface(
             technologyId: "event-driven-integration",
             surfaceId: "event-dispatches",
             displayName: "Event Dispatches",
             description: "Reported runtime state for durable event-dispatch paths backed by the active outbox surfaces.",
             entries: outboxes.Outboxes
-                .Select(CreateEntry)
+                .Select(outbox => CreateEntry(outbox, dispatchStores))
                 .ToArray());
     }
 
-    private TechnologyRuntimeEntry CreateEntry(OutboxDescriptor outbox)
+    private TechnologyRuntimeEntry CreateEntry(OutboxDescriptor outbox, IEnumerable<IEventDispatchStore> dispatchStores)
     {
         var metadata = new Dictionary<string, string>(outbox.Metadata, StringComparer.OrdinalIgnoreCase)
         {

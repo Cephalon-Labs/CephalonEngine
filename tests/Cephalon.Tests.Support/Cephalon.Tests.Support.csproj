@@ -111,5 +111,6 @@
     <ProjectReference Include="..\..\samples\Cephalon.Sample.MicroserviceSuite\services\OrdersService\Cephalon.Sample.MicroserviceSuite.OrdersService.csproj" />
     <ProjectReference Include="..\..\samples\Cephalon.Sample.ModularMonolith\Cephalon.Sample.ModularMonolith.csproj" />
     <ProjectReference Include="..\..\samples\Cephalon.Sample.ModularVerticalSlice\Cephalon.Sample.ModularVerticalSlice.csproj" />
+    <ProjectReference Include="..\..\samples\Cephalon.Sample.Showcase\Cephalon.Sample.Showcase.csproj" />
   </ItemGroup>
 </Project>

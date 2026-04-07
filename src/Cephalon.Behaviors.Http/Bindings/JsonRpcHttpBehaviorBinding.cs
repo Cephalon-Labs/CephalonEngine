@@ -142,15 +142,17 @@ public sealed class JsonRpcHttpBehaviorBinding : IHttpBehaviorBinding
                 return BuildErrorResult(id, -32600, "Invalid Request", "Missing 'method' field");
             }
 
-            // G-RPC-03: Unknown method → error -32601
-            if (!string.Equals(method, "handle", StringComparison.OrdinalIgnoreCase))
+            // G-RPC-03: Accept canonical "handle" plus common aliases "invoke" and "execute".
+            if (!string.Equals(method, "handle", StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(method, "invoke", StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(method, "execute", StringComparison.OrdinalIgnoreCase))
             {
                 return BuildErrorResult(id, -32601, "Method not found", $"Unknown method '{method}'");
             }
 
             object input = paramsNode is not null
                 ? JsonSerializer.Deserialize<object>(paramsNode.ToJsonString())!
-                : new object();
+                : JsonSerializer.Deserialize<object>("{}")!;
 
             try
             {
@@ -187,7 +189,9 @@ public sealed class JsonRpcHttpBehaviorBinding : IHttpBehaviorBinding
             Result = result,
             Id = id is not null ? JsonDocument.Parse(id.ToJsonString()).RootElement : (JsonElement?)null
         };
-        var json = JsonSerializer.Serialize(response, JsonRpcSerializerContext.Default.JsonRpcSuccessResponse);
+        // Use default serializer (not source-gen context) because the Result property
+        // contains domain types that are not registered in JsonRpcSerializerContext.
+        var json = JsonSerializer.Serialize(response);
         return Results.Content(json, "application/json", statusCode: 200);
     }
 

@@ -4,13 +4,54 @@ namespace Cephalon.Behaviors.Builders;
 
 /// <summary>
 /// Fluent builder for constructing a <see cref="BehaviorTopologyDescriptor" />.
-/// Call <c>Via*</c> methods to declare transport exposure, then call
-/// <see cref="Build" /> to produce the immutable descriptor.
+/// Implements <see cref="IBehaviorTopologyBuilder" /> so behaviors can declare
+/// topology from both manual <c>Register&lt;T&gt;</c> callbacks and auto-discovered
+/// static <c>ConfigureTopology</c> methods.
 /// </summary>
-public sealed class BehaviorTopologyBuilder
+public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
 {
     private string _pattern = "direct";
     private readonly HashSet<string> _transportIds = new(StringComparer.OrdinalIgnoreCase);
+    private readonly BehaviorTopologyOptions _options = new();
+
+    // ── Interface pattern methods (As* prefix) ──────────────────────────
+
+    /// <inheritdoc />
+    public IBehaviorTopologyBuilder AsDirect()
+    {
+        _pattern = "direct";
+        return this;
+    }
+
+    /// <inheritdoc />
+    public IBehaviorTopologyBuilder AsCqrs()
+    {
+        _pattern = "cqrs";
+        return this;
+    }
+
+    /// <inheritdoc />
+    public IBehaviorTopologyBuilder AsEventDriven()
+    {
+        _pattern = "event-driven";
+        return this;
+    }
+
+    /// <inheritdoc />
+    public IBehaviorTopologyBuilder AsSaga()
+    {
+        _pattern = "saga-step";
+        return this;
+    }
+
+    /// <inheritdoc />
+    public IBehaviorTopologyBuilder AsProcessManager()
+    {
+        _pattern = "process-manager";
+        return this;
+    }
+
+    // ── Legacy pattern methods (With*Pattern — kept for backward compat) ─
 
     /// <summary>
     /// Sets the interaction pattern to <c>direct</c>.
@@ -61,6 +102,41 @@ public sealed class BehaviorTopologyBuilder
         _pattern = "process-manager";
         return this;
     }
+
+    // ── Transport methods (shared by both APIs) ─────────────────────────
+
+    /// <inheritdoc />
+    IBehaviorTopologyBuilder IBehaviorTopologyBuilder.ViaHttpRest() => ViaHttpRest();
+
+    /// <inheritdoc />
+    IBehaviorTopologyBuilder IBehaviorTopologyBuilder.ViaHttpJsonRpc() => ViaHttpJsonRpc();
+
+    /// <inheritdoc />
+    IBehaviorTopologyBuilder IBehaviorTopologyBuilder.ViaHttpGraphQl() => ViaHttpGraphQl();
+
+    /// <inheritdoc />
+    IBehaviorTopologyBuilder IBehaviorTopologyBuilder.ViaHttpGraphQlSse() => ViaHttpGraphQlSse();
+
+    /// <inheritdoc />
+    IBehaviorTopologyBuilder IBehaviorTopologyBuilder.ViaHttpGraphQlWs() => ViaHttpGraphQlWs();
+
+    /// <inheritdoc />
+    IBehaviorTopologyBuilder IBehaviorTopologyBuilder.ViaHttpSse() => ViaHttpSse();
+
+    /// <inheritdoc />
+    IBehaviorTopologyBuilder IBehaviorTopologyBuilder.ViaWebSocket() => ViaWebSocket();
+
+    /// <inheritdoc />
+    IBehaviorTopologyBuilder IBehaviorTopologyBuilder.ViaRabbitMq() => ViaRabbitMq();
+
+    /// <inheritdoc />
+    IBehaviorTopologyBuilder IBehaviorTopologyBuilder.ViaKafka() => ViaKafka();
+
+    /// <inheritdoc />
+    IBehaviorTopologyBuilder IBehaviorTopologyBuilder.ViaInMemory() => ViaInMemory();
+
+    /// <inheritdoc />
+    IBehaviorTopologyBuilder IBehaviorTopologyBuilder.ViaGrpc() => ViaGrpc();
 
     /// <summary>
     /// Declares exposure over the <c>http.rest</c> transport.
@@ -172,6 +248,18 @@ public sealed class BehaviorTopologyBuilder
         return this;
     }
 
+    // ── Options ─────────────────────────────────────────────────────────
+
+    /// <inheritdoc />
+    public IBehaviorTopologyBuilder WithOptions(Action<BehaviorTopologyOptions> configure)
+    {
+        ArgumentNullException.ThrowIfNull(configure);
+        configure(_options);
+        return this;
+    }
+
+    // ── Build ───────────────────────────────────────────────────────────
+
     /// <summary>
     /// Builds the immutable <see cref="BehaviorTopologyDescriptor" /> for the given behavior identifier.
     /// </summary>
@@ -183,6 +271,9 @@ public sealed class BehaviorTopologyBuilder
         return new BehaviorTopologyDescriptor(
             behaviorId,
             _pattern,
-            _transportIds.OrderBy(static t => t, StringComparer.OrdinalIgnoreCase).ToArray());
+            _transportIds.OrderBy(static t => t, StringComparer.OrdinalIgnoreCase).ToArray(),
+            inboxEnabled: _options.InboxEnabled,
+            outboxEnabled: _options.OutboxEnabled,
+            eventSourcingEnabled: _options.EventSourcingEnabled);
     }
 }

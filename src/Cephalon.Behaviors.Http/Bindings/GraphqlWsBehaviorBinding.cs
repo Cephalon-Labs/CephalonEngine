@@ -160,16 +160,14 @@ public sealed class GraphqlWsBehaviorBinding : IHttpBehaviorBinding
                             ctx.RequestAborted, subCts.Token);
 
                         var payload = message?["payload"];
-                        var query = payload?["query"]?.GetValue<string>() ?? string.Empty;
                         var variablesRaw = payload?["variables"]?.ToJsonString();
-                        JsonElement variables = default;
-                        if (variablesRaw is not null)
-                        {
-                            using var doc = JsonDocument.Parse(variablesRaw);
-                            variables = doc.RootElement.Clone();
-                        }
 
-                        var input = new GraphqlRequest(query, variables);
+                        // Use the variables object as the behavior input.
+                        // This maps GraphQL variables to the behavior's typed input model.
+                        object input = variablesRaw is not null
+                            ? JsonSerializer.Deserialize<object>(variablesRaw)!
+                            : JsonSerializer.Deserialize<object>("{}")!;
+
                         var context = DefaultBehaviorContext.From(ctx, behaviorId);
 
                         try

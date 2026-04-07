@@ -4,6 +4,7 @@ using Cephalon.Behaviors.Compatibility;
 using Cephalon.Behaviors.Configuration;
 using Cephalon.Behaviors.Services;
 using Cephalon.Behaviors.Validation;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Behaviors;
@@ -562,5 +563,115 @@ public sealed class BehaviorBaselineTests
         Assert.NotNull(violation);
         Assert.Equal(CompatibilitySeverity.Advisory, violation!.Severity);
         Assert.Equal("ABT-004", violation.RuleId);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // BehaviorOptions — config binding from IConfiguration
+    // ─────────────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void BehaviorOptionsDefaultsAutoRegisterToTrue()
+    {
+        var options = new BehaviorOptions();
+        Assert.True(options.AutoRegister);
+    }
+
+    [Fact]
+    public void BehaviorOptionsBindsAutoRegisterFalseFromConfiguration()
+    {
+        var config = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Engine:Behaviors:AutoRegister"] = "false"
+            })
+            .Build();
+
+        var options = new BehaviorOptions();
+        config.GetSection("Engine:Behaviors").Bind(options);
+
+        Assert.False(options.AutoRegister);
+    }
+
+    [Fact]
+    public void BehaviorOptionsBindsAutoRegisterTrueFromConfiguration()
+    {
+        var config = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Engine:Behaviors:AutoRegister"] = "true"
+            })
+            .Build();
+
+        var options = new BehaviorOptions();
+        config.GetSection("Engine:Behaviors").Bind(options);
+
+        Assert.True(options.AutoRegister);
+    }
+
+    [Fact]
+    public void BehaviorOptionsBindsExcludeAssemblyPrefixesFromConfiguration()
+    {
+        var config = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Engine:Behaviors:AutoRegisterExcludeAssemblyPrefixes:0"] = "MyCompany.Shared.",
+                ["Engine:Behaviors:AutoRegisterExcludeAssemblyPrefixes:1"] = "ThirdParty."
+            })
+            .Build();
+
+        var options = new BehaviorOptions();
+        config.GetSection("Engine:Behaviors").Bind(options);
+
+        Assert.Equal(2, options.AutoRegisterExcludeAssemblyPrefixes.Count);
+        Assert.Contains("MyCompany.Shared.", options.AutoRegisterExcludeAssemblyPrefixes);
+        Assert.Contains("ThirdParty.", options.AutoRegisterExcludeAssemblyPrefixes);
+    }
+
+    [Fact]
+    public void BehaviorOptionsBindsAutoRegisterAssembliesFromConfiguration()
+    {
+        var config = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Engine:Behaviors:AutoRegisterAssemblies:0"] = "MyApp.Domain",
+                ["Engine:Behaviors:AutoRegisterAssemblies:1"] = "MyApp.Orders"
+            })
+            .Build();
+
+        var options = new BehaviorOptions();
+        config.GetSection("Engine:Behaviors").Bind(options);
+
+        Assert.Equal(2, options.AutoRegisterAssemblies.Count);
+        Assert.Contains("MyApp.Domain", options.AutoRegisterAssemblies);
+        Assert.Contains("MyApp.Orders", options.AutoRegisterAssemblies);
+    }
+
+    [Fact]
+    public void BehaviorOptionsCodeOverrideWinsOverConfig()
+    {
+        // Config says AutoRegister = true
+        var config = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Engine:Behaviors:AutoRegister"] = "true"
+            })
+            .Build();
+
+        var options = new BehaviorOptions();
+        config.GetSection("Engine:Behaviors").Bind(options);
+
+        // Code override says false → code wins
+        options.AutoRegister = false;
+
+        Assert.False(options.AutoRegister);
+    }
+
+    [Fact]
+    public void BehaviorOptionsAutoRegisterFalseReturnsEmptyAssemblies()
+    {
+        var options = new BehaviorOptions { AutoRegister = false };
+        var assemblies = options.ResolveAutoRegisterAssemblies();
+
+        Assert.Empty(assemblies);
     }
 }

@@ -11,8 +11,9 @@ namespace Cephalon.Behaviors.Http.Bindings;
 
 /// <summary>
 /// GraphQL over Server-Sent Events (SSE) transport binding (transport ID: <c>http.graphql-sse</c>).
-/// Accepts <c>POST /behaviors/{id}/graphql/sse</c> with a standard GraphQL body and
-/// streams the result as SSE events before sending a <c>complete</c> event.
+/// Accepts <c>POST /behaviors/{id}/graphql/sse</c> with a standard GraphQL body.
+/// The <c>variables</c> object is used as the behavior input, then the result is
+/// streamed as SSE events before sending a <c>complete</c> event.
 /// </summary>
 public sealed class GraphqlSseBehaviorBinding : IHttpBehaviorBinding
 {
@@ -33,13 +34,12 @@ public sealed class GraphqlSseBehaviorBinding : IHttpBehaviorBinding
 
         app.MapPost(route, async (HttpContext ctx, [FromBody] JsonElement body) =>
         {
-            string? query = null;
-            JsonElement variables = default;
+            // Extract the variables object as the behavior input.
+            object input = body.TryGetProperty("variables", out var variables)
+                    && variables.ValueKind == JsonValueKind.Object
+                ? JsonSerializer.Deserialize<object>(variables.GetRawText())!
+                : JsonSerializer.Deserialize<object>("{}")!;
 
-            if (body.TryGetProperty("query", out var q)) query = q.GetString();
-            if (body.TryGetProperty("variables", out var v)) variables = v;
-
-            var input = new GraphqlRequest(query ?? string.Empty, variables);
             var context = DefaultBehaviorContext.From(ctx, descriptor.Id);
 
             ctx.Response.ContentType = "text/event-stream";

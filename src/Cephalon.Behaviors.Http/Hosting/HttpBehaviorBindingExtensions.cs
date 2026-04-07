@@ -1,8 +1,10 @@
+using Cephalon.AspNetCore.Hosting;
 using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Http.Bindings;
 using Cephalon.Behaviors.Http.Registry;
 using Cephalon.Behaviors.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Cephalon.Behaviors.Http.Hosting;
 
@@ -38,6 +40,11 @@ public static class HttpBehaviorBindingExtensions
         // Register the registry that wraps all bindings.
         services.AddSingleton<IHttpBehaviorBindingRegistry>(sp =>
             new HttpBehaviorBindingRegistry(sp.GetServices<IHttpBehaviorBinding>()));
+
+        // Register the transport route mapper that bridges MapCephalon() to behavior HTTP bindings.
+        // This mapper is invoked when the "behavior-http" transport is selected in the engine manifest.
+        services.TryAddEnumerable(
+            ServiceDescriptor.Singleton<ITransportRouteMapper, BehaviorHttpTransportRouteMapper>());
 
         return builder;
     }

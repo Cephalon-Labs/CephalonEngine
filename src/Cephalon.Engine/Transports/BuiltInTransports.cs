@@ -100,6 +100,24 @@ public static class BuiltInTransports
             ["aspnet.registration"] = "Built into Cephalon.AspNetCore."
         });
 
+    /// <summary>
+    /// Gets the built-in behavior HTTP transport descriptor that bridges behavior topology
+    /// bindings (REST, SSE, WS, GraphQL, JSON-RPC) to ASP.NET Core endpoints under <c>/behaviors</c>.
+    /// </summary>
+    public static TransportDescriptor BehaviorHttp { get; } = new(
+        id: "behavior-http",
+        displayName: "Behavior HTTP",
+        description: "Aggregate transport that maps registered behavior topologies to per-behavior HTTP endpoints (REST, SSE, WebSocket, GraphQL, JSON-RPC) under /behaviors/{id}.",
+        features: TransportFeatures.RequestResponse |
+                  TransportFeatures.ServerStreaming |
+                  TransportFeatures.DuplexStreaming,
+        tags: ["http", "behaviors", "rest", "sse", "websocket", "graphql", "jsonrpc"],
+        metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["aspnet.adapterPackage"] = "Cephalon.Behaviors.Http",
+            ["aspnet.registration"] = "Call AddHttpBehaviorBindings() inside AddBehaviors()."
+        });
+
     private static readonly TransportDescriptor[] Items =
     [
         RestApi,
@@ -107,7 +125,8 @@ public static class BuiltInTransports
         Grpc,
         GraphQL,
         ServerSentEvents,
-        WebSocket
+        WebSocket,
+        BehaviorHttp
     ];
 
     private static readonly Dictionary<string, TransportDescriptor> Index = CreateIndex();
@@ -156,6 +175,7 @@ public static class BuiltInTransports
         Add(index, GraphQL, "GraphQL");
         Add(index, ServerSentEvents, "ServerSentEvents", "Sse");
         Add(index, WebSocket, "WebSocket", "WebSockets");
+        Add(index, BehaviorHttp, "BehaviorHttp", "BehaviorTransport");
 
         return index;
     }
