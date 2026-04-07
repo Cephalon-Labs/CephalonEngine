@@ -235,29 +235,13 @@ internal static class BehaviorXmlDocumentation
             : null;
     }
 
-    public static string? GetCombinedDescription(Type type)
+    public static string? GetDescription(Type type)
     {
         ArgumentNullException.ThrowIfNull(type);
 
-        if (!TryGetComments(type, out var comments))
-        {
-            return null;
-        }
-
-        var parts = new List<string>();
-        if (!string.IsNullOrWhiteSpace(comments.Summary))
-        {
-            parts.Add(comments.Summary);
-        }
-
-        if (!string.IsNullOrWhiteSpace(comments.Remarks))
-        {
-            parts.Add(comments.Remarks);
-        }
-
-        return parts.Count == 0
-            ? null
-            : string.Join(Environment.NewLine + Environment.NewLine, parts);
+        return TryGetComments(type, out var comments)
+            ? comments.Remarks
+            : null;
     }
 
     private static bool TryGetComments(Type type, out XmlTypeComments comments)

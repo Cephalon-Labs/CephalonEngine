@@ -43,7 +43,6 @@ public sealed class CartModule : ModuleBase, IEndpointModule
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapBehaviorRestGroup(this, "/showcase/cart");
-
         group.MapBehaviorGet<GetCartBehavior>("/{cartId}");
         group.MapBehaviorPost<AddToCartBehavior>("/{cartId}/items");
         group.MapBehaviorDelete<RemoveFromCartBehavior>("/{cartId}/items/{productId}");

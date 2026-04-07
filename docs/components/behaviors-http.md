@@ -65,6 +65,7 @@ Current helper behavior:
 - uses the owning module display name as the OpenAPI tag
 - derives the default operation-name version segment from the module descriptor major version
 - reads XML comments from the module and behavior assemblies when available so ASP.NET Core OpenAPI + Scalar can show summaries and descriptions without extra boilerplate
+- maps behavior `<summary>` to the OpenAPI operation summary and behavior `<remarks>` to the OpenAPI operation description so Scalar does not repeat the same text twice
 
 ## DefaultBehaviorContext header conventions
 

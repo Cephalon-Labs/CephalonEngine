@@ -5,9 +5,12 @@ using Cephalon.Sample.Showcase.Infrastructure;
 namespace Cephalon.Sample.Showcase.Domain.Cart.Behaviors;
 
 /// <summary>
-/// Retrieves the current shopping cart state using the CQRS query side.
-/// Rebuilds the cart from its event stream on every read.
+/// Retrieve the current shopping cart state.
 /// </summary>
+/// <remarks>
+/// Uses the CQRS query side.
+/// Rebuilds the cart from the event stream on every read.
+/// </remarks>
 [AppBehavior("cart.get")]
 [BehaviorAllowedPatterns("cqrs")]
 [BehaviorAllowedTransports("http.rest", "http.ws", "http.graphql", "http.sse")]

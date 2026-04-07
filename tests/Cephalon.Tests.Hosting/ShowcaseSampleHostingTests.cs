@@ -747,6 +747,37 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
+    [Fact]
+    public async Task ShowcaseSampleOpenApiUsesBehaviorSummaryAndRemarksWithoutDuplicatingSummary()
+    {
+        await using var app = ShowcaseSampleApp.Build(
+            configureBuilder: builder => builder.WebHost.UseTestServer());
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.GetAsync("/openapi/v1.json");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var getOperation = document.RootElement
+            .GetProperty("paths")
+            .GetProperty("/api/showcase/cart/{cartId}")
+            .GetProperty("get");
+
+        var summary = getOperation.GetProperty("summary").GetString();
+        var description = getOperation.GetProperty("description").GetString();
+
+        Assert.NotNull(summary);
+        Assert.NotNull(description);
+        Assert.Equal("Retrieve the current shopping cart state.", summary);
+        Assert.Equal(
+            "Uses the CQRS query side. Rebuilds the cart from the event stream on every read.",
+            description);
+        Assert.DoesNotContain(summary!, description, StringComparison.Ordinal);
+    }
+
     // ──────────────────────────────────────────────
     //  End-to-end flow test
     // ──────────────────────────────────────────────

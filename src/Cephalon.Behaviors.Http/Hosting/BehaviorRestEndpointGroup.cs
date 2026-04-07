@@ -244,7 +244,11 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         builder.WithName(contract.OperationName);
         builder.WithTags(contract.TagName);
         builder.WithSummary(contract.Summary);
-        builder.WithDescription(contract.Description);
+        if (!string.IsNullOrWhiteSpace(contract.Description))
+        {
+            builder.WithDescription(contract.Description);
+        }
+
         builder.WithMetadata(new BehaviorRestEndpointMetadata(
             contract.ModuleId,
             contract.ModuleVersion,
@@ -376,7 +380,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         string OperationName,
         string TagName,
         string Summary,
-        string Description,
+        string? Description,
         Type InputType,
         Type OutputType)
     {
@@ -398,10 +402,15 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                     $"Behavior type '{behaviorType.FullName}' does not implement IAppBehavior<TInput, TOutput>.");
             var typeArguments = contractInterface.GetGenericArguments();
             var behaviorId = GetBehaviorId(behaviorType);
-            var summary = BehaviorXmlDocumentation.GetSummary(behaviorType)
+            var xmlSummary = BehaviorXmlDocumentation.GetSummary(behaviorType);
+            var summary = xmlSummary
                 ?? behaviorId;
-            var description = BehaviorXmlDocumentation.GetCombinedDescription(behaviorType)
-                ?? moduleDescriptor.Description;
+            var description = BehaviorXmlDocumentation.GetDescription(behaviorType);
+            if (string.IsNullOrWhiteSpace(description) && string.IsNullOrWhiteSpace(xmlSummary))
+            {
+                description = moduleDescriptor.Description;
+            }
+
             var operationName = BuildOperationName(moduleDescriptor.Id, moduleVersionMajor, behaviorId);
 
             return new BehaviorRestEndpointContract(

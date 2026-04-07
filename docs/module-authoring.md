@@ -103,6 +103,7 @@ Current helper behavior:
 - uses the module display name for OpenAPI tags
 - derives the default operation-name version segment from the owning module descriptor major version
 - flows XML comments from the module and behavior assemblies into ASP.NET Core OpenAPI metadata when XML docs are available
+- maps behavior `<summary>` to the operation header and behavior `<remarks>` to the operation description so Scalar/OpenAPI content stays non-duplicated
 
 The generic `/behaviors/{id}` REST binding still exists and remains useful for low-ceremony or fully dynamic behavior hosts. Use the helper surface when the module owns a stable public REST shape that should read like a normal application API.
 
