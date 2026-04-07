@@ -42,7 +42,8 @@ public sealed class CartModule : ModuleBase, IEndpointModule
     /// <inheritdoc />
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapBehaviorRestGroup(this, "/showcase/cart");
+        var group = endpoints.MapBehaviorRestGroup(this, "/showcase/cart")
+            .ApiVersion(1);
         group.MapBehaviorGet<GetCartBehavior>("/{cartId}");
         group.MapBehaviorPost<AddToCartBehavior>("/{cartId}/items");
         group.MapBehaviorDelete<RemoveFromCartBehavior>("/{cartId}/items/{productId}");

@@ -59,6 +59,8 @@ When operators need deeper HTTP diagnostics, the same host surface can turn on r
 
 When teams use `Cephalon.Behaviors.Http` behavior-aware REST helpers, the resulting Minimal API endpoints flow through this same host-level OpenAPI + Scalar pipeline rather than requiring a separate documentation surface.
 
+By default the host registers the `v1` OpenAPI document and redirects `/scalar` to `/scalar/v1`. When a host needs additional named documents for versioned REST surfaces, configure them under `OpenApi:Documents` (for example `["v1", "v2"]`) so endpoints mapped with `WithGroupName("v2")` or `BehaviorRestEndpointGroup.ApiVersion(2)` appear in `/openapi/v2.json` and `/scalar/v2`. If the Scalar root should prefer something other than the first configured document, set `OpenApi:DefaultDocument` explicitly.
+
 ## Related docs
 
 - [Architecture](../architecture.md)

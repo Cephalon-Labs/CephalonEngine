@@ -8,6 +8,7 @@ using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Diagnostics;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -68,13 +69,11 @@ public static class EngineWebApplicationBuilderExtensions
         builder.AddCephalonProjectConfigurations();
         builder.AddCephalonHttpLogging();
 
-        builder.Services.AddOpenApi(options =>
+        foreach (var documentName in OpenApiDocumentNames.Resolve(builder.Configuration))
         {
-            options.AddDocumentTransformer<DocumentMetadataTransformer>();
-            options.AddDocumentTransformer<SecuritySchemeTransformer>();
-            options.AddDocumentTransformer(new XmlCommentsDocumentTransformer());
-            options.AddDocumentTransformer<ResultModelDocumentTransformer>();
-        });
+            builder.Services.AddOpenApi(documentName, ConfigureOpenApiDocument);
+        }
+
         builder.Services.AddProblemDetails();
         builder.Services.AddHealthChecks()
             .AddCheck<LivenessHealthCheck>("cephalon.liveness", tags: ["live", "engine"])
@@ -87,6 +86,14 @@ public static class EngineWebApplicationBuilderExtensions
         builder.Services.AddCephalon(builder.Configuration, configure);
 
         return builder;
+    }
+
+    private static void ConfigureOpenApiDocument(OpenApiOptions options)
+    {
+        options.AddDocumentTransformer<DocumentMetadataTransformer>();
+        options.AddDocumentTransformer<SecuritySchemeTransformer>();
+        options.AddDocumentTransformer(new XmlCommentsDocumentTransformer());
+        options.AddDocumentTransformer<ResultModelDocumentTransformer>();
     }
 
     /// <summary>

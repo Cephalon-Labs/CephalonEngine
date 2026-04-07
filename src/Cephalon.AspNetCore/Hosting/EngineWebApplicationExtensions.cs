@@ -70,12 +70,15 @@ public static class EngineWebApplicationExtensions
         ArgumentNullException.ThrowIfNull(app);
 
         var runtime = app.Services.GetRequiredService<IRuntime>();
+        var configuration = app.Services.GetRequiredService<IConfiguration>();
         var localizedTextCatalog = app.Services.GetRequiredService<ILocalizedTextCatalog>();
         var localizationSettings = app.Services.GetRequiredService<LocalizationSettings>();
         var referenceDocsOptions = app.Services.GetService<ReferenceDocsHostingOptions>() ?? new ReferenceDocsHostingOptions();
         var httpLoggingOptions = app.Services.GetService<HttpRequestResponseLoggingOptions>()
-            ?? HttpRequestResponseLoggingOptions.FromConfiguration(app.Services.GetRequiredService<IConfiguration>());
+            ?? HttpRequestResponseLoggingOptions.FromConfiguration(configuration);
         var referenceDocsSurface = CreateReferenceDocsSurface(referenceDocsOptions);
+        var openApiDocumentNames = OpenApiDocumentNames.Resolve(configuration);
+        var defaultOpenApiDocumentName = OpenApiDocumentNames.ResolveDefault(configuration);
         var restApiSelected = runtime.Manifest.AppProfile.Transports.Any(transport =>
             string.Equals(transport.Id, "rest-api", StringComparison.OrdinalIgnoreCase));
 
@@ -291,7 +294,8 @@ public static class EngineWebApplicationExtensions
                 .ExcludeFromDescription();
             app.MapGet("/favicon.ico", () => Results.Redirect(ScalarFaviconReference))
                 .ExcludeFromDescription();
-            app.MapGet("/scalar", () => Results.Redirect("/scalar/v1"))
+            app.MapGet("/scalar", (HttpContext context) => Results.Redirect(
+                    BuildScalarDocumentPath(defaultOpenApiDocumentName, context.Request.QueryString)))
                 .ExcludeFromDescription();
             app.MapScalarApiReference((options, httpContext) =>
             {
@@ -304,6 +308,16 @@ public static class EngineWebApplicationExtensions
                 options.WithTitle(title);
                 options.WithFavicon(ScalarFaviconReference);
                 options.WithJavaScriptConfiguration(OpenApiToggleScriptReference);
+
+                foreach (var documentName in openApiDocumentNames)
+                {
+                    options.AddDocument(
+                        documentName,
+                        isDefault: string.Equals(
+                            documentName,
+                            defaultOpenApiDocumentName,
+                            StringComparison.OrdinalIgnoreCase));
+                }
             });
         }
 
@@ -488,6 +502,16 @@ public static class EngineWebApplicationExtensions
         }
 
         return normalized;
+    }
+
+    private static string BuildScalarDocumentPath(string documentName, QueryString queryString)
+    {
+        var normalizedDocumentName = string.IsNullOrWhiteSpace(documentName)
+            ? OpenApiDocumentNames.DefaultDocumentName
+            : documentName.Trim();
+        var query = queryString.HasValue ? queryString.Value : string.Empty;
+
+        return $"/scalar/{normalizedDocumentName}{query}";
     }
 
     private static string BuildVersionedAssetReference(string route)

@@ -87,6 +87,24 @@ public sealed class HttpBehaviorBindingTests
         }
     }
 
+    private sealed class VersionedRestHelperModule : ModuleBase, IEndpointModule
+    {
+        private static readonly ModuleDescriptor DescriptorInstance = new(
+            id: "tests.cart",
+            displayName: "Test Cart",
+            description: "Test module for behavior-aware REST endpoint helpers.",
+            version: "2.4.0");
+
+        public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+        public void MapEndpoints(IEndpointRouteBuilder endpoints)
+        {
+            var group = endpoints.MapBehaviorRestGroup(this, "/tests/cart/versioned")
+                .ApiVersion(1);
+            group.MapBehaviorPost<RestHelperEchoBehavior>("/{cartId}/items");
+        }
+    }
+
     private sealed class StubEventStore : IEventStore
     {
         public Task AppendAsync(
@@ -157,6 +175,9 @@ public sealed class HttpBehaviorBindingTests
     }
 
     private static async Task<(WebApplication App, HttpClient Client)> BuildBehaviorRestHelperAppAsync()
+        => await BuildBehaviorRestHelperAppAsync(new RestHelperModule());
+
+    private static async Task<(WebApplication App, HttpClient Client)> BuildBehaviorRestHelperAppAsync(IEndpointModule module)
     {
         var descriptor = new BehaviorTopologyDescriptor("rest.helper.echo", "direct", ["http.rest"]);
         var builder = WebApplication.CreateBuilder();
@@ -174,7 +195,7 @@ public sealed class HttpBehaviorBindingTests
         builder.Services.AddSingleton<BehaviorDispatcher>();
 
         var app = builder.Build();
-        new RestHelperModule().MapEndpoints(app);
+        module.MapEndpoints(app);
 
         await app.StartAsync();
         return (app, app.GetTestClient());
@@ -446,7 +467,7 @@ public sealed class HttpBehaviorBindingTests
     }
 
     [Fact]
-    public async Task BehaviorRestEndpointGroupBindsRouteQueryAndBodyAndUsesModuleVersionedName()
+    public async Task BehaviorRestEndpointGroupBindsRouteQueryAndBodyAndUsesModuleVersionedNameByDefault()
     {
         var (app, client) = await BuildBehaviorRestHelperAppAsync();
 
@@ -472,6 +493,38 @@ public sealed class HttpBehaviorBindingTests
         var endpointName = endpoint.Metadata.GetMetadata<EndpointNameMetadata>();
         Assert.NotNull(endpointName);
         Assert.Equal("tests_cart.v2.rest_helper_echo", endpointName!.EndpointName);
+
+        var groupName = endpoint.Metadata.GetMetadata<IEndpointGroupNameMetadata>();
+        Assert.NotNull(groupName);
+        Assert.Equal("v1", groupName!.EndpointGroupName);
+
+        await app.StopAsync();
+    }
+
+    [Fact]
+    public async Task BehaviorRestEndpointGroupApiVersionOverridesOperationNameVersionSegment()
+    {
+        var (app, client) = await BuildBehaviorRestHelperAppAsync(new VersionedRestHelperModule());
+
+        var response = await client.PostAsJsonAsync(
+            "/tests/cart/versioned/cart-001/items?quantity=3",
+            new { productName = "Widget" });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var endpoint = app.Services.GetRequiredService<EndpointDataSource>()
+            .Endpoints
+            .OfType<RouteEndpoint>()
+            .Single(static candidate =>
+                string.Equals(candidate.RoutePattern.RawText, "/tests/cart/versioned/{cartId}/items", StringComparison.Ordinal));
+
+        var endpointName = endpoint.Metadata.GetMetadata<EndpointNameMetadata>();
+        Assert.NotNull(endpointName);
+        Assert.Equal("tests_cart.v1.rest_helper_echo", endpointName!.EndpointName);
+
+        var groupName = endpoint.Metadata.GetMetadata<IEndpointGroupNameMetadata>();
+        Assert.NotNull(groupName);
+        Assert.Equal("v1", groupName!.EndpointGroupName);
 
         await app.StopAsync();
     }

@@ -12,7 +12,7 @@ It wires behavior topology descriptors to HTTP transports via 7 concrete `IHttpB
 - **DefaultBehaviorContext** — `IBehaviorContext` implementation built from `HttpContext` (correlation, tenant, user, trace from headers, optional `IEventStore` from DI)
 - **7 transport bindings** — REST, JSON-RPC 2.0, GraphQL (HTTP), GraphQL-SSE, GraphQL-WS, SSE, WebSocket
 - **Behavior-aware REST helpers** — `MapBehaviorRestGroup(...)` plus `BehaviorRestEndpointGroup.MapBehaviorGet/Post/Put/Patch/Delete(...)` for Minimal API-style route groups that dispatch into behaviors
-- **OpenAPI enrichment** — module tags, module-major versioned operation names, and best-effort XML comment summaries/descriptions for behavior-driven REST endpoints
+- **OpenAPI enrichment** — module tags, explicit `.ApiVersion(...)` document selection with module-major fallback, and best-effort XML comment summaries/descriptions for behavior-driven REST endpoints
 - **Hosting** — `IBehaviorCollectionBuilder.AddHttpBehaviorBindings()` extension registering all bindings in DI
 
 ## Transport bindings
@@ -48,7 +48,8 @@ When a module wants shaped REST endpoints instead of the generic `/behaviors/{id
 ```csharp
 public void MapEndpoints(IEndpointRouteBuilder endpoints)
 {
-    var group = endpoints.MapBehaviorRestGroup(this, "/showcase/cart");
+    var group = endpoints.MapBehaviorRestGroup(this, "/showcase/cart")
+        .ApiVersion(1);
 
     group.MapBehaviorGet<GetCartBehavior>("/{cartId}");
     group.MapBehaviorPost<AddToCartBehavior>("/{cartId}/items");
@@ -63,9 +64,11 @@ Current helper behavior:
 - dispatches through `BehaviorDispatcher` using Minimal API handlers
 - composes route values, query-string values, and JSON request bodies into the behavior input payload
 - uses the owning module display name as the OpenAPI tag
-- derives the default operation-name version segment from the module descriptor major version
+- defaults newly mapped endpoints into the `v1` OpenAPI document and lets `.ApiVersion(major)` move them into another named document such as `v2`
+- uses `.ApiVersion(major)` as the operation-name version segment when configured; otherwise falls back to the owning module descriptor major version
 - reads XML comments from the module and behavior assemblies when available so ASP.NET Core OpenAPI + Scalar can show summaries and descriptions without extra boilerplate
 - maps behavior `<summary>` to the OpenAPI operation summary and behavior `<remarks>` to the OpenAPI operation description so Scalar does not repeat the same text twice
+- relies on host-level `OpenApi:Documents` registration when modules need additional named docs beyond the default `v1`
 
 ## DefaultBehaviorContext header conventions
 

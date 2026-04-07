@@ -585,6 +585,53 @@ public sealed class AspNetCoreHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonSupportsNamedOpenApiDocumentsAndScalarPages()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:Documents:0"] = "v1";
+        builder.Configuration["OpenApi:Documents:1"] = "v2";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapGet("/api/openapi-documents/orders/{orderId}", (string orderId) => TypedResults.Ok(new { orderId }))
+            .WithName("GetOpenApiDocumentOrder")
+            .WithGroupName("v2");
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var v1Response = await client.GetAsync("/openapi/v1.json");
+        var v2Response = await client.GetAsync("/openapi/v2.json");
+        var scalarV2Response = await client.GetAsync("/scalar/v2");
+
+        Assert.True(v1Response.IsSuccessStatusCode);
+        Assert.True(v2Response.IsSuccessStatusCode);
+        Assert.True(scalarV2Response.IsSuccessStatusCode);
+
+        using var v1Document = JsonDocument.Parse(await v1Response.Content.ReadAsStringAsync());
+        using var v2Document = JsonDocument.Parse(await v2Response.Content.ReadAsStringAsync());
+        var v1Paths = v1Document.RootElement.GetProperty("paths");
+        var v2Paths = v2Document.RootElement.GetProperty("paths");
+
+        Assert.Equal("v1", v1Document.RootElement.GetProperty("info").GetProperty("version").GetString());
+        Assert.Equal("v2", v2Document.RootElement.GetProperty("info").GetProperty("version").GetString());
+        Assert.False(v1Paths.TryGetProperty("/api/openapi-documents/orders/{orderId}", out _));
+        Assert.True(v2Paths.TryGetProperty("/api/openapi-documents/orders/{orderId}", out var versionedPath));
+        Assert.True(versionedPath.TryGetProperty("get", out _));
+
+        var scalarV2Payload = await scalarV2Response.Content.ReadAsStringAsync();
+        Assert.Contains("Scalar", scalarV2Payload, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task MapCephalonExposesTechnologyRuntimeSurfaces()
     {
         var builder = WebApplication.CreateSlimBuilder();

@@ -86,7 +86,8 @@ The owning module then maps the concrete REST surface:
 ```csharp
 public void MapEndpoints(IEndpointRouteBuilder endpoints)
 {
-    var group = endpoints.MapBehaviorRestGroup(this, "/showcase/cart");
+    var group = endpoints.MapBehaviorRestGroup(this, "/showcase/cart")
+        .ApiVersion(1);
 
     group.MapBehaviorGet<GetCartBehavior>("/{cartId}");
     group.MapBehaviorPost<AddToCartBehavior>("/{cartId}/items");
@@ -101,9 +102,12 @@ Current helper behavior:
 - dispatches through `BehaviorDispatcher` and `DefaultBehaviorContext`
 - merges route values, query-string values, and JSON request bodies into the behavior input payload
 - uses the module display name for OpenAPI tags
-- derives the default operation-name version segment from the owning module descriptor major version
+- defaults newly mapped endpoints into the `v1` OpenAPI document and lets `.ApiVersion(major)` move them into another named document such as `v2`
+- uses `.ApiVersion(major)` as the operation-name version segment when configured; otherwise falls back to the owning module descriptor major version
 - flows XML comments from the module and behavior assemblies into ASP.NET Core OpenAPI metadata when XML docs are available
 - maps behavior `<summary>` to the operation header and behavior `<remarks>` to the operation description so Scalar/OpenAPI content stays non-duplicated
+
+When a host needs more than the default `v1` document, register the extra names through `OpenApi:Documents` so endpoints mapped with `.ApiVersion(2)` or higher have a matching OpenAPI/Scalar surface.
 
 The generic `/behaviors/{id}` REST binding still exists and remains useful for low-ceremony or fully dynamic behavior hosts. Use the helper surface when the module owns a stable public REST shape that should read like a normal application API.
 

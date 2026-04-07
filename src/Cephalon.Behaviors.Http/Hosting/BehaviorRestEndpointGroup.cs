@@ -17,6 +17,7 @@ namespace Cephalon.Behaviors.Http.Hosting;
 /// </summary>
 public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
 {
+    private const string DefaultOpenApiDocumentName = "v1";
     private static readonly MethodInfo MapDeleteCoreMethod = GetRequiredCoreMethod(nameof(MapBehaviorDeleteCore));
     private static readonly MethodInfo MapGetCoreMethod = GetRequiredCoreMethod(nameof(MapBehaviorGetCore));
     private static readonly MethodInfo MapPatchCoreMethod = GetRequiredCoreMethod(nameof(MapBehaviorPatchCore));
@@ -30,6 +31,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         ModuleDescriptor = module.Descriptor;
         ModuleVersionMajor = ResolveModuleMajorVersion(ModuleDescriptor.Version);
         TagName = ModuleDescriptor.DisplayName;
+        OpenApiDocumentName = DefaultOpenApiDocumentName;
 
         Routes.WithTags(TagName);
         Routes.ProducesProblem(StatusCodes.Status400BadRequest);
@@ -68,6 +70,33 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     /// Gets the major version parsed from the module descriptor when available.
     /// </summary>
     public int? ModuleVersionMajor { get; }
+
+    /// <summary>
+    /// Gets the OpenAPI document name that newly mapped endpoints join by default.
+    /// </summary>
+    public string OpenApiDocumentName { get; private set; }
+
+    /// <summary>
+    /// Gets the explicit API major version applied to newly mapped endpoints when configured.
+    /// </summary>
+    public int? ApiVersionMajor { get; private set; }
+
+    /// <summary>
+    /// Assigns subsequently mapped endpoints to the OpenAPI document represented by the supplied API major version.
+    /// </summary>
+    /// <param name="major">The API major version to apply.</param>
+    /// <returns>The same group instance for fluent endpoint composition.</returns>
+    /// <remarks>
+    /// Call this before mapping endpoints when a module needs its REST surface to appear in a document other than the default <c>v1</c>.
+    /// </remarks>
+    public BehaviorRestEndpointGroup ApiVersion(int major)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(major);
+
+        ApiVersionMajor = major;
+        OpenApiDocumentName = $"v{major}";
+        return this;
+    }
 
     /// <summary>
     /// Maps a REST <c>GET</c> endpoint that dispatches into the specified behavior.
@@ -163,7 +192,13 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
 
-        var contract = BehaviorRestEndpointContract.Create(typeof(TBehavior), ModuleDescriptor, TagName, ModuleVersionMajor);
+        var contract = BehaviorRestEndpointContract.Create(
+            typeof(TBehavior),
+            ModuleDescriptor,
+            TagName,
+            ModuleVersionMajor,
+            OpenApiDocumentName,
+            ApiVersionMajor);
         var closedMethod = coreMethod.MakeGenericMethod(typeof(TBehavior), contract.InputType, contract.OutputType);
         var builder = (RouteHandlerBuilder)closedMethod.Invoke(null, [this, pattern, contract])!;
         configure?.Invoke(builder);
@@ -242,6 +277,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         bool acceptsBody)
     {
         builder.WithName(contract.OperationName);
+        builder.WithGroupName(contract.OpenApiDocumentName);
         builder.WithTags(contract.TagName);
         builder.WithSummary(contract.Summary);
         if (!string.IsNullOrWhiteSpace(contract.Description))
@@ -257,7 +293,9 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             contract.OperationName,
             contract.Summary,
             contract.Description,
-            contract.TagName));
+            contract.TagName,
+            contract.OpenApiDocumentName,
+            contract.ApiVersionMajor));
         builder.Produces<TOutput>(StatusCodes.Status200OK);
         builder.ProducesProblem(StatusCodes.Status400BadRequest);
         builder.Produces(StatusCodes.Status404NotFound);
@@ -370,7 +408,9 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         string OperationName,
         string? Summary,
         string? Description,
-        string TagName);
+        string TagName,
+        string OpenApiDocumentName,
+        int? ApiVersionMajor);
 
     private sealed record BehaviorRestEndpointContract(
         string ModuleId,
@@ -381,6 +421,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         string TagName,
         string Summary,
         string? Description,
+        string OpenApiDocumentName,
+        int? ApiVersionMajor,
         Type InputType,
         Type OutputType)
     {
@@ -388,11 +430,14 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             Type behaviorType,
             ModuleDescriptor moduleDescriptor,
             string tagName,
-            int? moduleVersionMajor)
+            int? moduleVersionMajor,
+            string openApiDocumentName,
+            int? apiVersionMajor)
         {
             ArgumentNullException.ThrowIfNull(behaviorType);
             ArgumentNullException.ThrowIfNull(moduleDescriptor);
             ArgumentException.ThrowIfNullOrWhiteSpace(tagName);
+            ArgumentException.ThrowIfNullOrWhiteSpace(openApiDocumentName);
 
             var contractInterface = behaviorType.GetInterfaces()
                 .FirstOrDefault(static candidate =>
@@ -411,7 +456,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 description = moduleDescriptor.Description;
             }
 
-            var operationName = BuildOperationName(moduleDescriptor.Id, moduleVersionMajor, behaviorId);
+            var operationVersionMajor = apiVersionMajor ?? moduleVersionMajor;
+            var operationName = BuildOperationName(moduleDescriptor.Id, operationVersionMajor, behaviorId);
 
             return new BehaviorRestEndpointContract(
                 moduleDescriptor.Id,
@@ -422,6 +468,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 tagName,
                 summary,
                 description,
+                openApiDocumentName,
+                apiVersionMajor,
                 typeArguments[0],
                 typeArguments[1]);
         }
