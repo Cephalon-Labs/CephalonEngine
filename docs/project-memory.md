@@ -187,7 +187,12 @@ These are explicit working agreements from the current collaboration and should 
 - when the team settles on an approach, plan, recurring workflow, or repeated command pattern, record it in project memory so it does not rely on thread-local recall alone
 - when deeper or version-sensitive external research is needed, especially around `.NET`, `.NET 10`, libraries, frameworks, support policy, or official guidance, use internet research instead of relying only on prior model knowledge
 - when delegating research work to sub-agents, prefer primary and official sources first, then synthesize the result back into repo context for Cephalon-specific decisions
+- for meaningful work, prefer using sub-agents in complementary roles when that improves the outcome, for example business/product framing, architecture, design patterns, documentation, planning cards, quality review, testing, benchmarking, or other task-shaped specialties
+- let sub-agents collaborate as a working group rather than as isolated note takers; they can cross-check one another's reasoning, surface tradeoffs, and help review the same change from different perspectives before the final decision lands
+- sub-agents may use internet research when it helps them validate framework guidance, technical options, benchmarks, security practices, documentation, or other external references that matter to the decision
 - repo-local memory is the reliable cross-thread source of truth; agreements that matter beyond the current thread should be written down here or in another repo-owned document
+- Cephalon is still in an active POC and invention phase, so decisions should not stay trapped by the current implementation alone; if a materially better approach exists for engine quality, architecture, performance, security, developer ergonomics, or future-proofing, it is acceptable to change direction deliberately
+- when rethinking an area during this POC phase, optimize for making Cephalon a stronger long-term engine: reduce common developer pain, keep the platform broad enough for varied project types, and prefer durable engine primitives over short-term local convenience
 
 Current standing examples from this collaboration:
 
@@ -198,6 +203,8 @@ Current standing examples from this collaboration:
 - GitHub Project cards should contain enough narrative detail for a reader to understand the work without extra thread context, and they should populate the standard fields `Assignee`, `Label`, `Type`, `Project`, `Estimate`, `Iteration`, `Test`, `Benchmark`, `Milestone`, and `Relationship` when cross-card references exist
 - when a commit materially advances a GitHub Project card, add a card comment that records what changed and references the commit id so the card keeps a readable implementation history
 - repository-facing written artifacts should be in English, including hand-authored documentation, commit messages, and planning or tracking content that becomes part of the project record
+- use sub-agents proactively for review, consultation, and parallel investigation when a task benefits from multiple perspectives instead of treating delegation as a last resort
+- keep future-facing engine quality in view during POC work, including architecture strength, design-pattern fit, performance, security, support for broad project shapes, and overall developer experience
 
 ## Working assumptions for contributors
 
