@@ -116,6 +116,7 @@ internal static class ProgramLinks
         "/reference/reference-manifest.json",
         "/openapi/v1.json",
         "/scalar",
+        "/scalar/",
         "/scalar/v1",
         "/scalar/openapi-toggle.js",
         "/scalar/assets/favicon.svg",

@@ -69,6 +69,7 @@ Current helper behavior:
 - reads XML comments from the module and behavior assemblies when available so ASP.NET Core OpenAPI + Scalar can show summaries and descriptions without extra boilerplate
 - maps behavior `<summary>` to the OpenAPI operation summary and behavior `<remarks>` to the OpenAPI operation description so Scalar does not repeat the same text twice
 - relies on host-level `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion` when modules need additional versioned docs beyond the default `v1`
+- expects `/scalar` to redirect to the selector page at `/scalar/` while `/scalar/v1`, `/scalar/v2`, and similar paths stay available as pinned-document deep links
 - still interoperates with legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` settings when a host needs custom named docs instead of major-version documents
 
 ## DefaultBehaviorContext header conventions

@@ -612,15 +612,17 @@ public sealed class AspNetCoreHostingTests
 
         var v1Response = await client.GetAsync("/openapi/v1.json");
         var v2Response = await client.GetAsync("/openapi/v2.json");
-        var scalarRootResponse = await client.GetAsync("/scalar?culture=en");
+        var scalarRootRedirectResponse = await client.GetAsync("/scalar?culture=en");
+        var scalarRootResponse = await client.GetAsync("/scalar/?culture=en");
         var scalarV2Response = await client.GetAsync("/scalar/v2");
 
         Assert.True(v1Response.IsSuccessStatusCode);
         Assert.True(v2Response.IsSuccessStatusCode);
-        Assert.Equal(HttpStatusCode.Redirect, scalarRootResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Redirect, scalarRootRedirectResponse.StatusCode);
+        Assert.NotNull(scalarRootRedirectResponse.Headers.Location);
+        Assert.Equal("/scalar/?culture=en", scalarRootRedirectResponse.Headers.Location!.OriginalString);
+        Assert.True(scalarRootResponse.IsSuccessStatusCode);
         Assert.True(scalarV2Response.IsSuccessStatusCode);
-        Assert.NotNull(scalarRootResponse.Headers.Location);
-        Assert.Equal("/scalar/v2?culture=en", scalarRootResponse.Headers.Location!.OriginalString);
 
         using var v1Document = JsonDocument.Parse(await v1Response.Content.ReadAsStringAsync());
         using var v2Document = JsonDocument.Parse(await v2Response.Content.ReadAsStringAsync());
@@ -633,7 +635,11 @@ public sealed class AspNetCoreHostingTests
         Assert.True(v2Paths.TryGetProperty("/api/openapi-documents/orders/{orderId}", out var versionedPath));
         Assert.True(versionedPath.TryGetProperty("get", out _));
 
+        var scalarRootPayload = await scalarRootResponse.Content.ReadAsStringAsync();
         var scalarV2Payload = await scalarV2Response.Content.ReadAsStringAsync();
+        Assert.Contains("Scalar", scalarRootPayload, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("\"sources\":[{\"title\":\"v1\",\"url\":\"openapi/v1.json\"}", scalarRootPayload, StringComparison.Ordinal);
+        Assert.Contains("\"title\":\"v2\",\"url\":\"openapi/v2.json\",\"default\":true", scalarRootPayload, StringComparison.Ordinal);
         Assert.Contains("Scalar", scalarV2Payload, StringComparison.OrdinalIgnoreCase);
     }
 

@@ -294,9 +294,15 @@ public static class EngineWebApplicationExtensions
                 .ExcludeFromDescription();
             app.MapGet("/favicon.ico", () => Results.Redirect(ScalarFaviconReference))
                 .ExcludeFromDescription();
-            app.MapGet("/scalar", (HttpContext context) => Results.Redirect(
-                    BuildScalarDocumentPath(defaultOpenApiDocumentName, context.Request.QueryString)))
-                .ExcludeFromDescription();
+            app.UseWhen(
+                static context =>
+                    (HttpMethods.IsGet(context.Request.Method) || HttpMethods.IsHead(context.Request.Method)) &&
+                    context.Request.Path == "/scalar",
+                branch => branch.Run(context =>
+                {
+                    context.Response.Redirect(BuildScalarSelectorPath(context.Request.QueryString));
+                    return Task.CompletedTask;
+                }));
             app.MapScalarApiReference((options, httpContext) =>
             {
                 var title = ResolveRestDocsText(
@@ -504,19 +510,15 @@ public static class EngineWebApplicationExtensions
         return normalized;
     }
 
-    private static string BuildScalarDocumentPath(string documentName, QueryString queryString)
-    {
-        var normalizedDocumentName = string.IsNullOrWhiteSpace(documentName)
-            ? OpenApiDocumentNames.DefaultDocumentName
-            : documentName.Trim();
-        var query = queryString.HasValue ? queryString.Value : string.Empty;
-
-        return $"/scalar/{normalizedDocumentName}{query}";
-    }
-
     private static string BuildVersionedAssetReference(string route)
     {
         return $"{route}?v={DocumentationAssetVersion}";
+    }
+
+    private static string BuildScalarSelectorPath(QueryString queryString)
+    {
+        var query = queryString.HasValue ? queryString.Value : string.Empty;
+        return $"/scalar/{query}";
     }
 
     private static HealthCheckOptions CreateHealthCheckOptions(Func<HealthCheckRegistration, bool> predicate)

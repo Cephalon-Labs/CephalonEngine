@@ -257,7 +257,8 @@ When the playground is running, open:
 - `/reference/reference-manifest.json`
 - `/openapi/v1.json`
 - `/scalar`
-- `/scalar/v1`
+- `/scalar/`
+- `/scalar/v1` (pinned document deep link)
 - `/scalar/openapi-toggle.js`
 - `/scalar/assets/favicon.svg`
 - `/api/platform/time`
@@ -689,7 +690,7 @@ The engine now emits built-in observability signals through the `Cephalon.Engine
 
 The transport catalog currently models `RestApi`, `GraphQL`, `JsonRpc`, `Grpc`, `ServerSentEvents`, and `WebSocket`. The sample host in this repo currently demonstrates `RestApi`, `GraphQL`, `JsonRpc`, `Grpc`, `ServerSentEvents`, and `WebSocket`.
 
-When `RestApi` is selected on ASP.NET Core, the host exposes OpenAPI at `/openapi/v1.json` and Scalar docs through `/scalar` with the document route at `/scalar/v1`. Cephalon also serves its Scalar JavaScript configuration from `/scalar/openapi-toggle.js` and its docs favicon from `/scalar/assets/favicon.svg`, both with cache-busting references and no-store headers so docs assets stay aligned after upgrades. Non-REST protocol endpoints stay out of that REST-facing API description surface.
+When `RestApi` is selected on ASP.NET Core, the host exposes OpenAPI at `/openapi/v1.json` and Scalar docs through `/scalar`, which normalizes to the selector-first page at `/scalar/`. Pinned document deep links such as `/scalar/v1` remain available when an operator or doc link needs to land on one document directly. Cephalon also serves its Scalar JavaScript configuration from `/scalar/openapi-toggle.js` and its docs favicon from `/scalar/assets/favicon.svg`, both with cache-busting references and no-store headers so docs assets stay aligned after upgrades. Non-REST protocol endpoints stay out of that REST-facing API description surface.
 
 `GET /engine/localization?culture=th` exposes the effective language resources the runtime resolved for a request culture, which makes it easier to verify configuration-driven and project-level overrides without stepping through host internals.
 
