@@ -73,7 +73,7 @@ public sealed class GraphqlHttpBehaviorBinding : IHttpBehaviorBinding
                         errors = new[] { new { message = ex.Message } }
                     });
                 }
-            });
+            }).ExcludeFromDescription();
         }
 
         return Task.CompletedTask;

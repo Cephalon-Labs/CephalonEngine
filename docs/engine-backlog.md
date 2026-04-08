@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `April 8, 2026`.
+Backlog status in this document reflects the repository state as of `April 9, 2026`.
 
 ## Completed foundation work
 
@@ -1558,6 +1558,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-058-T37 shared `BehaviorApiSurface` canonical routing for generic behavior HTTP bindings: `BehaviorTopologyDescriptor` now carries a transport-agnostic `ApiSurface`, `BehaviorApiSurfaceDescriptor.CreateDefault(...)` derives group/operation paths from the behavior id, `WithApiSurface(...)` and the behavior source generator keep fluent and compile-time topology aligned, and the generic REST, JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings now project canonical versioned routes from that shared surface. The earlier `/behaviors/{id}` compatibility aliases introduced in that round were later removed by `ENG-058-T39` so the canonical versioned routes remain the only public surface — **Shipped** · behavior API-surface tests 4/4 + composition HTTP tests 14/14
 - ENG-058-T38 canonical `ApiRoutes:Prefixes` defaults across built-in and generic HTTP transport surfaces: the canonical host config now defaults to `Rest=/api`, `GraphQL=/graphql`, `JsonRpc=/json-rpc`, `Grpc=/grpc`, `Ws=/ws`, `Sse=/sse`, `GraphQLWs=/graphql-ws`, and `GraphQLSse=/graphql-sse`; built-in transport mappers now read the same contract as the generic behavior bindings; the showcase sample now consumes route prefixes through generated client config instead of hard-coded transport paths; and hosting/composition coverage now locks the aligned default and override behavior — **Shipped** · behavior API-surface + HTTP binding tests 22/22 + targeted hosting tests 3/3 + showcase hosting tests 34/34
 - ENG-058-T39 remove generic `/behaviors/{id}` aliases from the behavior HTTP surface: canonical versioned routes are now the only generated behavior HTTP endpoints; `BehaviorApiSurfaceRouteResolver` no longer appends behavior-id compatibility aliases; the retired behavior-specific prefix/config aliases have been removed so the generic bindings read the same canonical `ApiRoutes:Prefixes:*` contract as the built-in host mappers; and XML comments, component docs, authoring guidance, and HTTP binding coverage now treat the canonical versioned routes as the single public contract — **Shipped** · composition HTTP tests 24/24
+- ENG-058-T40 separate public REST docs from generic behavior HTTP routes and add REST tag metadata: generic behavior HTTP endpoints now stay runnable but are excluded from REST OpenAPI + Scalar descriptions by default, `MapBehaviorRestGroup(...)` can now override tag names and descriptions explicitly, module XML comments can flow into tag descriptions, and hosting/tooling coverage now locks the public REST-vs-adapter-doc distinction — **Shipped** · targeted hosting tests 3/3 + package-surface tests 51/51
 
 ### Infrastructure — Phase 2 Developer Experience
 

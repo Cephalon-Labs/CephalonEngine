@@ -57,7 +57,7 @@ It also owns the ASP.NET Core side of Cephalon's split-configuration convention.
 
 When operators need deeper HTTP diagnostics, the same host surface can turn on request/response logging through `Engine:Observability:HttpLogging` or `AddCephalonHttpLogging(...)`. That flow keeps correlation in the shared `ILogger` pipeline by pushing `RequestId`, `TraceId`, `SpanId`, and `TraceParent` into request scopes, redacts known-sensitive query-string and payload fields before the log event is written, including JSON, form, and header-style `text/plain` content, and publishes the corresponding event-id range through `/engine/diagnostics`.
 
-When teams use `Cephalon.Behaviors.Http` behavior-aware REST helpers, the resulting Minimal API endpoints flow through this same host-level OpenAPI + Scalar pipeline rather than requiring a separate documentation surface.
+When teams use `Cephalon.Behaviors.Http` behavior-aware REST helpers, the resulting Minimal API endpoints flow through this same host-level OpenAPI + Scalar pipeline rather than requiring a separate documentation surface. That same pipeline now treats module-owned REST groups as the public REST documentation surface while keeping the generic behavior HTTP adapter endpoints out of REST OpenAPI + Scalar descriptions by default, so the docs do not show duplicate transport-adapter routes beside the module-owned API.
 
 By default the host registers the `v1` OpenAPI document and treats `/scalar/v1` as the canonical docs link by redirecting `/scalar` to the configured default document. The slash-suffixed Scalar shell at `/scalar/` still remains available for multi-document flows, and Cephalon's Scalar JavaScript normalizes hash-based selections such as `/scalar/#v2/` back into canonical versioned links. Hosts can move those surfaces through `OpenApi:RoutePattern` and `OpenApi:Scalar:RoutePrefix`, while the built-in REST mapper can move off `/api` through `ApiRoutes:Prefixes:Rest`. The long-term versioned config contract is `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion`, for example `EnabledVersions: [1, 2]` and `DefaultVersion: 2`, so Scalar can render a version selector while endpoints mapped with `BehaviorRestEndpointGroup.ApiVersion(2)` or defaulted from a module version `2.x` continue to appear in `/openapi/v2.json` and under version-aligned REST paths such as `/api/v2/...`. Legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` string settings still work for backward compatibility or custom non-version document names. `OpenApi:Version` remains available as a global `info.version` override for single-document hosts, but multi-document hosts now keep each document version truthful to its own resolved document name such as `v1` or `v2`.
 
@@ -72,7 +72,10 @@ GraphQL-over-SSE on `/graphql-sse/v1/...`, GraphQL-over-WebSocket on `/graphql-w
 `/sse/v1/...`, and WebSocket on `/ws/v1/...`. The older `/behaviors/{id}` aliases are gone, so the
 built-in host transport mappers follow the same canonical prefix set,
 so GraphQL, JSON-RPC, gRPC, SSE, and WebSocket transports can all move together under the `ApiRoutes`
-section instead of each surface inventing its own default root path.
+section instead of each surface inventing its own default root path. When generic behavior HTTP
+routes and module-owned REST helpers both exist in one host, the generic routes keep running as
+transport-adapter endpoints while the module-owned REST groups own the published REST OpenAPI tag,
+summary, and description surface.
 
 ## Related docs
 

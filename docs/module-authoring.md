@@ -124,12 +124,15 @@ Current helper behavior:
 - dispatches through `BehaviorDispatcher` and `DefaultBehaviorContext`
 - merges route values, query-string values, and JSON request bodies into the behavior input payload
 - uses the module display name for OpenAPI tags
+- lets the module override the published tag name and tag description through `.WithTagName(...)` and `.WithTagDescription(...)`
+- defaults the tag description from the module XML `<summary>` plus `<remarks>` when XML docs exist, falling back to `ModuleDescriptor.Description`
 - defaults newly mapped endpoints to the owning module descriptor major version when one is available, so a module declared as `1.0.0` automatically joins the `v1` document and gets a `/v1` route prefix without extra code
 - keeps `.ApiVersion(major)` as the explicit override when the public API version should differ from the module package major
 - prefixes the mapped REST route group with `/v{major}` for the resolved API major version, so ASP.NET Core hosts expose routes such as `/api/v1/showcase/cart/{cartId}`
 - uses the resolved API major version as the operation-name version segment, falling back to the owning module descriptor major version
 - flows XML comments from the module and behavior assemblies into ASP.NET Core OpenAPI metadata when XML docs are available
 - maps behavior `<summary>` to the operation header and behavior `<remarks>` to the operation description so Scalar/OpenAPI content stays non-duplicated
+- keeps generic route-shaped behavior HTTP endpoints runnable while excluding them from REST OpenAPI + Scalar descriptions by default, so module-owned REST helpers are the documented public REST surface
 
 When a host needs more than the default `v1` document, prefer `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion` so endpoints mapped with `.ApiVersion(2)` or higher, or defaulted from module version `2.x`, have a matching OpenAPI/Scalar surface. In that shape, `/scalar` redirects to the default canonical document such as `/scalar/v2`, `/scalar/` remains available for multi-document selection, and Cephalon normalizes hash-based Scalar selections such as `/scalar/#v2/` back into pinned versioned links. Hosts can also move the docs and REST entry points with `OpenApi:RoutePattern`, `OpenApi:Scalar:RoutePrefix`, and the canonical `ApiRoutes:Prefixes:*` settings. Legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` settings remain available when a host deliberately wants custom named documents instead of `v{major}` API-version documents.
 
@@ -137,7 +140,9 @@ This helper surface is still REST-specific. The generic route-shaped behavior tr
 the `BehaviorApiSurfaceDescriptor` contract for generic REST, JSON-RPC, GraphQL, GraphQL-SSE,
 GraphQL-WS, SSE, and WebSocket routes. Module-owned REST helpers remain the right choice when the
 module needs Minimal API method selection, concrete REST templates, and OpenAPI metadata beyond the
-generic per-behavior transport surface.
+generic per-behavior transport surface. Those generic behavior HTTP endpoints are transport-adapter
+surfaces first, so they continue to run but stay out of the REST OpenAPI/Scalar document set by
+default.
 
 The older `/behaviors/{id}` REST binding is gone. Use the helper surface when the module owns a
 stable public REST shape that should read like a normal application API, and treat the canonical

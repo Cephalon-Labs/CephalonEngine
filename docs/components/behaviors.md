@@ -79,6 +79,7 @@ Behavior metadata stays transport-neutral on purpose.
 - expect generic REST, JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket behavior bindings to reuse that shared API surface for canonical versioned routes
 - keep GraphQL schema ownership focused on payload and protocol semantics even though its Cephalon behavior endpoint now participates in the shared prefix/version policy
 - use `Cephalon.Behaviors.Http` route helpers such as `MapBehaviorRestGroup(...)` when a module needs a concrete REST method, route template, and OpenAPI surface
+- expect generic behavior HTTP routes to stay runnable transport-adapter endpoints while REST OpenAPI + Scalar descriptions stay focused on module-owned REST helper endpoints by default
 - keep HTTP-specific route shape in the adapter/helper layer so `Cephalon.Abstractions` and the core ABT contracts remain host-agnostic
 
 ## Performance characteristics

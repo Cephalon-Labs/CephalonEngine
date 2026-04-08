@@ -181,6 +181,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.AspNetCore.Hosting.EngineWebApplicationBuilderExtensions).Assembly,
             typeof(global::Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface),
             typeof(global::Cephalon.AspNetCore.Documentation.OpenApiEndpointOptions),
+            typeof(global::Cephalon.AspNetCore.Documentation.OpenApiTagMetadata),
             typeof(global::Cephalon.AspNetCore.Documentation.ReferenceDocsHostingOptions),
             typeof(global::Cephalon.AspNetCore.Documentation.ReferenceDocsSurface),
             typeof(global::Cephalon.AspNetCore.Hosting.ApiRoutesOptions),

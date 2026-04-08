@@ -91,6 +91,7 @@ public static class EngineWebApplicationBuilderExtensions
     private static void ConfigureOpenApiDocument(OpenApiOptions options)
     {
         options.AddDocumentTransformer<DocumentMetadataTransformer>();
+        options.AddDocumentTransformer<OpenApiTagMetadataDocumentTransformer>();
         options.AddDocumentTransformer<SecuritySchemeTransformer>();
         options.AddDocumentTransformer(new XmlCommentsDocumentTransformer());
         options.AddDocumentTransformer<ResultModelDocumentTransformer>();

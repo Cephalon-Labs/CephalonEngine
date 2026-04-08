@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
+using Cephalon.AspNetCore.Documentation;
 using Cephalon.Behaviors.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -25,6 +26,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     private static readonly MethodInfo MapPutCoreMethod = GetRequiredCoreMethod(nameof(MapBehaviorPutCore));
 
     private readonly IEndpointRouteBuilder endpoints;
+    private readonly string? moduleSummary;
+    private readonly string? moduleRemarks;
     private readonly string routePrefix;
     private RouteGroupBuilder? routes;
 
@@ -35,7 +38,13 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         this.routePrefix = NormalizeRoutePrefix(routePrefix);
         ModuleDescriptor = module.Descriptor;
         ModuleVersionMajor = ResolveModuleMajorVersion(ModuleDescriptor.Version);
+        moduleSummary = BehaviorXmlDocumentation.GetSummary(Module.GetType());
+        moduleRemarks = BehaviorXmlDocumentation.GetRemarks(Module.GetType());
         TagName = ModuleDescriptor.DisplayName;
+        TagDescription = BuildTagDescription(
+            moduleSummary,
+            moduleRemarks,
+            ModuleDescriptor.Description);
         OpenApiDocumentName = ModuleVersionMajor.HasValue
             ? $"v{ModuleVersionMajor.Value}"
             : DefaultOpenApiDocumentName;
@@ -59,7 +68,12 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     /// <summary>
     /// Gets the OpenAPI tag name used for endpoints in this group.
     /// </summary>
-    public string TagName { get; }
+    public string TagName { get; private set; }
+
+    /// <summary>
+    /// Gets the OpenAPI tag description used for endpoints in this group when one is available.
+    /// </summary>
+    public string? TagDescription { get; private set; }
 
     /// <summary>
     /// Gets the major version parsed from the module descriptor when available.
@@ -87,13 +101,39 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     public BehaviorRestEndpointGroup ApiVersion(int major)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(major);
-        if (routes is not null)
-        {
-            throw new InvalidOperationException("Call ApiVersion before mapping endpoints on the behavior REST group.");
-        }
+        EnsureRoutesNotCreated(nameof(ApiVersion));
 
         ApiVersionMajor = major;
         OpenApiDocumentName = $"v{major}";
+        return this;
+    }
+
+    /// <summary>
+    /// Overrides the OpenAPI tag name applied to subsequently mapped endpoints in this group.
+    /// </summary>
+    /// <param name="tagName">The public tag name to publish.</param>
+    /// <returns>The same group instance for fluent endpoint composition.</returns>
+    public BehaviorRestEndpointGroup WithTagName(string tagName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(tagName);
+        EnsureRoutesNotCreated(nameof(WithTagName));
+
+        TagName = tagName.Trim();
+        return this;
+    }
+
+    /// <summary>
+    /// Overrides the OpenAPI tag description applied to this group.
+    /// </summary>
+    /// <param name="description">The tag description to publish. Pass <see langword="null" /> to clear it.</param>
+    /// <returns>The same group instance for fluent endpoint composition.</returns>
+    public BehaviorRestEndpointGroup WithTagDescription(string? description)
+    {
+        EnsureRoutesNotCreated(nameof(WithTagDescription));
+
+        TagDescription = string.IsNullOrWhiteSpace(description)
+            ? null
+            : description.Trim();
         return this;
     }
 
@@ -194,14 +234,17 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         routes.WithTags(TagName);
         routes.ProducesProblem(StatusCodes.Status400BadRequest);
         routes.ProducesProblem(StatusCodes.Status404NotFound);
+        routes.WithMetadata(new OpenApiTagMetadata(TagName, TagDescription));
         routes.WithMetadata(new BehaviorRestGroupMetadata(
             ModuleDescriptor.Id,
             ModuleDescriptor.DisplayName,
             ModuleDescriptor.Description,
             ModuleDescriptor.Version,
             ModuleVersionMajor,
-            BehaviorXmlDocumentation.GetSummary(Module.GetType()),
-            BehaviorXmlDocumentation.GetRemarks(Module.GetType())));
+            moduleSummary,
+            moduleRemarks,
+            TagName,
+            TagDescription));
 
         return routes;
     }
@@ -440,6 +483,42 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             : normalized;
     }
 
+    private void EnsureRoutesNotCreated(string methodName)
+    {
+        if (routes is not null)
+        {
+            throw new InvalidOperationException(
+                $"Call {methodName} before mapping endpoints on the behavior REST group.");
+        }
+    }
+
+    private static string? BuildTagDescription(
+        string? summary,
+        string? remarks,
+        string? fallbackDescription)
+    {
+        var sections = new List<string>();
+
+        if (!string.IsNullOrWhiteSpace(summary))
+        {
+            sections.Add(summary.Trim());
+        }
+
+        if (!string.IsNullOrWhiteSpace(remarks))
+        {
+            sections.Add(remarks.Trim());
+        }
+
+        if (sections.Count > 0)
+        {
+            return string.Join(Environment.NewLine + Environment.NewLine, sections);
+        }
+
+        return string.IsNullOrWhiteSpace(fallbackDescription)
+            ? null
+            : fallbackDescription.Trim();
+    }
+
     private static MethodInfo GetRequiredCoreMethod(string methodName)
     {
         return typeof(BehaviorRestEndpointGroup).GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static)
@@ -453,7 +532,9 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         string? Version,
         int? MajorVersion,
         string? Summary,
-        string? Remarks);
+        string? Remarks,
+        string TagName,
+        string? TagDescription);
 
     private sealed record BehaviorRestEndpointMetadata(
         string ModuleId,

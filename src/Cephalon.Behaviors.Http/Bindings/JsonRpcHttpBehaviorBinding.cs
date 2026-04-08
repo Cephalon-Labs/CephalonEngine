@@ -200,7 +200,7 @@ public sealed class JsonRpcHttpBehaviorBinding : IHttpBehaviorBinding
                 {
                     return BuildErrorResult(id, -32603, "Internal error", ex.Message);
                 }
-            });
+            }).ExcludeFromDescription();
         }
 
         return Task.CompletedTask;

@@ -108,7 +108,7 @@ public sealed class SseBehaviorBinding : IHttpBehaviorBinding
                         .ConfigureAwait(false);
                     await ctx.Response.Body.FlushAsync(CancellationToken.None).ConfigureAwait(false);
                 }
-            });
+            }).ExcludeFromDescription();
         }
 
         return Task.CompletedTask;

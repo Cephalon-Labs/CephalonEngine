@@ -70,7 +70,7 @@ public sealed class RestHttpBehaviorBinding : IHttpBehaviorBinding
                 {
                     return Results.NotFound();
                 }
-            });
+            }).ExcludeFromDescription();
 
             app.MapGet(route, async (HttpContext ctx) =>
             {
@@ -86,7 +86,7 @@ public sealed class RestHttpBehaviorBinding : IHttpBehaviorBinding
                 {
                     return Results.NotFound();
                 }
-            });
+            }).ExcludeFromDescription();
         }
 
         return Task.CompletedTask;

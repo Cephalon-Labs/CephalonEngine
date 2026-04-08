@@ -13,7 +13,7 @@ It wires behavior topology descriptors to HTTP transports via 7 concrete `IHttpB
 - **7 transport bindings** — REST, JSON-RPC 2.0, GraphQL (HTTP), GraphQL-SSE, GraphQL-WS, SSE, WebSocket
 - **Shared behavior API surface** — `BehaviorApiSurfaceDescriptor` plus `BehaviorApiSurfaceRouteResolver` for canonical route-shaped behavior HTTP endpoints
 - **Behavior-aware REST helpers** — `MapBehaviorRestGroup(...)` plus `BehaviorRestEndpointGroup.MapBehaviorGet/Post/Put/Patch/Delete(...)` for Minimal API-style route groups that dispatch into behaviors
-- **OpenAPI enrichment** — module tags, module-major API-version defaults with explicit `.ApiVersion(...)` override support, and best-effort XML comment summaries/descriptions for behavior-driven REST endpoints
+- **OpenAPI enrichment** — module tag names and descriptions, module-major API-version defaults with explicit `.ApiVersion(...)` override support, best-effort XML comment summaries/descriptions for behavior-driven REST endpoints, and default exclusion of generic behavior adapter endpoints from REST OpenAPI docs
 - **Hosting** — `IBehaviorCollectionBuilder.AddHttpBehaviorBindings()` extension registering all bindings in DI
 
 ## Transport bindings
@@ -101,12 +101,15 @@ Current helper behavior:
 - dispatches through `BehaviorDispatcher` using Minimal API handlers
 - composes route values, query-string values, and JSON request bodies into the behavior input payload
 - uses the owning module display name as the OpenAPI tag
+- lets the module override the published tag name and tag description through `.WithTagName(...)` and `.WithTagDescription(...)`
+- defaults the tag description from the module XML `<summary>` plus `<remarks>` when XML docs exist, falling back to `ModuleDescriptor.Description`
 - defaults newly mapped endpoints to the owning module descriptor major version when one is available, so a module declared as `1.0.0` automatically joins the `v1` document and gets a `/v1` route prefix even without `.ApiVersion(1)`
 - keeps `.ApiVersion(major)` as the explicit override when a module needs a public API version that differs from the module package major
 - prefixes the mapped REST route group with `/v{major}` for the resolved API major version, so hosts expose paths such as `/api/v1/showcase/cart/{cartId}`
 - uses the resolved API major version as the operation-name version segment, falling back to the owning module descriptor major version before the default `v1` document name
 - reads XML comments from the module and behavior assemblies when available so ASP.NET Core OpenAPI + Scalar can show summaries and descriptions without extra boilerplate
 - maps behavior `<summary>` to the OpenAPI operation summary and behavior `<remarks>` to the OpenAPI operation description so Scalar does not repeat the same text twice
+- keeps generic route-shaped behavior HTTP endpoints runnable while excluding them from REST OpenAPI + Scalar descriptions by default, so public REST docs stay focused on module-owned REST groups
 - relies on host-level `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion` when modules need additional versioned docs beyond the default `v1`
 - expects `/scalar` to redirect to the default canonical document such as `/scalar/v1`, while `/scalar/` remains available for multi-document flows and hash-based selections are normalized back into pinned versioned links
 - lets hosts move the OpenAPI JSON endpoint, Scalar UI base path, and REST host prefix through `OpenApi:RoutePattern`, `OpenApi:Scalar:RoutePrefix`, and `ApiRoutes:Prefixes:Rest`

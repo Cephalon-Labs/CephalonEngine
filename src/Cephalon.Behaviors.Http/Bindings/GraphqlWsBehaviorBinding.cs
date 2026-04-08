@@ -72,7 +72,7 @@ public sealed class GraphqlWsBehaviorBinding : IHttpBehaviorBinding
                     ?.CreateLogger<GraphqlWsBehaviorBinding>();
                 using var ws = await ctx.WebSockets.AcceptWebSocketAsync("graphql-transport-ws").ConfigureAwait(false);
                 await HandleGraphqlWsAsync(ws, ctx, descriptor.Id, dispatcher, logger).ConfigureAwait(false);
-            });
+            }).ExcludeFromDescription();
         }
 
         return Task.CompletedTask;

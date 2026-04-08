@@ -75,7 +75,7 @@ public sealed class WebSocketBehaviorBinding : IHttpBehaviorBinding
                     ?.CreateLogger<WebSocketBehaviorBinding>();
                 using var ws = await ctx.WebSockets.AcceptWebSocketAsync().ConfigureAwait(false);
                 await HandleWebSocketAsync(ws, ctx, descriptor.Id, dispatcher, logger).ConfigureAwait(false);
-            });
+            }).ExcludeFromDescription();
         }
 
         return Task.CompletedTask;
