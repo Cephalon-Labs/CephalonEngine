@@ -446,6 +446,9 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains("replaceState", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("/scalar/${encodeURIComponent(documentName)}", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("hashchange", scalarConfigPayload, StringComparison.Ordinal);
+        Assert.Contains("hashSectionRoots", scalarConfigPayload, StringComparison.Ordinal);
+        Assert.Contains("isVersionDocumentName", scalarConfigPayload, StringComparison.Ordinal);
+        Assert.Contains("hashCarriesVersionDocument", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("no-store", scalarConfigResponse.Headers.CacheControl?.ToString(), StringComparison.OrdinalIgnoreCase);
 
         Assert.True(scalarFaviconResponse.IsSuccessStatusCode);
