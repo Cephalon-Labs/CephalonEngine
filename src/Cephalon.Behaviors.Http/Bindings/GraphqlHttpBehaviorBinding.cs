@@ -12,10 +12,9 @@ using Microsoft.Extensions.Configuration;
 namespace Cephalon.Behaviors.Http.Bindings;
 
 /// <summary>
-/// GraphQL HTTP transport binding (transport ID: <c>http.graphql</c>).
-/// Accepts canonical routes such as <c>POST /graphql/v1/cart/get</c>, while optionally keeping the
-/// legacy <c>/behaviors/{id}/graphql</c> alias enabled for compatibility. The request body uses a
-/// standard GraphQL envelope and the <c>variables</c> object is dispatched as the behavior input.
+/// GraphQL HTTP transport binding (transport ID: <c>http.graphql</c>). Accepts canonical routes
+/// such as <c>POST /graphql/v1/cart/get</c>. The request body uses a standard GraphQL envelope and
+/// the <c>variables</c> object is dispatched as the behavior input.
 /// </summary>
 public sealed class GraphqlHttpBehaviorBinding : IHttpBehaviorBinding
 {

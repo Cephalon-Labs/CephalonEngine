@@ -70,6 +70,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorAdvisorySeverity),
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorAllowedPatternsAttribute),
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorAllowedTransportsAttribute),
+            typeof(global::Cephalon.Abstractions.Behaviors.BehaviorApiSurfaceDescriptor),
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorCompatibilityViolation),
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorFault),
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorNotFoundException),
@@ -179,8 +180,10 @@ public sealed class PackageSurfaceTests
         AssertExportedTypes(
             typeof(global::Cephalon.AspNetCore.Hosting.EngineWebApplicationBuilderExtensions).Assembly,
             typeof(global::Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface),
+            typeof(global::Cephalon.AspNetCore.Documentation.OpenApiEndpointOptions),
             typeof(global::Cephalon.AspNetCore.Documentation.ReferenceDocsHostingOptions),
             typeof(global::Cephalon.AspNetCore.Documentation.ReferenceDocsSurface),
+            typeof(global::Cephalon.AspNetCore.Hosting.ApiRoutesOptions),
             typeof(global::Cephalon.AspNetCore.Hosting.EngineWebApplicationBuilderExtensions),
             typeof(global::Cephalon.AspNetCore.Hosting.EngineWebApplicationExtensions),
             typeof(global::Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions),

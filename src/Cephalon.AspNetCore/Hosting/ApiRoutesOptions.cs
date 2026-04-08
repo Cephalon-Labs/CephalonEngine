@@ -57,35 +57,9 @@ public sealed class ApiRoutesOptions
     public string GraphQLSsePrefix { get; set; } = "/graphql-sse";
 
     /// <summary>
-    /// Gets or sets the canonical prefix used by the generic behavior REST binding surface.
-    /// </summary>
-    /// <remarks>
-    /// This compatibility alias mirrors <see cref="RestPrefix" /> unless a legacy behavior-specific prefix is configured.
-    /// New configurations should use <c>ApiRoutes:Prefixes:Rest</c>.
-    /// </remarks>
-    public string BehaviorRestPrefix { get; set; } = "/api";
-
-    /// <summary>
-    /// Gets or sets the canonical prefix used by the generic behavior WebSocket binding surface.
-    /// </summary>
-    /// <remarks>
-    /// This compatibility alias mirrors <see cref="WsPrefix" /> and remains for older consumers that referenced the previous property name.
-    /// </remarks>
-    public string WebSocketPrefix
-    {
-        get => WsPrefix;
-        set => WsPrefix = value;
-    }
-
-    /// <summary>
     /// Gets or sets the default document/version segment projected into generic behavior transport routes.
     /// </summary>
     public string DefaultBehaviorDocumentName { get; set; } = OpenApiDocumentNames.DefaultDocumentName;
-
-    /// <summary>
-    /// Gets or sets a value indicating whether legacy <c>/behaviors/{id}/...</c> aliases remain active.
-    /// </summary>
-    public bool MapLegacyBehaviorRoutes { get; set; } = true;
 
     /// <summary>
     /// Binds and normalizes API route settings from configuration.
@@ -100,17 +74,15 @@ public sealed class ApiRoutesOptions
         ArgumentNullException.ThrowIfNull(configuration);
 
         var section = configuration.GetSection(sectionPath);
-        var restPrefix = section["Prefixes:Rest"] ?? section["RestPrefix"];
-        var graphQlPrefix = section["Prefixes:GraphQL"] ?? section["GraphQLPrefix"] ?? section["GraphQlPrefix"];
-        var jsonRpcPrefix = section["Prefixes:JsonRpc"] ?? section["JsonRpcPrefix"];
-        var grpcPrefix = section["Prefixes:Grpc"] ?? section["GrpcPrefix"];
-        var wsPrefix = section["Prefixes:Ws"] ?? section["WsPrefix"] ?? section["WebSocketPrefix"] ?? section["Prefixes:WebSocket"];
-        var ssePrefix = section["Prefixes:Sse"] ?? section["SsePrefix"];
-        var graphQlWsPrefix = section["Prefixes:GraphQLWs"] ?? section["GraphQLWsPrefix"] ?? section["GraphQlWsPrefix"];
-        var graphQlSsePrefix = section["Prefixes:GraphQLSse"] ?? section["GraphQLSsePrefix"] ?? section["GraphQlSsePrefix"];
-        var behaviorRestPrefix = section["BehaviorRestPrefix"] ?? section["Prefixes:BehaviorRest"];
+        var restPrefix = section["Prefixes:Rest"];
+        var graphQlPrefix = section["Prefixes:GraphQL"];
+        var jsonRpcPrefix = section["Prefixes:JsonRpc"];
+        var grpcPrefix = section["Prefixes:Grpc"];
+        var wsPrefix = section["Prefixes:Ws"];
+        var ssePrefix = section["Prefixes:Sse"];
+        var graphQlWsPrefix = section["Prefixes:GraphQLWs"];
+        var graphQlSsePrefix = section["Prefixes:GraphQLSse"];
         var defaultBehaviorDocumentName = section["DefaultBehaviorDocumentName"]?.Trim();
-        var mapLegacyBehaviorRoutes = section["MapLegacyBehaviorRoutes"] ?? section["BehaviorLegacyAliases"];
         var normalizedRestPrefix = NormalizePrefix(restPrefix, "/api");
         var normalizedWsPrefix = NormalizePrefix(wsPrefix, "/ws");
 
@@ -124,15 +96,9 @@ public sealed class ApiRoutesOptions
             SsePrefix = NormalizePrefix(ssePrefix, "/sse"),
             GraphQLWsPrefix = NormalizePrefix(graphQlWsPrefix, "/graphql-ws"),
             GraphQLSsePrefix = NormalizePrefix(graphQlSsePrefix, "/graphql-sse"),
-            BehaviorRestPrefix = NormalizePrefix(behaviorRestPrefix, normalizedRestPrefix),
-            DefaultBehaviorDocumentName = NormalizeDocumentName(defaultBehaviorDocumentName, configuration),
-            MapLegacyBehaviorRoutes = GetBoolean(mapLegacyBehaviorRoutes, defaultValue: true),
-            WebSocketPrefix = normalizedWsPrefix
+            DefaultBehaviorDocumentName = NormalizeDocumentName(defaultBehaviorDocumentName, configuration)
         };
     }
-
-    private static bool GetBoolean(string? value, bool defaultValue) =>
-        bool.TryParse(value, out var parsed) ? parsed : defaultValue;
 
     private static string NormalizeDocumentName(string? value, IConfiguration configuration)
     {

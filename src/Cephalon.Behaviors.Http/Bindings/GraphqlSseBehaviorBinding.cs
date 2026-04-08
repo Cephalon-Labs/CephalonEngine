@@ -14,8 +14,7 @@ namespace Cephalon.Behaviors.Http.Bindings;
 
 /// <summary>
 /// GraphQL over Server-Sent Events (SSE) transport binding (transport ID: <c>http.graphql-sse</c>).
-/// Accepts canonical routes such as <c>POST /graphql-sse/v1/cart/get</c>, while optionally
-/// keeping the legacy <c>/behaviors/{id}/graphql/sse</c> alias enabled for compatibility.
+/// Accepts canonical routes such as <c>POST /graphql-sse/v1/cart/get</c>.
 /// The <c>variables</c> object is used as the behavior input, then the result is streamed as SSE
 /// events before sending a <c>complete</c> event.
 /// </summary>

@@ -103,13 +103,13 @@ Adds HTTP transport bindings. Each binding implements `IHttpBehaviorBinding` and
 
 | Transport ID | Binding | Route pattern |
 |---|---|---|
-| `http.rest` | `RestHttpBehaviorBinding` | Canonical `POST/GET {RestPrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}` alias |
-| `http.jsonrpc` | `JsonRpcHttpBehaviorBinding` | Canonical `POST {JsonRpcPrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}/jsonrpc` alias |
-| `http.graphql` | `GraphqlHttpBehaviorBinding` | Canonical `POST {GraphQLPrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}/graphql` alias |
-| `http.graphql-sse` | `GraphqlSseBehaviorBinding` | Canonical `POST {GraphQLSsePrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}/graphql/sse` alias |
-| `http.graphql-ws` | `GraphqlWsBehaviorBinding` | Canonical `GET {GraphQLWsPrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}/graphql/ws` alias |
-| `http.sse` | `SseBehaviorBinding` | Canonical `GET {SsePrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}/events` alias |
-| `http.ws` | `WebSocketBehaviorBinding` | Canonical `GET {WsPrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}/ws` alias |
+| `http.rest` | `RestHttpBehaviorBinding` | Canonical `POST/GET {RestPrefix}/{document}/{group}/{operation}` |
+| `http.jsonrpc` | `JsonRpcHttpBehaviorBinding` | Canonical `POST {JsonRpcPrefix}/{document}/{group}/{operation}` |
+| `http.graphql` | `GraphqlHttpBehaviorBinding` | Canonical `POST {GraphQLPrefix}/{document}/{group}/{operation}` |
+| `http.graphql-sse` | `GraphqlSseBehaviorBinding` | Canonical `POST {GraphQLSsePrefix}/{document}/{group}/{operation}` |
+| `http.graphql-ws` | `GraphqlWsBehaviorBinding` | Canonical `GET {GraphQLWsPrefix}/{document}/{group}/{operation}` |
+| `http.sse` | `SseBehaviorBinding` | Canonical `GET {SsePrefix}/{document}/{group}/{operation}` |
+| `http.ws` | `WebSocketBehaviorBinding` | Canonical `GET {WsPrefix}/{document}/{group}/{operation}` |
 
 ## M6 Runtime Integration
 

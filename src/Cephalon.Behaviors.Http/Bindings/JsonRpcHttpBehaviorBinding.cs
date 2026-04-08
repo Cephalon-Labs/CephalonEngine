@@ -92,9 +92,8 @@ internal sealed partial class JsonRpcSerializerContext : JsonSerializerContext {
 
 /// <summary>
 /// JSON-RPC 2.0 HTTP transport binding (transport ID: <c>http.jsonrpc</c>).
-/// Accepts canonical routes such as <c>POST /json-rpc/v1/cart/get</c>, while optionally keeping the
-/// legacy <c>/behaviors/{id}/jsonrpc</c> alias enabled for compatibility, and returns a JSON-RPC
-/// 2.0 response or error object.
+/// Accepts canonical routes such as <c>POST /json-rpc/v1/cart/get</c> and returns a JSON-RPC 2.0
+/// response or error object.
 /// Per the JSON-RPC 2.0 specification the HTTP status is always <c>200 OK</c>.
 /// </summary>
 /// <remarks>

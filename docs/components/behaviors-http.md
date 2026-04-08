@@ -20,13 +20,13 @@ It wires behavior topology descriptors to HTTP transports via 7 concrete `IHttpB
 
 | Transport ID | Binding class | Route |
 |---|---|---|
-| `http.rest` | `RestHttpBehaviorBinding` | Canonical `POST/GET {RestPrefix}/{document}/{group}/{operation}`; optional legacy alias `POST/GET /behaviors/{id}` |
-| `http.jsonrpc` | `JsonRpcHttpBehaviorBinding` | Canonical `POST {JsonRpcPrefix}/{document}/{group}/{operation}`; optional legacy alias `POST /behaviors/{id}/jsonrpc` |
-| `http.graphql` | `GraphqlHttpBehaviorBinding` | Canonical `POST {GraphQLPrefix}/{document}/{group}/{operation}`; optional legacy alias `POST /behaviors/{id}/graphql` |
-| `http.graphql-sse` | `GraphqlSseBehaviorBinding` | Canonical `POST {GraphQLSsePrefix}/{document}/{group}/{operation}`; optional legacy alias `POST /behaviors/{id}/graphql/sse` |
-| `http.graphql-ws` | `GraphqlWsBehaviorBinding` | Canonical `GET {GraphQLWsPrefix}/{document}/{group}/{operation}`; optional legacy alias `GET /behaviors/{id}/graphql/ws` |
-| `http.sse` | `SseBehaviorBinding` | Canonical `GET {SsePrefix}/{document}/{group}/{operation}`; optional legacy alias `GET /behaviors/{id}/events` |
-| `http.ws` | `WebSocketBehaviorBinding` | Canonical `GET {WsPrefix}/{document}/{group}/{operation}`; optional legacy alias `GET /behaviors/{id}/ws` |
+| `http.rest` | `RestHttpBehaviorBinding` | Canonical `POST/GET {RestPrefix}/{document}/{group}/{operation}` |
+| `http.jsonrpc` | `JsonRpcHttpBehaviorBinding` | Canonical `POST {JsonRpcPrefix}/{document}/{group}/{operation}` |
+| `http.graphql` | `GraphqlHttpBehaviorBinding` | Canonical `POST {GraphQLPrefix}/{document}/{group}/{operation}` |
+| `http.graphql-sse` | `GraphqlSseBehaviorBinding` | Canonical `POST {GraphQLSsePrefix}/{document}/{group}/{operation}` |
+| `http.graphql-ws` | `GraphqlWsBehaviorBinding` | Canonical `GET {GraphQLWsPrefix}/{document}/{group}/{operation}` |
+| `http.sse` | `SseBehaviorBinding` | Canonical `GET {SsePrefix}/{document}/{group}/{operation}` |
+| `http.ws` | `WebSocketBehaviorBinding` | Canonical `GET {WsPrefix}/{document}/{group}/{operation}` |
 
 Cephalon now uses a shared `BehaviorApiSurfaceDescriptor` for the generic route-shaped behavior transports.
 By default the API surface is derived from the behavior id, so `cart.get` becomes logical group `cart`
@@ -34,12 +34,13 @@ plus operation `get`, which the HTTP bindings project into canonical versioned r
 `/api/v1/cart/get`, `/json-rpc/v1/cart/get`, `/graphql/v1/cart/get`, `/graphql-sse/v1/cart/get`,
 `/graphql-ws/v1/cart/get`, `/sse/v1/cart/get`, and `/ws/v1/cart/get`.
 
-The host controls those canonical prefixes through `ApiRoutes:Prefixes:Rest`,
+The host controls those canonical prefixes through the canonical `ApiRoutes:Prefixes` contract:
+`ApiRoutes:Prefixes:Rest`,
 `ApiRoutes:Prefixes:GraphQL`, `ApiRoutes:Prefixes:JsonRpc`, `ApiRoutes:Prefixes:Sse`,
 `ApiRoutes:Prefixes:Ws`, `ApiRoutes:Prefixes:GraphQLWs`, and `ApiRoutes:Prefixes:GraphQLSse`,
 while the resolved default version/document segment comes from `OpenApi:DefaultVersion` or
-`ApiRoutes:DefaultBehaviorDocumentName`. Legacy `/behaviors/{id}` aliases remain available through
-`ApiRoutes:MapLegacyBehaviorRoutes`.
+`ApiRoutes:DefaultBehaviorDocumentName`. The older `/behaviors/{id}` aliases are no longer part of
+the generated behavior HTTP surface.
 
 ## Shared behavior API surface
 

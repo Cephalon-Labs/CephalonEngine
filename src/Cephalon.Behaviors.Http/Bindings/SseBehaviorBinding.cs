@@ -14,8 +14,7 @@ namespace Cephalon.Behaviors.Http.Bindings;
 /// <summary>
 /// Server-Sent Events transport binding (transport ID: <c>http.sse</c>).
 /// Opens a long-lived SSE stream at canonical routes such as
-/// <c>GET /sse/v1/cart/get</c>, while optionally keeping the legacy
-/// <c>/behaviors/{id}/events</c> alias enabled for compatibility.
+/// <c>GET /sse/v1/cart/get</c>.
 /// Query-string parameters are parsed into a JSON object and deserialized as the
 /// behavior's typed input. The behavior is dispatched immediately; its return value
 /// is streamed as a <c>data: {json}\n\n</c> event. The connection stays alive with

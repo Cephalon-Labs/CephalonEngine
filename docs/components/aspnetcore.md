@@ -65,11 +65,12 @@ The same host layer also owns the prefix policy for the generic behavior HTTP bi
 generic behavior transports now project canonical versioned paths through `ApiRoutes:Prefixes:Rest`,
 `ApiRoutes:Prefixes:GraphQL`, `ApiRoutes:Prefixes:JsonRpc`, `ApiRoutes:Prefixes:Sse`,
 `ApiRoutes:Prefixes:Ws`, `ApiRoutes:Prefixes:GraphQLWs`, `ApiRoutes:Prefixes:GraphQLSse`,
-`ApiRoutes:DefaultBehaviorDocumentName`, and `ApiRoutes:MapLegacyBehaviorRoutes`. That lets a host keep
+and `ApiRoutes:DefaultBehaviorDocumentName`. Older flat or behavior-specific prefix aliases are no
+longer part of the public config contract. That lets a host keep
 generic behavior REST on `/api/v1/...`, GraphQL on `/graphql/v1/...`, JSON-RPC on `/json-rpc/v1/...`,
 GraphQL-over-SSE on `/graphql-sse/v1/...`, GraphQL-over-WebSocket on `/graphql-ws/v1/...`, SSE on
-`/sse/v1/...`, and WebSocket on `/ws/v1/...` while still retaining the old `/behaviors/{id}` aliases
-when compatibility matters. The built-in host transport mappers follow the same canonical prefix set,
+`/sse/v1/...`, and WebSocket on `/ws/v1/...`. The older `/behaviors/{id}` aliases are gone, so the
+built-in host transport mappers follow the same canonical prefix set,
 so GraphQL, JSON-RPC, gRPC, SSE, and WebSocket transports can all move together under the `ApiRoutes`
 section instead of each surface inventing its own default root path.
 

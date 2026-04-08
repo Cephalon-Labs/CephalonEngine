@@ -4,6 +4,7 @@ using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.EventSourcing;
 using Cephalon.Abstractions.Modules;
+using Cephalon.AspNetCore.Hosting;
 using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Http.Bindings;
 using Cephalon.Behaviors.Http.Hosting;
@@ -212,7 +213,7 @@ public sealed class HttpBehaviorBindingTests
         var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.rest"]);
         var (app, client) = await BuildAppAsync(descriptor, new RestHttpBehaviorBinding());
 
-        var response = await client.PostAsJsonAsync("/behaviors/object.echo", "World");
+        var response = await client.PostAsJsonAsync("/api/v1/object/echo", "World");
 
         Assert.True(
             response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.NoContent,
@@ -227,7 +228,7 @@ public sealed class HttpBehaviorBindingTests
         var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.rest"]);
         var (app, client) = await BuildAppAsync(descriptor, new RestHttpBehaviorBinding());
 
-        var response = await client.GetAsync("/behaviors/object.echo?q=hello");
+        var response = await client.GetAsync("/api/v1/object/echo?q=hello");
 
         Assert.True(
             response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.NoContent,
@@ -269,7 +270,7 @@ public sealed class HttpBehaviorBindingTests
             id = 42
         };
 
-        var response = await client.PostAsJsonAsync("/behaviors/object.echo/jsonrpc", requestBody);
+        var response = await client.PostAsJsonAsync("/json-rpc/v1/object/echo", requestBody);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -287,7 +288,7 @@ public sealed class HttpBehaviorBindingTests
         var (app, client) = await BuildAppAsync(descriptor, new JsonRpcHttpBehaviorBinding());
 
         var requestBody = new { jsonrpc = "2.0", method = "unknown", id = 1 };
-        var response = await client.PostAsJsonAsync("/behaviors/object.echo/jsonrpc", requestBody);
+        var response = await client.PostAsJsonAsync("/json-rpc/v1/object/echo", requestBody);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -334,7 +335,7 @@ public sealed class HttpBehaviorBindingTests
         var (app, client) = await BuildAppAsync(descriptor, new GraphqlHttpBehaviorBinding());
 
         var requestBody = new { query = "{ echo }", variables = (object?)null };
-        var response = await client.PostAsJsonAsync("/behaviors/object.echo/graphql", requestBody);
+        var response = await client.PostAsJsonAsync("/graphql/v1/object/echo", requestBody);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -498,7 +499,22 @@ public sealed class HttpBehaviorBindingTests
     // ─────────────────────────────────────────────────────────────────────────
 
     [Fact]
-    public async Task SseBindingHasCorrectRoute()
+    public async Task JsonRpcBindingDoesNotMapLegacyAliasByDefault()
+    {
+        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.jsonrpc"]);
+        var (app, client) = await BuildAppAsync(descriptor, new JsonRpcHttpBehaviorBinding());
+
+        var response = await client.PostAsJsonAsync(
+            "/behaviors/object.echo/jsonrpc",
+            new { jsonrpc = "2.0", method = "handle", @params = "test-input", id = 42 });
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+
+        await app.StopAsync();
+    }
+
+    [Fact]
+    public async Task SseBindingDoesNotMapLegacyAliasByDefault()
     {
         var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.sse"]);
         var (app, client) = await BuildAppAsync(descriptor, new SseBehaviorBinding());
@@ -506,7 +522,7 @@ public sealed class HttpBehaviorBindingTests
         using var request = new HttpRequestMessage(HttpMethod.Get, "/behaviors/object.echo/events");
         var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
 
-        Assert.NotEqual(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
         await app.StopAsync();
     }
@@ -530,16 +546,14 @@ public sealed class HttpBehaviorBindingTests
     // ─────────────────────────────────────────────────────────────────────────
 
     [Fact]
-    public async Task WebSocketBindingHasCorrectRoute()
+    public async Task WebSocketBindingDoesNotMapLegacyAliasByDefault()
     {
         var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.ws"]);
         var (app, client) = await BuildAppAsync(descriptor, new WebSocketBehaviorBinding());
 
-        // Non-WebSocket HTTP GET to the WS route returns 400 (not 404).
         var response = await client.GetAsync("/behaviors/object.echo/ws");
 
-        Assert.NotEqual(HttpStatusCode.NotFound, response.StatusCode);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
         await app.StopAsync();
     }
@@ -595,6 +609,10 @@ public sealed class HttpBehaviorBindingTests
             "/invoke/v2/object/echo",
             new { jsonrpc = "2.0", method = "handle", @params = "hello", id = 11 });
         Assert.Equal(HttpStatusCode.OK, rpcResponse.StatusCode);
+        var legacyRpcAliasResponse = await rpcClient.PostAsJsonAsync(
+            "/behaviors/object.echo/jsonrpc",
+            new { jsonrpc = "2.0", method = "handle", @params = "hello", id = 12 });
+        Assert.Equal(HttpStatusCode.NotFound, legacyRpcAliasResponse.StatusCode);
         await rpcApp.StopAsync();
 
         var sseDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.sse"]);
@@ -616,6 +634,8 @@ public sealed class HttpBehaviorBindingTests
         var (wsApp, wsClient) = await BuildAppAsync(wsDescriptor, new WebSocketBehaviorBinding(configuration));
         var wsResponse = await wsClient.GetAsync("/socket/v2/object/echo");
         Assert.Equal(HttpStatusCode.BadRequest, wsResponse.StatusCode);
+        var legacyWsAliasResponse = await wsClient.GetAsync("/behaviors/object.echo/ws");
+        Assert.Equal(HttpStatusCode.NotFound, legacyWsAliasResponse.StatusCode);
         await wsApp.StopAsync();
 
         var graphQlWsDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.graphql-ws"]);
@@ -623,6 +643,35 @@ public sealed class HttpBehaviorBindingTests
         var graphQlWsResponse = await graphQlWsClient.GetAsync("/graphql-socket/v2/object/echo");
         Assert.Equal(HttpStatusCode.BadRequest, graphQlWsResponse.StatusCode);
         await graphQlWsApp.StopAsync();
+    }
+
+    [Fact]
+    public void ApiRoutesOptionsUsesCanonicalPrefixesContract()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ApiRoutes:RestPrefix"] = "/legacy-api",
+                ["ApiRoutes:GraphQLPrefix"] = "/legacy-graphql",
+                ["ApiRoutes:JsonRpcPrefix"] = "/legacy-json-rpc",
+                ["ApiRoutes:GrpcPrefix"] = "/legacy-grpc",
+                ["ApiRoutes:WsPrefix"] = "/legacy-ws",
+                ["ApiRoutes:SsePrefix"] = "/legacy-sse",
+                ["ApiRoutes:GraphQLWsPrefix"] = "/legacy-graphql-ws",
+                ["ApiRoutes:GraphQLSsePrefix"] = "/legacy-graphql-sse"
+            })
+            .Build();
+
+        var options = ApiRoutesOptions.FromConfiguration(configuration);
+
+        Assert.Equal("/api", options.RestPrefix);
+        Assert.Equal("/graphql", options.GraphQLPrefix);
+        Assert.Equal("/json-rpc", options.JsonRpcPrefix);
+        Assert.Equal("/grpc", options.GrpcPrefix);
+        Assert.Equal("/ws", options.WsPrefix);
+        Assert.Equal("/sse", options.SsePrefix);
+        Assert.Equal("/graphql-ws", options.GraphQLWsPrefix);
+        Assert.Equal("/graphql-sse", options.GraphQLSsePrefix);
     }
 
     // ─────────────────────────────────────────────────────────────────────────

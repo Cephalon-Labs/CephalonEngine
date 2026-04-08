@@ -19,9 +19,9 @@ namespace Cephalon.Behaviors.Http.Bindings;
 
 /// <summary>
 /// GraphQL over WebSocket transport binding (transport ID: <c>http.graphql-ws</c>).
-/// Upgrades canonical routes such as <c>GET /graphql-ws/v1/cart/get</c> to a WebSocket connection,
-/// while optionally keeping the legacy <c>/behaviors/{id}/graphql/ws</c> alias enabled for compatibility.
-/// The connection implements the <c>graphql-transport-ws</c> sub-protocol:
+/// Upgrades canonical routes such as <c>GET /graphql-ws/v1/cart/get</c> to a WebSocket connection.
+/// The connection implements the
+/// <c>graphql-transport-ws</c> sub-protocol:
 /// <c>connection_init</c> → <c>connection_ack</c> → <c>subscribe</c> → <c>next</c> → <c>complete</c>.
 /// </summary>
 public sealed class GraphqlWsBehaviorBinding : IHttpBehaviorBinding

@@ -193,6 +193,7 @@ These are explicit working agreements from the current collaboration and should 
 - repo-local memory is the reliable cross-thread source of truth; agreements that matter beyond the current thread should be written down here or in another repo-owned document
 - Cephalon is still in an active POC and invention phase, so decisions should not stay trapped by the current implementation alone; if a materially better approach exists for engine quality, architecture, performance, security, developer ergonomics, or future-proofing, it is acceptable to change direction deliberately
 - when rethinking an area during this POC phase, optimize for making Cephalon a stronger long-term engine: reduce common developer pain, keep the platform broad enough for varied project types, and prefer durable engine primitives over short-term local convenience
+- Cephalon does not yet have legacy production consumers that must be preserved at all costs; when a compatibility shim conflicts with a cleaner long-term engine contract during the POC phase, prefer removing the shim and shipping the better design deliberately
 
 Current standing examples from this collaboration:
 

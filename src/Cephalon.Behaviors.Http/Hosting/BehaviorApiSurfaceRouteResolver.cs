@@ -4,7 +4,7 @@ using Cephalon.AspNetCore.Hosting;
 namespace Cephalon.Behaviors.Http.Hosting;
 
 /// <summary>
-/// Resolves canonical and legacy HTTP routes for behavior transport bindings from the shared API surface descriptor.
+/// Resolves canonical HTTP routes for behavior transport bindings from the shared API surface descriptor.
 /// </summary>
 internal sealed class BehaviorApiSurfaceRouteResolver
 {
@@ -20,26 +20,14 @@ internal sealed class BehaviorApiSurfaceRouteResolver
         ArgumentException.ThrowIfNullOrWhiteSpace(transportId);
         ArgumentNullException.ThrowIfNull(descriptor);
 
-        var routes = new List<string>
-        {
-            ResolveCanonicalRoute(transportId, descriptor)
-        };
-
-        if (options.MapLegacyBehaviorRoutes)
-        {
-            routes.Add(ResolveLegacyRoute(transportId, descriptor));
-        }
-
-        return routes
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToArray();
+        return [ResolveCanonicalRoute(transportId, descriptor)];
     }
 
     private string ResolveCanonicalRoute(string transportId, BehaviorTopologyDescriptor descriptor)
     {
         var prefix = transportId switch
         {
-            "http.rest" => options.BehaviorRestPrefix,
+            "http.rest" => options.RestPrefix,
             "http.jsonrpc" => options.JsonRpcPrefix,
             "http.sse" => options.SsePrefix,
             "http.ws" => options.WsPrefix,
@@ -55,22 +43,6 @@ internal sealed class BehaviorApiSurfaceRouteResolver
             options.DefaultBehaviorDocumentName,
             descriptor.ApiSurface.GroupPath,
             descriptor.ApiSurface.OperationPath);
-    }
-
-    private static string ResolveLegacyRoute(string transportId, BehaviorTopologyDescriptor descriptor)
-    {
-        return transportId switch
-        {
-            "http.rest" => $"/behaviors/{descriptor.Id}",
-            "http.jsonrpc" => $"/behaviors/{descriptor.Id}/jsonrpc",
-            "http.sse" => $"/behaviors/{descriptor.Id}/events",
-            "http.ws" => $"/behaviors/{descriptor.Id}/ws",
-            "http.graphql" => $"/behaviors/{descriptor.Id}/graphql",
-            "http.graphql-sse" => $"/behaviors/{descriptor.Id}/graphql/sse",
-            "http.graphql-ws" => $"/behaviors/{descriptor.Id}/graphql/ws",
-            _ => throw new InvalidOperationException(
-                $"Transport '{transportId}' does not participate in the shared behavior API surface route policy.")
-        };
     }
 
     private static string JoinSegments(params string[] segments)

@@ -18,8 +18,7 @@ namespace Cephalon.Behaviors.Http.Bindings;
 /// <summary>
 /// Bidirectional WebSocket transport binding (transport ID: <c>http.ws</c>).
 /// Upgrades canonical routes such as <c>GET /ws/v1/cart/get</c> to a full-duplex WebSocket
-/// connection, while optionally keeping the legacy <c>/behaviors/{id}/ws</c> alias enabled for
-/// compatibility.
+/// connection.
 /// Each received JSON text frame is dispatched to the behavior and the result
 /// is sent back as a JSON text frame. The connection is closed gracefully on
 /// client close or cancellation.
@@ -27,8 +26,8 @@ namespace Cephalon.Behaviors.Http.Bindings;
 /// <remarks>
 /// Canonical routes are derived from the shared <see cref="BehaviorApiSurfaceDescriptor" /> plus
 /// the configured WebSocket prefix (canonically <c>ApiRoutes:Prefixes:Ws</c>) and the resolved
-/// default behavior document name. <see cref="ApiRoutesOptions.WebSocketPrefix" /> remains
-/// available as a compatibility alias for older consumers.
+/// default behavior document name. <see cref="ApiRoutesOptions.WsPrefix" /> controls the
+/// configurable root prefix.
 /// </remarks>
 public sealed class WebSocketBehaviorBinding : IHttpBehaviorBinding
 {

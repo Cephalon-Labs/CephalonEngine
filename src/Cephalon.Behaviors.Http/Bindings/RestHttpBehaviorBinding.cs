@@ -15,15 +15,13 @@ namespace Cephalon.Behaviors.Http.Bindings;
 /// <summary>
 /// HTTP REST transport binding (transport ID: <c>http.rest</c>).
 /// Maps canonical behavior routes such as <c>POST /api/v1/cart/get</c> and
-/// <c>GET /api/v1/cart/get</c>, while optionally keeping the legacy
-/// <c>/behaviors/{id}</c> aliases enabled for compatibility.
+/// <c>GET /api/v1/cart/get</c> as the default per-behavior REST surface.
 /// </summary>
 /// <remarks>
 /// Canonical routes are derived from the shared <see cref="BehaviorApiSurfaceDescriptor" /> plus
 /// the configured REST prefix (canonically <c>ApiRoutes:Prefixes:Rest</c>) together with the
-/// resolved default behavior document name. <see cref="ApiRoutesOptions.BehaviorRestPrefix" />
-/// remains available as a compatibility alias for older hosts. Query-string parameters are parsed
-/// as JSON input for GET requests.
+/// resolved default behavior document name. <see cref="ApiRoutesOptions.RestPrefix" /> controls the
+/// configurable root prefix. Query-string parameters are parsed as JSON input for GET requests.
 /// </remarks>
 public sealed class RestHttpBehaviorBinding : IHttpBehaviorBinding
 {
