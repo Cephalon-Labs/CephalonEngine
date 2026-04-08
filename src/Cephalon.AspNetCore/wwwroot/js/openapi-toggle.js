@@ -71,7 +71,21 @@ function normalizeHashCanonicalUrl() {
   window.history.replaceState(window.history.state, "", nextUrl);
 }
 
-normalizeHashCanonicalUrl();
+function scheduleHashCanonicalization() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  normalizeHashCanonicalUrl();
+  window.setTimeout(normalizeHashCanonicalUrl, 0);
+  window.setTimeout(normalizeHashCanonicalUrl, 250);
+}
+
+if (typeof window !== "undefined") {
+  window.addEventListener("hashchange", normalizeHashCanonicalUrl);
+}
+
+scheduleHashCanonicalization();
 
 export default {
   generateOperationSlug: (operation) => {
