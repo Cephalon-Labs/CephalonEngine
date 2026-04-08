@@ -2,7 +2,7 @@
 // CephalonEngine Showcase — JavaScript
 // ═══════════════════════════════════════════════════════════
 
-const API = '/api/showcase';
+const API = '/api/v1/showcase';
 const BEHAVIOR_BASE = '/behaviors';
 
 // ── State ──────────────────────────────────────────────────

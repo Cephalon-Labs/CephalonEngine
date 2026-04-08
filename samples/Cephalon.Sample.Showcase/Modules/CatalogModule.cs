@@ -44,7 +44,8 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
     /// <inheritdoc />
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup("/showcase/catalog");
+        var group = endpoints.MapGroup("/v1/showcase/catalog")
+            .WithGroupName("v1");
 
         group.MapGet("/products", async (HttpContext ctx) =>
         {
@@ -101,7 +102,7 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
                 };
                 db.Products.Add(entity);
                 await db.SaveChangesAsync();
-                return Results.Created($"/api/showcase/catalog/products/{productId}", ToProduct(entity));
+                return Results.Created($"/api/v1/showcase/catalog/products/{productId}", ToProduct(entity));
             }
 
             var product = new Product
@@ -117,7 +118,7 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
                 CreatedAtUtc = DateTime.UtcNow
             };
             ShowcaseDataStore.Products[productId] = product;
-            return Results.Created($"/api/showcase/catalog/products/{productId}", product);
+            return Results.Created($"/api/v1/showcase/catalog/products/{productId}", product);
         });
 
         group.MapPut("/products/{productId}", async (string productId, UpdateProductInput input, HttpContext ctx) =>

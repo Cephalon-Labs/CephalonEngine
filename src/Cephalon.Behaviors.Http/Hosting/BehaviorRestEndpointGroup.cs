@@ -24,32 +24,25 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     private static readonly MethodInfo MapPostCoreMethod = GetRequiredCoreMethod(nameof(MapBehaviorPostCore));
     private static readonly MethodInfo MapPutCoreMethod = GetRequiredCoreMethod(nameof(MapBehaviorPutCore));
 
-    internal BehaviorRestEndpointGroup(RouteGroupBuilder routes, IModule module)
+    private readonly IEndpointRouteBuilder endpoints;
+    private readonly string routePrefix;
+    private RouteGroupBuilder? routes;
+
+    internal BehaviorRestEndpointGroup(IEndpointRouteBuilder endpoints, IModule module, string routePrefix)
     {
-        Routes = routes ?? throw new ArgumentNullException(nameof(routes));
+        this.endpoints = endpoints ?? throw new ArgumentNullException(nameof(endpoints));
         Module = module ?? throw new ArgumentNullException(nameof(module));
+        this.routePrefix = NormalizeRoutePrefix(routePrefix);
         ModuleDescriptor = module.Descriptor;
         ModuleVersionMajor = ResolveModuleMajorVersion(ModuleDescriptor.Version);
         TagName = ModuleDescriptor.DisplayName;
         OpenApiDocumentName = DefaultOpenApiDocumentName;
-
-        Routes.WithTags(TagName);
-        Routes.ProducesProblem(StatusCodes.Status400BadRequest);
-        Routes.ProducesProblem(StatusCodes.Status404NotFound);
-        Routes.WithMetadata(new BehaviorRestGroupMetadata(
-            ModuleDescriptor.Id,
-            ModuleDescriptor.DisplayName,
-            ModuleDescriptor.Description,
-            ModuleDescriptor.Version,
-            ModuleVersionMajor,
-            BehaviorXmlDocumentation.GetSummary(module.GetType()),
-            BehaviorXmlDocumentation.GetRemarks(module.GetType())));
     }
 
     /// <summary>
     /// Gets the underlying Minimal API route group.
     /// </summary>
-    public RouteGroupBuilder Routes { get; }
+    public RouteGroupBuilder Routes => EnsureRoutes();
 
     /// <summary>
     /// Gets the module instance that owns the route group.
@@ -92,6 +85,10 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     public BehaviorRestEndpointGroup ApiVersion(int major)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(major);
+        if (routes is not null)
+        {
+            throw new InvalidOperationException("Call ApiVersion before mapping endpoints on the behavior REST group.");
+        }
 
         ApiVersionMajor = major;
         OpenApiDocumentName = $"v{major}";
@@ -181,7 +178,47 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     /// <inheritdoc />
     public void Add(Action<EndpointBuilder> convention)
     {
-        ((IEndpointConventionBuilder)Routes).Add(convention);
+        ((IEndpointConventionBuilder)EnsureRoutes()).Add(convention);
+    }
+
+    private RouteGroupBuilder EnsureRoutes()
+    {
+        if (routes is not null)
+        {
+            return routes;
+        }
+
+        routes = endpoints.MapGroup(BuildResolvedRoutePrefix());
+        routes.WithTags(TagName);
+        routes.ProducesProblem(StatusCodes.Status400BadRequest);
+        routes.ProducesProblem(StatusCodes.Status404NotFound);
+        routes.WithMetadata(new BehaviorRestGroupMetadata(
+            ModuleDescriptor.Id,
+            ModuleDescriptor.DisplayName,
+            ModuleDescriptor.Description,
+            ModuleDescriptor.Version,
+            ModuleVersionMajor,
+            BehaviorXmlDocumentation.GetSummary(Module.GetType()),
+            BehaviorXmlDocumentation.GetRemarks(Module.GetType())));
+
+        return routes;
+    }
+
+    private string BuildResolvedRoutePrefix()
+    {
+        if (!ApiVersionMajor.HasValue)
+        {
+            return routePrefix;
+        }
+
+        var versionPrefix = $"/v{ApiVersionMajor.Value}";
+        if (routePrefix.Equals(versionPrefix, StringComparison.OrdinalIgnoreCase) ||
+            routePrefix.StartsWith($"{versionPrefix}/", StringComparison.OrdinalIgnoreCase))
+        {
+            return routePrefix;
+        }
+
+        return $"{versionPrefix}{routePrefix}";
     }
 
     private RouteHandlerBuilder MapBehaviorCore<TBehavior>(
@@ -383,6 +420,21 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         return Version.TryParse(moduleVersion, out var parsedVersion)
             ? parsedVersion.Major
             : null;
+    }
+
+    private static string NormalizeRoutePrefix(string routePrefix)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(routePrefix);
+
+        var normalized = routePrefix.Trim();
+        if (!normalized.StartsWith('/'))
+        {
+            normalized = $"/{normalized}";
+        }
+
+        return normalized.Length > 1
+            ? normalized.TrimEnd('/')
+            : normalized;
     }
 
     private static MethodInfo GetRequiredCoreMethod(string methodName)

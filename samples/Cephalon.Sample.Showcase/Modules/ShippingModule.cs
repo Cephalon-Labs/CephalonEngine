@@ -44,7 +44,8 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
     /// <inheritdoc />
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup("/showcase/shipping");
+        var group = endpoints.MapGroup("/v1/showcase/shipping")
+            .WithGroupName("v1");
 
         group.MapGet("/", async (HttpContext ctx) =>
         {
@@ -102,7 +103,7 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
                 };
                 db.Shipments.Add(entity);
                 await db.SaveChangesAsync();
-                return Results.Created($"/showcase/shipping/{shipmentId}",
+                return Results.Created($"/api/v1/showcase/shipping/{shipmentId}",
                     new InitiateShippingOutput(shipmentId, "LabelCreated", estimatedDelivery));
             }
 
@@ -117,7 +118,7 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
                 CreatedAtUtc = DateTime.UtcNow
             };
             ShowcaseDataStore.Shipments[shipmentId] = shipment;
-            return Results.Created($"/showcase/shipping/{shipmentId}",
+            return Results.Created($"/api/v1/showcase/shipping/{shipmentId}",
                 new InitiateShippingOutput(shipmentId, "LabelCreated", estimatedDelivery));
         });
 

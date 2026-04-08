@@ -44,7 +44,8 @@ public sealed class InventoryModule : ModuleBase, IEndpointModule
     /// <inheritdoc />
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup("/showcase/inventory");
+        var group = endpoints.MapGroup("/v1/showcase/inventory")
+            .WithGroupName("v1");
 
         group.MapGet("/", async (HttpContext ctx) =>
         {

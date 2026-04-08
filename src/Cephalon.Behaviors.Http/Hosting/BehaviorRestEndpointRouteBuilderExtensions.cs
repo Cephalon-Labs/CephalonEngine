@@ -30,7 +30,7 @@ public static class BehaviorRestEndpointRouteBuilderExtensions
         ArgumentNullException.ThrowIfNull(module);
         ArgumentException.ThrowIfNullOrWhiteSpace(prefix);
 
-        return new BehaviorRestEndpointGroup(endpoints.MapGroup(prefix), module);
+        return new BehaviorRestEndpointGroup(endpoints, module, prefix);
     }
 }
 

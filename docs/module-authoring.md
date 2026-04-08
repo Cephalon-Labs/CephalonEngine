@@ -103,11 +103,12 @@ Current helper behavior:
 - merges route values, query-string values, and JSON request bodies into the behavior input payload
 - uses the module display name for OpenAPI tags
 - defaults newly mapped endpoints into the `v1` OpenAPI document and lets `.ApiVersion(major)` move them into another named document such as `v2`
+- prefixes the mapped REST route group with `/v{major}` when `.ApiVersion(major)` is configured, so ASP.NET Core hosts expose routes such as `/api/v1/showcase/cart/{cartId}`
 - uses `.ApiVersion(major)` as the operation-name version segment when configured; otherwise falls back to the owning module descriptor major version
 - flows XML comments from the module and behavior assemblies into ASP.NET Core OpenAPI metadata when XML docs are available
 - maps behavior `<summary>` to the operation header and behavior `<remarks>` to the operation description so Scalar/OpenAPI content stays non-duplicated
 
-When a host needs more than the default `v1` document, prefer `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion` so endpoints mapped with `.ApiVersion(2)` or higher have a matching OpenAPI/Scalar surface. In that shape, `/scalar` redirects to the selector page at `/scalar/` instead of pinning one document up front, while deep links such as `/scalar/v2` stay available when an operator or doc link wants to pin a specific document. Legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` settings remain available when a host deliberately wants custom named documents instead of `v{major}` API-version documents.
+When a host needs more than the default `v1` document, prefer `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion` so endpoints mapped with `.ApiVersion(2)` or higher have a matching OpenAPI/Scalar surface. In that shape, `/scalar` redirects to the default canonical document such as `/scalar/v2`, `/scalar/` remains available for multi-document selection, and Cephalon normalizes hash-based Scalar selections such as `/scalar/#v2/` back into pinned versioned links. Legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` settings remain available when a host deliberately wants custom named documents instead of `v{major}` API-version documents.
 
 The generic `/behaviors/{id}` REST binding still exists and remains useful for low-ceremony or fully dynamic behavior hosts. Use the helper surface when the module owns a stable public REST shape that should read like a normal application API.
 

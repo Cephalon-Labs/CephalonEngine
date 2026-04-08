@@ -65,11 +65,12 @@ Current helper behavior:
 - composes route values, query-string values, and JSON request bodies into the behavior input payload
 - uses the owning module display name as the OpenAPI tag
 - defaults newly mapped endpoints into the `v1` OpenAPI document and lets `.ApiVersion(major)` move them into another named document such as `v2`
+- prefixes the mapped REST route group with `/v{major}` when `.ApiVersion(major)` is configured, so hosts expose paths such as `/api/v1/showcase/cart/{cartId}`
 - uses `.ApiVersion(major)` as the operation-name version segment when configured; otherwise falls back to the owning module descriptor major version
 - reads XML comments from the module and behavior assemblies when available so ASP.NET Core OpenAPI + Scalar can show summaries and descriptions without extra boilerplate
 - maps behavior `<summary>` to the OpenAPI operation summary and behavior `<remarks>` to the OpenAPI operation description so Scalar does not repeat the same text twice
 - relies on host-level `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion` when modules need additional versioned docs beyond the default `v1`
-- expects `/scalar` to redirect to the selector page at `/scalar/` while `/scalar/v1`, `/scalar/v2`, and similar paths stay available as pinned-document deep links
+- expects `/scalar` to redirect to the default canonical document such as `/scalar/v1`, while `/scalar/` remains available for multi-document flows and hash-based selections are normalized back into pinned versioned links
 - still interoperates with legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` settings when a host needs custom named docs instead of major-version documents
 
 ## DefaultBehaviorContext header conventions

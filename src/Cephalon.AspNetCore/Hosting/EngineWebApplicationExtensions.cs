@@ -300,7 +300,7 @@ public static class EngineWebApplicationExtensions
                     context.Request.Path == "/scalar",
                 branch => branch.Run(context =>
                 {
-                    context.Response.Redirect(BuildScalarSelectorPath(context.Request.QueryString));
+                    context.Response.Redirect(BuildScalarCanonicalPath(defaultOpenApiDocumentName, context.Request.QueryString));
                     return Task.CompletedTask;
                 }));
             app.MapScalarApiReference((options, httpContext) =>
@@ -515,10 +515,11 @@ public static class EngineWebApplicationExtensions
         return $"{route}?v={DocumentationAssetVersion}";
     }
 
-    private static string BuildScalarSelectorPath(QueryString queryString)
+    private static string BuildScalarCanonicalPath(string documentName, QueryString queryString)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(documentName);
         var query = queryString.HasValue ? queryString.Value : string.Empty;
-        return $"/scalar/{query}";
+        return $"/scalar/{documentName}{query}";
     }
 
     private static HealthCheckOptions CreateHealthCheckOptions(Func<HealthCheckRegistration, bool> predicate)

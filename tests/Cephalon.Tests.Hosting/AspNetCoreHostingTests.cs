@@ -443,6 +443,8 @@ public sealed class AspNetCoreHostingTests
         Assert.True(scalarConfigResponse.IsSuccessStatusCode);
         Assert.Equal("application/javascript", scalarConfigResponse.Content.Headers.ContentType?.MediaType);
         Assert.Contains("export default", scalarConfigPayload, StringComparison.Ordinal);
+        Assert.Contains("replaceState", scalarConfigPayload, StringComparison.Ordinal);
+        Assert.Contains("/scalar/${encodeURIComponent(documentName)}", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("no-store", scalarConfigResponse.Headers.CacheControl?.ToString(), StringComparison.OrdinalIgnoreCase);
 
         Assert.True(scalarFaviconResponse.IsSuccessStatusCode);
@@ -620,7 +622,7 @@ public sealed class AspNetCoreHostingTests
         Assert.True(v2Response.IsSuccessStatusCode);
         Assert.Equal(HttpStatusCode.Redirect, scalarRootRedirectResponse.StatusCode);
         Assert.NotNull(scalarRootRedirectResponse.Headers.Location);
-        Assert.Equal("/scalar/?culture=en", scalarRootRedirectResponse.Headers.Location!.OriginalString);
+        Assert.Equal("/scalar/v2?culture=en", scalarRootRedirectResponse.Headers.Location!.OriginalString);
         Assert.True(scalarRootResponse.IsSuccessStatusCode);
         Assert.True(scalarV2Response.IsSuccessStatusCode);
 

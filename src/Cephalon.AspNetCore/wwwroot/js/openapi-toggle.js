@@ -23,6 +23,56 @@ function updateTitle(selectedDocument) {
     : baseTitle;
 }
 
+function updateCanonicalUrl(selectedDocument) {
+  if (typeof window === "undefined" || typeof window.history === "undefined") {
+    return;
+  }
+
+  const documentName =
+    selectedDocument && typeof selectedDocument.title === "string"
+      ? selectedDocument.title.trim()
+      : "";
+
+  if (documentName.length === 0) {
+    return;
+  }
+
+  const nextPath = `/scalar/${encodeURIComponent(documentName)}`;
+  const nextUrl = `${nextPath}${window.location.search ?? ""}`;
+  const currentUrl = `${window.location.pathname}${window.location.search ?? ""}${window.location.hash ?? ""}`;
+
+  if (currentUrl === nextUrl) {
+    return;
+  }
+
+  window.history.replaceState(window.history.state, "", nextUrl);
+}
+
+function normalizeHashCanonicalUrl() {
+  if (typeof window === "undefined" || typeof window.history === "undefined") {
+    return;
+  }
+
+  const { pathname, search, hash } = window.location;
+  if (pathname !== "/scalar" && pathname !== "/scalar/") {
+    return;
+  }
+
+  const documentName = String(hash ?? "")
+    .replace(/^#\/?/, "")
+    .replace(/\/+$/, "")
+    .trim();
+
+  if (documentName.length === 0) {
+    return;
+  }
+
+  const nextUrl = `/scalar/${encodeURIComponent(documentName)}${search ?? ""}`;
+  window.history.replaceState(window.history.state, "", nextUrl);
+}
+
+normalizeHashCanonicalUrl();
+
 export default {
   generateOperationSlug: (operation) => {
     const method = toSlug(operation?.method);
@@ -31,5 +81,6 @@ export default {
   },
   onDocumentSelect: (selectedDocument) => {
     updateTitle(selectedDocument);
+    updateCanonicalUrl(selectedDocument);
   },
 };

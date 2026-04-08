@@ -111,7 +111,7 @@ public sealed class ShowcaseSampleHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
-        var response = await client.GetAsync("/api/showcase/catalog/products");
+        var response = await client.GetAsync("/api/v1/showcase/catalog/products");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadAsStringAsync();
@@ -131,7 +131,7 @@ public sealed class ShowcaseSampleHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
-        var response = await client.GetAsync("/api/showcase/catalog/products/prod-001");
+        var response = await client.GetAsync("/api/v1/showcase/catalog/products/prod-001");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadAsStringAsync();
@@ -148,7 +148,7 @@ public sealed class ShowcaseSampleHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
-        var response = await client.GetAsync("/api/showcase/catalog/products/nonexistent");
+        var response = await client.GetAsync("/api/v1/showcase/catalog/products/nonexistent");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -246,7 +246,7 @@ public sealed class ShowcaseSampleHostingTests
             tags = new[] { "test" }
         };
         var content = JsonContent.Create(payload);
-        var response = await client.PostAsync("/api/showcase/catalog/products", content);
+        var response = await client.PostAsync("/api/v1/showcase/catalog/products", content);
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var body = await response.Content.ReadAsStringAsync();
@@ -270,7 +270,7 @@ public sealed class ShowcaseSampleHostingTests
             priceInCents = 139999
         };
         var content = JsonContent.Create(updatePayload);
-        var response = await client.PutAsync("/api/showcase/catalog/products/prod-001", content);
+        var response = await client.PutAsync("/api/v1/showcase/catalog/products/prod-001", content);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadAsStringAsync();
@@ -289,7 +289,7 @@ public sealed class ShowcaseSampleHostingTests
 
         // Fire 20 concurrent read requests
         var tasks = Enumerable.Range(0, 20)
-            .Select(_ => client.GetAsync("/api/showcase/catalog/products"))
+            .Select(_ => client.GetAsync("/api/v1/showcase/catalog/products"))
             .ToArray();
 
         var responses = await Task.WhenAll(tasks);
@@ -307,7 +307,7 @@ public sealed class ShowcaseSampleHostingTests
         var client = app.GetTestClient();
 
         // Count initial products
-        var initialResponse = await client.GetAsync("/api/showcase/catalog/products");
+        var initialResponse = await client.GetAsync("/api/v1/showcase/catalog/products");
         var initialBody = await initialResponse.Content.ReadAsStringAsync();
         var initialCount = JsonSerializer.Deserialize<JsonElement>(initialBody).GetArrayLength();
 
@@ -323,7 +323,7 @@ public sealed class ShowcaseSampleHostingTests
                     priceInCents = (i + 1) * 100,
                     currency = "USD"
                 };
-                return client.PostAsync("/api/showcase/catalog/products", JsonContent.Create(payload));
+                return client.PostAsync("/api/v1/showcase/catalog/products", JsonContent.Create(payload));
             })
             .ToArray();
 
@@ -331,7 +331,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.All(writeResponses, r => Assert.Equal(HttpStatusCode.Created, r.StatusCode));
 
         // Verify all 10 were persisted
-        var finalResponse = await client.GetAsync("/api/showcase/catalog/products");
+        var finalResponse = await client.GetAsync("/api/v1/showcase/catalog/products");
         var finalBody = await finalResponse.Content.ReadAsStringAsync();
         var finalCount = JsonSerializer.Deserialize<JsonElement>(finalBody).GetArrayLength();
 
@@ -349,7 +349,7 @@ public sealed class ShowcaseSampleHostingTests
 
         var payload = new { productId = "nonexistent", name = "Ghost" };
         var response = await client.PutAsync(
-            "/api/showcase/catalog/products/nonexistent",
+            "/api/v1/showcase/catalog/products/nonexistent",
             JsonContent.Create(payload));
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -368,7 +368,7 @@ public sealed class ShowcaseSampleHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
-        var response = await client.GetAsync("/api/showcase/orders");
+        var response = await client.GetAsync("/api/v1/showcase/orders");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadAsStringAsync();
@@ -395,7 +395,7 @@ public sealed class ShowcaseSampleHostingTests
                 new { productId = "prod-001", productName = "ProBook Laptop 15\"", quantity = 1, unitPriceInCents = 149999L }
             }
         };
-        var placeResponse = await client.PostAsync("/api/showcase/orders", JsonContent.Create(placePayload));
+        var placeResponse = await client.PostAsync("/api/v1/showcase/orders", JsonContent.Create(placePayload));
 
         Assert.Equal(HttpStatusCode.Created, placeResponse.StatusCode);
         var placeBody = await placeResponse.Content.ReadAsStringAsync();
@@ -405,7 +405,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("Pending", placed.GetProperty("status").GetString());
 
         // Retrieve the order
-        var getResponse = await client.GetAsync($"/api/showcase/orders/{orderId}");
+        var getResponse = await client.GetAsync($"/api/v1/showcase/orders/{orderId}");
         Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
         var getBody = await getResponse.Content.ReadAsStringAsync();
         Assert.Contains(orderId, getBody, StringComparison.Ordinal);
@@ -431,14 +431,14 @@ public sealed class ShowcaseSampleHostingTests
                 new { productId = "prod-002", productName = "ErgoGrip Wireless Mouse", quantity = 2, unitPriceInCents = 4999L }
             }
         };
-        var placeResponse = await client.PostAsync("/api/showcase/orders", JsonContent.Create(placePayload));
+        var placeResponse = await client.PostAsync("/api/v1/showcase/orders", JsonContent.Create(placePayload));
         var placed = JsonSerializer.Deserialize<JsonElement>(await placeResponse.Content.ReadAsStringAsync());
         var orderId = placed.GetProperty("orderId").GetString()!;
 
         // Cancel the order
         var cancelPayload = new { orderId, reason = "Changed my mind" };
         var cancelResponse = await client.PutAsync(
-            $"/api/showcase/orders/{orderId}/cancel",
+            $"/api/v1/showcase/orders/{orderId}/cancel",
             JsonContent.Create(cancelPayload));
 
         Assert.Equal(HttpStatusCode.OK, cancelResponse.StatusCode);
@@ -455,7 +455,7 @@ public sealed class ShowcaseSampleHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
-        var response = await client.GetAsync("/api/showcase/orders/nonexistent");
+        var response = await client.GetAsync("/api/v1/showcase/orders/nonexistent");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -473,7 +473,7 @@ public sealed class ShowcaseSampleHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
-        var response = await client.GetAsync("/api/showcase/inventory");
+        var response = await client.GetAsync("/api/v1/showcase/inventory");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadAsStringAsync();
@@ -490,7 +490,7 @@ public sealed class ShowcaseSampleHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
-        var response = await client.GetAsync("/api/showcase/inventory/prod-005");
+        var response = await client.GetAsync("/api/v1/showcase/inventory/prod-005");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadAsStringAsync();
@@ -515,7 +515,7 @@ public sealed class ShowcaseSampleHostingTests
                 new { productId = "prod-002", quantity = 5 }
             }
         };
-        var response = await client.PostAsync("/api/showcase/inventory/reserve", JsonContent.Create(payload));
+        var response = await client.PostAsync("/api/v1/showcase/inventory/reserve", JsonContent.Create(payload));
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadAsStringAsync();
@@ -532,7 +532,7 @@ public sealed class ShowcaseSampleHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
-        var response = await client.GetAsync("/api/showcase/inventory/nonexistent");
+        var response = await client.GetAsync("/api/v1/showcase/inventory/nonexistent");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -550,7 +550,7 @@ public sealed class ShowcaseSampleHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
-        var response = await client.GetAsync("/api/showcase/shipping");
+        var response = await client.GetAsync("/api/v1/showcase/shipping");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadAsStringAsync();
@@ -577,7 +577,7 @@ public sealed class ShowcaseSampleHostingTests
                 new { productId = "prod-001", productName = "ProBook Laptop 15\"", quantity = 1 }
             }
         };
-        var initiateResponse = await client.PostAsync("/api/showcase/shipping", JsonContent.Create(initiatePayload));
+        var initiateResponse = await client.PostAsync("/api/v1/showcase/shipping", JsonContent.Create(initiatePayload));
 
         Assert.Equal(HttpStatusCode.Created, initiateResponse.StatusCode);
         var initiateBody = await initiateResponse.Content.ReadAsStringAsync();
@@ -587,7 +587,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("LabelCreated", initiated.GetProperty("status").GetString());
 
         // Track the shipment
-        var trackResponse = await client.GetAsync($"/api/showcase/shipping/{shipmentId}");
+        var trackResponse = await client.GetAsync($"/api/v1/showcase/shipping/{shipmentId}");
         Assert.Equal(HttpStatusCode.OK, trackResponse.StatusCode);
         var trackBody = await trackResponse.Content.ReadAsStringAsync();
         Assert.Contains(shipmentId, trackBody, StringComparison.Ordinal);
@@ -610,14 +610,14 @@ public sealed class ShowcaseSampleHostingTests
             destinationAddress = "321 Complete St",
             items = new[] { new { productId = "prod-003", productName = "AdjustaPro Standing Desk", quantity = 1 } }
         };
-        var initiateResponse = await client.PostAsync("/api/showcase/shipping", JsonContent.Create(initiatePayload));
+        var initiateResponse = await client.PostAsync("/api/v1/showcase/shipping", JsonContent.Create(initiatePayload));
         var initiated = JsonSerializer.Deserialize<JsonElement>(await initiateResponse.Content.ReadAsStringAsync());
         var shipmentId = initiated.GetProperty("shipmentId").GetString()!;
 
         // Confirm delivery
         var deliverPayload = new { shipmentId, recipientName = "Test User" };
         var deliverResponse = await client.PutAsync(
-            $"/api/showcase/shipping/{shipmentId}/deliver",
+            $"/api/v1/showcase/shipping/{shipmentId}/deliver",
             JsonContent.Create(deliverPayload));
 
         Assert.Equal(HttpStatusCode.OK, deliverResponse.StatusCode);
@@ -634,7 +634,7 @@ public sealed class ShowcaseSampleHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
-        var response = await client.GetAsync("/api/showcase/shipping/nonexistent");
+        var response = await client.GetAsync("/api/v1/showcase/shipping/nonexistent");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -662,7 +662,7 @@ public sealed class ShowcaseSampleHostingTests
             quantity = 1,
             priceInCents = 149999L
         };
-        var addResponse = await client.PostAsync("/api/showcase/cart/cart-test-001/items", JsonContent.Create(addPayload));
+        var addResponse = await client.PostAsync("/api/v1/showcase/cart/cart-test-001/items", JsonContent.Create(addPayload));
 
         Assert.Equal(HttpStatusCode.OK, addResponse.StatusCode);
         var addBody = await addResponse.Content.ReadAsStringAsync();
@@ -671,7 +671,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(149999, added.GetProperty("totalInCents").GetInt64());
 
         // Retrieve cart
-        var getResponse = await client.GetAsync("/api/showcase/cart/cart-test-001");
+        var getResponse = await client.GetAsync("/api/v1/showcase/cart/cart-test-001");
         Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
         var getBody = await getResponse.Content.ReadAsStringAsync();
         Assert.Contains("cart-test-001", getBody, StringComparison.Ordinal);
@@ -690,14 +690,14 @@ public sealed class ShowcaseSampleHostingTests
         // Add two items
         var item1 = new { cartId = "cart-remove-001", customerId = "cust-rm", productId = "prod-001",
             productName = "Laptop", quantity = 1, priceInCents = 149999L };
-        await client.PostAsync("/api/showcase/cart/cart-remove-001/items", JsonContent.Create(item1));
+        await client.PostAsync("/api/v1/showcase/cart/cart-remove-001/items", JsonContent.Create(item1));
 
         var item2 = new { cartId = "cart-remove-001", customerId = "cust-rm", productId = "prod-002",
             productName = "Mouse", quantity = 1, priceInCents = 4999L };
-        await client.PostAsync("/api/showcase/cart/cart-remove-001/items", JsonContent.Create(item2));
+        await client.PostAsync("/api/v1/showcase/cart/cart-remove-001/items", JsonContent.Create(item2));
 
         // Remove one
-        var removeResponse = await client.DeleteAsync("/api/showcase/cart/cart-remove-001/items/prod-001");
+        var removeResponse = await client.DeleteAsync("/api/v1/showcase/cart/cart-remove-001/items/prod-001");
 
         Assert.Equal(HttpStatusCode.OK, removeResponse.StatusCode);
         var body = await removeResponse.Content.ReadAsStringAsync();
@@ -718,12 +718,12 @@ public sealed class ShowcaseSampleHostingTests
         var addPayload = new { cartId = "cart-checkout-001", customerId = "cust-co",
             productId = "prod-006", productName = "TypeMaster Mechanical Keyboard",
             quantity = 1, priceInCents = 12999L };
-        await client.PostAsync("/api/showcase/cart/cart-checkout-001/items", JsonContent.Create(addPayload));
+        await client.PostAsync("/api/v1/showcase/cart/cart-checkout-001/items", JsonContent.Create(addPayload));
 
         // Checkout
         var checkoutPayload = new { cartId = "cart-checkout-001", shippingAddress = "123 Checkout Blvd" };
         var checkoutResponse = await client.PostAsync(
-            "/api/showcase/cart/cart-checkout-001/checkout",
+            "/api/v1/showcase/cart/cart-checkout-001/checkout",
             JsonContent.Create(checkoutPayload));
 
         Assert.Equal(HttpStatusCode.OK, checkoutResponse.StatusCode);
@@ -742,7 +742,7 @@ public sealed class ShowcaseSampleHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
-        var response = await client.GetAsync("/api/showcase/cart/nonexistent");
+        var response = await client.GetAsync("/api/v1/showcase/cart/nonexistent");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -763,7 +763,7 @@ public sealed class ShowcaseSampleHostingTests
         using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         var getOperation = document.RootElement
             .GetProperty("paths")
-            .GetProperty("/api/showcase/cart/{cartId}")
+            .GetProperty("/api/v1/showcase/cart/{cartId}")
             .GetProperty("get");
 
         var summary = getOperation.GetProperty("summary").GetString();
@@ -795,17 +795,17 @@ public sealed class ShowcaseSampleHostingTests
         var addItem1 = new { cartId = "cart-e2e-001", customerId = "cust-e2e",
             productId = "prod-001", productName = "ProBook Laptop 15\"",
             quantity = 1, priceInCents = 149999L };
-        await client.PostAsync("/api/showcase/cart/cart-e2e-001/items", JsonContent.Create(addItem1));
+        await client.PostAsync("/api/v1/showcase/cart/cart-e2e-001/items", JsonContent.Create(addItem1));
 
         var addItem2 = new { cartId = "cart-e2e-001", customerId = "cust-e2e",
             productId = "prod-006", productName = "TypeMaster Mechanical Keyboard",
             quantity = 2, priceInCents = 12999L };
-        await client.PostAsync("/api/showcase/cart/cart-e2e-001/items", JsonContent.Create(addItem2));
+        await client.PostAsync("/api/v1/showcase/cart/cart-e2e-001/items", JsonContent.Create(addItem2));
 
         // 2. Checkout cart
         var checkoutPayload = new { cartId = "cart-e2e-001", shippingAddress = "1 E2E Lane" };
         var checkoutResponse = await client.PostAsync(
-            "/api/showcase/cart/cart-e2e-001/checkout",
+            "/api/v1/showcase/cart/cart-e2e-001/checkout",
             JsonContent.Create(checkoutPayload));
         Assert.Equal(HttpStatusCode.OK, checkoutResponse.StatusCode);
 
@@ -820,7 +820,7 @@ public sealed class ShowcaseSampleHostingTests
                 new { productId = "prod-006", productName = "TypeMaster Mechanical Keyboard", quantity = 2, unitPriceInCents = 12999L }
             }
         };
-        var orderResponse = await client.PostAsync("/api/showcase/orders", JsonContent.Create(orderPayload));
+        var orderResponse = await client.PostAsync("/api/v1/showcase/orders", JsonContent.Create(orderPayload));
         Assert.Equal(HttpStatusCode.Created, orderResponse.StatusCode);
         var orderResult = JsonSerializer.Deserialize<JsonElement>(await orderResponse.Content.ReadAsStringAsync());
         var orderId = orderResult.GetProperty("orderId").GetString()!;
@@ -835,7 +835,7 @@ public sealed class ShowcaseSampleHostingTests
                 new { productId = "prod-006", quantity = 2 }
             }
         };
-        var reserveResponse = await client.PostAsync("/api/showcase/inventory/reserve", JsonContent.Create(reservePayload));
+        var reserveResponse = await client.PostAsync("/api/v1/showcase/inventory/reserve", JsonContent.Create(reservePayload));
         Assert.Equal(HttpStatusCode.OK, reserveResponse.StatusCode);
         var reserved = JsonSerializer.Deserialize<JsonElement>(await reserveResponse.Content.ReadAsStringAsync());
         Assert.True(reserved.GetProperty("allReserved").GetBoolean());
@@ -851,7 +851,7 @@ public sealed class ShowcaseSampleHostingTests
                 new { productId = "prod-006", productName = "TypeMaster Mechanical Keyboard", quantity = 2 }
             }
         };
-        var shipResponse = await client.PostAsync("/api/showcase/shipping", JsonContent.Create(shipPayload));
+        var shipResponse = await client.PostAsync("/api/v1/showcase/shipping", JsonContent.Create(shipPayload));
         Assert.Equal(HttpStatusCode.Created, shipResponse.StatusCode);
         var shipped = JsonSerializer.Deserialize<JsonElement>(await shipResponse.Content.ReadAsStringAsync());
         var shipmentId = shipped.GetProperty("shipmentId").GetString()!;
@@ -859,14 +859,14 @@ public sealed class ShowcaseSampleHostingTests
         // 6. Confirm delivery
         var deliverPayload = new { shipmentId, recipientName = "E2E Customer" };
         var deliverResponse = await client.PutAsync(
-            $"/api/showcase/shipping/{shipmentId}/deliver",
+            $"/api/v1/showcase/shipping/{shipmentId}/deliver",
             JsonContent.Create(deliverPayload));
         Assert.Equal(HttpStatusCode.OK, deliverResponse.StatusCode);
         var delivered = JsonSerializer.Deserialize<JsonElement>(await deliverResponse.Content.ReadAsStringAsync());
         Assert.Equal("Delivered", delivered.GetProperty("status").GetString());
 
         // 7. Verify order status reflects delivery
-        var orderStatus = await client.GetAsync($"/api/showcase/orders/{orderId}");
+        var orderStatus = await client.GetAsync($"/api/v1/showcase/orders/{orderId}");
         Assert.Equal(HttpStatusCode.OK, orderStatus.StatusCode);
         var orderBody = await orderStatus.Content.ReadAsStringAsync();
         Assert.Contains("Delivered", orderBody, StringComparison.Ordinal);
