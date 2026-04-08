@@ -7,6 +7,12 @@ Architecture recommendations: `docs/architecture-recommendations.md`
 Docs hub: `docs/README.md`
 Component docs: `docs/components/README.md`
 
+## Related research references
+
+- [Architecture patterns research](architecture-patterns-research.md)
+- [Design patterns reference](architecture/design-patterns-reference.md)
+- [.NET ecosystem reference](dotnet-ecosystem-reference.md)
+
 ## North star
 
 Cephalon should evolve into an engine/framework, not a single app shell. That means the foundation needs to optimize for composition, discoverability, and multiple hosts from day one.

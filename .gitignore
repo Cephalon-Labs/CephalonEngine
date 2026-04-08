@@ -60,6 +60,13 @@ dlldata.c
 # Benchmark Results
 BenchmarkDotNet.Artifacts/
 .playwright-cli/
+.artifacts/
+.build/
+.claude/
+.dotnet/
+.dotnet-appdata/
+.dotnet-cli/
+.nuget-appdata/
 tmp-*
 temp-*.cs
 
