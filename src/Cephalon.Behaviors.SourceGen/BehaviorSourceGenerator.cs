@@ -185,6 +185,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         bool outboxEnabled = false;
         bool inboxEnabled = false;
         bool eventSourcingEnabled = false;
+        string? apiSurfaceGroupPath = null;
+        string? apiSurfaceOperationPath = null;
         bool hasComplexLogic = false;
 
         // Check for any control flow that makes static analysis unreliable
@@ -228,6 +230,12 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 case "ViaKafka": transports.Add("kafka"); break;
                 case "ViaInMemory": transports.Add("in-memory"); break;
                 case "ViaGrpc": transports.Add("grpc"); break;
+                case "WithApiSurface":
+                    if (!TryExtractApiSurfaceFromInvocation(invocation, out apiSurfaceGroupPath, out apiSurfaceOperationPath))
+                    {
+                        return null;
+                    }
+                    break;
 
                 // WithOptions — analyze the lambda body
                 case "WithOptions":
@@ -243,7 +251,9 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             transports: transports.Distinct().ToArray(),
             outboxEnabled: outboxEnabled,
             inboxEnabled: inboxEnabled,
-            eventSourcingEnabled: eventSourcingEnabled);
+            eventSourcingEnabled: eventSourcingEnabled,
+            apiSurfaceGroupPath: apiSurfaceGroupPath,
+            apiSurfaceOperationPath: apiSurfaceOperationPath);
     }
 
     /// <summary>
@@ -295,6 +305,40 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 }
             }
         }
+    }
+
+    private static bool TryExtractApiSurfaceFromInvocation(
+        InvocationExpressionSyntax invocation,
+        out string? groupPath,
+        out string? operationPath)
+    {
+        groupPath = null;
+        operationPath = null;
+
+        if (invocation.ArgumentList.Arguments.Count < 2)
+        {
+            return false;
+        }
+
+        if (!TryGetStringLiteral(invocation.ArgumentList.Arguments[0].Expression, out groupPath) ||
+            !TryGetStringLiteral(invocation.ArgumentList.Arguments[1].Expression, out operationPath))
+        {
+            return false;
+        }
+
+        return !string.IsNullOrWhiteSpace(operationPath);
+    }
+
+    private static bool TryGetStringLiteral(ExpressionSyntax expression, out string? value)
+    {
+        value = expression switch
+        {
+            LiteralExpressionSyntax literal when literal.IsKind(SyntaxKind.StringLiteralExpression)
+                => literal.Token.ValueText,
+            _ => null
+        };
+
+        return value is not null;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -447,6 +491,14 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             if (t.InboxEnabled) sb.Append(", inboxEnabled: true");
             if (t.OutboxEnabled) sb.Append(", outboxEnabled: true");
             if (t.EventSourcingEnabled) sb.Append(", eventSourcingEnabled: true");
+            var apiSurfaceOperationPath = t.ApiSurfaceOperationPath;
+            if (!string.IsNullOrWhiteSpace(apiSurfaceOperationPath))
+            {
+                var apiSurfaceGroupPath = t.ApiSurfaceGroupPath ?? string.Empty;
+                sb.Append(", apiSurface: new global::Cephalon.Abstractions.Behaviors.BehaviorApiSurfaceDescriptor(");
+                sb.Append($"\"{EscapeString(apiSurfaceGroupPath)}\", ");
+                sb.Append($"\"{EscapeString(apiSurfaceOperationPath!)}\")");
+            }
 
             sb.AppendLine("),");
         }
@@ -497,14 +549,22 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
 
     private sealed class TopologyInfo
     {
-        public TopologyInfo(string pattern, string[] transports,
-            bool outboxEnabled, bool inboxEnabled, bool eventSourcingEnabled)
+        public TopologyInfo(
+            string pattern,
+            string[] transports,
+            bool outboxEnabled,
+            bool inboxEnabled,
+            bool eventSourcingEnabled,
+            string? apiSurfaceGroupPath,
+            string? apiSurfaceOperationPath)
         {
             Pattern = pattern;
             Transports = transports;
             OutboxEnabled = outboxEnabled;
             InboxEnabled = inboxEnabled;
             EventSourcingEnabled = eventSourcingEnabled;
+            ApiSurfaceGroupPath = apiSurfaceGroupPath;
+            ApiSurfaceOperationPath = apiSurfaceOperationPath;
         }
 
         public string Pattern { get; }
@@ -512,6 +572,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         public bool OutboxEnabled { get; }
         public bool InboxEnabled { get; }
         public bool EventSourcingEnabled { get; }
+        public string? ApiSurfaceGroupPath { get; }
+        public string? ApiSurfaceOperationPath { get; }
     }
 
     private sealed class BehaviorInfo

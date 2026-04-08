@@ -1,23 +1,50 @@
 using System.Text;
 using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
+using Cephalon.AspNetCore.Hosting;
 using Cephalon.Behaviors.Http.Abstractions;
+using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.Behaviors.Http.Bindings;
 
 /// <summary>
 /// Server-Sent Events transport binding (transport ID: <c>http.sse</c>).
-/// Opens a long-lived SSE stream at <c>GET /behaviors/{id}/events</c>.
+/// Opens a long-lived SSE stream at canonical routes such as
+/// <c>GET /events/v1/cart/get</c>, while optionally keeping the legacy
+/// <c>/behaviors/{id}/events</c> alias enabled for compatibility.
 /// Query-string parameters are parsed into a JSON object and deserialized as the
 /// behavior's typed input. The behavior is dispatched immediately; its return value
 /// is streamed as a <c>data: {json}\n\n</c> event. The connection stays alive with
 /// periodic heartbeat comments until the client disconnects.
 /// </summary>
+/// <remarks>
+/// Canonical routes are derived from the shared <see cref="BehaviorApiSurfaceDescriptor" /> plus
+/// <see cref="ApiRoutesOptions.SsePrefix" /> and the resolved default behavior document name.
+/// GraphQL subscriptions remain on their GraphQL-specific endpoints rather than participating in
+/// this route-shaped SSE contract.
+/// </remarks>
 public sealed class SseBehaviorBinding : IHttpBehaviorBinding
 {
+    private readonly BehaviorApiSurfaceRouteResolver routeResolver;
+
+    /// <summary>
+    /// Initializes a new <see cref="SseBehaviorBinding" />.
+    /// </summary>
+    /// <param name="configuration">
+    /// Optional configuration used to resolve canonical behavior transport routes.
+    /// When omitted, the binding falls back to the default <c>/events/v1</c> route policy.
+    /// </param>
+    public SseBehaviorBinding(IConfiguration? configuration = null)
+    {
+        routeResolver = new BehaviorApiSurfaceRouteResolver(configuration is null
+            ? new ApiRoutesOptions()
+            : ApiRoutesOptions.FromConfiguration(configuration));
+    }
+
     /// <inheritdoc />
     public string TransportId => "http.sse";
 
@@ -31,58 +58,59 @@ public sealed class SseBehaviorBinding : IHttpBehaviorBinding
         ArgumentNullException.ThrowIfNull(descriptor);
         ArgumentNullException.ThrowIfNull(dispatcher);
 
-        var route = $"/behaviors/{descriptor.Id}/events";
-
-        app.MapGet(route, async (HttpContext ctx) =>
+        foreach (var route in routeResolver.ResolveRoutes(TransportId, descriptor))
         {
-            // G-SSE-01/02/03: required SSE headers
-            ctx.Response.ContentType = "text/event-stream";
-            ctx.Response.Headers.CacheControl = "no-cache";
-            ctx.Response.Headers.Connection = "keep-alive";
-            ctx.Response.Headers["X-Accel-Buffering"] = "no"; // nginx compat
-
-            var input = ParseQueryAsJsonElement(ctx.Request.Query);
-            var context = DefaultBehaviorContext.From(ctx, descriptor.Id);
-
-            try
+            app.MapGet(route, async (HttpContext ctx) =>
             {
-                var result = await dispatcher.DispatchAsync(descriptor.Id, input, context, ctx.RequestAborted)
-                    .ConfigureAwait(false);
+                // G-SSE-01/02/03: required SSE headers
+                ctx.Response.ContentType = "text/event-stream";
+                ctx.Response.Headers.CacheControl = "no-cache";
+                ctx.Response.Headers.Connection = "keep-alive";
+                ctx.Response.Headers["X-Accel-Buffering"] = "no"; // nginx compat
 
-                if (result is not null)
+                var input = ParseQueryAsJsonElement(ctx.Request.Query);
+                var context = DefaultBehaviorContext.From(ctx, descriptor.Id);
+
+                try
                 {
-                    // G-SSE-06: double newline per SSE spec
-                    var json = JsonSerializer.Serialize(result);
-                    var sseEvent = $"event: result\ndata: {json}\n\n";
-                    await ctx.Response.WriteAsync(sseEvent, Encoding.UTF8, ctx.RequestAborted)
+                    var result = await dispatcher.DispatchAsync(descriptor.Id, input, context, ctx.RequestAborted)
                         .ConfigureAwait(false);
-                    // G-SSE-04: flush after every event
-                    await ctx.Response.Body.FlushAsync(ctx.RequestAborted).ConfigureAwait(false);
-                }
 
-                // G-SSE-07: keep connection alive with heartbeat comments
-                // until client disconnects, allowing EventSource to stay open
-                while (!ctx.RequestAborted.IsCancellationRequested)
-                {
-                    await Task.Delay(15_000, ctx.RequestAborted).ConfigureAwait(false);
-                    await ctx.Response.WriteAsync(": heartbeat\n\n", Encoding.UTF8, ctx.RequestAborted)
-                        .ConfigureAwait(false);
-                    await ctx.Response.Body.FlushAsync(ctx.RequestAborted).ConfigureAwait(false);
+                    if (result is not null)
+                    {
+                        // G-SSE-06: double newline per SSE spec
+                        var json = JsonSerializer.Serialize(result);
+                        var sseEvent = $"event: result\ndata: {json}\n\n";
+                        await ctx.Response.WriteAsync(sseEvent, Encoding.UTF8, ctx.RequestAborted)
+                            .ConfigureAwait(false);
+                        // G-SSE-04: flush after every event
+                        await ctx.Response.Body.FlushAsync(ctx.RequestAborted).ConfigureAwait(false);
+                    }
+
+                    // G-SSE-07: keep connection alive with heartbeat comments
+                    // until client disconnects, allowing EventSource to stay open
+                    while (!ctx.RequestAborted.IsCancellationRequested)
+                    {
+                        await Task.Delay(15_000, ctx.RequestAborted).ConfigureAwait(false);
+                        await ctx.Response.WriteAsync(": heartbeat\n\n", Encoding.UTF8, ctx.RequestAborted)
+                            .ConfigureAwait(false);
+                        await ctx.Response.Body.FlushAsync(ctx.RequestAborted).ConfigureAwait(false);
+                    }
                 }
-            }
-            catch (OperationCanceledException)
-            {
-                // G-SSE-05: client disconnected — exit gracefully, no error event
-            }
-            catch (Exception ex)
-            {
-                var errorJson = JsonSerializer.Serialize(new { error = ex.Message });
-                var errorEvent = $"event: error\ndata: {errorJson}\n\n";
-                await ctx.Response.WriteAsync(errorEvent, Encoding.UTF8, CancellationToken.None)
-                    .ConfigureAwait(false);
-                await ctx.Response.Body.FlushAsync(CancellationToken.None).ConfigureAwait(false);
-            }
-        });
+                catch (OperationCanceledException)
+                {
+                    // G-SSE-05: client disconnected — exit gracefully, no error event
+                }
+                catch (Exception ex)
+                {
+                    var errorJson = JsonSerializer.Serialize(new { error = ex.Message });
+                    var errorEvent = $"event: error\ndata: {errorJson}\n\n";
+                    await ctx.Response.WriteAsync(errorEvent, Encoding.UTF8, CancellationToken.None)
+                        .ConfigureAwait(false);
+                    await ctx.Response.Body.FlushAsync(CancellationToken.None).ConfigureAwait(false);
+                }
+            });
+        }
 
         return Task.CompletedTask;
     }

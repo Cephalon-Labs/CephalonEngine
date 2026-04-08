@@ -3,24 +3,51 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
+using Cephalon.AspNetCore.Hosting;
 using Cephalon.Behaviors.Http.Abstractions;
+using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Behaviors.Http.Bindings;
 
 /// <summary>
 /// Bidirectional WebSocket transport binding (transport ID: <c>http.ws</c>).
-/// Upgrades <c>GET /behaviors/{id}/ws</c> to a full-duplex WebSocket connection.
+/// Upgrades canonical routes such as <c>GET /ws/v1/cart/get</c> to a full-duplex WebSocket
+/// connection, while optionally keeping the legacy <c>/behaviors/{id}/ws</c> alias enabled for
+/// compatibility.
 /// Each received JSON text frame is dispatched to the behavior and the result
 /// is sent back as a JSON text frame. The connection is closed gracefully on
 /// client close or cancellation.
 /// </summary>
+/// <remarks>
+/// Canonical routes are derived from the shared <see cref="BehaviorApiSurfaceDescriptor" /> plus
+/// <see cref="ApiRoutesOptions.WebSocketPrefix" /> and the resolved default behavior document
+/// name. GraphQL-over-WebSocket remains on its GraphQL-specific endpoint shape rather than
+/// participating in this route-shaped WebSocket contract.
+/// </remarks>
 public sealed class WebSocketBehaviorBinding : IHttpBehaviorBinding
 {
+    private readonly BehaviorApiSurfaceRouteResolver routeResolver;
+
+    /// <summary>
+    /// Initializes a new <see cref="WebSocketBehaviorBinding" />.
+    /// </summary>
+    /// <param name="configuration">
+    /// Optional configuration used to resolve canonical behavior transport routes.
+    /// When omitted, the binding falls back to the default <c>/ws/v1</c> route policy.
+    /// </param>
+    public WebSocketBehaviorBinding(IConfiguration? configuration = null)
+    {
+        routeResolver = new BehaviorApiSurfaceRouteResolver(configuration is null
+            ? new ApiRoutesOptions()
+            : ApiRoutesOptions.FromConfiguration(configuration));
+    }
+
     /// <inheritdoc />
     public string TransportId => "http.ws";
 
@@ -34,22 +61,23 @@ public sealed class WebSocketBehaviorBinding : IHttpBehaviorBinding
         ArgumentNullException.ThrowIfNull(descriptor);
         ArgumentNullException.ThrowIfNull(dispatcher);
 
-        var route = $"/behaviors/{descriptor.Id}/ws";
-
-        app.MapGet(route, async (HttpContext ctx) =>
+        foreach (var route in routeResolver.ResolveRoutes(TransportId, descriptor))
         {
-            // G-WS-01: must be a WebSocket upgrade request
-            if (!ctx.WebSockets.IsWebSocketRequest)
+            app.MapGet(route, async (HttpContext ctx) =>
             {
-                ctx.Response.StatusCode = StatusCodes.Status400BadRequest;
-                return;
-            }
+                // G-WS-01: must be a WebSocket upgrade request
+                if (!ctx.WebSockets.IsWebSocketRequest)
+                {
+                    ctx.Response.StatusCode = StatusCodes.Status400BadRequest;
+                    return;
+                }
 
-            var logger = ctx.RequestServices.GetService<ILoggerFactory>()
-                ?.CreateLogger<WebSocketBehaviorBinding>();
-            using var ws = await ctx.WebSockets.AcceptWebSocketAsync().ConfigureAwait(false);
-            await HandleWebSocketAsync(ws, ctx, descriptor.Id, dispatcher, logger).ConfigureAwait(false);
-        });
+                var logger = ctx.RequestServices.GetService<ILoggerFactory>()
+                    ?.CreateLogger<WebSocketBehaviorBinding>();
+                using var ws = await ctx.WebSockets.AcceptWebSocketAsync().ConfigureAwait(false);
+                await HandleWebSocketAsync(ws, ctx, descriptor.Id, dispatcher, logger).ConfigureAwait(false);
+            });
+        }
 
         return Task.CompletedTask;
     }

@@ -38,6 +38,15 @@ public interface IBehaviorTopologyBuilder
     IBehaviorTopologyBuilder ViaInMemory();
     /// <summary>Adds the gRPC transport.</summary>
     IBehaviorTopologyBuilder ViaGrpc();
+    /// <summary>
+    /// Overrides the logical API surface projected by route-shaped transport adapters.
+    /// </summary>
+    /// <remarks>
+    /// This primarily affects the shared HTTP behavior route contract used by generic REST,
+    /// JSON-RPC, Server-Sent Events, and WebSocket bindings. GraphQL remains schema-owned and
+    /// therefore stays outside this route-shaped API-surface contract.
+    /// </remarks>
+    IBehaviorTopologyBuilder WithApiSurface(string groupPath, string operationPath);
 
     /// <summary>Configures optional feature flags for this behavior (outbox, inbox, event sourcing).</summary>
     IBehaviorTopologyBuilder WithOptions(Action<BehaviorTopologyOptions> configure);

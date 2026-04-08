@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Behaviors.Http;
@@ -235,6 +236,21 @@ public sealed class HttpBehaviorBindingTests
         await app.StopAsync();
     }
 
+    [Fact]
+    public async Task RestBindingMapsCanonicalApiSurfaceRoute()
+    {
+        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.rest"]);
+        var (app, client) = await BuildAppAsync(descriptor, new RestHttpBehaviorBinding());
+
+        var response = await client.GetAsync("/api/behaviors/v1/object/echo?q=hello");
+
+        Assert.True(
+            response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.NoContent,
+            $"Expected 200/204 but got {response.StatusCode}");
+
+        await app.StopAsync();
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // 2. JsonRpcBindingParsesRequestReturnsResult
     // ─────────────────────────────────────────────────────────────────────────
@@ -278,6 +294,31 @@ public sealed class HttpBehaviorBindingTests
         var json = await response.Content.ReadFromJsonAsync<JsonElement>();
         Assert.True(json.TryGetProperty("error", out var error));
         Assert.Equal(-32601, error.GetProperty("code").GetInt32());
+
+        await app.StopAsync();
+    }
+
+    [Fact]
+    public async Task JsonRpcBindingMapsCanonicalApiSurfaceRoute()
+    {
+        var descriptor = new BehaviorTopologyDescriptor(
+            "object.echo",
+            "direct",
+            ["http.jsonrpc"],
+            apiSurface: new BehaviorApiSurfaceDescriptor("catalog/items", "lookup"));
+        var (app, client) = await BuildAppAsync(descriptor, new JsonRpcHttpBehaviorBinding());
+
+        var requestBody = new
+        {
+            jsonrpc = "2.0",
+            method = "handle",
+            @params = "test-input",
+            id = 7
+        };
+
+        var response = await client.PostAsJsonAsync("/rpc/v1/catalog/items/lookup", requestBody);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
         await app.StopAsync();
     }
@@ -425,6 +466,20 @@ public sealed class HttpBehaviorBindingTests
         await app.StopAsync();
     }
 
+    [Fact]
+    public async Task SseBindingHasCanonicalApiSurfaceRoute()
+    {
+        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.sse"]);
+        var (app, client) = await BuildAppAsync(descriptor, new SseBehaviorBinding());
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/events/v1/object/echo");
+        var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+
+        Assert.NotEqual(HttpStatusCode.NotFound, response.StatusCode);
+
+        await app.StopAsync();
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // 8. WebSocketBindingHasCorrectRoute
     // ─────────────────────────────────────────────────────────────────────────
@@ -442,6 +497,62 @@ public sealed class HttpBehaviorBindingTests
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
         await app.StopAsync();
+    }
+
+    [Fact]
+    public async Task WebSocketBindingHasCanonicalApiSurfaceRoute()
+    {
+        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.ws"]);
+        var (app, client) = await BuildAppAsync(descriptor, new WebSocketBehaviorBinding());
+
+        var response = await client.GetAsync("/ws/v1/object/echo");
+
+        Assert.NotEqual(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+        await app.StopAsync();
+    }
+
+    [Fact]
+    public async Task CanonicalBehaviorTransportRoutesRespectConfiguredPrefixesAndDefaultVersion()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ApiRoutes:Prefixes:BehaviorRest"] = "/behavior-api",
+                ["ApiRoutes:Prefixes:JsonRpc"] = "/invoke",
+                ["ApiRoutes:Prefixes:Sse"] = "/stream",
+                ["ApiRoutes:Prefixes:WebSocket"] = "/socket",
+                ["OpenApi:DefaultVersion"] = "2"
+            })
+            .Build();
+
+        var restDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.rest"]);
+        var (restApp, restClient) = await BuildAppAsync(restDescriptor, new RestHttpBehaviorBinding(configuration));
+        var restResponse = await restClient.GetAsync("/behavior-api/v2/object/echo?q=hello");
+        Assert.True(restResponse.StatusCode is HttpStatusCode.OK or HttpStatusCode.NoContent);
+        await restApp.StopAsync();
+
+        var rpcDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.jsonrpc"]);
+        var (rpcApp, rpcClient) = await BuildAppAsync(rpcDescriptor, new JsonRpcHttpBehaviorBinding(configuration));
+        var rpcResponse = await rpcClient.PostAsJsonAsync(
+            "/invoke/v2/object/echo",
+            new { jsonrpc = "2.0", method = "handle", @params = "hello", id = 11 });
+        Assert.Equal(HttpStatusCode.OK, rpcResponse.StatusCode);
+        await rpcApp.StopAsync();
+
+        var sseDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.sse"]);
+        var (sseApp, sseClient) = await BuildAppAsync(sseDescriptor, new SseBehaviorBinding(configuration));
+        using var sseRequest = new HttpRequestMessage(HttpMethod.Get, "/stream/v2/object/echo");
+        var sseResponse = await sseClient.SendAsync(sseRequest, HttpCompletionOption.ResponseHeadersRead);
+        Assert.NotEqual(HttpStatusCode.NotFound, sseResponse.StatusCode);
+        await sseApp.StopAsync();
+
+        var wsDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.ws"]);
+        var (wsApp, wsClient) = await BuildAppAsync(wsDescriptor, new WebSocketBehaviorBinding(configuration));
+        var wsResponse = await wsClient.GetAsync("/socket/v2/object/echo");
+        Assert.Equal(HttpStatusCode.BadRequest, wsResponse.StatusCode);
+        await wsApp.StopAsync();
     }
 
     // ─────────────────────────────────────────────────────────────────────────

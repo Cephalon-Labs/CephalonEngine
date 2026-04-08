@@ -2,10 +2,13 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Cephalon.Abstractions.Behaviors;
+using Cephalon.AspNetCore.Hosting;
 using Cephalon.Behaviors.Http.Abstractions;
+using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.Behaviors.Http.Bindings;
 
@@ -89,12 +92,34 @@ internal sealed partial class JsonRpcSerializerContext : JsonSerializerContext {
 
 /// <summary>
 /// JSON-RPC 2.0 HTTP transport binding (transport ID: <c>http.jsonrpc</c>).
-/// Accepts <c>POST /behaviors/{id}/jsonrpc</c> with a JSON-RPC 2.0 envelope
-/// and returns a JSON-RPC 2.0 response or error object.
+/// Accepts canonical routes such as <c>POST /rpc/v1/cart/get</c>, while optionally keeping the
+/// legacy <c>/behaviors/{id}/jsonrpc</c> alias enabled for compatibility, and returns a JSON-RPC
+/// 2.0 response or error object.
 /// Per the JSON-RPC 2.0 specification the HTTP status is always <c>200 OK</c>.
 /// </summary>
+/// <remarks>
+/// Canonical routes are derived from the shared <see cref="BehaviorApiSurfaceDescriptor" /> plus
+/// <see cref="ApiRoutesOptions.JsonRpcPrefix" /> and the resolved default behavior document name.
+/// GraphQL remains outside this route-shaped transport contract.
+/// </remarks>
 public sealed class JsonRpcHttpBehaviorBinding : IHttpBehaviorBinding
 {
+    private readonly BehaviorApiSurfaceRouteResolver routeResolver;
+
+    /// <summary>
+    /// Initializes a new <see cref="JsonRpcHttpBehaviorBinding" />.
+    /// </summary>
+    /// <param name="configuration">
+    /// Optional configuration used to resolve canonical behavior transport routes.
+    /// When omitted, the binding falls back to the default <c>/rpc/v1</c> route policy.
+    /// </param>
+    public JsonRpcHttpBehaviorBinding(IConfiguration? configuration = null)
+    {
+        routeResolver = new BehaviorApiSurfaceRouteResolver(configuration is null
+            ? new ApiRoutesOptions()
+            : ApiRoutesOptions.FromConfiguration(configuration));
+    }
+
     /// <inheritdoc />
     public string TransportId => "http.jsonrpc";
 
@@ -108,75 +133,76 @@ public sealed class JsonRpcHttpBehaviorBinding : IHttpBehaviorBinding
         ArgumentNullException.ThrowIfNull(descriptor);
         ArgumentNullException.ThrowIfNull(dispatcher);
 
-        var route = $"/behaviors/{descriptor.Id}/jsonrpc";
-
-        app.MapPost(route, async (HttpContext ctx) =>
+        foreach (var route in routeResolver.ResolveRoutes(TransportId, descriptor))
         {
-            // G-RPC-02: Malformed JSON → error -32700
-            JsonNode? requestNode;
-            try
+            app.MapPost(route, async (HttpContext ctx) =>
             {
-                using var doc = await JsonDocument.ParseAsync(ctx.Request.Body, cancellationToken: ctx.RequestAborted)
-                    .ConfigureAwait(false);
-                requestNode = JsonNode.Parse(doc.RootElement.GetRawText());
-            }
-            catch (JsonException ex)
-            {
-                return BuildErrorResult(null, -32700, "Parse error", ex.Message);
-            }
+                // G-RPC-02: Malformed JSON → error -32700
+                JsonNode? requestNode;
+                try
+                {
+                    using var doc = await JsonDocument.ParseAsync(ctx.Request.Body, cancellationToken: ctx.RequestAborted)
+                        .ConfigureAwait(false);
+                    requestNode = JsonNode.Parse(doc.RootElement.GetRawText());
+                }
+                catch (JsonException ex)
+                {
+                    return BuildErrorResult(null, -32700, "Parse error", ex.Message);
+                }
 
-            var id = requestNode?["id"];
+                var id = requestNode?["id"];
 
-            // G-RPC-01: Validate jsonrpc == "2.0"
-            var jsonrpcVersion = requestNode?["jsonrpc"]?.GetValue<string>();
-            if (!string.Equals(jsonrpcVersion, "2.0", StringComparison.Ordinal))
-            {
-                return BuildErrorResult(id, -32600, "Invalid Request", "jsonrpc must be \"2.0\"");
-            }
+                // G-RPC-01: Validate jsonrpc == "2.0"
+                var jsonrpcVersion = requestNode?["jsonrpc"]?.GetValue<string>();
+                if (!string.Equals(jsonrpcVersion, "2.0", StringComparison.Ordinal))
+                {
+                    return BuildErrorResult(id, -32600, "Invalid Request", "jsonrpc must be \"2.0\"");
+                }
 
-            var method = requestNode?["method"]?.GetValue<string>();
-            var paramsNode = requestNode?["params"];
+                var method = requestNode?["method"]?.GetValue<string>();
+                var paramsNode = requestNode?["params"];
 
-            if (method is null)
-            {
-                return BuildErrorResult(id, -32600, "Invalid Request", "Missing 'method' field");
-            }
+                if (method is null)
+                {
+                    return BuildErrorResult(id, -32600, "Invalid Request", "Missing 'method' field");
+                }
 
-            // G-RPC-03: Accept canonical "handle" plus common aliases "invoke" and "execute".
-            if (!string.Equals(method, "handle", StringComparison.OrdinalIgnoreCase) &&
-                !string.Equals(method, "invoke", StringComparison.OrdinalIgnoreCase) &&
-                !string.Equals(method, "execute", StringComparison.OrdinalIgnoreCase))
-            {
-                return BuildErrorResult(id, -32601, "Method not found", $"Unknown method '{method}'");
-            }
+                // G-RPC-03: Accept canonical "handle" plus common aliases "invoke" and "execute".
+                if (!string.Equals(method, "handle", StringComparison.OrdinalIgnoreCase) &&
+                    !string.Equals(method, "invoke", StringComparison.OrdinalIgnoreCase) &&
+                    !string.Equals(method, "execute", StringComparison.OrdinalIgnoreCase))
+                {
+                    return BuildErrorResult(id, -32601, "Method not found", $"Unknown method '{method}'");
+                }
 
-            object input = paramsNode is not null
-                ? JsonSerializer.Deserialize<object>(paramsNode.ToJsonString())!
-                : JsonSerializer.Deserialize<object>("{}")!;
+                object input = paramsNode is not null
+                    ? JsonSerializer.Deserialize<object>(paramsNode.ToJsonString())!
+                    : JsonSerializer.Deserialize<object>("{}")!;
 
-            try
-            {
-                var context = DefaultBehaviorContext.From(ctx, descriptor.Id);
-                var result = await dispatcher.DispatchAsync(descriptor.Id, input, context, ctx.RequestAborted)
-                    .ConfigureAwait(false);
+                try
+                {
+                    var context = DefaultBehaviorContext.From(ctx, descriptor.Id);
+                    var result = await dispatcher.DispatchAsync(descriptor.Id, input, context, ctx.RequestAborted)
+                        .ConfigureAwait(false);
 
-                // G-RPC-04 / G-RPC-06: Success — always 200 OK, application/json
-                return BuildSuccessResult(id, result);
-            }
-            catch (BehaviorNotFoundException ex)
-            {
-                return BuildErrorResult(id, -32601, "Method not found", ex.Message);
-            }
-            catch (BehaviorSecurityException ex)
-            {
-                // G-RPC-07
-                return BuildErrorResult(id, -32003, "Security violation", ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BuildErrorResult(id, -32603, "Internal error", ex.Message);
-            }
-        });
+                    // G-RPC-04 / G-RPC-06: Success — always 200 OK, application/json
+                    return BuildSuccessResult(id, result);
+                }
+                catch (BehaviorNotFoundException ex)
+                {
+                    return BuildErrorResult(id, -32601, "Method not found", ex.Message);
+                }
+                catch (BehaviorSecurityException ex)
+                {
+                    // G-RPC-07
+                    return BuildErrorResult(id, -32003, "Security violation", ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    return BuildErrorResult(id, -32603, "Internal error", ex.Message);
+                }
+            });
+        }
 
         return Task.CompletedTask;
     }

@@ -13,6 +13,8 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
     private string _pattern = "direct";
     private readonly HashSet<string> _transportIds = new(StringComparer.OrdinalIgnoreCase);
     private readonly BehaviorTopologyOptions _options = new();
+    private string? _apiSurfaceGroupPath;
+    private string? _apiSurfaceOperationPath;
 
     // ── Interface pattern methods (As* prefix) ──────────────────────────
 
@@ -138,6 +140,10 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
     /// <inheritdoc />
     IBehaviorTopologyBuilder IBehaviorTopologyBuilder.ViaGrpc() => ViaGrpc();
 
+    /// <inheritdoc />
+    IBehaviorTopologyBuilder IBehaviorTopologyBuilder.WithApiSurface(string groupPath, string operationPath)
+        => WithApiSurface(groupPath, operationPath);
+
     /// <summary>
     /// Declares exposure over the <c>http.rest</c> transport.
     /// </summary>
@@ -248,6 +254,26 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
         return this;
     }
 
+    /// <summary>
+    /// Overrides the logical API surface projected by route-shaped transport adapters.
+    /// </summary>
+    /// <param name="groupPath">The logical group path, such as <c>cart</c>.</param>
+    /// <param name="operationPath">The logical operation path, such as <c>get</c>.</param>
+    /// <returns>The same builder for fluent chaining.</returns>
+    /// <remarks>
+    /// This primarily affects the shared HTTP behavior route contract used by generic REST,
+    /// JSON-RPC, Server-Sent Events, and WebSocket bindings. GraphQL remains schema-owned and
+    /// therefore stays outside this route-shaped API-surface contract.
+    /// </remarks>
+    public BehaviorTopologyBuilder WithApiSurface(string groupPath, string operationPath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(operationPath);
+
+        _apiSurfaceGroupPath = groupPath;
+        _apiSurfaceOperationPath = operationPath;
+        return this;
+    }
+
     // ── Options ─────────────────────────────────────────────────────────
 
     /// <inheritdoc />
@@ -268,12 +294,16 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
     public BehaviorTopologyDescriptor Build(string behaviorId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        var apiSurface = string.IsNullOrWhiteSpace(_apiSurfaceOperationPath)
+            ? null
+            : new BehaviorApiSurfaceDescriptor(_apiSurfaceGroupPath ?? string.Empty, _apiSurfaceOperationPath);
         return new BehaviorTopologyDescriptor(
             behaviorId,
             _pattern,
             _transportIds.OrderBy(static t => t, StringComparer.OrdinalIgnoreCase).ToArray(),
             inboxEnabled: _options.InboxEnabled,
             outboxEnabled: _options.OutboxEnabled,
-            eventSourcingEnabled: _options.EventSourcingEnabled);
+            eventSourcingEnabled: _options.EventSourcingEnabled,
+            apiSurface: apiSurface);
     }
 }

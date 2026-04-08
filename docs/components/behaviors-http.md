@@ -11,6 +11,7 @@ It wires behavior topology descriptors to HTTP transports via 7 concrete `IHttpB
 - **LazyTransportBinding** — deferred-init wrapper; `MapAsync` is called exactly once on first request, keeping pod startup under 100 ms
 - **DefaultBehaviorContext** — `IBehaviorContext` implementation built from `HttpContext` (correlation, tenant, user, trace from headers, optional `IEventStore` from DI)
 - **7 transport bindings** — REST, JSON-RPC 2.0, GraphQL (HTTP), GraphQL-SSE, GraphQL-WS, SSE, WebSocket
+- **Shared behavior API surface** — `BehaviorApiSurfaceDescriptor` plus `BehaviorApiSurfaceRouteResolver` for canonical route-shaped behavior HTTP endpoints
 - **Behavior-aware REST helpers** — `MapBehaviorRestGroup(...)` plus `BehaviorRestEndpointGroup.MapBehaviorGet/Post/Put/Patch/Delete(...)` for Minimal API-style route groups that dispatch into behaviors
 - **OpenAPI enrichment** — module tags, module-major API-version defaults with explicit `.ApiVersion(...)` override support, and best-effort XML comment summaries/descriptions for behavior-driven REST endpoints
 - **Hosting** — `IBehaviorCollectionBuilder.AddHttpBehaviorBindings()` extension registering all bindings in DI
@@ -19,15 +20,50 @@ It wires behavior topology descriptors to HTTP transports via 7 concrete `IHttpB
 
 | Transport ID | Binding class | Route |
 |---|---|---|
-| `http.rest` | `RestHttpBehaviorBinding` | `POST /behaviors/{id}`, `GET /behaviors/{id}` |
-| `http.jsonrpc` | `JsonRpcHttpBehaviorBinding` | `POST /behaviors/{id}/jsonrpc` |
+| `http.rest` | `RestHttpBehaviorBinding` | Canonical `POST/GET {BehaviorRestPrefix}/{document}/{group}/{operation}`; optional legacy alias `POST/GET /behaviors/{id}` |
+| `http.jsonrpc` | `JsonRpcHttpBehaviorBinding` | Canonical `POST {JsonRpcPrefix}/{document}/{group}/{operation}`; optional legacy alias `POST /behaviors/{id}/jsonrpc` |
 | `http.graphql` | `GraphqlHttpBehaviorBinding` | `POST /behaviors/{id}/graphql` |
 | `http.graphql-sse` | `GraphqlSseBehaviorBinding` | `POST /behaviors/{id}/graphql/sse` |
 | `http.graphql-ws` | `GraphqlWsBehaviorBinding` | `GET /behaviors/{id}/graphql/ws` |
-| `http.sse` | `SseBehaviorBinding` | `GET /behaviors/{id}/events` |
-| `http.ws` | `WebSocketBehaviorBinding` | `GET /behaviors/{id}/ws` |
+| `http.sse` | `SseBehaviorBinding` | Canonical `GET {SsePrefix}/{document}/{group}/{operation}`; optional legacy alias `GET /behaviors/{id}/events` |
+| `http.ws` | `WebSocketBehaviorBinding` | Canonical `GET {WebSocketPrefix}/{document}/{group}/{operation}`; optional legacy alias `GET /behaviors/{id}/ws` |
 
-These generic bindings still use behavior-id-driven routes. The REST helper layer does not automatically rewrite `http.graphql`, `http.graphql-sse`, `http.graphql-ws`, `http.sse`, or `http.ws` into module-owned versioned paths in this round.
+Cephalon now uses a shared `BehaviorApiSurfaceDescriptor` for the generic route-shaped behavior transports.
+By default the API surface is derived from the behavior id, so `cart.get` becomes logical group `cart`
+plus operation `get`, which the HTTP bindings project into canonical versioned routes such as
+`/api/behaviors/v1/cart/get`, `/rpc/v1/cart/get`, `/events/v1/cart/get`, and `/ws/v1/cart/get`.
+
+The host controls those canonical prefixes through `ApiRoutes:Prefixes:BehaviorRest`,
+`ApiRoutes:Prefixes:JsonRpc`, `ApiRoutes:Prefixes:Sse`, `ApiRoutes:Prefixes:WebSocket`, and the
+resolved default version/document segment through `OpenApi:DefaultVersion` or
+`ApiRoutes:DefaultBehaviorDocumentName`. Legacy `/behaviors/{id}` aliases remain available through
+`ApiRoutes:MapLegacyBehaviorRoutes`.
+
+GraphQL is intentionally excluded from this shared route-shaped contract. GraphQL, GraphQL-SSE, and
+GraphQL-WS remain schema- or GraphQL-endpoint-owned surfaces, so Cephalon keeps their current
+behavior-id endpoint shape instead of pretending they should be projected into REST-style operation
+paths.
+
+## Shared behavior API surface
+
+When the default `behavior-id -> group/operation` split is not the public contract you want, override
+it explicitly in `ConfigureTopology(...)`:
+
+```csharp
+public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+{
+    builder.AsCqrs()
+        .ViaHttpRest()
+        .ViaHttpJsonRpc()
+        .ViaHttpSse()
+        .ViaWebSocket()
+        .WithApiSurface("catalog/items", "lookup");
+}
+```
+
+That one transport-agnostic descriptor is then reused by the generic REST, JSON-RPC, SSE, and
+WebSocket behavior bindings. Source-generated topology descriptors honor the same `WithApiSurface(...)`
+contract, so the compile-time and fluent-runtime paths stay aligned.
 
 ## Registration
 
@@ -45,7 +81,8 @@ services.AddCephalon(config, engine => engine
 `[BehaviorAllowedTransports("http.rest")]` stays an activation and validation allowlist.
 It does **not** own HTTP method, route template, route grouping, or OpenAPI metadata.
 
-When a module wants shaped REST endpoints instead of the generic `/behaviors/{id}` surface, map them explicitly through the Minimal API helper layer:
+When a module wants shaped REST endpoints instead of the generic behavior transport surface, map them
+explicitly through the Minimal API helper layer:
 
 ```csharp
 public void MapEndpoints(IEndpointRouteBuilder endpoints)
@@ -75,7 +112,7 @@ Current helper behavior:
 - expects `/scalar` to redirect to the default canonical document such as `/scalar/v1`, while `/scalar/` remains available for multi-document flows and hash-based selections are normalized back into pinned versioned links
 - lets hosts move the OpenAPI JSON endpoint, Scalar UI base path, and REST host prefix through `OpenApi:RoutePattern`, `OpenApi:Scalar:RoutePrefix`, and `ApiRoutes:Prefixes:Rest`
 - still interoperates with legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` settings when a host needs custom named docs instead of major-version documents
-- does not yet provide a transport-agnostic route contract for the generic behavior bindings; side-by-side major-version transport surfaces still require a later behavior-identity and transport-surface rework
+- keeps module-owned REST routing distinct from the generic behavior transport surface; side-by-side major-version behavior identities still require a later behavior-identity and transport-surface rework
 
 ## DefaultBehaviorContext header conventions
 

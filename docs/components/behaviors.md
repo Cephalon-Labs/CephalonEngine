@@ -20,7 +20,8 @@
 | `IAppBehavior<TIn, TOut>` | Single behavior interface — `HandleAsync` + optional `static virtual ConfigureTopology` |
 | `IBehaviorContext` | Transport-neutral ambient API: `PublishAsync`, `SendAsync`, `ReplyAsync`, saga state, correlation |
 | `IBehaviorTopologyBuilder` | Fluent builder: `AsCqrs()`, `AsEventDriven()`, `ViaHttpRest()`, `ViaRabbitMq()`, etc. |
-| `BehaviorTopologyDescriptor` | Resolved per-behavior config: pattern, transports, feature flags |
+| `BehaviorApiSurfaceDescriptor` | Shared logical route surface for route-shaped transports; defaulted from the behavior id and overrideable through `WithApiSurface(...)` |
+| `BehaviorTopologyDescriptor` | Resolved per-behavior config: pattern, transports, feature flags, and shared API surface |
 | `[AppBehavior("id")]` | Declares a class as a named behavior |
 | `[BehaviorAllowedPatterns]` | Opt-in security allowlist restricting which patterns config can activate |
 | `[BehaviorAllowedTransports]` | Opt-in security allowlist restricting which transports config can activate; not a route-contract or OpenAPI descriptor |
@@ -74,6 +75,9 @@ Resolved topology is the result of a four-layer merge (lowest → highest priori
 Behavior metadata stays transport-neutral on purpose.
 
 - use `[BehaviorAllowedTransports]` and `ConfigureTopology(...)` to declare which transports may activate for a behavior
+- use `WithApiSurface(groupPath, operationPath)` when route-shaped transports should project a public path that differs from the default `behavior-id -> group/operation` split
+- expect generic REST, JSON-RPC, SSE, and WebSocket behavior bindings to reuse that shared API surface for canonical versioned routes
+- keep GraphQL, GraphQL-SSE, and GraphQL-WS schema-owned instead of forcing them into route-shaped behavior paths
 - use `Cephalon.Behaviors.Http` route helpers such as `MapBehaviorRestGroup(...)` when a module needs a concrete REST method, route template, and OpenAPI surface
 - keep HTTP-specific route shape in the adapter/helper layer so `Cephalon.Abstractions` and the core ABT contracts remain host-agnostic
 
@@ -99,13 +103,13 @@ Adds HTTP transport bindings. Each binding implements `IHttpBehaviorBinding` and
 
 | Transport ID | Binding | Route pattern |
 |---|---|---|
-| `http.rest` | `RestHttpBehaviorBinding` | `POST/GET /behaviors/{id}` |
-| `http.jsonrpc` | `JsonRpcHttpBehaviorBinding` | `POST /behaviors/{id}/jsonrpc` |
+| `http.rest` | `RestHttpBehaviorBinding` | Canonical `POST/GET {BehaviorRestPrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}` alias |
+| `http.jsonrpc` | `JsonRpcHttpBehaviorBinding` | Canonical `POST {JsonRpcPrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}/jsonrpc` alias |
 | `http.graphql` | `GraphqlHttpBehaviorBinding` | `POST /behaviors/{id}/graphql` |
 | `http.graphql-sse` | `GraphqlSseBehaviorBinding` | `POST /behaviors/{id}/graphql/sse` |
 | `http.graphql-ws` | `GraphqlWsBehaviorBinding` | `GET /behaviors/{id}/graphql/ws` |
-| `http.sse` | `SseBehaviorBinding` | `GET /behaviors/{id}/events` |
-| `http.ws` | `WebSocketBehaviorBinding` | `GET /behaviors/{id}/ws` |
+| `http.sse` | `SseBehaviorBinding` | Canonical `GET {SsePrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}/events` alias |
+| `http.ws` | `WebSocketBehaviorBinding` | Canonical `GET {WebSocketPrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}/ws` alias |
 
 ## M6 Runtime Integration
 

@@ -102,12 +102,13 @@ public static class BuiltInTransports
 
     /// <summary>
     /// Gets the built-in behavior HTTP transport descriptor that bridges behavior topology
-    /// bindings (REST, SSE, WS, GraphQL, JSON-RPC) to ASP.NET Core endpoints under <c>/behaviors</c>.
+    /// bindings to ASP.NET Core endpoints, including canonical versioned routes for route-shaped
+    /// transports plus compatibility aliases for the historical <c>/behaviors/{id}</c> surface.
     /// </summary>
     public static TransportDescriptor BehaviorHttp { get; } = new(
         id: "behavior-http",
         displayName: "Behavior HTTP",
-        description: "Aggregate transport that maps registered behavior topologies to per-behavior HTTP endpoints (REST, SSE, WebSocket, GraphQL, JSON-RPC) under /behaviors/{id}.",
+        description: "Aggregate transport that maps registered behavior topologies to per-behavior HTTP endpoints, using shared canonical routes for REST, JSON-RPC, SSE, and WebSocket while keeping GraphQL behavior bindings on their GraphQL-specific endpoint shapes.",
         features: TransportFeatures.RequestResponse |
                   TransportFeatures.ServerStreaming |
                   TransportFeatures.DuplexStreaming,

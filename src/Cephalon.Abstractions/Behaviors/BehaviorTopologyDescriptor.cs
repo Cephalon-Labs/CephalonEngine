@@ -1,6 +1,9 @@
 namespace Cephalon.Abstractions.Behaviors;
 
-/// <summary>Describes the resolved topology for a single behavior: its pattern, transports, and feature flags.</summary>
+/// <summary>
+/// Describes the resolved topology for a single behavior, including its pattern, transports,
+/// feature flags, and shared logical API surface.
+/// </summary>
 public sealed class BehaviorTopologyDescriptor
 {
     /// <summary>Initializes a new instance of <see cref="BehaviorTopologyDescriptor"/>.</summary>
@@ -11,6 +14,7 @@ public sealed class BehaviorTopologyDescriptor
         bool inboxEnabled = false,
         bool outboxEnabled = false,
         bool eventSourcingEnabled = false,
+        BehaviorApiSurfaceDescriptor? apiSurface = null,
         string? displayName = null,
         string? description = null,
         IReadOnlyDictionary<string, string>? metadata = null)
@@ -21,6 +25,7 @@ public sealed class BehaviorTopologyDescriptor
         InboxEnabled = inboxEnabled;
         OutboxEnabled = outboxEnabled;
         EventSourcingEnabled = eventSourcingEnabled;
+        ApiSurface = apiSurface ?? BehaviorApiSurfaceDescriptor.CreateDefault(id);
         DisplayName = displayName;
         Description = description;
         Metadata = metadata ?? new Dictionary<string, string>();
@@ -43,6 +48,16 @@ public sealed class BehaviorTopologyDescriptor
 
     /// <summary>Gets a value indicating whether event sourcing is wired into the behavior context.</summary>
     public bool EventSourcingEnabled { get; }
+
+    /// <summary>
+    /// Gets the logical public API surface projected by route-shaped transport adapters.
+    /// </summary>
+    /// <remarks>
+    /// When no explicit API surface is supplied, the descriptor derives one from the behavior
+    /// identifier so route-shaped transports can project canonical paths without hard-coding the
+    /// behavior id into every transport binding.
+    /// </remarks>
+    public BehaviorApiSurfaceDescriptor ApiSurface { get; }
 
     /// <summary>Gets the optional display name.</summary>
     public string? DisplayName { get; }
