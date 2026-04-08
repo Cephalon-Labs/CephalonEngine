@@ -36,7 +36,9 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         ModuleDescriptor = module.Descriptor;
         ModuleVersionMajor = ResolveModuleMajorVersion(ModuleDescriptor.Version);
         TagName = ModuleDescriptor.DisplayName;
-        OpenApiDocumentName = DefaultOpenApiDocumentName;
+        OpenApiDocumentName = ModuleVersionMajor.HasValue
+            ? $"v{ModuleVersionMajor.Value}"
+            : DefaultOpenApiDocumentName;
     }
 
     /// <summary>
@@ -206,12 +208,13 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
 
     private string BuildResolvedRoutePrefix()
     {
-        if (!ApiVersionMajor.HasValue)
+        var resolvedApiVersionMajor = ApiVersionMajor ?? ModuleVersionMajor;
+        if (!resolvedApiVersionMajor.HasValue)
         {
             return routePrefix;
         }
 
-        var versionPrefix = $"/v{ApiVersionMajor.Value}";
+        var versionPrefix = $"/v{resolvedApiVersionMajor.Value}";
         if (routePrefix.Equals(versionPrefix, StringComparison.OrdinalIgnoreCase) ||
             routePrefix.StartsWith($"{versionPrefix}/", StringComparison.OrdinalIgnoreCase))
         {
@@ -521,7 +524,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 summary,
                 description,
                 openApiDocumentName,
-                apiVersionMajor,
+                operationVersionMajor,
                 typeArguments[0],
                 typeArguments[1]);
         }

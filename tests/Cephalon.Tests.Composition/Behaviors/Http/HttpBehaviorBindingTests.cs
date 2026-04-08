@@ -472,7 +472,7 @@ public sealed class HttpBehaviorBindingTests
         var (app, client) = await BuildBehaviorRestHelperAppAsync();
 
         var response = await client.PostAsJsonAsync(
-            "/tests/cart/cart-001/items?quantity=3",
+            "/v2/tests/cart/cart-001/items?quantity=3",
             new { productName = "Widget" });
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -488,7 +488,7 @@ public sealed class HttpBehaviorBindingTests
             .Endpoints
             .OfType<RouteEndpoint>()
             .Single(static candidate =>
-                string.Equals(candidate.RoutePattern.RawText, "/tests/cart/{cartId}/items", StringComparison.Ordinal));
+                string.Equals(candidate.RoutePattern.RawText, "/v2/tests/cart/{cartId}/items", StringComparison.Ordinal));
 
         var endpointName = endpoint.Metadata.GetMetadata<EndpointNameMetadata>();
         Assert.NotNull(endpointName);
@@ -496,7 +496,7 @@ public sealed class HttpBehaviorBindingTests
 
         var groupName = endpoint.Metadata.GetMetadata<IEndpointGroupNameMetadata>();
         Assert.NotNull(groupName);
-        Assert.Equal("v1", groupName!.EndpointGroupName);
+        Assert.Equal("v2", groupName!.EndpointGroupName);
 
         await app.StopAsync();
     }

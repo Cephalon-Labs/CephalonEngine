@@ -267,6 +267,8 @@ When the playground is running, open:
 - `/events/discovery/principles`
 - `/ws/discovery`
 
+The default docs and REST prefixes are configurable through `OpenApi:RoutePattern`, `OpenApi:Scalar:RoutePrefix`, and `ApiRoutes:Prefixes:Rest` when a host needs paths other than `/openapi`, `/scalar`, and `/api`.
+
 ## Design direction
 
 Cephalon is aiming for a future where new capabilities can be delivered as modules instead of rewrites. The engine owns composition, dependency ordering, runtime introspection, and host integration. Product code should be able to plug into that surface without coupling itself to one transport or one monolith.

@@ -444,7 +444,9 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal("application/javascript", scalarConfigResponse.Content.Headers.ContentType?.MediaType);
         Assert.Contains("export default", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("replaceState", scalarConfigPayload, StringComparison.Ordinal);
-        Assert.Contains("/scalar/${encodeURIComponent(documentName)}", scalarConfigPayload, StringComparison.Ordinal);
+        Assert.Contains("configuredScalarRoutePrefix", scalarConfigPayload, StringComparison.Ordinal);
+        Assert.Contains("scalarRoutePrefix", scalarConfigPayload, StringComparison.Ordinal);
+        Assert.Contains("encodeURIComponent(documentName)", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("hashchange", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("hashSectionRoots", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("isVersionDocumentName", scalarConfigPayload, StringComparison.Ordinal);
@@ -644,9 +646,63 @@ public sealed class AspNetCoreHostingTests
         var scalarRootPayload = await scalarRootResponse.Content.ReadAsStringAsync();
         var scalarV2Payload = await scalarV2Response.Content.ReadAsStringAsync();
         Assert.Contains("Scalar", scalarRootPayload, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("\"sources\":[{\"title\":\"v1\",\"url\":\"openapi/v1.json\"}", scalarRootPayload, StringComparison.Ordinal);
-        Assert.Contains("\"title\":\"v2\",\"url\":\"openapi/v2.json\",\"default\":true", scalarRootPayload, StringComparison.Ordinal);
+        Assert.Contains("\"title\":\"v1\"", scalarRootPayload, StringComparison.Ordinal);
+        Assert.Contains("openapi/v1.json", scalarRootPayload, StringComparison.Ordinal);
+        Assert.Contains("\"title\":\"v2\"", scalarRootPayload, StringComparison.Ordinal);
+        Assert.Contains("openapi/v2.json", scalarRootPayload, StringComparison.Ordinal);
         Assert.Contains("Scalar", scalarV2Payload, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task MapCephalonSupportsConfigurableOpenApiScalarAndRestRoutePrefixes()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration["ApiRoutes:Prefixes:Rest"] = "/service-api";
+        builder.Configuration["OpenApi:RoutePattern"] = "/specs/{documentName}.json";
+        builder.Configuration["OpenApi:Scalar:RoutePrefix"] = "/docs/api-reference";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var restResponse = await client.GetAsync("/service-api/discovery/hello/Codex");
+        var legacyRestResponse = await client.GetAsync("/api/discovery/hello/Codex");
+        var openApiResponse = await client.GetAsync("/specs/v1.json");
+        var legacyOpenApiResponse = await client.GetAsync("/openapi/v1.json");
+        var scalarRootRedirectResponse = await client.GetAsync("/docs/api-reference?culture=en");
+        var scalarRootResponse = await client.GetAsync("/docs/api-reference/?culture=en");
+        var scalarV1Response = await client.GetAsync("/docs/api-reference/v1");
+        var scalarConfigResponse = await client.GetAsync("/docs/api-reference/openapi-toggle.js");
+        var scalarConfigPayload = await scalarConfigResponse.Content.ReadAsStringAsync();
+        var scalarRootPayload = await scalarRootResponse.Content.ReadAsStringAsync();
+
+        Assert.True(restResponse.IsSuccessStatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, legacyRestResponse.StatusCode);
+        Assert.True(openApiResponse.IsSuccessStatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, legacyOpenApiResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Redirect, scalarRootRedirectResponse.StatusCode);
+        Assert.NotNull(scalarRootRedirectResponse.Headers.Location);
+        Assert.Equal("/docs/api-reference/v1?culture=en", scalarRootRedirectResponse.Headers.Location!.OriginalString);
+        Assert.True(scalarRootResponse.IsSuccessStatusCode);
+        Assert.True(scalarV1Response.IsSuccessStatusCode);
+        Assert.True(scalarConfigResponse.IsSuccessStatusCode);
+        Assert.Contains("configuredScalarRoutePrefix = \"/docs/api-reference\"", scalarConfigPayload, StringComparison.Ordinal);
+        Assert.Contains("\"title\":\"v1\"", scalarRootPayload, StringComparison.Ordinal);
+        Assert.Contains("specs/v1.json", scalarRootPayload, StringComparison.Ordinal);
+
+        using var openApiDocument = JsonDocument.Parse(await openApiResponse.Content.ReadAsStringAsync());
+        Assert.True(openApiDocument.RootElement.GetProperty("paths").TryGetProperty("/service-api/discovery/hello/{name}", out _));
+        Assert.False(openApiDocument.RootElement.GetProperty("paths").TryGetProperty("/api/discovery/hello/{name}", out _));
     }
 
     [Fact]

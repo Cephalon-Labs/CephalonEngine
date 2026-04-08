@@ -32,18 +32,15 @@ namespace Cephalon.AspNetCore.Hosting;
 /// </summary>
 public static class EngineWebApplicationExtensions
 {
-    private const string OpenApiToggleScriptRoute = "/scalar/openapi-toggle.js";
-    private const string ScalarFaviconRoute = "/scalar/assets/favicon.svg";
     private const string OpenApiToggleScriptResourceName = "Cephalon.AspNetCore.Assets.openapi-toggle.js";
     private const string ScalarFaviconResourceName = "Cephalon.AspNetCore.Assets.docs-favicon.svg";
+    private const string ScalarRoutePrefixToken = "__CEPHALON_SCALAR_ROUTE_PREFIX__";
     private static readonly string DocumentationAssetVersion = typeof(EngineWebApplicationExtensions)
         .Assembly
         .ManifestModule
         .ModuleVersionId
         .ToString("N");
-    private static readonly string OpenApiToggleScriptReference = BuildVersionedAssetReference(OpenApiToggleScriptRoute);
-    private static readonly string ScalarFaviconReference = BuildVersionedAssetReference(ScalarFaviconRoute);
-    private static readonly Lazy<string> OpenApiToggleScript = new(() => LoadEmbeddedAsset(
+    private static readonly Lazy<string> OpenApiToggleScriptTemplate = new(() => LoadEmbeddedAsset(
         OpenApiToggleScriptResourceName,
         "Scalar configuration script"));
     private static readonly Lazy<string> ScalarFavicon = new(() => LoadEmbeddedAsset(
@@ -76,11 +73,16 @@ public static class EngineWebApplicationExtensions
         var referenceDocsOptions = app.Services.GetService<ReferenceDocsHostingOptions>() ?? new ReferenceDocsHostingOptions();
         var httpLoggingOptions = app.Services.GetService<HttpRequestResponseLoggingOptions>()
             ?? HttpRequestResponseLoggingOptions.FromConfiguration(configuration);
+        var openApiEndpointOptions = OpenApiEndpointOptions.FromConfiguration(configuration);
         var referenceDocsSurface = CreateReferenceDocsSurface(referenceDocsOptions);
         var openApiDocumentNames = OpenApiDocumentNames.Resolve(configuration);
         var defaultOpenApiDocumentName = OpenApiDocumentNames.ResolveDefault(configuration);
         var restApiSelected = runtime.Manifest.AppProfile.Transports.Any(transport =>
             string.Equals(transport.Id, "rest-api", StringComparison.OrdinalIgnoreCase));
+        var openApiToggleScriptRoute = BuildScalarAssetRoute(openApiEndpointOptions.ScalarRoutePrefix, "openapi-toggle.js");
+        var scalarFaviconRoute = BuildScalarAssetRoute(openApiEndpointOptions.ScalarRoutePrefix, "assets/favicon.svg");
+        var openApiToggleScriptReference = BuildVersionedAssetReference(openApiToggleScriptRoute);
+        var scalarFaviconReference = BuildVersionedAssetReference(scalarFaviconRoute);
 
         app.UseRequestLocalization(BuildRequestLocalizationOptions(localizationSettings, localizedTextCatalog));
         if (httpLoggingOptions.Enabled)
@@ -274,7 +276,7 @@ public static class EngineWebApplicationExtensions
         {
             // Keep the docs shell and bundled Scalar assets fresh across package upgrades.
             app.UseWhen(
-                context => context.Request.Path.StartsWithSegments("/scalar", StringComparison.OrdinalIgnoreCase),
+                context => context.Request.Path.StartsWithSegments(openApiEndpointOptions.ScalarRoutePrefix, StringComparison.OrdinalIgnoreCase),
                 branch => branch.Use(async (context, next) =>
                 {
                     context.Response.OnStarting(() =>
@@ -287,23 +289,31 @@ public static class EngineWebApplicationExtensions
                     await next();
                 }));
 
-            app.MapOpenApi();
-            app.MapGet(OpenApiToggleScriptRoute, () => Results.Text(OpenApiToggleScript.Value, "application/javascript"))
+            app.MapOpenApi(openApiEndpointOptions.RoutePattern);
+            app.MapGet(
+                    openApiToggleScriptRoute,
+                    () => Results.Text(
+                        RenderOpenApiToggleScript(openApiEndpointOptions.ScalarRoutePrefix),
+                        "application/javascript"))
                 .ExcludeFromDescription();
-            app.MapGet(ScalarFaviconRoute, () => Results.Text(ScalarFavicon.Value, "image/svg+xml"))
+            app.MapGet(scalarFaviconRoute, () => Results.Text(ScalarFavicon.Value, "image/svg+xml"))
                 .ExcludeFromDescription();
-            app.MapGet("/favicon.ico", () => Results.Redirect(ScalarFaviconReference))
+            app.MapGet("/favicon.ico", () => Results.Redirect(scalarFaviconReference))
                 .ExcludeFromDescription();
             app.UseWhen(
-                static context =>
+                context =>
                     (HttpMethods.IsGet(context.Request.Method) || HttpMethods.IsHead(context.Request.Method)) &&
-                    context.Request.Path == "/scalar",
+                    context.Request.Path == openApiEndpointOptions.ScalarRoutePrefix,
                 branch => branch.Run(context =>
                 {
-                    context.Response.Redirect(BuildScalarCanonicalPath(defaultOpenApiDocumentName, context.Request.QueryString));
+                    context.Response.Redirect(
+                        BuildScalarCanonicalPath(
+                            openApiEndpointOptions.ScalarRoutePrefix,
+                            defaultOpenApiDocumentName,
+                            context.Request.QueryString));
                     return Task.CompletedTask;
                 }));
-            app.MapScalarApiReference((options, httpContext) =>
+            app.MapScalarApiReference(openApiEndpointOptions.ScalarRoutePrefix, (options, httpContext) =>
             {
                 var title = ResolveRestDocsText(
                     httpContext.RequestServices,
@@ -312,8 +322,9 @@ public static class EngineWebApplicationExtensions
                     fallbackValue: "Cephalon REST API");
 
                 options.WithTitle(title);
-                options.WithFavicon(ScalarFaviconReference);
-                options.WithJavaScriptConfiguration(OpenApiToggleScriptReference);
+                options.WithFavicon(scalarFaviconReference);
+                options.WithJavaScriptConfiguration(openApiToggleScriptReference);
+                options.WithOpenApiRoutePattern(openApiEndpointOptions.RoutePattern);
 
                 foreach (var documentName in openApiDocumentNames)
                 {
@@ -515,11 +526,31 @@ public static class EngineWebApplicationExtensions
         return $"{route}?v={DocumentationAssetVersion}";
     }
 
-    private static string BuildScalarCanonicalPath(string documentName, QueryString queryString)
+    private static string BuildScalarCanonicalPath(string scalarRoutePrefix, string documentName, QueryString queryString)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(scalarRoutePrefix);
         ArgumentException.ThrowIfNullOrWhiteSpace(documentName);
         var query = queryString.HasValue ? queryString.Value : string.Empty;
-        return $"/scalar/{documentName}{query}";
+        return $"{scalarRoutePrefix}/{documentName}{query}";
+    }
+
+    private static string BuildScalarAssetRoute(string scalarRoutePrefix, string relativeAssetPath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(scalarRoutePrefix);
+        ArgumentException.ThrowIfNullOrWhiteSpace(relativeAssetPath);
+
+        var normalizedAssetPath = relativeAssetPath.TrimStart('/');
+        return $"{scalarRoutePrefix}/{normalizedAssetPath}";
+    }
+
+    private static string RenderOpenApiToggleScript(string scalarRoutePrefix)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(scalarRoutePrefix);
+
+        return OpenApiToggleScriptTemplate.Value.Replace(
+            ScalarRoutePrefixToken,
+            scalarRoutePrefix,
+            StringComparison.Ordinal);
     }
 
     private static HealthCheckOptions CreateHealthCheckOptions(Func<HealthCheckRegistration, bool> predicate)

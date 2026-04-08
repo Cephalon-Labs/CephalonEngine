@@ -150,9 +150,18 @@
     ]
   },
   "OpenApi": {
+    "RoutePattern": "/openapi/{documentName}.json",
     "EnabledVersions": [ 1, 2 ],
     "DefaultVersion": 1,
+    "Scalar": {
+      "RoutePrefix": "/scalar"
+    },
     "Title": "Cephalon Showcase Sample",
     "Description": "Comprehensive showcase exercising all 5 behavior patterns and 11 transports in CephalonEngine"
+  },
+  "ApiRoutes": {
+    "Prefixes": {
+      "Rest": "/api"
+    }
   }
 }

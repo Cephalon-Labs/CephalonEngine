@@ -1,5 +1,23 @@
 const baseTitle = "Cephalon REST API";
+const configuredScalarRoutePrefix = "__CEPHALON_SCALAR_ROUTE_PREFIX__";
 const hashSectionRoots = new Set(["description", "model", "operation", "tag", "webhook"]);
+const scalarRoutePrefix = normalizeRoutePrefix(configuredScalarRoutePrefix);
+
+function normalizeRoutePrefix(value) {
+  const normalized = String(value ?? "").trim();
+  if (normalized.length === 0 || normalized === "/") {
+    return "/scalar";
+  }
+
+  const withLeadingSlash = normalized.startsWith("/") ? normalized : `/${normalized}`;
+  return withLeadingSlash.length > 1
+    ? withLeadingSlash.replace(/\/+$/, "")
+    : withLeadingSlash;
+}
+
+function escapeRegex(value) {
+  return String(value ?? "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 
 function toSlug(value) {
   return String(value ?? "")
@@ -42,8 +60,11 @@ function updateCanonicalUrl(selectedDocument) {
 }
 
 function getPathDocumentName(pathname) {
-  const match = String(pathname ?? "").match(/^\/scalar\/([^/?#]+)/i);
-  return match ? decodeURIComponent(match[1]).trim() : "";
+  const match = String(pathname ?? "")
+    .match(new RegExp(`^${escapeRegex(scalarRoutePrefix)}(?:/([^/?#]+))?$`, "i"));
+  return match && match[1]
+    ? decodeURIComponent(match[1]).trim()
+    : "";
 }
 
 function splitHashSegments(hash) {
@@ -76,9 +97,11 @@ function resolveCanonicalUrl(preferredDocumentName = "") {
 
   const { pathname, search, hash } = window.location;
   const currentDocumentName = getPathDocumentName(pathname);
+  const isScalarRootPath = pathname.localeCompare(scalarRoutePrefix, undefined, { sensitivity: "accent" }) === 0;
+  const isScalarShellPath = pathname.localeCompare(`${scalarRoutePrefix}/`, undefined, { sensitivity: "accent" }) === 0;
   const supportsScalarDocumentPath =
-    pathname === "/scalar" ||
-    pathname === "/scalar/" ||
+    isScalarRootPath ||
+    isScalarShellPath ||
     currentDocumentName.length > 0;
 
   if (!supportsScalarDocumentPath) {
@@ -108,7 +131,7 @@ function resolveCanonicalUrl(preferredDocumentName = "") {
     return "";
   }
 
-  const nextPath = `/scalar/${encodeURIComponent(documentName)}`;
+  const nextPath = `${scalarRoutePrefix}/${encodeURIComponent(documentName)}`;
   const nextHash = hashSegments.length > 0 ? `#${hashSegments.join("/")}` : "";
   const nextUrl = `${nextPath}${search ?? ""}${nextHash}`;
   const currentUrl = `${pathname}${search ?? ""}${hash ?? ""}`;

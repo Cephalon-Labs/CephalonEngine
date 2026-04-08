@@ -1,16 +1,25 @@
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.Engine.Runtime;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.AspNetCore.Transports.Rest;
 
 internal sealed class RestTransportRouteMapper : ITransportRouteMapper
 {
+    private readonly ApiRoutesOptions options;
+
+    public RestTransportRouteMapper(IConfiguration configuration)
+    {
+        ArgumentNullException.ThrowIfNull(configuration);
+        options = ApiRoutesOptions.FromConfiguration(configuration);
+    }
+
     public string TransportId => "rest-api";
 
     public void MapRoutes(WebApplication app, IRuntime runtime)
     {
-        var apiGroup = app.MapGroup("/api");
+        var apiGroup = app.MapGroup(options.RestPrefix);
         foreach (var module in runtime.Modules.OfType<IRestModule>())
         {
             module.MapRestEndpoints(apiGroup);
