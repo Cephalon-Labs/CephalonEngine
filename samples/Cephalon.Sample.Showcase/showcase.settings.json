@@ -161,7 +161,14 @@
   },
   "ApiRoutes": {
     "Prefixes": {
-      "Rest": "/api"
+      "Rest": "/api",
+      "GraphQL": "/graphql",
+      "JsonRpc": "/json-rpc",
+      "Grpc": "/grpc",
+      "Ws": "/ws",
+      "Sse": "/sse",
+      "GraphQLWs": "/graphql-ws",
+      "GraphQLSse": "/graphql-sse"
     }
   }
 }

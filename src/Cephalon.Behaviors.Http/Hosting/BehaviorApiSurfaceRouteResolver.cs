@@ -42,7 +42,10 @@ internal sealed class BehaviorApiSurfaceRouteResolver
             "http.rest" => options.BehaviorRestPrefix,
             "http.jsonrpc" => options.JsonRpcPrefix,
             "http.sse" => options.SsePrefix,
-            "http.ws" => options.WebSocketPrefix,
+            "http.ws" => options.WsPrefix,
+            "http.graphql" => options.GraphQLPrefix,
+            "http.graphql-sse" => options.GraphQLSsePrefix,
+            "http.graphql-ws" => options.GraphQLWsPrefix,
             _ => throw new InvalidOperationException(
                 $"Transport '{transportId}' does not participate in the shared behavior API surface route policy.")
         };
@@ -62,6 +65,9 @@ internal sealed class BehaviorApiSurfaceRouteResolver
             "http.jsonrpc" => $"/behaviors/{descriptor.Id}/jsonrpc",
             "http.sse" => $"/behaviors/{descriptor.Id}/events",
             "http.ws" => $"/behaviors/{descriptor.Id}/ws",
+            "http.graphql" => $"/behaviors/{descriptor.Id}/graphql",
+            "http.graphql-sse" => $"/behaviors/{descriptor.Id}/graphql/sse",
+            "http.graphql-ws" => $"/behaviors/{descriptor.Id}/graphql/ws",
             _ => throw new InvalidOperationException(
                 $"Transport '{transportId}' does not participate in the shared behavior API surface route policy.")
         };

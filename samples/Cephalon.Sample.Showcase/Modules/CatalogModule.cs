@@ -102,7 +102,7 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
                 };
                 db.Products.Add(entity);
                 await db.SaveChangesAsync();
-                return Results.Created($"/api/v1/showcase/catalog/products/{productId}", ToProduct(entity));
+                return Results.Created(BuildCreatedLocation(ctx, productId), ToProduct(entity));
             }
 
             var product = new Product
@@ -118,7 +118,7 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
                 CreatedAtUtc = DateTime.UtcNow
             };
             ShowcaseDataStore.Products[productId] = product;
-            return Results.Created($"/api/v1/showcase/catalog/products/{productId}", product);
+            return Results.Created(BuildCreatedLocation(ctx, productId), product);
         });
 
         group.MapPut("/products/{productId}", async (string productId, UpdateProductInput input, HttpContext ctx) =>
@@ -174,5 +174,13 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
     {
         if (string.IsNullOrWhiteSpace(json)) return [];
         return JsonSerializer.Deserialize<List<string>>(json) ?? [];
+    }
+
+    private static string BuildCreatedLocation(HttpContext context, string resourceId)
+    {
+        var requestPath = context.Request.Path.Value?.TrimEnd('/');
+        return string.IsNullOrWhiteSpace(requestPath)
+            ? $"/{resourceId}"
+            : $"{requestPath}/{resourceId}";
     }
 }

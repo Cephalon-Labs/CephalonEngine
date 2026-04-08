@@ -5,24 +5,43 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Cephalon.Abstractions.Behaviors;
+using Cephalon.AspNetCore.Hosting;
 using Cephalon.Behaviors.Http.Abstractions;
+using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Behaviors.Http.Bindings;
 
 /// <summary>
 /// GraphQL over WebSocket transport binding (transport ID: <c>http.graphql-ws</c>).
-/// Upgrades <c>GET /behaviors/{id}/graphql/ws</c> to a WebSocket connection
-/// implementing the <c>graphql-transport-ws</c> sub-protocol:
+/// Upgrades canonical routes such as <c>GET /graphql-ws/v1/cart/get</c> to a WebSocket connection,
+/// while optionally keeping the legacy <c>/behaviors/{id}/graphql/ws</c> alias enabled for compatibility.
+/// The connection implements the <c>graphql-transport-ws</c> sub-protocol:
 /// <c>connection_init</c> → <c>connection_ack</c> → <c>subscribe</c> → <c>next</c> → <c>complete</c>.
 /// </summary>
 public sealed class GraphqlWsBehaviorBinding : IHttpBehaviorBinding
 {
     private static readonly TimeSpan ConnectionInitTimeout = TimeSpan.FromSeconds(5);
+    private readonly BehaviorApiSurfaceRouteResolver routeResolver;
+
+    /// <summary>
+    /// Initializes a new <see cref="GraphqlWsBehaviorBinding" />.
+    /// </summary>
+    /// <param name="configuration">
+    /// Optional configuration used to resolve canonical behavior transport routes.
+    /// When omitted, the binding falls back to the default <c>/graphql-ws/v1</c> route policy.
+    /// </param>
+    public GraphqlWsBehaviorBinding(IConfiguration? configuration = null)
+    {
+        routeResolver = new BehaviorApiSurfaceRouteResolver(configuration is null
+            ? new ApiRoutesOptions()
+            : ApiRoutesOptions.FromConfiguration(configuration));
+    }
 
     /// <inheritdoc />
     public string TransportId => "http.graphql-ws";
@@ -37,23 +56,24 @@ public sealed class GraphqlWsBehaviorBinding : IHttpBehaviorBinding
         ArgumentNullException.ThrowIfNull(descriptor);
         ArgumentNullException.ThrowIfNull(dispatcher);
 
-        var route = $"/behaviors/{descriptor.Id}/graphql/ws";
-
-        app.MapGet(route, async (HttpContext ctx) =>
+        foreach (var route in routeResolver.ResolveRoutes(TransportId, descriptor))
         {
-            // G-WS-01: must be a WebSocket upgrade request
-            if (!ctx.WebSockets.IsWebSocketRequest)
+            app.MapGet(route, async (HttpContext ctx) =>
             {
-                ctx.Response.StatusCode = StatusCodes.Status400BadRequest;
-                return;
-            }
+                // G-WS-01: must be a WebSocket upgrade request
+                if (!ctx.WebSockets.IsWebSocketRequest)
+                {
+                    ctx.Response.StatusCode = StatusCodes.Status400BadRequest;
+                    return;
+                }
 
-            // G-GQL-WS-01: correct subprotocol name
-            var logger = ctx.RequestServices.GetService<ILoggerFactory>()
-                ?.CreateLogger<GraphqlWsBehaviorBinding>();
-            using var ws = await ctx.WebSockets.AcceptWebSocketAsync("graphql-transport-ws").ConfigureAwait(false);
-            await HandleGraphqlWsAsync(ws, ctx, descriptor.Id, dispatcher, logger).ConfigureAwait(false);
-        });
+                // G-GQL-WS-01: correct subprotocol name
+                var logger = ctx.RequestServices.GetService<ILoggerFactory>()
+                    ?.CreateLogger<GraphqlWsBehaviorBinding>();
+                using var ws = await ctx.WebSockets.AcceptWebSocketAsync("graphql-transport-ws").ConfigureAwait(false);
+                await HandleGraphqlWsAsync(ws, ctx, descriptor.Id, dispatcher, logger).ConfigureAwait(false);
+            });
+        }
 
         return Task.CompletedTask;
     }

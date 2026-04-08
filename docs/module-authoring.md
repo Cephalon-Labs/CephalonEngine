@@ -96,12 +96,14 @@ public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
 }
 ```
 
-That shared API surface feeds the generic REST, JSON-RPC, SSE, and WebSocket behavior bindings, so
-they can all project canonical versioned routes such as `/api/behaviors/v1/cart/get`,
-`/rpc/v1/cart/get`, `/events/v1/cart/get`, and `/ws/v1/cart/get`. Hosts can move those canonical
-prefixes with `ApiRoutes:Prefixes:BehaviorRest`, `ApiRoutes:Prefixes:JsonRpc`,
-`ApiRoutes:Prefixes:Sse`, `ApiRoutes:Prefixes:WebSocket`, and control compatibility aliases through
-`ApiRoutes:MapLegacyBehaviorRoutes`.
+That shared API surface feeds the generic REST, JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, SSE,
+and WebSocket behavior bindings, so they can all project canonical versioned routes such as
+`/api/v1/cart/get`, `/json-rpc/v1/cart/get`, `/graphql/v1/cart/get`, `/graphql-sse/v1/cart/get`,
+`/graphql-ws/v1/cart/get`, `/sse/v1/cart/get`, and `/ws/v1/cart/get`. Hosts can move those
+canonical prefixes with `ApiRoutes:Prefixes:Rest`, `ApiRoutes:Prefixes:GraphQL`,
+`ApiRoutes:Prefixes:JsonRpc`, `ApiRoutes:Prefixes:Sse`, `ApiRoutes:Prefixes:Ws`,
+`ApiRoutes:Prefixes:GraphQLWs`, `ApiRoutes:Prefixes:GraphQLSse`, and control compatibility aliases
+through `ApiRoutes:MapLegacyBehaviorRoutes`.
 
 The owning module then maps the concrete REST surface:
 
@@ -133,9 +135,10 @@ Current helper behavior:
 When a host needs more than the default `v1` document, prefer `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion` so endpoints mapped with `.ApiVersion(2)` or higher, or defaulted from module version `2.x`, have a matching OpenAPI/Scalar surface. In that shape, `/scalar` redirects to the default canonical document such as `/scalar/v2`, `/scalar/` remains available for multi-document selection, and Cephalon normalizes hash-based Scalar selections such as `/scalar/#v2/` back into pinned versioned links. Hosts can also move the docs and REST entry points with `OpenApi:RoutePattern`, `OpenApi:Scalar:RoutePrefix`, and `ApiRoutes:Prefixes:Rest`. Legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` settings remain available when a host deliberately wants custom named documents instead of `v{major}` API-version documents.
 
 This helper surface is still REST-specific. The generic route-shaped behavior transports already share
-the `BehaviorApiSurfaceDescriptor` contract for generic REST, JSON-RPC, SSE, and WebSocket routes,
-while GraphQL, GraphQL-SSE, and GraphQL-WS intentionally remain on their current GraphQL-specific
-endpoint shapes because their public contract is schema-owned rather than route-owned.
+the `BehaviorApiSurfaceDescriptor` contract for generic REST, JSON-RPC, GraphQL, GraphQL-SSE,
+GraphQL-WS, SSE, and WebSocket routes. Module-owned REST helpers remain the right choice when the
+module needs Minimal API method selection, concrete REST templates, and OpenAPI metadata beyond the
+generic per-behavior transport surface.
 
 The generic `/behaviors/{id}` REST binding still exists as an optional compatibility alias and remains
 useful for low-ceremony or fully dynamic behavior hosts. Use the helper surface when the module owns a

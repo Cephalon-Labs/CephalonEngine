@@ -26,9 +26,9 @@ namespace Cephalon.Behaviors.Http.Bindings;
 /// </summary>
 /// <remarks>
 /// Canonical routes are derived from the shared <see cref="BehaviorApiSurfaceDescriptor" /> plus
-/// <see cref="ApiRoutesOptions.WebSocketPrefix" /> and the resolved default behavior document
-/// name. GraphQL-over-WebSocket remains on its GraphQL-specific endpoint shape rather than
-/// participating in this route-shaped WebSocket contract.
+/// the configured WebSocket prefix (canonically <c>ApiRoutes:Prefixes:Ws</c>) and the resolved
+/// default behavior document name. <see cref="ApiRoutesOptions.WebSocketPrefix" /> remains
+/// available as a compatibility alias for older consumers.
 /// </remarks>
 public sealed class WebSocketBehaviorBinding : IHttpBehaviorBinding
 {

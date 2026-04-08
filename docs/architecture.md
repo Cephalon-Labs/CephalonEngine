@@ -102,9 +102,9 @@ Source structure:
 - health summary, liveness, and readiness endpoints
 - OpenAPI and Scalar API docs for REST surfaces
 - optional hosted reference-doc surfaces for generated API documentation
-- built-in transport-aware module surfaces such as `/api`, `/events`, and `/ws`
+- built-in transport-aware module surfaces such as `/api`, `/sse`, and `/ws`
 
-Companion adapter packages can extend that host with additional transport surfaces such as `/graphql` for GraphQL, `/rpc` for JSON-RPC, or gRPC bindings with unary and streaming contracts.
+Companion adapter packages can extend that host with additional transport surfaces such as `/graphql` for GraphQL, `/json-rpc` for JSON-RPC, or `/grpc` for gRPC bindings with unary and streaming contracts.
 
 `Cephalon.Worker` is the non-HTTP generic-host adapter. It starts and stops the same runtime inside worker processes and keeps module/background behavior aligned with standard hosted-service lifecycles.
 

@@ -14,7 +14,7 @@ namespace Cephalon.Behaviors.Http.Bindings;
 /// <summary>
 /// Server-Sent Events transport binding (transport ID: <c>http.sse</c>).
 /// Opens a long-lived SSE stream at canonical routes such as
-/// <c>GET /events/v1/cart/get</c>, while optionally keeping the legacy
+/// <c>GET /sse/v1/cart/get</c>, while optionally keeping the legacy
 /// <c>/behaviors/{id}/events</c> alias enabled for compatibility.
 /// Query-string parameters are parsed into a JSON object and deserialized as the
 /// behavior's typed input. The behavior is dispatched immediately; its return value
@@ -23,9 +23,9 @@ namespace Cephalon.Behaviors.Http.Bindings;
 /// </summary>
 /// <remarks>
 /// Canonical routes are derived from the shared <see cref="BehaviorApiSurfaceDescriptor" /> plus
-/// <see cref="ApiRoutesOptions.SsePrefix" /> and the resolved default behavior document name.
-/// GraphQL subscriptions remain on their GraphQL-specific endpoints rather than participating in
-/// this route-shaped SSE contract.
+/// the configured SSE prefix (canonically <c>ApiRoutes:Prefixes:Sse</c>) and the resolved default
+/// behavior document name. GraphQL-over-SSE participates in the same shared API-surface model
+/// through its own dedicated prefix rather than reusing the generic SSE endpoint.
 /// </remarks>
 public sealed class SseBehaviorBinding : IHttpBehaviorBinding
 {
@@ -36,7 +36,7 @@ public sealed class SseBehaviorBinding : IHttpBehaviorBinding
     /// </summary>
     /// <param name="configuration">
     /// Optional configuration used to resolve canonical behavior transport routes.
-    /// When omitted, the binding falls back to the default <c>/events/v1</c> route policy.
+    /// When omitted, the binding falls back to the default <c>/sse/v1</c> route policy.
     /// </param>
     public SseBehaviorBinding(IConfiguration? configuration = null)
     {

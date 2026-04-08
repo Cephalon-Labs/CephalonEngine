@@ -1,23 +1,40 @@
 using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
+using Cephalon.AspNetCore.Hosting;
 using Cephalon.Behaviors.Http.Abstractions;
+using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.Behaviors.Http.Bindings;
 
 /// <summary>
 /// GraphQL HTTP transport binding (transport ID: <c>http.graphql</c>).
-/// Accepts <c>POST /behaviors/{id}/graphql</c> with a
-/// <c>{"query":"...","variables":{...}}</c> payload. The <c>variables</c> object
-/// is used as the behavior input, which allows standard domain behaviors to work
-/// transparently behind a GraphQL transport.
-/// Returns <c>{"data":{...}}</c> or <c>{"errors":[...]}</c>.
+/// Accepts canonical routes such as <c>POST /graphql/v1/cart/get</c>, while optionally keeping the
+/// legacy <c>/behaviors/{id}/graphql</c> alias enabled for compatibility. The request body uses a
+/// standard GraphQL envelope and the <c>variables</c> object is dispatched as the behavior input.
 /// </summary>
 public sealed class GraphqlHttpBehaviorBinding : IHttpBehaviorBinding
 {
+    private readonly BehaviorApiSurfaceRouteResolver routeResolver;
+
+    /// <summary>
+    /// Initializes a new <see cref="GraphqlHttpBehaviorBinding" />.
+    /// </summary>
+    /// <param name="configuration">
+    /// Optional configuration used to resolve canonical behavior transport routes.
+    /// When omitted, the binding falls back to the default <c>/graphql/v1</c> route policy.
+    /// </param>
+    public GraphqlHttpBehaviorBinding(IConfiguration? configuration = null)
+    {
+        routeResolver = new BehaviorApiSurfaceRouteResolver(configuration is null
+            ? new ApiRoutesOptions()
+            : ApiRoutesOptions.FromConfiguration(configuration));
+    }
+
     /// <inheritdoc />
     public string TransportId => "http.graphql";
 
@@ -31,33 +48,34 @@ public sealed class GraphqlHttpBehaviorBinding : IHttpBehaviorBinding
         ArgumentNullException.ThrowIfNull(descriptor);
         ArgumentNullException.ThrowIfNull(dispatcher);
 
-        var route = $"/behaviors/{descriptor.Id}/graphql";
-
-        app.MapPost(route, async (HttpContext ctx, [FromBody] JsonElement body) =>
+        foreach (var route in routeResolver.ResolveRoutes(TransportId, descriptor))
         {
-            // Extract the variables object as the behavior input.
-            // This maps the GraphQL variables to the behavior's typed input model.
-            object input = body.TryGetProperty("variables", out var variables)
-                    && variables.ValueKind == JsonValueKind.Object
-                ? JsonSerializer.Deserialize<object>(variables.GetRawText())!
-                : JsonSerializer.Deserialize<object>("{}")!;
-
-            var context = DefaultBehaviorContext.From(ctx, descriptor.Id);
-
-            try
+            app.MapPost(route, async (HttpContext ctx, [FromBody] JsonElement body) =>
             {
-                var result = await dispatcher.DispatchAsync(descriptor.Id, input, context, ctx.RequestAborted)
-                    .ConfigureAwait(false);
-                return Results.Json(new { data = result });
-            }
-            catch (Exception ex)
-            {
-                return Results.Json(new
+                // Extract the variables object as the behavior input.
+                // This maps the GraphQL variables to the behavior's typed input model.
+                object input = body.TryGetProperty("variables", out var variables)
+                        && variables.ValueKind == JsonValueKind.Object
+                    ? JsonSerializer.Deserialize<object>(variables.GetRawText())!
+                    : JsonSerializer.Deserialize<object>("{}")!;
+
+                var context = DefaultBehaviorContext.From(ctx, descriptor.Id);
+
+                try
                 {
-                    errors = new[] { new { message = ex.Message } }
-                });
-            }
-        });
+                    var result = await dispatcher.DispatchAsync(descriptor.Id, input, context, ctx.RequestAborted)
+                        .ConfigureAwait(false);
+                    return Results.Json(new { data = result });
+                }
+                catch (Exception ex)
+                {
+                    return Results.Json(new
+                    {
+                        errors = new[] { new { message = ex.Message } }
+                    });
+                }
+            });
+        }
 
         return Task.CompletedTask;
     }

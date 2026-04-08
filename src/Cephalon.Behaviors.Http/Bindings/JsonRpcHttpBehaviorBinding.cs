@@ -92,15 +92,15 @@ internal sealed partial class JsonRpcSerializerContext : JsonSerializerContext {
 
 /// <summary>
 /// JSON-RPC 2.0 HTTP transport binding (transport ID: <c>http.jsonrpc</c>).
-/// Accepts canonical routes such as <c>POST /rpc/v1/cart/get</c>, while optionally keeping the
+/// Accepts canonical routes such as <c>POST /json-rpc/v1/cart/get</c>, while optionally keeping the
 /// legacy <c>/behaviors/{id}/jsonrpc</c> alias enabled for compatibility, and returns a JSON-RPC
 /// 2.0 response or error object.
 /// Per the JSON-RPC 2.0 specification the HTTP status is always <c>200 OK</c>.
 /// </summary>
 /// <remarks>
 /// Canonical routes are derived from the shared <see cref="BehaviorApiSurfaceDescriptor" /> plus
-/// <see cref="ApiRoutesOptions.JsonRpcPrefix" /> and the resolved default behavior document name.
-/// GraphQL remains outside this route-shaped transport contract.
+/// the configured JSON-RPC prefix (canonically <c>ApiRoutes:Prefixes:JsonRpc</c>) and the
+/// resolved default behavior document name.
 /// </remarks>
 public sealed class JsonRpcHttpBehaviorBinding : IHttpBehaviorBinding
 {
@@ -111,7 +111,7 @@ public sealed class JsonRpcHttpBehaviorBinding : IHttpBehaviorBinding
     /// </summary>
     /// <param name="configuration">
     /// Optional configuration used to resolve canonical behavior transport routes.
-    /// When omitted, the binding falls back to the default <c>/rpc/v1</c> route policy.
+    /// When omitted, the binding falls back to the default <c>/json-rpc/v1</c> route policy.
     /// </param>
     public JsonRpcHttpBehaviorBinding(IConfiguration? configuration = null)
     {

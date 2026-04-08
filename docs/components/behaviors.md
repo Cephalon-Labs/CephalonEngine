@@ -76,8 +76,8 @@ Behavior metadata stays transport-neutral on purpose.
 
 - use `[BehaviorAllowedTransports]` and `ConfigureTopology(...)` to declare which transports may activate for a behavior
 - use `WithApiSurface(groupPath, operationPath)` when route-shaped transports should project a public path that differs from the default `behavior-id -> group/operation` split
-- expect generic REST, JSON-RPC, SSE, and WebSocket behavior bindings to reuse that shared API surface for canonical versioned routes
-- keep GraphQL, GraphQL-SSE, and GraphQL-WS schema-owned instead of forcing them into route-shaped behavior paths
+- expect generic REST, JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket behavior bindings to reuse that shared API surface for canonical versioned routes
+- keep GraphQL schema ownership focused on payload and protocol semantics even though its Cephalon behavior endpoint now participates in the shared prefix/version policy
 - use `Cephalon.Behaviors.Http` route helpers such as `MapBehaviorRestGroup(...)` when a module needs a concrete REST method, route template, and OpenAPI surface
 - keep HTTP-specific route shape in the adapter/helper layer so `Cephalon.Abstractions` and the core ABT contracts remain host-agnostic
 
@@ -103,13 +103,13 @@ Adds HTTP transport bindings. Each binding implements `IHttpBehaviorBinding` and
 
 | Transport ID | Binding | Route pattern |
 |---|---|---|
-| `http.rest` | `RestHttpBehaviorBinding` | Canonical `POST/GET {BehaviorRestPrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}` alias |
+| `http.rest` | `RestHttpBehaviorBinding` | Canonical `POST/GET {RestPrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}` alias |
 | `http.jsonrpc` | `JsonRpcHttpBehaviorBinding` | Canonical `POST {JsonRpcPrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}/jsonrpc` alias |
-| `http.graphql` | `GraphqlHttpBehaviorBinding` | `POST /behaviors/{id}/graphql` |
-| `http.graphql-sse` | `GraphqlSseBehaviorBinding` | `POST /behaviors/{id}/graphql/sse` |
-| `http.graphql-ws` | `GraphqlWsBehaviorBinding` | `GET /behaviors/{id}/graphql/ws` |
+| `http.graphql` | `GraphqlHttpBehaviorBinding` | Canonical `POST {GraphQLPrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}/graphql` alias |
+| `http.graphql-sse` | `GraphqlSseBehaviorBinding` | Canonical `POST {GraphQLSsePrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}/graphql/sse` alias |
+| `http.graphql-ws` | `GraphqlWsBehaviorBinding` | Canonical `GET {GraphQLWsPrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}/graphql/ws` alias |
 | `http.sse` | `SseBehaviorBinding` | Canonical `GET {SsePrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}/events` alias |
-| `http.ws` | `WebSocketBehaviorBinding` | Canonical `GET {WebSocketPrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}/ws` alias |
+| `http.ws` | `WebSocketBehaviorBinding` | Canonical `GET {WsPrefix}/{document}/{group}/{operation}` plus optional legacy `/behaviors/{id}/ws` alias |
 
 ## M6 Runtime Integration
 

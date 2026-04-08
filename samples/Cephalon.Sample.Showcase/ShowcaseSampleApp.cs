@@ -180,9 +180,32 @@ public static class ShowcaseSampleApp
         builder.Services.AddSingleton<IEventStore, ShowcaseInMemoryEventStore>();
 
         var app = builder.Build();
+        var apiRoutes = ApiRoutesOptions.FromConfiguration(app.Configuration);
         app.UseExceptionHandler();
         app.UseStaticFiles();
         app.MapGet("/", () => TypedResults.Ok(ShowcaseSummary.Instance)).ExcludeFromDescription();
+        app.MapGet("/showcase/client-config.js", () =>
+        {
+            var payload = JsonSerializer.Serialize(new
+            {
+                restApiBase = $"{apiRoutes.RestPrefix}/v1/showcase",
+                restApiVersion = "v1",
+                behaviorVersion = apiRoutes.DefaultBehaviorDocumentName,
+                behaviorRoutes = new
+                {
+                    rest = apiRoutes.RestPrefix,
+                    graphql = apiRoutes.GraphQLPrefix,
+                    jsonRpc = apiRoutes.JsonRpcPrefix,
+                    grpc = apiRoutes.GrpcPrefix,
+                    ws = apiRoutes.WsPrefix,
+                    sse = apiRoutes.SsePrefix,
+                    graphQLWs = apiRoutes.GraphQLWsPrefix,
+                    graphQLSse = apiRoutes.GraphQLSsePrefix
+                }
+            });
+
+            return Results.Content($"window.CEPHALON_SHOWCASE = {payload};", "application/javascript");
+        }).ExcludeFromDescription();
         app.MapCephalon();
 
         // --- Database initialization (Docker mode) ---

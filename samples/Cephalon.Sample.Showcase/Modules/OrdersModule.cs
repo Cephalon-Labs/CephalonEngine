@@ -110,7 +110,7 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
                 };
                 db.Orders.Add(entity);
                 await db.SaveChangesAsync();
-                return Results.Created($"/api/v1/showcase/orders/{orderId}",
+                return Results.Created(BuildCreatedLocation(ctx, orderId),
                     new PlaceOrderOutput(orderId, "Pending"));
             }
 
@@ -126,7 +126,7 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
                 PlacedAtUtc = DateTime.UtcNow
             };
             ShowcaseDataStore.Orders[orderId] = order;
-            return Results.Created($"/api/v1/showcase/orders/{orderId}",
+            return Results.Created(BuildCreatedLocation(ctx, orderId),
                 new PlaceOrderOutput(orderId, "Pending"));
         });
 
@@ -202,5 +202,13 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
             order.UpdatedAtUtc,
             order.CancellationReason
         };
+    }
+
+    private static string BuildCreatedLocation(HttpContext context, string resourceId)
+    {
+        var requestPath = context.Request.Path.Value?.TrimEnd('/');
+        return string.IsNullOrWhiteSpace(requestPath)
+            ? $"/{resourceId}"
+            : $"{requestPath}/{resourceId}";
     }
 }

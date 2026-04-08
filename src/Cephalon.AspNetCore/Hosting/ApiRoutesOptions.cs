@@ -22,24 +22,60 @@ public sealed class ApiRoutesOptions
     public string RestPrefix { get; set; } = "/api";
 
     /// <summary>
-    /// Gets or sets the canonical prefix used by the generic behavior REST binding surface.
+    /// Gets or sets the root prefix used by the built-in GraphQL transport mapper.
     /// </summary>
-    public string BehaviorRestPrefix { get; set; } = "/api/behaviors";
+    public string GraphQLPrefix { get; set; } = "/graphql";
 
     /// <summary>
     /// Gets or sets the canonical prefix used by the generic behavior JSON-RPC binding surface.
     /// </summary>
-    public string JsonRpcPrefix { get; set; } = "/rpc";
+    public string JsonRpcPrefix { get; set; } = "/json-rpc";
 
     /// <summary>
-    /// Gets or sets the canonical prefix used by the generic behavior Server-Sent Events binding surface.
+    /// Gets or sets the root prefix used by the built-in gRPC transport mapper.
     /// </summary>
-    public string SsePrefix { get; set; } = "/events";
+    public string GrpcPrefix { get; set; } = "/grpc";
 
     /// <summary>
     /// Gets or sets the canonical prefix used by the generic behavior WebSocket binding surface.
     /// </summary>
-    public string WebSocketPrefix { get; set; } = "/ws";
+    public string WsPrefix { get; set; } = "/ws";
+
+    /// <summary>
+    /// Gets or sets the canonical prefix used by the generic behavior Server-Sent Events binding surface.
+    /// </summary>
+    public string SsePrefix { get; set; } = "/sse";
+
+    /// <summary>
+    /// Gets or sets the canonical prefix used by the generic behavior GraphQL-over-WebSocket binding surface.
+    /// </summary>
+    public string GraphQLWsPrefix { get; set; } = "/graphql-ws";
+
+    /// <summary>
+    /// Gets or sets the canonical prefix used by the generic behavior GraphQL-over-SSE binding surface.
+    /// </summary>
+    public string GraphQLSsePrefix { get; set; } = "/graphql-sse";
+
+    /// <summary>
+    /// Gets or sets the canonical prefix used by the generic behavior REST binding surface.
+    /// </summary>
+    /// <remarks>
+    /// This compatibility alias mirrors <see cref="RestPrefix" /> unless a legacy behavior-specific prefix is configured.
+    /// New configurations should use <c>ApiRoutes:Prefixes:Rest</c>.
+    /// </remarks>
+    public string BehaviorRestPrefix { get; set; } = "/api";
+
+    /// <summary>
+    /// Gets or sets the canonical prefix used by the generic behavior WebSocket binding surface.
+    /// </summary>
+    /// <remarks>
+    /// This compatibility alias mirrors <see cref="WsPrefix" /> and remains for older consumers that referenced the previous property name.
+    /// </remarks>
+    public string WebSocketPrefix
+    {
+        get => WsPrefix;
+        set => WsPrefix = value;
+    }
 
     /// <summary>
     /// Gets or sets the default document/version segment projected into generic behavior transport routes.
@@ -64,23 +100,34 @@ public sealed class ApiRoutesOptions
         ArgumentNullException.ThrowIfNull(configuration);
 
         var section = configuration.GetSection(sectionPath);
-        var restPrefix = section["RestPrefix"] ?? section["Prefixes:Rest"];
+        var restPrefix = section["Prefixes:Rest"] ?? section["RestPrefix"];
+        var graphQlPrefix = section["Prefixes:GraphQL"] ?? section["GraphQLPrefix"] ?? section["GraphQlPrefix"];
+        var jsonRpcPrefix = section["Prefixes:JsonRpc"] ?? section["JsonRpcPrefix"];
+        var grpcPrefix = section["Prefixes:Grpc"] ?? section["GrpcPrefix"];
+        var wsPrefix = section["Prefixes:Ws"] ?? section["WsPrefix"] ?? section["WebSocketPrefix"] ?? section["Prefixes:WebSocket"];
+        var ssePrefix = section["Prefixes:Sse"] ?? section["SsePrefix"];
+        var graphQlWsPrefix = section["Prefixes:GraphQLWs"] ?? section["GraphQLWsPrefix"] ?? section["GraphQlWsPrefix"];
+        var graphQlSsePrefix = section["Prefixes:GraphQLSse"] ?? section["GraphQLSsePrefix"] ?? section["GraphQlSsePrefix"];
         var behaviorRestPrefix = section["BehaviorRestPrefix"] ?? section["Prefixes:BehaviorRest"];
-        var jsonRpcPrefix = section["JsonRpcPrefix"] ?? section["Prefixes:JsonRpc"];
-        var ssePrefix = section["SsePrefix"] ?? section["Prefixes:Sse"];
-        var webSocketPrefix = section["WebSocketPrefix"] ?? section["Prefixes:WebSocket"];
         var defaultBehaviorDocumentName = section["DefaultBehaviorDocumentName"]?.Trim();
         var mapLegacyBehaviorRoutes = section["MapLegacyBehaviorRoutes"] ?? section["BehaviorLegacyAliases"];
+        var normalizedRestPrefix = NormalizePrefix(restPrefix, "/api");
+        var normalizedWsPrefix = NormalizePrefix(wsPrefix, "/ws");
 
         return new ApiRoutesOptions
         {
-            RestPrefix = NormalizePrefix(restPrefix, "/api"),
-            BehaviorRestPrefix = NormalizePrefix(behaviorRestPrefix, "/api/behaviors"),
-            JsonRpcPrefix = NormalizePrefix(jsonRpcPrefix, "/rpc"),
-            SsePrefix = NormalizePrefix(ssePrefix, "/events"),
-            WebSocketPrefix = NormalizePrefix(webSocketPrefix, "/ws"),
+            RestPrefix = normalizedRestPrefix,
+            GraphQLPrefix = NormalizePrefix(graphQlPrefix, "/graphql"),
+            JsonRpcPrefix = NormalizePrefix(jsonRpcPrefix, "/json-rpc"),
+            GrpcPrefix = NormalizePrefix(grpcPrefix, "/grpc"),
+            WsPrefix = normalizedWsPrefix,
+            SsePrefix = NormalizePrefix(ssePrefix, "/sse"),
+            GraphQLWsPrefix = NormalizePrefix(graphQlWsPrefix, "/graphql-ws"),
+            GraphQLSsePrefix = NormalizePrefix(graphQlSsePrefix, "/graphql-sse"),
+            BehaviorRestPrefix = NormalizePrefix(behaviorRestPrefix, normalizedRestPrefix),
             DefaultBehaviorDocumentName = NormalizeDocumentName(defaultBehaviorDocumentName, configuration),
-            MapLegacyBehaviorRoutes = GetBoolean(mapLegacyBehaviorRoutes, defaultValue: true)
+            MapLegacyBehaviorRoutes = GetBoolean(mapLegacyBehaviorRoutes, defaultValue: true),
+            WebSocketPrefix = normalizedWsPrefix
         };
     }
 

@@ -62,13 +62,16 @@ When teams use `Cephalon.Behaviors.Http` behavior-aware REST helpers, the result
 By default the host registers the `v1` OpenAPI document and treats `/scalar/v1` as the canonical docs link by redirecting `/scalar` to the configured default document. The slash-suffixed Scalar shell at `/scalar/` still remains available for multi-document flows, and Cephalon's Scalar JavaScript normalizes hash-based selections such as `/scalar/#v2/` back into canonical versioned links. Hosts can move those surfaces through `OpenApi:RoutePattern` and `OpenApi:Scalar:RoutePrefix`, while the built-in REST mapper can move off `/api` through `ApiRoutes:Prefixes:Rest`. The long-term versioned config contract is `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion`, for example `EnabledVersions: [1, 2]` and `DefaultVersion: 2`, so Scalar can render a version selector while endpoints mapped with `BehaviorRestEndpointGroup.ApiVersion(2)` or defaulted from a module version `2.x` continue to appear in `/openapi/v2.json` and under version-aligned REST paths such as `/api/v2/...`. Legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` string settings still work for backward compatibility or custom non-version document names. `OpenApi:Version` remains available as a global `info.version` override for single-document hosts, but multi-document hosts now keep each document version truthful to its own resolved document name such as `v1` or `v2`.
 
 The same host layer also owns the prefix policy for the generic behavior HTTP bindings. Route-shaped
-generic behavior transports now project canonical versioned paths through `ApiRoutes:Prefixes:BehaviorRest`,
-`ApiRoutes:Prefixes:JsonRpc`, `ApiRoutes:Prefixes:Sse`, `ApiRoutes:Prefixes:WebSocket`,
+generic behavior transports now project canonical versioned paths through `ApiRoutes:Prefixes:Rest`,
+`ApiRoutes:Prefixes:GraphQL`, `ApiRoutes:Prefixes:JsonRpc`, `ApiRoutes:Prefixes:Sse`,
+`ApiRoutes:Prefixes:Ws`, `ApiRoutes:Prefixes:GraphQLWs`, `ApiRoutes:Prefixes:GraphQLSse`,
 `ApiRoutes:DefaultBehaviorDocumentName`, and `ApiRoutes:MapLegacyBehaviorRoutes`. That lets a host keep
-generic behavior REST on `/api/behaviors/v1/...`, JSON-RPC on `/rpc/v1/...`, SSE on `/events/v1/...`, and
-WebSocket on `/ws/v1/...` while still retaining the old `/behaviors/{id}` aliases when compatibility
-matters. GraphQL behavior bindings remain intentionally outside that route-shaped policy because their
-public surface is schema- or GraphQL-endpoint-owned rather than route-owned.
+generic behavior REST on `/api/v1/...`, GraphQL on `/graphql/v1/...`, JSON-RPC on `/json-rpc/v1/...`,
+GraphQL-over-SSE on `/graphql-sse/v1/...`, GraphQL-over-WebSocket on `/graphql-ws/v1/...`, SSE on
+`/sse/v1/...`, and WebSocket on `/ws/v1/...` while still retaining the old `/behaviors/{id}` aliases
+when compatibility matters. The built-in host transport mappers follow the same canonical prefix set,
+so GraphQL, JSON-RPC, gRPC, SSE, and WebSocket transports can all move together under the `ApiRoutes`
+section instead of each surface inventing its own default root path.
 
 ## Related docs
 

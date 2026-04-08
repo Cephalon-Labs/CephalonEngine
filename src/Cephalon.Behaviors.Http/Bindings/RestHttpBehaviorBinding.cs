@@ -14,14 +14,16 @@ namespace Cephalon.Behaviors.Http.Bindings;
 
 /// <summary>
 /// HTTP REST transport binding (transport ID: <c>http.rest</c>).
-/// Maps canonical behavior routes such as <c>POST /api/behaviors/v1/cart/get</c> and
-/// <c>GET /api/behaviors/v1/cart/get</c>, while optionally keeping the legacy
+/// Maps canonical behavior routes such as <c>POST /api/v1/cart/get</c> and
+/// <c>GET /api/v1/cart/get</c>, while optionally keeping the legacy
 /// <c>/behaviors/{id}</c> aliases enabled for compatibility.
 /// </summary>
 /// <remarks>
 /// Canonical routes are derived from the shared <see cref="BehaviorApiSurfaceDescriptor" /> plus
-/// <see cref="ApiRoutesOptions.BehaviorRestPrefix" /> and the resolved default behavior document
-/// name. Query-string parameters are parsed as JSON input for GET requests.
+/// the configured REST prefix (canonically <c>ApiRoutes:Prefixes:Rest</c>) together with the
+/// resolved default behavior document name. <see cref="ApiRoutesOptions.BehaviorRestPrefix" />
+/// remains available as a compatibility alias for older hosts. Query-string parameters are parsed
+/// as JSON input for GET requests.
 /// </remarks>
 public sealed class RestHttpBehaviorBinding : IHttpBehaviorBinding
 {
@@ -32,7 +34,7 @@ public sealed class RestHttpBehaviorBinding : IHttpBehaviorBinding
     /// </summary>
     /// <param name="configuration">
     /// Optional configuration used to resolve canonical behavior transport routes.
-    /// When omitted, the binding falls back to the default <c>/api/behaviors/v1</c> route policy.
+    /// When omitted, the binding falls back to the default <c>/api/v1</c> route policy.
     /// </param>
     public RestHttpBehaviorBinding(IConfiguration? configuration = null)
     {

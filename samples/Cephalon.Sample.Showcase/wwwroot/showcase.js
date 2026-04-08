@@ -2,8 +2,20 @@
 // CephalonEngine Showcase — JavaScript
 // ═══════════════════════════════════════════════════════════
 
-const API = '/api/v1/showcase';
-const BEHAVIOR_BASE = '/behaviors';
+const SHOWCASE_CONFIG = window.CEPHALON_SHOWCASE || {};
+const ROUTE_PREFIXES = Object.freeze({
+  rest: SHOWCASE_CONFIG.behaviorRoutes?.rest || '/api',
+  graphql: SHOWCASE_CONFIG.behaviorRoutes?.graphql || '/graphql',
+  jsonRpc: SHOWCASE_CONFIG.behaviorRoutes?.jsonRpc || '/json-rpc',
+  grpc: SHOWCASE_CONFIG.behaviorRoutes?.grpc || '/grpc',
+  ws: SHOWCASE_CONFIG.behaviorRoutes?.ws || '/ws',
+  sse: SHOWCASE_CONFIG.behaviorRoutes?.sse || '/sse',
+  graphqlWs: SHOWCASE_CONFIG.behaviorRoutes?.graphQLWs || '/graphql-ws',
+  graphqlSse: SHOWCASE_CONFIG.behaviorRoutes?.graphQLSse || '/graphql-sse'
+});
+const API_VERSION = SHOWCASE_CONFIG.restApiVersion || 'v1';
+const API = SHOWCASE_CONFIG.restApiBase || `${ROUTE_PREFIXES.rest}/${API_VERSION}/showcase`;
+const BEHAVIOR_VERSION = SHOWCASE_CONFIG.behaviorVersion || 'v1';
 
 // ── State ──────────────────────────────────────────────────
 let cartId = 'cart-' + Math.random().toString(36).slice(2, 10);
@@ -28,6 +40,12 @@ function shortId(id) { return id?.length > 16 ? id.slice(0, 16) + '...' : id; }
 function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 function ts() { return new Date().toLocaleTimeString('en-US', { hour12: false }); }
 function prettyJson(obj) { try { return JSON.stringify(typeof obj === 'string' ? JSON.parse(obj) : obj, null, 2); } catch { return String(obj); } }
+function behaviorPath(prefix, behavior) { return `${prefix}/${BEHAVIOR_VERSION}/${behavior.split('.').join('/')}`; }
+function behaviorHttpUrl(prefix, behavior) { return behaviorPath(prefix, behavior); }
+function behaviorWsUrl(prefix, behavior) {
+  const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  return `${protocol}//${location.host}${behaviorPath(prefix, behavior)}`;
+}
 
 function statusClass(s) {
   const m = {
@@ -419,7 +437,7 @@ function connectSse() {
   const behavior = document.getElementById('sseSelect').value;
   if (sseConnections[behavior]) { toast(behavior + ' already connected', 'error'); return; }
 
-  const url = BEHAVIOR_BASE + '/' + behavior + '/events';
+  const url = behaviorHttpUrl(ROUTE_PREFIXES.sse, behavior);
   const source = new EventSource(url);
   sseConnections[behavior] = source;
 
@@ -468,8 +486,7 @@ function connectWs() {
   const behavior = document.getElementById('wsSelect').value;
   if (wsConnections[behavior]) { toast(behavior + ' already connected', 'error'); return; }
 
-  const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const url = protocol + '//' + location.host + BEHAVIOR_BASE + '/' + behavior + '/ws';
+  const url = behaviorWsUrl(ROUTE_PREFIXES.ws, behavior);
   const ws = new WebSocket(url);
   wsConnections[behavior] = ws;
 
@@ -557,7 +574,7 @@ async function labGraphqlSend() {
   const behavior = document.getElementById('gqlBehavior').value;
   const query = document.getElementById('gqlQuery').value;
   const variables = document.getElementById('gqlVars').value;
-  const url = BEHAVIOR_BASE + '/' + behavior + '/graphql';
+  const url = behaviorHttpUrl(ROUTE_PREFIXES.graphql, behavior);
 
   const reqBody = { query, variables: JSON.parse(variables || '{}') };
   document.getElementById('gqlReqView').textContent = `POST ${url}\n\n${prettyJson(reqBody)}`;
@@ -581,8 +598,7 @@ function labGqlWsConnect() {
   if (labGqlWsConn) { toast('Already connected', 'error'); return; }
 
   const behavior = document.getElementById('gqlWsBehavior').value;
-  const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const url = protocol + '//' + location.host + BEHAVIOR_BASE + '/' + behavior + '/graphql/ws';
+  const url = behaviorWsUrl(ROUTE_PREFIXES.graphqlWs, behavior);
 
   const ws = new WebSocket(url, 'graphql-transport-ws');
   labGqlWsConn = ws;
@@ -651,7 +667,7 @@ function updateGqlWsStatus(state) {
 async function labGqlSseSend() {
   const behavior = document.getElementById('gqlSseBehavior').value;
   const query = document.getElementById('gqlSseQuery').value;
-  const url = BEHAVIOR_BASE + '/' + behavior + '/graphql/sse';
+  const url = behaviorHttpUrl(ROUTE_PREFIXES.graphqlSse, behavior);
 
   const reqBody = { query };
   document.getElementById('gqlSseReqView').textContent = `POST ${url}\n\n${prettyJson(reqBody)}`;
@@ -686,7 +702,7 @@ async function labGqlSseSend() {
 function labSseConnect() {
   if (labSseSource) { toast('Already connected', 'error'); return; }
   const behavior = document.getElementById('labSseBehavior').value;
-  const url = BEHAVIOR_BASE + '/' + behavior + '/events';
+  const url = behaviorHttpUrl(ROUTE_PREFIXES.sse, behavior);
 
   document.getElementById('labSseInfo').textContent = `Endpoint: GET ${url}\nContent-Type: text/event-stream\nBehavior: ${behavior}\nStatus: Connecting...`;
   const eventsEl = document.getElementById('labSseEvents');
@@ -728,8 +744,7 @@ function updateLabSseStatus(state) {
 function labWsConnect() {
   if (labWsConn) { toast('Already connected', 'error'); return; }
   const behavior = document.getElementById('labWsBehavior').value;
-  const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const url = protocol + '//' + location.host + BEHAVIOR_BASE + '/' + behavior + '/ws';
+  const url = behaviorWsUrl(ROUTE_PREFIXES.ws, behavior);
 
   const ws = new WebSocket(url);
   labWsConn = ws;
@@ -779,7 +794,7 @@ function updateLabWsStatus(state) {
 async function labJsonRpcSend() {
   const behavior = document.getElementById('jsonrpcBehavior').value;
   const body = document.getElementById('jsonrpcBody').value;
-  const url = BEHAVIOR_BASE + '/' + behavior + '/jsonrpc';
+  const url = behaviorHttpUrl(ROUTE_PREFIXES.jsonRpc, behavior);
 
   document.getElementById('jsonrpcReqView').textContent = `POST ${url}\nContent-Type: application/json\n\n${prettyJson(body)}`;
   try {
@@ -801,6 +816,11 @@ async function labJsonRpcSend() {
 // ═══════════════════════════════════════════════════════════
 
 document.getElementById('cartIdDisplay').textContent = cartId.slice(0, 12);
+document.getElementById('restUrl').value = `${API}/catalog/products`;
+document.getElementById('labSseInfo').textContent =
+  `Endpoint: GET ${behaviorHttpUrl(ROUTE_PREFIXES.sse, 'orders.get-status')}\n` +
+  'Content-Type: text/event-stream\n' +
+  'Protocol: Server-Sent Events (EventSource API)';
 loadProducts();
 loadInventory();
 loadOrders();

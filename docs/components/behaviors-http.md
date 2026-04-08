@@ -20,29 +20,26 @@ It wires behavior topology descriptors to HTTP transports via 7 concrete `IHttpB
 
 | Transport ID | Binding class | Route |
 |---|---|---|
-| `http.rest` | `RestHttpBehaviorBinding` | Canonical `POST/GET {BehaviorRestPrefix}/{document}/{group}/{operation}`; optional legacy alias `POST/GET /behaviors/{id}` |
+| `http.rest` | `RestHttpBehaviorBinding` | Canonical `POST/GET {RestPrefix}/{document}/{group}/{operation}`; optional legacy alias `POST/GET /behaviors/{id}` |
 | `http.jsonrpc` | `JsonRpcHttpBehaviorBinding` | Canonical `POST {JsonRpcPrefix}/{document}/{group}/{operation}`; optional legacy alias `POST /behaviors/{id}/jsonrpc` |
-| `http.graphql` | `GraphqlHttpBehaviorBinding` | `POST /behaviors/{id}/graphql` |
-| `http.graphql-sse` | `GraphqlSseBehaviorBinding` | `POST /behaviors/{id}/graphql/sse` |
-| `http.graphql-ws` | `GraphqlWsBehaviorBinding` | `GET /behaviors/{id}/graphql/ws` |
+| `http.graphql` | `GraphqlHttpBehaviorBinding` | Canonical `POST {GraphQLPrefix}/{document}/{group}/{operation}`; optional legacy alias `POST /behaviors/{id}/graphql` |
+| `http.graphql-sse` | `GraphqlSseBehaviorBinding` | Canonical `POST {GraphQLSsePrefix}/{document}/{group}/{operation}`; optional legacy alias `POST /behaviors/{id}/graphql/sse` |
+| `http.graphql-ws` | `GraphqlWsBehaviorBinding` | Canonical `GET {GraphQLWsPrefix}/{document}/{group}/{operation}`; optional legacy alias `GET /behaviors/{id}/graphql/ws` |
 | `http.sse` | `SseBehaviorBinding` | Canonical `GET {SsePrefix}/{document}/{group}/{operation}`; optional legacy alias `GET /behaviors/{id}/events` |
-| `http.ws` | `WebSocketBehaviorBinding` | Canonical `GET {WebSocketPrefix}/{document}/{group}/{operation}`; optional legacy alias `GET /behaviors/{id}/ws` |
+| `http.ws` | `WebSocketBehaviorBinding` | Canonical `GET {WsPrefix}/{document}/{group}/{operation}`; optional legacy alias `GET /behaviors/{id}/ws` |
 
 Cephalon now uses a shared `BehaviorApiSurfaceDescriptor` for the generic route-shaped behavior transports.
 By default the API surface is derived from the behavior id, so `cart.get` becomes logical group `cart`
 plus operation `get`, which the HTTP bindings project into canonical versioned routes such as
-`/api/behaviors/v1/cart/get`, `/rpc/v1/cart/get`, `/events/v1/cart/get`, and `/ws/v1/cart/get`.
+`/api/v1/cart/get`, `/json-rpc/v1/cart/get`, `/graphql/v1/cart/get`, `/graphql-sse/v1/cart/get`,
+`/graphql-ws/v1/cart/get`, `/sse/v1/cart/get`, and `/ws/v1/cart/get`.
 
-The host controls those canonical prefixes through `ApiRoutes:Prefixes:BehaviorRest`,
-`ApiRoutes:Prefixes:JsonRpc`, `ApiRoutes:Prefixes:Sse`, `ApiRoutes:Prefixes:WebSocket`, and the
-resolved default version/document segment through `OpenApi:DefaultVersion` or
+The host controls those canonical prefixes through `ApiRoutes:Prefixes:Rest`,
+`ApiRoutes:Prefixes:GraphQL`, `ApiRoutes:Prefixes:JsonRpc`, `ApiRoutes:Prefixes:Sse`,
+`ApiRoutes:Prefixes:Ws`, `ApiRoutes:Prefixes:GraphQLWs`, and `ApiRoutes:Prefixes:GraphQLSse`,
+while the resolved default version/document segment comes from `OpenApi:DefaultVersion` or
 `ApiRoutes:DefaultBehaviorDocumentName`. Legacy `/behaviors/{id}` aliases remain available through
 `ApiRoutes:MapLegacyBehaviorRoutes`.
-
-GraphQL is intentionally excluded from this shared route-shaped contract. GraphQL, GraphQL-SSE, and
-GraphQL-WS remain schema- or GraphQL-endpoint-owned surfaces, so Cephalon keeps their current
-behavior-id endpoint shape instead of pretending they should be projected into REST-style operation
-paths.
 
 ## Shared behavior API surface
 
@@ -61,9 +58,10 @@ public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
 }
 ```
 
-That one transport-agnostic descriptor is then reused by the generic REST, JSON-RPC, SSE, and
-WebSocket behavior bindings. Source-generated topology descriptors honor the same `WithApiSurface(...)`
-contract, so the compile-time and fluent-runtime paths stay aligned.
+That one transport-agnostic descriptor is then reused by the generic REST, JSON-RPC, GraphQL,
+GraphQL-SSE, GraphQL-WS, SSE, and WebSocket behavior bindings. Source-generated topology descriptors
+honor the same `WithApiSurface(...)` contract, so the compile-time and fluent-runtime paths stay
+aligned.
 
 ## Registration
 

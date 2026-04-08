@@ -299,7 +299,7 @@ public sealed class AspNetCoreHostingTests
         var graphQlPayload = await graphQlResponse.Content.ReadAsStringAsync();
         var graphQlSdlResponse = await client.GetAsync("/graphql?sdl");
         var graphQlSdlPayload = await graphQlSdlResponse.Content.ReadAsStringAsync();
-        var rpcResponse = await client.PostAsJsonAsync("/rpc/discovery", new
+        var rpcResponse = await client.PostAsJsonAsync("/json-rpc/discovery", new
         {
             jsonRpc = "2.0",
             method = "discovery.hello",
@@ -307,12 +307,16 @@ public sealed class AspNetCoreHostingTests
             id = "req-1"
         });
         var rpcPayload = await rpcResponse.Content.ReadAsStringAsync();
-        var sseResponse = await client.GetAsync("/events/discovery/principles");
+        var sseResponse = await client.GetAsync("/sse/discovery/principles");
         var ssePayload = await sseResponse.Content.ReadAsStringAsync();
-        var grpcHttpClient = app.GetTestClient();
+        var grpcHandler = new GrpcSubdirectoryHandler(app.GetTestServer().CreateHandler(), "/grpc");
+        using var grpcHttpClient = new HttpClient(grpcHandler)
+        {
+            BaseAddress = new Uri("http://localhost")
+        };
         grpcHttpClient.DefaultRequestVersion = HttpVersion.Version20;
         grpcHttpClient.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
-        using var channel = GrpcChannel.ForAddress(grpcHttpClient.BaseAddress!, new GrpcChannelOptions
+        using var channel = GrpcChannel.ForAddress("http://localhost", new GrpcChannelOptions
         {
             HttpClient = grpcHttpClient
         });
@@ -418,8 +422,8 @@ public sealed class AspNetCoreHostingTests
         var schemas = components.GetProperty("schemas");
         Assert.True(paths.TryGetProperty("/api/discovery/hello/{name}", out _));
         Assert.True(paths.TryGetProperty("/api/platform/time", out _));
-        Assert.False(paths.TryGetProperty("/rpc/discovery", out _));
-        Assert.False(paths.TryGetProperty("/events/discovery/principles", out _));
+        Assert.False(paths.TryGetProperty("/json-rpc/discovery", out _));
+        Assert.False(paths.TryGetProperty("/sse/discovery/principles", out _));
         Assert.False(paths.TryGetProperty("/engine", out _));
         Assert.True(securitySchemes.TryGetProperty("Bearer", out var bearerScheme));
         Assert.Equal("http", bearerScheme.GetProperty("type").GetString());
@@ -660,9 +664,22 @@ public sealed class AspNetCoreHostingTests
         builder.WebHost.UseTestServer();
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:1"] = "JsonRpc";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:2"] = "Grpc";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:3"] = "GraphQL";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:4"] = "ServerSentEvents";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:5"] = "WebSocket";
         builder.Configuration["ApiRoutes:Prefixes:Rest"] = "/service-api";
+        builder.Configuration["ApiRoutes:Prefixes:GraphQL"] = "/graph";
+        builder.Configuration["ApiRoutes:Prefixes:JsonRpc"] = "/invoke";
+        builder.Configuration["ApiRoutes:Prefixes:Grpc"] = "/rpc-bin";
+        builder.Configuration["ApiRoutes:Prefixes:Sse"] = "/stream";
+        builder.Configuration["ApiRoutes:Prefixes:Ws"] = "/socket";
         builder.Configuration["OpenApi:RoutePattern"] = "/specs/{documentName}.json";
         builder.Configuration["OpenApi:Scalar:RoutePrefix"] = "/docs/api-reference";
+        builder.AddGraphQLTransport();
+        builder.AddGrpcTransport();
+        builder.AddJsonRpcTransport();
         builder.AddCephalon(cephalon =>
         {
             cephalon.AddModule(new PlatformTestModule());
@@ -685,6 +702,37 @@ public sealed class AspNetCoreHostingTests
         var scalarConfigResponse = await client.GetAsync("/docs/api-reference/openapi-toggle.js");
         var scalarConfigPayload = await scalarConfigResponse.Content.ReadAsStringAsync();
         var scalarRootPayload = await scalarRootResponse.Content.ReadAsStringAsync();
+        var graphQlResponse = await client.PostAsJsonAsync("/graph", new
+        {
+            query = "query ($name: String) { hello(name: $name) { message } }",
+            variables = new { name = "Configurable" }
+        });
+        var rpcResponse = await client.PostAsJsonAsync("/invoke/discovery", new
+        {
+            jsonRpc = "2.0",
+            method = "discovery.hello",
+            @params = new Dictionary<string, string?> { ["name"] = "Configurable" },
+            id = "req-3"
+        });
+        var sseResponse = await client.GetAsync("/stream/discovery/principles");
+        var grpcHandler = new GrpcSubdirectoryHandler(app.GetTestServer().CreateHandler(), "/rpc-bin");
+        using var grpcHttpClient = new HttpClient(grpcHandler)
+        {
+            BaseAddress = new Uri("http://localhost")
+        };
+        grpcHttpClient.DefaultRequestVersion = HttpVersion.Version20;
+        grpcHttpClient.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
+        using var grpcChannel = GrpcChannel.ForAddress("http://localhost", new GrpcChannelOptions
+        {
+            HttpClient = grpcHttpClient
+        });
+        var grpcClient = new DiscoveryService.DiscoveryServiceClient(grpcChannel);
+        var grpcReply = await grpcClient.SayHelloAsync(new HelloRequest { Name = "Configurable" });
+        var webSocketClient = app.GetTestServer().CreateWebSocketClient();
+        using var webSocket = await webSocketClient.ConnectAsync(new Uri("ws://localhost/socket/discovery"), CancellationToken.None);
+        var webSocketBuffer = new byte[4096];
+        var webSocketReceive = await webSocket.ReceiveAsync(webSocketBuffer, CancellationToken.None);
+        var webSocketPayload = Encoding.UTF8.GetString(webSocketBuffer, 0, webSocketReceive.Count);
 
         Assert.True(restResponse.IsSuccessStatusCode);
         Assert.Equal(HttpStatusCode.NotFound, legacyRestResponse.StatusCode);
@@ -696,6 +744,11 @@ public sealed class AspNetCoreHostingTests
         Assert.True(scalarRootResponse.IsSuccessStatusCode);
         Assert.True(scalarV1Response.IsSuccessStatusCode);
         Assert.True(scalarConfigResponse.IsSuccessStatusCode);
+        Assert.True(graphQlResponse.IsSuccessStatusCode);
+        Assert.True(rpcResponse.IsSuccessStatusCode);
+        Assert.True(sseResponse.IsSuccessStatusCode);
+        Assert.Contains("Configurable", grpcReply.Message, StringComparison.Ordinal);
+        Assert.Contains("socket", webSocketPayload, StringComparison.Ordinal);
         Assert.Contains("configuredScalarRoutePrefix = \"/docs/api-reference\"", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("\"title\":\"v1\"", scalarRootPayload, StringComparison.Ordinal);
         Assert.Contains("specs/v1.json", scalarRootPayload, StringComparison.Ordinal);
@@ -1694,7 +1747,7 @@ note: visible
         var scalarConfigResponse = await client.GetAsync("/scalar/openapi-toggle.js");
         var scalarFaviconResponse = await client.GetAsync("/scalar/assets/favicon.svg");
         var scalarResponse = await client.GetAsync("/scalar/v1");
-        var rpcResponse = await client.PostAsJsonAsync("/rpc/discovery", new
+        var rpcResponse = await client.PostAsJsonAsync("/json-rpc/discovery", new
         {
             jsonRpc = "2.0",
             method = "discovery.hello",
@@ -2386,4 +2439,37 @@ note: visible
         string WorkspacePath,
         string PluginsRootPath,
         string PackageDirectoryPath);
+
+    private sealed class GrpcSubdirectoryHandler : DelegatingHandler
+    {
+        private readonly string subdirectory;
+
+        public GrpcSubdirectoryHandler(HttpMessageHandler innerHandler, string subdirectory)
+            : base(innerHandler)
+        {
+            ArgumentNullException.ThrowIfNull(innerHandler);
+            ArgumentException.ThrowIfNullOrWhiteSpace(subdirectory);
+
+            this.subdirectory = subdirectory.StartsWith('/')
+                ? subdirectory.TrimEnd('/')
+                : $"/{subdirectory.TrimEnd('/')}";
+        }
+
+        protected override Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken)
+        {
+            ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(request.RequestUri);
+
+            var requestUri = request.RequestUri;
+            var builder = new UriBuilder(requestUri)
+            {
+                Path = $"{subdirectory}{requestUri.AbsolutePath}"
+            };
+            request.RequestUri = builder.Uri;
+
+            return base.SendAsync(request, cancellationToken);
+        }
+    }
 }

@@ -108,7 +108,7 @@ public static class BuiltInTransports
     public static TransportDescriptor BehaviorHttp { get; } = new(
         id: "behavior-http",
         displayName: "Behavior HTTP",
-        description: "Aggregate transport that maps registered behavior topologies to per-behavior HTTP endpoints, using shared canonical routes for REST, JSON-RPC, SSE, and WebSocket while keeping GraphQL behavior bindings on their GraphQL-specific endpoint shapes.",
+        description: "Aggregate transport that maps registered behavior topologies to per-behavior HTTP endpoints, using shared canonical routes for REST, GraphQL, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket while optionally retaining legacy /behaviors/{id} aliases for compatibility.",
         features: TransportFeatures.RequestResponse |
                   TransportFeatures.ServerStreaming |
                   TransportFeatures.DuplexStreaming,

@@ -3,11 +3,20 @@ using Cephalon.AspNetCore.Hosting;
 using Cephalon.Engine.Runtime;
 using HotChocolate.AspNetCore;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.AspNetCore.GraphQL.Routing;
 
 internal sealed class GraphQLTransportRouteMapper : ITransportRouteMapper
 {
+    private readonly ApiRoutesOptions options;
+
+    public GraphQLTransportRouteMapper(IConfiguration configuration)
+    {
+        ArgumentNullException.ThrowIfNull(configuration);
+        options = ApiRoutesOptions.FromConfiguration(configuration);
+    }
+
     public string TransportId => "graphql";
 
     public void MapRoutes(WebApplication app, IRuntime runtime)
@@ -20,7 +29,7 @@ internal sealed class GraphQLTransportRouteMapper : ITransportRouteMapper
         }
 
         app.UseWebSockets();
-        app.MapGraphQL("/graphql")
+        app.MapGraphQL(options.GraphQLPrefix)
             .WithDisplayName("Cephalon GraphQL");
     }
 }

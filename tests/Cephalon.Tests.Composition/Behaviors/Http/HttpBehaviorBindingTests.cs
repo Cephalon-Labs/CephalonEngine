@@ -242,7 +242,7 @@ public sealed class HttpBehaviorBindingTests
         var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.rest"]);
         var (app, client) = await BuildAppAsync(descriptor, new RestHttpBehaviorBinding());
 
-        var response = await client.GetAsync("/api/behaviors/v1/object/echo?q=hello");
+        var response = await client.GetAsync("/api/v1/object/echo?q=hello");
 
         Assert.True(
             response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.NoContent,
@@ -316,7 +316,7 @@ public sealed class HttpBehaviorBindingTests
             id = 7
         };
 
-        var response = await client.PostAsJsonAsync("/rpc/v1/catalog/items/lookup", requestBody);
+        var response = await client.PostAsJsonAsync("/json-rpc/v1/catalog/items/lookup", requestBody);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -342,6 +342,51 @@ public sealed class HttpBehaviorBindingTests
         Assert.True(
             json.TryGetProperty("data", out _) || json.TryGetProperty("errors", out _),
             "Response should contain 'data' or 'errors'");
+
+        await app.StopAsync();
+    }
+
+    [Fact]
+    public async Task GraphqlBindingMapsCanonicalApiSurfaceRoute()
+    {
+        var descriptor = new BehaviorTopologyDescriptor(
+            "object.echo",
+            "direct",
+            ["http.graphql"],
+            apiSurface: new BehaviorApiSurfaceDescriptor("catalog/items", "lookup"));
+        var (app, client) = await BuildAppAsync(descriptor, new GraphqlHttpBehaviorBinding());
+
+        var requestBody = new { query = "{ echo }", variables = (object?)null };
+        var response = await client.PostAsJsonAsync("/graphql/v1/catalog/items/lookup", requestBody);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        await app.StopAsync();
+    }
+
+    [Fact]
+    public async Task GraphqlSseBindingMapsCanonicalApiSurfaceRoute()
+    {
+        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.graphql-sse"]);
+        var (app, client) = await BuildAppAsync(descriptor, new GraphqlSseBehaviorBinding());
+
+        var response = await client.PostAsJsonAsync("/graphql-sse/v1/object/echo", new { query = "{ echo }" });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        await app.StopAsync();
+    }
+
+    [Fact]
+    public async Task GraphqlWsBindingMapsCanonicalApiSurfaceRoute()
+    {
+        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.graphql-ws"]);
+        var (app, client) = await BuildAppAsync(descriptor, new GraphqlWsBehaviorBinding());
+
+        var response = await client.GetAsync("/graphql-ws/v1/object/echo");
+
+        Assert.NotEqual(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
         await app.StopAsync();
     }
@@ -472,7 +517,7 @@ public sealed class HttpBehaviorBindingTests
         var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.sse"]);
         var (app, client) = await BuildAppAsync(descriptor, new SseBehaviorBinding());
 
-        using var request = new HttpRequestMessage(HttpMethod.Get, "/events/v1/object/echo");
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/sse/v1/object/echo");
         var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
 
         Assert.NotEqual(HttpStatusCode.NotFound, response.StatusCode);
@@ -519,19 +564,30 @@ public sealed class HttpBehaviorBindingTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["ApiRoutes:Prefixes:BehaviorRest"] = "/behavior-api",
+                ["ApiRoutes:Prefixes:Rest"] = "/service-api",
+                ["ApiRoutes:Prefixes:GraphQL"] = "/behavior-graphql",
                 ["ApiRoutes:Prefixes:JsonRpc"] = "/invoke",
+                ["ApiRoutes:Prefixes:GraphQLSse"] = "/graphql-stream",
+                ["ApiRoutes:Prefixes:GraphQLWs"] = "/graphql-socket",
                 ["ApiRoutes:Prefixes:Sse"] = "/stream",
-                ["ApiRoutes:Prefixes:WebSocket"] = "/socket",
+                ["ApiRoutes:Prefixes:Ws"] = "/socket",
                 ["OpenApi:DefaultVersion"] = "2"
             })
             .Build();
 
         var restDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.rest"]);
         var (restApp, restClient) = await BuildAppAsync(restDescriptor, new RestHttpBehaviorBinding(configuration));
-        var restResponse = await restClient.GetAsync("/behavior-api/v2/object/echo?q=hello");
+        var restResponse = await restClient.GetAsync("/service-api/v2/object/echo?q=hello");
         Assert.True(restResponse.StatusCode is HttpStatusCode.OK or HttpStatusCode.NoContent);
         await restApp.StopAsync();
+
+        var graphQlDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.graphql"]);
+        var (graphQlApp, graphQlClient) = await BuildAppAsync(graphQlDescriptor, new GraphqlHttpBehaviorBinding(configuration));
+        var graphQlResponse = await graphQlClient.PostAsJsonAsync(
+            "/behavior-graphql/v2/object/echo",
+            new { query = "{ echo }", variables = (object?)null });
+        Assert.Equal(HttpStatusCode.OK, graphQlResponse.StatusCode);
+        await graphQlApp.StopAsync();
 
         var rpcDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.jsonrpc"]);
         var (rpcApp, rpcClient) = await BuildAppAsync(rpcDescriptor, new JsonRpcHttpBehaviorBinding(configuration));
@@ -548,11 +604,25 @@ public sealed class HttpBehaviorBindingTests
         Assert.NotEqual(HttpStatusCode.NotFound, sseResponse.StatusCode);
         await sseApp.StopAsync();
 
+        var graphQlSseDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.graphql-sse"]);
+        var (graphQlSseApp, graphQlSseClient) = await BuildAppAsync(graphQlSseDescriptor, new GraphqlSseBehaviorBinding(configuration));
+        var graphQlSseResponse = await graphQlSseClient.PostAsJsonAsync(
+            "/graphql-stream/v2/object/echo",
+            new { query = "{ echo }" });
+        Assert.Equal(HttpStatusCode.OK, graphQlSseResponse.StatusCode);
+        await graphQlSseApp.StopAsync();
+
         var wsDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.ws"]);
         var (wsApp, wsClient) = await BuildAppAsync(wsDescriptor, new WebSocketBehaviorBinding(configuration));
         var wsResponse = await wsClient.GetAsync("/socket/v2/object/echo");
         Assert.Equal(HttpStatusCode.BadRequest, wsResponse.StatusCode);
         await wsApp.StopAsync();
+
+        var graphQlWsDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.graphql-ws"]);
+        var (graphQlWsApp, graphQlWsClient) = await BuildAppAsync(graphQlWsDescriptor, new GraphqlWsBehaviorBinding(configuration));
+        var graphQlWsResponse = await graphQlWsClient.GetAsync("/graphql-socket/v2/object/echo");
+        Assert.Equal(HttpStatusCode.BadRequest, graphQlWsResponse.StatusCode);
+        await graphQlWsApp.StopAsync();
     }
 
     // ─────────────────────────────────────────────────────────────────────────

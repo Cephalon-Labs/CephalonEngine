@@ -122,8 +122,8 @@ internal static class ProgramLinks
         "/scalar/assets/favicon.svg",
         "/api/platform/time",
         "/api/discovery/hello/Codex",
-        "/rpc/discovery",
-        "/events/discovery/principles",
+        "/json-rpc/discovery",
+        "/sse/discovery/principles",
         "/ws/discovery"
     ];
 }

@@ -382,7 +382,7 @@
       <span class="conn-status" id="labSseStatus"><span class="conn-dot disconnected"></span> Disconnected</span>
     </div>
     <div class="req-res">
-      <div class="req-res-panel"><div class="req-res-header">Connection Info</div><div class="req-res-body"><pre id="labSseInfo">Endpoint: GET /behaviors/{id}/events
+      <div class="req-res-panel"><div class="req-res-header">Connection Info</div><div class="req-res-body"><pre id="labSseInfo">Endpoint: GET /sse/v1/{group}/{operation}
 Content-Type: text/event-stream
 Protocol: Server-Sent Events (EventSource API)</pre></div></div>
       <div class="req-res-panel"><div class="req-res-header">Received Events</div><div class="req-res-body"><pre id="labSseEvents">-</pre></div></div>
@@ -458,6 +458,7 @@ grpcurl -plaintext -d '{"name":"test"}' localhost:5199 discovery.DiscoveryServic
 </div>
 </div>
 
+<script src="/showcase/client-config.js"></script>
 <script src="/showcase.js"></script>
 </body>
 </html>

@@ -103,7 +103,7 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
                 };
                 db.Shipments.Add(entity);
                 await db.SaveChangesAsync();
-                return Results.Created($"/api/v1/showcase/shipping/{shipmentId}",
+                return Results.Created(BuildCreatedLocation(ctx, shipmentId),
                     new InitiateShippingOutput(shipmentId, "LabelCreated", estimatedDelivery));
             }
 
@@ -118,7 +118,7 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
                 CreatedAtUtc = DateTime.UtcNow
             };
             ShowcaseDataStore.Shipments[shipmentId] = shipment;
-            return Results.Created($"/api/v1/showcase/shipping/{shipmentId}",
+            return Results.Created(BuildCreatedLocation(ctx, shipmentId),
                 new InitiateShippingOutput(shipmentId, "LabelCreated", estimatedDelivery));
         });
 
@@ -193,5 +193,13 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
             shipment.DeliveredAtUtc,
             shipment.CreatedAtUtc
         };
+    }
+
+    private static string BuildCreatedLocation(HttpContext context, string resourceId)
+    {
+        var requestPath = context.Request.Path.Value?.TrimEnd('/');
+        return string.IsNullOrWhiteSpace(requestPath)
+            ? $"/{resourceId}"
+            : $"{requestPath}/{resourceId}";
     }
 }
