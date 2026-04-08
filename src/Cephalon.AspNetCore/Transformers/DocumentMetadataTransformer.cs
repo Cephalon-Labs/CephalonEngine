@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Localization;
+using Cephalon.AspNetCore.Documentation;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi;
@@ -22,7 +23,7 @@ internal sealed class DocumentMetadataTransformer(
                 "engine.docs.rest.title",
                 CultureInfo.CurrentUICulture.Name,
                 fallback: "Cephalon REST API"));
-        document.Info.Version = GetSetting("Version", fallbackValue: context.DocumentName ?? "v1");
+        document.Info.Version = ResolveInfoVersion(context.DocumentName);
 
         if (string.IsNullOrWhiteSpace(document.Info.Description))
         {
@@ -35,6 +36,15 @@ internal sealed class DocumentMetadataTransformer(
         }
 
         return Task.CompletedTask;
+    }
+
+    private string ResolveInfoVersion(string? documentName)
+    {
+        var fallbackVersion = documentName ?? OpenApiDocumentNames.DefaultDocumentName;
+
+        return OpenApiDocumentNames.HasSingleResolvedDocument(configuration)
+            ? GetSetting("Version", fallbackValue: fallbackVersion)
+            : fallbackVersion;
     }
 
     private string GetSetting(string key, string fallbackValue)

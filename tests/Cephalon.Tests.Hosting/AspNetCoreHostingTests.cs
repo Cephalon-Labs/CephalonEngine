@@ -591,8 +591,10 @@ public sealed class AspNetCoreHostingTests
         builder.WebHost.UseTestServer();
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
-        builder.Configuration["OpenApi:Documents:0"] = "v1";
-        builder.Configuration["OpenApi:Documents:1"] = "v2";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "1";
+        builder.Configuration["OpenApi:EnabledVersions:1"] = "2";
+        builder.Configuration["OpenApi:DefaultVersion"] = "2";
+        builder.Configuration["OpenApi:Version"] = "2026.04";
         builder.AddCephalon(cephalon =>
         {
             cephalon.AddModule(new PlatformTestModule());
@@ -610,11 +612,15 @@ public sealed class AspNetCoreHostingTests
 
         var v1Response = await client.GetAsync("/openapi/v1.json");
         var v2Response = await client.GetAsync("/openapi/v2.json");
+        var scalarRootResponse = await client.GetAsync("/scalar?culture=en");
         var scalarV2Response = await client.GetAsync("/scalar/v2");
 
         Assert.True(v1Response.IsSuccessStatusCode);
         Assert.True(v2Response.IsSuccessStatusCode);
+        Assert.Equal(HttpStatusCode.Redirect, scalarRootResponse.StatusCode);
         Assert.True(scalarV2Response.IsSuccessStatusCode);
+        Assert.NotNull(scalarRootResponse.Headers.Location);
+        Assert.Equal("/scalar/v2?culture=en", scalarRootResponse.Headers.Location!.OriginalString);
 
         using var v1Document = JsonDocument.Parse(await v1Response.Content.ReadAsStringAsync());
         using var v2Document = JsonDocument.Parse(await v2Response.Content.ReadAsStringAsync());
@@ -629,6 +635,34 @@ public sealed class AspNetCoreHostingTests
 
         var scalarV2Payload = await scalarV2Response.Content.ReadAsStringAsync();
         Assert.Contains("Scalar", scalarV2Payload, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task MapCephalonAppliesGlobalOpenApiInfoVersionOverrideToSingleDocumentHosts()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:Version"] = "2026.04";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var openApiResponse = await client.GetAsync("/openapi/v1.json");
+
+        Assert.True(openApiResponse.IsSuccessStatusCode);
+
+        using var document = JsonDocument.Parse(await openApiResponse.Content.ReadAsStringAsync());
+        Assert.Equal("2026.04", document.RootElement.GetProperty("info").GetProperty("version").GetString());
     }
 
     [Fact]

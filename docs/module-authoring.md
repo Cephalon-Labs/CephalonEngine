@@ -107,7 +107,7 @@ Current helper behavior:
 - flows XML comments from the module and behavior assemblies into ASP.NET Core OpenAPI metadata when XML docs are available
 - maps behavior `<summary>` to the operation header and behavior `<remarks>` to the operation description so Scalar/OpenAPI content stays non-duplicated
 
-When a host needs more than the default `v1` document, register the extra names through `OpenApi:Documents` so endpoints mapped with `.ApiVersion(2)` or higher have a matching OpenAPI/Scalar surface.
+When a host needs more than the default `v1` document, prefer `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion` so endpoints mapped with `.ApiVersion(2)` or higher have a matching OpenAPI/Scalar surface. Legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` settings remain available when a host deliberately wants custom named documents instead of `v{major}` API-version documents.
 
 The generic `/behaviors/{id}` REST binding still exists and remains useful for low-ceremony or fully dynamic behavior hosts. Use the helper surface when the module owns a stable public REST shape that should read like a normal application API.
 

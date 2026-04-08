@@ -59,7 +59,7 @@ When operators need deeper HTTP diagnostics, the same host surface can turn on r
 
 When teams use `Cephalon.Behaviors.Http` behavior-aware REST helpers, the resulting Minimal API endpoints flow through this same host-level OpenAPI + Scalar pipeline rather than requiring a separate documentation surface.
 
-By default the host registers the `v1` OpenAPI document and redirects `/scalar` to `/scalar/v1`. When a host needs additional named documents for versioned REST surfaces, configure them under `OpenApi:Documents` (for example `["v1", "v2"]`) so endpoints mapped with `WithGroupName("v2")` or `BehaviorRestEndpointGroup.ApiVersion(2)` appear in `/openapi/v2.json` and `/scalar/v2`. If the Scalar root should prefer something other than the first configured document, set `OpenApi:DefaultDocument` explicitly.
+By default the host registers the `v1` OpenAPI document and redirects `/scalar` to `/scalar/v1`. The long-term versioned config contract is `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion`, for example `EnabledVersions: [1, 2]` and `DefaultVersion: 2`, so endpoints mapped with `BehaviorRestEndpointGroup.ApiVersion(2)` appear in `/openapi/v2.json` and `/scalar/v2` while `/scalar` redirects to the configured default version. Legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` string settings still work for backward compatibility or custom non-version document names. `OpenApi:Version` remains available as a global `info.version` override for single-document hosts, but multi-document hosts now keep each document version truthful to its own resolved document name such as `v1` or `v2`.
 
 ## Related docs
 
