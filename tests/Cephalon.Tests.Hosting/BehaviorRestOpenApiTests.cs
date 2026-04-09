@@ -290,7 +290,7 @@ public sealed class BehaviorRestOpenApiTests
         {
             if (string.Equals(input.WidgetId, "missing", StringComparison.OrdinalIgnoreCase))
             {
-                return Task.FromResult(BehaviorResult.NotFound<EnvelopeLookupOutput>(
+                return Task.FromResult<BehaviorResult<EnvelopeLookupOutput>>(BehaviorResult.NotFound(
                     "tests.widgets.not_found",
                     $"Widget '{input.WidgetId}' was not found.",
                     new BehaviorFault
@@ -302,7 +302,7 @@ public sealed class BehaviorRestOpenApiTests
 
             if (string.Equals(input.WidgetId, "invalid", StringComparison.OrdinalIgnoreCase))
             {
-                return Task.FromResult(BehaviorResult.Invalid<EnvelopeLookupOutput>(
+                return Task.FromResult<BehaviorResult<EnvelopeLookupOutput>>(BehaviorResult.Invalid(
                     "tests.widgets.invalid",
                     "Widget validation failed.",
                     new BehaviorFault

@@ -26,53 +26,104 @@ public static class BehaviorResult
     /// <summary>
     /// Creates a no-content result.
     /// </summary>
+    public static BehaviorResultDescriptor NoContent(string? message = null, string? code = null)
+        => new(BehaviorResultStatus.NoContent, message, code, fault: null);
+
+    /// <summary>
+    /// Creates a no-content result for the specified payload type.
+    /// </summary>
     public static BehaviorResult<T> NoContent<T>(string? message = null, string? code = null)
-        => BehaviorResult<T>.Create(BehaviorResultStatus.NoContent, default, hasValue: false, message, code, fault: null);
+        => NoContent(message, code);
 
     /// <summary>
     /// Creates an invalid-request result.
+    /// </summary>
+    public static BehaviorResultDescriptor Invalid(
+        string code,
+        string message,
+        BehaviorFault? fault = null)
+        => new(BehaviorResultStatus.Invalid, message, code, fault);
+
+    /// <summary>
+    /// Creates an invalid-request result for the specified payload type.
     /// </summary>
     public static BehaviorResult<T> Invalid<T>(
         string code,
         string message,
         BehaviorFault? fault = null)
-        => BehaviorResult<T>.Create(BehaviorResultStatus.Invalid, default, hasValue: false, message, code, fault);
+        => Invalid(code, message, fault);
 
     /// <summary>
     /// Creates an unauthorized result.
+    /// </summary>
+    public static BehaviorResultDescriptor Unauthorized(
+        string code,
+        string message,
+        BehaviorFault? fault = null)
+        => new(BehaviorResultStatus.Unauthorized, message, code, fault);
+
+    /// <summary>
+    /// Creates an unauthorized result for the specified payload type.
     /// </summary>
     public static BehaviorResult<T> Unauthorized<T>(
         string code,
         string message,
         BehaviorFault? fault = null)
-        => BehaviorResult<T>.Create(BehaviorResultStatus.Unauthorized, default, hasValue: false, message, code, fault);
+        => Unauthorized(code, message, fault);
 
     /// <summary>
     /// Creates a forbidden result.
+    /// </summary>
+    public static BehaviorResultDescriptor Forbidden(
+        string code,
+        string message,
+        BehaviorFault? fault = null)
+        => new(BehaviorResultStatus.Forbidden, message, code, fault);
+
+    /// <summary>
+    /// Creates a forbidden result for the specified payload type.
     /// </summary>
     public static BehaviorResult<T> Forbidden<T>(
         string code,
         string message,
         BehaviorFault? fault = null)
-        => BehaviorResult<T>.Create(BehaviorResultStatus.Forbidden, default, hasValue: false, message, code, fault);
+        => Forbidden(code, message, fault);
 
     /// <summary>
     /// Creates a not-found result.
+    /// </summary>
+    public static BehaviorResultDescriptor NotFound(
+        string code,
+        string message,
+        BehaviorFault? fault = null)
+        => new(BehaviorResultStatus.NotFound, message, code, fault);
+
+    /// <summary>
+    /// Creates a not-found result for the specified payload type.
     /// </summary>
     public static BehaviorResult<T> NotFound<T>(
         string code,
         string message,
         BehaviorFault? fault = null)
-        => BehaviorResult<T>.Create(BehaviorResultStatus.NotFound, default, hasValue: false, message, code, fault);
+        => NotFound(code, message, fault);
 
     /// <summary>
     /// Creates a conflict result.
+    /// </summary>
+    public static BehaviorResultDescriptor Conflict(
+        string code,
+        string message,
+        BehaviorFault? fault = null)
+        => new(BehaviorResultStatus.Conflict, message, code, fault);
+
+    /// <summary>
+    /// Creates a conflict result for the specified payload type.
     /// </summary>
     public static BehaviorResult<T> Conflict<T>(
         string code,
         string message,
         BehaviorFault? fault = null)
-        => BehaviorResult<T>.Create(BehaviorResultStatus.Conflict, default, hasValue: false, message, code, fault);
+        => Conflict(code, message, fault);
 }
 
 /// <summary>
@@ -144,6 +195,20 @@ public sealed class BehaviorResult<T> : IBehaviorResult
     /// </summary>
     public static implicit operator BehaviorResult<T>(T value)
         => BehaviorResult.Ok(value);
+
+    /// <summary>
+    /// Converts a no-payload descriptor into a typed behavior result.
+    /// </summary>
+    public static implicit operator BehaviorResult<T>(BehaviorResultDescriptor descriptor)
+    {
+        return Create(
+            descriptor.Status,
+            default,
+            hasValue: false,
+            descriptor.Message,
+            descriptor.Code,
+            descriptor.Fault);
+    }
 
     internal static BehaviorResult<T> Create(
         BehaviorResultStatus status,

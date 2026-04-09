@@ -125,7 +125,7 @@ public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, BehaviorRes
         var faults = Validate(input); // validation helper omitted for brevity
         if (faults.Count > 0)
         {
-            return Task.FromResult(BehaviorResult.Invalid<AddToCartOutput>(
+            return Task.FromResult<BehaviorResult<AddToCartOutput>>(BehaviorResult.Invalid(
                 "cart.add_item.invalid",
                 "Cart add-item request is invalid.",
                 new BehaviorFault
@@ -164,7 +164,7 @@ public sealed class GetCartBehavior : IAppBehavior<GetCartInput, BehaviorResult<
         var cart = await LoadCartAsync(input.CartId, cancellationToken);
         if (cart is null)
         {
-            return BehaviorResult.NotFound<GetCartOutput>(
+            return BehaviorResult.NotFound(
                 "cart.not_found",
                 $"Cart '{input.CartId}' was not found.");
         }
@@ -173,6 +173,14 @@ public sealed class GetCartBehavior : IAppBehavior<GetCartInput, BehaviorResult<
     }
 }
 ```
+
+For no-payload branches such as `Invalid`, `NotFound`, `Conflict`, `Forbidden`, and `NoContent`,
+Cephalon now lets the behavior use the shorter `BehaviorResult.Invalid(...)` /
+`BehaviorResult.NotFound(...)` / `BehaviorResult.Conflict(...)` shape because the enclosing
+`BehaviorResult<T>` return type supplies the target payload type automatically. If a synchronous
+implementation uses `Task.FromResult(...)`, keep the wrapper target-typed as
+`Task.FromResult<BehaviorResult<TOut>>(...)` so the compiler does not stop at the intermediate
+descriptor.
 
 That keeps the behavior contract transport-neutral. REST can still project `BehaviorResult<T>` to
 HTTP status codes, and hosts can turn on the Cephalon REST envelope with

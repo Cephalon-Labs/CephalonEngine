@@ -18,7 +18,7 @@ public sealed class BehaviorResultTests
     [Fact]
     public void NotFoundResultCarriesStructuredFaultState()
     {
-        var result = BehaviorResult.NotFound<string>(
+        BehaviorResult<string> result = BehaviorResult.NotFound(
             "cart.not_found",
             "Cart 'cart-123' was not found.",
             new BehaviorFault
@@ -35,5 +35,19 @@ public sealed class BehaviorResultTests
         Assert.Equal("cart.not_found", result.Code);
         Assert.NotNull(result.Fault);
         Assert.Equal(BehaviorFaultSeverity.Warning, result.Fault!.Severity);
+    }
+
+    [Fact]
+    public void NoContentFactoryConvertsWithoutGenericTypeArguments()
+    {
+        BehaviorResult<string> result = BehaviorResult.NoContent(
+            message: "Cart is already up to date.",
+            code: "cart.no_change");
+
+        Assert.True(result.IsSuccess);
+        Assert.False(result.HasValue);
+        Assert.Equal(BehaviorResultStatus.NoContent, result.Status);
+        Assert.Equal("cart.no_change", result.Code);
+        Assert.Equal("Cart is already up to date.", result.Message);
     }
 }

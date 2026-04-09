@@ -76,6 +76,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorFaultSeverity),
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorNotFoundException),
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorResult),
+            typeof(global::Cephalon.Abstractions.Behaviors.BehaviorResultDescriptor),
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorResult<>),
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorResultStatus),
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorSecurityException),

@@ -85,6 +85,12 @@ Cephalon behaviors should keep their return contract transport-neutral by defaul
 - return `BehaviorResult<TOut>` when the behavior needs to communicate an expected branch such as
   `NotFound`, `Invalid`, `Conflict`, `Forbidden`, or `NoContent` without throwing exceptions for
   normal domain flow
+- use the shorter no-payload factories such as `BehaviorResult.NotFound(...)` or
+  `BehaviorResult.Invalid(...)` when the target `BehaviorResult<TOut>` return type is already
+  known from the method signature
+- if a synchronous implementation returns `Task.FromResult(...)`, keep that wrapper explicit as
+  `Task.FromResult<BehaviorResult<TOut>>(...)` so the compiler does not stop at the intermediate
+  no-payload descriptor
 - keep REST, GraphQL, JSON-RPC, and messaging envelopes in the adapter layer instead of making
   every behavior return an HTTP-shaped wrapper
 
@@ -103,7 +109,7 @@ public sealed class GetCartBehavior : IAppBehavior<GetCartInput, BehaviorResult<
         var cart = await LoadCartAsync(input.CartId, cancellationToken);
         if (cart is null)
         {
-            return BehaviorResult.NotFound<GetCartOutput>(
+            return BehaviorResult.NotFound(
                 "cart.not_found",
                 $"Cart '{input.CartId}' was not found.",
                 new BehaviorFault

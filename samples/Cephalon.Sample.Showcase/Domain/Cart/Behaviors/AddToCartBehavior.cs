@@ -27,7 +27,7 @@ public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, BehaviorRes
         var validationFaults = Validate(input);
         if (validationFaults.Count > 0)
         {
-            return BehaviorResult.Invalid<AddToCartOutput>(
+            return BehaviorResult.Invalid(
                 "showcase.cart.add_item.invalid",
                 "Cart add-item request is invalid.",
                 new BehaviorFault
@@ -49,7 +49,7 @@ public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, BehaviorRes
             var currentCart = await ShowcaseEventSourcingHelper.RebuildCartAsync(eventStore, streamId, input.CustomerId, ct);
             if (currentCart.IsCheckedOut)
             {
-                return BehaviorResult.Conflict<AddToCartOutput>(
+                return BehaviorResult.Conflict(
                     "showcase.cart.add_item.checked_out",
                     $"Cart '{input.CartId}' has already been checked out.",
                     new BehaviorFault

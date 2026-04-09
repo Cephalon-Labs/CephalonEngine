@@ -230,7 +230,7 @@ public sealed class GetCartBehavior : IAppBehavior<GetCartInput, BehaviorResult<
         var cart = await LoadCartAsync(input.CartId, cancellationToken);
         if (cart is null)
         {
-            return BehaviorResult.NotFound<GetCartOutput>(
+            return BehaviorResult.NotFound(
                 "cart.not_found",
                 $"Cart '{input.CartId}' was not found.");
         }
@@ -277,7 +277,7 @@ and:
 ```
 
 Multi-reason validation faults project cleanly too. The showcase `AddToCartBehavior` now returns
-`BehaviorResult.Invalid<AddToCartOutput>` with nested `BehaviorFault.InnerFaults`, which REST
+`BehaviorResult.Invalid(...)` with nested `BehaviorFault.InnerFaults`, which REST
 projects to payloads such as:
 
 ```json
