@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Behaviors.Builders;
+using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Compatibility;
 using Cephalon.Behaviors.Configuration;
 using Cephalon.Behaviors.Services;
@@ -40,6 +41,22 @@ public sealed class BehaviorBaselineTests
 
     [AppBehavior("greeting.no-allowlist")]
     private sealed class NoAllowlistBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
+            => Task.FromResult(input);
+    }
+
+    [AppBehavior("orders.annotation-rest")]
+    [BehaviorAllowedTransports("http.rest")]
+    private sealed class AnnotationDrivenRestBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
+            => Task.FromResult(input);
+    }
+
+    [AppBehavior("orders.duplicate-rest")]
+    [BehaviorAllowedTransports("http.rest")]
+    private sealed class DuplicateRestDeclarationBehavior : IAppBehavior<string, string>
     {
         public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
             => Task.FromResult(input);
@@ -497,6 +514,58 @@ public sealed class BehaviorBaselineTests
         Assert.NotNull(desc);
         Assert.Contains("http.rest", desc!.TransportIds);
         Assert.Contains("in-memory", desc.TransportIds);
+    }
+
+    [Fact]
+    public void BehaviorCollectionBuilderRegisterAutoActivatesRestWhenAnnotationDeclaresHttpRest()
+    {
+        var services = new ServiceCollection();
+        var typeRegistry = new BehaviorTypeRegistry();
+        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+
+        builder.Register<AnnotationDrivenRestBehavior>();
+
+        var provider = services.BuildServiceProvider();
+        var contributors = provider.GetServices<IBehaviorContributor>().ToList();
+        var catalog = new BehaviorCatalog(contributors);
+        var descriptor = catalog.FindById("orders.annotation-rest");
+
+        Assert.NotNull(descriptor);
+        Assert.Contains("http.rest", descriptor!.TransportIds);
+    }
+
+    [Fact]
+    public void BehaviorCollectionBuilderRegisterThrowsWhenRestIsDeclaredByAttributeAndFluentTopology()
+    {
+        var services = new ServiceCollection();
+        var typeRegistry = new BehaviorTypeRegistry();
+        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+
+        Assert.Throws<BehaviorSecurityException>(() =>
+            builder.Register<DuplicateRestDeclarationBehavior>(topology => topology.ViaHttpRest()));
+    }
+
+    [Fact]
+    public void BehaviorCollectionBuilderRegisterSupportsExplicitGenericRestContract()
+    {
+        var services = new ServiceCollection();
+        var typeRegistry = new BehaviorTypeRegistry();
+        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+
+        builder.Register<DirectGreetingBehavior>(topology => topology
+            .ViaHttpRest(rest => rest
+                .MapGet("greetings/{name}")
+                .BindRoute("name", "input")));
+
+        var provider = services.BuildServiceProvider();
+        var contributors = provider.GetServices<IBehaviorContributor>().ToList();
+        var catalog = new BehaviorCatalog(contributors);
+        var descriptor = catalog.FindById("greeting.direct");
+
+        Assert.NotNull(descriptor);
+        Assert.Contains("http.rest", descriptor!.TransportIds);
+        Assert.Equal("GET", descriptor.Metadata["cephalon.http.rest.method"]);
+        Assert.Equal("greetings/{name}", descriptor.Metadata["cephalon.http.rest.route-template"]);
     }
 
     // ─────────────────────────────────────────────────────────────────────────

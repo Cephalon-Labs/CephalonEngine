@@ -174,8 +174,19 @@ internal sealed class BehaviorModule(
         {
             foreach (var descriptor in descriptors)
             {
-                services.AddSingleton<IBehaviorContributor>(
-                    new FluentBehaviorContributor(descriptor));
+                if (!typeRegistry.TryGetType(descriptor.Id, out var behaviorType) || behaviorType is null)
+                {
+                    continue;
+                }
+
+                var normalizedDescriptor = BehaviorRestTransportDeclarationResolver.Resolve(
+                    descriptor.Id,
+                    behaviorType,
+                    descriptor);
+                if (normalizedDescriptor is not null)
+                {
+                    services.AddSingleton<IBehaviorContributor>(new FluentBehaviorContributor(normalizedDescriptor));
+                }
             }
         }
 
@@ -190,7 +201,7 @@ internal sealed class BehaviorModule(
         {
             foreach (var (id, type) in runtimeBehaviors)
             {
-                TryRegisterTopologyFromStaticMethod(services, type, id);
+                TryRegisterResolvedTopology(services, type, id);
             }
         }
 
@@ -247,7 +258,7 @@ internal sealed class BehaviorModule(
             typeRegistry.Register(attr.Id, type);
 
             // Invoke static ConfigureTopology if the concrete type defines one
-            TryRegisterTopologyFromStaticMethod(services, type, attr.Id);
+            TryRegisterResolvedTopology(services, type, attr.Id);
         }
     }
 
@@ -255,8 +266,22 @@ internal sealed class BehaviorModule(
     /// Checks whether the concrete behavior type defines a static <c>ConfigureTopology</c>
     /// method and, if so, invokes it to build and register a Layer-4 topology contributor.
     /// </summary>
-    private static void TryRegisterTopologyFromStaticMethod(
+    private static void TryRegisterResolvedTopology(
         IServiceCollection services,
+        Type behaviorType,
+        string behaviorId)
+    {
+        var descriptor = BuildTopologyDescriptorFromStaticMethod(behaviorType, behaviorId);
+        descriptor = BehaviorRestTransportDeclarationResolver.Resolve(behaviorId, behaviorType, descriptor);
+        if (descriptor is null)
+        {
+            return;
+        }
+
+        services.AddSingleton<IBehaviorContributor>(new FluentBehaviorContributor(descriptor));
+    }
+
+    private static BehaviorTopologyDescriptor? BuildTopologyDescriptorFromStaticMethod(
         Type behaviorType,
         string behaviorId)
     {
@@ -268,13 +293,11 @@ internal sealed class BehaviorModule(
             null);
 
         if (configMethod is null || configMethod.DeclaringType != behaviorType)
-            return;
+            return null;
 
         var builder = new BehaviorTopologyBuilder();
         configMethod.Invoke(null, [builder]);
-        var descriptor = builder.Build(behaviorId);
-        var contributor = new FluentBehaviorContributor(descriptor);
-        services.AddSingleton<IBehaviorContributor>(contributor);
+        return builder.Build(behaviorId);
     }
 
     /// <summary>

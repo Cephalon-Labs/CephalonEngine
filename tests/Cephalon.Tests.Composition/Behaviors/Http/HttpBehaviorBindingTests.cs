@@ -9,6 +9,7 @@ using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Http.Bindings;
 using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Http.Registry;
+using Cephalon.Behaviors.Builders;
 using Cephalon.Behaviors.Services;
 using Cephalon.AspNetCore.Modules;
 using Microsoft.AspNetCore.Builder;
@@ -71,6 +72,31 @@ public sealed class HttpBehaviorBindingTests
         string ProductName,
         int Quantity,
         bool HasEventStore);
+
+    [AppBehavior("catalog.create-product")]
+    private sealed class ExplicitRestContractBehavior : IAppBehavior<ExplicitRestContractInput, ExplicitRestContractOutput>
+    {
+        public Task<ExplicitRestContractOutput> HandleAsync(
+            ExplicitRestContractInput input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(new ExplicitRestContractOutput(
+                input.ProductId,
+                input.ProductName,
+                input.IsDraft));
+        }
+    }
+
+    private sealed record ExplicitRestContractInput(
+        string ProductId,
+        string ProductName,
+        bool IsDraft);
+
+    private sealed record ExplicitRestContractOutput(
+        string ProductId,
+        string ProductName,
+        bool IsDraft);
 
     private sealed class RestHelperModule : ModuleBase, IEndpointModule
     {
@@ -248,6 +274,62 @@ public sealed class HttpBehaviorBindingTests
         Assert.True(
             response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.NoContent,
             $"Expected 200/204 but got {response.StatusCode}");
+
+        await app.StopAsync();
+    }
+
+    [Fact]
+    public async Task RestBindingSupportsExplicitGenericRestContract()
+    {
+        var descriptor = new BehaviorTopologyBuilder()
+            .AsDirect()
+            .ViaHttpRest(rest => rest
+                .MapPost("catalog/create-product/{productId}")
+                .BindRoute("productId", nameof(ExplicitRestContractInput.ProductId))
+                .BindQuery("draftMode", nameof(ExplicitRestContractInput.IsDraft)))
+            .Build("catalog.create-product");
+        var (app, client) = await BuildAppAsync<ExplicitRestContractBehavior>(
+            descriptor,
+            [new RestHttpBehaviorBinding()]);
+
+        var response = await client.PostAsJsonAsync(
+            "/api/v1/catalog/create-product/sku-001?draftMode=true",
+            new { productName = "Keyboard" });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var payload = await response.Content.ReadFromJsonAsync<ExplicitRestContractOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("sku-001", payload!.ProductId);
+        Assert.Equal("Keyboard", payload.ProductName);
+        Assert.True(payload.IsDraft);
+
+        var getResponse = await client.GetAsync("/api/v1/catalog/create-product/sku-001?draftMode=true");
+        Assert.Equal(HttpStatusCode.MethodNotAllowed, getResponse.StatusCode);
+
+        await app.StopAsync();
+    }
+
+    [Fact]
+    public async Task RestBindingSupportsEmptyConfiguredRootPrefix()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ApiRoutes:Prefixes:Rest"] = string.Empty,
+                ["OpenApi:DefaultVersion"] = "2"
+            })
+            .Build();
+        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.rest"]);
+        var (app, client) = await BuildAppAsync(descriptor, new RestHttpBehaviorBinding(configuration));
+
+        var response = await client.GetAsync("/v2/object/echo?q=hello");
+        var legacyResponse = await client.GetAsync("/api/v2/object/echo?q=hello");
+
+        Assert.True(
+            response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.NoContent,
+            $"Expected 200/204 but got {response.StatusCode}");
+        Assert.Equal(HttpStatusCode.NotFound, legacyResponse.StatusCode);
 
         await app.StopAsync();
     }
@@ -672,6 +754,59 @@ public sealed class HttpBehaviorBindingTests
         Assert.Equal("/sse", options.SsePrefix);
         Assert.Equal("/graphql-ws", options.GraphQLWsPrefix);
         Assert.Equal("/graphql-sse", options.GraphQLSsePrefix);
+    }
+
+    [Fact]
+    public void ApiRoutesOptionsAllowsEmptyRestPrefixWithoutFallingBackToSlashApi()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ApiRoutes:Prefixes:Rest"] = string.Empty
+            })
+            .Build();
+
+        var options = ApiRoutesOptions.FromConfiguration(configuration);
+
+        Assert.Equal(string.Empty, options.RestPrefix);
+    }
+
+    [Fact]
+    public void ApiRoutesOptionsAllowsEmptyRestPrefixWithoutFallingBackToApi()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ApiRoutes:Prefixes:Rest"] = string.Empty
+            })
+            .Build();
+
+        var options = ApiRoutesOptions.FromConfiguration(configuration);
+
+        Assert.Equal(string.Empty, options.RestPrefix);
+    }
+
+    [Fact]
+    public async Task RestBindingAllowsEmptyConfiguredRestPrefix()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ApiRoutes:Prefixes:Rest"] = string.Empty,
+                ["OpenApi:DefaultVersion"] = "1"
+            })
+            .Build();
+
+        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.rest"]);
+        var (app, client) = await BuildAppAsync(descriptor, new RestHttpBehaviorBinding(configuration));
+
+        var response = await client.GetAsync("/v1/object/echo?q=hello");
+
+        Assert.True(
+            response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.NoContent,
+            $"Expected 200/204 but got {response.StatusCode}");
+
+        await app.StopAsync();
     }
 
     // ─────────────────────────────────────────────────────────────────────────

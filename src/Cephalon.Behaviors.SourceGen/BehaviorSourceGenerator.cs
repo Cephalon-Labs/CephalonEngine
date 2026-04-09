@@ -12,7 +12,7 @@ namespace Cephalon.Behaviors.SourceGen;
 /// Incremental source generator that validates classes decorated with
 /// <c>[AppBehavior]</c>, emits compile-time diagnostics for common authoring mistakes,
 /// and generates zero-reflection registration code with pre-built topology descriptors.
-/// Diagnostic IDs: ABT-010 through ABT-013.
+/// Diagnostic IDs: ABT-010 through ABT-014.
 /// </summary>
 [Generator]
 public sealed class BehaviorSourceGenerator : IIncrementalGenerator
@@ -66,6 +66,17 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true,
         description: "Static classes cannot be instantiated by the dispatcher. Remove the static modifier or remove [AppBehavior].",
+        helpLinkUri: HelpLink);
+
+    /// <summary>ABT-014: REST must use either the annotation-driven declaration style or fluent topology, not both.</summary>
+    public static readonly DiagnosticDescriptor Abt014DuplicateRestDeclaration = new(
+        id: "ABT0014",
+        title: "http.rest must use a single declaration style",
+        messageFormat: "'{0}' declares http.rest in both [BehaviorAllowedTransports] and ConfigureTopology(...); choose one style",
+        category: "Cephalon.Behaviors",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "Cephalon treats [BehaviorAllowedTransports(\"http.rest\")] as the annotation-driven generic REST activation path. Do not also call ViaHttpRest(...) in ConfigureTopology for the same behavior.",
         helpLinkUri: HelpLink);
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -123,13 +134,16 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         var isStatic = typeSymbol.IsStatic;
 
         var implementsInterface = ImplementsIAppBehavior(typeSymbol);
+        var hasRestTransportAttribute = DeclaresRestTransportAttribute(typeSymbol);
 
         var location = ctx.TargetNode.GetLocation();
 
         // Extract topology from static ConfigureTopology method if present
         TopologyInfo? topology = null;
+        var hasConfigureTopologyRestTransport = false;
         if (implementsInterface && !isAbstract && !isStatic && ctx.TargetNode is ClassDeclarationSyntax classDecl)
         {
+            hasConfigureTopologyRestTransport = DeclaresRestTransportInConfigureMethod(classDecl);
             topology = ExtractTopologyFromConfigureMethod(classDecl);
         }
 
@@ -141,7 +155,9 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             isStatic: isStatic,
             implementsInterface: implementsInterface,
             location: location,
-            topology: topology);
+            topology: topology,
+            hasRestTransportAttribute: hasRestTransportAttribute,
+            hasConfigureTopologyRestTransport: hasConfigureTopologyRestTransport);
     }
 
     private static bool ImplementsIAppBehavior(INamedTypeSymbol typeSymbol)
@@ -149,6 +165,43 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         return typeSymbol.AllInterfaces.Any(static i =>
             i.OriginalDefinition.ToDisplayString() ==
             "Cephalon.Abstractions.Behaviors.IAppBehavior<TIn, TOut>");
+    }
+
+    private static bool DeclaresRestTransportAttribute(INamedTypeSymbol typeSymbol)
+    {
+        foreach (var attribute in typeSymbol.GetAttributes())
+        {
+            if (!string.Equals(
+                    attribute.AttributeClass?.ToDisplayString(),
+                    "Cephalon.Abstractions.Behaviors.BehaviorAllowedTransportsAttribute",
+                    StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            foreach (var argument in attribute.ConstructorArguments)
+            {
+                if (argument.Kind == TypedConstantKind.Array)
+                {
+                    foreach (var value in argument.Values)
+                    {
+                        if (string.Equals(value.Value as string, "http.rest", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return true;
+                        }
+                    }
+
+                    continue;
+                }
+
+                if (string.Equals(argument.Value as string, "http.rest", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -209,6 +262,12 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             var methodName = GetMethodName(invocation);
             if (methodName is null) continue;
 
+            if (string.Equals(methodName, "ViaHttpRest", StringComparison.Ordinal) &&
+                invocation.ArgumentList.Arguments.Count > 0)
+            {
+                return null;
+            }
+
             // Pattern methods
             switch (methodName)
             {
@@ -254,6 +313,26 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             eventSourcingEnabled: eventSourcingEnabled,
             apiSurfaceGroupPath: apiSurfaceGroupPath,
             apiSurfaceOperationPath: apiSurfaceOperationPath);
+    }
+
+    private static bool DeclaresRestTransportInConfigureMethod(ClassDeclarationSyntax classDecl)
+    {
+        var method = classDecl.Members
+            .OfType<MethodDeclarationSyntax>()
+            .FirstOrDefault(m =>
+                m.Identifier.Text == "ConfigureTopology" &&
+                m.Modifiers.Any(SyntaxKind.StaticKeyword) &&
+                m.Modifiers.Any(SyntaxKind.PublicKeyword));
+
+        if (method is null)
+        {
+            return false;
+        }
+
+        return method.DescendantNodes()
+            .OfType<InvocationExpressionSyntax>()
+            .Select(GetMethodName)
+            .Any(static methodName => string.Equals(methodName, "ViaHttpRest", StringComparison.Ordinal));
     }
 
     /// <summary>
@@ -375,6 +454,14 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         {
             spc.ReportDiagnostic(Diagnostic.Create(
                 Abt010MustImplementIAppBehavior,
+                info.Location,
+                info.ShortName));
+        }
+
+        if (info.HasRestTransportAttribute && info.HasConfigureTopologyRestTransport)
+        {
+            spc.ReportDiagnostic(Diagnostic.Create(
+                Abt014DuplicateRestDeclaration,
                 info.Location,
                 info.ShortName));
         }
@@ -586,7 +673,9 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             bool isStatic,
             bool implementsInterface,
             Location location,
-            TopologyInfo? topology)
+            TopologyInfo? topology,
+            bool hasRestTransportAttribute,
+            bool hasConfigureTopologyRestTransport)
         {
             TypeName = typeName;
             ShortName = shortName;
@@ -596,6 +685,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             ImplementsInterface = implementsInterface;
             Location = location;
             Topology = topology;
+            HasRestTransportAttribute = hasRestTransportAttribute;
+            HasConfigureTopologyRestTransport = hasConfigureTopologyRestTransport;
         }
 
         public string TypeName { get; }
@@ -606,6 +697,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         public bool ImplementsInterface { get; }
         public Location Location { get; }
         public TopologyInfo? Topology { get; }
+        public bool HasRestTransportAttribute { get; }
+        public bool HasConfigureTopologyRestTransport { get; }
 
         /// <summary>
         /// True when the behavior class passes all validation checks and should be included in generated output.

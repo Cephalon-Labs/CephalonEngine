@@ -694,6 +694,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Behaviors.Http.LazyTransportBinding),
             typeof(global::Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup),
             typeof(global::Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointRouteBuilderExtensions),
+            typeof(global::Cephalon.Behaviors.Http.Hosting.BehaviorRestTopologyBuilder),
+            typeof(global::Cephalon.Behaviors.Http.Hosting.BehaviorRestTopologyBuilderExtensions),
             typeof(global::Cephalon.Behaviors.Http.Hosting.HttpBehaviorBindingExtensions));
     }
 

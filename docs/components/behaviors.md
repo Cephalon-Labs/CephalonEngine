@@ -24,7 +24,7 @@
 | `BehaviorTopologyDescriptor` | Resolved per-behavior config: pattern, transports, feature flags, and shared API surface |
 | `[AppBehavior("id")]` | Declares a class as a named behavior |
 | `[BehaviorAllowedPatterns]` | Opt-in security allowlist restricting which patterns config can activate |
-| `[BehaviorAllowedTransports]` | Opt-in security allowlist restricting which transports config can activate; not a route-contract or OpenAPI descriptor |
+| `[BehaviorAllowedTransports]` | Transport allowlist; for `http.rest` specifically, the attribute also acts as the annotation-driven generic REST activation path, but it still does not become a route-contract or OpenAPI descriptor |
 | `IBehaviorCompatibilityRule` | Author extension point for custom topology validation |
 
 ## Registration
@@ -74,7 +74,7 @@ Resolved topology is the result of a four-layer merge (lowest → highest priori
 
 Behavior metadata stays transport-neutral on purpose.
 
-- use `[BehaviorAllowedTransports]` and `ConfigureTopology(...)` to declare which transports may activate for a behavior
+- use `[BehaviorAllowedTransports]` as the annotation-driven generic REST activation path when the default canonical REST route is enough, or use `ConfigureTopology(...)` plus `ViaHttpRest(rest => ...)` for one explicit generic REST contract; do not declare `http.rest` in both places for the same behavior
 - use `WithApiSurface(groupPath, operationPath)` when route-shaped transports should project a public path that differs from the default `behavior-id -> group/operation` split
 - expect generic REST, JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket behavior bindings to reuse that shared API surface for canonical versioned routes
 - keep GraphQL schema ownership focused on payload and protocol semantics even though its Cephalon behavior endpoint now participates in the shared prefix/version policy
@@ -104,7 +104,7 @@ Adds HTTP transport bindings. Each binding implements `IHttpBehaviorBinding` and
 
 | Transport ID | Binding | Route pattern |
 |---|---|---|
-| `http.rest` | `RestHttpBehaviorBinding` | Canonical `POST/GET {RestPrefix}/{document}/{group}/{operation}` |
+| `http.rest` | `RestHttpBehaviorBinding` | Canonical `POST/GET {RestPrefix}/{document}/{group}/{operation}` by default, or one explicit method + route template when `ViaHttpRest(rest => ...)` supplies a generic REST contract |
 | `http.jsonrpc` | `JsonRpcHttpBehaviorBinding` | Canonical `POST {JsonRpcPrefix}/{document}/{group}/{operation}` |
 | `http.graphql` | `GraphqlHttpBehaviorBinding` | Canonical `POST {GraphQLPrefix}/{document}/{group}/{operation}` |
 | `http.graphql-sse` | `GraphqlSseBehaviorBinding` | Canonical `POST {GraphQLSsePrefix}/{document}/{group}/{operation}` |

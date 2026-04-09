@@ -759,6 +759,33 @@ public sealed class AspNetCoreHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonSupportsEmptyRestPrefix()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration["ApiRoutes:Prefixes:Rest"] = string.Empty;
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.GetAsync("/discovery/hello/Codex");
+        var legacyResponse = await client.GetAsync("/api/discovery/hello/Codex");
+
+        Assert.True(response.IsSuccessStatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, legacyResponse.StatusCode);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesGlobalOpenApiInfoVersionOverrideToSingleDocumentHosts()
     {
         var builder = WebApplication.CreateSlimBuilder();

@@ -83,7 +83,7 @@ public sealed class ApiRoutesOptions
         var graphQlWsPrefix = section["Prefixes:GraphQLWs"];
         var graphQlSsePrefix = section["Prefixes:GraphQLSse"];
         var defaultBehaviorDocumentName = section["DefaultBehaviorDocumentName"]?.Trim();
-        var normalizedRestPrefix = NormalizePrefix(restPrefix, "/api");
+        var normalizedRestPrefix = NormalizePrefix(restPrefix, "/api", allowRoot: true);
         var normalizedWsPrefix = NormalizePrefix(wsPrefix, "/ws");
 
         return new ApiRoutesOptions
@@ -110,11 +110,25 @@ public sealed class ApiRoutesOptions
         return OpenApiDocumentNames.ResolveDefault(configuration);
     }
 
-    private static string NormalizePrefix(string? value, string defaultValue)
+    private static string NormalizePrefix(string? value, string defaultValue, bool allowRoot = false)
     {
-        var normalized = string.IsNullOrWhiteSpace(value)
-            ? defaultValue
-            : value.Trim();
+        if (value is null)
+        {
+            return defaultValue;
+        }
+
+        var normalized = value.Trim();
+
+        if (normalized.Length == 0 || normalized == "/")
+        {
+            if (allowRoot)
+            {
+                return string.Empty;
+            }
+
+            throw new InvalidOperationException(
+                "ApiRoutes route prefixes must resolve to non-root paths such as '/graphql'.");
+        }
 
         if (!normalized.StartsWith('/'))
         {
@@ -127,8 +141,10 @@ public sealed class ApiRoutesOptions
 
         if (normalized == "/")
         {
-            throw new InvalidOperationException(
-                "ApiRoutes route prefixes must resolve to non-root paths such as '/api'.");
+            return allowRoot
+                ? string.Empty
+                : throw new InvalidOperationException(
+                    "ApiRoutes route prefixes must resolve to non-root paths such as '/graphql'.");
         }
 
         return normalized;

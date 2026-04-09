@@ -11,7 +11,7 @@ conventions at build time and produce a compile-time-known registration hint fil
   - Emits `BehaviorRegistrationHints.g.cs` listing all discovered `[AppBehavior]` IDs
   - Emits `BehaviorAutoRegistration.g.cs` for zero-reflection DI/type registration plus pre-built topology descriptors when compile-time extraction succeeds
   - Extracts compile-time topology from `ConfigureTopology(...)` for pattern, transports, feature flags, and literal `WithApiSurface(...)` overrides
-  - Reports ABT0010–ABT0013 diagnostics on invalid behavior declarations
+  - Reports ABT0010–ABT0014 diagnostics on invalid behavior declarations
 
 ## Diagnostic rules
 
@@ -21,6 +21,7 @@ conventions at build time and produce a compile-time-known registration hint fil
 | ABT0011 | Error | `[AppBehavior]` ID is null or empty |
 | ABT0012 | Error | `[AppBehavior]` class is abstract |
 | ABT0013 | Error | `[AppBehavior]` class is static |
+| ABT0014 | Error | `http.rest` is declared in both `[BehaviorAllowedTransports]` and `ConfigureTopology(...)` |
 
 ## Generated output
 
@@ -70,7 +71,10 @@ and diagnostics activate for any project that references `Cephalon.Behaviors`.
 
 Compile-time topology extraction intentionally stays conservative. Literal `WithApiSurface(...)`
 arguments are supported, while more complex expressions fall back to runtime topology resolution so
-the generated surface stays truthful.
+the generated surface stays truthful. The generator also falls back to runtime topology resolution
+when a behavior uses the REST-specific `ViaHttpRest(rest => ...)` contract builder from
+`Cephalon.Behaviors.Http`, because route templates, query/route remapping, and request-shaping
+metadata live in the HTTP companion package instead of the core topology abstraction.
 
 ## Status
 

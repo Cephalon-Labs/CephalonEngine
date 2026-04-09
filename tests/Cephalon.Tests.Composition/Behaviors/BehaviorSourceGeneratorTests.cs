@@ -36,6 +36,18 @@ public sealed class BehaviorSourceGeneratorTests
             }
 
             public interface IBehaviorContext { }
+
+            [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+            public sealed class BehaviorAllowedTransportsAttribute : System.Attribute
+            {
+                public BehaviorAllowedTransportsAttribute(params string[] transports) { Transports = transports; }
+                public string[] Transports { get; }
+            }
+
+            public interface IBehaviorTopologyBuilder
+            {
+                IBehaviorTopologyBuilder ViaHttpRest();
+            }
         }
         """;
 
@@ -81,6 +93,12 @@ public sealed class BehaviorSourceGeneratorTests
     private static string? GetGeneratedSource(GeneratorDriverRunResult result) =>
         result.GeneratedTrees
             .FirstOrDefault(t => t.FilePath.EndsWith("BehaviorRegistrationHints.g.cs", StringComparison.Ordinal))
+            ?.GetText()
+            .ToString();
+
+    private static string? GetGeneratedAutoRegistrationSource(GeneratorDriverRunResult result) =>
+        result.GeneratedTrees
+            .FirstOrDefault(t => t.FilePath.EndsWith("BehaviorAutoRegistration.g.cs", StringComparison.Ordinal))
             ?.GetText()
             .ToString();
 
@@ -217,6 +235,7 @@ public sealed class BehaviorSourceGeneratorTests
             BehaviorSourceGenerator.Abt011EmptyBehaviorId,
             BehaviorSourceGenerator.Abt012MustNotBeAbstract,
             BehaviorSourceGenerator.Abt013MustNotBeStatic,
+            BehaviorSourceGenerator.Abt014DuplicateRestDeclaration,
         };
 
         foreach (var d in descriptors)
@@ -234,6 +253,72 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Equal("ABT0011", BehaviorSourceGenerator.Abt011EmptyBehaviorId.Id);
         Assert.Equal("ABT0012", BehaviorSourceGenerator.Abt012MustNotBeAbstract.Id);
         Assert.Equal("ABT0013", BehaviorSourceGenerator.Abt013MustNotBeStatic.Id);
+        Assert.Equal("ABT0014", BehaviorSourceGenerator.Abt014DuplicateRestDeclaration.Id);
+    }
+
+    [Fact]
+    public void DuplicateRestDeclarationEmitsAbt0014()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            [AppBehavior("orders.create")]
+            [BehaviorAllowedTransports("http.rest")]
+            public sealed class CreateOrderBehavior : IAppBehavior<string, string>
+            {
+                public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+                    => builder.ViaHttpRest();
+
+                public Task<string> HandleAsync(string input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (_, diagnostics) = RunGenerator(source);
+
+        Assert.Contains(diagnostics, d => d.Id == "ABT0014");
+    }
+
+    [Fact]
+    public void ViaHttpRestWithRestContractFallsBackToRuntimeTopologyGeneration()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using System;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            public static class BehaviorRestTopologyBuilderExtensions
+            {
+                public static IBehaviorTopologyBuilder ViaHttpRest(this IBehaviorTopologyBuilder builder, Action<object> configure)
+                {
+                    configure(new object());
+                    return builder.ViaHttpRest();
+                }
+            }
+
+            [AppBehavior("orders.lookup")]
+            public sealed class LookupOrderBehavior : IAppBehavior<string, string>
+            {
+                public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+                    => builder.ViaHttpRest(rest => { });
+
+                public Task<string> HandleAsync(string input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (result, diagnostics) = RunGenerator(source);
+
+        Assert.Empty(diagnostics);
+
+        var autoRegistration = GetGeneratedAutoRegistrationSource(result);
+        Assert.NotNull(autoRegistration);
+        Assert.Contains("GetBehaviorsNeedingRuntimeTopology", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("(\"orders.lookup\", typeof(global::LookupOrderBehavior))", autoRegistration, StringComparison.Ordinal);
+        Assert.DoesNotContain("new global::Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor(\"orders.lookup\"", autoRegistration, StringComparison.Ordinal);
     }
 
     // ─────────────────────────────────────────────────────────────────────────

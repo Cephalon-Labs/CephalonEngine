@@ -55,13 +55,13 @@ That keeps the authoring path close to the same module-first ideas used by Cepha
 14. Use `IOutboxContributor` when the package needs to publish operator-facing outbox descriptors through `/engine/outboxes` and `/engine/snapshot`.
 15. Use `IAuthorizationPolicyContributor` when the package needs to publish operator-facing authorization-policy descriptors through `/engine/authorization-policies` and `/engine/snapshot`.
 16. Add transport contribution interfaces only when the package really owns an external surface.
-17. When a module exposes behavior-driven REST endpoints, keep `[BehaviorAllowedTransports]` as the transport allowlist and map concrete REST routes through `Cephalon.Behaviors.Http` route helpers instead of trying to encode HTTP method or route shape inside the behavior attributes.
+17. When a module exposes behavior-driven REST endpoints, choose the REST authoring level deliberately: annotation-driven generic REST activation for the conventional adapter route, `ViaHttpRest(rest => ...)` for one explicit generic REST contract, or `MapBehaviorRestGroup(...)` when the module owns the public REST API.
 
 ## Behavior-first REST authoring
 
 Modules that expose Cephalon behaviors over REST can now keep most of the boilerplate in the helper layer while staying inside normal Minimal API conventions.
 
-Behavior declaration stays transport-neutral:
+Behavior declaration stays transport-neutral when the default generic REST route is enough:
 
 ```csharp
 [AppBehavior("cart.add-item")]
@@ -72,7 +72,6 @@ public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, AddToCartOu
     public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
     {
         builder.AsCqrs()
-            .ViaHttpRest()
             .ViaWebSocket()
             .ViaHttpGraphQl()
             .ViaHttpSse()
@@ -80,6 +79,11 @@ public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, AddToCartOu
     }
 }
 ```
+
+That shape lets `[BehaviorAllowedTransports("http.rest")]` activate the conventional generic REST
+adapter route without duplicating `http.rest` inside `ConfigureTopology(...)`. Cephalon derives the
+generic route from the behavior id, so `cart.add-item` projects to `/api/v1/cart/add-item` and
+`cart.add-item.draft` projects to `/api/v1/cart/add-item/draft` by default.
 
 If the generic route-shaped transports should expose a different logical public path than the default
 `behavior-id -> group/operation` split, override it in the same topology declaration:
@@ -102,7 +106,29 @@ and WebSocket behavior bindings, so they can all project canonical versioned rou
 `/graphql-ws/v1/cart/get`, `/sse/v1/cart/get`, and `/ws/v1/cart/get`. Hosts can move those
 canonical prefixes with `ApiRoutes:Prefixes:Rest`, `ApiRoutes:Prefixes:GraphQL`,
 `ApiRoutes:Prefixes:JsonRpc`, `ApiRoutes:Prefixes:Sse`, `ApiRoutes:Prefixes:Ws`,
-`ApiRoutes:Prefixes:GraphQLWs`, and `ApiRoutes:Prefixes:GraphQLSse`.
+`ApiRoutes:Prefixes:GraphQLWs`, and `ApiRoutes:Prefixes:GraphQLSse`. For REST specifically,
+`ApiRoutes:Prefixes:Rest = ""` is valid when the host wants versioned REST routes such as `/v1/...`
+at the root instead of under `/api`.
+
+When the generic REST adapter needs an explicit HTTP method, custom path template, or wire-name
+remapping without moving to a module-owned REST API, use the REST-specific topology extension:
+
+```csharp
+public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+{
+    builder.AsCqrs()
+        .ViaHttpRest(rest => rest
+            .MapPost("cart/{cartId}/items")
+            .BindRoute("cartId", nameof(AddToCartInput.CartId))
+            .BindQuery("draftMode", nameof(AddToCartInput.IsDraft)))
+        .ViaHttpJsonRpc()
+        .ViaHttpSse();
+}
+```
+
+That contract remains on the generic behavior transport surface. It is best for a single conventional
+REST endpoint per behavior. Route tokens and query-string keys bind by name unless `BindRoute(...)`
+or `BindQuery(...)` remaps them, and JSON request bodies populate the remaining input members.
 
 The owning module then maps the concrete REST surface:
 

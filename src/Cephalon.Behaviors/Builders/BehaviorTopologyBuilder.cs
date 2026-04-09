@@ -13,6 +13,7 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
     private string _pattern = "direct";
     private readonly HashSet<string> _transportIds = new(StringComparer.OrdinalIgnoreCase);
     private readonly BehaviorTopologyOptions _options = new();
+    private readonly Dictionary<string, string> _metadata = new(StringComparer.Ordinal);
     private string? _apiSurfaceGroupPath;
     private string? _apiSurfaceOperationPath;
 
@@ -144,6 +145,10 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
     IBehaviorTopologyBuilder IBehaviorTopologyBuilder.WithApiSurface(string groupPath, string operationPath)
         => WithApiSurface(groupPath, operationPath);
 
+    /// <inheritdoc />
+    IBehaviorTopologyBuilder IBehaviorTopologyBuilder.WithMetadata(string key, string? value)
+        => WithMetadata(key, value);
+
     /// <summary>
     /// Declares exposure over the <c>http.rest</c> transport.
     /// </summary>
@@ -274,6 +279,31 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
         return this;
     }
 
+    /// <summary>
+    /// Adds or replaces descriptor metadata that companion packages can later project into
+    /// adapter-specific runtime behavior.
+    /// </summary>
+    /// <param name="key">The metadata key to write.</param>
+    /// <param name="value">
+    /// The metadata value to store. Pass <see langword="null" /> to remove the key.
+    /// </param>
+    /// <returns>The same builder for fluent chaining.</returns>
+    public BehaviorTopologyBuilder WithMetadata(string key, string? value)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(key);
+
+        if (value is null)
+        {
+            _metadata.Remove(key);
+        }
+        else
+        {
+            _metadata[key] = value;
+        }
+
+        return this;
+    }
+
     // ── Options ─────────────────────────────────────────────────────────
 
     /// <inheritdoc />
@@ -304,6 +334,9 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
             inboxEnabled: _options.InboxEnabled,
             outboxEnabled: _options.OutboxEnabled,
             eventSourcingEnabled: _options.EventSourcingEnabled,
-            apiSurface: apiSurface);
+            apiSurface: apiSurface,
+            metadata: _metadata.Count == 0
+                ? null
+                : new Dictionary<string, string>(_metadata, StringComparer.Ordinal));
     }
 }

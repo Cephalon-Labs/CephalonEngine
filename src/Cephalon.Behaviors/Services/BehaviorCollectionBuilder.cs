@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Behaviors.Builders;
+using Cephalon.Behaviors.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -75,13 +76,18 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
         _typeRegistry.Register(behaviorId, behaviorType);
 
         // 3. If fluent topology provided, add a Layer-4 contributor
+        BehaviorTopologyDescriptor? descriptor = null;
         if (configureTopology is not null)
         {
             var builder = new BehaviorTopologyBuilder();
             configureTopology(builder);
-            var descriptor = builder.Build(behaviorId);
-            var contributor = new FluentBehaviorContributor(descriptor);
-            Services.AddSingleton<IBehaviorContributor>(contributor);
+            descriptor = builder.Build(behaviorId);
+        }
+
+        descriptor = BehaviorRestTransportDeclarationResolver.Resolve(behaviorId, behaviorType, descriptor);
+        if (descriptor is not null)
+        {
+            Services.AddSingleton<IBehaviorContributor>(new FluentBehaviorContributor(descriptor));
         }
 
         return this;

@@ -36,7 +36,10 @@ public static class BehaviorRestEndpointRouteBuilderExtensions
 
 internal static class BehaviorRequestJsonComposer
 {
-    public static async Task<JsonElement> ComposeAsync<TInput>(HttpContext context, bool acceptsBody)
+    public static async Task<JsonElement> ComposeAsync<TInput>(
+        HttpContext context,
+        bool acceptsBody,
+        BehaviorRestTransportContract? contract = null)
     {
         ArgumentNullException.ThrowIfNull(context);
 
@@ -62,8 +65,8 @@ internal static class BehaviorRequestJsonComposer
             }
         }
 
-        MergeQuery(payload, context.Request.Query);
-        MergeRouteValues(payload, context.Request.RouteValues);
+        MergeQuery(payload, context.Request.Query, contract);
+        MergeRouteValues(payload, context.Request.RouteValues, contract);
 
         return JsonSerializer.SerializeToElement(payload);
     }
@@ -126,13 +129,17 @@ internal static class BehaviorRequestJsonComposer
         return await JsonNode.ParseAsync(context.Request.Body, cancellationToken: context.RequestAborted).ConfigureAwait(false);
     }
 
-    private static void MergeQuery(JsonObject payload, IQueryCollection query)
+    private static void MergeQuery(
+        JsonObject payload,
+        IQueryCollection query,
+        BehaviorRestTransportContract? contract)
     {
         foreach (var pair in query)
         {
+            var memberName = contract?.ResolveQueryMemberName(pair.Key) ?? pair.Key;
             if (pair.Value.Count == 1)
             {
-                payload[pair.Key] = ParseScalarNode(pair.Value[0]);
+                payload[memberName] = ParseScalarNode(pair.Value[0]);
                 continue;
             }
 
@@ -144,12 +151,15 @@ internal static class BehaviorRequestJsonComposer
                     values.Add(ParseScalarNode(value));
                 }
 
-                payload[pair.Key] = values;
+                payload[memberName] = values;
             }
         }
     }
 
-    private static void MergeRouteValues(JsonObject payload, RouteValueDictionary routeValues)
+    private static void MergeRouteValues(
+        JsonObject payload,
+        RouteValueDictionary routeValues,
+        BehaviorRestTransportContract? contract)
     {
         foreach (var pair in routeValues)
         {
@@ -158,7 +168,8 @@ internal static class BehaviorRequestJsonComposer
                 continue;
             }
 
-            payload[pair.Key] = ParseScalarNode(Convert.ToString(pair.Value, CultureInfo.InvariantCulture) ?? string.Empty);
+            var memberName = contract?.ResolveRouteMemberName(pair.Key) ?? pair.Key;
+            payload[memberName] = ParseScalarNode(Convert.ToString(pair.Value, CultureInfo.InvariantCulture) ?? string.Empty);
         }
     }
 

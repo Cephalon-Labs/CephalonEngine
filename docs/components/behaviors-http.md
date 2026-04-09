@@ -20,7 +20,7 @@ It wires behavior topology descriptors to HTTP transports via 7 concrete `IHttpB
 
 | Transport ID | Binding class | Route |
 |---|---|---|
-| `http.rest` | `RestHttpBehaviorBinding` | Canonical `POST/GET {RestPrefix}/{document}/{group}/{operation}` |
+| `http.rest` | `RestHttpBehaviorBinding` | Conventional `POST/GET {RestPrefix}/{document}/{group}/{operation}` by default, or a configured single-method route when `ViaHttpRest(rest => ...)` supplies an explicit contract |
 | `http.jsonrpc` | `JsonRpcHttpBehaviorBinding` | Canonical `POST {JsonRpcPrefix}/{document}/{group}/{operation}` |
 | `http.graphql` | `GraphqlHttpBehaviorBinding` | Canonical `POST {GraphQLPrefix}/{document}/{group}/{operation}` |
 | `http.graphql-sse` | `GraphqlSseBehaviorBinding` | Canonical `POST {GraphQLSsePrefix}/{document}/{group}/{operation}` |
@@ -40,7 +40,29 @@ The host controls those canonical prefixes through the canonical `ApiRoutes:Pref
 `ApiRoutes:Prefixes:Ws`, `ApiRoutes:Prefixes:GraphQLWs`, and `ApiRoutes:Prefixes:GraphQLSse`,
 while the resolved default version/document segment comes from `OpenApi:DefaultVersion` or
 `ApiRoutes:DefaultBehaviorDocumentName`. The older `/behaviors/{id}` aliases are no longer part of
-the generated behavior HTTP surface.
+the generated behavior HTTP surface. For REST specifically, `ApiRoutes:Prefixes:Rest = ""` is valid
+and means "mount the versioned REST surface at the root," while `null` still falls back to `/api`.
+
+## REST declaration styles
+
+Cephalon now treats generic REST authoring as three distinct levels:
+
+- **Annotation-driven generic REST activation**: `[BehaviorAllowedTransports("http.rest")]`
+  turns on the conventional generic REST adapter route for that behavior
+- **Topology-driven generic REST contract**: `ConfigureTopology(...)` plus
+  `ViaHttpRest(rest => ...)` keeps the behavior on the generic REST adapter surface, but lets the
+  behavior choose one HTTP method, an optional explicit route template, and optional route/query
+  member remapping
+- **Module-owned public REST endpoints**: `MapBehaviorRestGroup(...)` plus
+  `MapBehaviorGet/Post/Put/Patch/Delete(...)` gives the module a full Minimal API-style public REST
+  surface with OpenAPI tags, XML comments, and route-group control
+
+For generic REST declarations, use one REST activation style per behavior:
+
+- if `[BehaviorAllowedTransports("http.rest")]` is present, do not also call `ViaHttpRest()` or
+  `ViaHttpRest(rest => ...)` for the same behavior
+- if both declaration styles appear, the runtime fails fast and the source generator reports
+  `ABT0014`
 
 ## Shared behavior API surface
 
@@ -64,6 +86,12 @@ GraphQL-SSE, GraphQL-WS, SSE, and WebSocket behavior bindings. Source-generated 
 honor the same `WithApiSurface(...)` contract, so the compile-time and fluent-runtime paths stay
 aligned.
 
+When no explicit API surface is supplied, Cephalon derives the public path deterministically from the
+behavior id:
+
+- `cart.add-item` becomes group `cart` plus operation `add-item`, which projects to `/api/v1/cart/add-item`
+- `cart.add-item.draft` becomes group `cart/add-item` plus operation `draft`, which projects to `/api/v1/cart/add-item/draft`
+
 ## Registration
 
 ```csharp
@@ -75,10 +103,32 @@ services.AddCephalon(config, engine => engine
 );
 ```
 
+When the generic REST adapter needs a more REST-shaped contract without moving to a module-owned
+Minimal API surface, configure the REST contract inside `ConfigureTopology(...)`:
+
+```csharp
+public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+{
+    builder.AsDirect()
+        .ViaHttpRest(rest => rest
+            .MapPost("catalog/create-product/{productId}")
+            .BindRoute("productId", nameof(CreateProductInput.ProductId))
+            .BindQuery("draftMode", nameof(CreateProductInput.IsDraft)));
+}
+```
+
+That explicit generic REST contract keeps the route on the generic behavior transport surface while
+letting the behavior choose a single HTTP method plus a route template. Route-token names and
+query-string keys bind by name by default; `BindRoute(...)` and `BindQuery(...)` only exist for
+wire-name mismatches. JSON request bodies fill the remaining input members.
+
 ## Behavior-aware REST endpoints
 
-`[BehaviorAllowedTransports("http.rest")]` stays an activation and validation allowlist.
-It does **not** own HTTP method, route template, route grouping, or OpenAPI metadata.
+`[BehaviorAllowedTransports("http.rest")]` stays the annotation-driven generic REST activation path.
+It does **not** own HTTP method, route template, route grouping, or OpenAPI metadata. Use it when
+the default conventional generic REST route is enough; move to `ViaHttpRest(rest => ...)` for a
+single explicit generic REST contract, or to `MapBehaviorRestGroup(...)` when the module owns the
+public REST API.
 
 When a module wants shaped REST endpoints instead of the generic behavior transport surface, map them
 explicitly through the Minimal API helper layer:

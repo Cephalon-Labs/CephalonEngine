@@ -38,11 +38,31 @@ internal sealed class BehaviorApiSurfaceRouteResolver
                 $"Transport '{transportId}' does not participate in the shared behavior API surface route policy.")
         };
 
+        var restContract = transportId == "http.rest"
+            ? BehaviorRestTransportContract.FromDescriptor(descriptor)
+            : null;
+
         return JoinSegments(
             prefix,
             options.DefaultBehaviorDocumentName,
-            descriptor.ApiSurface.GroupPath,
-            descriptor.ApiSurface.OperationPath);
+            ResolveTransportPathSegments(descriptor, restContract));
+    }
+
+    private static string[] ResolveTransportPathSegments(
+        BehaviorTopologyDescriptor descriptor,
+        BehaviorRestTransportContract? restContract)
+    {
+        if (!string.IsNullOrWhiteSpace(restContract?.RouteTemplate) || restContract?.RouteTemplate == string.Empty)
+        {
+            if (restContract.RouteTemplate!.Length == 0)
+            {
+                return [];
+            }
+
+            return restContract.RouteTemplate.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        }
+
+        return [descriptor.ApiSurface.GroupPath, descriptor.ApiSurface.OperationPath];
     }
 
     private static string JoinSegments(params string[] segments)
@@ -56,5 +76,10 @@ internal sealed class BehaviorApiSurfaceRouteResolver
         return normalizedSegments.Length == 0
             ? "/"
             : "/" + string.Join("/", normalizedSegments);
+    }
+
+    private static string JoinSegments(string prefix, string documentName, string[] surfaceSegments)
+    {
+        return JoinSegments([prefix, documentName, .. surfaceSegments]);
     }
 }

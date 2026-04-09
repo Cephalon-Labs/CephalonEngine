@@ -54,42 +54,108 @@ public sealed class RestHttpBehaviorBinding : IHttpBehaviorBinding
         ArgumentNullException.ThrowIfNull(descriptor);
         ArgumentNullException.ThrowIfNull(dispatcher);
 
+        var contract = BehaviorRestTransportContract.FromDescriptor(descriptor);
+
         foreach (var route in routeResolver.ResolveRoutes(TransportId, descriptor))
         {
+            if (contract.HasExplicitHttpMethod)
+            {
+                MapExplicitContractEndpoint(app, route, descriptor, dispatcher, contract);
+                continue;
+            }
+
             app.MapPost(route, async (HttpContext ctx, [FromBody] JsonElement body) =>
             {
-                var input = JsonSerializer.Deserialize<object>(body)!;
-                var context = DefaultBehaviorContext.From(ctx, descriptor.Id);
-                try
-                {
-                    var result = await dispatcher.DispatchAsync(descriptor.Id, input, context, ctx.RequestAborted)
-                        .ConfigureAwait(false);
-                    return result is null ? Results.NoContent() : Results.Json(result, contentType: "application/json");
-                }
-                catch (BehaviorNotFoundException)
-                {
-                    return Results.NotFound();
-                }
+                return await DispatchBodyAsync(ctx, descriptor, dispatcher, body).ConfigureAwait(false);
             }).ExcludeFromDescription();
 
             app.MapGet(route, async (HttpContext ctx) =>
             {
                 var input = (object)ParseQueryAsJsonElement(ctx.Request.Query);
-                var context = DefaultBehaviorContext.From(ctx, descriptor.Id);
-                try
-                {
-                    var result = await dispatcher.DispatchAsync(descriptor.Id, input, context, ctx.RequestAborted)
-                        .ConfigureAwait(false);
-                    return result is null ? Results.NoContent() : Results.Json(result, contentType: "application/json");
-                }
-                catch (BehaviorNotFoundException)
-                {
-                    return Results.NotFound();
-                }
+                return await DispatchAsync(ctx, descriptor, dispatcher, input).ConfigureAwait(false);
             }).ExcludeFromDescription();
         }
 
         return Task.CompletedTask;
+    }
+
+    private static void MapExplicitContractEndpoint(
+        WebApplication app,
+        string route,
+        BehaviorTopologyDescriptor descriptor,
+        BehaviorDispatcher dispatcher,
+        BehaviorRestTransportContract contract)
+    {
+        var acceptsBody = AcceptsBody(contract.HttpMethod!);
+        app.MapMethods(route, [contract.HttpMethod!], async (HttpContext ctx) =>
+        {
+            object input;
+            if (acceptsBody)
+            {
+                var body = await ComposeBehaviorBodyAsync(ctx, contract).ConfigureAwait(false);
+                input = JsonSerializer.Deserialize<object>(body)!;
+            }
+            else
+            {
+                input = await ComposeBehaviorRequestAsync(ctx, contract).ConfigureAwait(false);
+            }
+
+            return await DispatchAsync(ctx, descriptor, dispatcher, input).ConfigureAwait(false);
+        }).ExcludeFromDescription();
+    }
+
+    private static async Task<IResult> DispatchBodyAsync(
+        HttpContext ctx,
+        BehaviorTopologyDescriptor descriptor,
+        BehaviorDispatcher dispatcher,
+        JsonElement body)
+    {
+        var input = JsonSerializer.Deserialize<object>(body)!;
+        return await DispatchAsync(ctx, descriptor, dispatcher, input).ConfigureAwait(false);
+    }
+
+    private static async Task<IResult> DispatchAsync(
+        HttpContext ctx,
+        BehaviorTopologyDescriptor descriptor,
+        BehaviorDispatcher dispatcher,
+        object input)
+    {
+        var context = DefaultBehaviorContext.From(ctx, descriptor.Id);
+        try
+        {
+            var result = await dispatcher.DispatchAsync(descriptor.Id, input, context, ctx.RequestAborted)
+                .ConfigureAwait(false);
+            return result is null ? Results.NoContent() : Results.Json(result, contentType: "application/json");
+        }
+        catch (BehaviorNotFoundException)
+        {
+            return Results.NotFound();
+        }
+    }
+
+    private static async Task<object> ComposeBehaviorRequestAsync(
+        HttpContext context,
+        BehaviorRestTransportContract contract)
+    {
+        var payload = await BehaviorRequestJsonComposer
+            .ComposeAsync<object>(context, acceptsBody: false, contract)
+            .ConfigureAwait(false);
+        return payload;
+    }
+
+    private static async Task<JsonElement> ComposeBehaviorBodyAsync(
+        HttpContext context,
+        BehaviorRestTransportContract contract)
+    {
+        return await BehaviorRequestJsonComposer
+            .ComposeAsync<object>(context, acceptsBody: true, contract)
+            .ConfigureAwait(false);
+    }
+
+    private static bool AcceptsBody(string httpMethod)
+    {
+        return !string.Equals(httpMethod, "GET", StringComparison.OrdinalIgnoreCase) &&
+               !string.Equals(httpMethod, "DELETE", StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>

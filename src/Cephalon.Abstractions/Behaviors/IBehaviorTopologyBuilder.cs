@@ -51,6 +51,16 @@ public interface IBehaviorTopologyBuilder
     /// <summary>Configures optional feature flags for this behavior (outbox, inbox, event sourcing).</summary>
     IBehaviorTopologyBuilder WithOptions(Action<BehaviorTopologyOptions> configure);
 
+    /// <summary>
+    /// Adds or replaces arbitrary topology metadata for companion packs that need extra routing or runtime hints.
+    /// </summary>
+    /// <param name="key">The stable metadata key.</param>
+    /// <param name="value">
+    /// The metadata value. Pass <see langword="null" /> to remove the key from the topology descriptor.
+    /// </param>
+    /// <returns>The same builder for fluent chaining.</returns>
+    IBehaviorTopologyBuilder WithMetadata(string key, string? value);
+
     /// <summary>Builds the final descriptor. Called internally by the engine — do not call directly.</summary>
     BehaviorTopologyDescriptor Build(string behaviorId);
 }
