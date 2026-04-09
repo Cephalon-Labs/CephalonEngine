@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Authorization;
+using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
@@ -528,6 +529,7 @@ public sealed class EngineBuilder
 
             var activeModules = ModuleActivation.ApplyOptions(allModules, engineOptions);
             var orderedModules = ModuleOrdering.Order(activeModules);
+            var ownedBehaviorRegistrations = CollectOwnedBehaviorRegistrations(orderedModules);
             var modulesByType = orderedModules.ToDictionary(module => module.GetType());
             var executionGraphs = new List<ExecutionGraphDescriptor>();
             var hostedExecutions = new List<HostedExecutionDescriptor>();
@@ -599,6 +601,7 @@ public sealed class EngineBuilder
             Services.TryAddSingleton(appProfile);
             Services.TryAddSingleton(technologyCatalog);
             Services.TryAddSingleton(technologySelection);
+            Services.TryAddSingleton<IReadOnlyList<OwnedBehaviorRegistration>>(ownedBehaviorRegistrations);
             Services.TryAddSingleton<IReadOnlyList<AuditStoreDescriptor>>(_ => auditStores.ToArray());
             Services.TryAddSingleton<IProjectionCatalog>(_ => new ProjectionCatalogSnapshot(projections));
             Services.TryAddSingleton<IOutboxCatalog>(_ => new OutboxCatalogSnapshot(outboxes));
@@ -714,6 +717,71 @@ public sealed class EngineBuilder
         return capabilities
             .Where(capability => options.IsCapabilityEnabled(capability.Key))
             .ToArray();
+    }
+
+    private static OwnedBehaviorRegistration[] CollectOwnedBehaviorRegistrations(
+        List<IModule> modules)
+    {
+        ArgumentNullException.ThrowIfNull(modules);
+
+        if (modules.Count == 0)
+        {
+            return [];
+        }
+
+        var registrations = new List<OwnedBehaviorRegistration>();
+
+        foreach (var module in modules.OfType<IBehaviorOwnerModule>())
+        {
+            var builder = new OwnedBehaviorModuleBuilder(module.Descriptor.Id);
+            module.ConfigureBehaviors(builder);
+            registrations.AddRange(builder.Build());
+        }
+
+        ValidateOwnedBehaviorRegistrations(registrations);
+        return [.. registrations];
+    }
+
+    private static void ValidateOwnedBehaviorRegistrations(
+        IReadOnlyList<OwnedBehaviorRegistration> registrations)
+    {
+        ArgumentNullException.ThrowIfNull(registrations);
+
+        var duplicateBehaviorId = registrations
+            .GroupBy(static registration => registration.BehaviorId, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault(static group => group
+                .Select(static registration => registration.SourceModuleId)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Skip(1)
+                .Any());
+
+        if (duplicateBehaviorId is not null)
+        {
+            var sourceModules = duplicateBehaviorId
+                .Select(static registration => registration.SourceModuleId)
+                .Distinct(StringComparer.OrdinalIgnoreCase);
+
+            throw new InvalidOperationException(
+                $"Behavior '{duplicateBehaviorId.Key}' is owned by multiple modules: {string.Join(", ", sourceModules)}.");
+        }
+
+        var duplicateBehaviorType = registrations
+            .GroupBy(static registration => registration.BehaviorType)
+            .FirstOrDefault(static group => group
+                .Select(static registration => registration.SourceModuleId)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Skip(1)
+                .Any());
+
+        if (duplicateBehaviorType is not null)
+        {
+            var sourceModules = duplicateBehaviorType
+                .Select(static registration => registration.SourceModuleId)
+                .Distinct(StringComparer.OrdinalIgnoreCase);
+
+            throw new InvalidOperationException(
+                $"Behavior type '{duplicateBehaviorType.Key.FullName}' is owned by multiple modules: {string.Join(", ", sourceModules)}.");
+        }
     }
 
     private static ModuleManifest CreateManifest(

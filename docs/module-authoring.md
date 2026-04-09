@@ -15,7 +15,12 @@ Choose the starter that matches the package you want to author:
 - `dotnet new cephalon-rest-module`
   - everything in `cephalon-module`
   - plus `IRestModule` and a localized REST endpoint
+  - best for generic REST modules that do not dispatch into Cephalon behaviors
   - generated `cephalon.package.json` copied to the output folder
+
+For behavior-owning modules, add `Cephalon.Behaviors` or `Cephalon.Behaviors.Http` and prefer
+`BehaviorModuleBase` or `RestBehaviorModuleBase` instead of implementing
+`IBehaviorOwnerModule`/`IRestModule` directly in normal authoring code.
 
 For a concrete reference implementation, use:
 
@@ -55,14 +60,50 @@ That keeps the authoring path close to the same module-first ideas used by Cepha
 14. Use `IOutboxContributor` when the package needs to publish operator-facing outbox descriptors through `/engine/outboxes` and `/engine/snapshot`.
 15. Use `IAuthorizationPolicyContributor` when the package needs to publish operator-facing authorization-policy descriptors through `/engine/authorization-policies` and `/engine/snapshot`.
 16. Add transport contribution interfaces only when the package really owns an external surface.
-17. When a module exposes REST endpoints backed by behaviors, map that REST surface in
+17. When a module explicitly owns Cephalon behaviors, prefer `BehaviorModuleBase` so ownership stays
+    host-agnostic and deterministic.
+18. When a behavior-owning module exposes REST endpoints, prefer `RestBehaviorModuleBase` so the same
+    module can own internal-only behaviors and public REST-backed behaviors without splitting the
+    bounded context across multiple module classes.
+19. When a module exposes REST endpoints backed by behaviors, map that REST surface in
     `MapEndpoints(...)` with `MapBehaviorRestGroup(...)` and keep REST out of behavior topology.
+
+## Behavior-owning modules
+
+Cephalon now has a first-class module-owned behavior authoring model:
+
+- `BehaviorModuleBase` keeps behavior ownership host-agnostic through `ConfigureBehaviors(...)`
+- `RestBehaviorModuleBase` layers public REST mapping on top of that same ownership contract
+- one module can own both internal/process-only behaviors and public REST-backed behaviors
+- generic `IRestModule` remains the right fit for REST modules that do not dispatch into Cephalon
+  behaviors
+
+Use `BehaviorModuleBase` when the module owns behaviors but does not need to expose a public REST
+surface:
+
+```csharp
+public sealed class CartModule : BehaviorModuleBase
+{
+    public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+    public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
+    {
+        behaviors.Add<RepriceCartBehavior>();
+        behaviors.Add<CheckoutWorkflowBehavior>(topology => topology
+            .AsProcessManager()
+            .ViaKafka());
+    }
+}
+```
+
+That shape keeps ownership explicit even when the behaviors only run through messaging, generic HTTP
+transports, or background orchestration.
 
 ## Behavior-first REST authoring
 
-Modules that expose Cephalon behaviors over REST can keep the transport-neutral behavior topology in
-the behavior itself while putting the public REST surface in the module, where ASP.NET Core route
-groups, metadata, and OpenAPI are already designed to live.
+Modules that expose Cephalon behaviors over REST can keep one module as the single owner of the
+bounded context. `RestBehaviorModuleBase` keeps behavior ownership and REST exposure together while
+still separating host-agnostic behavior registration from ASP.NET Core route mapping.
 
 Behavior declaration stays focused on the interaction pattern plus non-REST transports:
 
@@ -112,22 +153,40 @@ canonical prefixes with `ApiRoutes:Prefixes:GraphQL`, `ApiRoutes:Prefixes:JsonRp
 `ApiRoutes:Prefixes:Sse`, `ApiRoutes:Prefixes:Ws`, `ApiRoutes:Prefixes:GraphQLWs`, and
 `ApiRoutes:Prefixes:GraphQLSse`.
 
-The owning module then maps the concrete REST surface:
+The owning module then keeps both ownership and public REST mapping together:
 
 ```csharp
-public void MapEndpoints(IEndpointRouteBuilder endpoints)
+public sealed class CartModule : RestBehaviorModuleBase
 {
-    var group = endpoints.MapBehaviorRestGroup(this, "/showcase/cart");
+    public override ModuleDescriptor Descriptor => DescriptorInstance;
 
-    group.MapBehaviorGet<GetCartBehavior>("/{cartId}");
-    group.MapBehaviorPost<AddToCartBehavior>("/{cartId}/items");
-    group.MapBehaviorDelete<RemoveFromCartBehavior>("/{cartId}/items/{productId}");
-    group.MapBehaviorPost<CheckoutCartBehavior>("/{cartId}/checkout");
+    public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
+    {
+        behaviors.Add<GetCartBehavior>();
+        behaviors.Add<AddToCartBehavior>();
+        behaviors.Add<RemoveFromCartBehavior>();
+        behaviors.Add<CheckoutCartBehavior>();
+        behaviors.Add<RepriceCartBehavior>(); // internal-only
+    }
+
+    public override void MapEndpoints(IEndpointRouteBuilder endpoints)
+    {
+        var group = endpoints.MapBehaviorRestGroup(this, "/showcase/cart");
+
+        group.MapBehaviorGet<GetCartBehavior>("/{cartId}");
+        group.MapBehaviorPost<AddToCartBehavior>("/{cartId}/items");
+        group.MapBehaviorDelete<RemoveFromCartBehavior>("/{cartId}/items/{productId}");
+        group.MapBehaviorPost<CheckoutCartBehavior>("/{cartId}/checkout");
+    }
 }
 ```
 
 Current helper behavior:
 
+- gives behavior authors a base class instead of forcing modules to implement multiple interfaces
+  directly
+- keeps one module as the owner of both internal-only and REST-exposed behaviors
+- validates that a module cannot map another module's explicitly owned behavior through the REST helper layer
 - keeps route shape in the ASP.NET Core adapter layer while behavior attributes remain host-agnostic
 - dispatches through `BehaviorDispatcher` and `DefaultBehaviorContext`
 - merges route values, query-string values, and JSON request bodies into the behavior input payload
@@ -147,7 +206,8 @@ This helper surface is REST-specific. The generic route-shaped behavior transpor
 `BehaviorApiSurfaceDescriptor` contract for JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, SSE, and
 WebSocket routes. Module-owned REST helpers are the right choice when the module needs Minimal API
 method selection, concrete REST templates, and OpenAPI metadata that read like a normal application
-API.
+API, while `BehaviorModuleBase` remains the host-agnostic choice for internal or non-REST behavior
+ownership.
 
 ## Workflow and orchestration descriptors
 

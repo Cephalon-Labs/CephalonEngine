@@ -69,10 +69,25 @@ internal sealed class BehaviorModule(
             configureBehaviors(builder);
         }
 
+        var ownedBehaviorRegistrations = ResolveOwnedBehaviorRegistrations(services);
+        var ownedBehaviorIds = ownedBehaviorRegistrations.Count == 0
+            ? null
+            : ownedBehaviorRegistrations
+                .Select(static registration => registration.BehaviorId)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (ownedBehaviorRegistrations.Count > 0)
+        {
+            var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+            foreach (var registration in ownedBehaviorRegistrations)
+            {
+                builder.Register(registration.BehaviorType, registration.ConfigureTopology);
+            }
+        }
+
         // Auto-register behaviors from assemblies when enabled (default: true)
         if (options.AutoRegister)
         {
-            AutoRegisterBehaviors(services, typeRegistry, options);
+            AutoRegisterBehaviors(services, typeRegistry, options, ownedBehaviorIds);
         }
 
         services.TryAddSingleton(options);
@@ -102,6 +117,24 @@ internal sealed class BehaviorModule(
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, BehaviorRuntimeContributor>());
     }
 
+    private static IReadOnlyList<OwnedBehaviorRegistration> ResolveOwnedBehaviorRegistrations(
+        IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        for (var index = services.Count - 1; index >= 0; index--)
+        {
+            var descriptor = services[index];
+            if (descriptor.ServiceType == typeof(IReadOnlyList<OwnedBehaviorRegistration>) &&
+                descriptor.ImplementationInstance is IReadOnlyList<OwnedBehaviorRegistration> registrations)
+            {
+                return registrations;
+            }
+        }
+
+        return [];
+    }
+
     private static readonly Type AppBehaviorOpenGeneric = typeof(IAppBehavior<,>);
 
     /// <summary>
@@ -116,7 +149,8 @@ internal sealed class BehaviorModule(
     private static void AutoRegisterBehaviors(
         IServiceCollection services,
         BehaviorTypeRegistry typeRegistry,
-        BehaviorOptions options)
+        BehaviorOptions options,
+        IReadOnlySet<string>? ownedBehaviorIds)
     {
         var assemblies = options.ResolveAutoRegisterAssemblies();
         if (assemblies.Count == 0) return;
@@ -124,7 +158,7 @@ internal sealed class BehaviorModule(
         foreach (var assembly in assemblies)
         {
             // Phase 1: Try source-generated registration (zero reflection)
-            if (TrySourceGeneratedRegistration(services, typeRegistry, assembly))
+            if (TrySourceGeneratedRegistration(services, typeRegistry, assembly, ownedBehaviorIds))
                 continue;
 
             // Phase 2: Reflection fallback for assemblies without source generation
@@ -144,7 +178,8 @@ internal sealed class BehaviorModule(
     private static bool TrySourceGeneratedRegistration(
         IServiceCollection services,
         BehaviorTypeRegistry typeRegistry,
-        Assembly assembly)
+        Assembly assembly,
+        IReadOnlySet<string>? ownedBehaviorIds)
     {
         // Single cheap attribute check per assembly — no type scanning needed
         var attr = assembly.GetCustomAttribute<ContainsBehaviorsAttribute>();
@@ -173,6 +208,11 @@ internal sealed class BehaviorModule(
         {
             foreach (var descriptor in descriptors)
             {
+                if (ownedBehaviorIds?.Contains(descriptor.Id) == true)
+                {
+                    continue;
+                }
+
                 if (!typeRegistry.TryGetType(descriptor.Id, out var behaviorType) || behaviorType is null)
                 {
                     continue;
@@ -200,6 +240,11 @@ internal sealed class BehaviorModule(
         {
             foreach (var (id, type) in runtimeBehaviors)
             {
+                if (ownedBehaviorIds?.Contains(id) == true)
+                {
+                    continue;
+                }
+
                 TryRegisterResolvedTopology(services, type, id);
             }
         }

@@ -86,10 +86,13 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Behaviors.IBehaviorCatalog),
             typeof(global::Cephalon.Abstractions.Behaviors.IBehaviorCompatibilityRule),
             typeof(global::Cephalon.Abstractions.Behaviors.IBehaviorContext),
+            typeof(global::Cephalon.Abstractions.Behaviors.IBehaviorModuleBuilder),
+            typeof(global::Cephalon.Abstractions.Behaviors.IBehaviorOwnerModule),
             typeof(global::Cephalon.Abstractions.Behaviors.IBehaviorContributor),
             typeof(global::Cephalon.Abstractions.Behaviors.IBehaviorRegistry),
             typeof(global::Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder),
             typeof(global::Cephalon.Abstractions.Behaviors.IProcessCompletion),
+            typeof(global::Cephalon.Abstractions.Behaviors.OwnedBehaviorRegistration),
             typeof(global::Cephalon.Abstractions.Capabilities.Capability),
             typeof(global::Cephalon.Abstractions.Capabilities.CapabilityAccess),
             typeof(global::Cephalon.Abstractions.Capabilities.ICapabilityRegistry),
@@ -693,7 +696,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Behaviors.Http.LazyTransportBinding),
             typeof(global::Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup),
             typeof(global::Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointRouteBuilderExtensions),
-            typeof(global::Cephalon.Behaviors.Http.Hosting.HttpBehaviorBindingExtensions));
+            typeof(global::Cephalon.Behaviors.Http.Hosting.HttpBehaviorBindingExtensions),
+            typeof(global::Cephalon.Behaviors.Http.Hosting.RestBehaviorModuleBase));
     }
 
     [Fact]

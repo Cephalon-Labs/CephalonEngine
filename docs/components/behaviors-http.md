@@ -22,6 +22,8 @@ module-owned REST endpoints.
 - **Behavior-aware REST helpers** — `MapBehaviorRestGroup(...)` plus
   `BehaviorRestEndpointGroup.MapBehaviorGet/Post/Put/Patch/Delete(...)` for Minimal API-style
   module route groups that dispatch into behaviors
+- **REST behavior module base class** — `RestBehaviorModuleBase` so behavior-owning REST modules can
+  expose public endpoints without implementing multiple author-facing interfaces directly
 - **OpenAPI enrichment** — module tag names and descriptions, module-major API-version defaults
   with explicit `.ApiVersion(...)` override support, best-effort XML comment
   summaries/descriptions for module-owned REST endpoints, and separation between public REST docs
@@ -62,6 +64,9 @@ Cephalon keeps public REST module-owned:
 
 - do not declare `http.rest` in `[BehaviorAllowedTransports(...)]`
 - do not call `ViaHttpRest()` or `ViaHttpRest(rest => ...)` in `ConfigureTopology(...)`
+- prefer `RestBehaviorModuleBase` when a module owns behaviors and exposes them publicly over REST
+- prefer `BehaviorModuleBase` when a module owns behaviors but does not expose a public REST surface
+- keep low-level `IRestModule` for REST modules that do not dispatch into Cephalon behaviors
 - map public REST routes in the owning module through `MapEndpoints(...)` plus
   `MapBehaviorRestGroup(...)`
 - keep behavior attributes and topology focused on interaction pattern plus non-REST transports
@@ -120,17 +125,31 @@ Behaviors no longer activate REST through annotations or topology. Instead, modu
 endpoints explicitly through the Minimal API helper layer while still dispatching through
 `BehaviorDispatcher`.
 
-When a module wants a public REST surface, map it explicitly through the Minimal API helper layer:
+When a module wants a public REST surface, keep ownership and REST mapping together explicitly:
 
 ```csharp
-public void MapEndpoints(IEndpointRouteBuilder endpoints)
+public sealed class CartModule : RestBehaviorModuleBase
 {
-    var group = endpoints.MapBehaviorRestGroup(this, "/showcase/cart");
+    public override ModuleDescriptor Descriptor => DescriptorInstance;
 
-    group.MapBehaviorGet<GetCartBehavior>("/{cartId}");
-    group.MapBehaviorPost<AddToCartBehavior>("/{cartId}/items");
-    group.MapBehaviorDelete<RemoveFromCartBehavior>("/{cartId}/items/{productId}");
-    group.MapBehaviorPost<CheckoutCartBehavior>("/{cartId}/checkout");
+    public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
+    {
+        behaviors.Add<GetCartBehavior>();
+        behaviors.Add<AddToCartBehavior>();
+        behaviors.Add<RemoveFromCartBehavior>();
+        behaviors.Add<CheckoutCartBehavior>();
+        behaviors.Add<RepriceCartBehavior>(); // internal-only
+    }
+
+    public override void MapEndpoints(IEndpointRouteBuilder endpoints)
+    {
+        var group = endpoints.MapBehaviorRestGroup(this, "/showcase/cart");
+
+        group.MapBehaviorGet<GetCartBehavior>("/{cartId}");
+        group.MapBehaviorPost<AddToCartBehavior>("/{cartId}/items");
+        group.MapBehaviorDelete<RemoveFromCartBehavior>("/{cartId}/items/{productId}");
+        group.MapBehaviorPost<CheckoutCartBehavior>("/{cartId}/checkout");
+    }
 }
 ```
 
@@ -138,6 +157,8 @@ Current helper behavior:
 
 - keeps REST route shape in the host-adapter layer instead of overloading behavior attributes with
   HTTP-specific concerns
+- gives behavior-owning REST modules a dedicated base class instead of requiring authors to
+  implement `IBehaviorOwnerModule` plus `IRestModule` manually
 - dispatches through `BehaviorDispatcher` using Minimal API handlers
 - composes route values, query-string values, and JSON request bodies into the behavior input payload
 - uses the owning module display name as the OpenAPI tag
@@ -170,6 +191,7 @@ Current helper behavior:
 - keeps module-owned REST routing distinct from the generic behavior transport surface; side-by-side
   major-version behavior identities still require a later behavior-identity and transport-surface
   rework
+- rejects module-owned REST mappings that target a behavior explicitly owned by another module
 
 ## DefaultBehaviorContext header conventions
 

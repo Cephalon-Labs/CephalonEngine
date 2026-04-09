@@ -5,6 +5,7 @@
 ## What it owns
 
 - module contracts such as `IModule`, `IModuleLifecycle`, `ModuleBase`, `ModuleDescriptor`, and `ModuleContext`
+- behavior contracts such as `IAppBehavior<TIn, TOut>`, `IBehaviorContext`, `IBehaviorTopologyBuilder`, `IBehaviorOwnerModule`, `IBehaviorModuleBuilder`, and `OwnedBehaviorRegistration`
 - capability contracts such as `Capability`, `CapabilityAccess`, and `ICapabilityRegistry`
 - app-model contracts such as `AppBlueprint`, `AppProfile`, and scaffold-plan types
 - phase-8 runtime-neutral contracts for data, authorization, tenancy, audit, and id generation
@@ -16,6 +17,12 @@
 
 - `Modules/IModule.cs`
 - `Modules/IModuleLifecycle.cs`
+- `Behaviors/IAppBehavior.cs`
+- `Behaviors/IBehaviorContext.cs`
+- `Behaviors/IBehaviorTopologyBuilder.cs`
+- `Behaviors/IBehaviorOwnerModule.cs`
+- `Behaviors/IBehaviorModuleBuilder.cs`
+- `Behaviors/OwnedBehaviorRegistration.cs`
 - `Capabilities/Capability.cs`
 - `Capabilities/ICapabilityRegistry.cs`
 - `AppModel/AppProfile.cs`
@@ -51,6 +58,7 @@
 - `AppModel/Scaffolding`
 - `Audit`
 - `Authorization`
+- `Behaviors`
 - `Capabilities`
 - `Data`
 - `Health`
@@ -65,6 +73,12 @@
 ## How it fits
 
 The engine should depend on this package for contracts only. New runtime behavior belongs in `Cephalon.Engine` or a companion package unless it must become part of the public module authoring surface.
+
+The behavior ownership contracts now follow that rule directly:
+
+- `IBehaviorOwnerModule` and `IBehaviorModuleBuilder` let one module declare the behaviors it owns without leaking ASP.NET Core or other host APIs into `Cephalon.Abstractions`
+- `OwnedBehaviorRegistration` is the normalized ownership record the engine composes at build time
+- public REST exposure still belongs in adapter packages such as `Cephalon.Behaviors.Http`, so module ownership and HTTP route mapping stay separate concerns
 
 The phase-8 families stay runtime-neutral on purpose:
 

@@ -56,7 +56,18 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
         Action<BehaviorTopologyBuilder>? configureTopology = null)
         where TBehavior : class
     {
-        var behaviorType = typeof(TBehavior);
+        Action<IBehaviorTopologyBuilder>? configureTopologyAdapter = configureTopology is null
+            ? null
+            : builder => configureTopology((BehaviorTopologyBuilder)builder);
+
+        return Register(typeof(TBehavior), configureTopologyAdapter);
+    }
+
+    internal IBehaviorCollectionBuilder Register(
+        Type behaviorType,
+        Action<IBehaviorTopologyBuilder>? configureTopology = null)
+    {
+        ArgumentNullException.ThrowIfNull(behaviorType);
 
         var attr = (AppBehaviorAttribute?)Attribute.GetCustomAttribute(
             behaviorType, typeof(AppBehaviorAttribute));
@@ -69,8 +80,19 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
 
         var behaviorId = attr.Id;
 
+        if (_typeRegistry.TryGetType(behaviorId, out var existingBehaviorType) && existingBehaviorType is not null)
+        {
+            if (existingBehaviorType != behaviorType)
+            {
+                throw new InvalidOperationException(
+                    $"Cannot register behavior id '{behaviorId}' for '{behaviorType.FullName}' because it is already registered by '{existingBehaviorType.FullName}'.");
+            }
+
+            return this;
+        }
+
         // 1. Register the type in DI as transient
-        Services.TryAddTransient<TBehavior>();
+        Services.TryAddTransient(behaviorType);
 
         // 2. Populate the type registry
         _typeRegistry.Register(behaviorId, behaviorType);
@@ -79,9 +101,9 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
         BehaviorTopologyDescriptor? descriptor = null;
         if (configureTopology is not null)
         {
-            var builder = new BehaviorTopologyBuilder();
-            configureTopology(builder);
-            descriptor = builder.Build(behaviorId);
+            var topologyBuilder = new BehaviorTopologyBuilder();
+            configureTopology(topologyBuilder);
+            descriptor = topologyBuilder.Build(behaviorId);
         }
 
         descriptor = BehaviorAttributeTopologyResolver.Resolve(behaviorId, behaviorType, descriptor);

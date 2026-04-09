@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-09T09:31:11.7588796+00:00",
+  "GeneratedAtUtc": "2026-04-09T11:22:45.8311897+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 17,
-      "TypeCount": 140
+      "TypeCount": 143
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -596,7 +596,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-behaviors",
-      "TypeCount": 24
+      "TypeCount": 27
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Capabilities",
@@ -4171,6 +4171,36 @@
       }
     },
     {
+      "DisplayName": "IBehaviorModuleBuilder",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-behaviors-ibehaviormodulebuilder",
+      "Declaration": "public interface IBehaviorModuleBuilder",
+      "Summary": "Collects behavior ownership declarations contributed by a Cephalon module.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "IBehaviorOwnerModule",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-behaviors-ibehaviorownermodule",
+      "Declaration": "public interface IBehaviorOwnerModule",
+      "Summary": "Declares that a module explicitly owns one or more Cephalon behaviors.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "IBehaviorRegistry",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -6511,6 +6541,21 @@
       }
     },
     {
+      "DisplayName": "OwnedBehaviorRegistration",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-behaviors-ownedbehaviorregistration",
+      "Declaration": "public sealed class OwnedBehaviorRegistration",
+      "Summary": "Describes one explicit module-owned behavior registration collected during engine composition.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "PackageDependencyManifest",
       "NamespaceName": "Cephalon.Engine.Manifest",
       "AssemblyName": "Cephalon.Engine",
@@ -8215,6 +8260,28 @@
       "AnchorId": "member-m-cephalon-abstractions-authorization-iauthorizationpolicyregistry-add-cephalon-abstractions-authorization-authorizationpolicydescriptor",
       "Signature": "void Add(AuthorizationPolicyDescriptor policy)",
       "Summary": "Adds an authorization policy to the current runtime composition."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorModuleBuilder",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-1",
+      "Signature": "IBehaviorModuleBuilder Add\u003CTBehavior\u003E()",
+      "Summary": "Declares that the current module owns the specified behavior."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorModuleBuilder",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-1-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder",
+      "Signature": "IBehaviorModuleBuilder Add\u003CTBehavior\u003E(Action\u003CIBehaviorTopologyBuilder\u003E configureTopology)",
+      "Summary": "Declares that the current module owns the specified behavior and supplies an explicit topology override."
     },
     {
       "DisplayName": "Add",
@@ -10714,6 +10781,17 @@
       "Summary": "Gets the stable identifier of the behavior being executed."
     },
     {
+      "DisplayName": "BehaviorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "OwnedBehaviorRegistration",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-behaviorid",
+      "Signature": "string BehaviorId { get; }",
+      "Summary": "Gets the stable behavior identifier."
+    },
+    {
       "DisplayName": "BehaviorNotFoundException",
       "Category": "Constructors",
       "DeclaringTypeName": "BehaviorNotFoundException",
@@ -10778,6 +10856,17 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-behaviortopologyoptions-ctor",
       "Signature": "BehaviorTopologyOptions()",
       "Summary": "Initializes a new instance of \u0060BehaviorTopologyOptions\u0060."
+    },
+    {
+      "DisplayName": "BehaviorType",
+      "Category": "Properties",
+      "DeclaringTypeName": "OwnedBehaviorRegistration",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-behaviortype",
+      "Signature": "Type BehaviorType { get; }",
+      "Summary": "Gets the concrete behavior implementation type."
     },
     {
       "DisplayName": "BestEffortContinue",
@@ -11693,6 +11782,17 @@
       "Summary": "Gets the build configuration to read from."
     },
     {
+      "DisplayName": "ConfigureBehaviors",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorOwnerModule",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviorownermodule-configurebehaviors-cephalon-abstractions-behaviors-ibehaviormodulebuilder",
+      "Signature": "void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)",
+      "Summary": "Registers the behaviors owned by the current module."
+    },
+    {
       "DisplayName": "ConfigureCephalonEvents",
       "Category": "Methods",
       "DeclaringTypeName": "EntityFrameworkEventSourcingConfiguration",
@@ -11823,6 +11923,17 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-iappbehavior-2-configuretopology-cephalon-abstractions-behaviors-ibehaviortopologybuilder",
       "Signature": "void ConfigureTopology(IBehaviorTopologyBuilder builder)",
       "Summary": "Optional author-intent topology declaration. Called by source generator at build time. Override to declare pattern/transport defaults in code."
+    },
+    {
+      "DisplayName": "ConfigureTopology",
+      "Category": "Properties",
+      "DeclaringTypeName": "OwnedBehaviorRegistration",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-configuretopology",
+      "Signature": "Action\u003CIBehaviorTopologyBuilder\u003E ConfigureTopology { get; }",
+      "Summary": "Gets the optional topology callback supplied by the owning module."
     },
     {
       "DisplayName": "ConflictsWith",
@@ -22572,6 +22683,17 @@
       "Summary": "Gets the output directory where reference docs should be written."
     },
     {
+      "DisplayName": "OwnedBehaviorRegistration",
+      "Category": "Constructors",
+      "DeclaringTypeName": "OwnedBehaviorRegistration",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ownedbehaviorregistration-ctor-system-string-system-string-system-type-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder",
+      "Signature": "OwnedBehaviorRegistration(string sourceModuleId, string behaviorId, Type behaviorType, Action\u003CIBehaviorTopologyBuilder\u003E configureTopology)",
+      "Summary": "Initializes a new \u0060OwnedBehaviorRegistration\u0060."
+    },
+    {
       "DisplayName": "OwnerSubjectId",
       "Category": "Properties",
       "DeclaringTypeName": "AuthorizationResource",
@@ -26794,6 +26916,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-outboxdescriptor-sourcemoduleid",
       "Signature": "string SourceModuleId { get; }",
       "Summary": "Gets the identifier of the module that owns the outbox surface."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "OwnedBehaviorRegistration",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the stable module identifier that owns the behavior."
     },
     {
       "DisplayName": "SourceModuleId",

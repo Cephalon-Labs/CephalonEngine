@@ -74,6 +74,10 @@ arguments are supported, while more complex expressions fall back to runtime top
 the generated surface stays truthful. Public REST is module-owned and therefore sits outside the
 behavior source-generator topology model; `ABT0014` now rejects `http.rest` and `ViaHttpRest(...)`
 so authors map REST in a module with `MapEndpoints(...)` plus `MapBehaviorRestGroup(...)`.
+Likewise, explicit module ownership through `IBehaviorOwnerModule`, `BehaviorModuleBase`, or
+`RestBehaviorModuleBase` remains a runtime-composition concern rather than a source-generated
+topology concern: the generator still focuses on behavior shape and topology, while the engine owns
+which module claims each behavior.
 When a behavior has no compile-time topology but does declare exactly one allowed pattern plus one
 or more allowed transports, the runtime synthesizes the attribute-only baseline descriptor from
 those attributes. If multiple allowed patterns are declared, runtime resolution still fails fast

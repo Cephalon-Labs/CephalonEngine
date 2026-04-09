@@ -16,3 +16,5 @@ Generated from the Cephalon module package template.
 2. Replace the starter capability keys with package-specific ones.
 3. Register the package through assembly discovery or `engine.AddModule(new ModuleEntry())`.
 4. Add transport-specific contribution interfaces only when the package really owns an external surface.
+5. If the module explicitly owns Cephalon behaviors, add `Cephalon.Behaviors` and derive from
+   `BehaviorModuleBase` so behavior ownership stays deterministic and host-agnostic.

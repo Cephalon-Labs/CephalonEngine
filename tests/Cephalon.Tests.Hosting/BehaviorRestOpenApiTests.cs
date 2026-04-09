@@ -4,9 +4,9 @@ using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
 using Cephalon.AspNetCore.Hosting;
-using Cephalon.AspNetCore.Modules;
 using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Hosting;
+using Cephalon.Behaviors.Modules;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.TestHost;
@@ -36,9 +36,6 @@ public sealed class BehaviorRestOpenApiTests
             engine.AddModule(new DocumentedRestHelperModule(helperTagName, helperTagDescription));
             engine.AddBehaviors(behaviors =>
             {
-                behaviors.Register<RestHelperEchoBehavior>(topology => topology
-                    .AsDirect()
-                    .ViaHttpJsonRpc());
                 behaviors.AddHttpBehaviorBindings();
             });
         });
@@ -80,9 +77,6 @@ public sealed class BehaviorRestOpenApiTests
         {
             engine.AddBehaviors(behaviors =>
             {
-                behaviors.Register<RestHelperEchoBehavior>(topology => topology
-                    .AsDirect()
-                    .ViaHttpJsonRpc());
                 behaviors.AddHttpBehaviorBindings();
             });
         });
@@ -96,6 +90,33 @@ public sealed class BehaviorRestOpenApiTests
         var response = await client.PostAsJsonAsync(genericRoute, new { productName = "Keyboard" });
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public void RestBehaviorModuleBaseRejectsMappingBehaviorOwnedByAnotherModule()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["Engine:Transports:1"] = "BehaviorHttp";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new DocumentedRestHelperModule("Test Cart API", "Commands and queries exposed by the test cart REST surface."));
+            engine.AddModule(new ConflictingRestHelperModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        var app = builder.Build();
+
+        var exception = Assert.Throws<InvalidOperationException>(() => app.MapCephalon());
+
+        Assert.Contains("owned by module", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("tests.cart", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("tests.conflict", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [AppBehavior("rest.helper.echo")]
@@ -114,7 +135,7 @@ public sealed class BehaviorRestOpenApiTests
 
     private sealed record RestHelperEchoOutput(string CartId, string ProductName, int Quantity);
 
-    private sealed class DocumentedRestHelperModule(string tagName, string tagDescription) : ModuleBase, IEndpointModule
+    private sealed class DocumentedRestHelperModule(string tagName, string tagDescription) : RestBehaviorModuleBase
     {
         private static readonly ModuleDescriptor DescriptorInstance = new(
             id: "tests.cart",
@@ -124,12 +145,40 @@ public sealed class BehaviorRestOpenApiTests
 
         public override ModuleDescriptor Descriptor => DescriptorInstance;
 
-        public void MapEndpoints(IEndpointRouteBuilder endpoints)
+        public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Add<RestHelperEchoBehavior>(topology => topology
+                .AsDirect()
+                .ViaHttpJsonRpc());
+        }
+
+        public override void MapEndpoints(IEndpointRouteBuilder endpoints)
         {
             var group = endpoints.MapBehaviorRestGroup(this, "/tests/cart")
                 .WithTagName(tagName)
                 .WithTagDescription(tagDescription);
             group.MapBehaviorPost<RestHelperEchoBehavior>("/{cartId}/items");
+        }
+    }
+
+    private sealed class ConflictingRestHelperModule : RestBehaviorModuleBase
+    {
+        private static readonly ModuleDescriptor DescriptorInstance = new(
+            id: "tests.conflict",
+            displayName: "Conflict",
+            description: "Conflicting test module.",
+            version: "1.0.0");
+
+        public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+        public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
+        {
+        }
+
+        public override void MapEndpoints(IEndpointRouteBuilder endpoints)
+        {
+            var group = endpoints.MapBehaviorRestGroup(this, "/tests/conflict");
+            group.MapBehaviorPost<RestHelperEchoBehavior>("/echo");
         }
     }
 }

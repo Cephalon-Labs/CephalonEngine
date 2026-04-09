@@ -209,6 +209,10 @@ Current standing examples from this collaboration:
 - when a host exposes both module-owned REST helpers and generic behavior HTTP routes, treat the module-owned REST groups as the public REST/OpenAPI/Scalar surface and keep the generic behavior routes focused on non-REST adapter transports
 - public REST is module-owned only: do not declare `http.rest` in `[BehaviorAllowedTransports(...)]` or `ConfigureTopology(...)`; map REST through `MapEndpoints(...)` plus `MapBehaviorRestGroup(...)`
 - `Engine:Behaviors` is no longer a per-behavior REST topology contract; keep it focused on behavior discovery and auto-registration
+- when a module explicitly owns behaviors, prefer `BehaviorModuleBase` for process-only modules and `RestBehaviorModuleBase` when the same module also exposes some of those behaviors over REST; keep raw `IRestModule` implementations for REST modules that do not dispatch through behaviors
+- prefer `BehaviorModuleBase` when a module explicitly owns behaviors but does not expose a public REST surface
+- prefer `RestBehaviorModuleBase` when the same module owns behaviors and exposes some of them over REST
+- keep one bounded context in one module when possible; do not split modules only to separate internal behaviors from REST-exposed behaviors
 
 ## Working assumptions for contributors
 

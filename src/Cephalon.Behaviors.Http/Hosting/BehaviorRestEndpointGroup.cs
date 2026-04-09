@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Behaviors.Http.Hosting;
 
@@ -276,6 +277,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         where TBehavior : class
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
+        ValidateBehaviorOwnership(typeof(TBehavior));
 
         var contract = BehaviorRestEndpointContract.Create(
             typeof(TBehavior),
@@ -288,6 +290,29 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         var builder = (RouteHandlerBuilder)closedMethod.Invoke(null, [this, pattern, contract])!;
         configure?.Invoke(builder);
         return builder;
+    }
+
+    private void ValidateBehaviorOwnership(Type behaviorType)
+    {
+        ArgumentNullException.ThrowIfNull(behaviorType);
+
+        var ownedBehaviors = endpoints.ServiceProvider.GetService<IReadOnlyList<OwnedBehaviorRegistration>>();
+        if (ownedBehaviors is null || ownedBehaviors.Count == 0)
+        {
+            return;
+        }
+
+        var behaviorId = BehaviorRestEndpointContract.GetBehaviorId(behaviorType);
+        var owner = ownedBehaviors.FirstOrDefault(registration =>
+            string.Equals(registration.BehaviorId, behaviorId, StringComparison.OrdinalIgnoreCase));
+        if (owner is null ||
+            string.Equals(owner.SourceModuleId, ModuleDescriptor.Id, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        throw new InvalidOperationException(
+            $"Behavior '{behaviorId}' is owned by module '{owner.SourceModuleId}' and cannot be mapped by module '{ModuleDescriptor.Id}'.");
     }
 
     private static RouteHandlerBuilder MapBehaviorGetCore<TBehavior, TInput, TOutput>(

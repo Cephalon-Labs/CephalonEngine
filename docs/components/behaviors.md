@@ -23,6 +23,9 @@
 | `IAppBehavior<TIn, TOut>` | Single behavior interface — `HandleAsync` + optional `static virtual ConfigureTopology` |
 | `IBehaviorContext` | Transport-neutral ambient API: `PublishAsync`, `SendAsync`, `ReplyAsync`, saga state, correlation |
 | `IBehaviorTopologyBuilder` | Fluent builder: `AsCqrs()`, `AsEventDriven()`, `ViaHttpJsonRpc()`, `ViaRabbitMq()`, etc. |
+| `IBehaviorModuleBuilder` | Host-agnostic builder that lets a module declare which behaviors it owns |
+| `IBehaviorOwnerModule` | Module contract for explicit behavior ownership through `ConfigureBehaviors(...)` |
+| `OwnedBehaviorRegistration` | Runtime composition record describing one module-owned behavior registration |
 | `BehaviorApiSurfaceDescriptor` | Shared logical route surface for route-shaped generic HTTP transports; defaulted from the behavior id and overrideable through `WithApiSurface(...)` |
 | `BehaviorTopologyDescriptor` | Resolved per-behavior config: pattern, transports, feature flags, and shared API surface |
 | `[AppBehavior("id")]` | Declares a class as a named behavior |
@@ -40,6 +43,37 @@ services.AddCephalon(config, engine => engine
     )
 );
 ```
+
+## Module-owned behaviors
+
+Cephalon now supports an explicit ownership model for behaviors:
+
+- `BehaviorModuleBase` is the recommended base class when a module owns behaviors but does not need
+  to expose a public REST surface
+- `RestBehaviorModuleBase` lives in `Cephalon.Behaviors.Http` and adds `MapEndpoints(...)` on top
+  of the same ownership model for REST-backed modules
+- one module can own both internal-only behaviors and public REST-backed behaviors without splitting
+  the bounded context into multiple module classes
+- engine build validates duplicate ownership so the same behavior id or type cannot be claimed by
+  multiple modules silently
+
+```csharp
+public sealed class CartModule : BehaviorModuleBase
+{
+    public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+    public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
+    {
+        behaviors.Add<RepriceCartBehavior>();
+        behaviors.Add<CheckoutWorkflowBehavior>(topology => topology
+            .AsProcessManager()
+            .ViaKafka());
+    }
+}
+```
+
+Use that contract when ownership must be explicit even if the behavior still runs through generic
+HTTP transports, messaging, or background orchestration rather than a module-owned REST API.
 
 ## Configuration
 
@@ -86,6 +120,8 @@ Behavior metadata stays transport-neutral on purpose.
   use the attribute-only baseline and the pattern choice is unambiguous
 - do not declare `http.rest` in behavior allowlists or topology; public REST is mapped by modules
   through `MapEndpoints(...)` plus `MapBehaviorRestGroup(...)`
+- prefer `BehaviorModuleBase` or `RestBehaviorModuleBase` when a module should explicitly own the
+  behaviors it ships instead of relying only on assembly scanning
 - if a behavior declares multiple allowed patterns, add `ConfigureTopology(...)` or fluent
   registration so the runtime does not need to guess
 - use `WithApiSurface(groupPath, operationPath)` when route-shaped generic transports should project

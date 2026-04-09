@@ -15,3 +15,6 @@ Generated from the Cephalon REST module package template.
 2. Replace the starter capability keys with your package capabilities.
 3. Add the package assembly to `Engine:Discovery:Assemblies` or register the module manually.
 4. Keep transport-specific behavior isolated in this package instead of leaking it into host startup.
+5. If the module owns Cephalon behaviors and exposes them over REST, add `Cephalon.Behaviors` plus
+   `Cephalon.Behaviors.Http` and derive from `RestBehaviorModuleBase`; keep raw `IRestModule` for
+   REST modules that are not behavior-backed.

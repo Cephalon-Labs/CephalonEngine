@@ -1,9 +1,10 @@
 using Cephalon.Abstractions.Capabilities;
-using Cephalon.Abstractions.Modules;
-using Cephalon.AspNetCore.Modules;
+using Cephalon.Abstractions.Behaviors;
 using Cephalon.Behaviors.Http.Hosting;
+using Cephalon.Behaviors.Modules;
 using Cephalon.Sample.Showcase.Domain.Cart.Behaviors;
 using Microsoft.AspNetCore.Routing;
+using Cephalon.Abstractions.Modules;
 
 namespace Cephalon.Sample.Showcase.Modules;
 
@@ -14,7 +15,7 @@ namespace Cephalon.Sample.Showcase.Modules;
 /// Exposes REST endpoints through behavior-aware Minimal API helpers so the
 /// module keeps transport mapping aligned with the shipped CQRS behaviors.
 /// </summary>
-public sealed class CartModule : ModuleBase, IEndpointModule
+public sealed class CartModule : RestBehaviorModuleBase
 {
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "showcase.cart",
@@ -40,7 +41,16 @@ public sealed class CartModule : ModuleBase, IEndpointModule
     }
 
     /// <inheritdoc />
-    public void MapEndpoints(IEndpointRouteBuilder endpoints)
+    public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
+    {
+        behaviors.Add<GetCartBehavior>();
+        behaviors.Add<AddToCartBehavior>();
+        behaviors.Add<RemoveFromCartBehavior>();
+        behaviors.Add<CheckoutCartBehavior>();
+    }
+
+    /// <inheritdoc />
+    public override void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapBehaviorRestGroup(this, "/showcase/cart");
         group.MapBehaviorGet<GetCartBehavior>("/{cartId}");

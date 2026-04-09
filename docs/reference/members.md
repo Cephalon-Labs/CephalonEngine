@@ -78,6 +78,12 @@ Browse the published API surface by public member.
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-iauthorizationpolicyregistry-add-cephalon-abstractions-authorization-authorizationpolicydescriptor): `Methods` on `IAuthorizationPolicyRegistry` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Adds an authorization policy to the current runtime composition.
   - `void Add(AuthorizationPolicyDescriptor policy)`
+- [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-1): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Declares that the current module owns the specified behavior.
+  - `IBehaviorModuleBuilder Add<TBehavior>()`
+- [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-1-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Declares that the current module owns the specified behavior and supplies an explicit topology override.
+  - `IBehaviorModuleBuilder Add<TBehavior>(Action<IBehaviorTopologyBuilder> configureTopology)`
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviorregistry-add-cephalon-abstractions-behaviors-behaviortopologydescriptor): `Methods` on `IBehaviorRegistry` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Adds a behavior topology descriptor to the registry.
   - `void Add(BehaviorTopologyDescriptor descriptor)`
@@ -762,6 +768,9 @@ Browse the published API surface by public member.
 - [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorcontext-behaviorid): `Properties` on `IBehaviorContext` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the stable identifier of the behavior being executed.
   - `string BehaviorId { get; }`
+- [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-behaviorid): `Properties` on `OwnedBehaviorRegistration` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the stable behavior identifier.
+  - `string BehaviorId { get; }`
 - [BehaviorNotFoundException](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviornotfoundexception-ctor-system-string): `Constructors` on `BehaviorNotFoundException` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorNotFoundException&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes the exception for the given behavior identifier.
   - `BehaviorNotFoundException(string behaviorId)`
@@ -780,6 +789,9 @@ Browse the published API surface by public member.
 - [BehaviorTopologyOptions](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviortopologyoptions-ctor): `Constructors` on `BehaviorTopologyOptions` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorTopologyOptions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes a new instance of `BehaviorTopologyOptions`.
   - `BehaviorTopologyOptions()`
+- [BehaviorType](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-behaviortype): `Properties` on `OwnedBehaviorRegistration` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the concrete behavior implementation type.
+  - `Type BehaviorType { get; }`
 - [BestEffortContinue](cephalon-engine.md#member-f-cephalon-engine-configuration-stopfailurebehavior-besteffortcontinue): `Fields` on `StopFailureBehavior` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BestEffortContinue&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Continue stopping remaining modules and report failures afterward.
   - `const StopFailureBehavior BestEffortContinue`
@@ -1032,6 +1044,9 @@ Browse the published API surface by public member.
 - [Configuration](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-configuration): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Configuration&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the build configuration to read from.
   - `string Configuration { get; }`
+- [ConfigureBehaviors](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviorownermodule-configurebehaviors-cephalon-abstractions-behaviors-ibehaviormodulebuilder): `Methods` on `IBehaviorOwnerModule` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConfigureBehaviors&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Registers the behaviors owned by the current module.
+  - `void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)`
 - [ConfigureCephalonEvents](cephalon-eventsourcing-entityframework.md#member-m-cephalon-eventsourcing-entityframework-entityframeworkeventsourcingconfiguration-configurecephalonevents-microsoft-entityframeworkcore-modelbuilder): `Methods` on `EntityFrameworkEventSourcingConfiguration` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=ConfigureCephalonEvents&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
   - Configures the `CephalonEvents` table and indexes required by the Entity Framework event-store provider.
   - `void ConfigureCephalonEvents(ModelBuilder modelBuilder)`
@@ -1068,6 +1083,9 @@ Browse the published API surface by public member.
 - [ConfigureTopology](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-iappbehavior-2-configuretopology-cephalon-abstractions-behaviors-ibehaviortopologybuilder): `Methods` on `IAppBehavior<TIn, TOut>` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConfigureTopology&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Optional author-intent topology declaration. Called by source generator at build time. Override to declare pattern/transport defaults in code.
   - `void ConfigureTopology(IBehaviorTopologyBuilder builder)`
+- [ConfigureTopology](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-configuretopology): `Properties` on `OwnedBehaviorRegistration` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConfigureTopology&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the optional topology callback supplied by the owning module.
+  - `Action<IBehaviorTopologyBuilder> ConfigureTopology { get; }`
 - [ConflictsWith](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-conflictswith): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConflictsWith&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the pattern identifiers that conflict with this pattern.
   - `IReadOnlyList<string> ConflictsWith { get; }`
@@ -4035,6 +4053,9 @@ Browse the published API surface by public member.
 - [OutputPath](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-outputpath): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=OutputPath&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the output directory where reference docs should be written.
   - `string OutputPath { get; }`
+- [OwnedBehaviorRegistration](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ownedbehaviorregistration-ctor-system-string-system-string-system-type-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder): `Constructors` on `OwnedBehaviorRegistration` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnedBehaviorRegistration&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Initializes a new `OwnedBehaviorRegistration`.
+  - `OwnedBehaviorRegistration(string sourceModuleId, string behaviorId, Type behaviorType, Action<IBehaviorTopologyBuilder> configureTopology)`
 - [OwnerSubjectId](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationresource-ownersubjectid): `Properties` on `AuthorizationResource` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnerSubjectId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the owning subject identifier when one is known.
   - `string OwnerSubjectId { get; }`
@@ -5198,6 +5219,9 @@ Browse the published API surface by public member.
   - `string SourceModuleId { get; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdescriptor-sourcemoduleid): `Properties` on `OutboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the identifier of the module that owns the outbox surface.
+  - `string SourceModuleId { get; }`
+- [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-sourcemoduleid): `Properties` on `OwnedBehaviorRegistration` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the stable module identifier that owns the behavior.
   - `string SourceModuleId { get; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-projectiondescriptor-sourcemoduleid): `Properties` on `ProjectionDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the identifier of the module that owns the projection.

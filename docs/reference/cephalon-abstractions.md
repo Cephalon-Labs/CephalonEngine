@@ -3796,6 +3796,82 @@ Returns the behavior topology descriptors contributed by this instance.
 
 Returns: The contributed descriptors.
 
+<a id="type-cephalon-abstractions-behaviors-ibehaviormodulebuilder"></a>
+
+### `IBehaviorModuleBuilder`
+
+Collects behavior ownership declarations contributed by a Cephalon module.
+
+Remarks: This builder is host-agnostic and only declares which behaviors a module owns. Public REST exposure stays in host adapters such as ASP.NET Core.
+
+#### Declaration
+```csharp
+public interface IBehaviorModuleBuilder
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-1"></a>
+
+##### `Add`
+
+```csharp
+IBehaviorModuleBuilder Add<TBehavior>()
+```
+
+Declares that the current module owns the specified behavior.
+
+Returns: The same builder for fluent ownership registration.
+
+Type parameters:
+- `TBehavior`: The concrete behavior type owned by the module.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-1-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder"></a>
+
+##### `Add`
+
+```csharp
+IBehaviorModuleBuilder Add<TBehavior>(Action<IBehaviorTopologyBuilder> configureTopology)
+```
+
+Declares that the current module owns the specified behavior and supplies an explicit topology override.
+
+Returns: The same builder for fluent ownership registration.
+
+Type parameters:
+- `TBehavior`: The concrete behavior type owned by the module.
+
+Parameters:
+- `configureTopology`: The callback that selects the resolved behavior topology when attribute-only synthesis is not enough.
+
+<a id="type-cephalon-abstractions-behaviors-ibehaviorownermodule"></a>
+
+### `IBehaviorOwnerModule`
+
+Declares that a module explicitly owns one or more Cephalon behaviors.
+
+Remarks: Modules can use this contract to keep behavior ownership deterministic without relying only on assembly scanning. A module may still choose to expose only some of its owned behaviors through a host adapter such as ASP.NET Core REST.
+
+#### Declaration
+```csharp
+public interface IBehaviorOwnerModule
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviorownermodule-configurebehaviors-cephalon-abstractions-behaviors-ibehaviormodulebuilder"></a>
+
+##### `ConfigureBehaviors`
+
+```csharp
+void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
+```
+
+Registers the behaviors owned by the current module.
+
+Parameters:
+- `behaviors`: The builder that collects module-owned behavior registrations.
+
 <a id="type-cephalon-abstractions-behaviors-ibehaviorregistry"></a>
 
 ### `IBehaviorRegistry`
@@ -4040,6 +4116,77 @@ Marker interface that signals a process manager behavior has reached its final s
 ```csharp
 public interface IProcessCompletion
 ```
+
+<a id="type-cephalon-abstractions-behaviors-ownedbehaviorregistration"></a>
+
+### `OwnedBehaviorRegistration`
+
+Describes one explicit module-owned behavior registration collected during engine composition.
+
+#### Declaration
+```csharp
+public sealed class OwnedBehaviorRegistration
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-behaviors-ownedbehaviorregistration-ctor-system-string-system-string-system-type-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder"></a>
+
+##### `OwnedBehaviorRegistration`
+
+```csharp
+OwnedBehaviorRegistration(string sourceModuleId, string behaviorId, Type behaviorType, Action<IBehaviorTopologyBuilder> configureTopology)
+```
+
+Initializes a new `OwnedBehaviorRegistration`.
+
+Parameters:
+- `sourceModuleId`: The stable module identifier that owns the behavior.
+- `behaviorId`: The stable behavior identifier.
+- `behaviorType`: The concrete behavior implementation type.
+- `configureTopology`: An optional topology callback used when the owning module needs to select an explicit behavior topology.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-behaviorid"></a>
+
+##### `BehaviorId`
+
+```csharp
+string BehaviorId { get; }
+```
+
+Gets the stable behavior identifier.
+
+<a id="member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-behaviortype"></a>
+
+##### `BehaviorType`
+
+```csharp
+Type BehaviorType { get; }
+```
+
+Gets the concrete behavior implementation type.
+
+<a id="member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-configuretopology"></a>
+
+##### `ConfigureTopology`
+
+```csharp
+Action<IBehaviorTopologyBuilder> ConfigureTopology { get; }
+```
+
+Gets the optional topology callback supplied by the owning module.
+
+<a id="member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the stable module identifier that owns the behavior.
 
 <a id="namespace-cephalon-abstractions-capabilities"></a>
 
