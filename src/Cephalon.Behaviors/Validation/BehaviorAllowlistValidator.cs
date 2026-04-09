@@ -73,10 +73,13 @@ public sealed class BehaviorAllowlistValidator
             return;
         }
 
-        var allowed = new HashSet<string>(attr.Transports, StringComparer.OrdinalIgnoreCase);
+        var allowed = new HashSet<string>(
+            BehaviorTransportIdNormalizer.NormalizeMany(attr.Transports),
+            StringComparer.OrdinalIgnoreCase);
         foreach (var transport in descriptor.TransportIds)
         {
-            if (!allowed.Contains(transport))
+            var normalizedTransport = BehaviorTransportIdNormalizer.Normalize(transport);
+            if (!allowed.Contains(normalizedTransport))
             {
                 throw new BehaviorSecurityException(
                     descriptor.Id,

@@ -75,6 +75,10 @@ the generated surface stays truthful. The generator also falls back to runtime t
 when a behavior uses the REST-specific `ViaHttpRest(rest => ...)` contract builder from
 `Cephalon.Behaviors.Http`, because route templates, query/route remapping, and request-shaping
 metadata live in the HTTP companion package instead of the core topology abstraction.
+When a behavior has no compile-time topology but does declare exactly one allowed pattern plus one
+or more allowed transports, the runtime synthesizes the attribute-only baseline descriptor from
+those attributes. If multiple allowed patterns are declared, runtime resolution still fails fast
+until another topology source selects one explicitly.
 
 ## Status
 

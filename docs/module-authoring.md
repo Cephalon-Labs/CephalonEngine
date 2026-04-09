@@ -55,13 +55,13 @@ That keeps the authoring path close to the same module-first ideas used by Cepha
 14. Use `IOutboxContributor` when the package needs to publish operator-facing outbox descriptors through `/engine/outboxes` and `/engine/snapshot`.
 15. Use `IAuthorizationPolicyContributor` when the package needs to publish operator-facing authorization-policy descriptors through `/engine/authorization-policies` and `/engine/snapshot`.
 16. Add transport contribution interfaces only when the package really owns an external surface.
-17. When a module exposes behavior-driven REST endpoints, choose the REST authoring level deliberately: annotation-driven generic REST activation for the conventional adapter route, `ViaHttpRest(rest => ...)` for one explicit generic REST contract, or `MapBehaviorRestGroup(...)` when the module owns the public REST API.
+17. When a module exposes behavior-driven REST endpoints, choose the REST authoring level deliberately: attribute-only baseline for a simple generic behavior surface, annotation-driven generic REST activation for the conventional adapter route, `ViaHttpRest(rest => ...)` for one explicit generic REST contract, or `MapBehaviorRestGroup(...)` when the module owns the public REST API.
 
 ## Behavior-first REST authoring
 
 Modules that expose Cephalon behaviors over REST can now keep most of the boilerplate in the helper layer while staying inside normal Minimal API conventions.
 
-Behavior declaration stays transport-neutral when the default generic REST route is enough:
+Behavior declaration can now stay attribute-only when the default generic behavior surface is enough:
 
 ```csharp
 [AppBehavior("cart.add-item")]
@@ -69,21 +69,25 @@ Behavior declaration stays transport-neutral when the default generic REST route
 [BehaviorAllowedTransports("http.rest", "http.ws", "http.graphql", "http.sse")]
 public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, AddToCartOutput>
 {
-    public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
-    {
-        builder.AsCqrs()
-            .ViaWebSocket()
-            .ViaHttpGraphQl()
-            .ViaHttpSse()
-            .WithOptions(opts => opts.EventSourcingEnabled = true);
-    }
+    public Task<AddToCartOutput> HandleAsync(
+        AddToCartInput input,
+        IBehaviorContext context,
+        CancellationToken cancellationToken = default)
+        => throw new NotImplementedException();
 }
 ```
 
-That shape lets `[BehaviorAllowedTransports("http.rest")]` activate the conventional generic REST
-adapter route without duplicating `http.rest` inside `ConfigureTopology(...)`. Cephalon derives the
-generic route from the behavior id, so `cart.add-item` projects to `/api/v1/cart/add-item` and
+That shape gives the runtime an attribute-only baseline: the single allowed pattern (`cqrs`) plus
+the declared transports become the resolved behavior topology when no explicit topology/config
+override exists. `[BehaviorAllowedTransports("http.rest")]` also activates the conventional generic
+REST adapter route without duplicating `http.rest` inside `ConfigureTopology(...)`. Cephalon derives
+the generic route from the behavior id, so `cart.add-item` projects to `/api/v1/cart/add-item` and
 `cart.add-item.draft` projects to `/api/v1/cart/add-item/draft` by default.
+
+If a behavior declares multiple allowed patterns, keep the attributes as an allowlist and add
+`ConfigureTopology(...)`, fluent registration, or config selection so the runtime does not need to
+guess which pattern should execute. For authoring convenience, `[BehaviorAllowedTransports("http.grpc")]`
+is accepted and normalized to canonical `grpc`.
 
 If the generic route-shaped transports should expose a different logical public path than the default
 `behavior-id -> group/operation` split, override it in the same topology declaration:

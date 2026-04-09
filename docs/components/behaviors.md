@@ -23,8 +23,8 @@
 | `BehaviorApiSurfaceDescriptor` | Shared logical route surface for route-shaped transports; defaulted from the behavior id and overrideable through `WithApiSurface(...)` |
 | `BehaviorTopologyDescriptor` | Resolved per-behavior config: pattern, transports, feature flags, and shared API surface |
 | `[AppBehavior("id")]` | Declares a class as a named behavior |
-| `[BehaviorAllowedPatterns]` | Opt-in security allowlist restricting which patterns config can activate |
-| `[BehaviorAllowedTransports]` | Transport allowlist; for `http.rest` specifically, the attribute also acts as the annotation-driven generic REST activation path, but it still does not become a route-contract or OpenAPI descriptor |
+| `[BehaviorAllowedPatterns]` | Pattern allowlist; when no explicit topology exists, exactly one declared pattern also becomes the attribute-only runtime baseline |
+| `[BehaviorAllowedTransports]` | Transport allowlist; when no explicit topology exists, declared transports also become the attribute-only runtime transport baseline. `http.rest` still stays activation-only and does not become a route contract or OpenAPI descriptor, and `http.grpc` is accepted as an alias for canonical `grpc` |
 | `IBehaviorCompatibilityRule` | Author extension point for custom topology validation |
 
 ## Registration
@@ -61,20 +61,26 @@ services.AddCephalon(config, engine => engine
 
 Resolved topology is the result of a four-layer merge (lowest → highest priority):
 
-1. `[AppBehavior]` attribute + `static virtual ConfigureTopology` — author compile-time intent
+1. `[AppBehavior]` attribute allowlists plus `static virtual ConfigureTopology` — author compile-time intent. When no explicit topology exists, a single allowed pattern plus declared transports can synthesize an attribute-only baseline
 2. `Engine:BehaviorDefaults` config section — project-level ops default
 3. `Engine:Behaviors` per-behavior entry — per-behavior ops override
 4. `Register<T>(b => ...)` fluent DI callback — runtime code override
+
+If a behavior declares multiple allowed patterns and no explicit topology/config selection chooses one, startup fails fast instead of guessing.
 
 ## Transport identifiers
 
 `http.rest` · `http.jsonrpc` · `http.graphql` · `http.graphql-sse` · `http.graphql-ws` · `http.sse` · `http.ws` · `rabbitmq` · `kafka` · `in-memory` · `grpc`
 
+For author-facing allowlists, `http.grpc` is accepted as an alias and normalizes to canonical `grpc` at runtime.
+
 ## HTTP route-shape follow-through
 
 Behavior metadata stays transport-neutral on purpose.
 
+- use `[BehaviorAllowedPatterns]` plus `[BehaviorAllowedTransports]` alone when the behavior should use the attribute-only baseline and the pattern choice is unambiguous
 - use `[BehaviorAllowedTransports]` as the annotation-driven generic REST activation path when the default canonical REST route is enough, or use `ConfigureTopology(...)` plus `ViaHttpRest(rest => ...)` for one explicit generic REST contract; do not declare `http.rest` in both places for the same behavior
+- if a behavior declares multiple allowed patterns, add `ConfigureTopology(...)`, fluent registration, or config selection so the runtime does not need to guess
 - use `WithApiSurface(groupPath, operationPath)` when route-shaped transports should project a public path that differs from the default `behavior-id -> group/operation` split
 - expect generic REST, JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket behavior bindings to reuse that shared API surface for canonical versioned routes
 - keep GraphQL schema ownership focused on payload and protocol semantics even though its Cephalon behavior endpoint now participates in the shared prefix/version policy

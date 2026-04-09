@@ -47,6 +47,9 @@ and means "mount the versioned REST surface at the root," while `null` still fal
 
 Cephalon now treats generic REST authoring as three distinct levels:
 
+- **Attribute-only generic behavior baseline**: `[BehaviorAllowedPatterns(...)]` plus
+  `[BehaviorAllowedTransports(...)]` can synthesize the runtime baseline when no explicit topology
+  exists and the pattern choice is unambiguous
 - **Annotation-driven generic REST activation**: `[BehaviorAllowedTransports("http.rest")]`
   turns on the conventional generic REST adapter route for that behavior
 - **Topology-driven generic REST contract**: `ConfigureTopology(...)` plus
@@ -59,10 +62,16 @@ Cephalon now treats generic REST authoring as three distinct levels:
 
 For generic REST declarations, use one REST activation style per behavior:
 
+- if a behavior only declares `[BehaviorAllowedPatterns(...)]` plus
+  `[BehaviorAllowedTransports(...)]`, the runtime uses that attribute-only baseline when exactly one
+  pattern is declared; if multiple patterns are declared, startup fails fast until another topology
+  source selects one
 - if `[BehaviorAllowedTransports("http.rest")]` is present, do not also call `ViaHttpRest()` or
   `ViaHttpRest(rest => ...)` for the same behavior
 - if both declaration styles appear, the runtime fails fast and the source generator reports
   `ABT0014`
+- for authoring convenience, `[BehaviorAllowedTransports("http.grpc")]` is accepted and normalized
+  to canonical `grpc`
 
 ## Shared behavior API surface
 
@@ -123,6 +132,11 @@ query-string keys bind by name by default; `BindRoute(...)` and `BindQuery(...)`
 wire-name mismatches. JSON request bodies fill the remaining input members.
 
 ## Behavior-aware REST endpoints
+
+`[BehaviorAllowedPatterns(...)]` plus `[BehaviorAllowedTransports(...)]` can now be enough to make a
+behavior runnable when the baseline is obvious: one declared pattern plus declared transports means
+the runtime can synthesize the descriptor without `ConfigureTopology(...)`. That attribute-only path
+still stays transport-agnostic except for the generic REST activation rule.
 
 `[BehaviorAllowedTransports("http.rest")]` stays the annotation-driven generic REST activation path.
 It does **not** own HTTP method, route template, route grouping, or OpenAPI metadata. Use it when

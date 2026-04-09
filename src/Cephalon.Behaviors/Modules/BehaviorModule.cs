@@ -179,7 +179,7 @@ internal sealed class BehaviorModule(
                     continue;
                 }
 
-                var normalizedDescriptor = BehaviorRestTransportDeclarationResolver.Resolve(
+                var normalizedDescriptor = BehaviorAttributeTopologyResolver.Resolve(
                     descriptor.Id,
                     behaviorType,
                     descriptor);
@@ -272,7 +272,7 @@ internal sealed class BehaviorModule(
         string behaviorId)
     {
         var descriptor = BuildTopologyDescriptorFromStaticMethod(behaviorType, behaviorId);
-        descriptor = BehaviorRestTransportDeclarationResolver.Resolve(behaviorId, behaviorType, descriptor);
+        descriptor = BehaviorAttributeTopologyResolver.Resolve(behaviorId, behaviorType, descriptor);
         if (descriptor is null)
         {
             return;

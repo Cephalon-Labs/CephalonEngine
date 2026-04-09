@@ -98,6 +98,20 @@ public sealed class HttpBehaviorBindingTests
         string ProductName,
         bool IsDraft);
 
+    [AppBehavior("catalog.attribute-only")]
+    [BehaviorAllowedPatterns("cqrs")]
+    [BehaviorAllowedTransports("http.rest")]
+    private sealed class AttributeOnlyRestBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(
+            string input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult($"attribute:{input}");
+        }
+    }
+
     private sealed class RestHelperModule : ModuleBase, IEndpointModule
     {
         private static readonly ModuleDescriptor DescriptorInstance = new(
@@ -200,6 +214,40 @@ public sealed class HttpBehaviorBindingTests
 
         await app.StartAsync();
         return (app, app.GetTestClient());
+    }
+
+    private static async Task<(WebApplication App, HttpClient Client, BehaviorTopologyDescriptor Descriptor)> BuildRegisteredAppAsync<TBehavior>(
+        params IHttpBehaviorBinding[] bindings)
+        where TBehavior : class
+    {
+        var services = new ServiceCollection();
+        var typeRegistry = new BehaviorTypeRegistry();
+        var behaviorBuilder = new BehaviorCollectionBuilder(services, typeRegistry);
+        behaviorBuilder.Register<TBehavior>();
+
+        services.AddSingleton<IBehaviorTypeRegistry>(typeRegistry);
+        services.AddSingleton<IBehaviorCatalog>(serviceProvider =>
+            new BehaviorCatalog(serviceProvider.GetServices<IBehaviorContributor>()));
+
+        var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IBehaviorCatalog>();
+        var appBehaviorAttribute = (AppBehaviorAttribute?)Attribute.GetCustomAttribute(
+            typeof(TBehavior),
+            typeof(AppBehaviorAttribute));
+        var descriptor = catalog.FindById(appBehaviorAttribute!.Id);
+        var dispatcher = new BehaviorDispatcher(catalog, typeRegistry, provider);
+
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        var app = builder.Build();
+
+        foreach (var binding in bindings)
+        {
+            await binding.MapAsync(app, descriptor!, dispatcher);
+        }
+
+        await app.StartAsync();
+        return (app, app.GetTestClient(), descriptor!);
     }
 
     private static async Task<(WebApplication App, HttpClient Client)> BuildBehaviorRestHelperAppAsync()
@@ -330,6 +378,23 @@ public sealed class HttpBehaviorBindingTests
             response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.NoContent,
             $"Expected 200/204 but got {response.StatusCode}");
         Assert.Equal(HttpStatusCode.NotFound, legacyResponse.StatusCode);
+
+        await app.StopAsync();
+    }
+
+    [Fact]
+    public async Task RestBindingMapsAttributeOnlyRegisteredBehavior()
+    {
+        var (app, client, descriptor) = await BuildRegisteredAppAsync<AttributeOnlyRestBehavior>(
+            new RestHttpBehaviorBinding());
+
+        var response = await client.PostAsJsonAsync("/api/v1/catalog/attribute-only", "hello");
+
+        Assert.True(
+            response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.NoContent,
+            $"Expected 200/204 but got {response.StatusCode}");
+        Assert.Equal("cqrs", descriptor.Pattern);
+        Assert.Contains("http.rest", descriptor.TransportIds);
 
         await app.StopAsync();
     }

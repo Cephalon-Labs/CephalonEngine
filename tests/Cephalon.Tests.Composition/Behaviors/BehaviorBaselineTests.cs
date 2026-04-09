@@ -54,6 +54,32 @@ public sealed class BehaviorBaselineTests
             => Task.FromResult(input);
     }
 
+    [AppBehavior("orders.attribute-only-cqrs")]
+    [BehaviorAllowedPatterns("cqrs")]
+    [BehaviorAllowedTransports("http.rest", "http.grpc")]
+    private sealed class AttributeOnlyCqrsBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
+            => Task.FromResult(input);
+    }
+
+    [AppBehavior("orders.grpc-alias")]
+    [BehaviorAllowedTransports("http.grpc")]
+    private sealed class GrpcAliasAllowlistBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
+            => Task.FromResult(input);
+    }
+
+    [AppBehavior("orders.attribute-only-ambiguous")]
+    [BehaviorAllowedPatterns("cqrs", "event-driven")]
+    [BehaviorAllowedTransports("http.rest")]
+    private sealed class AttributeOnlyAmbiguousPatternBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
+            => Task.FromResult(input);
+    }
+
     [AppBehavior("orders.duplicate-rest")]
     [BehaviorAllowedTransports("http.rest")]
     private sealed class DuplicateRestDeclarationBehavior : IAppBehavior<string, string>
@@ -531,7 +557,42 @@ public sealed class BehaviorBaselineTests
         var descriptor = catalog.FindById("orders.annotation-rest");
 
         Assert.NotNull(descriptor);
+        Assert.Equal("direct", descriptor!.Pattern);
         Assert.Contains("http.rest", descriptor!.TransportIds);
+    }
+
+    [Fact]
+    public void BehaviorCollectionBuilderRegisterUsesSingleAllowedPatternAndDeclaredTransportsWhenNoTopologyExists()
+    {
+        var services = new ServiceCollection();
+        var typeRegistry = new BehaviorTypeRegistry();
+        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+
+        builder.Register<AttributeOnlyCqrsBehavior>();
+
+        var provider = services.BuildServiceProvider();
+        var contributors = provider.GetServices<IBehaviorContributor>().ToList();
+        var catalog = new BehaviorCatalog(contributors);
+        var descriptor = catalog.FindById("orders.attribute-only-cqrs");
+
+        Assert.NotNull(descriptor);
+        Assert.Equal("cqrs", descriptor!.Pattern);
+        Assert.Contains("grpc", descriptor.TransportIds);
+        Assert.Contains("http.rest", descriptor.TransportIds);
+    }
+
+    [Fact]
+    public void BehaviorCollectionBuilderRegisterThrowsWhenMultipleAllowedPatternsNeedAnExplicitSelection()
+    {
+        var services = new ServiceCollection();
+        var typeRegistry = new BehaviorTypeRegistry();
+        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+
+        var exception = Assert.Throws<BehaviorSecurityException>(() =>
+            builder.Register<AttributeOnlyAmbiguousPatternBehavior>());
+
+        Assert.Contains("multiple allowed patterns", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("ConfigureTopology", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -543,6 +604,24 @@ public sealed class BehaviorBaselineTests
 
         Assert.Throws<BehaviorSecurityException>(() =>
             builder.Register<DuplicateRestDeclarationBehavior>(topology => topology.ViaHttpRest()));
+    }
+
+    [Fact]
+    public void BehaviorCollectionBuilderRegisterAcceptsHttpGrpcAliasWhenTopologyUsesGrpc()
+    {
+        var services = new ServiceCollection();
+        var typeRegistry = new BehaviorTypeRegistry();
+        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+
+        builder.Register<GrpcAliasAllowlistBehavior>(topology => topology.ViaGrpc());
+
+        var provider = services.BuildServiceProvider();
+        var contributors = provider.GetServices<IBehaviorContributor>().ToList();
+        var catalog = new BehaviorCatalog(contributors);
+        var descriptor = catalog.FindById("orders.grpc-alias");
+
+        Assert.NotNull(descriptor);
+        Assert.Contains("grpc", descriptor!.TransportIds);
     }
 
     [Fact]
