@@ -206,8 +206,9 @@ Current standing examples from this collaboration:
 - repository-facing written artifacts should be in English, including hand-authored documentation, commit messages, and planning or tracking content that becomes part of the project record
 - use sub-agents proactively for review, consultation, and parallel investigation when a task benefits from multiple perspectives instead of treating delegation as a last resort
 - keep future-facing engine quality in view during POC work, including architecture strength, design-pattern fit, performance, security, support for broad project shapes, and overall developer experience
-- when a host exposes both module-owned REST helpers and generic behavior HTTP routes, treat the module-owned REST groups as the public REST/OpenAPI/Scalar surface and keep the generic behavior routes as runnable transport-adapter endpoints that stay hidden from REST docs by default
-- for behavior-driven REST surfaces, treat `[BehaviorAllowedTransports("http.rest")]` as the annotation-driven generic REST activation path, `ViaHttpRest(rest => ...)` as the single explicit generic REST contract path, and `MapBehaviorRestGroup(...)` as the module-owned public REST API path; do not mix annotation-driven and topology-driven `http.rest` declarations on the same behavior
+- when a host exposes both module-owned REST helpers and generic behavior HTTP routes, treat the module-owned REST groups as the public REST/OpenAPI/Scalar surface and keep the generic behavior routes focused on non-REST adapter transports
+- public REST is module-owned only: do not declare `http.rest` in `[BehaviorAllowedTransports(...)]` or `ConfigureTopology(...)`; map REST through `MapEndpoints(...)` plus `MapBehaviorRestGroup(...)`
+- `Engine:Behaviors` is no longer a per-behavior REST topology contract; keep it focused on behavior discovery and auto-registration
 
 ## Working assumptions for contributors
 

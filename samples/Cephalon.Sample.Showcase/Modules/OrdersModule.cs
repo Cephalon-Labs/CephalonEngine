@@ -1,7 +1,7 @@
-using System.Text.Json;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
 using Cephalon.AspNetCore.Modules;
+using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Sample.Showcase.Domain.Orders.Models;
 using Cephalon.Sample.Showcase.Infrastructure;
 using Microsoft.AspNetCore.Http;
@@ -13,8 +13,7 @@ namespace Cephalon.Sample.Showcase.Modules;
 
 /// <summary>
 /// Registers the orders bounded context module.
-/// Implements the event-driven behavior pattern — order placement is fire-and-forget
-/// and downstream processing is coordinated via messaging transports.
+/// Implements the event-driven behavior pattern with a module-owned REST surface.
 /// Uses PostgreSQL (via EF) when available, otherwise falls back to in-memory store.
 /// </summary>
 public sealed class OrdersModule : ModuleBase, IEndpointModule
@@ -45,10 +44,10 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
     /// <inheritdoc />
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup("/v1/showcase/orders")
-            .WithGroupName("v1");
+        var group = endpoints.MapBehaviorRestGroup(this, "/showcase/orders");
+        var routes = group.Routes;
 
-        group.MapGet("/", async (HttpContext ctx) =>
+        routes.MapGet(string.Empty, async (HttpContext ctx) =>
         {
             var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
             if (db is not null)
@@ -67,7 +66,7 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
                 .ToList());
         });
 
-        group.MapGet("/{orderId}", async (string orderId, HttpContext ctx) =>
+        routes.MapGet("/{orderId}", async (string orderId, HttpContext ctx) =>
         {
             var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
             if (db is not null)
@@ -84,7 +83,7 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
                 : Results.NotFound();
         });
 
-        group.MapPost("/", async (PlaceOrderInput input, HttpContext ctx) =>
+        routes.MapPost(string.Empty, async (PlaceOrderInput input, HttpContext ctx) =>
         {
             var orderId = $"ord-{Guid.NewGuid():N}"[..16];
             var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
@@ -110,8 +109,7 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
                 };
                 db.Orders.Add(entity);
                 await db.SaveChangesAsync();
-                return Results.Created(BuildCreatedLocation(ctx, orderId),
-                    new PlaceOrderOutput(orderId, "Pending"));
+                return Results.Created(BuildCreatedLocation(ctx, orderId), new PlaceOrderOutput(orderId, "Pending"));
             }
 
             var order = new Order
@@ -121,26 +119,32 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
                 ShippingAddress = input.ShippingAddress,
                 Status = OrderStatus.Pending,
                 Items = input.Items.Select(i => new OrderLineItem(
-                    i.ProductId, i.ProductName, i.Quantity, i.UnitPriceInCents)).ToList(),
+                    i.ProductId,
+                    i.ProductName,
+                    i.Quantity,
+                    i.UnitPriceInCents)).ToList(),
                 TotalInCents = input.Items.Sum(i => (long)i.Quantity * i.UnitPriceInCents),
                 PlacedAtUtc = DateTime.UtcNow
             };
             ShowcaseDataStore.Orders[orderId] = order;
-            return Results.Created(BuildCreatedLocation(ctx, orderId),
-                new PlaceOrderOutput(orderId, "Pending"));
+            return Results.Created(BuildCreatedLocation(ctx, orderId), new PlaceOrderOutput(orderId, "Pending"));
         });
 
-        group.MapPut("/{orderId}/cancel", async (string orderId, CancelOrderInput input, HttpContext ctx) =>
+        routes.MapPut("/{orderId}/cancel", async (string orderId, CancelOrderInput input, HttpContext ctx) =>
         {
             var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
             if (db is not null)
             {
                 var entity = await db.Orders.FindAsync(orderId);
-                if (entity is null) return Results.NotFound();
+                if (entity is null)
+                {
+                    return Results.NotFound();
+                }
 
                 if (entity.Status is "Shipped" or "Delivered")
-                    return Results.BadRequest(
-                        $"Order '{orderId}' cannot be cancelled in status '{entity.Status}'.");
+                {
+                    return Results.BadRequest($"Order '{orderId}' cannot be cancelled in status '{entity.Status}'.");
+                }
 
                 entity.Status = "Cancelled";
                 entity.CancellationReason = input.Reason;
@@ -150,11 +154,14 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
             }
 
             if (!ShowcaseDataStore.Orders.TryGetValue(orderId, out var order))
+            {
                 return Results.NotFound();
+            }
 
             if (order.Status is OrderStatus.Shipped or OrderStatus.Delivered)
-                return Results.BadRequest(
-                    $"Order '{orderId}' cannot be cancelled in status '{order.Status}'.");
+            {
+                return Results.BadRequest($"Order '{orderId}' cannot be cancelled in status '{order.Status}'.");
+            }
 
             order.Status = OrderStatus.Cancelled;
             order.CancellationReason = input.Reason;
@@ -173,7 +180,10 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
             entity.Status,
             Items = entity.Items.Select(i => new
             {
-                i.ProductId, i.ProductName, i.Quantity, i.UnitPriceInCents,
+                i.ProductId,
+                i.ProductName,
+                i.Quantity,
+                i.UnitPriceInCents,
                 LineTotalInCents = (long)i.Quantity * i.UnitPriceInCents
             }).ToList(),
             entity.TotalInCents,
@@ -194,7 +204,11 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
             Status = order.Status.ToString(),
             Items = order.Items.Select(i => new
             {
-                i.ProductId, i.ProductName, i.Quantity, i.UnitPriceInCents, i.LineTotalInCents
+                i.ProductId,
+                i.ProductName,
+                i.Quantity,
+                i.UnitPriceInCents,
+                i.LineTotalInCents
             }).ToList(),
             order.TotalInCents,
             order.ShippingAddress,

@@ -6,11 +6,11 @@ namespace Cephalon.Sample.Showcase.Domain.Catalog.Behaviors;
 
 /// <summary>
 /// Creates a new product in the catalog using the direct pattern.
-/// Exposed via REST and JSON-RPC transports.
+/// Exposed through JSON-RPC while REST stays module-owned.
 /// </summary>
 [AppBehavior("catalog.create-product")]
 [BehaviorAllowedPatterns("direct")]
-[BehaviorAllowedTransports("http.rest", "http.jsonrpc")]
+[BehaviorAllowedTransports("http.jsonrpc")]
 public sealed class CreateProductBehavior : IAppBehavior<CreateProductInput, CreateProductOutput>
 {
     /// <inheritdoc />
@@ -45,7 +45,6 @@ public sealed class CreateProductBehavior : IAppBehavior<CreateProductInput, Cre
     public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
     {
         builder.AsDirect()
-            .ViaHttpRest()
             .ViaHttpJsonRpc();
     }
 }

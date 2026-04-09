@@ -27,7 +27,6 @@ internal sealed class BehaviorApiSurfaceRouteResolver
     {
         var prefix = transportId switch
         {
-            "http.rest" => options.RestPrefix,
             "http.jsonrpc" => options.JsonRpcPrefix,
             "http.sse" => options.SsePrefix,
             "http.ws" => options.WsPrefix,
@@ -38,31 +37,10 @@ internal sealed class BehaviorApiSurfaceRouteResolver
                 $"Transport '{transportId}' does not participate in the shared behavior API surface route policy.")
         };
 
-        var restContract = transportId == "http.rest"
-            ? BehaviorRestTransportContract.FromDescriptor(descriptor)
-            : null;
-
         return JoinSegments(
             prefix,
             options.DefaultBehaviorDocumentName,
-            ResolveTransportPathSegments(descriptor, restContract));
-    }
-
-    private static string[] ResolveTransportPathSegments(
-        BehaviorTopologyDescriptor descriptor,
-        BehaviorRestTransportContract? restContract)
-    {
-        if (!string.IsNullOrWhiteSpace(restContract?.RouteTemplate) || restContract?.RouteTemplate == string.Empty)
-        {
-            if (restContract.RouteTemplate!.Length == 0)
-            {
-                return [];
-            }
-
-            return restContract.RouteTemplate.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        }
-
-        return [descriptor.ApiSurface.GroupPath, descriptor.ApiSurface.OperationPath];
+            [descriptor.ApiSurface.GroupPath, descriptor.ApiSurface.OperationPath]);
     }
 
     private static string JoinSegments(params string[] segments)

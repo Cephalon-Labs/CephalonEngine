@@ -6,7 +6,7 @@ namespace Cephalon.Sample.Showcase.Domain.Orders.Behaviors;
 
 /// <summary>
 /// Cancels an existing order using the event-driven pattern.
-/// Publishes a cancellation event for downstream compensation (inventory release).
+/// Publishes a cancellation event for downstream compensation.
 /// </summary>
 [AppBehavior("orders.cancel")]
 [BehaviorAllowedPatterns("event-driven")]

@@ -21,7 +21,7 @@ conventions at build time and produce a compile-time-known registration hint fil
 | ABT0011 | Error | `[AppBehavior]` ID is null or empty |
 | ABT0012 | Error | `[AppBehavior]` class is abstract |
 | ABT0013 | Error | `[AppBehavior]` class is static |
-| ABT0014 | Error | `http.rest` is declared in both `[BehaviorAllowedTransports]` and `ConfigureTopology(...)` |
+| ABT0014 | Error | REST is declared in behavior topology instead of a module `MapEndpoints(...)` surface |
 
 ## Generated output
 
@@ -56,7 +56,7 @@ internal static class BehaviorAutoRegistration
             new BehaviorTopologyDescriptor(
                 "catalog.lookup",
                 "cqrs",
-                new[] { "http.rest", "http.jsonrpc" },
+                new[] { "http.jsonrpc", "http.sse" },
                 apiSurface: new BehaviorApiSurfaceDescriptor("catalog/items", "lookup"))
         ];
     }
@@ -71,10 +71,9 @@ and diagnostics activate for any project that references `Cephalon.Behaviors`.
 
 Compile-time topology extraction intentionally stays conservative. Literal `WithApiSurface(...)`
 arguments are supported, while more complex expressions fall back to runtime topology resolution so
-the generated surface stays truthful. The generator also falls back to runtime topology resolution
-when a behavior uses the REST-specific `ViaHttpRest(rest => ...)` contract builder from
-`Cephalon.Behaviors.Http`, because route templates, query/route remapping, and request-shaping
-metadata live in the HTTP companion package instead of the core topology abstraction.
+the generated surface stays truthful. Public REST is module-owned and therefore sits outside the
+behavior source-generator topology model; `ABT0014` now rejects `http.rest` and `ViaHttpRest(...)`
+so authors map REST in a module with `MapEndpoints(...)` plus `MapBehaviorRestGroup(...)`.
 When a behavior has no compile-time topology but does declare exactly one allowed pattern plus one
 or more allowed transports, the runtime synthesizes the attribute-only baseline descriptor from
 those attributes. If multiple allowed patterns are declared, runtime resolution still fails fast

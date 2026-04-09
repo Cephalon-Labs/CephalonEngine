@@ -108,11 +108,11 @@ public static class BuiltInTransports
     public static TransportDescriptor BehaviorHttp { get; } = new(
         id: "behavior-http",
         displayName: "Behavior HTTP",
-        description: "Aggregate transport that maps registered behavior topologies to per-behavior HTTP endpoints using shared canonical routes for REST, GraphQL, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket.",
+        description: "Aggregate transport that maps registered behavior topologies to per-behavior HTTP endpoints using shared canonical routes for JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket.",
         features: TransportFeatures.RequestResponse |
                   TransportFeatures.ServerStreaming |
                   TransportFeatures.DuplexStreaming,
-        tags: ["http", "behaviors", "rest", "sse", "websocket", "graphql", "jsonrpc"],
+        tags: ["http", "behaviors", "sse", "websocket", "graphql", "jsonrpc"],
         metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["aspnet.adapterPackage"] = "Cephalon.Behaviors.Http",

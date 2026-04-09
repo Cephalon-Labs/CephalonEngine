@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-07T14:25:05.8572635+00:00",
+  "GeneratedAtUtc": "2026-04-09T09:31:11.7588796+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 17,
-      "TypeCount": 139
+      "TypeCount": 140
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -24,7 +24,7 @@
       "Description": "ASP.NET Core host core, REST surface, docs, health, and runtime endpoints.",
       "FileName": "cephalon-aspnetcore.md",
       "NamespaceCount": 8,
-      "TypeCount": 13
+      "TypeCount": 16
     },
     {
       "AssemblyName": "Cephalon.AspNetCore.GraphQL",
@@ -493,7 +493,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-behaviors",
-      "TypeCount": 23
+      "TypeCount": 24
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Capabilities",
@@ -612,7 +612,7 @@
       "AssemblyName": "Cephalon.AspNetCore",
       "FileName": "cephalon-aspnetcore.md",
       "AnchorId": "namespace-cephalon-aspnetcore-documentation",
-      "TypeCount": 2
+      "TypeCount": 4
     },
     {
       "NamespaceName": "Cephalon.AspNetCore.GraphQL.Hosting",
@@ -654,7 +654,7 @@
       "AssemblyName": "Cephalon.AspNetCore",
       "FileName": "cephalon-aspnetcore.md",
       "AnchorId": "namespace-cephalon-aspnetcore-hosting",
-      "TypeCount": 4
+      "TypeCount": 5
     },
     {
       "NamespaceName": "Cephalon.AspNetCore.JsonRpc.Hosting",
@@ -1638,6 +1638,21 @@
       }
     },
     {
+      "DisplayName": "ApiRoutesOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-hosting-apiroutesoptions",
+      "Declaration": "public sealed class ApiRoutesOptions",
+      "Summary": "Configures host-level HTTP route prefixes for Cephalon ASP.NET Core transports.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 1,
+        "Properties": 9,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "AppBehaviorAttribute",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -2034,7 +2049,7 @@
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "type-cephalon-abstractions-behaviors-behaviorallowedpatternsattribute",
       "Declaration": "public sealed class BehaviorAllowedPatternsAttribute",
-      "Summary": "Restricts which patterns ops config may activate for this behavior. If absent, no allowlist restriction applies.",
+      "Summary": "Restricts which patterns may activate for this behavior and can also provide an attribute-only runtime baseline when exactly one pattern is declared.",
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
@@ -2049,12 +2064,27 @@
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "type-cephalon-abstractions-behaviors-behaviorallowedtransportsattribute",
       "Declaration": "public sealed class BehaviorAllowedTransportsAttribute",
-      "Summary": "Restricts which transports ops config may activate for this behavior. If absent, no allowlist restriction applies.",
+      "Summary": "Restricts which transports may activate for this behavior and can also provide an attribute-only runtime transport baseline when no explicit topology exists.",
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
         "Properties": 1,
         "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "BehaviorApiSurfaceDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor",
+      "Declaration": "public sealed class BehaviorApiSurfaceDescriptor",
+      "Summary": "Describes the logical public API surface projected by a behavior across transport adapters.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
       }
     },
     {
@@ -2124,11 +2154,11 @@
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "type-cephalon-abstractions-behaviors-behaviortopologydescriptor",
       "Declaration": "public sealed class BehaviorTopologyDescriptor",
-      "Summary": "Describes the resolved topology for a single behavior: its pattern, transports, and feature flags.",
+      "Summary": "Describes the resolved topology for a single behavior, including its pattern, transports, feature flags, and shared logical API surface.",
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 9,
+        "Properties": 10,
         "Methods": 0
       }
     },
@@ -4064,7 +4094,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
-        "Methods": 18
+        "Methods": 19
       }
     },
     {
@@ -6150,6 +6180,36 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "OpenApiEndpointOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Documentation",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-documentation-openapiendpointoptions",
+      "Declaration": "public sealed class OpenApiEndpointOptions",
+      "Summary": "Configures the host-level OpenAPI JSON and Scalar UI endpoints exposed by Cephalon ASP.NET Core hosts.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 1,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "OpenApiTagMetadata",
+      "NamespaceName": "Cephalon.AspNetCore.Documentation",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-documentation-openapitagmetadata",
+      "Declaration": "public sealed class OpenApiTagMetadata",
+      "Summary": "Describes OpenAPI tag metadata projected from ASP.NET Core route groups or endpoints.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 0
       }
     },
     {
@@ -9671,6 +9731,28 @@
       "Summary": "Gets or sets the optional API key used for Elasticsearch API-key authentication."
     },
     {
+      "DisplayName": "ApiRoutesOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ApiRoutesOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-hosting-apiroutesoptions-ctor",
+      "Signature": "ApiRoutesOptions()",
+      "Summary": "Initializes a new \u0060ApiRoutesOptions\u0060 with the canonical Cephalon route-prefix defaults."
+    },
+    {
+      "DisplayName": "ApiSurface",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorTopologyDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-apisurface",
+      "Signature": "BehaviorApiSurfaceDescriptor ApiSurface { get; }",
+      "Summary": "Gets the logical public API surface projected by route-shaped transport adapters."
+    },
+    {
       "DisplayName": "ApmEndpoint",
       "Category": "Properties",
       "DeclaringTypeName": "HuaweiCloudTelemetryExportOptions",
@@ -10419,6 +10501,17 @@
       "Summary": "Initializes a new instance of \u0060BehaviorAllowedTransportsAttribute\u0060."
     },
     {
+      "DisplayName": "BehaviorApiSurfaceDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BehaviorApiSurfaceDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-ctor-system-string-system-string",
+      "Signature": "BehaviorApiSurfaceDescriptor(string groupPath, string operationPath)",
+      "Summary": "Initializes a new \u0060BehaviorApiSurfaceDescriptor\u0060."
+    },
+    {
       "DisplayName": "BehaviorCompatibilityViolation",
       "Category": "Constructors",
       "DeclaringTypeName": "BehaviorCompatibilityViolation",
@@ -10449,7 +10542,7 @@
       "FileName": "cephalon-engine.md",
       "AnchorId": "member-p-cephalon-engine-transports-builtintransports-behaviorhttp",
       "Signature": "TransportDescriptor BehaviorHttp { get; }",
-      "Summary": "Gets the built-in behavior HTTP transport descriptor that bridges behavior topology bindings (REST, SSE, WS, GraphQL, JSON-RPC) to ASP.NET Core endpoints under \u0060/behaviors\u0060."
+      "Summary": "Gets the built-in behavior HTTP transport descriptor that bridges behavior topology bindings to ASP.NET Core endpoints, including canonical versioned routes for route-shaped transports without the older \u0060/behaviors/{id}\u0060 compatibility aliases."
     },
     {
       "DisplayName": "BehaviorId",
@@ -10568,8 +10661,8 @@
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-behaviors-behaviortopologydescriptor-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean-system-boolean-system-boolean-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "BehaviorTopologyDescriptor(string id, string pattern, IReadOnlyList\u003Cstring\u003E transportIds, bool inboxEnabled, bool outboxEnabled, bool eventSourcingEnabled, string displayName, string description, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-behaviortopologydescriptor-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean-system-boolean-system-boolean-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "BehaviorTopologyDescriptor(string id, string pattern, IReadOnlyList\u003Cstring\u003E transportIds, bool inboxEnabled, bool outboxEnabled, bool eventSourcingEnabled, BehaviorApiSurfaceDescriptor apiSurface, string displayName, string description, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Initializes a new instance of \u0060BehaviorTopologyDescriptor\u0060."
     },
     {
@@ -12190,6 +12283,17 @@
       "Summary": "Gets the time at which the durable outbox row was created."
     },
     {
+      "DisplayName": "CreateDefault",
+      "Category": "Methods",
+      "DeclaringTypeName": "BehaviorApiSurfaceDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-createdefault-system-string",
+      "Signature": "BehaviorApiSurfaceDescriptor CreateDefault(string behaviorId)",
+      "Summary": "Creates a default API surface descriptor from the supplied behavior identifier."
+    },
+    {
       "DisplayName": "CreateInstance",
       "Category": "Methods",
       "DeclaringTypeName": "RequireCephalonAuthorizationAttribute",
@@ -12551,6 +12655,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-trustpolicy-default",
       "Signature": "TrustPolicy Default { get; }",
       "Summary": "Gets the default trust policy."
+    },
+    {
+      "DisplayName": "DefaultBehaviorDocumentName",
+      "Category": "Properties",
+      "DeclaringTypeName": "ApiRoutesOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-apiroutesoptions-defaultbehaviordocumentname",
+      "Signature": "string DefaultBehaviorDocumentName { get; set; }",
+      "Summary": "Gets or sets the default document/version segment projected into generic behavior transport routes."
     },
     {
       "DisplayName": "DefaultCapabilityAccess",
@@ -13134,6 +13249,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-modulemanifest-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets the human-readable description of the module."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenApiTagMetadata",
+      "NamespaceName": "Cephalon.AspNetCore.Documentation",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-documentation-openapitagmetadata-description",
+      "Signature": "string Description { get; set; }",
+      "Summary": "The optional tag description shown in OpenAPI and Scalar."
     },
     {
       "DisplayName": "Description",
@@ -15789,6 +15915,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "ApiRoutesOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-hosting-apiroutesoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "ApiRoutesOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds and normalizes API route settings from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "AuditRuntimeOptions",
       "NamespaceName": "Cephalon.Audit.Configuration",
       "AssemblyName": "Cephalon.Audit",
@@ -16170,6 +16307,17 @@
       "AnchorId": "member-m-cephalon-observability-configuration-observabilityoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
       "Signature": "ObservabilityOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
       "Summary": "Binds observability options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
+      "DeclaringTypeName": "OpenApiEndpointOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Documentation",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-documentation-openapiendpointoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "OpenApiEndpointOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds and normalizes OpenAPI endpoint options from configuration."
     },
     {
       "DisplayName": "FromConfiguration",
@@ -16876,6 +17024,39 @@
       "Summary": "Gets the built-in GraphQL transport descriptor."
     },
     {
+      "DisplayName": "GraphQLPrefix",
+      "Category": "Properties",
+      "DeclaringTypeName": "ApiRoutesOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-apiroutesoptions-graphqlprefix",
+      "Signature": "string GraphQLPrefix { get; set; }",
+      "Summary": "Gets or sets the root prefix used by the built-in GraphQL transport mapper."
+    },
+    {
+      "DisplayName": "GraphQLSsePrefix",
+      "Category": "Properties",
+      "DeclaringTypeName": "ApiRoutesOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-apiroutesoptions-graphqlsseprefix",
+      "Signature": "string GraphQLSsePrefix { get; set; }",
+      "Summary": "Gets or sets the canonical prefix used by the generic behavior GraphQL-over-SSE binding surface."
+    },
+    {
+      "DisplayName": "GraphQLWsPrefix",
+      "Category": "Properties",
+      "DeclaringTypeName": "ApiRoutesOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-apiroutesoptions-graphqlwsprefix",
+      "Signature": "string GraphQLWsPrefix { get; set; }",
+      "Summary": "Gets or sets the canonical prefix used by the generic behavior GraphQL-over-WebSocket binding surface."
+    },
+    {
       "DisplayName": "Graphs",
       "Category": "Properties",
       "DeclaringTypeName": "IExecutionRuntimeCatalog",
@@ -16887,6 +17068,17 @@
       "Summary": "Gets all execution graphs visible to the current runtime."
     },
     {
+      "DisplayName": "GroupPath",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorApiSurfaceDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-grouppath",
+      "Signature": "string GroupPath { get; }",
+      "Summary": "Gets the logical group path shared by transport-specific projections."
+    },
+    {
       "DisplayName": "Grpc",
       "Category": "Properties",
       "DeclaringTypeName": "BuiltInTransports",
@@ -16896,6 +17088,17 @@
       "AnchorId": "member-p-cephalon-engine-transports-builtintransports-grpc",
       "Signature": "TransportDescriptor Grpc { get; }",
       "Summary": "Gets the built-in gRPC transport descriptor."
+    },
+    {
+      "DisplayName": "GrpcPrefix",
+      "Category": "Properties",
+      "DeclaringTypeName": "ApiRoutesOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-apiroutesoptions-grpcprefix",
+      "Signature": "string GrpcPrefix { get; set; }",
+      "Summary": "Gets or sets the root prefix used by the built-in gRPC transport mapper."
     },
     {
       "DisplayName": "Guidance",
@@ -19052,6 +19255,17 @@
       "AnchorId": "member-p-cephalon-engine-transports-builtintransports-jsonrpc",
       "Signature": "TransportDescriptor JsonRpc { get; }",
       "Summary": "Gets the built-in JSON-RPC transport descriptor."
+    },
+    {
+      "DisplayName": "JsonRpcPrefix",
+      "Category": "Properties",
+      "DeclaringTypeName": "ApiRoutesOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-apiroutesoptions-jsonrpcprefix",
+      "Signature": "string JsonRpcPrefix { get; set; }",
+      "Summary": "Gets or sets the canonical prefix used by the generic behavior JSON-RPC binding surface."
     },
     {
       "DisplayName": "KafkaDependencyDefinition",
@@ -21476,6 +21690,17 @@
     {
       "DisplayName": "Name",
       "Category": "Properties",
+      "DeclaringTypeName": "OpenApiTagMetadata",
+      "NamespaceName": "Cephalon.AspNetCore.Documentation",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-documentation-openapitagmetadata-name",
+      "Signature": "string Name { get; set; }",
+      "Summary": "The public tag name shown in OpenAPI and Scalar."
+    },
+    {
+      "DisplayName": "Name",
+      "Category": "Properties",
       "DeclaringTypeName": "RenderedProject",
       "NamespaceName": "Cephalon.Scaffolding.Generation",
       "AssemblyName": "Cephalon.Scaffolding",
@@ -21870,6 +22095,28 @@
       "Summary": "Gets the previous serialized value when one is known."
     },
     {
+      "DisplayName": "OpenApiEndpointOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "OpenApiEndpointOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Documentation",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-documentation-openapiendpointoptions-ctor",
+      "Signature": "OpenApiEndpointOptions()",
+      "Summary": "Initializes a new \u0060OpenApiEndpointOptions\u0060 with the canonical Cephalon OpenAPI and Scalar routes."
+    },
+    {
+      "DisplayName": "OpenApiTagMetadata",
+      "Category": "Constructors",
+      "DeclaringTypeName": "OpenApiTagMetadata",
+      "NamespaceName": "Cephalon.AspNetCore.Documentation",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-documentation-openapitagmetadata-ctor-system-string-system-string",
+      "Signature": "OpenApiTagMetadata(string Name, string Description)",
+      "Summary": "Describes OpenAPI tag metadata projected from ASP.NET Core route groups or endpoints."
+    },
+    {
       "DisplayName": "OpenSearchDependencyDefinition",
       "Category": "Constructors",
       "DeclaringTypeName": "OpenSearchDependencyDefinition",
@@ -21934,6 +22181,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-operationalstory",
       "Signature": "RuntimeOperationalStory OperationalStory { get; set; }",
       "Summary": "The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, hosted-execution state, module state, and the ordered runtime timeline."
+    },
+    {
+      "DisplayName": "OperationPath",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorApiSurfaceDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-operationpath",
+      "Signature": "string OperationPath { get; }",
+      "Summary": "Gets the logical operation path shared by transport-specific projections."
     },
     {
       "DisplayName": "Options",
@@ -25093,6 +25351,17 @@
       "Summary": "The number of completed manual restarts."
     },
     {
+      "DisplayName": "RestPrefix",
+      "Category": "Properties",
+      "DeclaringTypeName": "ApiRoutesOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-apiroutesoptions-restprefix",
+      "Signature": "string RestPrefix { get; set; }",
+      "Summary": "Gets or sets the root prefix used by the built-in REST transport mapper."
+    },
+    {
       "DisplayName": "RetrievalOptions",
       "Category": "Constructors",
       "DeclaringTypeName": "RetrievalOptions",
@@ -25245,6 +25514,17 @@
       "AnchorId": "member-p-cephalon-referencedocs-generation-referencedocsrequest-rootpath",
       "Signature": "string RootPath { get; }",
       "Summary": "Gets the repository root path."
+    },
+    {
+      "DisplayName": "RoutePattern",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenApiEndpointOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Documentation",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-documentation-openapiendpointoptions-routepattern",
+      "Signature": "string RoutePattern { get; set; }",
+      "Summary": "Gets or sets the route pattern used by \u0060MapOpenApi(...)\u0060."
     },
     {
       "DisplayName": "RoutePrefix",
@@ -25654,6 +25934,17 @@
       "Summary": "Creates a new scaffold request."
     },
     {
+      "DisplayName": "ScalarRoutePrefix",
+      "Category": "Properties",
+      "DeclaringTypeName": "OpenApiEndpointOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Documentation",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-documentation-openapiendpointoptions-scalarrouteprefix",
+      "Signature": "string ScalarRoutePrefix { get; set; }",
+      "Summary": "Gets or sets the route prefix used by the Scalar UI."
+    },
+    {
       "DisplayName": "Scheme",
       "Category": "Properties",
       "DeclaringTypeName": "Neo4jDependencyDefinition",
@@ -25733,6 +26024,17 @@
     {
       "DisplayName": "SectionName",
       "Category": "Fields",
+      "DeclaringTypeName": "ApiRoutesOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-f-cephalon-aspnetcore-hosting-apiroutesoptions-sectionname",
+      "Signature": "const string SectionName",
+      "Summary": "Gets the configuration section used for API route settings."
+    },
+    {
+      "DisplayName": "SectionName",
+      "Category": "Fields",
       "DeclaringTypeName": "EngineSettings",
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
@@ -25751,6 +26053,17 @@
       "AnchorId": "member-f-cephalon-eventsourcing-configuration-eventsourcingoptions-sectionname",
       "Signature": "const string SectionName",
       "Summary": "The configuration section that owns the host-level event-sourcing settings."
+    },
+    {
+      "DisplayName": "SectionName",
+      "Category": "Fields",
+      "DeclaringTypeName": "OpenApiEndpointOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Documentation",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-f-cephalon-aspnetcore-documentation-openapiendpointoptions-sectionname",
+      "Signature": "const string SectionName",
+      "Summary": "Gets the root configuration section used for OpenAPI endpoint routing."
     },
     {
       "DisplayName": "SectionName",
@@ -26532,6 +26845,17 @@
       "AnchorId": "member-m-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions-ctor",
       "Signature": "SqlServerDependencyHealthOptions()",
       "Summary": "Initializes a new instance of the \u0060SqlServerDependencyHealthOptions\u0060 class."
+    },
+    {
+      "DisplayName": "SsePrefix",
+      "Category": "Properties",
+      "DeclaringTypeName": "ApiRoutesOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-apiroutesoptions-sseprefix",
+      "Signature": "string SsePrefix { get; set; }",
+      "Summary": "Gets or sets the canonical prefix used by the generic behavior Server-Sent Events binding surface."
     },
     {
       "DisplayName": "SslMode",
@@ -29647,17 +29971,6 @@
       "Summary": "Adds the JSON-RPC 2.0 over HTTP transport."
     },
     {
-      "DisplayName": "ViaHttpRest",
-      "Category": "Methods",
-      "DeclaringTypeName": "IBehaviorTopologyBuilder",
-      "NamespaceName": "Cephalon.Abstractions.Behaviors",
-      "AssemblyName": "Cephalon.Abstractions",
-      "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viahttprest",
-      "Signature": "IBehaviorTopologyBuilder ViaHttpRest()",
-      "Summary": "Adds the HTTP REST transport (GET/POST routing)."
-    },
-    {
       "DisplayName": "ViaHttpSse",
       "Category": "Methods",
       "DeclaringTypeName": "IBehaviorTopologyBuilder",
@@ -29768,6 +30081,17 @@
       "Summary": "Gets the built-in WebSocket transport descriptor."
     },
     {
+      "DisplayName": "WithApiSurface",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorTopologyBuilder",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-withapisurface-system-string-system-string",
+      "Signature": "IBehaviorTopologyBuilder WithApiSurface(string groupPath, string operationPath)",
+      "Summary": "Overrides the logical API surface projected by route-shaped transport adapters."
+    },
+    {
       "DisplayName": "WithCephalonAuthenticationSchemes",
       "Category": "Methods",
       "DeclaringTypeName": "IdentityEndpointConventionBuilderExtensions",
@@ -29777,6 +30101,17 @@
       "AnchorId": "member-m-cephalon-identity-aspnetcore-transports-rest-identityendpointconventionbuilderextensions-withcephalonauthenticationschemes-1-0-system-string",
       "Signature": "TBuilder WithCephalonAuthenticationSchemes\u003CTBuilder\u003E(this TBuilder builder, string[] authenticationSchemes)",
       "Summary": "Declares the ASP.NET Core authentication schemes that should own challenge and forbid responses for an endpoint or route group."
+    },
+    {
+      "DisplayName": "WithMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorTopologyBuilder",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-withmetadata-system-string-system-string",
+      "Signature": "IBehaviorTopologyBuilder WithMetadata(string key, string value)",
+      "Summary": "Adds or replaces arbitrary topology metadata for companion packs that need extra routing or runtime hints."
     },
     {
       "DisplayName": "WithOptions",
@@ -29865,6 +30200,17 @@
       "AnchorId": "member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-writedbcontexttype",
       "Signature": "Type WriteDbContextType { get; }",
       "Summary": "Gets the write-side \u0060DbContext\u0060 type."
+    },
+    {
+      "DisplayName": "WsPrefix",
+      "Category": "Properties",
+      "DeclaringTypeName": "ApiRoutesOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-apiroutesoptions-wsprefix",
+      "Signature": "string WsPrefix { get; set; }",
+      "Summary": "Gets or sets the canonical prefix used by the generic behavior WebSocket binding surface."
     },
     {
       "DisplayName": "XmlCommentsDocumentTransformer",

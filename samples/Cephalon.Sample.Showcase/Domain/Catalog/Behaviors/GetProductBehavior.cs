@@ -6,11 +6,11 @@ namespace Cephalon.Sample.Showcase.Domain.Catalog.Behaviors;
 
 /// <summary>
 /// Retrieves a single product by identifier using the direct pattern.
-/// Exposed via REST, GraphQL, gRPC, and JSON-RPC transports.
+/// Exposed via GraphQL, gRPC, and JSON-RPC while REST stays module-owned.
 /// </summary>
 [AppBehavior("catalog.get-product")]
 [BehaviorAllowedPatterns("direct")]
-[BehaviorAllowedTransports("http.rest", "http.graphql", "grpc", "http.jsonrpc")]
+[BehaviorAllowedTransports("http.graphql", "grpc", "http.jsonrpc")]
 public sealed class GetProductBehavior : IAppBehavior<GetProductInput, GetProductOutput?>
 {
     /// <inheritdoc />
@@ -29,7 +29,6 @@ public sealed class GetProductBehavior : IAppBehavior<GetProductInput, GetProduc
     public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
     {
         builder.AsDirect()
-            .ViaHttpRest()
             .ViaHttpGraphQl()
             .ViaGrpc()
             .ViaHttpJsonRpc();

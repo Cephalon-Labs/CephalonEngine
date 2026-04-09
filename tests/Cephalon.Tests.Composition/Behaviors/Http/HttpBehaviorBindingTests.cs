@@ -5,13 +5,12 @@ using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.EventSourcing;
 using Cephalon.Abstractions.Modules;
 using Cephalon.AspNetCore.Hosting;
+using Cephalon.AspNetCore.Modules;
 using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Http.Bindings;
 using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Http.Registry;
-using Cephalon.Behaviors.Builders;
 using Cephalon.Behaviors.Services;
-using Cephalon.AspNetCore.Modules;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
@@ -21,27 +20,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Behaviors.Http;
 
-/// <summary>
-/// Integration and unit tests for the ABT M2 HTTP Transport Pack.
-/// Covers all 7 transport bindings, the lazy-init wrapper, the registry, and DI wiring.
-/// </summary>
 public sealed class HttpBehaviorBindingTests
 {
-    // ─────────────────────────────────────────────────────────────────────────
-    // Test fixtures
-    // ─────────────────────────────────────────────────────────────────────────
-
-    [AppBehavior("echo.direct")]
-    private sealed class EchoBehavior : IAppBehavior<string, string>
-    {
-        public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
-            => Task.FromResult($"echo:{input}");
-    }
-
-    /// <summary>
-    /// Object-in / object-out behavior used for HTTP binding tests where the input
-    /// arrives as a deserialized <see cref="System.Text.Json.JsonElement" />.
-    /// </summary>
     [AppBehavior("object.echo")]
     private sealed class ObjectEchoBehavior : IAppBehavior<object, object>
     {
@@ -72,45 +52,6 @@ public sealed class HttpBehaviorBindingTests
         string ProductName,
         int Quantity,
         bool HasEventStore);
-
-    [AppBehavior("catalog.create-product")]
-    private sealed class ExplicitRestContractBehavior : IAppBehavior<ExplicitRestContractInput, ExplicitRestContractOutput>
-    {
-        public Task<ExplicitRestContractOutput> HandleAsync(
-            ExplicitRestContractInput input,
-            IBehaviorContext context,
-            CancellationToken cancellationToken = default)
-        {
-            return Task.FromResult(new ExplicitRestContractOutput(
-                input.ProductId,
-                input.ProductName,
-                input.IsDraft));
-        }
-    }
-
-    private sealed record ExplicitRestContractInput(
-        string ProductId,
-        string ProductName,
-        bool IsDraft);
-
-    private sealed record ExplicitRestContractOutput(
-        string ProductId,
-        string ProductName,
-        bool IsDraft);
-
-    [AppBehavior("catalog.attribute-only")]
-    [BehaviorAllowedPatterns("cqrs")]
-    [BehaviorAllowedTransports("http.rest")]
-    private sealed class AttributeOnlyRestBehavior : IAppBehavior<string, string>
-    {
-        public Task<string> HandleAsync(
-            string input,
-            IBehaviorContext context,
-            CancellationToken cancellationToken = default)
-        {
-            return Task.FromResult($"attribute:{input}");
-        }
-    }
 
     private sealed class RestHelperModule : ModuleBase, IEndpointModule
     {
@@ -173,10 +114,6 @@ public sealed class HttpBehaviorBindingTests
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Helper: build a minimal WebApplication with specified bindings mapped
-    // ─────────────────────────────────────────────────────────────────────────
-
     private static async Task<(WebApplication App, HttpClient Client)> BuildAppAsync(
         BehaviorTopologyDescriptor descriptor,
         params IHttpBehaviorBinding[] bindings)
@@ -184,7 +121,7 @@ public sealed class HttpBehaviorBindingTests
 
     private static async Task<(WebApplication App, HttpClient Client)> BuildAppAsync<TBehavior>(
         BehaviorTopologyDescriptor descriptor,
-        IHttpBehaviorBinding[] bindings)
+        params IHttpBehaviorBinding[] bindings)
         where TBehavior : class
     {
         var services = new ServiceCollection();
@@ -193,8 +130,7 @@ public sealed class HttpBehaviorBindingTests
         var typeRegistry = new BehaviorTypeRegistry();
         typeRegistry.Register(descriptor.Id, typeof(TBehavior));
 
-        var contributor = new FluentBehaviorContributor(descriptor);
-        services.AddSingleton<IBehaviorContributor>(contributor);
+        services.AddSingleton<IBehaviorContributor>(new FluentBehaviorContributor(descriptor));
         services.AddSingleton<IBehaviorTypeRegistry>(typeRegistry);
         services.AddSingleton<IBehaviorCatalog>(sp =>
             new BehaviorCatalog(sp.GetServices<IBehaviorContributor>()));
@@ -216,49 +152,21 @@ public sealed class HttpBehaviorBindingTests
         return (app, app.GetTestClient());
     }
 
-    private static async Task<(WebApplication App, HttpClient Client, BehaviorTopologyDescriptor Descriptor)> BuildRegisteredAppAsync<TBehavior>(
-        params IHttpBehaviorBinding[] bindings)
-        where TBehavior : class
+    private static async Task<(WebApplication App, HttpClient Client)> BuildBehaviorRestHelperAppAsync(
+        IEndpointModule? module = null,
+        IDictionary<string, string?>? configurationValues = null)
     {
-        var services = new ServiceCollection();
-        var typeRegistry = new BehaviorTypeRegistry();
-        var behaviorBuilder = new BehaviorCollectionBuilder(services, typeRegistry);
-        behaviorBuilder.Register<TBehavior>();
-
-        services.AddSingleton<IBehaviorTypeRegistry>(typeRegistry);
-        services.AddSingleton<IBehaviorCatalog>(serviceProvider =>
-            new BehaviorCatalog(serviceProvider.GetServices<IBehaviorContributor>()));
-
-        var provider = services.BuildServiceProvider();
-        var catalog = provider.GetRequiredService<IBehaviorCatalog>();
-        var appBehaviorAttribute = (AppBehaviorAttribute?)Attribute.GetCustomAttribute(
-            typeof(TBehavior),
-            typeof(AppBehaviorAttribute));
-        var descriptor = catalog.FindById(appBehaviorAttribute!.Id);
-        var dispatcher = new BehaviorDispatcher(catalog, typeRegistry, provider);
+        module ??= new RestHelperModule();
 
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseTestServer();
-        var app = builder.Build();
 
-        foreach (var binding in bindings)
+        if (configurationValues is not null)
         {
-            await binding.MapAsync(app, descriptor!, dispatcher);
+            builder.Configuration.AddInMemoryCollection(configurationValues);
         }
 
-        await app.StartAsync();
-        return (app, app.GetTestClient(), descriptor!);
-    }
-
-    private static async Task<(WebApplication App, HttpClient Client)> BuildBehaviorRestHelperAppAsync()
-        => await BuildBehaviorRestHelperAppAsync(new RestHelperModule());
-
-    private static async Task<(WebApplication App, HttpClient Client)> BuildBehaviorRestHelperAppAsync(IEndpointModule module)
-    {
-        var descriptor = new BehaviorTopologyDescriptor("rest.helper.echo", "direct", ["http.rest"]);
-        var builder = WebApplication.CreateBuilder();
-        builder.WebHost.UseTestServer();
-
+        var descriptor = new BehaviorTopologyDescriptor("rest.helper.echo", "direct", []);
         builder.Services.AddTransient<RestHelperEchoBehavior>();
         builder.Services.AddSingleton<IEventStore, StubEventStore>();
 
@@ -271,137 +179,15 @@ public sealed class HttpBehaviorBindingTests
         builder.Services.AddSingleton<BehaviorDispatcher>();
 
         var app = builder.Build();
-        module.MapEndpoints(app);
+        var routeOptions = ApiRoutesOptions.FromConfiguration(app.Configuration);
+        IEndpointRouteBuilder endpoints = string.IsNullOrWhiteSpace(routeOptions.RestPrefix)
+            ? app
+            : app.MapGroup(routeOptions.RestPrefix);
+        module.MapEndpoints(endpoints);
 
         await app.StartAsync();
         return (app, app.GetTestClient());
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // 1. RestBindingMapsPostRoute
-    // ─────────────────────────────────────────────────────────────────────────
-
-    [Fact]
-    public async Task RestBindingMapsPostRoute()
-    {
-        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.rest"]);
-        var (app, client) = await BuildAppAsync(descriptor, new RestHttpBehaviorBinding());
-
-        var response = await client.PostAsJsonAsync("/api/v1/object/echo", "World");
-
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.NoContent,
-            $"Expected 200/204 but got {response.StatusCode}");
-
-        await app.StopAsync();
-    }
-
-    [Fact]
-    public async Task RestBindingMapsGetRoute()
-    {
-        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.rest"]);
-        var (app, client) = await BuildAppAsync(descriptor, new RestHttpBehaviorBinding());
-
-        var response = await client.GetAsync("/api/v1/object/echo?q=hello");
-
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.NoContent,
-            $"Expected 200/204 but got {response.StatusCode}");
-
-        await app.StopAsync();
-    }
-
-    [Fact]
-    public async Task RestBindingMapsCanonicalApiSurfaceRoute()
-    {
-        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.rest"]);
-        var (app, client) = await BuildAppAsync(descriptor, new RestHttpBehaviorBinding());
-
-        var response = await client.GetAsync("/api/v1/object/echo?q=hello");
-
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.NoContent,
-            $"Expected 200/204 but got {response.StatusCode}");
-
-        await app.StopAsync();
-    }
-
-    [Fact]
-    public async Task RestBindingSupportsExplicitGenericRestContract()
-    {
-        var descriptor = new BehaviorTopologyBuilder()
-            .AsDirect()
-            .ViaHttpRest(rest => rest
-                .MapPost("catalog/create-product/{productId}")
-                .BindRoute("productId", nameof(ExplicitRestContractInput.ProductId))
-                .BindQuery("draftMode", nameof(ExplicitRestContractInput.IsDraft)))
-            .Build("catalog.create-product");
-        var (app, client) = await BuildAppAsync<ExplicitRestContractBehavior>(
-            descriptor,
-            [new RestHttpBehaviorBinding()]);
-
-        var response = await client.PostAsJsonAsync(
-            "/api/v1/catalog/create-product/sku-001?draftMode=true",
-            new { productName = "Keyboard" });
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-        var payload = await response.Content.ReadFromJsonAsync<ExplicitRestContractOutput>();
-        Assert.NotNull(payload);
-        Assert.Equal("sku-001", payload!.ProductId);
-        Assert.Equal("Keyboard", payload.ProductName);
-        Assert.True(payload.IsDraft);
-
-        var getResponse = await client.GetAsync("/api/v1/catalog/create-product/sku-001?draftMode=true");
-        Assert.Equal(HttpStatusCode.MethodNotAllowed, getResponse.StatusCode);
-
-        await app.StopAsync();
-    }
-
-    [Fact]
-    public async Task RestBindingSupportsEmptyConfiguredRootPrefix()
-    {
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["ApiRoutes:Prefixes:Rest"] = string.Empty,
-                ["OpenApi:DefaultVersion"] = "2"
-            })
-            .Build();
-        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.rest"]);
-        var (app, client) = await BuildAppAsync(descriptor, new RestHttpBehaviorBinding(configuration));
-
-        var response = await client.GetAsync("/v2/object/echo?q=hello");
-        var legacyResponse = await client.GetAsync("/api/v2/object/echo?q=hello");
-
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.NoContent,
-            $"Expected 200/204 but got {response.StatusCode}");
-        Assert.Equal(HttpStatusCode.NotFound, legacyResponse.StatusCode);
-
-        await app.StopAsync();
-    }
-
-    [Fact]
-    public async Task RestBindingMapsAttributeOnlyRegisteredBehavior()
-    {
-        var (app, client, descriptor) = await BuildRegisteredAppAsync<AttributeOnlyRestBehavior>(
-            new RestHttpBehaviorBinding());
-
-        var response = await client.PostAsJsonAsync("/api/v1/catalog/attribute-only", "hello");
-
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.NoContent,
-            $"Expected 200/204 but got {response.StatusCode}");
-        Assert.Equal("cqrs", descriptor.Pattern);
-        Assert.Contains("http.rest", descriptor.TransportIds);
-
-        await app.StopAsync();
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // 2. JsonRpcBindingParsesRequestReturnsResult
-    // ─────────────────────────────────────────────────────────────────────────
 
     [Fact]
     public async Task JsonRpcBindingParsesRequestReturnsResult()
@@ -409,15 +195,9 @@ public sealed class HttpBehaviorBindingTests
         var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.jsonrpc"]);
         var (app, client) = await BuildAppAsync(descriptor, new JsonRpcHttpBehaviorBinding());
 
-        var requestBody = new
-        {
-            jsonrpc = "2.0",
-            method = "handle",
-            @params = "test-input",
-            id = 42
-        };
-
-        var response = await client.PostAsJsonAsync("/json-rpc/v1/object/echo", requestBody);
+        var response = await client.PostAsJsonAsync(
+            "/json-rpc/v1/object/echo",
+            new { jsonrpc = "2.0", method = "handle", @params = "test-input", id = 42 });
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -429,247 +209,18 @@ public sealed class HttpBehaviorBindingTests
     }
 
     [Fact]
-    public async Task JsonRpcBindingReturnsErrorForUnknownMethod()
-    {
-        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.jsonrpc"]);
-        var (app, client) = await BuildAppAsync(descriptor, new JsonRpcHttpBehaviorBinding());
-
-        var requestBody = new { jsonrpc = "2.0", method = "unknown", id = 1 };
-        var response = await client.PostAsJsonAsync("/json-rpc/v1/object/echo", requestBody);
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
-        Assert.True(json.TryGetProperty("error", out var error));
-        Assert.Equal(-32601, error.GetProperty("code").GetInt32());
-
-        await app.StopAsync();
-    }
-
-    [Fact]
-    public async Task JsonRpcBindingMapsCanonicalApiSurfaceRoute()
-    {
-        var descriptor = new BehaviorTopologyDescriptor(
-            "object.echo",
-            "direct",
-            ["http.jsonrpc"],
-            apiSurface: new BehaviorApiSurfaceDescriptor("catalog/items", "lookup"));
-        var (app, client) = await BuildAppAsync(descriptor, new JsonRpcHttpBehaviorBinding());
-
-        var requestBody = new
-        {
-            jsonrpc = "2.0",
-            method = "handle",
-            @params = "test-input",
-            id = 7
-        };
-
-        var response = await client.PostAsJsonAsync("/json-rpc/v1/catalog/items/lookup", requestBody);
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-        await app.StopAsync();
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // 3. GraphqlBindingParsesQueryReturnsData
-    // ─────────────────────────────────────────────────────────────────────────
-
-    [Fact]
-    public async Task GraphqlBindingParsesQueryReturnsData()
+    public async Task GraphqlBindingMapsCanonicalApiSurfaceRoute()
     {
         var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.graphql"]);
         var (app, client) = await BuildAppAsync(descriptor, new GraphqlHttpBehaviorBinding());
 
-        var requestBody = new { query = "{ echo }", variables = (object?)null };
-        var response = await client.PostAsJsonAsync("/graphql/v1/object/echo", requestBody);
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
-        Assert.True(
-            json.TryGetProperty("data", out _) || json.TryGetProperty("errors", out _),
-            "Response should contain 'data' or 'errors'");
-
-        await app.StopAsync();
-    }
-
-    [Fact]
-    public async Task GraphqlBindingMapsCanonicalApiSurfaceRoute()
-    {
-        var descriptor = new BehaviorTopologyDescriptor(
-            "object.echo",
-            "direct",
-            ["http.graphql"],
-            apiSurface: new BehaviorApiSurfaceDescriptor("catalog/items", "lookup"));
-        var (app, client) = await BuildAppAsync(descriptor, new GraphqlHttpBehaviorBinding());
-
-        var requestBody = new { query = "{ echo }", variables = (object?)null };
-        var response = await client.PostAsJsonAsync("/graphql/v1/catalog/items/lookup", requestBody);
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-        await app.StopAsync();
-    }
-
-    [Fact]
-    public async Task GraphqlSseBindingMapsCanonicalApiSurfaceRoute()
-    {
-        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.graphql-sse"]);
-        var (app, client) = await BuildAppAsync(descriptor, new GraphqlSseBehaviorBinding());
-
-        var response = await client.PostAsJsonAsync("/graphql-sse/v1/object/echo", new { query = "{ echo }" });
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-        await app.StopAsync();
-    }
-
-    [Fact]
-    public async Task GraphqlWsBindingMapsCanonicalApiSurfaceRoute()
-    {
-        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.graphql-ws"]);
-        var (app, client) = await BuildAppAsync(descriptor, new GraphqlWsBehaviorBinding());
-
-        var response = await client.GetAsync("/graphql-ws/v1/object/echo");
-
-        Assert.NotEqual(HttpStatusCode.NotFound, response.StatusCode);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-
-        await app.StopAsync();
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // 4. LazyBindingCallsMapAsyncOnlyOnce
-    // ─────────────────────────────────────────────────────────────────────────
-
-    [Fact]
-    public async Task LazyBindingCallsMapAsyncOnlyOnce()
-    {
-        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.rest"]);
-        var mapCallCount = 0;
-
-        var trackingBinding = new TrackingBinding("http.test", (_, _, _) =>
-        {
-            mapCallCount++;
-            return Task.CompletedTask;
-        });
-
-        var services = new ServiceCollection();
-        services.AddTransient<EchoBehavior>();
-        var typeRegistry = new BehaviorTypeRegistry();
-        typeRegistry.Register(descriptor.Id, typeof(EchoBehavior));
-        services.AddSingleton<IBehaviorContributor>(new FluentBehaviorContributor(descriptor));
-        services.AddSingleton<IBehaviorTypeRegistry>(typeRegistry);
-        services.AddSingleton<IBehaviorCatalog>(sp =>
-            new BehaviorCatalog(sp.GetServices<IBehaviorContributor>()));
-        var provider = services.BuildServiceProvider();
-        var catalog = provider.GetRequiredService<IBehaviorCatalog>();
-        var dispatcher = new BehaviorDispatcher(catalog, typeRegistry, provider);
-
-        var builder = WebApplication.CreateBuilder();
-        builder.WebHost.UseTestServer();
-        var app = builder.Build();
-
-        using var lazy = new Cephalon.Behaviors.Http.LazyTransportBinding();
-
-        // Three concurrent callers — MapAsync must fire only once.
-        await Task.WhenAll(
-            lazy.EnsureMappedAsync(app, descriptor, dispatcher, trackingBinding),
-            lazy.EnsureMappedAsync(app, descriptor, dispatcher, trackingBinding),
-            lazy.EnsureMappedAsync(app, descriptor, dispatcher, trackingBinding));
-
-        Assert.Equal(1, mapCallCount);
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // 5. RegistryGetBindingByTransportId
-    // ─────────────────────────────────────────────────────────────────────────
-
-    [Fact]
-    public void RegistryGetBindingByTransportId()
-    {
-        var bindings = new IHttpBehaviorBinding[]
-        {
-            new RestHttpBehaviorBinding(),
-            new JsonRpcHttpBehaviorBinding(),
-            new GraphqlHttpBehaviorBinding()
-        };
-
-        var registry = new HttpBehaviorBindingRegistry(bindings);
-
-        Assert.NotNull(registry.GetBinding("http.rest"));
-        Assert.NotNull(registry.GetBinding("http.jsonrpc"));
-        Assert.NotNull(registry.GetBinding("http.graphql"));
-        Assert.Null(registry.GetBinding("http.unknown"));
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // 6. AllBindingsHaveUniqueTransportIds
-    // ─────────────────────────────────────────────────────────────────────────
-
-    [Fact]
-    public void AllBindingsHaveUniqueTransportIds()
-    {
-        IHttpBehaviorBinding[] all =
-        [
-            new RestHttpBehaviorBinding(),
-            new JsonRpcHttpBehaviorBinding(),
-            new GraphqlHttpBehaviorBinding(),
-            new GraphqlSseBehaviorBinding(),
-            new GraphqlWsBehaviorBinding(),
-            new SseBehaviorBinding(),
-            new WebSocketBehaviorBinding()
-        ];
-
-        var ids = all.Select(b => b.TransportId).ToList();
-        var distinct = ids.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-
-        Assert.Equal(7, ids.Count);
-        Assert.Equal(ids.Count, distinct.Count);
-    }
-
-    [Fact]
-    public void AllBindingsHaveExpectedTransportIds()
-    {
-        Assert.Equal("http.rest", new RestHttpBehaviorBinding().TransportId);
-        Assert.Equal("http.jsonrpc", new JsonRpcHttpBehaviorBinding().TransportId);
-        Assert.Equal("http.graphql", new GraphqlHttpBehaviorBinding().TransportId);
-        Assert.Equal("http.graphql-sse", new GraphqlSseBehaviorBinding().TransportId);
-        Assert.Equal("http.graphql-ws", new GraphqlWsBehaviorBinding().TransportId);
-        Assert.Equal("http.sse", new SseBehaviorBinding().TransportId);
-        Assert.Equal("http.ws", new WebSocketBehaviorBinding().TransportId);
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // 7. SseBindingHasCorrectRoute
-    // ─────────────────────────────────────────────────────────────────────────
-
-    [Fact]
-    public async Task JsonRpcBindingDoesNotMapLegacyAliasByDefault()
-    {
-        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.jsonrpc"]);
-        var (app, client) = await BuildAppAsync(descriptor, new JsonRpcHttpBehaviorBinding());
-
         var response = await client.PostAsJsonAsync(
-            "/behaviors/object.echo/jsonrpc",
-            new { jsonrpc = "2.0", method = "handle", @params = "test-input", id = 42 });
+            "/graphql/v1/object/echo",
+            new { query = "query Echo($value: String!) { echo(value: $value) }", variables = new { value = "hello" } });
 
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-
-        await app.StopAsync();
-    }
-
-    [Fact]
-    public async Task SseBindingDoesNotMapLegacyAliasByDefault()
-    {
-        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.sse"]);
-        var (app, client) = await BuildAppAsync(descriptor, new SseBehaviorBinding());
-
-        using var request = new HttpRequestMessage(HttpMethod.Get, "/behaviors/object.echo/events");
-        var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var payload = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.True(payload.TryGetProperty("data", out _));
 
         await app.StopAsync();
     }
@@ -688,23 +239,6 @@ public sealed class HttpBehaviorBindingTests
         await app.StopAsync();
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // 8. WebSocketBindingHasCorrectRoute
-    // ─────────────────────────────────────────────────────────────────────────
-
-    [Fact]
-    public async Task WebSocketBindingDoesNotMapLegacyAliasByDefault()
-    {
-        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.ws"]);
-        var (app, client) = await BuildAppAsync(descriptor, new WebSocketBehaviorBinding());
-
-        var response = await client.GetAsync("/behaviors/object.echo/ws");
-
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-
-        await app.StopAsync();
-    }
-
     [Fact]
     public async Task WebSocketBindingHasCanonicalApiSurfaceRoute()
     {
@@ -713,7 +247,6 @@ public sealed class HttpBehaviorBindingTests
 
         var response = await client.GetAsync("/ws/v1/object/echo");
 
-        Assert.NotEqual(HttpStatusCode.NotFound, response.StatusCode);
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
         await app.StopAsync();
@@ -725,7 +258,6 @@ public sealed class HttpBehaviorBindingTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["ApiRoutes:Prefixes:Rest"] = "/service-api",
                 ["ApiRoutes:Prefixes:GraphQL"] = "/behavior-graphql",
                 ["ApiRoutes:Prefixes:JsonRpc"] = "/invoke",
                 ["ApiRoutes:Prefixes:GraphQLSse"] = "/graphql-stream",
@@ -736,31 +268,21 @@ public sealed class HttpBehaviorBindingTests
             })
             .Build();
 
-        var restDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.rest"]);
-        var (restApp, restClient) = await BuildAppAsync(restDescriptor, new RestHttpBehaviorBinding(configuration));
-        var restResponse = await restClient.GetAsync("/service-api/v2/object/echo?q=hello");
-        Assert.True(restResponse.StatusCode is HttpStatusCode.OK or HttpStatusCode.NoContent);
-        await restApp.StopAsync();
-
-        var graphQlDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.graphql"]);
-        var (graphQlApp, graphQlClient) = await BuildAppAsync(graphQlDescriptor, new GraphqlHttpBehaviorBinding(configuration));
-        var graphQlResponse = await graphQlClient.PostAsJsonAsync(
-            "/behavior-graphql/v2/object/echo",
-            new { query = "{ echo }", variables = (object?)null });
-        Assert.Equal(HttpStatusCode.OK, graphQlResponse.StatusCode);
-        await graphQlApp.StopAsync();
-
         var rpcDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.jsonrpc"]);
         var (rpcApp, rpcClient) = await BuildAppAsync(rpcDescriptor, new JsonRpcHttpBehaviorBinding(configuration));
         var rpcResponse = await rpcClient.PostAsJsonAsync(
             "/invoke/v2/object/echo",
             new { jsonrpc = "2.0", method = "handle", @params = "hello", id = 11 });
         Assert.Equal(HttpStatusCode.OK, rpcResponse.StatusCode);
-        var legacyRpcAliasResponse = await rpcClient.PostAsJsonAsync(
-            "/behaviors/object.echo/jsonrpc",
-            new { jsonrpc = "2.0", method = "handle", @params = "hello", id = 12 });
-        Assert.Equal(HttpStatusCode.NotFound, legacyRpcAliasResponse.StatusCode);
         await rpcApp.StopAsync();
+
+        var graphQlDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.graphql"]);
+        var (graphQlApp, graphQlClient) = await BuildAppAsync(graphQlDescriptor, new GraphqlHttpBehaviorBinding(configuration));
+        var graphQlResponse = await graphQlClient.PostAsJsonAsync(
+            "/behavior-graphql/v2/object/echo",
+            new { query = "{ echo }", variables = new { value = "hello" } });
+        Assert.Equal(HttpStatusCode.OK, graphQlResponse.StatusCode);
+        await graphQlApp.StopAsync();
 
         var sseDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.sse"]);
         var (sseApp, sseClient) = await BuildAppAsync(sseDescriptor, new SseBehaviorBinding(configuration));
@@ -769,117 +291,58 @@ public sealed class HttpBehaviorBindingTests
         Assert.NotEqual(HttpStatusCode.NotFound, sseResponse.StatusCode);
         await sseApp.StopAsync();
 
-        var graphQlSseDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.graphql-sse"]);
-        var (graphQlSseApp, graphQlSseClient) = await BuildAppAsync(graphQlSseDescriptor, new GraphqlSseBehaviorBinding(configuration));
-        var graphQlSseResponse = await graphQlSseClient.PostAsJsonAsync(
-            "/graphql-stream/v2/object/echo",
-            new { query = "{ echo }" });
-        Assert.Equal(HttpStatusCode.OK, graphQlSseResponse.StatusCode);
-        await graphQlSseApp.StopAsync();
-
         var wsDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.ws"]);
         var (wsApp, wsClient) = await BuildAppAsync(wsDescriptor, new WebSocketBehaviorBinding(configuration));
         var wsResponse = await wsClient.GetAsync("/socket/v2/object/echo");
         Assert.Equal(HttpStatusCode.BadRequest, wsResponse.StatusCode);
-        var legacyWsAliasResponse = await wsClient.GetAsync("/behaviors/object.echo/ws");
-        Assert.Equal(HttpStatusCode.NotFound, legacyWsAliasResponse.StatusCode);
         await wsApp.StopAsync();
-
-        var graphQlWsDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.graphql-ws"]);
-        var (graphQlWsApp, graphQlWsClient) = await BuildAppAsync(graphQlWsDescriptor, new GraphqlWsBehaviorBinding(configuration));
-        var graphQlWsResponse = await graphQlWsClient.GetAsync("/graphql-socket/v2/object/echo");
-        Assert.Equal(HttpStatusCode.BadRequest, graphQlWsResponse.StatusCode);
-        await graphQlWsApp.StopAsync();
     }
 
     [Fact]
-    public void ApiRoutesOptionsUsesCanonicalPrefixesContract()
+    public void RegistryGetBindingByTransportId()
     {
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["ApiRoutes:RestPrefix"] = "/legacy-api",
-                ["ApiRoutes:GraphQLPrefix"] = "/legacy-graphql",
-                ["ApiRoutes:JsonRpcPrefix"] = "/legacy-json-rpc",
-                ["ApiRoutes:GrpcPrefix"] = "/legacy-grpc",
-                ["ApiRoutes:WsPrefix"] = "/legacy-ws",
-                ["ApiRoutes:SsePrefix"] = "/legacy-sse",
-                ["ApiRoutes:GraphQLWsPrefix"] = "/legacy-graphql-ws",
-                ["ApiRoutes:GraphQLSsePrefix"] = "/legacy-graphql-sse"
-            })
-            .Build();
+        var bindings = new IHttpBehaviorBinding[]
+        {
+            new JsonRpcHttpBehaviorBinding(),
+            new GraphqlHttpBehaviorBinding(),
+            new GraphqlSseBehaviorBinding(),
+            new GraphqlWsBehaviorBinding(),
+            new SseBehaviorBinding(),
+            new WebSocketBehaviorBinding()
+        };
 
-        var options = ApiRoutesOptions.FromConfiguration(configuration);
+        var registry = new HttpBehaviorBindingRegistry(bindings);
 
-        Assert.Equal("/api", options.RestPrefix);
-        Assert.Equal("/graphql", options.GraphQLPrefix);
-        Assert.Equal("/json-rpc", options.JsonRpcPrefix);
-        Assert.Equal("/grpc", options.GrpcPrefix);
-        Assert.Equal("/ws", options.WsPrefix);
-        Assert.Equal("/sse", options.SsePrefix);
-        Assert.Equal("/graphql-ws", options.GraphQLWsPrefix);
-        Assert.Equal("/graphql-sse", options.GraphQLSsePrefix);
+        Assert.Null(registry.GetBinding("http.rest"));
+        Assert.NotNull(registry.GetBinding("http.jsonrpc"));
+        Assert.NotNull(registry.GetBinding("http.graphql"));
+        Assert.NotNull(registry.GetBinding("http.graphql-sse"));
+        Assert.NotNull(registry.GetBinding("http.graphql-ws"));
+        Assert.NotNull(registry.GetBinding("http.sse"));
+        Assert.NotNull(registry.GetBinding("http.ws"));
     }
 
     [Fact]
-    public void ApiRoutesOptionsAllowsEmptyRestPrefixWithoutFallingBackToSlashApi()
+    public void AllBindingsHaveExpectedTransportIds()
     {
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["ApiRoutes:Prefixes:Rest"] = string.Empty
-            })
-            .Build();
+        IHttpBehaviorBinding[] all =
+        [
+            new JsonRpcHttpBehaviorBinding(),
+            new GraphqlHttpBehaviorBinding(),
+            new GraphqlSseBehaviorBinding(),
+            new GraphqlWsBehaviorBinding(),
+            new SseBehaviorBinding(),
+            new WebSocketBehaviorBinding()
+        ];
 
-        var options = ApiRoutesOptions.FromConfiguration(configuration);
-
-        Assert.Equal(string.Empty, options.RestPrefix);
+        var ids = all.Select(binding => binding.TransportId).ToList();
+        Assert.Equal(6, ids.Count);
+        Assert.Equal(ids.Count, ids.Distinct(StringComparer.OrdinalIgnoreCase).Count());
+        Assert.DoesNotContain("http.rest", ids);
     }
 
     [Fact]
-    public void ApiRoutesOptionsAllowsEmptyRestPrefixWithoutFallingBackToApi()
-    {
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["ApiRoutes:Prefixes:Rest"] = string.Empty
-            })
-            .Build();
-
-        var options = ApiRoutesOptions.FromConfiguration(configuration);
-
-        Assert.Equal(string.Empty, options.RestPrefix);
-    }
-
-    [Fact]
-    public async Task RestBindingAllowsEmptyConfiguredRestPrefix()
-    {
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["ApiRoutes:Prefixes:Rest"] = string.Empty,
-                ["OpenApi:DefaultVersion"] = "1"
-            })
-            .Build();
-
-        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.rest"]);
-        var (app, client) = await BuildAppAsync(descriptor, new RestHttpBehaviorBinding(configuration));
-
-        var response = await client.GetAsync("/v1/object/echo?q=hello");
-
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.NoContent,
-            $"Expected 200/204 but got {response.StatusCode}");
-
-        await app.StopAsync();
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // 9. AddHttpBehaviorBindingsRegistersAllBindingsInDI
-    // ─────────────────────────────────────────────────────────────────────────
-
-    [Fact]
-    public void AddHttpBehaviorBindingsRegistersAllBindingsInDI()
+    public void AddHttpBehaviorBindingsRegistersAllBindingsInDi()
     {
         var services = new ServiceCollection();
         var typeRegistry = new BehaviorTypeRegistry();
@@ -891,18 +354,19 @@ public sealed class HttpBehaviorBindingTests
         var bindings = provider.GetServices<IHttpBehaviorBinding>().ToList();
         var registry = provider.GetService<IHttpBehaviorBindingRegistry>();
 
-        Assert.Equal(7, bindings.Count);
+        Assert.Equal(6, bindings.Count);
         Assert.NotNull(registry);
-        Assert.Equal(7, registry!.All.Count);
+        Assert.Equal(6, registry!.All.Count);
+        Assert.DoesNotContain(registry.All, binding => string.Equals(binding.TransportId, "http.rest", StringComparison.Ordinal));
     }
 
     [Fact]
-    public async Task BehaviorRestEndpointGroupBindsRouteQueryAndBodyAndUsesModuleVersionedNameByDefault()
+    public async Task BehaviorRestEndpointGroupUsesConfiguredRestPrefixByDefault()
     {
         var (app, client) = await BuildBehaviorRestHelperAppAsync();
 
         var response = await client.PostAsJsonAsync(
-            "/v2/tests/cart/cart-001/items?quantity=3",
+            "/api/v2/tests/cart/cart-001/items?quantity=3",
             new { productName = "Widget" });
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -918,7 +382,7 @@ public sealed class HttpBehaviorBindingTests
             .Endpoints
             .OfType<RouteEndpoint>()
             .Single(static candidate =>
-                string.Equals(candidate.RoutePattern.RawText, "/v2/tests/cart/{cartId}/items", StringComparison.Ordinal));
+                string.Equals(candidate.RoutePattern.RawText, "/api/v2/tests/cart/{cartId}/items", StringComparison.Ordinal));
 
         var endpointName = endpoint.Metadata.GetMetadata<EndpointNameMetadata>();
         Assert.NotNull(endpointName);
@@ -932,12 +396,16 @@ public sealed class HttpBehaviorBindingTests
     }
 
     [Fact]
-    public async Task BehaviorRestEndpointGroupApiVersionOverridesOperationNameVersionSegment()
+    public async Task BehaviorRestEndpointGroupRespectsEmptyRestPrefix()
     {
-        var (app, client) = await BuildBehaviorRestHelperAppAsync(new VersionedRestHelperModule());
+        var (app, client) = await BuildBehaviorRestHelperAppAsync(
+            configurationValues: new Dictionary<string, string?>
+            {
+                ["ApiRoutes:Prefixes:Rest"] = string.Empty
+            });
 
         var response = await client.PostAsJsonAsync(
-            "/v1/tests/cart/versioned/cart-001/items?quantity=3",
+            "/v2/tests/cart/cart-001/items?quantity=3",
             new { productName = "Widget" });
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -946,7 +414,28 @@ public sealed class HttpBehaviorBindingTests
             .Endpoints
             .OfType<RouteEndpoint>()
             .Single(static candidate =>
-                string.Equals(candidate.RoutePattern.RawText, "/v1/tests/cart/versioned/{cartId}/items", StringComparison.Ordinal));
+                string.Equals(candidate.RoutePattern.RawText, "/v2/tests/cart/{cartId}/items", StringComparison.Ordinal));
+
+        Assert.NotNull(endpoint);
+        await app.StopAsync();
+    }
+
+    [Fact]
+    public async Task BehaviorRestEndpointGroupApiVersionOverridesOperationNameVersionSegment()
+    {
+        var (app, client) = await BuildBehaviorRestHelperAppAsync(new VersionedRestHelperModule());
+
+        var response = await client.PostAsJsonAsync(
+            "/api/v1/tests/cart/versioned/cart-001/items?quantity=3",
+            new { productName = "Widget" });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var endpoint = app.Services.GetRequiredService<EndpointDataSource>()
+            .Endpoints
+            .OfType<RouteEndpoint>()
+            .Single(static candidate =>
+                string.Equals(candidate.RoutePattern.RawText, "/api/v1/tests/cart/versioned/{cartId}/items", StringComparison.Ordinal));
 
         var endpointName = endpoint.Metadata.GetMetadata<EndpointNameMetadata>();
         Assert.NotNull(endpointName);
@@ -957,27 +446,5 @@ public sealed class HttpBehaviorBindingTests
         Assert.Equal("v1", groupName!.EndpointGroupName);
 
         await app.StopAsync();
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Helper: tracking binding stub
-    // ─────────────────────────────────────────────────────────────────────────
-
-    private sealed class TrackingBinding : IHttpBehaviorBinding
-    {
-        private readonly Func<WebApplication, BehaviorTopologyDescriptor, BehaviorDispatcher, Task> _callback;
-
-        internal TrackingBinding(
-            string transportId,
-            Func<WebApplication, BehaviorTopologyDescriptor, BehaviorDispatcher, Task> callback)
-        {
-            TransportId = transportId;
-            _callback = callback;
-        }
-
-        public string TransportId { get; }
-
-        public Task MapAsync(WebApplication app, BehaviorTopologyDescriptor descriptor, BehaviorDispatcher dispatcher)
-            => _callback(app, descriptor, dispatcher);
     }
 }

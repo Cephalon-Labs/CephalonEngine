@@ -17,6 +17,13 @@ public sealed class OpenApiEndpointOptions
     public const string SectionName = "OpenApi";
 
     /// <summary>
+    /// Initializes a new <see cref="OpenApiEndpointOptions" /> with the canonical Cephalon OpenAPI and Scalar routes.
+    /// </summary>
+    public OpenApiEndpointOptions()
+    {
+    }
+
+    /// <summary>
     /// Gets or sets the route pattern used by <c>MapOpenApi(...)</c>.
     /// </summary>
     /// <remarks>

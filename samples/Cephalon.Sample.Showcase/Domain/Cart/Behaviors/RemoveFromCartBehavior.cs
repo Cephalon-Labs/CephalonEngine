@@ -10,7 +10,7 @@ namespace Cephalon.Sample.Showcase.Domain.Cart.Behaviors;
 /// </summary>
 [AppBehavior("cart.remove-item")]
 [BehaviorAllowedPatterns("cqrs")]
-[BehaviorAllowedTransports("http.rest", "http.ws", "http.graphql", "http.sse")]
+[BehaviorAllowedTransports("http.ws", "http.graphql", "http.sse")]
 public sealed class RemoveFromCartBehavior : IAppBehavior<RemoveFromCartInput, RemoveFromCartOutput>
 {
     /// <inheritdoc />
@@ -40,18 +40,5 @@ public sealed class RemoveFromCartBehavior : IAppBehavior<RemoveFromCartInput, R
         var cart = await ShowcaseEventSourcingHelper.RebuildCartAsync(eventStore, streamId, input.CartId, ct);
 
         return new RemoveFromCartOutput(input.CartId, cart.Items.Count, cart.TotalInCents);
-    }
-
-    /// <summary>
-    /// Declares the CQRS pattern with event sourcing enabled.
-    /// </summary>
-    public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
-    {
-        builder.AsCqrs()
-            .ViaHttpRest()
-            .ViaWebSocket()
-            .ViaHttpGraphQl()
-            .ViaHttpSse()
-            .WithOptions(opts => opts.EventSourcingEnabled = true);
     }
 }

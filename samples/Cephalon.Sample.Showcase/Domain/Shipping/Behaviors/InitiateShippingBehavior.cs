@@ -6,12 +6,11 @@ namespace Cephalon.Sample.Showcase.Domain.Shipping.Behaviors;
 
 /// <summary>
 /// Initiates a new shipment using the process-manager pattern.
-/// The process manager runtime creates a checkpoint tracking the shipment through its
-/// lifecycle steps: initiated -> label created -> in transit -> delivered.
+/// The process manager runtime creates a checkpoint tracking the shipment lifecycle.
 /// </summary>
 [AppBehavior("shipping.initiate")]
 [BehaviorAllowedPatterns("process-manager")]
-[BehaviorAllowedTransports("kafka", "rabbitmq", "in-memory", "http.rest", "grpc")]
+[BehaviorAllowedTransports("kafka", "rabbitmq", "in-memory", "grpc")]
 public sealed class InitiateShippingBehavior : IAppBehavior<InitiateShippingInput, InitiateShippingOutput>
 {
     /// <inheritdoc />
@@ -38,11 +37,13 @@ public sealed class InitiateShippingBehavior : IAppBehavior<InitiateShippingInpu
         ShowcaseDataStore.Shipments[shipmentId] = shipment;
 
         return Task.FromResult(new InitiateShippingOutput(
-            shipmentId, shipment.Status.ToString(), estimatedDelivery));
+            shipmentId,
+            shipment.Status.ToString(),
+            estimatedDelivery));
     }
 
     /// <summary>
-    /// Declares the process-manager pattern with multi-transport exposure.
+    /// Declares the process-manager pattern with messaging and gRPC transports.
     /// </summary>
     public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
     {
@@ -50,7 +51,6 @@ public sealed class InitiateShippingBehavior : IAppBehavior<InitiateShippingInpu
             .ViaKafka()
             .ViaRabbitMq()
             .ViaInMemory()
-            .ViaHttpRest()
             .ViaGrpc();
     }
 }

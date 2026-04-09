@@ -16,8 +16,6 @@ public interface IBehaviorTopologyBuilder
     IBehaviorTopologyBuilder AsDirect();
 
     // Transport — Via* prefix is additive (multiple calls union the transport set)
-    /// <summary>Adds the HTTP REST transport (GET/POST routing).</summary>
-    IBehaviorTopologyBuilder ViaHttpRest();
     /// <summary>Adds the JSON-RPC 2.0 over HTTP transport.</summary>
     IBehaviorTopologyBuilder ViaHttpJsonRpc();
     /// <summary>Adds the GraphQL over HTTP transport (queries and mutations).</summary>
@@ -42,9 +40,10 @@ public interface IBehaviorTopologyBuilder
     /// Overrides the logical API surface projected by route-shaped transport adapters.
     /// </summary>
     /// <remarks>
-    /// This primarily affects the shared HTTP behavior route contract used by generic REST,
-    /// JSON-RPC, Server-Sent Events, and WebSocket bindings. GraphQL remains schema-owned and
-    /// therefore stays outside this route-shaped API-surface contract.
+    /// This primarily affects the shared generic behavior HTTP transport surface used by JSON-RPC,
+    /// GraphQL, GraphQL-SSE, GraphQL-WS, Server-Sent Events, and WebSocket bindings. Public REST
+    /// endpoints are module-owned and should be mapped through <c>MapEndpoints(...)</c> plus
+    /// <c>MapBehaviorRestGroup(...)</c> instead of behavior topology.
     /// </remarks>
     IBehaviorTopologyBuilder WithApiSurface(string groupPath, string operationPath);
 

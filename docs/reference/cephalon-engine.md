@@ -6774,7 +6774,7 @@ Gets all built-in transport descriptors.
 TransportDescriptor BehaviorHttp { get; }
 ```
 
-Gets the built-in behavior HTTP transport descriptor that bridges behavior topology bindings (REST, SSE, WS, GraphQL, JSON-RPC) to ASP.NET Core endpoints under `/behaviors`.
+Gets the built-in behavior HTTP transport descriptor that bridges behavior topology bindings to ASP.NET Core endpoints, including canonical versioned routes for route-shaped transports without the older `/behaviors/{id}` compatibility aliases.
 
 <a id="member-p-cephalon-engine-transports-builtintransports-graphql"></a>
 

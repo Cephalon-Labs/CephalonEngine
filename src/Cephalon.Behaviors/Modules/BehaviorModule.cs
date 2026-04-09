@@ -86,7 +86,6 @@ internal sealed class BehaviorModule(
 
         // Compatibility rules
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorCompatibilityRule, Abt001SagaStepStatefulTransportRule>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorCompatibilityRule, Abt002EventDrivenWithHttpRestRule>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorCompatibilityRule, Abt003ProcessManagerRequiresInboxRule>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorCompatibilityRule, Abt004CqrsMultipleTransportsRule>());
 

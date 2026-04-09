@@ -43,8 +43,8 @@ namespace Cephalon.Sample.Showcase;
 /// <list type="bullet">
 ///   <item><description><b>Catalog</b> - Direct pattern via REST, GraphQL, gRPC, JSON-RPC</description></item>
 ///   <item><description><b>Cart</b> - CQRS pattern (event-sourced) via REST, WebSocket, GraphQL, SSE</description></item>
-///   <item><description><b>Orders</b> - Event-driven pattern via RabbitMQ, Kafka, GraphQL-WS, SSE, GraphQL-SSE</description></item>
-///   <item><description><b>Inventory</b> - Saga-step pattern via RabbitMQ, in-memory</description></item>
+///   <item><description><b>Orders</b> - Event-driven pattern via REST, RabbitMQ, Kafka, GraphQL-WS, SSE, GraphQL-SSE</description></item>
+///   <item><description><b>Inventory</b> - Saga-step pattern via REST, RabbitMQ, in-memory</description></item>
 ///   <item><description><b>Shipping</b> - Process-manager pattern via Kafka, RabbitMQ, in-memory, REST, gRPC</description></item>
 /// </list>
 /// <para>
@@ -150,15 +150,15 @@ public static class ShowcaseSampleApp
             });
             engine.AddAudit();
 
-            // --- Behaviors: all five patterns + all transports ---
+            // --- Behaviors: all five patterns + generic non-REST transports ---
             // Behaviors are auto-registered from loaded assemblies (AutoRegister = true by default).
-            // Each behavior's topology is declared via its static ConfigureTopology() method.
+            // Public REST stays module-owned; behavior topology covers non-REST transports.
             engine.AddBehaviors(behaviors =>
             {
                 // Register pattern execution strategies
                 behaviors.AddBehaviorPatterns();
 
-                // Register HTTP transport bindings (REST, GraphQL, gRPC, JSON-RPC, SSE, WS)
+                // Register generic HTTP behavior bindings (JSON-RPC, GraphQL, GraphQL-SSE/WS, SSE, WS)
                 behaviors.AddHttpBehaviorBindings();
 
                 // Register messaging transport bindings — auto-bind from Engine:Messaging config
@@ -306,7 +306,7 @@ internal static class ShowcaseSummary
 
     private static readonly string[] CatalogTransports = ["http.rest", "http.graphql", "grpc", "http.jsonrpc"];
     private static readonly string[] CartTransports = ["http.rest", "http.ws", "http.graphql", "http.sse"];
-    private static readonly string[] OrdersTransports = ["rabbitmq", "kafka", "http.graphql-ws", "http.sse", "http.graphql-sse"];
-    private static readonly string[] InventoryTransports = ["rabbitmq", "in-memory"];
+    private static readonly string[] OrdersTransports = ["http.rest", "rabbitmq", "kafka", "http.graphql-ws", "http.sse", "http.graphql-sse"];
+    private static readonly string[] InventoryTransports = ["http.rest", "rabbitmq", "in-memory"];
     private static readonly string[] ShippingTransports = ["kafka", "rabbitmq", "in-memory", "http.rest", "grpc"];
 }

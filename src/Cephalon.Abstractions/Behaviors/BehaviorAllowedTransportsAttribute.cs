@@ -7,7 +7,7 @@ namespace Cephalon.Abstractions.Behaviors;
 /// <remarks>
 /// Declared transports remain a transport allowlist for config and topology validation. When a
 /// behavior has no explicit topology, the declared transports become the runtime transport baseline.
-/// For <c>http.rest</c>, do not also declare the same transport through <c>ConfigureTopology(...)</c>.
+/// Public REST is module-owned and must not be declared through behavior transport allowlists.
 /// For author-facing allowlists, <c>http.grpc</c> is accepted and normalized to canonical
 /// <c>grpc</c>.
 /// </remarks>

@@ -1,6 +1,5 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Behaviors.Builders;
-using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Compatibility;
 using Cephalon.Behaviors.Configuration;
 using Cephalon.Behaviors.Services;
@@ -46,17 +45,9 @@ public sealed class BehaviorBaselineTests
             => Task.FromResult(input);
     }
 
-    [AppBehavior("orders.annotation-rest")]
-    [BehaviorAllowedTransports("http.rest")]
-    private sealed class AnnotationDrivenRestBehavior : IAppBehavior<string, string>
-    {
-        public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
-            => Task.FromResult(input);
-    }
-
     [AppBehavior("orders.attribute-only-cqrs")]
     [BehaviorAllowedPatterns("cqrs")]
-    [BehaviorAllowedTransports("http.rest", "http.grpc")]
+    [BehaviorAllowedTransports("http.jsonrpc", "http.grpc")]
     private sealed class AttributeOnlyCqrsBehavior : IAppBehavior<string, string>
     {
         public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
@@ -73,16 +64,23 @@ public sealed class BehaviorBaselineTests
 
     [AppBehavior("orders.attribute-only-ambiguous")]
     [BehaviorAllowedPatterns("cqrs", "event-driven")]
-    [BehaviorAllowedTransports("http.rest")]
+    [BehaviorAllowedTransports("http.jsonrpc")]
     private sealed class AttributeOnlyAmbiguousPatternBehavior : IAppBehavior<string, string>
     {
         public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
             => Task.FromResult(input);
     }
 
-    [AppBehavior("orders.duplicate-rest")]
+    [AppBehavior("orders.rest-annotation")]
     [BehaviorAllowedTransports("http.rest")]
-    private sealed class DuplicateRestDeclarationBehavior : IAppBehavior<string, string>
+    private sealed class RestAnnotationBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
+            => Task.FromResult(input);
+    }
+
+    [AppBehavior("orders.rest-topology")]
+    private sealed class RestTopologyBehavior : IAppBehavior<string, string>
     {
         public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
             => Task.FromResult(input);
@@ -102,10 +100,10 @@ public sealed class BehaviorBaselineTests
     public void ViaTransportMethodsProduceCorrectIds()
     {
         var b = new BehaviorTopologyBuilder();
-        b.ViaHttpRest().ViaRabbitMq().ViaKafka().ViaInMemory().ViaGrpc();
+        b.ViaHttpJsonRpc().ViaRabbitMq().ViaKafka().ViaInMemory().ViaGrpc();
         var desc = b.Build("test");
 
-        Assert.Contains("http.rest", desc.TransportIds);
+        Assert.Contains("http.jsonrpc", desc.TransportIds);
         Assert.Contains("rabbitmq", desc.TransportIds);
         Assert.Contains("kafka", desc.TransportIds);
         Assert.Contains("in-memory", desc.TransportIds);
@@ -116,8 +114,7 @@ public sealed class BehaviorBaselineTests
     public void BehaviorTopologyBuilderAllTransportIdsAreCorrect()
     {
         var b = new BehaviorTopologyBuilder();
-        b.ViaHttpRest()
-         .ViaHttpJsonRpc()
+        b.ViaHttpJsonRpc()
          .ViaHttpGraphQl()
          .ViaHttpGraphQlSse()
          .ViaHttpGraphQlWs()
@@ -130,7 +127,6 @@ public sealed class BehaviorBaselineTests
 
         var desc = b.Build("all-transports");
 
-        Assert.Contains("http.rest", desc.TransportIds);
         Assert.Contains("http.jsonrpc", desc.TransportIds);
         Assert.Contains("http.graphql", desc.TransportIds);
         Assert.Contains("http.graphql-sse", desc.TransportIds);
@@ -141,7 +137,7 @@ public sealed class BehaviorBaselineTests
         Assert.Contains("kafka", desc.TransportIds);
         Assert.Contains("in-memory", desc.TransportIds);
         Assert.Contains("grpc", desc.TransportIds);
-        Assert.Equal(11, desc.TransportIds.Count);
+        Assert.Equal(10, desc.TransportIds.Count);
     }
 
     [Fact]
@@ -151,89 +147,6 @@ public sealed class BehaviorBaselineTests
         Assert.Equal("direct", desc.Pattern);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // BehaviorTopologyResolver — 4-layer priority
-    // ─────────────────────────────────────────────────────────────────────────
-
-    [Fact]
-    public void BehaviorTopologyResolverInheritsDefaultsWhenBehaviorEntryEmpty()
-    {
-        var options = new BehaviorOptions
-        {
-            BehaviorDefaults = new BehaviorDefaultsOptions
-            {
-                Pattern = "cqrs",
-                Transport = ["http.rest"]
-            },
-            Behaviors = new Dictionary<string, BehaviorEntryOptions>(StringComparer.OrdinalIgnoreCase)
-            {
-                // Entry exists but has no pattern or transport overrides
-                ["my-behavior"] = new BehaviorEntryOptions()
-            }
-        };
-
-        var resolver = new BehaviorTopologyResolver(options, new Dictionary<string, BehaviorTopologyDescriptor>());
-        var desc = resolver.Resolve("my-behavior");
-
-        Assert.Equal("cqrs", desc.Pattern);
-        Assert.Contains("http.rest", desc.TransportIds);
-    }
-
-    [Fact]
-    public void BehaviorTopologyResolverOverridesTransportWhenBehaviorEntrySpecifiesTransport()
-    {
-        var options = new BehaviorOptions
-        {
-            BehaviorDefaults = new BehaviorDefaultsOptions
-            {
-                Transport = ["http.rest"]
-            },
-            Behaviors = new Dictionary<string, BehaviorEntryOptions>(StringComparer.OrdinalIgnoreCase)
-            {
-                ["my-behavior"] = new BehaviorEntryOptions { Transport = ["rabbitmq"] }
-            }
-        };
-
-        var resolver = new BehaviorTopologyResolver(options, new Dictionary<string, BehaviorTopologyDescriptor>());
-        var desc = resolver.Resolve("my-behavior");
-
-        Assert.Contains("rabbitmq", desc.TransportIds);
-        Assert.DoesNotContain("http.rest", desc.TransportIds);
-    }
-
-    [Fact]
-    public void BehaviorTopologyResolverFluentOverrideWinsOverConfig()
-    {
-        var options = new BehaviorOptions
-        {
-            BehaviorDefaults = new BehaviorDefaultsOptions { Pattern = "cqrs" }
-        };
-
-        var fluentDescriptor = new BehaviorTopologyDescriptor("my-behavior", "event-driven", ["rabbitmq"]);
-        var fluentOverrides = new Dictionary<string, BehaviorTopologyDescriptor>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["my-behavior"] = fluentDescriptor
-        };
-
-        var resolver = new BehaviorTopologyResolver(options, fluentOverrides);
-        var desc = resolver.Resolve("my-behavior");
-
-        Assert.Equal("event-driven", desc.Pattern);
-        Assert.Contains("rabbitmq", desc.TransportIds);
-    }
-
-    [Fact]
-    public void BehaviorTopologyResolverUsesCompiledDefaultsWhenNoConfig()
-    {
-        var options = new BehaviorOptions();
-        var resolver = new BehaviorTopologyResolver(options, new Dictionary<string, BehaviorTopologyDescriptor>());
-        var desc = resolver.Resolve("unknown");
-
-        Assert.Equal("direct", desc.Pattern);
-        Assert.Empty(desc.TransportIds);
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
     // BehaviorAllowlistValidator
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -276,7 +189,7 @@ public sealed class BehaviorBaselineTests
     public void CompatibilityMatrixAbt001ErrorSagaStepWithNoStatefulTransport()
     {
         var rule = new Abt001SagaStepStatefulTransportRule();
-        var desc = new BehaviorTopologyDescriptor("s", "saga-step", ["http.rest"]);
+        var desc = new BehaviorTopologyDescriptor("s", "saga-step", ["http.jsonrpc"]);
         var violation = rule.Check(desc);
 
         Assert.NotNull(violation);
@@ -312,38 +225,7 @@ public sealed class BehaviorBaselineTests
     public void CompatibilityMatrixAbt001PassesNonSagaPattern()
     {
         var rule = new Abt001SagaStepStatefulTransportRule();
-        var desc = new BehaviorTopologyDescriptor("s", "cqrs", ["http.rest"]);
-        Assert.Null(rule.Check(desc));
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Compatibility matrix — ABT-002
-    // ─────────────────────────────────────────────────────────────────────────
-
-    [Fact]
-    public void CompatibilityMatrixAbt002WarningEventDrivenWithHttpRest()
-    {
-        var rule = new Abt002EventDrivenWithHttpRestRule();
-        var desc = new BehaviorTopologyDescriptor("e", "event-driven", ["http.rest"]);
-        var v = rule.Check(desc);
-
-        Assert.NotNull(v);
-        Assert.Equal(CompatibilitySeverity.Warning, v!.Severity);
-    }
-
-    [Fact]
-    public void CompatibilityMatrixAbt002NoViolationEventDrivenWithSse()
-    {
-        var rule = new Abt002EventDrivenWithHttpRestRule();
-        var desc = new BehaviorTopologyDescriptor("e", "event-driven", ["http.sse"]);
-        Assert.Null(rule.Check(desc));
-    }
-
-    [Fact]
-    public void CompatibilityMatrixAbt002NoViolationCqrsWithHttpRest()
-    {
-        var rule = new Abt002EventDrivenWithHttpRestRule();
-        var desc = new BehaviorTopologyDescriptor("e", "cqrs", ["http.rest"]);
+        var desc = new BehaviorTopologyDescriptor("s", "cqrs", ["http.jsonrpc"]);
         Assert.Null(rule.Check(desc));
     }
 
@@ -529,7 +411,7 @@ public sealed class BehaviorBaselineTests
         var typeRegistry = new BehaviorTypeRegistry();
         var builder = new BehaviorCollectionBuilder(services, typeRegistry);
 
-        builder.Register<DirectGreetingBehavior>(b => b.ViaHttpRest().ViaInMemory());
+        builder.Register<DirectGreetingBehavior>(b => b.ViaHttpJsonRpc().ViaInMemory());
 
         var provider = services.BuildServiceProvider();
         var contributors = provider.GetServices<IBehaviorContributor>().ToList();
@@ -538,27 +420,21 @@ public sealed class BehaviorBaselineTests
         var catalog = new BehaviorCatalog(contributors);
         var desc = catalog.FindById("greeting.direct");
         Assert.NotNull(desc);
-        Assert.Contains("http.rest", desc!.TransportIds);
+        Assert.Contains("http.jsonrpc", desc!.TransportIds);
         Assert.Contains("in-memory", desc.TransportIds);
     }
 
     [Fact]
-    public void BehaviorCollectionBuilderRegisterAutoActivatesRestWhenAnnotationDeclaresHttpRest()
+    public void BehaviorCollectionBuilderRegisterThrowsWhenRestIsDeclaredByAttribute()
     {
         var services = new ServiceCollection();
         var typeRegistry = new BehaviorTypeRegistry();
         var builder = new BehaviorCollectionBuilder(services, typeRegistry);
 
-        builder.Register<AnnotationDrivenRestBehavior>();
+        var exception = Assert.Throws<BehaviorSecurityException>(() =>
+            builder.Register<RestAnnotationBehavior>());
 
-        var provider = services.BuildServiceProvider();
-        var contributors = provider.GetServices<IBehaviorContributor>().ToList();
-        var catalog = new BehaviorCatalog(contributors);
-        var descriptor = catalog.FindById("orders.annotation-rest");
-
-        Assert.NotNull(descriptor);
-        Assert.Equal("direct", descriptor!.Pattern);
-        Assert.Contains("http.rest", descriptor!.TransportIds);
+        Assert.Contains("module-owned only", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -578,7 +454,7 @@ public sealed class BehaviorBaselineTests
         Assert.NotNull(descriptor);
         Assert.Equal("cqrs", descriptor!.Pattern);
         Assert.Contains("grpc", descriptor.TransportIds);
-        Assert.Contains("http.rest", descriptor.TransportIds);
+        Assert.Contains("http.jsonrpc", descriptor.TransportIds);
     }
 
     [Fact]
@@ -596,14 +472,17 @@ public sealed class BehaviorBaselineTests
     }
 
     [Fact]
-    public void BehaviorCollectionBuilderRegisterThrowsWhenRestIsDeclaredByAttributeAndFluentTopology()
+    public void BehaviorCollectionBuilderRegisterThrowsWhenRestIsDeclaredByTopology()
     {
         var services = new ServiceCollection();
         var typeRegistry = new BehaviorTypeRegistry();
         var builder = new BehaviorCollectionBuilder(services, typeRegistry);
 
-        Assert.Throws<BehaviorSecurityException>(() =>
-            builder.Register<DuplicateRestDeclarationBehavior>(topology => topology.ViaHttpRest()));
+        var restDescriptor = new BehaviorTopologyDescriptor("orders.rest-topology", "direct", ["http.rest"]);
+        var exception = Assert.Throws<BehaviorSecurityException>(() =>
+            BehaviorAttributeTopologyResolver.Resolve("orders.rest-topology", typeof(RestTopologyBehavior), restDescriptor));
+
+        Assert.Contains("MapBehaviorRestGroup", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -625,26 +504,22 @@ public sealed class BehaviorBaselineTests
     }
 
     [Fact]
-    public void BehaviorCollectionBuilderRegisterSupportsExplicitGenericRestContract()
+    public void BehaviorCollectionBuilderRegisterSupportsAttributeOnlyNonRestTopology()
     {
         var services = new ServiceCollection();
         var typeRegistry = new BehaviorTypeRegistry();
         var builder = new BehaviorCollectionBuilder(services, typeRegistry);
 
-        builder.Register<DirectGreetingBehavior>(topology => topology
-            .ViaHttpRest(rest => rest
-                .MapGet("greetings/{name}")
-                .BindRoute("name", "input")));
+        builder.Register<AttributeOnlyCqrsBehavior>();
 
         var provider = services.BuildServiceProvider();
         var contributors = provider.GetServices<IBehaviorContributor>().ToList();
         var catalog = new BehaviorCatalog(contributors);
-        var descriptor = catalog.FindById("greeting.direct");
+        var descriptor = catalog.FindById("orders.attribute-only-cqrs");
 
         Assert.NotNull(descriptor);
-        Assert.Contains("http.rest", descriptor!.TransportIds);
-        Assert.Equal("GET", descriptor.Metadata["cephalon.http.rest.method"]);
-        Assert.Equal("greetings/{name}", descriptor.Metadata["cephalon.http.rest.route-template"]);
+        Assert.Contains("http.jsonrpc", descriptor!.TransportIds);
+        Assert.Contains("grpc", descriptor.TransportIds);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -654,7 +529,7 @@ public sealed class BehaviorBaselineTests
     [Fact]
     public void BehaviorCatalogGetByPatternReturnsCqrsDescriptor()
     {
-        var d = new BehaviorTopologyDescriptor("greeting.cqrs", "cqrs", ["http.rest"]);
+        var d = new BehaviorTopologyDescriptor("greeting.cqrs", "cqrs", ["http.jsonrpc"]);
         var catalog = new BehaviorCatalog([new FluentBehaviorContributor(d)]);
 
         var results = catalog.GetByPattern("cqrs");
@@ -664,12 +539,12 @@ public sealed class BehaviorBaselineTests
     }
 
     [Fact]
-    public void BehaviorCatalogGetByTransportReturnsHttpRestDescriptor()
+    public void BehaviorCatalogGetByTransportReturnsJsonRpcDescriptor()
     {
-        var d = new BehaviorTopologyDescriptor("greeting.direct", "direct", ["http.rest"]);
+        var d = new BehaviorTopologyDescriptor("greeting.direct", "direct", ["http.jsonrpc"]);
         var catalog = new BehaviorCatalog([new FluentBehaviorContributor(d)]);
 
-        var results = catalog.GetByTransport("http.rest");
+        var results = catalog.GetByTransport("http.jsonrpc");
 
         Assert.Single(results);
         Assert.Equal("greeting.direct", results[0].Id);
@@ -704,7 +579,7 @@ public sealed class BehaviorBaselineTests
     public void CompatibilityMatrixAbt004CqrsMultipleTransportsReturnsAdvisory()
     {
         var rule = new Abt004CqrsMultipleTransportsRule();
-        var desc = new BehaviorTopologyDescriptor("order.query", "cqrs", ["http.rest", "grpc"]);
+        var desc = new BehaviorTopologyDescriptor("order.query", "cqrs", ["http.jsonrpc", "grpc"]);
 
         var violation = rule.Check(desc);
 

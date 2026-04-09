@@ -15,7 +15,7 @@ namespace Cephalon.Behaviors.Http.Hosting;
 public static class HttpBehaviorBindingExtensions
 {
     /// <summary>
-    /// Registers all 7 HTTP transport bindings (REST, JSON-RPC, GraphQL, GraphQL-SSE,
+    /// Registers all 6 generic HTTP transport bindings (JSON-RPC, GraphQL, GraphQL-SSE,
     /// GraphQL-WS, SSE, WebSocket) and the <see cref="IHttpBehaviorBindingRegistry" />
     /// as singletons in the service collection.
     /// </summary>
@@ -28,8 +28,7 @@ public static class HttpBehaviorBindingExtensions
 
         var services = builder.Services;
 
-        // Register each binding as a singleton IHttpBehaviorBinding.
-        services.AddSingleton<IHttpBehaviorBinding, RestHttpBehaviorBinding>();
+        // Register each generic binding as a singleton IHttpBehaviorBinding.
         services.AddSingleton<IHttpBehaviorBinding, JsonRpcHttpBehaviorBinding>();
         services.AddSingleton<IHttpBehaviorBinding, GraphqlHttpBehaviorBinding>();
         services.AddSingleton<IHttpBehaviorBinding, GraphqlSseBehaviorBinding>();

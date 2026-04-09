@@ -46,7 +46,7 @@ public sealed class BehaviorSourceGeneratorTests
 
             public interface IBehaviorTopologyBuilder
             {
-                IBehaviorTopologyBuilder ViaHttpRest();
+                IBehaviorTopologyBuilder ViaHttpJsonRpc();
             }
         }
         """;
@@ -235,7 +235,7 @@ public sealed class BehaviorSourceGeneratorTests
             BehaviorSourceGenerator.Abt011EmptyBehaviorId,
             BehaviorSourceGenerator.Abt012MustNotBeAbstract,
             BehaviorSourceGenerator.Abt013MustNotBeStatic,
-            BehaviorSourceGenerator.Abt014DuplicateRestDeclaration,
+            BehaviorSourceGenerator.Abt014RestMustBeModuleOwned,
         };
 
         foreach (var d in descriptors)
@@ -253,11 +253,11 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Equal("ABT0011", BehaviorSourceGenerator.Abt011EmptyBehaviorId.Id);
         Assert.Equal("ABT0012", BehaviorSourceGenerator.Abt012MustNotBeAbstract.Id);
         Assert.Equal("ABT0013", BehaviorSourceGenerator.Abt013MustNotBeStatic.Id);
-        Assert.Equal("ABT0014", BehaviorSourceGenerator.Abt014DuplicateRestDeclaration.Id);
+        Assert.Equal("ABT0014", BehaviorSourceGenerator.Abt014RestMustBeModuleOwned.Id);
     }
 
     [Fact]
-    public void DuplicateRestDeclarationEmitsAbt0014()
+    public void RestTransportAttributeEmitsAbt0014()
     {
         const string source = """
             using Cephalon.Abstractions.Behaviors;
@@ -267,6 +267,35 @@ public sealed class BehaviorSourceGeneratorTests
             [AppBehavior("orders.create")]
             [BehaviorAllowedTransports("http.rest")]
             public sealed class CreateOrderBehavior : IAppBehavior<string, string>
+            {
+                public Task<string> HandleAsync(string input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (_, diagnostics) = RunGenerator(source);
+
+        Assert.Contains(diagnostics, d => d.Id == "ABT0014");
+    }
+
+    [Fact]
+    public void RestTransportInConfigureTopologyEmitsAbt0014()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            public static class RestExtensions
+            {
+                public static IBehaviorTopologyBuilder ViaHttpRest(this IBehaviorTopologyBuilder builder)
+                {
+                    return builder;
+                }
+            }
+
+            [AppBehavior("orders.lookup")]
+            public sealed class LookupOrderBehavior : IAppBehavior<string, string>
             {
                 public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
                     => builder.ViaHttpRest();
@@ -282,28 +311,18 @@ public sealed class BehaviorSourceGeneratorTests
     }
 
     [Fact]
-    public void ViaHttpRestWithRestContractFallsBackToRuntimeTopologyGeneration()
+    public void NonRestConfigureTopologyStillGeneratesCompileTimeDescriptor()
     {
         const string source = """
             using Cephalon.Abstractions.Behaviors;
-            using System;
             using System.Threading;
             using System.Threading.Tasks;
-
-            public static class BehaviorRestTopologyBuilderExtensions
-            {
-                public static IBehaviorTopologyBuilder ViaHttpRest(this IBehaviorTopologyBuilder builder, Action<object> configure)
-                {
-                    configure(new object());
-                    return builder.ViaHttpRest();
-                }
-            }
 
             [AppBehavior("orders.lookup")]
             public sealed class LookupOrderBehavior : IAppBehavior<string, string>
             {
                 public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
-                    => builder.ViaHttpRest(rest => { });
+                    => builder.ViaHttpJsonRpc();
 
                 public Task<string> HandleAsync(string input, IBehaviorContext ctx, CancellationToken ct = default)
                     => Task.FromResult("ok");
@@ -316,9 +335,8 @@ public sealed class BehaviorSourceGeneratorTests
 
         var autoRegistration = GetGeneratedAutoRegistrationSource(result);
         Assert.NotNull(autoRegistration);
-        Assert.Contains("GetBehaviorsNeedingRuntimeTopology", autoRegistration, StringComparison.Ordinal);
-        Assert.Contains("(\"orders.lookup\", typeof(global::LookupOrderBehavior))", autoRegistration, StringComparison.Ordinal);
-        Assert.DoesNotContain("new global::Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor(\"orders.lookup\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("new global::Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor(\"orders.lookup\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("\"http.jsonrpc\"", autoRegistration, StringComparison.Ordinal);
     }
 
     // ─────────────────────────────────────────────────────────────────────────

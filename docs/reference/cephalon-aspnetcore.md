@@ -148,6 +148,136 @@ The aggregate health endpoint path.
 
 ## Namespace Cephalon.AspNetCore.Documentation
 
+<a id="type-cephalon-aspnetcore-documentation-openapiendpointoptions"></a>
+
+### `OpenApiEndpointOptions`
+
+Configures the host-level OpenAPI JSON and Scalar UI endpoints exposed by Cephalon ASP.NET Core hosts.
+
+Remarks: These options stay in the ASP.NET Core adapter because they describe HTTP route layout for generated documentation assets rather than engine-core behavior.
+
+#### Declaration
+```csharp
+public sealed class OpenApiEndpointOptions
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-documentation-openapiendpointoptions-ctor"></a>
+
+##### `OpenApiEndpointOptions`
+
+```csharp
+OpenApiEndpointOptions()
+```
+
+Initializes a new `OpenApiEndpointOptions` with the canonical Cephalon OpenAPI and Scalar routes.
+
+#### Fields
+
+<a id="member-f-cephalon-aspnetcore-documentation-openapiendpointoptions-sectionname"></a>
+
+##### `SectionName`
+
+```csharp
+const string SectionName
+```
+
+Gets the root configuration section used for OpenAPI endpoint routing.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-documentation-openapiendpointoptions-routepattern"></a>
+
+##### `RoutePattern`
+
+```csharp
+string RoutePattern { get; set; }
+```
+
+Gets or sets the route pattern used by `MapOpenApi(...)`.
+
+Remarks: The pattern must include the `{documentName}` placeholder so versioned and named documents remain addressable.
+
+<a id="member-p-cephalon-aspnetcore-documentation-openapiendpointoptions-scalarrouteprefix"></a>
+
+##### `ScalarRoutePrefix`
+
+```csharp
+string ScalarRoutePrefix { get; set; }
+```
+
+Gets or sets the route prefix used by the Scalar UI.
+
+Remarks: The value may be supplied with or without a leading slash. Cephalon normalizes it to a rooted path such as `/scalar`.
+
+#### Methods
+
+<a id="member-m-cephalon-aspnetcore-documentation-openapiendpointoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
+
+##### `FromConfiguration`
+
+```csharp
+OpenApiEndpointOptions FromConfiguration(IConfiguration configuration, string sectionPath)
+```
+
+Binds and normalizes OpenAPI endpoint options from configuration.
+
+Returns: The normalized OpenAPI endpoint options.
+
+Parameters:
+- `configuration`: The application configuration root.
+- `sectionPath`: The configuration section path to bind.
+
+<a id="type-cephalon-aspnetcore-documentation-openapitagmetadata"></a>
+
+### `OpenApiTagMetadata`
+
+Describes OpenAPI tag metadata projected from ASP.NET Core route groups or endpoints.
+
+#### Declaration
+```csharp
+public sealed class OpenApiTagMetadata
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-documentation-openapitagmetadata-ctor-system-string-system-string"></a>
+
+##### `OpenApiTagMetadata`
+
+```csharp
+OpenApiTagMetadata(string Name, string Description)
+```
+
+Describes OpenAPI tag metadata projected from ASP.NET Core route groups or endpoints.
+
+Parameters:
+- `Name`: The public tag name shown in OpenAPI and Scalar.
+- `Description`: The optional tag description shown in OpenAPI and Scalar.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-documentation-openapitagmetadata-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; set; }
+```
+
+The optional tag description shown in OpenAPI and Scalar.
+
+<a id="member-p-cephalon-aspnetcore-documentation-openapitagmetadata-name"></a>
+
+##### `Name`
+
+```csharp
+string Name { get; set; }
+```
+
+The public tag name shown in OpenAPI and Scalar.
+
 <a id="type-cephalon-aspnetcore-documentation-referencedocshostingoptions"></a>
 
 ### `ReferenceDocsHostingOptions`
@@ -401,6 +531,153 @@ The hosted path to the type index.
 <a id="namespace-cephalon-aspnetcore-hosting"></a>
 
 ## Namespace Cephalon.AspNetCore.Hosting
+
+<a id="type-cephalon-aspnetcore-hosting-apiroutesoptions"></a>
+
+### `ApiRoutesOptions`
+
+Configures host-level HTTP route prefixes for Cephalon ASP.NET Core transports.
+
+Remarks: These settings describe the public HTTP surface of the ASP.NET Core adapter. They intentionally stay out of the engine core.
+
+#### Declaration
+```csharp
+public sealed class ApiRoutesOptions
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-hosting-apiroutesoptions-ctor"></a>
+
+##### `ApiRoutesOptions`
+
+```csharp
+ApiRoutesOptions()
+```
+
+Initializes a new `ApiRoutesOptions` with the canonical Cephalon route-prefix defaults.
+
+#### Fields
+
+<a id="member-f-cephalon-aspnetcore-hosting-apiroutesoptions-sectionname"></a>
+
+##### `SectionName`
+
+```csharp
+const string SectionName
+```
+
+Gets the configuration section used for API route settings.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-hosting-apiroutesoptions-defaultbehaviordocumentname"></a>
+
+##### `DefaultBehaviorDocumentName`
+
+```csharp
+string DefaultBehaviorDocumentName { get; set; }
+```
+
+Gets or sets the default document/version segment projected into generic behavior transport routes.
+
+<a id="member-p-cephalon-aspnetcore-hosting-apiroutesoptions-graphqlprefix"></a>
+
+##### `GraphQLPrefix`
+
+```csharp
+string GraphQLPrefix { get; set; }
+```
+
+Gets or sets the root prefix used by the built-in GraphQL transport mapper.
+
+<a id="member-p-cephalon-aspnetcore-hosting-apiroutesoptions-graphqlsseprefix"></a>
+
+##### `GraphQLSsePrefix`
+
+```csharp
+string GraphQLSsePrefix { get; set; }
+```
+
+Gets or sets the canonical prefix used by the generic behavior GraphQL-over-SSE binding surface.
+
+<a id="member-p-cephalon-aspnetcore-hosting-apiroutesoptions-graphqlwsprefix"></a>
+
+##### `GraphQLWsPrefix`
+
+```csharp
+string GraphQLWsPrefix { get; set; }
+```
+
+Gets or sets the canonical prefix used by the generic behavior GraphQL-over-WebSocket binding surface.
+
+<a id="member-p-cephalon-aspnetcore-hosting-apiroutesoptions-grpcprefix"></a>
+
+##### `GrpcPrefix`
+
+```csharp
+string GrpcPrefix { get; set; }
+```
+
+Gets or sets the root prefix used by the built-in gRPC transport mapper.
+
+<a id="member-p-cephalon-aspnetcore-hosting-apiroutesoptions-jsonrpcprefix"></a>
+
+##### `JsonRpcPrefix`
+
+```csharp
+string JsonRpcPrefix { get; set; }
+```
+
+Gets or sets the canonical prefix used by the generic behavior JSON-RPC binding surface.
+
+<a id="member-p-cephalon-aspnetcore-hosting-apiroutesoptions-restprefix"></a>
+
+##### `RestPrefix`
+
+```csharp
+string RestPrefix { get; set; }
+```
+
+Gets or sets the root prefix used by the built-in REST transport mapper.
+
+<a id="member-p-cephalon-aspnetcore-hosting-apiroutesoptions-sseprefix"></a>
+
+##### `SsePrefix`
+
+```csharp
+string SsePrefix { get; set; }
+```
+
+Gets or sets the canonical prefix used by the generic behavior Server-Sent Events binding surface.
+
+<a id="member-p-cephalon-aspnetcore-hosting-apiroutesoptions-wsprefix"></a>
+
+##### `WsPrefix`
+
+```csharp
+string WsPrefix { get; set; }
+```
+
+Gets or sets the canonical prefix used by the generic behavior WebSocket binding surface.
+
+#### Methods
+
+<a id="member-m-cephalon-aspnetcore-hosting-apiroutesoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
+
+##### `FromConfiguration`
+
+```csharp
+ApiRoutesOptions FromConfiguration(IConfiguration configuration, string sectionPath)
+```
+
+Binds and normalizes API route settings from configuration.
+
+Returns: The normalized route settings.
+
+Parameters:
+- `configuration`: The application configuration root.
+- `sectionPath`: The configuration section path to bind.
 
 <a id="type-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions"></a>
 

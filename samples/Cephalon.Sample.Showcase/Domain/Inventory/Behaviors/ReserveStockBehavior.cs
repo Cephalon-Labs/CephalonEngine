@@ -6,8 +6,7 @@ namespace Cephalon.Sample.Showcase.Domain.Inventory.Behaviors;
 
 /// <summary>
 /// Reserves stock for an order using the saga-step pattern.
-/// The saga runtime loads/saves <see cref="InventoryReservationSagaState"/> automatically.
-/// On failure, the saga compensation step (release) is triggered.
+/// The saga runtime loads and saves <see cref="InventoryReservationSagaState" /> automatically.
 /// </summary>
 [AppBehavior("inventory.reserve-stock")]
 [BehaviorAllowedPatterns("saga-step")]
@@ -32,7 +31,9 @@ public sealed class ReserveStockBehavior : IAppBehavior<ReserveStockInput, Reser
                     inventoryItem.QuantityReserved += item.Quantity;
                     inventoryItem.LastUpdatedAtUtc = DateTime.UtcNow;
                     reservations.Add(new StockReservation(
-                        item.ProductId, item.Quantity, inventoryItem.WarehouseCode));
+                        item.ProductId,
+                        item.Quantity,
+                        inventoryItem.WarehouseCode));
                 }
                 else
                 {

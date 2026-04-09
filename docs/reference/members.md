@@ -519,6 +519,12 @@ Browse the published API surface by public member.
 - [ApiKey](cephalon-observability-elasticsearchdependencies.md#member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-apikey): `Properties` on `ElasticsearchDependencyDefinition` in `Cephalon.Observability.ElasticsearchDependencies.Configuration` (`Cephalon.Observability.ElasticsearchDependencies`) [Browse](browse.html?q=ApiKey&assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Configuration&scope=members)
   - Gets or sets the optional API key used for Elasticsearch API-key authentication.
   - `string ApiKey { get; set; }`
+- [ApiRoutesOptions](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-apiroutesoptions-ctor): `Constructors` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ApiRoutesOptions&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Initializes a new `ApiRoutesOptions` with the canonical Cephalon route-prefix defaults.
+  - `ApiRoutesOptions()`
+- [ApiSurface](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-apisurface): `Properties` on `BehaviorTopologyDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApiSurface&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the logical public API surface projected by route-shaped transport adapters.
+  - `BehaviorApiSurfaceDescriptor ApiSurface { get; }`
 - [ApmEndpoint](cephalon-observability-huaweicloud.md#member-p-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions-apmendpoint): `Properties` on `HuaweiCloudTelemetryExportOptions` in `Cephalon.Observability.HuaweiCloud.Configuration` (`Cephalon.Observability.HuaweiCloud`) [Browse](browse.html?q=ApmEndpoint&assembly=Cephalon.Observability.HuaweiCloud&namespace=Cephalon.Observability.HuaweiCloud.Configuration&scope=members)
   - Gets or sets the Huawei Cloud APM OTLP endpoint used for direct managed trace ingestion.
   - `string ApmEndpoint { get; set; }`
@@ -726,6 +732,9 @@ Browse the published API surface by public member.
 - [BehaviorAllowedTransportsAttribute](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorallowedtransportsattribute-ctor-system-string): `Constructors` on `BehaviorAllowedTransportsAttribute` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorAllowedTransportsAttribute&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes a new instance of `BehaviorAllowedTransportsAttribute`.
   - `BehaviorAllowedTransportsAttribute(string[] transports)`
+- [BehaviorApiSurfaceDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-ctor-system-string-system-string): `Constructors` on `BehaviorApiSurfaceDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorApiSurfaceDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Initializes a new `BehaviorApiSurfaceDescriptor`.
+  - `BehaviorApiSurfaceDescriptor(string groupPath, string operationPath)`
 - [BehaviorCompatibilityViolation](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorcompatibilityviolation-ctor-system-string-system-string-cephalon-abstractions-behaviors-compatibilityseverity-system-string): `Constructors` on `BehaviorCompatibilityViolation` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorCompatibilityViolation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes a new instance of `BehaviorCompatibilityViolation`.
   - `BehaviorCompatibilityViolation(string ruleId, string behaviorId, CompatibilitySeverity severity, string message)`
@@ -733,7 +742,7 @@ Browse the published API surface by public member.
   - Initializes a new instance of `BehaviorFault`.
   - `BehaviorFault()`
 - [BehaviorHttp](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-behaviorhttp): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=BehaviorHttp&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
-  - Gets the built-in behavior HTTP transport descriptor that bridges behavior topology bindings (REST, SSE, WS, GraphQL, JSON-RPC) to ASP.NET Core endpoints under `/behaviors`.
+  - Gets the built-in behavior HTTP transport descriptor that bridges behavior topology bindings to ASP.NET Core endpoints, including canonical versioned routes for route-shaped transports without the older `/behaviors/{id}` compatibility aliases.
   - `TransportDescriptor BehaviorHttp { get; }`
 - [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-appbehaviorattribute-behaviorid): `Properties` on `AppBehaviorAttribute` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the stable behavior identifier.
@@ -765,9 +774,9 @@ Browse the published API surface by public member.
 - [BehaviorSecurityException](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorsecurityexception-ctor-system-string-system-string-system-exception): `Constructors` on `BehaviorSecurityException` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorSecurityException&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes the exception with the behavior identifier, a descriptive message, and an inner exception.
   - `BehaviorSecurityException(string behaviorId, string message, Exception innerException)`
-- [BehaviorTopologyDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviortopologydescriptor-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean-system-boolean-system-boolean-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `BehaviorTopologyDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorTopologyDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+- [BehaviorTopologyDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviortopologydescriptor-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean-system-boolean-system-boolean-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `BehaviorTopologyDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorTopologyDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes a new instance of `BehaviorTopologyDescriptor`.
-  - `BehaviorTopologyDescriptor(string id, string pattern, IReadOnlyList<string> transportIds, bool inboxEnabled, bool outboxEnabled, bool eventSourcingEnabled, string displayName, string description, IReadOnlyDictionary<string, string> metadata)`
+  - `BehaviorTopologyDescriptor(string id, string pattern, IReadOnlyList<string> transportIds, bool inboxEnabled, bool outboxEnabled, bool eventSourcingEnabled, BehaviorApiSurfaceDescriptor apiSurface, string displayName, string description, IReadOnlyDictionary<string, string> metadata)`
 - [BehaviorTopologyOptions](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviortopologyoptions-ctor): `Constructors` on `BehaviorTopologyOptions` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorTopologyOptions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes a new instance of `BehaviorTopologyOptions`.
   - `BehaviorTopologyOptions()`
@@ -1212,6 +1221,9 @@ Browse the published API surface by public member.
 - [CreatedAtUtc](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchitem-createdatutc): `Properties` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreatedAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the time at which the durable outbox row was created.
   - `DateTimeOffset CreatedAtUtc { get; }`
+- [CreateDefault](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-createdefault-system-string): `Methods` on `BehaviorApiSurfaceDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=CreateDefault&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a default API surface descriptor from the supplied behavior identifier.
+  - `BehaviorApiSurfaceDescriptor CreateDefault(string behaviorId)`
 - [CreateInstance](cephalon-identity-aspnetcore.md#member-m-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-createinstance-system-iserviceprovider): `Methods` on `RequireCephalonAuthorizationAttribute` in `Cephalon.Identity.AspNetCore.Transports.Rest` (`Cephalon.Identity.AspNetCore`) [Browse](browse.html?q=CreateInstance&assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Transports.Rest&scope=members)
   - Creates the MVC authorization filter that evaluates the current request through the shared Cephalon boundary executor.
   - `IFilterMetadata CreateInstance(IServiceProvider serviceProvider)`
@@ -1314,6 +1326,9 @@ Browse the published API surface by public member.
 - [Default](cephalon-engine.md#member-p-cephalon-engine-configuration-trustpolicy-default): `Properties` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Default&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the default trust policy.
   - `TrustPolicy Default { get; }`
+- [DefaultBehaviorDocumentName](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-apiroutesoptions-defaultbehaviordocumentname): `Properties` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=DefaultBehaviorDocumentName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or sets the default document/version segment projected into generic behavior transport routes.
+  - `string DefaultBehaviorDocumentName { get; set; }`
 - [DefaultCapabilityAccess](cephalon-engine.md#member-p-cephalon-engine-configuration-trustpolicy-defaultcapabilityaccess): `Properties` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultCapabilityAccess&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the default access applied to capability keys without an explicit override.
   - `CapabilityAccess DefaultCapabilityAccess { get; }`
@@ -1473,6 +1488,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-engine.md#member-p-cephalon-engine-manifest-modulemanifest-description): `Properties` on `ModuleManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the human-readable description of the module.
   - `string Description { get; }`
+- [Description](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-openapitagmetadata-description): `Properties` on `OpenApiTagMetadata` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Description&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
+  - The optional tag description shown in OpenAPI and Scalar.
+  - `string Description { get; set; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdescriptor-description): `Properties` on `OutboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the human-readable outbox description.
   - `string Description { get; }`
@@ -2202,6 +2220,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability-alibabacloud.md#member-m-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `AlibabaCloudTelemetryExportOptions` in `Cephalon.Observability.AlibabaCloud.Configuration` (`Cephalon.Observability.AlibabaCloud`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Configuration&scope=members)
   - Binds Alibaba Cloud telemetry export options from configuration.
   - `AlibabaCloudTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-apiroutesoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Binds and normalizes API route settings from configuration.
+  - `ApiRoutesOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-audit.md#member-m-cephalon-audit-configuration-auditruntimeoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `AuditRuntimeOptions` in `Cephalon.Audit.Configuration` (`Cephalon.Audit`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Configuration&scope=members)
   - Reads audit runtime options from configuration.
   - `AuditRuntimeOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -2307,6 +2328,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability.md#member-m-cephalon-observability-configuration-observabilityoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `ObservabilityOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Binds observability options from configuration.
   - `ObservabilityOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-documentation-openapiendpointoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `OpenApiEndpointOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
+  - Binds and normalizes OpenAPI endpoint options from configuration.
+  - `OpenApiEndpointOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability-opensearchdependencies.md#member-m-cephalon-observability-opensearchdependencies-configuration-opensearchdependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `OpenSearchDependencyHealthOptions` in `Cephalon.Observability.OpenSearchDependencies.Configuration` (`Cephalon.Observability.OpenSearchDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.OpenSearchDependencies&namespace=Cephalon.Observability.OpenSearchDependencies.Configuration&scope=members)
   - Binds OpenSearch dependency-health options from configuration.
   - `OpenSearchDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -2502,12 +2526,27 @@ Browse the published API surface by public member.
 - [GraphQL](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-graphql): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=GraphQL&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
   - Gets the built-in GraphQL transport descriptor.
   - `TransportDescriptor GraphQL { get; }`
+- [GraphQLPrefix](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-apiroutesoptions-graphqlprefix): `Properties` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=GraphQLPrefix&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or sets the root prefix used by the built-in GraphQL transport mapper.
+  - `string GraphQLPrefix { get; set; }`
+- [GraphQLSsePrefix](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-apiroutesoptions-graphqlsseprefix): `Properties` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=GraphQLSsePrefix&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or sets the canonical prefix used by the generic behavior GraphQL-over-SSE binding surface.
+  - `string GraphQLSsePrefix { get; set; }`
+- [GraphQLWsPrefix](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-apiroutesoptions-graphqlwsprefix): `Properties` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=GraphQLWsPrefix&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or sets the canonical prefix used by the generic behavior GraphQL-over-WebSocket binding surface.
+  - `string GraphQLWsPrefix { get; set; }`
 - [Graphs](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-iexecutionruntimecatalog-graphs): `Properties` on `IExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Graphs&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all execution graphs visible to the current runtime.
   - `IReadOnlyList<ExecutionGraphDescriptor> Graphs { get; }`
+- [GroupPath](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-grouppath): `Properties` on `BehaviorApiSurfaceDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=GroupPath&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the logical group path shared by transport-specific projections.
+  - `string GroupPath { get; }`
 - [Grpc](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-grpc): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=Grpc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
   - Gets the built-in gRPC transport descriptor.
   - `TransportDescriptor Grpc { get; }`
+- [GrpcPrefix](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-apiroutesoptions-grpcprefix): `Properties` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=GrpcPrefix&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or sets the root prefix used by the built-in gRPC transport mapper.
+  - `string GrpcPrefix { get; set; }`
 - [Guidance](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-guidance): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Guidance&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the guidance entries associated with the technology.
   - `IReadOnlyList<string> Guidance { get; }`
@@ -3105,6 +3144,9 @@ Browse the published API surface by public member.
 - [JsonRpc](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-jsonrpc): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=JsonRpc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
   - Gets the built-in JSON-RPC transport descriptor.
   - `TransportDescriptor JsonRpc { get; }`
+- [JsonRpcPrefix](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-apiroutesoptions-jsonrpcprefix): `Properties` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=JsonRpcPrefix&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or sets the canonical prefix used by the generic behavior JSON-RPC binding surface.
+  - `string JsonRpcPrefix { get; set; }`
 
 ## K
 
@@ -3777,6 +3819,9 @@ Browse the published API surface by public member.
 - [Name](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-name): `Properties` on `HelloRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Name&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - The display name to greet.
   - `string Name { get; set; }`
+- [Name](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-openapitagmetadata-name): `Properties` on `OpenApiTagMetadata` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Name&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
+  - The public tag name shown in OpenAPI and Scalar.
+  - `string Name { get; set; }`
 - [Name](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedproject-name): `Properties` on `RenderedProject` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Name&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the generated project name.
   - `string Name { get; }`
@@ -3888,6 +3933,12 @@ Browse the published API surface by public member.
 - [OldValue](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditchange-oldvalue): `Properties` on `AuditChange` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=OldValue&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the previous serialized value when one is known.
   - `string OldValue { get; }`
+- [OpenApiEndpointOptions](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-documentation-openapiendpointoptions-ctor): `Constructors` on `OpenApiEndpointOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=OpenApiEndpointOptions&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
+  - Initializes a new `OpenApiEndpointOptions` with the canonical Cephalon OpenAPI and Scalar routes.
+  - `OpenApiEndpointOptions()`
+- [OpenApiTagMetadata](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-documentation-openapitagmetadata-ctor-system-string-system-string): `Constructors` on `OpenApiTagMetadata` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=OpenApiTagMetadata&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
+  - Describes OpenAPI tag metadata projected from ASP.NET Core route groups or endpoints.
+  - `OpenApiTagMetadata(string Name, string Description)`
 - [OpenSearchDependencyDefinition](cephalon-observability-opensearchdependencies.md#member-m-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-ctor): `Constructors` on `OpenSearchDependencyDefinition` in `Cephalon.Observability.OpenSearchDependencies.Configuration` (`Cephalon.Observability.OpenSearchDependencies`) [Browse](browse.html?q=OpenSearchDependencyDefinition&assembly=Cephalon.Observability.OpenSearchDependencies&namespace=Cephalon.Observability.OpenSearchDependencies.Configuration&scope=members)
   - Initializes a new instance of the `OpenSearchDependencyDefinition` class.
   - `OpenSearchDependencyDefinition()`
@@ -3906,6 +3957,9 @@ Browse the published API surface by public member.
 - [OperationalStory](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-operationalstory): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=OperationalStory&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, hosted-execution state, module state, and the ordered runtime timeline.
   - `RuntimeOperationalStory OperationalStory { get; set; }`
+- [OperationPath](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-operationpath): `Properties` on `BehaviorApiSurfaceDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperationPath&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the logical operation path shared by transport-specific projections.
+  - `string OperationPath { get; }`
 - [Options](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-options): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Options&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets module and capability option overrides.
   - `EngineOptions Options { get; }`
@@ -4776,6 +4830,9 @@ Browse the published API surface by public member.
 - [RestartCount](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-restartcount): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RestartCount&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The number of completed manual restarts.
   - `int RestartCount { get; set; }`
+- [RestPrefix](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-apiroutesoptions-restprefix): `Properties` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RestPrefix&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or sets the root prefix used by the built-in REST transport mapper.
+  - `string RestPrefix { get; set; }`
 - [RetrievalOptions](cephalon-retrieval.md#member-m-cephalon-retrieval-configuration-retrievaloptions-ctor): `Constructors` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=RetrievalOptions&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
   - Creates retrieval options with the default host-owned features enabled.
   - `RetrievalOptions()`
@@ -4818,6 +4875,9 @@ Browse the published API surface by public member.
 - [RootPath](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-rootpath): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=RootPath&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the repository root path.
   - `string RootPath { get; }`
+- [RoutePattern](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-openapiendpointoptions-routepattern): `Properties` on `OpenApiEndpointOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RoutePattern&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
+  - Gets or sets the route pattern used by `MapOpenApi(...)`.
+  - `string RoutePattern { get; set; }`
 - [RoutePrefix](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocshostingoptions-routeprefix): `Properties` on `ReferenceDocsHostingOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RoutePrefix&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Gets or sets the route prefix where the documentation should be served.
   - `string RoutePrefix { get; set; }`
@@ -4932,6 +4992,9 @@ Browse the published API surface by public member.
 - [ScaffoldRequest](cephalon-scaffolding.md#member-m-cephalon-scaffolding-generation-scaffoldrequest-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string): `Constructors` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=ScaffoldRequest&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Creates a new scaffold request.
   - `ScaffoldRequest(string appName, IReadOnlyList<string> modules, IReadOnlyList<string> features, string targetFramework, string cephalonPackageVersion)`
+- [ScalarRoutePrefix](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-openapiendpointoptions-scalarrouteprefix): `Properties` on `OpenApiEndpointOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ScalarRoutePrefix&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
+  - Gets or sets the route prefix used by the Scalar UI.
+  - `string ScalarRoutePrefix { get; set; }`
 - [Scheme](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-scheme): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Scheme&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
   - Gets or sets the URI scheme used when building a discrete endpoint, such as `neo4j`, `neo4j+s`, `bolt`, or `bolt+s`.
   - `string Scheme { get; set; }`
@@ -4953,11 +5016,17 @@ Browse the published API surface by public member.
 - [Scope](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-scope): `Properties` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Scope&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the scaffold scope that owns the project.
   - `string Scope { get; }`
+- [SectionName](cephalon-aspnetcore.md#member-f-cephalon-aspnetcore-hosting-apiroutesoptions-sectionname): `Fields` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=SectionName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets the configuration section used for API route settings.
+  - `const string SectionName`
 - [SectionName](cephalon-engine.md#member-f-cephalon-engine-configuration-enginesettings-sectionname): `Fields` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=SectionName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the default root configuration section name for engine settings.
   - `const string SectionName`
 - [SectionName](cephalon-eventsourcing.md#member-f-cephalon-eventsourcing-configuration-eventsourcingoptions-sectionname): `Fields` on `EventSourcingOptions` in `Cephalon.EventSourcing.Configuration` (`Cephalon.EventSourcing`) [Browse](browse.html?q=SectionName&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Configuration&scope=members)
   - The configuration section that owns the host-level event-sourcing settings.
+  - `const string SectionName`
+- [SectionName](cephalon-aspnetcore.md#member-f-cephalon-aspnetcore-documentation-openapiendpointoptions-sectionname): `Fields` on `OpenApiEndpointOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=SectionName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
+  - Gets the root configuration section used for OpenAPI endpoint routing.
   - `const string SectionName`
 - [SectionName](cephalon-aspnetcore.md#member-f-cephalon-aspnetcore-documentation-referencedocshostingoptions-sectionname): `Fields` on `ReferenceDocsHostingOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=SectionName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Gets the default configuration section used for reference-doc hosting.
@@ -5172,6 +5241,9 @@ Browse the published API surface by public member.
 - [SqlServerDependencyHealthOptions](cephalon-observability-sqlserverdependencies.md#member-m-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencyhealthoptions-ctor): `Constructors` on `SqlServerDependencyHealthOptions` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=SqlServerDependencyHealthOptions&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Initializes a new instance of the `SqlServerDependencyHealthOptions` class.
   - `SqlServerDependencyHealthOptions()`
+- [SsePrefix](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-apiroutesoptions-sseprefix): `Properties` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=SsePrefix&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or sets the canonical prefix used by the generic behavior Server-Sent Events binding surface.
+  - `string SsePrefix { get; set; }`
 - [SslMode](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-sslmode): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=SslMode&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
   - Gets or sets the optional MySQL SSL mode such as `Preferred`, `Required`, `VerifyCA`, or `VerifyFull`.
   - `string SslMode { get; set; }`
@@ -6030,9 +6102,6 @@ Browse the published API surface by public member.
 - [ViaHttpJsonRpc](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viahttpjsonrpc): `Methods` on `IBehaviorTopologyBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=ViaHttpJsonRpc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Adds the JSON-RPC 2.0 over HTTP transport.
   - `IBehaviorTopologyBuilder ViaHttpJsonRpc()`
-- [ViaHttpRest](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viahttprest): `Methods` on `IBehaviorTopologyBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=ViaHttpRest&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
-  - Adds the HTTP REST transport (GET/POST routing).
-  - `IBehaviorTopologyBuilder ViaHttpRest()`
 - [ViaHttpSse](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viahttpsse): `Methods` on `IBehaviorTopologyBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=ViaHttpSse&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Adds the raw Server-Sent Events push transport.
   - `IBehaviorTopologyBuilder ViaHttpSse()`
@@ -6066,9 +6135,15 @@ Browse the published API surface by public member.
 - [WebSocket](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-websocket): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=WebSocket&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
   - Gets the built-in WebSocket transport descriptor.
   - `TransportDescriptor WebSocket { get; }`
+- [WithApiSurface](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-withapisurface-system-string-system-string): `Methods` on `IBehaviorTopologyBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=WithApiSurface&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Overrides the logical API surface projected by route-shaped transport adapters.
+  - `IBehaviorTopologyBuilder WithApiSurface(string groupPath, string operationPath)`
 - [WithCephalonAuthenticationSchemes](cephalon-identity-aspnetcore.md#member-m-cephalon-identity-aspnetcore-transports-rest-identityendpointconventionbuilderextensions-withcephalonauthenticationschemes-1-0-system-string): `Methods` on `IdentityEndpointConventionBuilderExtensions` in `Cephalon.Identity.AspNetCore.Transports.Rest` (`Cephalon.Identity.AspNetCore`) [Browse](browse.html?q=WithCephalonAuthenticationSchemes&assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Transports.Rest&scope=members)
   - Declares the ASP.NET Core authentication schemes that should own challenge and forbid responses for an endpoint or route group.
   - `TBuilder WithCephalonAuthenticationSchemes<TBuilder>(this TBuilder builder, string[] authenticationSchemes)`
+- [WithMetadata](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-withmetadata-system-string-system-string): `Methods` on `IBehaviorTopologyBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=WithMetadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Adds or replaces arbitrary topology metadata for companion packs that need extra routing or runtime hints.
+  - `IBehaviorTopologyBuilder WithMetadata(string key, string value)`
 - [WithOptions](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-withoptions-system-action-cephalon-abstractions-behaviors-behaviortopologyoptions): `Methods` on `IBehaviorTopologyBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=WithOptions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Configures optional feature flags for this behavior (outbox, inbox, event sourcing).
   - `IBehaviorTopologyBuilder WithOptions(Action<BehaviorTopologyOptions> configure)`
@@ -6093,6 +6168,9 @@ Browse the published API surface by public member.
 - [WriteDbContextType](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-writedbcontexttype): `Properties` on `EntityFrameworkDataOptions` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=WriteDbContextType&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets the write-side `DbContext` type.
   - `Type WriteDbContextType { get; }`
+- [WsPrefix](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-apiroutesoptions-wsprefix): `Properties` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=WsPrefix&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or sets the canonical prefix used by the generic behavior WebSocket binding surface.
+  - `string WsPrefix { get; set; }`
 
 ## X
 

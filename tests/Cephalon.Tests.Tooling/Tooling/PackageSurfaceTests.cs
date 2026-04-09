@@ -675,10 +675,9 @@ public sealed class PackageSurfaceTests
     public void BehaviorsHttpAssemblyExposesOnlyTheDocumentedContractSurface()
     {
         AssertExportedTypes(
-            typeof(global::Cephalon.Behaviors.Http.Bindings.RestHttpBehaviorBinding).Assembly,
+            typeof(global::Cephalon.Behaviors.Http.Bindings.JsonRpcHttpBehaviorBinding).Assembly,
             typeof(global::Cephalon.Behaviors.Http.Abstractions.IHttpBehaviorBinding),
             typeof(global::Cephalon.Behaviors.Http.Abstractions.IHttpBehaviorBindingRegistry),
-            typeof(global::Cephalon.Behaviors.Http.Bindings.RestHttpBehaviorBinding),
             typeof(global::Cephalon.Behaviors.Http.Bindings.JsonRpcRequest),
             typeof(global::Cephalon.Behaviors.Http.Bindings.JsonRpcSuccessResponse),
             typeof(global::Cephalon.Behaviors.Http.Bindings.JsonRpcErrorResponse),
@@ -694,8 +693,6 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Behaviors.Http.LazyTransportBinding),
             typeof(global::Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup),
             typeof(global::Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointRouteBuilderExtensions),
-            typeof(global::Cephalon.Behaviors.Http.Hosting.BehaviorRestTopologyBuilder),
-            typeof(global::Cephalon.Behaviors.Http.Hosting.BehaviorRestTopologyBuilderExtensions),
             typeof(global::Cephalon.Behaviors.Http.Hosting.HttpBehaviorBindingExtensions));
     }
 

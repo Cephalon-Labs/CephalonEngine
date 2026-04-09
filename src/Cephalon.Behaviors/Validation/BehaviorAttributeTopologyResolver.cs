@@ -19,18 +19,7 @@ internal static class BehaviorAttributeTopologyResolver
 
         var declaredPatterns = ReadDeclaredPatterns(behaviorType);
         var declaredTransports = ReadDeclaredTransports(behaviorType);
-        var annotationDeclaresRest = declaredTransports.Any(static transportId =>
-            string.Equals(transportId, RestTransportId, StringComparison.OrdinalIgnoreCase));
-        var topologyDeclaresRest = descriptor?.TransportIds.Any(static transportId =>
-            string.Equals(transportId, RestTransportId, StringComparison.OrdinalIgnoreCase)) == true;
-
-        if (annotationDeclaresRest && topologyDeclaresRest)
-        {
-            throw new BehaviorSecurityException(
-                behaviorId,
-                $"Behavior '{behaviorId}' declares '{RestTransportId}' in both [BehaviorAllowedTransports] and a fluent topology declaration. " +
-                "Choose one generic REST declaration style per behavior.");
-        }
+        ThrowIfRestDeclared(behaviorId, declaredTransports, descriptor);
 
         if (descriptor is null)
         {
@@ -39,10 +28,6 @@ internal static class BehaviorAttributeTopologyResolver
             {
                 return null;
             }
-        }
-        else if (annotationDeclaresRest)
-        {
-            descriptor = CloneWithAddedTransports(descriptor, [RestTransportId]);
         }
 
         BehaviorAllowlistValidator.Validate(descriptor, behaviorType);
@@ -111,26 +96,24 @@ internal static class BehaviorAttributeTopologyResolver
         return BehaviorTransportIdNormalizer.NormalizeMany(attribute.Transports);
     }
 
-    private static BehaviorTopologyDescriptor CloneWithAddedTransports(
-        BehaviorTopologyDescriptor descriptor,
-        IReadOnlyList<string> declaredTransports)
+    private static void ThrowIfRestDeclared(
+        string behaviorId,
+        IReadOnlyList<string> declaredTransports,
+        BehaviorTopologyDescriptor? descriptor)
     {
-        var transportIds = descriptor.TransportIds
-            .Concat(declaredTransports)
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(static candidate => candidate, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
+        var annotationDeclaresRest = declaredTransports.Any(static transportId =>
+            string.Equals(transportId, RestTransportId, StringComparison.OrdinalIgnoreCase));
+        var topologyDeclaresRest = descriptor?.TransportIds.Any(static transportId =>
+            string.Equals(transportId, RestTransportId, StringComparison.OrdinalIgnoreCase)) == true;
 
-        return new BehaviorTopologyDescriptor(
-            descriptor.Id,
-            descriptor.Pattern,
-            transportIds,
-            inboxEnabled: descriptor.InboxEnabled,
-            outboxEnabled: descriptor.OutboxEnabled,
-            eventSourcingEnabled: descriptor.EventSourcingEnabled,
-            apiSurface: descriptor.ApiSurface,
-            displayName: descriptor.DisplayName,
-            description: descriptor.Description,
-            metadata: descriptor.Metadata);
+        if (!annotationDeclaresRest && !topologyDeclaresRest)
+        {
+            return;
+        }
+
+        throw new BehaviorSecurityException(
+            behaviorId,
+            $"Behavior '{behaviorId}' declares '{RestTransportId}', but Cephalon now keeps REST module-owned only. " +
+            "Remove 'http.rest' from behavior annotations/topology and map REST endpoints in a module with MapEndpoints(...) plus MapBehaviorRestGroup(...).");
     }
 }

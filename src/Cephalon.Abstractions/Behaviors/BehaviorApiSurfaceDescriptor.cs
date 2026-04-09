@@ -4,9 +4,10 @@ namespace Cephalon.Abstractions.Behaviors;
 /// Describes the logical public API surface projected by a behavior across transport adapters.
 /// </summary>
 /// <remarks>
-/// This descriptor stays transport-agnostic. HTTP adapters can project REST, JSON-RPC, SSE,
-/// or WebSocket routes from the same logical surface without forcing transport-specific path
-/// details into behavior identifiers.
+/// This descriptor stays transport-agnostic. Route-shaped non-REST adapters such as JSON-RPC,
+/// GraphQL-over-SSE, GraphQL-over-WebSocket, Server-Sent Events, and WebSocket can project
+/// canonical routes from the same logical surface without forcing transport-specific path
+/// details into behavior identifiers. Public REST stays module-owned.
 /// </remarks>
 public sealed class BehaviorApiSurfaceDescriptor
 {

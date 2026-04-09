@@ -109,9 +109,6 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
     // ── Transport methods (shared by both APIs) ─────────────────────────
 
     /// <inheritdoc />
-    IBehaviorTopologyBuilder IBehaviorTopologyBuilder.ViaHttpRest() => ViaHttpRest();
-
-    /// <inheritdoc />
     IBehaviorTopologyBuilder IBehaviorTopologyBuilder.ViaHttpJsonRpc() => ViaHttpJsonRpc();
 
     /// <inheritdoc />
@@ -148,16 +145,6 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
     /// <inheritdoc />
     IBehaviorTopologyBuilder IBehaviorTopologyBuilder.WithMetadata(string key, string? value)
         => WithMetadata(key, value);
-
-    /// <summary>
-    /// Declares exposure over the <c>http.rest</c> transport.
-    /// </summary>
-    /// <returns>The same builder for fluent chaining.</returns>
-    public BehaviorTopologyBuilder ViaHttpRest()
-    {
-        _transportIds.Add("http.rest");
-        return this;
-    }
 
     /// <summary>
     /// Declares exposure over the <c>http.jsonrpc</c> transport.
@@ -266,9 +253,10 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
     /// <param name="operationPath">The logical operation path, such as <c>get</c>.</param>
     /// <returns>The same builder for fluent chaining.</returns>
     /// <remarks>
-    /// This primarily affects the shared HTTP behavior route contract used by generic REST,
-    /// JSON-RPC, Server-Sent Events, and WebSocket bindings. GraphQL remains schema-owned and
-    /// therefore stays outside this route-shaped API-surface contract.
+    /// This primarily affects the shared HTTP behavior route contract used by route-shaped
+    /// non-REST bindings such as JSON-RPC, GraphQL-over-SSE, GraphQL-over-WebSocket,
+    /// Server-Sent Events, and WebSocket. Public REST stays module-owned, and GraphQL remains
+    /// schema-owned.
     /// </remarks>
     public BehaviorTopologyBuilder WithApiSurface(string groupPath, string operationPath)
     {

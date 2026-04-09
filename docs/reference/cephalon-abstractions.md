@@ -2789,7 +2789,9 @@ Warning — review recommended.
 
 ### `BehaviorAllowedPatternsAttribute`
 
-Restricts which patterns ops config may activate for this behavior. If absent, no allowlist restriction applies.
+Restricts which patterns may activate for this behavior and can also provide an attribute-only runtime baseline when exactly one pattern is declared.
+
+Remarks: When a behavior has no explicit topology from `ConfigureTopology(...)`, fluent registration, or configuration overrides, a single declared pattern becomes the runtime baseline. Multiple declared patterns remain an allowlist and require another topology source to choose one.
 
 #### Declaration
 ```csharp
@@ -2824,7 +2826,9 @@ Gets the set of allowed pattern identifiers.
 
 ### `BehaviorAllowedTransportsAttribute`
 
-Restricts which transports ops config may activate for this behavior. If absent, no allowlist restriction applies.
+Restricts which transports may activate for this behavior and can also provide an attribute-only runtime transport baseline when no explicit topology exists.
+
+Remarks: Declared transports remain a transport allowlist for config and topology validation. When a behavior has no explicit topology, the declared transports become the runtime transport baseline. Public REST is module-owned and must not be declared through behavior transport allowlists. For author-facing allowlists, `http.grpc` is accepted and normalized to canonical `grpc`.
 
 #### Declaration
 ```csharp
@@ -2854,6 +2858,76 @@ IReadOnlyList<string> Transports { get; }
 ```
 
 Gets the set of allowed transport identifiers.
+
+<a id="type-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor"></a>
+
+### `BehaviorApiSurfaceDescriptor`
+
+Describes the logical public API surface projected by a behavior across transport adapters.
+
+Remarks: This descriptor stays transport-agnostic. Route-shaped non-REST adapters such as JSON-RPC, GraphQL-over-SSE, GraphQL-over-WebSocket, Server-Sent Events, and WebSocket can project canonical routes from the same logical surface without forcing transport-specific path details into behavior identifiers. Public REST stays module-owned.
+
+#### Declaration
+```csharp
+public sealed class BehaviorApiSurfaceDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-ctor-system-string-system-string"></a>
+
+##### `BehaviorApiSurfaceDescriptor`
+
+```csharp
+BehaviorApiSurfaceDescriptor(string groupPath, string operationPath)
+```
+
+Initializes a new `BehaviorApiSurfaceDescriptor`.
+
+Parameters:
+- `groupPath`: The logical group path, such as `cart` or `orders/status`.
+- `operationPath`: The logical operation path, such as `get` or `remove-item`.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-grouppath"></a>
+
+##### `GroupPath`
+
+```csharp
+string GroupPath { get; }
+```
+
+Gets the logical group path shared by transport-specific projections.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-operationpath"></a>
+
+##### `OperationPath`
+
+```csharp
+string OperationPath { get; }
+```
+
+Gets the logical operation path shared by transport-specific projections.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-createdefault-system-string"></a>
+
+##### `CreateDefault`
+
+```csharp
+BehaviorApiSurfaceDescriptor CreateDefault(string behaviorId)
+```
+
+Creates a default API surface descriptor from the supplied behavior identifier.
+
+Remarks: Behavior identifiers such as `cart.get` become group `cart` plus operation `get`. Identifiers with more than two segments join all but the final segment into the group path.
+
+Returns: The default logical API surface derived from the identifier.
+
+Parameters:
+- `behaviorId`: The stable behavior identifier.
 
 <a id="type-cephalon-abstractions-behaviors-behaviorcompatibilityviolation"></a>
 
@@ -3095,7 +3169,7 @@ Gets the behavior identifier that triggered the security violation.
 
 ### `BehaviorTopologyDescriptor`
 
-Describes the resolved topology for a single behavior: its pattern, transports, and feature flags.
+Describes the resolved topology for a single behavior, including its pattern, transports, feature flags, and shared logical API surface.
 
 #### Declaration
 ```csharp
@@ -3104,17 +3178,29 @@ public sealed class BehaviorTopologyDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-behaviors-behaviortopologydescriptor-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean-system-boolean-system-boolean-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-behaviors-behaviortopologydescriptor-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean-system-boolean-system-boolean-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `BehaviorTopologyDescriptor`
 
 ```csharp
-BehaviorTopologyDescriptor(string id, string pattern, IReadOnlyList<string> transportIds, bool inboxEnabled, bool outboxEnabled, bool eventSourcingEnabled, string displayName, string description, IReadOnlyDictionary<string, string> metadata)
+BehaviorTopologyDescriptor(string id, string pattern, IReadOnlyList<string> transportIds, bool inboxEnabled, bool outboxEnabled, bool eventSourcingEnabled, BehaviorApiSurfaceDescriptor apiSurface, string displayName, string description, IReadOnlyDictionary<string, string> metadata)
 ```
 
 Initializes a new instance of `BehaviorTopologyDescriptor`.
 
 #### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-apisurface"></a>
+
+##### `ApiSurface`
+
+```csharp
+BehaviorApiSurfaceDescriptor ApiSurface { get; }
+```
+
+Gets the logical public API surface projected by route-shaped transport adapters.
+
+Remarks: When no explicit API surface is supplied, the descriptor derives one from the behavior identifier so route-shaped transports can project canonical paths without hard-coding the behavior id into every transport binding.
 
 <a id="member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-description"></a>
 
@@ -3856,16 +3942,6 @@ IBehaviorTopologyBuilder ViaHttpJsonRpc()
 
 Adds the JSON-RPC 2.0 over HTTP transport.
 
-<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viahttprest"></a>
-
-##### `ViaHttpRest`
-
-```csharp
-IBehaviorTopologyBuilder ViaHttpRest()
-```
-
-Adds the HTTP REST transport (GET/POST routing).
-
 <a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viahttpsse"></a>
 
 ##### `ViaHttpSse`
@@ -3915,6 +3991,34 @@ IBehaviorTopologyBuilder ViaWebSocket()
 ```
 
 Adds the raw WebSocket bi-directional transport.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-withapisurface-system-string-system-string"></a>
+
+##### `WithApiSurface`
+
+```csharp
+IBehaviorTopologyBuilder WithApiSurface(string groupPath, string operationPath)
+```
+
+Overrides the logical API surface projected by route-shaped transport adapters.
+
+Remarks: This primarily affects the shared generic behavior HTTP transport surface used by JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, Server-Sent Events, and WebSocket bindings. Public REST endpoints are module-owned and should be mapped through `MapEndpoints(...)` plus `MapBehaviorRestGroup(...)` instead of behavior topology.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-withmetadata-system-string-system-string"></a>
+
+##### `WithMetadata`
+
+```csharp
+IBehaviorTopologyBuilder WithMetadata(string key, string value)
+```
+
+Adds or replaces arbitrary topology metadata for companion packs that need extra routing or runtime hints.
+
+Returns: The same builder for fluent chaining.
+
+Parameters:
+- `key`: The stable metadata key.
+- `value`: The metadata value. Pass `null` to remove the key from the topology descriptor.
 
 <a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-withoptions-system-action-cephalon-abstractions-behaviors-behaviortopologyoptions"></a>
 

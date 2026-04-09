@@ -13,7 +13,7 @@ namespace Cephalon.Sample.Showcase.Domain.Cart.Behaviors;
 /// </remarks>
 [AppBehavior("cart.get")]
 [BehaviorAllowedPatterns("cqrs")]
-[BehaviorAllowedTransports("http.rest", "http.ws", "http.graphql", "http.sse")]
+[BehaviorAllowedTransports("http.ws", "http.graphql", "http.sse")]
 public sealed class GetCartBehavior : IAppBehavior<GetCartInput, GetCartOutput>
 {
     /// <inheritdoc />
@@ -34,18 +34,5 @@ public sealed class GetCartBehavior : IAppBehavior<GetCartInput, GetCartOutput>
         var cart = await ShowcaseEventSourcingHelper.RebuildCartAsync(eventStore, streamId, input.CartId, ct);
 
         return new GetCartOutput(cart);
-    }
-
-    /// <summary>
-    /// Declares the CQRS pattern with event sourcing for the read side.
-    /// </summary>
-    public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
-    {
-        builder.AsCqrs()
-            .ViaHttpRest()
-            .ViaWebSocket()
-            .ViaHttpGraphQl()
-            .ViaHttpSse()
-            .WithOptions(opts => opts.EventSourcingEnabled = true);
     }
 }

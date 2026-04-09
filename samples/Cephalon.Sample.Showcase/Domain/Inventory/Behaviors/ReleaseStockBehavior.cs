@@ -6,8 +6,7 @@ namespace Cephalon.Sample.Showcase.Domain.Inventory.Behaviors;
 
 /// <summary>
 /// Releases previously reserved stock as a saga compensation step.
-/// This is triggered when the order saga fails (e.g., payment declined) and
-/// stock reservations need to be rolled back.
+/// This is triggered when the order saga fails and reservations need to be rolled back.
 /// </summary>
 [AppBehavior("inventory.release-stock")]
 [BehaviorAllowedPatterns("saga-step")]
@@ -20,12 +19,8 @@ public sealed class ReleaseStockBehavior : IAppBehavior<ReleaseStockInput, Relea
         IBehaviorContext context,
         CancellationToken ct = default)
     {
-        // Look up reservations for this order and release them
         foreach (var inventoryItem in ShowcaseDataStore.Inventory.Values)
         {
-            // In a real implementation, we would track which reservations belong
-            // to which order. For the showcase, we simulate releasing by reducing
-            // the reserved quantity proportionally.
             if (inventoryItem.QuantityReserved > 0)
             {
                 inventoryItem.QuantityReserved = Math.Max(0, inventoryItem.QuantityReserved - 1);

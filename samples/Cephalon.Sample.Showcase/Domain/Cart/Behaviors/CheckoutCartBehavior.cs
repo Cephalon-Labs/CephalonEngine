@@ -10,7 +10,7 @@ namespace Cephalon.Sample.Showcase.Domain.Cart.Behaviors;
 /// </summary>
 [AppBehavior("cart.checkout")]
 [BehaviorAllowedPatterns("cqrs")]
-[BehaviorAllowedTransports("http.rest", "http.graphql")]
+[BehaviorAllowedTransports("http.graphql")]
 public sealed class CheckoutCartBehavior : IAppBehavior<CheckoutCartInput, CheckoutCartOutput>
 {
     /// <inheritdoc />
@@ -52,20 +52,5 @@ public sealed class CheckoutCartBehavior : IAppBehavior<CheckoutCartInput, Check
         await eventStore.AppendAsync(streamId, [evt], cart.Version, ct);
 
         return new CheckoutCartOutput(orderId, cart.TotalInCents, cart.Items.Count);
-    }
-
-    /// <summary>
-    /// Declares the CQRS pattern with event sourcing and outbox for downstream coordination.
-    /// </summary>
-    public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
-    {
-        builder.AsCqrs()
-            .ViaHttpRest()
-            .ViaHttpGraphQl()
-            .WithOptions(opts =>
-            {
-                opts.EventSourcingEnabled = true;
-                opts.OutboxEnabled = true;
-            });
     }
 }

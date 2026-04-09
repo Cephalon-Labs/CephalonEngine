@@ -38,8 +38,7 @@ internal static class BehaviorRequestJsonComposer
 {
     public static async Task<JsonElement> ComposeAsync<TInput>(
         HttpContext context,
-        bool acceptsBody,
-        BehaviorRestTransportContract? contract = null)
+        bool acceptsBody)
     {
         ArgumentNullException.ThrowIfNull(context);
 
@@ -65,8 +64,8 @@ internal static class BehaviorRequestJsonComposer
             }
         }
 
-        MergeQuery(payload, context.Request.Query, contract);
-        MergeRouteValues(payload, context.Request.RouteValues, contract);
+        MergeQuery(payload, context.Request.Query);
+        MergeRouteValues(payload, context.Request.RouteValues);
 
         return JsonSerializer.SerializeToElement(payload);
     }
@@ -131,15 +130,13 @@ internal static class BehaviorRequestJsonComposer
 
     private static void MergeQuery(
         JsonObject payload,
-        IQueryCollection query,
-        BehaviorRestTransportContract? contract)
+        IQueryCollection query)
     {
         foreach (var pair in query)
         {
-            var memberName = contract?.ResolveQueryMemberName(pair.Key) ?? pair.Key;
             if (pair.Value.Count == 1)
             {
-                payload[memberName] = ParseScalarNode(pair.Value[0]);
+                payload[pair.Key] = ParseScalarNode(pair.Value[0]);
                 continue;
             }
 
@@ -151,15 +148,14 @@ internal static class BehaviorRequestJsonComposer
                     values.Add(ParseScalarNode(value));
                 }
 
-                payload[memberName] = values;
+                payload[pair.Key] = values;
             }
         }
     }
 
     private static void MergeRouteValues(
         JsonObject payload,
-        RouteValueDictionary routeValues,
-        BehaviorRestTransportContract? contract)
+        RouteValueDictionary routeValues)
     {
         foreach (var pair in routeValues)
         {
@@ -168,8 +164,7 @@ internal static class BehaviorRequestJsonComposer
                 continue;
             }
 
-            var memberName = contract?.ResolveRouteMemberName(pair.Key) ?? pair.Key;
-            payload[memberName] = ParseScalarNode(Convert.ToString(pair.Value, CultureInfo.InvariantCulture) ?? string.Empty);
+            payload[pair.Key] = ParseScalarNode(Convert.ToString(pair.Value, CultureInfo.InvariantCulture) ?? string.Empty);
         }
     }
 

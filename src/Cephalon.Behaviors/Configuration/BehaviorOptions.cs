@@ -3,7 +3,7 @@ using System.Reflection;
 namespace Cephalon.Behaviors.Configuration;
 
 /// <summary>
-/// Top-level behavior topology options read from the <c>Engine:Behaviors</c> configuration section.
+/// Top-level behavior options read from the <c>Engine:Behaviors</c> configuration section.
 /// </summary>
 public sealed class BehaviorOptions
 {
@@ -37,16 +37,6 @@ public sealed class BehaviorOptions
     /// such as <c>"MyCompany.Shared."</c> or <c>"ThirdParty."</c>.
     /// </summary>
     public List<string> AutoRegisterExcludeAssemblyPrefixes { get; set; } = [];
-
-    /// <summary>
-    /// Gets or sets per-behavior topology overrides, keyed by behavior identifier.
-    /// </summary>
-    public Dictionary<string, BehaviorEntryOptions> Behaviors { get; set; } = new(StringComparer.OrdinalIgnoreCase);
-
-    /// <summary>
-    /// Gets or sets the engine-level defaults applied to all behaviors.
-    /// </summary>
-    public BehaviorDefaultsOptions BehaviorDefaults { get; set; } = new();
 
     /// <summary>
     /// Resolves the assemblies to scan for auto-registration.

@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
 using Cephalon.AspNetCore.Modules;
+using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Sample.Showcase.Domain.Inventory.Models;
 using Cephalon.Sample.Showcase.Infrastructure;
 using Microsoft.AspNetCore.Http;
@@ -12,8 +13,7 @@ namespace Cephalon.Sample.Showcase.Modules;
 
 /// <summary>
 /// Registers the inventory bounded context module.
-/// Implements the saga-step behavior pattern — stock reservation and release
-/// are coordinated as compensable saga steps with durable state tracking.
+/// Implements the saga-step behavior pattern with a module-owned REST surface.
 /// Uses PostgreSQL (via EF) when available, otherwise falls back to in-memory store.
 /// </summary>
 public sealed class InventoryModule : ModuleBase, IEndpointModule
@@ -44,10 +44,10 @@ public sealed class InventoryModule : ModuleBase, IEndpointModule
     /// <inheritdoc />
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup("/v1/showcase/inventory")
-            .WithGroupName("v1");
+        var group = endpoints.MapBehaviorRestGroup(this, "/showcase/inventory");
+        var routes = group.Routes;
 
-        group.MapGet("/", async (HttpContext ctx) =>
+        routes.MapGet(string.Empty, async (HttpContext ctx) =>
         {
             var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
             if (db is not null)
@@ -64,7 +64,7 @@ public sealed class InventoryModule : ModuleBase, IEndpointModule
                 .ToList());
         });
 
-        group.MapGet("/{productId}", async (string productId, HttpContext ctx) =>
+        routes.MapGet("/{productId}", async (string productId, HttpContext ctx) =>
         {
             var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
             if (db is not null)
@@ -80,7 +80,7 @@ public sealed class InventoryModule : ModuleBase, IEndpointModule
                 : Results.NotFound();
         });
 
-        group.MapPost("/reserve", async (ReserveStockInput input, HttpContext ctx) =>
+        routes.MapPost("/reserve", async (ReserveStockInput input, HttpContext ctx) =>
         {
             var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
             if (db is not null)
@@ -99,22 +99,20 @@ public sealed class InventoryModule : ModuleBase, IEndpointModule
 
                     entity.QuantityReserved += lineItem.Quantity;
                     entity.LastUpdatedAtUtc = DateTime.UtcNow;
-                    reservations.Add(new StockReservation(
-                        entity.ProductId, lineItem.Quantity, entity.WarehouseCode));
+                    reservations.Add(new StockReservation(entity.ProductId, lineItem.Quantity, entity.WarehouseCode));
                 }
 
                 await db.SaveChangesAsync();
                 return Results.Ok(new ReserveStockOutput(input.OrderId, allReserved, reservations));
             }
 
-            // In-memory fallback
             var memReservations = new List<StockReservation>();
             var memAllReserved = true;
 
             foreach (var lineItem in input.Items)
             {
-                if (!ShowcaseDataStore.Inventory.TryGetValue(lineItem.ProductId, out var item)
-                    || item.QuantityAvailable < lineItem.Quantity)
+                if (!ShowcaseDataStore.Inventory.TryGetValue(lineItem.ProductId, out var item) ||
+                    item.QuantityAvailable < lineItem.Quantity)
                 {
                     memAllReserved = false;
                     continue;
@@ -122,21 +120,17 @@ public sealed class InventoryModule : ModuleBase, IEndpointModule
 
                 item.QuantityReserved += lineItem.Quantity;
                 item.LastUpdatedAtUtc = DateTime.UtcNow;
-                memReservations.Add(new StockReservation(
-                    item.ProductId, lineItem.Quantity, item.WarehouseCode));
+                memReservations.Add(new StockReservation(item.ProductId, lineItem.Quantity, item.WarehouseCode));
             }
 
             return Results.Ok(new ReserveStockOutput(input.OrderId, memAllReserved, memReservations));
         });
 
-        group.MapPost("/release", async (ReleaseStockInput input, HttpContext ctx) =>
+        routes.MapPost("/release", async (ReleaseStockInput input, HttpContext ctx) =>
         {
             var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
             if (db is not null)
             {
-                // Release all reservations for the given order
-                // In a real system this would track per-order reservations;
-                // for the showcase we release based on current reserved stock
                 var entities = await db.InventoryItems.ToListAsync();
                 foreach (var entity in entities)
                 {

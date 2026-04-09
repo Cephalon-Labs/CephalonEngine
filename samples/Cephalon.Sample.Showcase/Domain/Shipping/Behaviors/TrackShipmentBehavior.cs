@@ -10,7 +10,7 @@ namespace Cephalon.Sample.Showcase.Domain.Shipping.Behaviors;
 /// </summary>
 [AppBehavior("shipping.track")]
 [BehaviorAllowedPatterns("process-manager")]
-[BehaviorAllowedTransports("http.rest", "grpc", "in-memory")]
+[BehaviorAllowedTransports("grpc", "in-memory")]
 public sealed class TrackShipmentBehavior : IAppBehavior<TrackShipmentInput, TrackShipmentOutput?>
 {
     /// <inheritdoc />
@@ -41,7 +41,6 @@ public sealed class TrackShipmentBehavior : IAppBehavior<TrackShipmentInput, Tra
     public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
     {
         builder.AsProcessManager()
-            .ViaHttpRest()
             .ViaGrpc()
             .ViaInMemory();
     }

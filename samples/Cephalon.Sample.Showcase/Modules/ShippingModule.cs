@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
 using Cephalon.AspNetCore.Modules;
+using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Sample.Showcase.Domain.Shipping.Models;
 using Cephalon.Sample.Showcase.Infrastructure;
 using Microsoft.AspNetCore.Http;
@@ -12,8 +13,7 @@ namespace Cephalon.Sample.Showcase.Modules;
 
 /// <summary>
 /// Registers the shipping bounded context module.
-/// Implements the process-manager behavior pattern — shipment lifecycle
-/// is tracked through durable checkpoints from initiation to delivery confirmation.
+/// Implements the process-manager behavior pattern with a module-owned REST surface.
 /// Uses PostgreSQL (via EF) when available, otherwise falls back to in-memory store.
 /// </summary>
 public sealed class ShippingModule : ModuleBase, IEndpointModule
@@ -44,10 +44,10 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
     /// <inheritdoc />
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup("/v1/showcase/shipping")
-            .WithGroupName("v1");
+        var group = endpoints.MapBehaviorRestGroup(this, "/showcase/shipping");
+        var routes = group.Routes;
 
-        group.MapGet("/", async (HttpContext ctx) =>
+        routes.MapGet(string.Empty, async (HttpContext ctx) =>
         {
             var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
             if (db is not null)
@@ -65,7 +65,7 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
                 .ToList());
         });
 
-        group.MapGet("/{shipmentId}", async (string shipmentId, HttpContext ctx) =>
+        routes.MapGet("/{shipmentId}", async (string shipmentId, HttpContext ctx) =>
         {
             var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
             if (db is not null)
@@ -81,7 +81,7 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
                 : Results.NotFound();
         });
 
-        group.MapPost("/", async (InitiateShippingInput input, HttpContext ctx) =>
+        routes.MapPost(string.Empty, async (InitiateShippingInput input, HttpContext ctx) =>
         {
             var shipmentId = $"shp-{Guid.NewGuid():N}"[..16];
             var trackingNumber = $"TRK-{Guid.NewGuid():N}"[..16].ToUpperInvariant();
@@ -103,7 +103,8 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
                 };
                 db.Shipments.Add(entity);
                 await db.SaveChangesAsync();
-                return Results.Created(BuildCreatedLocation(ctx, shipmentId),
+                return Results.Created(
+                    BuildCreatedLocation(ctx, shipmentId),
                     new InitiateShippingOutput(shipmentId, "LabelCreated", estimatedDelivery));
             }
 
@@ -118,23 +119,26 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
                 CreatedAtUtc = DateTime.UtcNow
             };
             ShowcaseDataStore.Shipments[shipmentId] = shipment;
-            return Results.Created(BuildCreatedLocation(ctx, shipmentId),
+            return Results.Created(
+                BuildCreatedLocation(ctx, shipmentId),
                 new InitiateShippingOutput(shipmentId, "LabelCreated", estimatedDelivery));
         });
 
-        group.MapPut("/{shipmentId}/deliver", async (string shipmentId, ConfirmDeliveryInput input, HttpContext ctx) =>
+        routes.MapPut("/{shipmentId}/deliver", async (string shipmentId, ConfirmDeliveryInput input, HttpContext ctx) =>
         {
             var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
             if (db is not null)
             {
                 var entity = await db.Shipments.FindAsync(shipmentId);
-                if (entity is null) return Results.NotFound();
+                if (entity is null)
+                {
+                    return Results.NotFound();
+                }
 
                 entity.Status = "Delivered";
                 entity.DeliveredAtUtc = DateTime.UtcNow;
                 await db.SaveChangesAsync();
 
-                // Synchronize order status to Delivered
                 var order = await db.Orders.FindAsync(entity.OrderId);
                 if (order is not null)
                 {
@@ -143,23 +147,30 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
                     await db.SaveChangesAsync();
                 }
 
-                return Results.Ok(new ConfirmDeliveryOutput(shipmentId, "Delivered", entity.DeliveredAtUtc.Value));
+                return Results.Ok(new ConfirmDeliveryOutput(
+                    shipmentId,
+                    "Delivered",
+                    entity.DeliveredAtUtc.Value));
             }
 
             if (!ShowcaseDataStore.Shipments.TryGetValue(shipmentId, out var shipment))
+            {
                 return Results.NotFound();
+            }
 
             shipment.Status = ShipmentStatus.Delivered;
             shipment.DeliveredAtUtc = DateTime.UtcNow;
 
-            // Synchronize order status
             if (ShowcaseDataStore.Orders.TryGetValue(shipment.OrderId, out var memOrder))
             {
                 memOrder.Status = Domain.Orders.Models.OrderStatus.Delivered;
                 memOrder.UpdatedAtUtc = DateTime.UtcNow;
             }
 
-            return Results.Ok(new ConfirmDeliveryOutput(shipmentId, "Delivered", shipment.DeliveredAtUtc!.Value));
+            return Results.Ok(new ConfirmDeliveryOutput(
+                shipmentId,
+                "Delivered",
+                shipment.DeliveredAtUtc!.Value));
         });
     }
 

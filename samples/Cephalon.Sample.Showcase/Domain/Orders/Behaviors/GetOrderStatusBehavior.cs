@@ -6,11 +6,11 @@ namespace Cephalon.Sample.Showcase.Domain.Orders.Behaviors;
 
 /// <summary>
 /// Retrieves order status using the event-driven pattern.
-/// While the pattern is event-driven, this query side provides synchronous read access.
+/// This read-side view is exposed through streaming-oriented transports while REST stays module-owned.
 /// </summary>
 [AppBehavior("orders.get-status")]
-[BehaviorAllowedPatterns("event-driven", "direct")]
-[BehaviorAllowedTransports("http.rest", "http.graphql-ws", "http.sse", "http.graphql-sse")]
+[BehaviorAllowedPatterns("event-driven")]
+[BehaviorAllowedTransports("http.graphql-ws", "http.sse", "http.graphql-sse")]
 public sealed class GetOrderStatusBehavior : IAppBehavior<GetOrderStatusInput, GetOrderStatusOutput?>
 {
     /// <inheritdoc />

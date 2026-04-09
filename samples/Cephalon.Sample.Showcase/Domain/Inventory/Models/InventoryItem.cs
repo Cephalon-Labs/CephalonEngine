@@ -50,8 +50,6 @@ public sealed class InventoryReservationSagaState
 /// <param name="WarehouseCode">The warehouse holding the reservation.</param>
 public sealed record StockReservation(string ProductId, int Quantity, string WarehouseCode);
 
-// --- Inventory behavior input/output contracts ---
-
 /// <summary>Input for reserving stock for an order.</summary>
 public sealed record ReserveStockInput(
     string OrderId,

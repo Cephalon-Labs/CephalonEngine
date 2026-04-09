@@ -6,12 +6,11 @@ namespace Cephalon.Sample.Showcase.Domain.Shipping.Behaviors;
 
 /// <summary>
 /// Confirms shipment delivery using the process-manager pattern.
-/// This is the terminal step — the process manager deletes the checkpoint on completion.
-/// Implements <see cref="IProcessCompletion"/> to signal process termination.
+/// This is the terminal step and completes the tracked process.
 /// </summary>
 [AppBehavior("shipping.confirm-delivery")]
 [BehaviorAllowedPatterns("process-manager")]
-[BehaviorAllowedTransports("kafka", "rabbitmq", "in-memory", "http.rest")]
+[BehaviorAllowedTransports("kafka", "rabbitmq", "in-memory")]
 public sealed class ConfirmDeliveryBehavior : IAppBehavior<ConfirmDeliveryInput, ConfirmDeliveryOutput>,
     IProcessCompletion
 {
@@ -29,7 +28,6 @@ public sealed class ConfirmDeliveryBehavior : IAppBehavior<ConfirmDeliveryInput,
         shipment.Status = ShipmentStatus.Delivered;
         shipment.DeliveredAtUtc = DateTime.UtcNow;
 
-        // Update the corresponding order status if it exists
         if (ShowcaseDataStore.Orders.TryGetValue(shipment.OrderId, out var order))
         {
             order.Status = Orders.Models.OrderStatus.Delivered;
@@ -43,15 +41,13 @@ public sealed class ConfirmDeliveryBehavior : IAppBehavior<ConfirmDeliveryInput,
     }
 
     /// <summary>
-    /// Declares the process-manager pattern with multi-transport exposure.
-    /// This is the terminal step — <see cref="IProcessCompletion"/> signals checkpoint deletion.
+    /// Declares the process-manager pattern with messaging transports.
     /// </summary>
     public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
     {
         builder.AsProcessManager()
             .ViaKafka()
             .ViaRabbitMq()
-            .ViaInMemory()
-            .ViaHttpRest();
+            .ViaInMemory();
     }
 }

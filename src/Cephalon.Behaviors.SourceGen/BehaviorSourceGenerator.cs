@@ -68,15 +68,15 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         description: "Static classes cannot be instantiated by the dispatcher. Remove the static modifier or remove [AppBehavior].",
         helpLinkUri: HelpLink);
 
-    /// <summary>ABT-014: REST must use either the annotation-driven declaration style or fluent topology, not both.</summary>
-    public static readonly DiagnosticDescriptor Abt014DuplicateRestDeclaration = new(
+    /// <summary>ABT-014: REST is module-owned only and must not be declared in behavior topology.</summary>
+    public static readonly DiagnosticDescriptor Abt014RestMustBeModuleOwned = new(
         id: "ABT0014",
-        title: "http.rest must use a single declaration style",
-        messageFormat: "'{0}' declares http.rest in both [BehaviorAllowedTransports] and ConfigureTopology(...); choose one style",
+        title: "REST must be mapped by a module",
+        messageFormat: "'{0}' declares REST in behavior topology; remove 'http.rest' or ViaHttpRest(...) and map REST in a module with MapEndpoints(...) plus MapBehaviorRestGroup(...)",
         category: "Cephalon.Behaviors",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true,
-        description: "Cephalon treats [BehaviorAllowedTransports(\"http.rest\")] as the annotation-driven generic REST activation path. Do not also call ViaHttpRest(...) in ConfigureTopology for the same behavior.",
+        description: "Cephalon keeps public REST module-owned. Behaviors must not declare http.rest in [BehaviorAllowedTransports] or ConfigureTopology(...). Map REST endpoints through a module's MapEndpoints(...) implementation instead.",
         helpLinkUri: HelpLink);
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -262,8 +262,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             var methodName = GetMethodName(invocation);
             if (methodName is null) continue;
 
-            if (string.Equals(methodName, "ViaHttpRest", StringComparison.Ordinal) &&
-                invocation.ArgumentList.Arguments.Count > 0)
+            if (string.Equals(methodName, "ViaHttpRest", StringComparison.Ordinal))
             {
                 return null;
             }
@@ -278,7 +277,6 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 case "AsProcessManager": pattern = "process-manager"; break;
 
                 // Transport methods
-                case "ViaHttpRest": transports.Add("http.rest"); break;
                 case "ViaHttpJsonRpc": transports.Add("http.jsonrpc"); break;
                 case "ViaHttpGraphQl": transports.Add("http.graphql"); break;
                 case "ViaHttpGraphQlSse": transports.Add("http.graphql-sse"); break;
@@ -458,10 +456,10 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 info.ShortName));
         }
 
-        if (info.HasRestTransportAttribute && info.HasConfigureTopologyRestTransport)
+        if (info.HasRestTransportAttribute || info.HasConfigureTopologyRestTransport)
         {
             spc.ReportDiagnostic(Diagnostic.Create(
-                Abt014DuplicateRestDeclaration,
+                Abt014RestMustBeModuleOwned,
                 info.Location,
                 info.ShortName));
         }

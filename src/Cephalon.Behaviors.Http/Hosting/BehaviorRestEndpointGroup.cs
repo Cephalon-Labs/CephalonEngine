@@ -231,6 +231,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         }
 
         routes = endpoints.MapGroup(BuildResolvedRoutePrefix());
+        routes.WithGroupName(OpenApiDocumentName);
         routes.WithTags(TagName);
         routes.ProducesProblem(StatusCodes.Status400BadRequest);
         routes.ProducesProblem(StatusCodes.Status404NotFound);
@@ -251,20 +252,21 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
 
     private string BuildResolvedRoutePrefix()
     {
+        var resolvedPrefix = routePrefix;
         var resolvedApiVersionMajor = ApiVersionMajor ?? ModuleVersionMajor;
         if (!resolvedApiVersionMajor.HasValue)
         {
-            return routePrefix;
+            return resolvedPrefix;
         }
 
         var versionPrefix = $"/v{resolvedApiVersionMajor.Value}";
-        if (routePrefix.Equals(versionPrefix, StringComparison.OrdinalIgnoreCase) ||
-            routePrefix.StartsWith($"{versionPrefix}/", StringComparison.OrdinalIgnoreCase))
+        if (resolvedPrefix.Equals(versionPrefix, StringComparison.OrdinalIgnoreCase) ||
+            resolvedPrefix.StartsWith($"{versionPrefix}/", StringComparison.OrdinalIgnoreCase))
         {
-            return routePrefix;
+            return resolvedPrefix;
         }
 
-        return $"{versionPrefix}{routePrefix}";
+        return $"{versionPrefix}{resolvedPrefix}";
     }
 
     private RouteHandlerBuilder MapBehaviorCore<TBehavior>(

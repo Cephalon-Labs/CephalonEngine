@@ -17,6 +17,13 @@ public sealed class ApiRoutesOptions
     public const string SectionName = "ApiRoutes";
 
     /// <summary>
+    /// Initializes a new <see cref="ApiRoutesOptions" /> with the canonical Cephalon route-prefix defaults.
+    /// </summary>
+    public ApiRoutesOptions()
+    {
+    }
+
+    /// <summary>
     /// Gets or sets the root prefix used by the built-in REST transport mapper.
     /// </summary>
     public string RestPrefix { get; set; } = "/api";

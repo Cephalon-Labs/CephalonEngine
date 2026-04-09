@@ -6,14 +6,14 @@ namespace Cephalon.Behaviors.Http.Abstractions;
 
 /// <summary>
 /// Thin adapter that maps a behavior topology to one HTTP transport.
-/// Each transport variant (REST, JSON-RPC, GraphQL, SSE, WebSocket, etc.)
+/// Each transport variant (JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, SSE, WebSocket, etc.)
 /// implements this interface and is registered in the
 /// <see cref="IHttpBehaviorBindingRegistry" />.
 /// </summary>
 public interface IHttpBehaviorBinding
 {
     /// <summary>
-    /// Gets the canonical transport identifier, e.g. <c>http.rest</c>, <c>http.jsonrpc</c>.
+    /// Gets the canonical transport identifier, e.g. <c>http.jsonrpc</c>.
     /// </summary>
     string TransportId { get; }
 

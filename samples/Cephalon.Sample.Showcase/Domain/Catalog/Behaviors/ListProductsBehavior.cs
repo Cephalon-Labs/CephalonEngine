@@ -6,11 +6,11 @@ namespace Cephalon.Sample.Showcase.Domain.Catalog.Behaviors;
 
 /// <summary>
 /// Lists products with optional filtering using the direct pattern.
-/// Exposed via REST, GraphQL, gRPC, and JSON-RPC transports.
+/// Exposed via GraphQL, gRPC, and JSON-RPC while REST stays module-owned.
 /// </summary>
 [AppBehavior("catalog.list-products")]
 [BehaviorAllowedPatterns("direct")]
-[BehaviorAllowedTransports("http.rest", "http.graphql", "grpc", "http.jsonrpc")]
+[BehaviorAllowedTransports("http.graphql", "grpc", "http.jsonrpc")]
 public sealed class ListProductsBehavior : IAppBehavior<ListProductsInput, ListProductsOutput>
 {
     /// <inheritdoc />
@@ -44,7 +44,6 @@ public sealed class ListProductsBehavior : IAppBehavior<ListProductsInput, ListP
     public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
     {
         builder.AsDirect()
-            .ViaHttpRest()
             .ViaHttpGraphQl()
             .ViaGrpc()
             .ViaHttpJsonRpc();

@@ -9,7 +9,7 @@ public interface IHttpBehaviorBindingRegistry
     /// Returns the binding registered for <paramref name="transportId" />,
     /// or <see langword="null" /> if none is registered.
     /// </summary>
-    /// <param name="transportId">The canonical transport identifier, e.g. <c>http.rest</c>.</param>
+    /// <param name="transportId">The canonical transport identifier, e.g. <c>http.jsonrpc</c>.</param>
     /// <returns>The matching binding, or <see langword="null" />.</returns>
     IHttpBehaviorBinding? GetBinding(string transportId);
 

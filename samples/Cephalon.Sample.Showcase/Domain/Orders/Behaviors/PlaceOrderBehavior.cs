@@ -6,8 +6,7 @@ namespace Cephalon.Sample.Showcase.Domain.Orders.Behaviors;
 
 /// <summary>
 /// Places a new order using the event-driven pattern.
-/// The behavior fires and forgets — the order is created asynchronously and downstream
-/// processing (inventory reservation, shipping) is triggered via messaging.
+/// The behavior fires and forgets while downstream processing is coordinated via messaging and streaming transports.
 /// </summary>
 [AppBehavior("orders.place")]
 [BehaviorAllowedPatterns("event-driven")]
@@ -30,7 +29,10 @@ public sealed class PlaceOrderBehavior : IAppBehavior<PlaceOrderInput, PlaceOrde
             TenantId = context.Metadata.GetValueOrDefault("tenantId"),
             Status = OrderStatus.Pending,
             Items = input.Items.Select(i => new OrderLineItem(
-                i.ProductId, i.ProductName, i.Quantity, i.UnitPriceInCents)).ToList(),
+                i.ProductId,
+                i.ProductName,
+                i.Quantity,
+                i.UnitPriceInCents)).ToList(),
             TotalInCents = input.Items.Sum(i => (long)i.Quantity * i.UnitPriceInCents),
             PlacedAtUtc = DateTime.UtcNow
         };

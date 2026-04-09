@@ -37,14 +37,12 @@ public sealed class BehaviorApiSurfaceTests
     {
         var descriptor = new BehaviorTopologyBuilder()
             .AsCqrs()
-            .ViaHttpRest()
             .ViaHttpJsonRpc()
             .WithApiSurface("catalog/items", "lookup")
             .Build("catalog.lookup");
 
         Assert.Equal("catalog/items", descriptor.ApiSurface.GroupPath);
         Assert.Equal("lookup", descriptor.ApiSurface.OperationPath);
-        Assert.Contains("http.rest", descriptor.TransportIds);
         Assert.Contains("http.jsonrpc", descriptor.TransportIds);
     }
 }

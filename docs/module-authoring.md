@@ -55,18 +55,21 @@ That keeps the authoring path close to the same module-first ideas used by Cepha
 14. Use `IOutboxContributor` when the package needs to publish operator-facing outbox descriptors through `/engine/outboxes` and `/engine/snapshot`.
 15. Use `IAuthorizationPolicyContributor` when the package needs to publish operator-facing authorization-policy descriptors through `/engine/authorization-policies` and `/engine/snapshot`.
 16. Add transport contribution interfaces only when the package really owns an external surface.
-17. When a module exposes behavior-driven REST endpoints, choose the REST authoring level deliberately: attribute-only baseline for a simple generic behavior surface, annotation-driven generic REST activation for the conventional adapter route, `ViaHttpRest(rest => ...)` for one explicit generic REST contract, or `MapBehaviorRestGroup(...)` when the module owns the public REST API.
+17. When a module exposes REST endpoints backed by behaviors, map that REST surface in
+    `MapEndpoints(...)` with `MapBehaviorRestGroup(...)` and keep REST out of behavior topology.
 
 ## Behavior-first REST authoring
 
-Modules that expose Cephalon behaviors over REST can now keep most of the boilerplate in the helper layer while staying inside normal Minimal API conventions.
+Modules that expose Cephalon behaviors over REST can keep the transport-neutral behavior topology in
+the behavior itself while putting the public REST surface in the module, where ASP.NET Core route
+groups, metadata, and OpenAPI are already designed to live.
 
-Behavior declaration can now stay attribute-only when the default generic behavior surface is enough:
+Behavior declaration stays focused on the interaction pattern plus non-REST transports:
 
 ```csharp
 [AppBehavior("cart.add-item")]
 [BehaviorAllowedPatterns("cqrs")]
-[BehaviorAllowedTransports("http.rest", "http.ws", "http.graphql", "http.sse")]
+[BehaviorAllowedTransports("http.ws", "http.graphql", "http.sse")]
 public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, AddToCartOutput>
 {
     public Task<AddToCartOutput> HandleAsync(
@@ -78,16 +81,13 @@ public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, AddToCartOu
 ```
 
 That shape gives the runtime an attribute-only baseline: the single allowed pattern (`cqrs`) plus
-the declared transports become the resolved behavior topology when no explicit topology/config
-override exists. `[BehaviorAllowedTransports("http.rest")]` also activates the conventional generic
-REST adapter route without duplicating `http.rest` inside `ConfigureTopology(...)`. Cephalon derives
-the generic route from the behavior id, so `cart.add-item` projects to `/api/v1/cart/add-item` and
-`cart.add-item.draft` projects to `/api/v1/cart/add-item/draft` by default.
+the declared transports become the resolved behavior topology when no explicit topology override
+exists. Public REST is not part of that baseline; modules own REST explicitly.
 
 If a behavior declares multiple allowed patterns, keep the attributes as an allowlist and add
-`ConfigureTopology(...)`, fluent registration, or config selection so the runtime does not need to
-guess which pattern should execute. For authoring convenience, `[BehaviorAllowedTransports("http.grpc")]`
-is accepted and normalized to canonical `grpc`.
+`ConfigureTopology(...)` or fluent registration so the runtime does not need to guess which pattern
+should execute. For authoring convenience, `[BehaviorAllowedTransports("http.grpc")]` is accepted
+and normalized to canonical `grpc`.
 
 If the generic route-shaped transports should expose a different logical public path than the default
 `behavior-id -> group/operation` split, override it in the same topology declaration:
@@ -96,43 +96,21 @@ If the generic route-shaped transports should expose a different logical public 
 public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
 {
     builder.AsCqrs()
-        .ViaHttpRest()
         .ViaHttpJsonRpc()
+        .ViaHttpGraphQl()
         .ViaHttpSse()
         .ViaWebSocket()
         .WithApiSurface("cart", "get");
 }
 ```
 
-That shared API surface feeds the generic REST, JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, SSE,
-and WebSocket behavior bindings, so they can all project canonical versioned routes such as
-`/api/v1/cart/get`, `/json-rpc/v1/cart/get`, `/graphql/v1/cart/get`, `/graphql-sse/v1/cart/get`,
+That shared API surface feeds the generic JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, SSE, and
+WebSocket behavior bindings, so they can all project canonical versioned routes such as
+`/json-rpc/v1/cart/get`, `/graphql/v1/cart/get`, `/graphql-sse/v1/cart/get`,
 `/graphql-ws/v1/cart/get`, `/sse/v1/cart/get`, and `/ws/v1/cart/get`. Hosts can move those
-canonical prefixes with `ApiRoutes:Prefixes:Rest`, `ApiRoutes:Prefixes:GraphQL`,
-`ApiRoutes:Prefixes:JsonRpc`, `ApiRoutes:Prefixes:Sse`, `ApiRoutes:Prefixes:Ws`,
-`ApiRoutes:Prefixes:GraphQLWs`, and `ApiRoutes:Prefixes:GraphQLSse`. For REST specifically,
-`ApiRoutes:Prefixes:Rest = ""` is valid when the host wants versioned REST routes such as `/v1/...`
-at the root instead of under `/api`.
-
-When the generic REST adapter needs an explicit HTTP method, custom path template, or wire-name
-remapping without moving to a module-owned REST API, use the REST-specific topology extension:
-
-```csharp
-public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
-{
-    builder.AsCqrs()
-        .ViaHttpRest(rest => rest
-            .MapPost("cart/{cartId}/items")
-            .BindRoute("cartId", nameof(AddToCartInput.CartId))
-            .BindQuery("draftMode", nameof(AddToCartInput.IsDraft)))
-        .ViaHttpJsonRpc()
-        .ViaHttpSse();
-}
-```
-
-That contract remains on the generic behavior transport surface. It is best for a single conventional
-REST endpoint per behavior. Route tokens and query-string keys bind by name unless `BindRoute(...)`
-or `BindQuery(...)` remaps them, and JSON request bodies populate the remaining input members.
+canonical prefixes with `ApiRoutes:Prefixes:GraphQL`, `ApiRoutes:Prefixes:JsonRpc`,
+`ApiRoutes:Prefixes:Sse`, `ApiRoutes:Prefixes:Ws`, `ApiRoutes:Prefixes:GraphQLWs`, and
+`ApiRoutes:Prefixes:GraphQLSse`.
 
 The owning module then maps the concrete REST surface:
 
@@ -162,21 +140,14 @@ Current helper behavior:
 - uses the resolved API major version as the operation-name version segment, falling back to the owning module descriptor major version
 - flows XML comments from the module and behavior assemblies into ASP.NET Core OpenAPI metadata when XML docs are available
 - maps behavior `<summary>` to the operation header and behavior `<remarks>` to the operation description so Scalar/OpenAPI content stays non-duplicated
-- keeps generic route-shaped behavior HTTP endpoints runnable while excluding them from REST OpenAPI + Scalar descriptions by default, so module-owned REST helpers are the documented public REST surface
 
 When a host needs more than the default `v1` document, prefer `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion` so endpoints mapped with `.ApiVersion(2)` or higher, or defaulted from module version `2.x`, have a matching OpenAPI/Scalar surface. In that shape, `/scalar` redirects to the default canonical document such as `/scalar/v2`, `/scalar/` remains available for multi-document selection, and Cephalon normalizes hash-based Scalar selections such as `/scalar/#v2/` back into pinned versioned links. Hosts can also move the docs and REST entry points with `OpenApi:RoutePattern`, `OpenApi:Scalar:RoutePrefix`, and the canonical `ApiRoutes:Prefixes:*` settings. Legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` settings remain available when a host deliberately wants custom named documents instead of `v{major}` API-version documents.
 
-This helper surface is still REST-specific. The generic route-shaped behavior transports already share
-the `BehaviorApiSurfaceDescriptor` contract for generic REST, JSON-RPC, GraphQL, GraphQL-SSE,
-GraphQL-WS, SSE, and WebSocket routes. Module-owned REST helpers remain the right choice when the
-module needs Minimal API method selection, concrete REST templates, and OpenAPI metadata beyond the
-generic per-behavior transport surface. Those generic behavior HTTP endpoints are transport-adapter
-surfaces first, so they continue to run but stay out of the REST OpenAPI/Scalar document set by
-default.
-
-The older `/behaviors/{id}` REST binding is gone. Use the helper surface when the module owns a
-stable public REST shape that should read like a normal application API, and treat the canonical
-versioned behavior routes as the only generic HTTP transport surface.
+This helper surface is REST-specific. The generic route-shaped behavior transports already share the
+`BehaviorApiSurfaceDescriptor` contract for JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, SSE, and
+WebSocket routes. Module-owned REST helpers are the right choice when the module needs Minimal API
+method selection, concrete REST templates, and OpenAPI metadata that read like a normal application
+API.
 
 ## Workflow and orchestration descriptors
 

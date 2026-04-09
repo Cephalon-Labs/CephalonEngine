@@ -8,4 +8,4 @@ ABT0010 | Cephalon.Behaviors | Error | AppBehavior class must implement IAppBeha
 ABT0011 | Cephalon.Behaviors | Error | AppBehavior id must not be empty
 ABT0012 | Cephalon.Behaviors | Error | AppBehavior class must not be abstract
 ABT0013 | Cephalon.Behaviors | Error | AppBehavior class must not be static
-ABT0014 | Cephalon.Behaviors | Error | http.rest must use a single declaration style
+ABT0014 | Cephalon.Behaviors | Error | Public REST is module-owned only and must not be declared in behavior topology

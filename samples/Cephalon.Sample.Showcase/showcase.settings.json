@@ -4,7 +4,6 @@
     "MongoDB": "mongodb://showcase:showcase_secret@localhost:27017",
     "Redis": "localhost:6379"
   },
-
   "Engine": {
     "Blueprint": "modular-monolith",
     "Discovery": {
@@ -59,71 +58,7 @@
       }
     },
     "Behaviors": {
-      "AutoRegister": true,
-      "catalog.get-product": {
-        "pattern": "direct",
-        "transports": [ "http.rest", "http.graphql", "grpc", "http.jsonrpc" ]
-      },
-      "catalog.list-products": {
-        "pattern": "direct",
-        "transports": [ "http.rest", "http.graphql", "grpc", "http.jsonrpc" ]
-      },
-      "catalog.create-product": {
-        "pattern": "direct",
-        "transports": [ "http.rest", "http.jsonrpc" ]
-      },
-      "catalog.update-product": {
-        "pattern": "direct",
-        "transports": [ "http.rest", "http.jsonrpc" ]
-      },
-      "cart.add-item": {
-        "pattern": "cqrs",
-        "transports": [ "http.rest", "http.ws", "http.graphql", "http.sse" ]
-      },
-      "cart.remove-item": {
-        "pattern": "cqrs",
-        "transports": [ "http.rest", "http.ws", "http.graphql", "http.sse" ]
-      },
-      "cart.get": {
-        "pattern": "cqrs",
-        "transports": [ "http.rest", "http.ws", "http.graphql", "http.sse" ]
-      },
-      "cart.checkout": {
-        "pattern": "cqrs",
-        "transports": [ "http.rest", "http.graphql" ]
-      },
-      "orders.place": {
-        "pattern": "event-driven",
-        "transports": [ "rabbitmq", "kafka", "http.graphql-ws", "http.sse", "http.graphql-sse" ]
-      },
-      "orders.cancel": {
-        "pattern": "event-driven",
-        "transports": [ "rabbitmq", "kafka", "http.sse" ]
-      },
-      "orders.get-status": {
-        "pattern": "event-driven",
-        "transports": [ "http.graphql-ws", "http.sse", "http.graphql-sse" ]
-      },
-      "inventory.reserve-stock": {
-        "pattern": "saga-step",
-        "transports": [ "rabbitmq", "in-memory" ]
-      },
-      "inventory.release-stock": {
-        "pattern": "saga-step",
-        "transports": [ "rabbitmq", "in-memory" ]
-      },
-      "shipping.initiate": {
-        "pattern": "process-manager",
-        "transports": [ "kafka", "rabbitmq", "in-memory", "http.rest", "grpc" ]
-      },
-      "shipping.track": {
-        "pattern": "process-manager",
-        "transports": [ "http.rest", "grpc", "in-memory" ]
-      },
-      "shipping.confirm-delivery": {
-        "pattern": "process-manager",
-        "transports": [ "kafka", "rabbitmq", "in-memory", "http.rest" ]
-      }
+      "AutoRegister": true
     },
     "Observability": {
       "LogManifestSummary": true,

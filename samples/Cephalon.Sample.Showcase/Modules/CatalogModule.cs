@@ -2,6 +2,7 @@ using System.Text.Json;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
 using Cephalon.AspNetCore.Modules;
+using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Sample.Showcase.Domain.Catalog.Models;
 using Cephalon.Sample.Showcase.Infrastructure;
 using Microsoft.AspNetCore.Http;
@@ -13,7 +14,7 @@ namespace Cephalon.Sample.Showcase.Modules;
 
 /// <summary>
 /// Registers the catalog bounded context module.
-/// Exposes product CRUD operations via the direct behavior pattern.
+/// Exposes product CRUD operations through a module-owned REST surface.
 /// Uses PostgreSQL (via EF) when available, otherwise falls back to in-memory store.
 /// </summary>
 public sealed class CatalogModule : ModuleBase, IEndpointModule
@@ -44,10 +45,10 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
     /// <inheritdoc />
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup("/v1/showcase/catalog")
-            .WithGroupName("v1");
+        var group = endpoints.MapBehaviorRestGroup(this, "/showcase/catalog");
+        var routes = group.Routes;
 
-        group.MapGet("/products", async (HttpContext ctx) =>
+        routes.MapGet("/products", async (HttpContext ctx) =>
         {
             var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
             if (db is not null)
@@ -66,12 +67,13 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
                 .ToList());
         });
 
-        group.MapGet("/products/{productId}", async (string productId, HttpContext ctx) =>
+        routes.MapGet("/products/{productId}", async (string productId, HttpContext ctx) =>
         {
             var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
             if (db is not null)
             {
-                var entity = await db.Products.AsNoTracking()
+                var entity = await db.Products
+                    .AsNoTracking()
                     .FirstOrDefaultAsync(p => p.Id == productId);
                 return entity is not null ? Results.Ok(ToProduct(entity)) : Results.NotFound();
             }
@@ -81,7 +83,7 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
                 : Results.NotFound();
         });
 
-        group.MapPost("/products", async (CreateProductInput input, HttpContext ctx) =>
+        routes.MapPost("/products", async (CreateProductInput input, HttpContext ctx) =>
         {
             var productId = $"prod-{Guid.NewGuid():N}"[..16];
             var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
@@ -121,33 +123,68 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
             return Results.Created(BuildCreatedLocation(ctx, productId), product);
         });
 
-        group.MapPut("/products/{productId}", async (string productId, UpdateProductInput input, HttpContext ctx) =>
+        routes.MapPut("/products/{productId}", async (string productId, UpdateProductInput input, HttpContext ctx) =>
         {
             var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
             if (db is not null)
             {
                 var entity = await db.Products.FindAsync(productId);
-                if (entity is null) return Results.NotFound();
+                if (entity is null)
+                {
+                    return Results.NotFound();
+                }
 
-                if (input.Name is not null) entity.Name = input.Name;
-                if (input.Description is not null) entity.Description = input.Description;
-                if (input.PriceInCents.HasValue) entity.PriceInCents = input.PriceInCents.Value;
-                if (input.IsActive.HasValue) entity.IsActive = input.IsActive.Value;
+                if (input.Name is not null)
+                {
+                    entity.Name = input.Name;
+                }
+
+                if (input.Description is not null)
+                {
+                    entity.Description = input.Description;
+                }
+
+                if (input.PriceInCents.HasValue)
+                {
+                    entity.PriceInCents = input.PriceInCents.Value;
+                }
+
+                if (input.IsActive.HasValue)
+                {
+                    entity.IsActive = input.IsActive.Value;
+                }
+
                 entity.UpdatedAtUtc = DateTime.UtcNow;
-
                 await db.SaveChangesAsync();
                 return Results.Ok(ToProduct(entity));
             }
 
             if (!ShowcaseDataStore.Products.TryGetValue(productId, out var product))
+            {
                 return Results.NotFound();
+            }
 
-            if (input.Name is not null) product.Name = input.Name;
-            if (input.Description is not null) product.Description = input.Description;
-            if (input.PriceInCents.HasValue) product.PriceInCents = input.PriceInCents.Value;
-            if (input.IsActive.HasValue) product.IsActive = input.IsActive.Value;
+            if (input.Name is not null)
+            {
+                product.Name = input.Name;
+            }
+
+            if (input.Description is not null)
+            {
+                product.Description = input.Description;
+            }
+
+            if (input.PriceInCents.HasValue)
+            {
+                product.PriceInCents = input.PriceInCents.Value;
+            }
+
+            if (input.IsActive.HasValue)
+            {
+                product.IsActive = input.IsActive.Value;
+            }
+
             product.UpdatedAtUtc = DateTime.UtcNow;
-
             return Results.Ok(product);
         });
     }
@@ -172,7 +209,11 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
 
     private static List<string> DeserializeTags(string? json)
     {
-        if (string.IsNullOrWhiteSpace(json)) return [];
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return [];
+        }
+
         return JsonSerializer.Deserialize<List<string>>(json) ?? [];
     }
 
