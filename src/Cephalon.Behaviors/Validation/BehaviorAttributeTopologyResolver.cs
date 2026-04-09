@@ -12,7 +12,8 @@ internal static class BehaviorAttributeTopologyResolver
     internal static BehaviorTopologyDescriptor? Resolve(
         string behaviorId,
         Type behaviorType,
-        BehaviorTopologyDescriptor? descriptor)
+        BehaviorTopologyDescriptor? descriptor,
+        bool defaultToDirect = false)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
         ArgumentNullException.ThrowIfNull(behaviorType);
@@ -26,7 +27,15 @@ internal static class BehaviorAttributeTopologyResolver
             descriptor = BuildDescriptorFromAttributes(behaviorId, declaredPatterns, declaredTransports);
             if (descriptor is null)
             {
-                return null;
+                if (!defaultToDirect)
+                {
+                    return null;
+                }
+
+                descriptor = new BehaviorTopologyDescriptor(
+                    behaviorId,
+                    pattern: "direct",
+                    transportIds: []);
             }
         }
 

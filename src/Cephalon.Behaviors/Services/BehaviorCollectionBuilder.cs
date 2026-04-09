@@ -106,7 +106,11 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
             descriptor = topologyBuilder.Build(behaviorId);
         }
 
-        descriptor = BehaviorAttributeTopologyResolver.Resolve(behaviorId, behaviorType, descriptor);
+        descriptor = BehaviorAttributeTopologyResolver.Resolve(
+            behaviorId,
+            behaviorType,
+            descriptor,
+            defaultToDirect: true);
         if (descriptor is not null)
         {
             Services.AddSingleton<IBehaviorContributor>(new FluentBehaviorContributor(descriptor));

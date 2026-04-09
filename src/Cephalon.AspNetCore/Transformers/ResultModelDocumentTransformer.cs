@@ -38,7 +38,7 @@ internal sealed class ResultModelDocumentTransformer : IOpenApiDocumentTransform
                         if (sourceSchema is null)
                             continue;
 
-                        if (IsResultModelSchema(sourceSchema) && ContainsErrorsProperty(sourceSchema))
+                        if (IsResultModelSchema(sourceSchema) && ContainsErrorProperty(sourceSchema))
                         {
                             mediaType.Schema = CreateSuccessSchema(mediaType.Schema, sourceSchema, document);
                             var successSchema = ResolveSchema(mediaType.Schema, document);
@@ -72,8 +72,9 @@ internal sealed class ResultModelDocumentTransformer : IOpenApiDocumentTransform
                schema.Properties.Keys.Contains("status_code", StringComparer.OrdinalIgnoreCase);
     }
 
-    private static bool ContainsErrorsProperty(OpenApiSchema schema)
-        => schema.Properties?.Keys.Contains("errors", StringComparer.OrdinalIgnoreCase) == true;
+    private static bool ContainsErrorProperty(OpenApiSchema schema)
+        => schema.Properties?.Keys.Contains("errors", StringComparer.OrdinalIgnoreCase) == true ||
+           schema.Properties?.Keys.Contains("error", StringComparer.OrdinalIgnoreCase) == true;
 
     private static void ApplyReadableSchemaTitle(IOpenApiSchema? originalSchema, OpenApiSchema resolvedSchema, OpenApiDocument document)
     {
@@ -600,14 +601,18 @@ internal sealed class ResultModelDocumentTransformer : IOpenApiDocumentTransform
         if (source.Properties is not null)
         {
             clone.Properties = source.Properties
-                .Where(kvp => !string.Equals(kvp.Key, "errors", StringComparison.OrdinalIgnoreCase))
+                .Where(kvp =>
+                    !string.Equals(kvp.Key, "errors", StringComparison.OrdinalIgnoreCase) &&
+                    !string.Equals(kvp.Key, "error", StringComparison.OrdinalIgnoreCase))
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value, StringComparer.OrdinalIgnoreCase);
         }
 
         if (source.Required is not null)
         {
             clone.Required = source.Required
-                .Where(name => !string.Equals(name, "errors", StringComparison.OrdinalIgnoreCase))
+                .Where(name =>
+                    !string.Equals(name, "errors", StringComparison.OrdinalIgnoreCase) &&
+                    !string.Equals(name, "error", StringComparison.OrdinalIgnoreCase))
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
         }
 

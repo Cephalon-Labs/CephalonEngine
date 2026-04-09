@@ -3,13 +3,15 @@ using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
 using Cephalon.AspNetCore.Documentation;
+using Cephalon.AspNetCore.Hosting;
+using Cephalon.AspNetCore.Transports.Rest;
 using Cephalon.Behaviors.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.Behaviors.Http.Hosting;
 
@@ -285,7 +287,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             TagName,
             ModuleVersionMajor,
             OpenApiDocumentName,
-            ApiVersionMajor);
+            ApiVersionMajor,
+            endpoints.ServiceProvider);
         var closedMethod = coreMethod.MakeGenericMethod(typeof(TBehavior), contract.InputType, contract.OutputType);
         var builder = (RouteHandlerBuilder)closedMethod.Invoke(null, [this, pattern, contract])!;
         configure?.Invoke(builder);
@@ -406,9 +409,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             contract.TagName,
             contract.OpenApiDocumentName,
             contract.ApiVersionMajor));
-        builder.Produces<TOutput>(StatusCodes.Status200OK);
-        builder.ProducesProblem(StatusCodes.Status400BadRequest);
-        builder.Produces(StatusCodes.Status404NotFound);
+
+        ApplyResponseConventions(builder, contract);
 
         if (acceptsBody)
         {
@@ -418,7 +420,44 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         return builder;
     }
 
-    private static async Task<Results<Ok<TOutput>, NoContent, BadRequest<ProblemDetails>, NotFound>> InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(
+    private static void ApplyResponseConventions(
+        RouteHandlerBuilder builder,
+        BehaviorRestEndpointContract contract)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        var successResponseType = contract.UseResultModelEnvelope
+            ? typeof(ResultModel<>).MakeGenericType(contract.ResponseType)
+            : contract.ResponseType;
+        var errorResponseType = contract.UseResultModelEnvelope
+            ? typeof(ResultModelError)
+            : typeof(ProblemDetails);
+
+        builder.Produces(StatusCodes.Status200OK, successResponseType, "application/json");
+
+        if (contract.ReturnsBehaviorResult)
+        {
+            builder.Produces(StatusCodes.Status201Created, successResponseType, "application/json");
+            builder.Produces(StatusCodes.Status202Accepted, successResponseType, "application/json");
+            builder.Produces(StatusCodes.Status204NoContent);
+            builder.Produces(StatusCodes.Status401Unauthorized, errorResponseType, "application/json");
+            builder.Produces(StatusCodes.Status403Forbidden, errorResponseType, "application/json");
+            builder.Produces(StatusCodes.Status409Conflict, errorResponseType, "application/json");
+        }
+
+        if (contract.UseResultModelEnvelope)
+        {
+            builder.Produces(StatusCodes.Status400BadRequest, errorResponseType, "application/json");
+            builder.Produces(StatusCodes.Status404NotFound, errorResponseType, "application/json");
+        }
+        else
+        {
+            builder.ProducesProblem(StatusCodes.Status400BadRequest);
+            builder.Produces(StatusCodes.Status404NotFound);
+        }
+    }
+
+    private static async Task<IResult> InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(
         HttpContext context,
         BehaviorDispatcher dispatcher)
         where TBehavior : class, IAppBehavior<TInput, TOutput>
@@ -426,7 +465,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         return await InvokeAsync<TBehavior, TInput, TOutput>(context, dispatcher, acceptsBody: false).ConfigureAwait(false);
     }
 
-    private static async Task<Results<Ok<TOutput>, NoContent, BadRequest<ProblemDetails>, NotFound>> InvokeWithBodyAsync<TBehavior, TInput, TOutput>(
+    private static async Task<IResult> InvokeWithBodyAsync<TBehavior, TInput, TOutput>(
         HttpContext context,
         BehaviorDispatcher dispatcher)
         where TBehavior : class, IAppBehavior<TInput, TOutput>
@@ -434,7 +473,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         return await InvokeAsync<TBehavior, TInput, TOutput>(context, dispatcher, acceptsBody: true).ConfigureAwait(false);
     }
 
-    private static async Task<Results<Ok<TOutput>, NoContent, BadRequest<ProblemDetails>, NotFound>> InvokeAsync<TBehavior, TInput, TOutput>(
+    private static async Task<IResult> InvokeAsync<TBehavior, TInput, TOutput>(
         HttpContext context,
         BehaviorDispatcher dispatcher,
         bool acceptsBody)
@@ -452,40 +491,43 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 behaviorContext,
                 context.RequestAborted).ConfigureAwait(false);
 
-            return result is null
-                ? TypedResults.NoContent()
-                : TypedResults.Ok((TOutput)result);
+            if (result is null)
+            {
+                return TypedResults.NoContent();
+            }
+
+            if (result is IBehaviorResult behaviorResult)
+            {
+                return BehaviorRestResponseMapper.MapBehaviorResult(behaviorResult, context.RequestServices);
+            }
+
+            return BehaviorRestResponseMapper.MapSuccess((TOutput)result, context.RequestServices);
         }
         catch (BehaviorNotFoundException)
         {
-            return TypedResults.NotFound();
+            return BehaviorRestResponseMapper.MapNotFound(
+                $"Behavior '{behaviorId}' was not found.",
+                context.RequestServices,
+                code: behaviorId);
         }
         catch (KeyNotFoundException)
         {
-            return TypedResults.NotFound();
+            return BehaviorRestResponseMapper.MapNotFound(
+                "The requested resource was not found.",
+                context.RequestServices);
         }
         catch (JsonException ex)
         {
-            return TypedResults.BadRequest(CreateProblemDetails(ex.Message));
+            return BehaviorRestResponseMapper.MapBadRequest(ex.Message, context.RequestServices, code: "invalid_json");
         }
         catch (InvalidOperationException ex)
         {
-            return TypedResults.BadRequest(CreateProblemDetails(ex.Message));
+            return BehaviorRestResponseMapper.MapBadRequest(ex.Message, context.RequestServices, code: "invalid_operation");
         }
         catch (ArgumentException ex)
         {
-            return TypedResults.BadRequest(CreateProblemDetails(ex.Message));
+            return BehaviorRestResponseMapper.MapBadRequest(ex.Message, context.RequestServices, code: "invalid_argument");
         }
-    }
-
-    private static ProblemDetails CreateProblemDetails(string detail)
-    {
-        return new ProblemDetails
-        {
-            Title = "Behavior request rejected.",
-            Detail = detail,
-            Status = StatusCodes.Status400BadRequest
-        };
     }
 
     private static int? ResolveModuleMajorVersion(string? moduleVersion)
@@ -587,7 +629,10 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         string OpenApiDocumentName,
         int? ApiVersionMajor,
         Type InputType,
-        Type OutputType)
+        Type OutputType,
+        Type ResponseType,
+        bool ReturnsBehaviorResult,
+        bool UseResultModelEnvelope)
     {
         internal static BehaviorRestEndpointContract Create(
             Type behaviorType,
@@ -595,12 +640,14 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             string tagName,
             int? moduleVersionMajor,
             string openApiDocumentName,
-            int? apiVersionMajor)
+            int? apiVersionMajor,
+            IServiceProvider services)
         {
             ArgumentNullException.ThrowIfNull(behaviorType);
             ArgumentNullException.ThrowIfNull(moduleDescriptor);
             ArgumentException.ThrowIfNullOrWhiteSpace(tagName);
             ArgumentException.ThrowIfNullOrWhiteSpace(openApiDocumentName);
+            ArgumentNullException.ThrowIfNull(services);
 
             var contractInterface = behaviorType.GetInterfaces()
                 .FirstOrDefault(static candidate =>
@@ -621,6 +668,19 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
 
             var operationVersionMajor = apiVersionMajor ?? moduleVersionMajor;
             var operationName = BuildOperationName(moduleDescriptor.Id, operationVersionMajor, behaviorId);
+            var outputType = typeArguments[1];
+            var responseType = outputType;
+            var returnsBehaviorResult = false;
+            if (outputType.IsGenericType &&
+                outputType.GetGenericTypeDefinition() == typeof(BehaviorResult<>))
+            {
+                responseType = outputType.GetGenericArguments()[0];
+                returnsBehaviorResult = true;
+            }
+
+            var configuration = services.GetService<IConfiguration>();
+            var useResultModelEnvelope = configuration is not null &&
+                ApiRoutesOptions.FromConfiguration(configuration).UseResultModelEnvelope;
 
             return new BehaviorRestEndpointContract(
                 moduleDescriptor.Id,
@@ -634,7 +694,10 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 openApiDocumentName,
                 operationVersionMajor,
                 typeArguments[0],
-                typeArguments[1]);
+                outputType,
+                responseType,
+                returnsBehaviorResult,
+                useResultModelEnvelope);
         }
 
         internal static string GetBehaviorId(Type behaviorType)

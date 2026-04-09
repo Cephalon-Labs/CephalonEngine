@@ -69,6 +69,11 @@ public sealed class ApiRoutesOptions
     public string DefaultBehaviorDocumentName { get; set; } = OpenApiDocumentNames.DefaultDocumentName;
 
     /// <summary>
+    /// Gets or sets a value indicating whether behavior-aware REST endpoints should emit the Cephalon result envelope.
+    /// </summary>
+    public bool UseResultModelEnvelope { get; set; }
+
+    /// <summary>
     /// Binds and normalizes API route settings from configuration.
     /// </summary>
     /// <param name="configuration">The application configuration root.</param>
@@ -92,6 +97,7 @@ public sealed class ApiRoutesOptions
         var defaultBehaviorDocumentName = section["DefaultBehaviorDocumentName"]?.Trim();
         var normalizedRestPrefix = NormalizePrefix(restPrefix, "/api", allowRoot: true);
         var normalizedWsPrefix = NormalizePrefix(wsPrefix, "/ws");
+        var useResultModelEnvelope = bool.TryParse(section["ResultEnvelope:Enabled"], out var envelopeEnabled) && envelopeEnabled;
 
         return new ApiRoutesOptions
         {
@@ -103,7 +109,8 @@ public sealed class ApiRoutesOptions
             SsePrefix = NormalizePrefix(ssePrefix, "/sse"),
             GraphQLWsPrefix = NormalizePrefix(graphQlWsPrefix, "/graphql-ws"),
             GraphQLSsePrefix = NormalizePrefix(graphQlSsePrefix, "/graphql-sse"),
-            DefaultBehaviorDocumentName = NormalizeDocumentName(defaultBehaviorDocumentName, configuration)
+            DefaultBehaviorDocumentName = NormalizeDocumentName(defaultBehaviorDocumentName, configuration),
+            UseResultModelEnvelope = useResultModelEnvelope
         };
     }
 

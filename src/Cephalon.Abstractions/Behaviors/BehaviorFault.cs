@@ -12,6 +12,9 @@ public sealed class BehaviorFault
     /// <summary>Gets or sets the fault message.</summary>
     public string Message { get; init; } = string.Empty;
 
+    /// <summary>Gets or sets the fault severity.</summary>
+    public BehaviorFaultSeverity Severity { get; init; } = BehaviorFaultSeverity.Error;
+
     /// <summary>Gets or sets additional fault details.</summary>
     public string? Details { get; init; }
 

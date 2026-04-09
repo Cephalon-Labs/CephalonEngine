@@ -22,6 +22,9 @@ module-owned REST endpoints.
 - **Behavior-aware REST helpers** — `MapBehaviorRestGroup(...)` plus
   `BehaviorRestEndpointGroup.MapBehaviorGet/Post/Put/Patch/Delete(...)` for Minimal API-style
   module route groups that dispatch into behaviors
+- **REST behavior result mapping** — `BehaviorRestResponseMapper` projects raw behavior outputs and
+  transport-neutral `BehaviorResult<T>` outcomes into REST responses without teaching the core
+  behavior contract about HTTP envelopes
 - **REST behavior module base class** — `RestBehaviorModuleBase` so behavior-owning REST modules can
   expose public endpoints without implementing multiple author-facing interfaces directly
 - **REST behavior-module DSL** — `IRestBehaviorModuleBuilder` plus
@@ -30,6 +33,9 @@ module-owned REST endpoints.
   with explicit `.ApiVersion(...)` override support, best-effort XML comment
   summaries/descriptions for module-owned REST endpoints, and separation between public REST docs
   and generic adapter endpoints
+- **Optional REST response envelope** — `ApiRoutes:ResultEnvelope:Enabled` projects REST success
+  and error responses through `ResultModel<T>` / `ResultModelError` while leaving GraphQL,
+  JSON-RPC, SSE, and WebSocket bindings on their native protocol envelopes
 - **Hosting** — `IBehaviorCollectionBuilder.AddHttpBehaviorBindings()` extension registering the
   generic HTTP bindings in DI
 
@@ -157,6 +163,7 @@ Current helper behavior:
 - keeps `Internal<TBehavior>()` available for internal-only behaviors or behaviors that will be exposed
   through custom/manual endpoints
 - dispatches through `BehaviorDispatcher` using Minimal API handlers
+- lets behaviors return raw `TOutput` or transport-neutral `BehaviorResult<TOutput>` values
 - composes route values, query-string values, and JSON request bodies into the behavior input payload
 - uses the owning module display name as the OpenAPI tag
 - lets the module override the published tag name and tag description through `.WithTagName(...)`
@@ -191,6 +198,81 @@ Current helper behavior:
 - rejects module-owned REST mappings that target a behavior explicitly owned by another module
 - keeps `MapAdditionalEndpoints(...)` as the advanced/manual Minimal API escape hatch for REST
   modules that need extra routes beyond the default behavior DSL
+
+## REST response envelopes
+
+`Cephalon.Behaviors.Http` now treats structured behavior outcomes and wire-format envelopes as
+separate concerns:
+
+- `IAppBehavior<TIn, TOut>` can still return raw payload types for simple success paths
+- `IAppBehavior<TIn, BehaviorResult<TOut>>` can communicate expected non-success branches such as
+  `NotFound`, `Invalid`, `Conflict`, `Forbidden`, and `NoContent` without throwing transport-shaped
+  exceptions
+- REST projects those outcomes into HTTP status codes automatically
+- when `ApiRoutes:ResultEnvelope:Enabled = true`, REST also wraps the payload into
+  `ResultModel<T>` / `ResultModelError`
+- GraphQL and JSON-RPC keep their protocol-native response shapes and are intentionally not wrapped
+  in `ResultModel`
+
+Example:
+
+```csharp
+public sealed class GetCartBehavior : IAppBehavior<GetCartInput, BehaviorResult<GetCartOutput>>
+{
+    public async Task<BehaviorResult<GetCartOutput>> HandleAsync(
+        GetCartInput input,
+        IBehaviorContext context,
+        CancellationToken cancellationToken = default)
+    {
+        var cart = await LoadCartAsync(input.CartId, cancellationToken);
+        if (cart is null)
+        {
+            return BehaviorResult.NotFound<GetCartOutput>(
+                "cart.not_found",
+                $"Cart '{input.CartId}' was not found.");
+        }
+
+        return BehaviorResult.Ok(
+            new GetCartOutput(cart),
+            message: "Cart resolved.");
+    }
+}
+```
+
+With `ApiRoutes:ResultEnvelope:Enabled = true`, REST projects that contract into payloads such as:
+
+```json
+{
+  "title": "Ok",
+  "message": "Cart resolved.",
+  "success": true,
+  "status_code": 200,
+  "data": {
+    "cartId": "cart-123"
+  }
+}
+```
+
+and:
+
+```json
+{
+  "title": "Not found",
+  "message": "Cart 'cart-123' was not found.",
+  "success": false,
+  "status_code": 404,
+  "data": null,
+  "error": {
+    "key": "cart.not_found",
+    "message": "Cart 'cart-123' was not found.",
+    "severity": "error",
+    "details": null
+  }
+}
+```
+
+Keep that envelope as a REST host policy only. Messaging, events, GraphQL, and JSON-RPC should not
+reuse it as a universal engine contract.
 
 ## DefaultBehaviorContext header conventions
 

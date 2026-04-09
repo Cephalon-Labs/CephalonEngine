@@ -129,6 +129,37 @@ That shape gives the runtime an attribute-only baseline: the single allowed patt
 the declared transports become the resolved behavior topology when no explicit topology override
 exists. Public REST is not part of that baseline; modules own REST explicitly.
 
+When a behavior needs to communicate an expected branch without throwing exceptions for normal
+domain flow, prefer `BehaviorResult<T>` over a transport-specific envelope:
+
+```csharp
+[AppBehavior("cart.get")]
+[BehaviorAllowedPatterns("cqrs")]
+public sealed class GetCartBehavior : IAppBehavior<GetCartInput, BehaviorResult<GetCartOutput>>
+{
+    public async Task<BehaviorResult<GetCartOutput>> HandleAsync(
+        GetCartInput input,
+        IBehaviorContext context,
+        CancellationToken cancellationToken = default)
+    {
+        var cart = await LoadCartAsync(input.CartId, cancellationToken);
+        if (cart is null)
+        {
+            return BehaviorResult.NotFound<GetCartOutput>(
+                "cart.not_found",
+                $"Cart '{input.CartId}' was not found.");
+        }
+
+        return BehaviorResult.Ok(new GetCartOutput(cart), message: "Cart resolved.");
+    }
+}
+```
+
+That keeps the behavior contract transport-neutral. REST can still project `BehaviorResult<T>` to
+HTTP status codes, and hosts can turn on the Cephalon REST envelope with
+`ApiRoutes:ResultEnvelope:Enabled = true` when they want `ResultModel<T>` / `ResultModelError` on
+the wire. GraphQL and JSON-RPC keep their own protocol-native response shapes.
+
 If a behavior declares multiple allowed patterns, keep the attributes as an allowlist and add
 `ConfigureTopology(...)` or fluent registration so the runtime does not need to guess which pattern
 should execute. For authoring convenience, `[BehaviorAllowedTransports("http.grpc")]` is accepted
