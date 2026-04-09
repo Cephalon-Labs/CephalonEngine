@@ -207,12 +207,14 @@ Current standing examples from this collaboration:
 - use sub-agents proactively for review, consultation, and parallel investigation when a task benefits from multiple perspectives instead of treating delegation as a last resort
 - keep future-facing engine quality in view during POC work, including architecture strength, design-pattern fit, performance, security, support for broad project shapes, and overall developer experience
 - when a host exposes both module-owned REST helpers and generic behavior HTTP routes, treat the module-owned REST groups as the public REST/OpenAPI/Scalar surface and keep the generic behavior routes focused on non-REST adapter transports
-- public REST is module-owned only: do not declare `http.rest` in `[BehaviorAllowedTransports(...)]` or `ConfigureTopology(...)`; map REST through `MapEndpoints(...)` plus `MapBehaviorRestGroup(...)`
+- public REST is module-owned only: do not declare `http.rest` in `[BehaviorAllowedTransports(...)]` or `ConfigureTopology(...)`; author REST through `RestBehaviorModuleBase.ConfigureRestBehaviors(...)` by default and reserve low-level `MapBehaviorRestGroup(...)` work for advanced/manual cases
 - `Engine:Behaviors` is no longer a per-behavior REST topology contract; keep it focused on behavior discovery and auto-registration
 - when a module explicitly owns behaviors, prefer `BehaviorModuleBase` for process-only modules and `RestBehaviorModuleBase` when the same module also exposes some of those behaviors over REST; keep raw `IRestModule` implementations for REST modules that do not dispatch through behaviors
 - prefer `BehaviorModuleBase` when a module explicitly owns behaviors but does not expose a public REST surface
 - prefer `RestBehaviorModuleBase` when the same module owns behaviors and exposes some of them over REST
+- prefer the single-surface REST DSL on `RestBehaviorModuleBase`: public `behaviors.Group(...).MapGet/MapPost/...` routes imply ownership automatically, while `behaviors.Own<TBehavior>()` is the explicit path for internal-only or custom/manual-route behaviors in the same module
 - keep one bounded context in one module when possible; do not split modules only to separate internal behaviors from REST-exposed behaviors
+- `Engine:Behaviors:AutoRegister` is now an opt-in fallback rather than the default behavior-ownership path; prefer explicit module ownership and only turn scanning back on when a host intentionally wants convention-based discovery
 
 ## Working assumptions for contributors
 

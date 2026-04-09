@@ -65,18 +65,21 @@ That keeps the authoring path close to the same module-first ideas used by Cepha
 18. When a behavior-owning module exposes REST endpoints, prefer `RestBehaviorModuleBase` so the same
     module can own internal-only behaviors and public REST-backed behaviors without splitting the
     bounded context across multiple module classes.
-19. When a module exposes REST endpoints backed by behaviors, map that REST surface in
-    `MapEndpoints(...)` with `MapBehaviorRestGroup(...)` and keep REST out of behavior topology.
+19. When a module exposes REST endpoints backed by behaviors, author that REST surface in
+    `ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)` and keep REST out of behavior
+    topology.
 
 ## Behavior-owning modules
 
 Cephalon now has a first-class module-owned behavior authoring model:
 
 - `BehaviorModuleBase` keeps behavior ownership host-agnostic through `ConfigureBehaviors(...)`
-- `RestBehaviorModuleBase` layers public REST mapping on top of that same ownership contract
+- `RestBehaviorModuleBase` adds one REST-specific authoring DSL through
+  `ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)`
 - one module can own both internal/process-only behaviors and public REST-backed behaviors
 - generic `IRestModule` remains the right fit for REST modules that do not dispatch into Cephalon
   behaviors
+- `Engine:Behaviors:AutoRegister` is now an opt-in fallback rather than the default ownership path
 
 Use `BehaviorModuleBase` when the module owns behaviors but does not need to expose a public REST
 surface:
@@ -102,8 +105,9 @@ transports, or background orchestration.
 ## Behavior-first REST authoring
 
 Modules that expose Cephalon behaviors over REST can keep one module as the single owner of the
-bounded context. `RestBehaviorModuleBase` keeps behavior ownership and REST exposure together while
-still separating host-agnostic behavior registration from ASP.NET Core route mapping.
+bounded context. `RestBehaviorModuleBase` keeps public REST exposure and module ownership in one
+authoring surface while still materializing the actual Minimal API routes inside the ASP.NET Core
+adapter layer.
 
 Behavior declaration stays focused on the interaction pattern plus non-REST transports:
 
@@ -160,23 +164,16 @@ public sealed class CartModule : RestBehaviorModuleBase
 {
     public override ModuleDescriptor Descriptor => DescriptorInstance;
 
-    public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
     {
-        behaviors.Add<GetCartBehavior>();
-        behaviors.Add<AddToCartBehavior>();
-        behaviors.Add<RemoveFromCartBehavior>();
-        behaviors.Add<CheckoutCartBehavior>();
-        behaviors.Add<RepriceCartBehavior>(); // internal-only
-    }
+        var group = behaviors.Group("/showcase/cart");
 
-    public override void MapEndpoints(IEndpointRouteBuilder endpoints)
-    {
-        var group = endpoints.MapBehaviorRestGroup(this, "/showcase/cart");
+        group.MapGet<GetCartBehavior>("/{cartId}");
+        group.MapPost<AddToCartBehavior>("/{cartId}/items");
+        group.MapDelete<RemoveFromCartBehavior>("/{cartId}/items/{productId}");
+        group.MapPost<CheckoutCartBehavior>("/{cartId}/checkout");
 
-        group.MapBehaviorGet<GetCartBehavior>("/{cartId}");
-        group.MapBehaviorPost<AddToCartBehavior>("/{cartId}/items");
-        group.MapBehaviorDelete<RemoveFromCartBehavior>("/{cartId}/items/{productId}");
-        group.MapBehaviorPost<CheckoutCartBehavior>("/{cartId}/checkout");
+        behaviors.Own<RepriceCartBehavior>(); // internal-only
     }
 }
 ```
@@ -185,7 +182,10 @@ Current helper behavior:
 
 - gives behavior authors a base class instead of forcing modules to implement multiple interfaces
   directly
-- keeps one module as the owner of both internal-only and REST-exposed behaviors
+- keeps one module as the owner of both internal-only and REST-exposed behaviors without making
+  authors declare the same public behavior twice
+- treats `behaviors.Group(...).MapGet/MapPost/...` as the primary public REST DSL
+- treats `behaviors.Own<TBehavior>()` as the explicit internal-only or custom/manual-route path
 - validates that a module cannot map another module's explicitly owned behavior through the REST helper layer
 - keeps route shape in the ASP.NET Core adapter layer while behavior attributes remain host-agnostic
 - dispatches through `BehaviorDispatcher` and `DefaultBehaviorContext`
@@ -199,6 +199,9 @@ Current helper behavior:
 - uses the resolved API major version as the operation-name version segment, falling back to the owning module descriptor major version
 - flows XML comments from the module and behavior assemblies into ASP.NET Core OpenAPI metadata when XML docs are available
 - maps behavior `<summary>` to the operation header and behavior `<remarks>` to the operation description so Scalar/OpenAPI content stays non-duplicated
+- keeps `MapAdditionalEndpoints(...)` as the advanced escape hatch for manual Minimal API work that
+  falls outside the default behavior REST DSL; custom endpoints should still declare ownership first
+  through `behaviors.Own<TBehavior>()`
 
 When a host needs more than the default `v1` document, prefer `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion` so endpoints mapped with `.ApiVersion(2)` or higher, or defaulted from module version `2.x`, have a matching OpenAPI/Scalar surface. In that shape, `/scalar` redirects to the default canonical document such as `/scalar/v2`, `/scalar/` remains available for multi-document selection, and Cephalon normalizes hash-based Scalar selections such as `/scalar/#v2/` back into pinned versioned links. Hosts can also move the docs and REST entry points with `OpenApi:RoutePattern`, `OpenApi:Scalar:RoutePrefix`, and the canonical `ApiRoutes:Prefixes:*` settings. Legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` settings remain available when a host deliberately wants custom named documents instead of `v{major}` API-version documents.
 

@@ -41,21 +41,12 @@ public sealed class CartModule : RestBehaviorModuleBase
     }
 
     /// <inheritdoc />
-    public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
     {
-        behaviors.Add<GetCartBehavior>();
-        behaviors.Add<AddToCartBehavior>();
-        behaviors.Add<RemoveFromCartBehavior>();
-        behaviors.Add<CheckoutCartBehavior>();
-    }
-
-    /// <inheritdoc />
-    public override void MapEndpoints(IEndpointRouteBuilder endpoints)
-    {
-        var group = endpoints.MapBehaviorRestGroup(this, "/showcase/cart");
-        group.MapBehaviorGet<GetCartBehavior>("/{cartId}");
-        group.MapBehaviorPost<AddToCartBehavior>("/{cartId}/items");
-        group.MapBehaviorDelete<RemoveFromCartBehavior>("/{cartId}/items/{productId}");
-        group.MapBehaviorPost<CheckoutCartBehavior>("/{cartId}/checkout");
+        var group = behaviors.Group("/showcase/cart");
+        group.MapGet<GetCartBehavior>("/{cartId}");
+        group.MapPost<AddToCartBehavior>("/{cartId}/items");
+        group.MapDelete<RemoveFromCartBehavior>("/{cartId}/items/{productId}");
+        group.MapPost<CheckoutCartBehavior>("/{cartId}/checkout");
     }
 }

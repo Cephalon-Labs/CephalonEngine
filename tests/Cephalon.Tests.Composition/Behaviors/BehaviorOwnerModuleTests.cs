@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Hosting;
 using Cephalon.Behaviors.Modules;
 using Cephalon.Behaviors.Services;
@@ -76,6 +77,24 @@ public sealed class BehaviorOwnerModuleTests
         Assert.DoesNotContain("http.sse", descriptor.TransportIds, StringComparer.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public void RestBehaviorModuleBaseRegistersPublicAndInternalBehaviorsFromSingleDsl()
+    {
+        var services = new ServiceCollection();
+        var builder = new EngineBuilder(services);
+        builder.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+        builder.AddBehaviors(options => options.AutoRegister = false);
+        builder.AddModule(new OwnedRestBehaviorModule());
+
+        builder.Build();
+
+        using var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IBehaviorCatalog>();
+
+        Assert.NotNull(catalog.FindById("tests.owned.rest.query"));
+        Assert.NotNull(catalog.FindById("tests.owned.rest.internal"));
+    }
+
     [AppBehavior("tests.owned.greeting")]
     [BehaviorAllowedPatterns("direct")]
     [BehaviorAllowedTransports("http.jsonrpc", "http.sse")]
@@ -86,6 +105,26 @@ public sealed class BehaviorOwnerModuleTests
             IBehaviorContext context,
             CancellationToken cancellationToken = default)
             => Task.FromResult($"Owned hello, {input}!");
+    }
+
+    [AppBehavior("tests.owned.rest.query")]
+    private sealed class OwnedRestQueryBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(
+            string input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult($"REST hello, {input}!");
+    }
+
+    [AppBehavior("tests.owned.rest.internal")]
+    private sealed class OwnedRestInternalBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(
+            string input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult($"Internal hello, {input}!");
     }
 
     private sealed class OwnedGreetingModule : BehaviorModuleBase
@@ -139,6 +178,31 @@ public sealed class BehaviorOwnerModuleTests
             behaviors.Add<GetCartBehavior>(topology => topology
                 .AsCqrs()
                 .ViaWebSocket());
+        }
+    }
+
+    private sealed class OwnedRestBehaviorModule : RestBehaviorModuleBase
+    {
+        private static readonly ModuleDescriptor DescriptorInstance = new(
+            id: "tests.rest-owner",
+            displayName: "REST Behavior Owner",
+            description: "Test module that owns public and internal behaviors through one REST DSL.",
+            version: "1.0.0");
+
+        public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            var group = behaviors.Group("/tests/rest-owner");
+            group.MapGet<OwnedRestQueryBehavior>(
+                "/{name}",
+                topology => topology
+                    .AsDirect()
+                    .ViaHttpJsonRpc());
+
+            behaviors.Own<OwnedRestInternalBehavior>(topology => topology
+                .AsDirect()
+                .ViaInMemory());
         }
     }
 }

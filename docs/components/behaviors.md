@@ -50,8 +50,9 @@ Cephalon now supports an explicit ownership model for behaviors:
 
 - `BehaviorModuleBase` is the recommended base class when a module owns behaviors but does not need
   to expose a public REST surface
-- `RestBehaviorModuleBase` lives in `Cephalon.Behaviors.Http` and adds `MapEndpoints(...)` on top
-  of the same ownership model for REST-backed modules
+- `RestBehaviorModuleBase` lives in `Cephalon.Behaviors.Http` and adds
+  `ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)` on top of the same ownership model
+  for REST-backed modules
 - one module can own both internal-only behaviors and public REST-backed behaviors without splitting
   the bounded context into multiple module classes
 - engine build validates duplicate ownership so the same behavior id or type cannot be claimed by
@@ -81,7 +82,7 @@ HTTP transports, messaging, or background orchestration rather than a module-own
 {
   "Engine": {
     "Behaviors": {
-      "AutoRegister": true,
+      "AutoRegister": false,
       "AutoRegisterAssemblies": [
         "Acme.Store.Service"
       ],
@@ -94,7 +95,9 @@ HTTP transports, messaging, or background orchestration rather than a module-own
 ```
 
 `Engine:Behaviors` now controls discovery and auto-registration only. It no longer acts as a
-per-behavior topology override surface.
+per-behavior topology override surface, and explicit module ownership is now the preferred default
+path. Turn `AutoRegister` on only when a host deliberately wants ambient assembly scanning as a
+fallback.
 
 ## Resolution model
 
@@ -119,7 +122,7 @@ Behavior metadata stays transport-neutral on purpose.
 - use `[BehaviorAllowedPatterns]` plus `[BehaviorAllowedTransports]` alone when the behavior should
   use the attribute-only baseline and the pattern choice is unambiguous
 - do not declare `http.rest` in behavior allowlists or topology; public REST is mapped by modules
-  through `MapEndpoints(...)` plus `MapBehaviorRestGroup(...)`
+  through `RestBehaviorModuleBase.ConfigureRestBehaviors(...)`
 - prefer `BehaviorModuleBase` or `RestBehaviorModuleBase` when a module should explicitly own the
   behaviors it ships instead of relying only on assembly scanning
 - if a behavior declares multiple allowed patterns, add `ConfigureTopology(...)` or fluent

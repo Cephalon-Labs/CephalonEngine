@@ -145,19 +145,16 @@ public sealed class BehaviorRestOpenApiTests
 
         public override ModuleDescriptor Descriptor => DescriptorInstance;
 
-        public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
         {
-            behaviors.Add<RestHelperEchoBehavior>(topology => topology
-                .AsDirect()
-                .ViaHttpJsonRpc());
-        }
-
-        public override void MapEndpoints(IEndpointRouteBuilder endpoints)
-        {
-            var group = endpoints.MapBehaviorRestGroup(this, "/tests/cart")
+            var group = behaviors.Group("/tests/cart")
                 .WithTagName(tagName)
                 .WithTagDescription(tagDescription);
-            group.MapBehaviorPost<RestHelperEchoBehavior>("/{cartId}/items");
+            group.MapPost<RestHelperEchoBehavior>(
+                "/{cartId}/items",
+                topology => topology
+                    .AsDirect()
+                    .ViaHttpJsonRpc());
         }
     }
 
@@ -171,11 +168,11 @@ public sealed class BehaviorRestOpenApiTests
 
         public override ModuleDescriptor Descriptor => DescriptorInstance;
 
-        public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
         {
         }
 
-        public override void MapEndpoints(IEndpointRouteBuilder endpoints)
+        protected override void MapAdditionalEndpoints(IEndpointRouteBuilder endpoints)
         {
             var group = endpoints.MapBehaviorRestGroup(this, "/tests/conflict");
             group.MapBehaviorPost<RestHelperEchoBehavior>("/echo");

@@ -21,7 +21,7 @@ conventions at build time and produce a compile-time-known registration hint fil
 | ABT0011 | Error | `[AppBehavior]` ID is null or empty |
 | ABT0012 | Error | `[AppBehavior]` class is abstract |
 | ABT0013 | Error | `[AppBehavior]` class is static |
-| ABT0014 | Error | REST is declared in behavior topology instead of a module `MapEndpoints(...)` surface |
+| ABT0014 | Error | REST is declared in behavior topology instead of a module-owned REST surface |
 
 ## Generated output
 
@@ -73,7 +73,9 @@ Compile-time topology extraction intentionally stays conservative. Literal `With
 arguments are supported, while more complex expressions fall back to runtime topology resolution so
 the generated surface stays truthful. Public REST is module-owned and therefore sits outside the
 behavior source-generator topology model; `ABT0014` now rejects `http.rest` and `ViaHttpRest(...)`
-so authors map REST in a module with `MapEndpoints(...)` plus `MapBehaviorRestGroup(...)`.
+so authors map REST in a module with `RestBehaviorModuleBase.ConfigureRestBehaviors(...)`, or with
+manual `MapBehaviorRestGroup(...)` wiring when they intentionally stay on the low-level REST module
+path.
 Likewise, explicit module ownership through `IBehaviorOwnerModule`, `BehaviorModuleBase`, or
 `RestBehaviorModuleBase` remains a runtime-composition concern rather than a source-generated
 topology concern: the generator still focuses on behavior shape and topology, while the engine owns

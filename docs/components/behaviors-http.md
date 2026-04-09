@@ -24,6 +24,8 @@ module-owned REST endpoints.
   module route groups that dispatch into behaviors
 - **REST behavior module base class** — `RestBehaviorModuleBase` so behavior-owning REST modules can
   expose public endpoints without implementing multiple author-facing interfaces directly
+- **REST behavior-module DSL** — `IRestBehaviorModuleBuilder` plus
+  `IRestBehaviorEndpointGroupBuilder` for one-place public REST and internal behavior ownership
 - **OpenAPI enrichment** — module tag names and descriptions, module-major API-version defaults
   with explicit `.ApiVersion(...)` override support, best-effort XML comment
   summaries/descriptions for module-owned REST endpoints, and separation between public REST docs
@@ -67,8 +69,8 @@ Cephalon keeps public REST module-owned:
 - prefer `RestBehaviorModuleBase` when a module owns behaviors and exposes them publicly over REST
 - prefer `BehaviorModuleBase` when a module owns behaviors but does not expose a public REST surface
 - keep low-level `IRestModule` for REST modules that do not dispatch into Cephalon behaviors
-- map public REST routes in the owning module through `MapEndpoints(...)` plus
-  `MapBehaviorRestGroup(...)`
+- author public REST routes in the owning module through
+  `ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)`
 - keep behavior attributes and topology focused on interaction pattern plus non-REST transports
 - keep `WithApiSurface(...)` for the shared generic HTTP route surface, not for REST
 
@@ -132,23 +134,15 @@ public sealed class CartModule : RestBehaviorModuleBase
 {
     public override ModuleDescriptor Descriptor => DescriptorInstance;
 
-    public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
     {
-        behaviors.Add<GetCartBehavior>();
-        behaviors.Add<AddToCartBehavior>();
-        behaviors.Add<RemoveFromCartBehavior>();
-        behaviors.Add<CheckoutCartBehavior>();
-        behaviors.Add<RepriceCartBehavior>(); // internal-only
-    }
+        var group = behaviors.Group("/showcase/cart");
+        group.MapGet<GetCartBehavior>("/{cartId}");
+        group.MapPost<AddToCartBehavior>("/{cartId}/items");
+        group.MapDelete<RemoveFromCartBehavior>("/{cartId}/items/{productId}");
+        group.MapPost<CheckoutCartBehavior>("/{cartId}/checkout");
 
-    public override void MapEndpoints(IEndpointRouteBuilder endpoints)
-    {
-        var group = endpoints.MapBehaviorRestGroup(this, "/showcase/cart");
-
-        group.MapBehaviorGet<GetCartBehavior>("/{cartId}");
-        group.MapBehaviorPost<AddToCartBehavior>("/{cartId}/items");
-        group.MapBehaviorDelete<RemoveFromCartBehavior>("/{cartId}/items/{productId}");
-        group.MapBehaviorPost<CheckoutCartBehavior>("/{cartId}/checkout");
+        behaviors.Own<RepriceCartBehavior>(); // internal-only
     }
 }
 ```
@@ -159,6 +153,9 @@ Current helper behavior:
   HTTP-specific concerns
 - gives behavior-owning REST modules a dedicated base class instead of requiring authors to
   implement `IBehaviorOwnerModule` plus `IRestModule` manually
+- treats the REST DSL as the primary authoring path, so public routes also imply module ownership
+- keeps `Own<TBehavior>()` available for internal-only behaviors or behaviors that will be exposed
+  through custom/manual endpoints
 - dispatches through `BehaviorDispatcher` using Minimal API handlers
 - composes route values, query-string values, and JSON request bodies into the behavior input payload
 - uses the owning module display name as the OpenAPI tag
@@ -192,6 +189,8 @@ Current helper behavior:
   major-version behavior identities still require a later behavior-identity and transport-surface
   rework
 - rejects module-owned REST mappings that target a behavior explicitly owned by another module
+- keeps `MapAdditionalEndpoints(...)` as the advanced/manual Minimal API escape hatch for REST
+  modules that need extra routes beyond the default behavior DSL
 
 ## DefaultBehaviorContext header conventions
 

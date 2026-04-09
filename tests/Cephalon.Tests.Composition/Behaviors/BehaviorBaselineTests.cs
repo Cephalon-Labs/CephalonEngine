@@ -593,10 +593,10 @@ public sealed class BehaviorBaselineTests
     // ─────────────────────────────────────────────────────────────────────────
 
     [Fact]
-    public void BehaviorOptionsDefaultsAutoRegisterToTrue()
+    public void BehaviorOptionsDefaultsAutoRegisterToFalse()
     {
         var options = new BehaviorOptions();
-        Assert.True(options.AutoRegister);
+        Assert.False(options.AutoRegister);
     }
 
     [Fact]

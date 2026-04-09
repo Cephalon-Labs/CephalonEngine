@@ -9,16 +9,18 @@ public sealed class BehaviorOptions
 {
     /// <summary>
     /// Gets or sets whether the engine automatically discovers and registers behaviors
-    /// from loaded assemblies. When <see langword="true" /> (the default), the engine
+    /// from loaded assemblies. When <see langword="true" />, the engine
     /// scans assemblies for concrete types decorated with
     /// <c>[AppBehavior]</c> and implementing <c>IAppBehavior&lt;TIn, TOut&gt;</c>,
     /// registering any that have not already been registered manually.
     /// </summary>
     /// <remarks>
-    /// Set to <see langword="false" /> to require explicit
-    /// <c>behaviors.Register&lt;T&gt;()</c> calls for every behavior.
+    /// Explicit module-owned behavior registration through <c>BehaviorModuleBase</c> and
+    /// <c>RestBehaviorModuleBase</c> is now the preferred default path. Use auto-registration as
+    /// an opt-in fallback for legacy, exploratory, or convention-driven scenarios that still rely
+    /// on assembly scanning.
     /// </remarks>
-    public bool AutoRegister { get; set; } = true;
+    public bool AutoRegister { get; set; }
 
     /// <summary>
     /// Gets or sets the list of assembly names to scan for auto-registration.

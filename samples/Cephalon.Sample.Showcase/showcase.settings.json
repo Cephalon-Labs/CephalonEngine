@@ -57,9 +57,6 @@
         "GroupId": "showcase-behaviors"
       }
     },
-    "Behaviors": {
-      "AutoRegister": true
-    },
     "Observability": {
       "LogManifestSummary": true,
       "LogModuleSummary": true,
