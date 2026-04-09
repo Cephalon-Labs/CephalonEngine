@@ -115,13 +115,32 @@ Behavior declaration stays focused on the interaction pattern plus non-REST tran
 [AppBehavior("cart.add-item")]
 [BehaviorAllowedPatterns("cqrs")]
 [BehaviorAllowedTransports("http.ws", "http.graphql", "http.sse")]
-public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, AddToCartOutput>
+public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, BehaviorResult<AddToCartOutput>>
 {
-    public Task<AddToCartOutput> HandleAsync(
+    public Task<BehaviorResult<AddToCartOutput>> HandleAsync(
         AddToCartInput input,
         IBehaviorContext context,
         CancellationToken cancellationToken = default)
-        => throw new NotImplementedException();
+    {
+        var faults = Validate(input); // validation helper omitted for brevity
+        if (faults.Count > 0)
+        {
+            return Task.FromResult(BehaviorResult.Invalid<AddToCartOutput>(
+                "cart.add_item.invalid",
+                "Cart add-item request is invalid.",
+                new BehaviorFault
+                {
+                    Code = "cart.add_item.invalid",
+                    Message = "Cart add-item request is invalid.",
+                    Severity = BehaviorFaultSeverity.Error,
+                    InnerFaults = faults
+                }));
+        }
+
+        return Task.FromResult(BehaviorResult.Ok(
+            new AddToCartOutput(input.CartId, itemCount: 1, totalInCents: input.PriceInCents),
+            message: "Item added to cart."));
+    }
 }
 ```
 
@@ -129,8 +148,8 @@ That shape gives the runtime an attribute-only baseline: the single allowed patt
 the declared transports become the resolved behavior topology when no explicit topology override
 exists. Public REST is not part of that baseline; modules own REST explicitly.
 
-When a behavior needs to communicate an expected branch without throwing exceptions for normal
-domain flow, prefer `BehaviorResult<T>` over a transport-specific envelope:
+When a behavior needs to communicate expected branches without throwing exceptions for normal domain
+flow, prefer `BehaviorResult<T>` over a transport-specific envelope:
 
 ```csharp
 [AppBehavior("cart.get")]
@@ -158,8 +177,9 @@ public sealed class GetCartBehavior : IAppBehavior<GetCartInput, BehaviorResult<
 That keeps the behavior contract transport-neutral. REST can still project `BehaviorResult<T>` to
 HTTP status codes, and hosts can turn on the Cephalon REST envelope with
 `ApiRoutes:ResultEnvelope:Enabled = true` when they want `ResultModel<T>` / `ResultModelError` on
-the wire, including an `errors` collection for validation or multi-reason failures. GraphQL and
-JSON-RPC keep their own protocol-native response shapes.
+the wire, including an `errors` collection for validation or multi-reason failures such as the
+`AddToCartBehavior` example above. GraphQL and JSON-RPC keep their own protocol-native response
+shapes.
 
 If a behavior declares multiple allowed patterns, keep the attributes as an allowlist and add
 `ConfigureTopology(...)` or fluent registration so the runtime does not need to guess which pattern

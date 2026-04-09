@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Sample.Showcase;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 
@@ -679,6 +680,93 @@ public sealed class ShowcaseSampleHostingTests
     }
 
     [Fact]
+    public async Task ShowcaseSampleAddToCartBehaviorProjectsValidationFaultCollectionsWhenRestEnvelopeEnabled()
+    {
+        await using var app = BuildShowcaseWithRestEnvelope();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var invalidPayload = new
+        {
+            cartId = "cart-invalid-001",
+            customerId = "",
+            productId = "",
+            productName = "",
+            quantity = 0,
+            priceInCents = -1L
+        };
+
+        var response = await client.PostAsync("/api/v1/showcase/cart/cart-invalid-001/items", JsonContent.Create(invalidPayload));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+        var body = await response.Content.ReadAsStringAsync();
+        var payload = JsonSerializer.Deserialize<JsonElement>(body);
+        Assert.False(payload.GetProperty("success").GetBoolean());
+        Assert.Equal(400, payload.GetProperty("status_code").GetInt32());
+        Assert.Equal("Cart add-item request is invalid.", payload.GetProperty("message").GetString());
+
+        var errors = payload.GetProperty("errors");
+        Assert.Equal(5, errors.GetArrayLength());
+        Assert.Contains(errors.EnumerateArray(), error => error.GetProperty("key").GetString() == "showcase.cart.add_item.customer_id.required");
+        Assert.Contains(errors.EnumerateArray(), error => error.GetProperty("key").GetString() == "showcase.cart.add_item.product_id.required");
+        Assert.Contains(errors.EnumerateArray(), error => error.GetProperty("key").GetString() == "showcase.cart.add_item.product_name.required");
+        Assert.Contains(errors.EnumerateArray(), error => error.GetProperty("key").GetString() == "showcase.cart.add_item.quantity.invalid");
+        Assert.Contains(errors.EnumerateArray(), error => error.GetProperty("key").GetString() == "showcase.cart.add_item.price.invalid");
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleAddToCartBehaviorReturnsConflictAfterCheckoutWhenRestEnvelopeEnabled()
+    {
+        await using var app = BuildShowcaseWithRestEnvelope();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var addPayload = new
+        {
+            cartId = "cart-locked-001",
+            customerId = "cust-locked",
+            productId = "prod-006",
+            productName = "TypeMaster Mechanical Keyboard",
+            quantity = 1,
+            priceInCents = 12999L
+        };
+        await client.PostAsync("/api/v1/showcase/cart/cart-locked-001/items", JsonContent.Create(addPayload));
+
+        var checkoutPayload = new { cartId = "cart-locked-001", shippingAddress = "123 Checkout Blvd" };
+        var checkoutResponse = await client.PostAsync(
+            "/api/v1/showcase/cart/cart-locked-001/checkout",
+            JsonContent.Create(checkoutPayload));
+        Assert.Equal(HttpStatusCode.OK, checkoutResponse.StatusCode);
+
+        var retryPayload = new
+        {
+            cartId = "cart-locked-001",
+            customerId = "cust-locked",
+            productId = "prod-007",
+            productName = "NoiseBlock Headphones",
+            quantity = 1,
+            priceInCents = 19999L
+        };
+
+        var conflictResponse = await client.PostAsync("/api/v1/showcase/cart/cart-locked-001/items", JsonContent.Create(retryPayload));
+
+        Assert.Equal(HttpStatusCode.Conflict, conflictResponse.StatusCode);
+
+        var conflictBody = await conflictResponse.Content.ReadAsStringAsync();
+        var conflictPayload = JsonSerializer.Deserialize<JsonElement>(conflictBody);
+        Assert.False(conflictPayload.GetProperty("success").GetBoolean());
+        Assert.Equal(409, conflictPayload.GetProperty("status_code").GetInt32());
+        Assert.Equal($"Cart 'cart-locked-001' has already been checked out.", conflictPayload.GetProperty("message").GetString());
+
+        var errors = conflictPayload.GetProperty("errors");
+        Assert.Equal(1, errors.GetArrayLength());
+        Assert.Equal("showcase.cart.add_item.checked_out", errors[0].GetProperty("key").GetString());
+    }
+
+    [Fact]
     public async Task ShowcaseSampleRemovesItemFromCart()
     {
         await using var app = ShowcaseSampleApp.Build(
@@ -870,5 +958,14 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(HttpStatusCode.OK, orderStatus.StatusCode);
         var orderBody = await orderStatus.Content.ReadAsStringAsync();
         Assert.Contains("Delivered", orderBody, StringComparison.Ordinal);
+    }
+
+    private static WebApplication BuildShowcaseWithRestEnvelope()
+    {
+        return ShowcaseSampleApp.Build(configureBuilder: builder =>
+        {
+            builder.WebHost.UseTestServer();
+            builder.Configuration["ApiRoutes:ResultEnvelope:Enabled"] = "true";
+        });
     }
 }

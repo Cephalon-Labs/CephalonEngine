@@ -276,6 +276,34 @@ and:
 }
 ```
 
+Multi-reason validation faults project cleanly too. The showcase `AddToCartBehavior` now returns
+`BehaviorResult.Invalid<AddToCartOutput>` with nested `BehaviorFault.InnerFaults`, which REST
+projects to payloads such as:
+
+```json
+{
+  "title": "Invalid request",
+  "message": "Cart add-item request is invalid.",
+  "success": false,
+  "status_code": 400,
+  "data": null,
+  "errors": [
+    {
+      "key": "showcase.cart.add_item.product_id.required",
+      "message": "Product id is required.",
+      "severity": "error",
+      "details": null
+    },
+    {
+      "key": "showcase.cart.add_item.quantity.invalid",
+      "message": "Quantity must be greater than zero.",
+      "severity": "error",
+      "details": null
+    }
+  ]
+}
+```
+
 Keep that envelope as a REST host policy only. Messaging, events, GraphQL, and JSON-RPC should not
 reuse it as a universal engine contract.
 

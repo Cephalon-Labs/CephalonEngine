@@ -58,7 +58,7 @@ public static class ShowcaseSampleApp
     /// Builds the showcase sample application with the full Cephalon wiring.
     /// </summary>
     /// <param name="args">Optional command-line arguments for the sample host.</param>
-    /// <param name="configureBuilder">Optional hook to customize the builder before the host is built.</param>
+    /// <param name="configureBuilder">Optional hook to customize the builder after the base configuration sources are loaded and before the host is built.</param>
     /// <returns>The configured showcase sample application.</returns>
     public static WebApplication Build(
         string[]? args = null,
@@ -74,9 +74,9 @@ public static class ShowcaseSampleApp
             EnvironmentName = Environments.Development
         });
 
-        configureBuilder?.Invoke(builder);
         builder.Configuration.AddJsonFile("showcase.settings.json", optional: false, reloadOnChange: false);
         builder.Configuration.AddEnvironmentVariables("SHOWCASE_");
+        configureBuilder?.Invoke(builder);
 
         var config = builder.Configuration;
 
@@ -151,8 +151,9 @@ public static class ShowcaseSampleApp
             engine.AddAudit();
 
             // --- Behaviors: all five patterns + generic non-REST transports ---
-            // Behaviors are auto-registered from loaded assemblies (AutoRegister = true by default).
-            // Public REST stays module-owned; behavior topology covers non-REST transports.
+            // This sample uses explicit module-owned behavior registration for public REST and
+            // internal ownership. Hosts can still opt into assembly auto-registration separately
+            // through Engine:Behaviors:AutoRegister when they want the fallback scan path.
             engine.AddBehaviors(behaviors =>
             {
                 // Register pattern execution strategies
