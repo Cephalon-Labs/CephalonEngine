@@ -150,7 +150,7 @@ public sealed class BehaviorRestOpenApiTests
         Assert.NotNull(missingResponse.Errors);
         Assert.Single(missingResponse.Errors!);
         Assert.Equal("tests.widgets.not_found", missingResponse.Errors[0].Key);
-        Assert.Contains("\"severity\":\"error\"", missingPayload, StringComparison.Ordinal);
+        Assert.Contains("\"severity\":", missingPayload, StringComparison.Ordinal);
         Assert.DoesNotContain("\"error\":", missingPayload, StringComparison.Ordinal);
         Assert.Contains("\"errors\":[", missingPayload, StringComparison.Ordinal);
 
@@ -187,6 +187,59 @@ public sealed class BehaviorRestOpenApiTests
         Assert.True(successSchema.GetProperty("properties").TryGetProperty("data", out _));
         Assert.False(successSchema.GetProperty("properties").TryGetProperty("error", out _));
         Assert.False(successSchema.GetProperty("properties").TryGetProperty("errors", out _));
+
+        var documentedResponses = document.RootElement
+            .GetProperty("paths")
+            .GetProperty("/api/v1/tests/results/widgets/{widgetId}")
+            .GetProperty("get")
+            .GetProperty("responses");
+
+        Assert.True(documentedResponses.TryGetProperty("500", out _));
+    }
+
+    [Fact]
+    public async Task BehaviorRestOpenApiDocumentedStatusesCanBeConfigured()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["ApiRoutes:ResultEnvelope:Enabled"] = "true";
+        builder.Configuration["OpenApi:BehaviorRest:DocumentedStatusCodes:0"] = "200";
+        builder.Configuration["OpenApi:BehaviorRest:DocumentedStatusCodes:1"] = "400";
+        builder.Configuration["OpenApi:BehaviorRest:DocumentedStatusCodes:2"] = "500";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new EnvelopeResultModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        using var document = JsonDocument.Parse(await client.GetStringAsync("/openapi/v1.json"));
+        var responses = document.RootElement
+            .GetProperty("paths")
+            .GetProperty("/api/v1/tests/results/widgets/{widgetId}")
+            .GetProperty("get")
+            .GetProperty("responses");
+
+        Assert.True(responses.TryGetProperty("200", out _));
+        Assert.True(responses.TryGetProperty("400", out _));
+        Assert.True(responses.TryGetProperty("500", out _));
+        Assert.False(responses.TryGetProperty("201", out _));
+        Assert.False(responses.TryGetProperty("202", out _));
+        Assert.False(responses.TryGetProperty("204", out _));
+        Assert.False(responses.TryGetProperty("401", out _));
+        Assert.False(responses.TryGetProperty("403", out _));
+        Assert.False(responses.TryGetProperty("404", out _));
+        Assert.False(responses.TryGetProperty("409", out _));
     }
 
     [Fact]

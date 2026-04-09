@@ -11,6 +11,20 @@ namespace Cephalon.AspNetCore.Documentation;
 /// </remarks>
 public sealed class OpenApiEndpointOptions
 {
+    private static readonly int[] DefaultBehaviorRestDocumentedStatusCodes =
+    [
+        200,
+        201,
+        202,
+        204,
+        400,
+        401,
+        403,
+        404,
+        409,
+        500
+    ];
+
     /// <summary>
     /// Gets the root configuration section used for OpenAPI endpoint routing.
     /// </summary>
@@ -40,6 +54,14 @@ public sealed class OpenApiEndpointOptions
     public string ScalarRoutePrefix { get; set; } = "/scalar";
 
     /// <summary>
+    /// Gets or sets the HTTP status codes that Cephalon's behavior-owned REST helpers publish in OpenAPI documents by default.
+    /// </summary>
+    /// <remarks>
+    /// This list controls documentation metadata only. It does not change the runtime HTTP status codes emitted by ASP.NET Core.
+    /// </remarks>
+    public IReadOnlyList<int> BehaviorRestDocumentedStatusCodes { get; set; } = DefaultBehaviorRestDocumentedStatusCodes;
+
+    /// <summary>
     /// Binds and normalizes OpenAPI endpoint options from configuration.
     /// </summary>
     /// <param name="configuration">The application configuration root.</param>
@@ -54,12 +76,35 @@ public sealed class OpenApiEndpointOptions
         var section = configuration.GetSection(sectionPath);
         var routePattern = section["RoutePattern"];
         var scalarRoutePrefix = section["Scalar:RoutePrefix"] ?? section["ScalarRoutePrefix"];
+        var documentedStatusCodes = NormalizeStatusCodes(
+            section.GetSection("BehaviorRest:DocumentedStatusCodes").Get<int[]>() ?? DefaultBehaviorRestDocumentedStatusCodes);
 
         return new OpenApiEndpointOptions
         {
             RoutePattern = NormalizeRoutePattern(routePattern),
-            ScalarRoutePrefix = NormalizeRoutePrefix(scalarRoutePrefix)
+            ScalarRoutePrefix = NormalizeRoutePrefix(scalarRoutePrefix),
+            BehaviorRestDocumentedStatusCodes = documentedStatusCodes
         };
+    }
+
+    private static int[] NormalizeStatusCodes(IEnumerable<int> statusCodes)
+    {
+        ArgumentNullException.ThrowIfNull(statusCodes);
+
+        var normalized = statusCodes
+            .Distinct()
+            .ToArray();
+
+        foreach (var statusCode in normalized)
+        {
+            if (statusCode is < 100 or > 599)
+            {
+                throw new InvalidOperationException(
+                    "OpenApi:BehaviorRest:DocumentedStatusCodes entries must be valid HTTP status codes between 100 and 599.");
+            }
+        }
+
+        return normalized;
     }
 
     private static string NormalizeRoutePattern(string? routePattern)

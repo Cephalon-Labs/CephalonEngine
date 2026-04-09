@@ -233,11 +233,19 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             return routes;
         }
 
+        var documentedStatusCodes = ResolveDocumentedStatusCodes(endpoints.ServiceProvider);
         routes = endpoints.MapGroup(BuildResolvedRoutePrefix());
         routes.WithGroupName(OpenApiDocumentName);
         routes.WithTags(TagName);
-        routes.ProducesProblem(StatusCodes.Status400BadRequest);
-        routes.ProducesProblem(StatusCodes.Status404NotFound);
+        if (documentedStatusCodes.Contains(StatusCodes.Status400BadRequest))
+        {
+            routes.ProducesProblem(StatusCodes.Status400BadRequest);
+        }
+
+        if (documentedStatusCodes.Contains(StatusCodes.Status404NotFound))
+        {
+            routes.ProducesProblem(StatusCodes.Status404NotFound);
+        }
         routes.WithMetadata(new OpenApiTagMetadata(TagName, TagDescription));
         routes.WithMetadata(new BehaviorRestGroupMetadata(
             ModuleDescriptor.Id,
@@ -433,27 +441,79 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             ? typeof(ResultModelError)
             : typeof(ProblemDetails);
 
-        builder.Produces(StatusCodes.Status200OK, successResponseType, "application/json");
+        if (contract.ShouldDocumentStatus(StatusCodes.Status200OK))
+        {
+            builder.Produces(StatusCodes.Status200OK, successResponseType, "application/json");
+        }
 
         if (contract.ReturnsBehaviorResult)
         {
-            builder.Produces(StatusCodes.Status201Created, successResponseType, "application/json");
-            builder.Produces(StatusCodes.Status202Accepted, successResponseType, "application/json");
-            builder.Produces(StatusCodes.Status204NoContent);
-            builder.Produces(StatusCodes.Status401Unauthorized, errorResponseType, "application/json");
-            builder.Produces(StatusCodes.Status403Forbidden, errorResponseType, "application/json");
-            builder.Produces(StatusCodes.Status409Conflict, errorResponseType, "application/json");
+            if (contract.ShouldDocumentStatus(StatusCodes.Status201Created))
+            {
+                builder.Produces(StatusCodes.Status201Created, successResponseType, "application/json");
+            }
+
+            if (contract.ShouldDocumentStatus(StatusCodes.Status202Accepted))
+            {
+                builder.Produces(StatusCodes.Status202Accepted, successResponseType, "application/json");
+            }
+
+            if (contract.ShouldDocumentStatus(StatusCodes.Status204NoContent))
+            {
+                builder.Produces(StatusCodes.Status204NoContent);
+            }
+
+            if (contract.ShouldDocumentStatus(StatusCodes.Status401Unauthorized))
+            {
+                builder.Produces(StatusCodes.Status401Unauthorized, errorResponseType, "application/json");
+            }
+
+            if (contract.ShouldDocumentStatus(StatusCodes.Status403Forbidden))
+            {
+                builder.Produces(StatusCodes.Status403Forbidden, errorResponseType, "application/json");
+            }
+
+            if (contract.ShouldDocumentStatus(StatusCodes.Status409Conflict))
+            {
+                builder.Produces(StatusCodes.Status409Conflict, errorResponseType, "application/json");
+            }
         }
 
         if (contract.UseResultModelEnvelope)
         {
-            builder.Produces(StatusCodes.Status400BadRequest, errorResponseType, "application/json");
-            builder.Produces(StatusCodes.Status404NotFound, errorResponseType, "application/json");
+            if (contract.ShouldDocumentStatus(StatusCodes.Status400BadRequest))
+            {
+                builder.Produces(StatusCodes.Status400BadRequest, errorResponseType, "application/json");
+            }
+
+            if (contract.ShouldDocumentStatus(StatusCodes.Status404NotFound))
+            {
+                builder.Produces(StatusCodes.Status404NotFound, errorResponseType, "application/json");
+            }
         }
         else
         {
-            builder.ProducesProblem(StatusCodes.Status400BadRequest);
-            builder.Produces(StatusCodes.Status404NotFound);
+            if (contract.ShouldDocumentStatus(StatusCodes.Status400BadRequest))
+            {
+                builder.ProducesProblem(StatusCodes.Status400BadRequest);
+            }
+
+            if (contract.ShouldDocumentStatus(StatusCodes.Status404NotFound))
+            {
+                builder.Produces(StatusCodes.Status404NotFound);
+            }
+        }
+
+        if (contract.ShouldDocumentStatus(StatusCodes.Status500InternalServerError))
+        {
+            if (contract.UseResultModelEnvelope)
+            {
+                builder.Produces(StatusCodes.Status500InternalServerError, errorResponseType, "application/json");
+            }
+            else
+            {
+                builder.ProducesProblem(StatusCodes.Status500InternalServerError);
+            }
         }
     }
 
@@ -588,6 +648,16 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             : fallbackDescription.Trim();
     }
 
+    private static HashSet<int> ResolveDocumentedStatusCodes(IServiceProvider services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        var configuration = services.GetService<IConfiguration>();
+        return configuration is null
+            ? new HashSet<int>(new OpenApiEndpointOptions().BehaviorRestDocumentedStatusCodes)
+            : new HashSet<int>(OpenApiEndpointOptions.FromConfiguration(configuration).BehaviorRestDocumentedStatusCodes);
+    }
+
     private static MethodInfo GetRequiredCoreMethod(string methodName)
     {
         return typeof(BehaviorRestEndpointGroup).GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static)
@@ -632,7 +702,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         Type OutputType,
         Type ResponseType,
         bool ReturnsBehaviorResult,
-        bool UseResultModelEnvelope)
+        bool UseResultModelEnvelope,
+        IReadOnlySet<int> DocumentedStatusCodes)
     {
         internal static BehaviorRestEndpointContract Create(
             Type behaviorType,
@@ -681,6 +752,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             var configuration = services.GetService<IConfiguration>();
             var useResultModelEnvelope = configuration is not null &&
                 ApiRoutesOptions.FromConfiguration(configuration).UseResultModelEnvelope;
+            var documentedStatusCodes = ResolveDocumentedStatusCodes(services);
 
             return new BehaviorRestEndpointContract(
                 moduleDescriptor.Id,
@@ -697,8 +769,11 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 outputType,
                 responseType,
                 returnsBehaviorResult,
-                useResultModelEnvelope);
+                useResultModelEnvelope,
+                documentedStatusCodes);
         }
+
+        internal bool ShouldDocumentStatus(int statusCode) => DocumentedStatusCodes.Contains(statusCode);
 
         internal static string GetBehaviorId(Type behaviorType)
         {

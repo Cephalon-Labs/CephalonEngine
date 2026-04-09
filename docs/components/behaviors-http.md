@@ -214,8 +214,24 @@ separate concerns:
   `ResultModel<T>` / `ResultModelError`
 - error envelopes use an `errors` collection so validation and multi-reason failures can return
   more than one error item cleanly
+- the OpenAPI + Scalar response list for behavior-owned REST helpers is configurable through
+  `OpenApi:BehaviorRest:DocumentedStatusCodes`
+- the default documented status set is `200`, `201`, `202`, `204`, `400`, `401`, `403`, `404`,
+  `409`, and `500`, so server-error responses stay visible in docs by default
 - GraphQL and JSON-RPC keep their protocol-native response shapes and are intentionally not wrapped
   in `ResultModel`
+
+Example host override:
+
+```json
+{
+  "OpenApi": {
+    "BehaviorRest": {
+      "DocumentedStatusCodes": [200, 400, 404, 500]
+    }
+  }
+}
+```
 
 Example:
 
