@@ -11,14 +11,14 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
     private readonly List<Action<IBehaviorModuleBuilder>> ownershipRegistrations = [];
     private readonly List<RestBehaviorEndpointGroupDefinition> groups = [];
 
-    public IRestBehaviorModuleBuilder Own<TBehavior>()
+    public IRestBehaviorModuleBuilder Internal<TBehavior>()
         where TBehavior : class
     {
         RegisterOwnedBehavior<TBehavior>(configureTopology: null);
         return this;
     }
 
-    public IRestBehaviorModuleBuilder Own<TBehavior>(Action<IBehaviorTopologyBuilder> configureTopology)
+    public IRestBehaviorModuleBuilder Internal<TBehavior>(Action<IBehaviorTopologyBuilder> configureTopology)
         where TBehavior : class
     {
         ArgumentNullException.ThrowIfNull(configureTopology);
@@ -53,7 +53,7 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
             if (existing.HasExplicitTopologyOverride || ownership.HasExplicitTopologyOverride)
             {
                 throw new InvalidOperationException(
-                    $"Behavior '{ownership.BehaviorId}' was declared more than once with explicit ownership/topology configuration inside the same REST behavior module. Own the behavior once, then map it from one or more REST routes.");
+                    $"Behavior '{ownership.BehaviorId}' was declared more than once with explicit internal/topology configuration inside the same REST behavior module. Declare the behavior once through Internal<TBehavior>(), then map it from one or more REST routes.");
             }
 
             return;

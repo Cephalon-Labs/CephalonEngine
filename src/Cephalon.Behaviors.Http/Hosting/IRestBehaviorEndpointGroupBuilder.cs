@@ -9,8 +9,8 @@ namespace Cephalon.Behaviors.Http.Hosting;
 /// </summary>
 /// <remarks>
 /// Mapping a behavior through this contract automatically declares module ownership for that
-/// behavior. Use <see cref="IRestBehaviorModuleBuilder.Own{TBehavior}()"/> when a behavior should
-/// remain internal-only or when the module needs a custom/manual endpoint mapping path.
+/// behavior. Use <see cref="IRestBehaviorModuleBuilder.Internal{TBehavior}()"/> when a behavior
+/// should remain internal-only or when the module needs a custom/manual endpoint mapping path.
 /// </remarks>
 public interface IRestBehaviorEndpointGroupBuilder
 {

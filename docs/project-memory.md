@@ -212,7 +212,7 @@ Current standing examples from this collaboration:
 - when a module explicitly owns behaviors, prefer `BehaviorModuleBase` for process-only modules and `RestBehaviorModuleBase` when the same module also exposes some of those behaviors over REST; keep raw `IRestModule` implementations for REST modules that do not dispatch through behaviors
 - prefer `BehaviorModuleBase` when a module explicitly owns behaviors but does not expose a public REST surface
 - prefer `RestBehaviorModuleBase` when the same module owns behaviors and exposes some of them over REST
-- prefer the single-surface REST DSL on `RestBehaviorModuleBase`: public `behaviors.Group(...).MapGet/MapPost/...` routes imply ownership automatically, while `behaviors.Own<TBehavior>()` is the explicit path for internal-only or custom/manual-route behaviors in the same module
+- prefer the single-surface REST DSL on `RestBehaviorModuleBase`: public `behaviors.Group(...).MapGet/MapPost/...` routes imply ownership automatically, while `behaviors.Internal<TBehavior>()` is the explicit path for internal-only or custom/manual-route behaviors in the same module
 - keep one bounded context in one module when possible; do not split modules only to separate internal behaviors from REST-exposed behaviors
 - `Engine:Behaviors:AutoRegister` is now an opt-in fallback rather than the default behavior-ownership path; prefer explicit module ownership and only turn scanning back on when a host intentionally wants convention-based discovery
 

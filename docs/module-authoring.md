@@ -173,7 +173,7 @@ public sealed class CartModule : RestBehaviorModuleBase
         group.MapDelete<RemoveFromCartBehavior>("/{cartId}/items/{productId}");
         group.MapPost<CheckoutCartBehavior>("/{cartId}/checkout");
 
-        behaviors.Own<RepriceCartBehavior>(); // internal-only
+        behaviors.Internal<RepriceCartBehavior>();
     }
 }
 ```
@@ -185,7 +185,7 @@ Current helper behavior:
 - keeps one module as the owner of both internal-only and REST-exposed behaviors without making
   authors declare the same public behavior twice
 - treats `behaviors.Group(...).MapGet/MapPost/...` as the primary public REST DSL
-- treats `behaviors.Own<TBehavior>()` as the explicit internal-only or custom/manual-route path
+- treats `behaviors.Internal<TBehavior>()` as the explicit internal-only or custom/manual-route path
 - validates that a module cannot map another module's explicitly owned behavior through the REST helper layer
 - keeps route shape in the ASP.NET Core adapter layer while behavior attributes remain host-agnostic
 - dispatches through `BehaviorDispatcher` and `DefaultBehaviorContext`
@@ -201,7 +201,7 @@ Current helper behavior:
 - maps behavior `<summary>` to the operation header and behavior `<remarks>` to the operation description so Scalar/OpenAPI content stays non-duplicated
 - keeps `MapAdditionalEndpoints(...)` as the advanced escape hatch for manual Minimal API work that
   falls outside the default behavior REST DSL; custom endpoints should still declare ownership first
-  through `behaviors.Own<TBehavior>()`
+  through `behaviors.Internal<TBehavior>()`
 
 When a host needs more than the default `v1` document, prefer `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion` so endpoints mapped with `.ApiVersion(2)` or higher, or defaulted from module version `2.x`, have a matching OpenAPI/Scalar surface. In that shape, `/scalar` redirects to the default canonical document such as `/scalar/v2`, `/scalar/` remains available for multi-document selection, and Cephalon normalizes hash-based Scalar selections such as `/scalar/#v2/` back into pinned versioned links. Hosts can also move the docs and REST entry points with `OpenApi:RoutePattern`, `OpenApi:Scalar:RoutePrefix`, and the canonical `ApiRoutes:Prefixes:*` settings. Legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` settings remain available when a host deliberately wants custom named documents instead of `v{major}` API-version documents.
 

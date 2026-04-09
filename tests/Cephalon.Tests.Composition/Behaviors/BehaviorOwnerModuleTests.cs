@@ -200,7 +200,7 @@ public sealed class BehaviorOwnerModuleTests
                     .AsDirect()
                     .ViaHttpJsonRpc());
 
-            behaviors.Own<OwnedRestInternalBehavior>(topology => topology
+            behaviors.Internal<OwnedRestInternalBehavior>(topology => topology
                 .AsDirect()
                 .ViaInMemory());
         }

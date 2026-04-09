@@ -47,8 +47,8 @@ public abstract class RestBehaviorModuleBase : BehaviorModuleBase, IRestModule
     /// <param name="endpoints">The endpoint route builder receiving additional module endpoints.</param>
     /// <remarks>
     /// When a custom endpoint still dispatches into a Cephalon behavior, declare ownership first through
-    /// <see cref="ConfigureRestBehaviors(IRestBehaviorModuleBuilder)"/> using <c>Own&lt;TBehavior&gt;()</c>
-    /// so engine composition remains deterministic.
+    /// <see cref="ConfigureRestBehaviors(IRestBehaviorModuleBuilder)"/> using
+    /// <c>Internal&lt;TBehavior&gt;()</c> so engine composition remains deterministic.
     /// </remarks>
     protected virtual void MapAdditionalEndpoints(IEndpointRouteBuilder endpoints)
     {

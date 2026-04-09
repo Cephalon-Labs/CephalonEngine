@@ -6,29 +6,30 @@ namespace Cephalon.Behaviors.Http.Hosting;
 /// Collects behavior ownership and public REST exposure for a <see cref="RestBehaviorModuleBase" />.
 /// </summary>
 /// <remarks>
-/// Public REST behavior routes automatically imply module ownership. Use <see cref="Own{TBehavior}()"/>
-/// or <see cref="Own{TBehavior}(Action{IBehaviorTopologyBuilder})"/> when a module also owns
+/// Public REST behavior routes automatically imply module ownership. Use
+/// <see cref="Internal{TBehavior}()"/> or
+/// <see cref="Internal{TBehavior}(Action{IBehaviorTopologyBuilder})"/> when a module also owns
 /// internal-only behaviors or behaviors that will be exposed through a custom/manual route path.
 /// </remarks>
 public interface IRestBehaviorModuleBuilder
 {
     /// <summary>
-    /// Declares that the current REST-capable module owns the specified behavior without exposing it
-    /// through the default REST route builder.
+    /// Declares that the current REST-capable module owns the specified behavior as an internal or
+    /// custom/manual-route behavior without exposing it through the default REST route builder.
     /// </summary>
     /// <typeparam name="TBehavior">The concrete behavior type owned by the module.</typeparam>
     /// <returns>The same builder for fluent authoring.</returns>
-    IRestBehaviorModuleBuilder Own<TBehavior>()
+    IRestBehaviorModuleBuilder Internal<TBehavior>()
         where TBehavior : class;
 
     /// <summary>
-    /// Declares that the current REST-capable module owns the specified behavior and applies an
-    /// explicit topology override during behavior registration.
+    /// Declares that the current REST-capable module owns the specified behavior as an internal or
+    /// custom/manual-route behavior and applies an explicit topology override during registration.
     /// </summary>
     /// <typeparam name="TBehavior">The concrete behavior type owned by the module.</typeparam>
     /// <param name="configureTopology">The explicit topology selection callback.</param>
     /// <returns>The same builder for fluent authoring.</returns>
-    IRestBehaviorModuleBuilder Own<TBehavior>(Action<IBehaviorTopologyBuilder> configureTopology)
+    IRestBehaviorModuleBuilder Internal<TBehavior>(Action<IBehaviorTopologyBuilder> configureTopology)
         where TBehavior : class;
 
     /// <summary>

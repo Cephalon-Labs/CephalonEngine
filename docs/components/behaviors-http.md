@@ -142,7 +142,7 @@ public sealed class CartModule : RestBehaviorModuleBase
         group.MapDelete<RemoveFromCartBehavior>("/{cartId}/items/{productId}");
         group.MapPost<CheckoutCartBehavior>("/{cartId}/checkout");
 
-        behaviors.Own<RepriceCartBehavior>(); // internal-only
+        behaviors.Internal<RepriceCartBehavior>();
     }
 }
 ```
@@ -154,7 +154,7 @@ Current helper behavior:
 - gives behavior-owning REST modules a dedicated base class instead of requiring authors to
   implement `IBehaviorOwnerModule` plus `IRestModule` manually
 - treats the REST DSL as the primary authoring path, so public routes also imply module ownership
-- keeps `Own<TBehavior>()` available for internal-only behaviors or behaviors that will be exposed
+- keeps `Internal<TBehavior>()` available for internal-only behaviors or behaviors that will be exposed
   through custom/manual endpoints
 - dispatches through `BehaviorDispatcher` using Minimal API handlers
 - composes route values, query-string values, and JSON request bodies into the behavior input payload
