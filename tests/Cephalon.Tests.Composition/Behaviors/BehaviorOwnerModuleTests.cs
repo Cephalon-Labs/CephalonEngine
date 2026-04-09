@@ -59,7 +59,7 @@ public sealed class BehaviorOwnerModuleTests
         builder.AddBehaviors(configureOptions: options =>
         {
             options.AutoRegister = true;
-            options.AutoRegisterAssemblies = [typeof(GetCartBehavior).Assembly.GetName().Name!];
+            options.AutoRegisterExcludeAssemblyPrefixes = ["Cephalon.Tests.Composition"];
         });
         builder.AddModule(new ShowcaseOwnedBehaviorModule());
 

@@ -162,7 +162,7 @@ internal sealed class BehaviorModule(
                 continue;
 
             // Phase 2: Reflection fallback for assemblies without source generation
-            ReflectionScanAssembly(services, typeRegistry, assembly);
+            ReflectionScanAssembly(services, typeRegistry, assembly, ownedBehaviorIds);
         }
     }
 
@@ -263,7 +263,8 @@ internal sealed class BehaviorModule(
     private static void ReflectionScanAssembly(
         IServiceCollection services,
         BehaviorTypeRegistry typeRegistry,
-        Assembly assembly)
+        Assembly assembly,
+        IReadOnlySet<string>? ownedBehaviorIds)
     {
         Type[] types;
         try
@@ -285,6 +286,11 @@ internal sealed class BehaviorModule(
             var attr = (AppBehaviorAttribute?)Attribute.GetCustomAttribute(
                 type, typeof(AppBehaviorAttribute));
             if (attr is null) continue;
+
+            if (ownedBehaviorIds?.Contains(attr.Id) == true)
+            {
+                continue;
+            }
 
             // Must implement IAppBehavior<TIn, TOut>
             var appBehaviorInterface = type.GetInterfaces()
