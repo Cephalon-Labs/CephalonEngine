@@ -42,8 +42,8 @@ public class ResultModel<TModel>
     /// <summary>
     /// Gets or sets the structured error details when the response is not successful.
     /// </summary>
-    [JsonPropertyName("error")]
-    public ResultModelErrorDetail? Error { get; set; }
+    [JsonPropertyName("errors")]
+    public List<ResultModelErrorDetail>? Errors { get; set; }
 }
 
 /// <summary>

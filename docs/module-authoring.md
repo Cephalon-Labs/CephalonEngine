@@ -158,7 +158,8 @@ public sealed class GetCartBehavior : IAppBehavior<GetCartInput, BehaviorResult<
 That keeps the behavior contract transport-neutral. REST can still project `BehaviorResult<T>` to
 HTTP status codes, and hosts can turn on the Cephalon REST envelope with
 `ApiRoutes:ResultEnvelope:Enabled = true` when they want `ResultModel<T>` / `ResultModelError` on
-the wire. GraphQL and JSON-RPC keep their own protocol-native response shapes.
+the wire, including an `errors` collection for validation or multi-reason failures. GraphQL and
+JSON-RPC keep their own protocol-native response shapes.
 
 If a behavior declares multiple allowed patterns, keep the attributes as an allowlist and add
 `ConfigureTopology(...)` or fluent registration so the runtime does not need to guess which pattern

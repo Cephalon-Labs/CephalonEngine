@@ -100,6 +100,7 @@ public sealed class BehaviorRestOpenApiTests
     {
         const string route = "/api/v1/tests/results/widgets/widget-1";
         const string missingRoute = "/api/v1/tests/results/widgets/missing";
+        const string invalidRoute = "/api/v1/tests/results/widgets/invalid";
 
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseTestServer();
@@ -130,6 +131,9 @@ public sealed class BehaviorRestOpenApiTests
         var missingHttpResponse = await client.GetAsync(missingRoute);
         var missingPayload = await missingHttpResponse.Content.ReadAsStringAsync();
         var missingResponse = await missingHttpResponse.Content.ReadFromJsonAsync<ResultModelError>();
+        var invalidHttpResponse = await client.GetAsync(invalidRoute);
+        var invalidPayload = await invalidHttpResponse.Content.ReadAsStringAsync();
+        var invalidResponse = await invalidHttpResponse.Content.ReadFromJsonAsync<ResultModelError>();
 
         Assert.True(successHttpResponse.IsSuccessStatusCode, successPayload);
         Assert.NotNull(successResponse);
@@ -143,9 +147,23 @@ public sealed class BehaviorRestOpenApiTests
         Assert.NotNull(missingResponse);
         Assert.False(missingResponse!.Success);
         Assert.Equal(404, missingResponse.StatusCode);
-        Assert.NotNull(missingResponse.Error);
-        Assert.Equal("tests.widgets.not_found", missingResponse.Error!.Key);
+        Assert.NotNull(missingResponse.Errors);
+        Assert.Single(missingResponse.Errors!);
+        Assert.Equal("tests.widgets.not_found", missingResponse.Errors[0].Key);
         Assert.Contains("\"severity\":\"error\"", missingPayload, StringComparison.Ordinal);
+        Assert.DoesNotContain("\"error\":", missingPayload, StringComparison.Ordinal);
+        Assert.Contains("\"errors\":[", missingPayload, StringComparison.Ordinal);
+
+        Assert.Equal(HttpStatusCode.BadRequest, invalidHttpResponse.StatusCode);
+        Assert.NotNull(invalidResponse);
+        Assert.False(invalidResponse!.Success);
+        Assert.Equal(400, invalidResponse.StatusCode);
+        Assert.NotNull(invalidResponse.Errors);
+        Assert.Equal(2, invalidResponse.Errors!.Count);
+        Assert.Contains(invalidResponse.Errors, error => error.Key == "tests.widgets.widget_id.required");
+        Assert.Contains(invalidResponse.Errors, error => error.Key == "tests.widgets.widget_id.length");
+        Assert.DoesNotContain("\"error\":", invalidPayload, StringComparison.Ordinal);
+        Assert.Contains("\"errors\":[", invalidPayload, StringComparison.Ordinal);
 
         var successSchemaReference = document.RootElement
             .GetProperty("paths")
@@ -168,6 +186,7 @@ public sealed class BehaviorRestOpenApiTests
 
         Assert.True(successSchema.GetProperty("properties").TryGetProperty("data", out _));
         Assert.False(successSchema.GetProperty("properties").TryGetProperty("error", out _));
+        Assert.False(successSchema.GetProperty("properties").TryGetProperty("errors", out _));
     }
 
     [Fact]
@@ -278,6 +297,34 @@ public sealed class BehaviorRestOpenApiTests
                     {
                         Code = "tests.widgets.not_found",
                         Message = $"Widget '{input.WidgetId}' was not found."
+                    }));
+            }
+
+            if (string.Equals(input.WidgetId, "invalid", StringComparison.OrdinalIgnoreCase))
+            {
+                return Task.FromResult(BehaviorResult.Invalid<EnvelopeLookupOutput>(
+                    "tests.widgets.invalid",
+                    "Widget validation failed.",
+                    new BehaviorFault
+                    {
+                        Code = "tests.widgets.invalid",
+                        Message = "Widget validation failed.",
+                        Severity = BehaviorFaultSeverity.Error,
+                        InnerFaults =
+                        [
+                            new BehaviorFault
+                            {
+                                Code = "tests.widgets.widget_id.required",
+                                Message = "Widget id is required.",
+                                Severity = BehaviorFaultSeverity.Error
+                            },
+                            new BehaviorFault
+                            {
+                                Code = "tests.widgets.widget_id.length",
+                                Message = "Widget id must be at least 3 characters long.",
+                                Severity = BehaviorFaultSeverity.Error
+                            }
+                        ]
                     }));
             }
 

@@ -156,7 +156,8 @@ internal static class BehaviorRestResponseMapper
             result.Message,
             result.Code ?? GetDefaultErrorKey(statusCode),
             result.Fault?.Severity ?? BehaviorFaultSeverity.Error,
-            result.Fault?.Details);
+            result.Fault?.Details,
+            result.Fault);
     }
 
     private static IResult CreateErrorEnvelope(
@@ -165,7 +166,8 @@ internal static class BehaviorRestResponseMapper
         string message,
         string code,
         BehaviorFaultSeverity severity,
-        string? details = null)
+        string? details = null,
+        BehaviorFault? fault = null)
     {
         var envelope = new ResultModelError
         {
@@ -173,16 +175,49 @@ internal static class BehaviorRestResponseMapper
             Message = message,
             Success = false,
             StatusCode = statusCode,
-            Error = new ResultModelErrorDetail
+            Errors = BuildErrors(code, message, severity, details, fault)
+        };
+
+        return Results.Json(envelope, statusCode: statusCode);
+    }
+
+    private static List<ResultModelErrorDetail> BuildErrors(
+        string code,
+        string message,
+        BehaviorFaultSeverity severity,
+        string? details,
+        BehaviorFault? fault)
+    {
+        if (fault?.InnerFaults.Count > 0)
+        {
+            return fault.InnerFaults
+                .Select(MapFault)
+                .ToList();
+        }
+
+        return
+        [
+            new ResultModelErrorDetail
             {
                 Key = code,
                 Message = message,
                 Severity = severity,
                 Details = details
             }
-        };
+        ];
+    }
 
-        return Results.Json(envelope, statusCode: statusCode);
+    private static ResultModelErrorDetail MapFault(BehaviorFault fault)
+    {
+        ArgumentNullException.ThrowIfNull(fault);
+
+        return new ResultModelErrorDetail
+        {
+            Key = string.IsNullOrWhiteSpace(fault.Code) ? "unknown_error" : fault.Code,
+            Message = string.IsNullOrWhiteSpace(fault.Message) ? "The request failed." : fault.Message,
+            Severity = fault.Severity,
+            Details = fault.Details
+        };
     }
 
     private static ProblemDetails CreateProblemDetails(string detail)

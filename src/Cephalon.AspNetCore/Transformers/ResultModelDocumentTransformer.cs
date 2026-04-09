@@ -73,8 +73,7 @@ internal sealed class ResultModelDocumentTransformer : IOpenApiDocumentTransform
     }
 
     private static bool ContainsErrorProperty(OpenApiSchema schema)
-        => schema.Properties?.Keys.Contains("errors", StringComparer.OrdinalIgnoreCase) == true ||
-           schema.Properties?.Keys.Contains("error", StringComparer.OrdinalIgnoreCase) == true;
+        => schema.Properties?.Keys.Contains("errors", StringComparer.OrdinalIgnoreCase) == true;
 
     private static void ApplyReadableSchemaTitle(IOpenApiSchema? originalSchema, OpenApiSchema resolvedSchema, OpenApiDocument document)
     {
@@ -601,18 +600,14 @@ internal sealed class ResultModelDocumentTransformer : IOpenApiDocumentTransform
         if (source.Properties is not null)
         {
             clone.Properties = source.Properties
-                .Where(kvp =>
-                    !string.Equals(kvp.Key, "errors", StringComparison.OrdinalIgnoreCase) &&
-                    !string.Equals(kvp.Key, "error", StringComparison.OrdinalIgnoreCase))
+                .Where(kvp => !string.Equals(kvp.Key, "errors", StringComparison.OrdinalIgnoreCase))
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value, StringComparer.OrdinalIgnoreCase);
         }
 
         if (source.Required is not null)
         {
             clone.Required = source.Required
-                .Where(name =>
-                    !string.Equals(name, "errors", StringComparison.OrdinalIgnoreCase) &&
-                    !string.Equals(name, "error", StringComparison.OrdinalIgnoreCase))
+                .Where(name => !string.Equals(name, "errors", StringComparison.OrdinalIgnoreCase))
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
         }
 

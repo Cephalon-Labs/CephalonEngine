@@ -34,7 +34,8 @@ module-owned REST endpoints.
   summaries/descriptions for module-owned REST endpoints, and separation between public REST docs
   and generic adapter endpoints
 - **Optional REST response envelope** — `ApiRoutes:ResultEnvelope:Enabled` projects REST success
-  and error responses through `ResultModel<T>` / `ResultModelError` while leaving GraphQL,
+  and error responses through `ResultModel<T>` / `ResultModelError` with an `errors` collection
+  while leaving GraphQL,
   JSON-RPC, SSE, and WebSocket bindings on their native protocol envelopes
 - **Hosting** — `IBehaviorCollectionBuilder.AddHttpBehaviorBindings()` extension registering the
   generic HTTP bindings in DI
@@ -211,6 +212,8 @@ separate concerns:
 - REST projects those outcomes into HTTP status codes automatically
 - when `ApiRoutes:ResultEnvelope:Enabled = true`, REST also wraps the payload into
   `ResultModel<T>` / `ResultModelError`
+- error envelopes use an `errors` collection so validation and multi-reason failures can return
+  more than one error item cleanly
 - GraphQL and JSON-RPC keep their protocol-native response shapes and are intentionally not wrapped
   in `ResultModel`
 
@@ -262,12 +265,14 @@ and:
   "success": false,
   "status_code": 404,
   "data": null,
-  "error": {
-    "key": "cart.not_found",
-    "message": "Cart 'cart-123' was not found.",
-    "severity": "error",
-    "details": null
-  }
+  "errors": [
+    {
+      "key": "cart.not_found",
+      "message": "Cart 'cart-123' was not found.",
+      "severity": "error",
+      "details": null
+    }
+  ]
 }
 ```
 
