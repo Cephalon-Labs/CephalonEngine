@@ -1,8 +1,12 @@
 namespace Cephalon.Abstractions.Behaviors;
 
 /// <summary>
-/// Provides factory helpers for creating transport-neutral behavior results.
+/// Provides legacy factory helpers for creating transport-neutral behavior results.
 /// </summary>
+/// <remarks>
+/// Prefer <see cref="Result" /> for new authoring code when the shorter name is a better fit.
+/// This type remains available as a compatibility alias.
+/// </remarks>
 public static class BehaviorResult
 {
     /// <summary>
@@ -127,10 +131,14 @@ public static class BehaviorResult
 }
 
 /// <summary>
-/// Represents a transport-neutral behavior outcome with an optional payload value.
+/// Represents a legacy transport-neutral behavior outcome with an optional payload value.
 /// </summary>
 /// <typeparam name="T">The payload type carried by the result.</typeparam>
-public sealed class BehaviorResult<T> : IBehaviorResult
+/// <remarks>
+/// Prefer <see cref="Result{T}" /> for new authoring code when the shorter name is a better fit.
+/// This type remains available as a compatibility alias.
+/// </remarks>
+public sealed class BehaviorResult<T> : Result<T>
 {
     private BehaviorResult(
         BehaviorResultStatus status,
@@ -139,56 +147,9 @@ public sealed class BehaviorResult<T> : IBehaviorResult
         string? message,
         string? code,
         BehaviorFault? fault)
+        : base(status, value, hasValue, message, code, fault)
     {
-        Status = status;
-        Value = value;
-        HasValue = hasValue;
-        Message = string.IsNullOrWhiteSpace(message)
-            ? GetDefaultMessage(status)
-            : message.Trim();
-        Code = string.IsNullOrWhiteSpace(code) ? null : code.Trim();
-        Fault = fault;
     }
-
-    /// <summary>
-    /// Gets the transport-neutral outcome status.
-    /// </summary>
-    public BehaviorResultStatus Status { get; }
-
-    /// <summary>
-    /// Gets the stable outcome code when one was supplied.
-    /// </summary>
-    public string? Code { get; }
-
-    /// <summary>
-    /// Gets the human-readable outcome message.
-    /// </summary>
-    public string Message { get; }
-
-    /// <summary>
-    /// Gets a value indicating whether the result represents a successful outcome.
-    /// </summary>
-    public bool IsSuccess => Status is BehaviorResultStatus.Ok
-        or BehaviorResultStatus.Created
-        or BehaviorResultStatus.Accepted
-        or BehaviorResultStatus.NoContent;
-
-    /// <summary>
-    /// Gets a value indicating whether the result carries a payload value.
-    /// </summary>
-    public bool HasValue { get; }
-
-    /// <summary>
-    /// Gets the typed payload value when one was supplied.
-    /// </summary>
-    public T? Value { get; }
-
-    object? IBehaviorResult.Value => Value;
-
-    /// <summary>
-    /// Gets the structured fault details when the outcome is not successful.
-    /// </summary>
-    public BehaviorFault? Fault { get; }
 
     /// <summary>
     /// Converts a raw payload value into a successful result.
@@ -210,7 +171,7 @@ public sealed class BehaviorResult<T> : IBehaviorResult
             descriptor.Fault);
     }
 
-    internal static BehaviorResult<T> Create(
+    internal static new BehaviorResult<T> Create(
         BehaviorResultStatus status,
         T? value,
         bool hasValue,
@@ -219,22 +180,5 @@ public sealed class BehaviorResult<T> : IBehaviorResult
         BehaviorFault? fault)
     {
         return new BehaviorResult<T>(status, value, hasValue, message, code, fault);
-    }
-
-    private static string GetDefaultMessage(BehaviorResultStatus status)
-    {
-        return status switch
-        {
-            BehaviorResultStatus.Ok => "Ok",
-            BehaviorResultStatus.Created => "Created",
-            BehaviorResultStatus.Accepted => "Accepted",
-            BehaviorResultStatus.NoContent => "No content",
-            BehaviorResultStatus.Invalid => "The request is invalid.",
-            BehaviorResultStatus.Unauthorized => "The request is unauthorized.",
-            BehaviorResultStatus.Forbidden => "The request is forbidden.",
-            BehaviorResultStatus.NotFound => "The requested resource was not found.",
-            BehaviorResultStatus.Conflict => "The request conflicts with the current state.",
-            _ => "Completed"
-        };
     }
 }

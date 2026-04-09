@@ -99,6 +99,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder),
             typeof(global::Cephalon.Abstractions.Behaviors.IProcessCompletion),
             typeof(global::Cephalon.Abstractions.Behaviors.OwnedBehaviorRegistration),
+            typeof(global::Cephalon.Abstractions.Behaviors.Result),
+            typeof(global::Cephalon.Abstractions.Behaviors.Result<>),
             typeof(global::Cephalon.Abstractions.Capabilities.Capability),
             typeof(global::Cephalon.Abstractions.Capabilities.CapabilityAccess),
             typeof(global::Cephalon.Abstractions.Capabilities.ICapabilityRegistry),

@@ -740,14 +740,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             var operationVersionMajor = apiVersionMajor ?? moduleVersionMajor;
             var operationName = BuildOperationName(moduleDescriptor.Id, operationVersionMajor, behaviorId);
             var outputType = typeArguments[1];
-            var responseType = outputType;
-            var returnsBehaviorResult = false;
-            if (outputType.IsGenericType &&
-                outputType.GetGenericTypeDefinition() == typeof(BehaviorResult<>))
-            {
-                responseType = outputType.GetGenericArguments()[0];
-                returnsBehaviorResult = true;
-            }
+            var returnsBehaviorResult = TryResolveBehaviorResultPayloadType(outputType, out var responseType);
 
             var configuration = services.GetService<IConfiguration>();
             var useResultModelEnvelope = configuration is not null &&
@@ -796,6 +789,27 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         {
             return string.Concat(value.Select(static ch =>
                 char.IsLetterOrDigit(ch) ? ch : '_'));
+        }
+
+        private static bool TryResolveBehaviorResultPayloadType(Type outputType, out Type responseType)
+        {
+            ArgumentNullException.ThrowIfNull(outputType);
+
+            responseType = outputType;
+            if (!outputType.IsGenericType)
+            {
+                return false;
+            }
+
+            var genericDefinition = outputType.GetGenericTypeDefinition();
+            if (genericDefinition != typeof(Result<>) &&
+                genericDefinition != typeof(BehaviorResult<>))
+            {
+                return false;
+            }
+
+            responseType = outputType.GetGenericArguments()[0];
+            return true;
         }
     }
 }

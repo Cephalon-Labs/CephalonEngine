@@ -115,9 +115,9 @@ Behavior declaration stays focused on the interaction pattern plus non-REST tran
 [AppBehavior("cart.add-item")]
 [BehaviorAllowedPatterns("cqrs")]
 [BehaviorAllowedTransports("http.ws", "http.graphql", "http.sse")]
-public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, BehaviorResult<AddToCartOutput>>
+public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, Result<AddToCartOutput>>
 {
-    public Task<BehaviorResult<AddToCartOutput>> HandleAsync(
+    public Task<Result<AddToCartOutput>> HandleAsync(
         AddToCartInput input,
         IBehaviorContext context,
         CancellationToken cancellationToken = default)
@@ -125,7 +125,7 @@ public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, BehaviorRes
         var faults = Validate(input); // validation helper omitted for brevity
         if (faults.Count > 0)
         {
-            return Task.FromResult<BehaviorResult<AddToCartOutput>>(BehaviorResult.Invalid(
+            return Task.FromResult<Result<AddToCartOutput>>(Result.Invalid(
                 "cart.add_item.invalid",
                 "Cart add-item request is invalid.",
                 new BehaviorFault
@@ -137,7 +137,7 @@ public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, BehaviorRes
                 }));
         }
 
-        return Task.FromResult(BehaviorResult.Ok(
+        return Task.FromResult(Result.Ok(
             new AddToCartOutput(input.CartId, itemCount: 1, totalInCents: input.PriceInCents),
             message: "Item added to cart."));
     }
@@ -149,14 +149,14 @@ the declared transports become the resolved behavior topology when no explicit t
 exists. Public REST is not part of that baseline; modules own REST explicitly.
 
 When a behavior needs to communicate expected branches without throwing exceptions for normal domain
-flow, prefer `BehaviorResult<T>` over a transport-specific envelope:
+flow, prefer `Result<T>` over a transport-specific envelope:
 
 ```csharp
 [AppBehavior("cart.get")]
 [BehaviorAllowedPatterns("cqrs")]
-public sealed class GetCartBehavior : IAppBehavior<GetCartInput, BehaviorResult<GetCartOutput>>
+public sealed class GetCartBehavior : IAppBehavior<GetCartInput, Result<GetCartOutput>>
 {
-    public async Task<BehaviorResult<GetCartOutput>> HandleAsync(
+    public async Task<Result<GetCartOutput>> HandleAsync(
         GetCartInput input,
         IBehaviorContext context,
         CancellationToken cancellationToken = default)
@@ -164,30 +164,33 @@ public sealed class GetCartBehavior : IAppBehavior<GetCartInput, BehaviorResult<
         var cart = await LoadCartAsync(input.CartId, cancellationToken);
         if (cart is null)
         {
-            return BehaviorResult.NotFound(
+            return Result.NotFound(
                 "cart.not_found",
                 $"Cart '{input.CartId}' was not found.");
         }
 
-        return BehaviorResult.Ok(new GetCartOutput(cart), message: "Cart resolved.");
+        return Result.Ok(new GetCartOutput(cart), message: "Cart resolved.");
     }
 }
 ```
 
 For no-payload branches such as `Invalid`, `NotFound`, `Conflict`, `Forbidden`, and `NoContent`,
-Cephalon now lets the behavior use the shorter `BehaviorResult.Invalid(...)` /
-`BehaviorResult.NotFound(...)` / `BehaviorResult.Conflict(...)` shape because the enclosing
-`BehaviorResult<T>` return type supplies the target payload type automatically. If a synchronous
+Cephalon now lets the behavior use the shorter `Result.Invalid(...)` /
+`Result.NotFound(...)` / `Result.Conflict(...)` shape because the enclosing
+`Result<T>` return type supplies the target payload type automatically. If a synchronous
 implementation uses `Task.FromResult(...)`, keep the wrapper target-typed as
-`Task.FromResult<BehaviorResult<TOut>>(...)` so the compiler does not stop at the intermediate
+`Task.FromResult<Result<TOut>>(...)` so the compiler does not stop at the intermediate
 descriptor.
 
-That keeps the behavior contract transport-neutral. REST can still project `BehaviorResult<T>` to
+That keeps the behavior contract transport-neutral. REST can still project `Result<T>` to
 HTTP status codes, and hosts can turn on the Cephalon REST envelope with
 `ApiRoutes:ResultEnvelope:Enabled = true` when they want `ResultModel<T>` / `ResultModelError` on
 the wire, including an `errors` collection for validation or multi-reason failures such as the
 `AddToCartBehavior` example above. GraphQL and JSON-RPC keep their own protocol-native response
 shapes.
+
+`BehaviorResult<T>` remains available as a compatibility alias when older code has not migrated to
+the shorter `Result<T>` name yet.
 
 If a behavior declares multiple allowed patterns, keep the attributes as an allowlist and add
 `ConfigureTopology(...)` or fluent registration so the runtime does not need to guess which pattern

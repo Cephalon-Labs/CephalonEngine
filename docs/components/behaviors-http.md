@@ -23,7 +23,7 @@ module-owned REST endpoints.
   `BehaviorRestEndpointGroup.MapBehaviorGet/Post/Put/Patch/Delete(...)` for Minimal API-style
   module route groups that dispatch into behaviors
 - **REST behavior result mapping** — `BehaviorRestResponseMapper` projects raw behavior outputs and
-  transport-neutral `BehaviorResult<T>` outcomes into REST responses without teaching the core
+  transport-neutral `Result<T>` outcomes into REST responses without teaching the core
   behavior contract about HTTP envelopes
 - **REST behavior module base class** — `RestBehaviorModuleBase` so behavior-owning REST modules can
   expose public endpoints without implementing multiple author-facing interfaces directly
@@ -164,7 +164,7 @@ Current helper behavior:
 - keeps `Internal<TBehavior>()` available for internal-only behaviors or behaviors that will be exposed
   through custom/manual endpoints
 - dispatches through `BehaviorDispatcher` using Minimal API handlers
-- lets behaviors return raw `TOutput` or transport-neutral `BehaviorResult<TOutput>` values
+- lets behaviors return raw `TOutput` or transport-neutral `Result<TOutput>` values
 - composes route values, query-string values, and JSON request bodies into the behavior input payload
 - uses the owning module display name as the OpenAPI tag
 - lets the module override the published tag name and tag description through `.WithTagName(...)`
@@ -206,7 +206,7 @@ Current helper behavior:
 separate concerns:
 
 - `IAppBehavior<TIn, TOut>` can still return raw payload types for simple success paths
-- `IAppBehavior<TIn, BehaviorResult<TOut>>` can communicate expected non-success branches such as
+- `IAppBehavior<TIn, Result<TOut>>` can communicate expected non-success branches such as
   `NotFound`, `Invalid`, `Conflict`, `Forbidden`, and `NoContent` without throwing transport-shaped
   exceptions
 - REST projects those outcomes into HTTP status codes automatically
@@ -236,9 +236,9 @@ Example host override:
 Example:
 
 ```csharp
-public sealed class GetCartBehavior : IAppBehavior<GetCartInput, BehaviorResult<GetCartOutput>>
+public sealed class GetCartBehavior : IAppBehavior<GetCartInput, Result<GetCartOutput>>
 {
-    public async Task<BehaviorResult<GetCartOutput>> HandleAsync(
+    public async Task<Result<GetCartOutput>> HandleAsync(
         GetCartInput input,
         IBehaviorContext context,
         CancellationToken cancellationToken = default)
@@ -246,12 +246,12 @@ public sealed class GetCartBehavior : IAppBehavior<GetCartInput, BehaviorResult<
         var cart = await LoadCartAsync(input.CartId, cancellationToken);
         if (cart is null)
         {
-            return BehaviorResult.NotFound(
+            return Result.NotFound(
                 "cart.not_found",
                 $"Cart '{input.CartId}' was not found.");
         }
 
-        return BehaviorResult.Ok(
+        return Result.Ok(
             new GetCartOutput(cart),
             message: "Cart resolved.");
     }
@@ -293,7 +293,7 @@ and:
 ```
 
 Multi-reason validation faults project cleanly too. The showcase `AddToCartBehavior` now returns
-`BehaviorResult.Invalid(...)` with nested `BehaviorFault.InnerFaults`, which REST
+`Result.Invalid(...)` with nested `BehaviorFault.InnerFaults`, which REST
 projects to payloads such as:
 
 ```json

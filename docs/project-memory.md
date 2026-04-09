@@ -215,7 +215,7 @@ Current standing examples from this collaboration:
 - prefer the single-surface REST DSL on `RestBehaviorModuleBase`: public `behaviors.Group(...).MapGet/MapPost/...` routes imply ownership automatically, while `behaviors.Internal<TBehavior>()` is the explicit path for internal-only or custom/manual-route behaviors in the same module
 - keep one bounded context in one module when possible; do not split modules only to separate internal behaviors from REST-exposed behaviors
 - `Engine:Behaviors:AutoRegister` is now an opt-in fallback rather than the default behavior-ownership path; prefer explicit module ownership and only turn scanning back on when a host intentionally wants convention-based discovery
-- keep behavior return contracts transport-neutral by default: prefer raw `TOut` for simple success paths, prefer `BehaviorResult<T>` for expected non-success branches, and treat `ResultModel<T>` / `ResultModelError` as an optional REST wire-format policy rather than the universal engine contract
+- keep behavior return contracts transport-neutral by default: prefer raw `TOut` for simple success paths, prefer `Result<T>` for expected non-success branches, keep `BehaviorResult<T>` as a compatibility alias during the transition, and treat `ResultModel<T>` / `ResultModelError` as an optional REST wire-format policy rather than the universal engine contract
 
 ## Working assumptions for contributors
 

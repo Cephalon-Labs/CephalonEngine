@@ -27,7 +27,7 @@
 | `IBehaviorOwnerModule` | Module contract for explicit behavior ownership through `ConfigureBehaviors(...)` |
 | `OwnedBehaviorRegistration` | Runtime composition record describing one module-owned behavior registration |
 | `BehaviorApiSurfaceDescriptor` | Shared logical route surface for route-shaped generic HTTP transports; defaulted from the behavior id and overrideable through `WithApiSurface(...)` |
-| `BehaviorResult<T>` / `IBehaviorResult` | Transport-neutral structured outcome for expected non-success branches without forcing HTTP or RPC envelopes into the core behavior contract |
+| `Result<T>` / `IBehaviorResult` | Preferred concise transport-neutral structured outcome for expected non-success branches without forcing HTTP or RPC envelopes into the core behavior contract |
 | `BehaviorTopologyDescriptor` | Resolved per-behavior config: pattern, transports, feature flags, and shared API surface |
 | `[AppBehavior("id")]` | Declares a class as a named behavior |
 | `[BehaviorAllowedPatterns]` | Pattern allowlist; when no explicit topology exists, exactly one declared pattern also becomes the attribute-only runtime baseline |
@@ -82,26 +82,28 @@ HTTP transports, messaging, or background orchestration rather than a module-own
 Cephalon behaviors should keep their return contract transport-neutral by default:
 
 - return raw `TOut` when the success path is straightforward
-- return `BehaviorResult<TOut>` when the behavior needs to communicate an expected branch such as
+- return `Result<TOut>` when the behavior needs to communicate an expected branch such as
   `NotFound`, `Invalid`, `Conflict`, `Forbidden`, or `NoContent` without throwing exceptions for
   normal domain flow
-- use the shorter no-payload factories such as `BehaviorResult.NotFound(...)` or
-  `BehaviorResult.Invalid(...)` when the target `BehaviorResult<TOut>` return type is already
+- use the shorter no-payload factories such as `Result.NotFound(...)` or
+  `Result.Invalid(...)` when the target `Result<TOut>` return type is already
   known from the method signature
 - if a synchronous implementation returns `Task.FromResult(...)`, keep that wrapper explicit as
-  `Task.FromResult<BehaviorResult<TOut>>(...)` so the compiler does not stop at the intermediate
+  `Task.FromResult<Result<TOut>>(...)` so the compiler does not stop at the intermediate
   no-payload descriptor
 - keep REST, GraphQL, JSON-RPC, and messaging envelopes in the adapter layer instead of making
   every behavior return an HTTP-shaped wrapper
+- keep `BehaviorResult<T>` available as a compatibility alias when older code or samples have not
+  migrated to the shorter `Result<T>` name yet
 
 Recommended baseline:
 
 ```csharp
 [AppBehavior("cart.get")]
 [BehaviorAllowedPatterns("cqrs")]
-public sealed class GetCartBehavior : IAppBehavior<GetCartInput, BehaviorResult<GetCartOutput>>
+public sealed class GetCartBehavior : IAppBehavior<GetCartInput, Result<GetCartOutput>>
 {
-    public async Task<BehaviorResult<GetCartOutput>> HandleAsync(
+    public async Task<Result<GetCartOutput>> HandleAsync(
         GetCartInput input,
         IBehaviorContext context,
         CancellationToken cancellationToken = default)
@@ -109,7 +111,7 @@ public sealed class GetCartBehavior : IAppBehavior<GetCartInput, BehaviorResult<
         var cart = await LoadCartAsync(input.CartId, cancellationToken);
         if (cart is null)
         {
-            return BehaviorResult.NotFound(
+            return Result.NotFound(
                 "cart.not_found",
                 $"Cart '{input.CartId}' was not found.",
                 new BehaviorFault
@@ -120,7 +122,7 @@ public sealed class GetCartBehavior : IAppBehavior<GetCartInput, BehaviorResult<
                 });
         }
 
-        return BehaviorResult.Ok(new GetCartOutput(cart), message: "Cart resolved.");
+        return Result.Ok(new GetCartOutput(cart), message: "Cart resolved.");
     }
 }
 ```

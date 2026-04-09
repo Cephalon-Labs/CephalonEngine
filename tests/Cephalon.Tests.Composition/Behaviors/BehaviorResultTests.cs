@@ -5,9 +5,9 @@ namespace Cephalon.Tests.Composition.Behaviors;
 public sealed class BehaviorResultTests
 {
     [Fact]
-    public void RawPayloadConvertsToSuccessfulBehaviorResult()
+    public void RawPayloadConvertsToSuccessfulResult()
     {
-        BehaviorResult<string> result = "hello";
+        Result<string> result = "hello";
 
         Assert.True(result.IsSuccess);
         Assert.True(result.HasValue);
@@ -18,7 +18,7 @@ public sealed class BehaviorResultTests
     [Fact]
     public void NotFoundResultCarriesStructuredFaultState()
     {
-        BehaviorResult<string> result = BehaviorResult.NotFound(
+        Result<string> result = Result.NotFound(
             "cart.not_found",
             "Cart 'cart-123' was not found.",
             new BehaviorFault
@@ -38,9 +38,23 @@ public sealed class BehaviorResultTests
     }
 
     [Fact]
+    public void LegacyBehaviorResultAliasAcceptsConciseResultFactories()
+    {
+        BehaviorResult<string> result = Result.NoContent(
+            message: "Cart is already up to date.",
+            code: "cart.no_change");
+
+        Assert.True(result.IsSuccess);
+        Assert.False(result.HasValue);
+        Assert.Equal(BehaviorResultStatus.NoContent, result.Status);
+        Assert.Equal("cart.no_change", result.Code);
+        Assert.Equal("Cart is already up to date.", result.Message);
+    }
+
+    [Fact]
     public void NoContentFactoryConvertsWithoutGenericTypeArguments()
     {
-        BehaviorResult<string> result = BehaviorResult.NoContent(
+        Result<string> result = Result.NoContent(
             message: "Cart is already up to date.",
             code: "cart.no_change");
 

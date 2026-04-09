@@ -81,7 +81,7 @@ summary, and description surface.
 
 The ASP.NET Core host also owns Cephalon's optional REST response envelope policy. When
 `ApiRoutes:ResultEnvelope:Enabled = true`, module-owned REST endpoints can project raw behavior
-payloads or transport-neutral `BehaviorResult<T>` outcomes through `ResultModel<T>` /
+payloads or transport-neutral `Result<T>` outcomes through `ResultModel<T>` /
 `ResultModelError` on the wire, with structured failure details exposed through an `errors`
 collection. That setting is intentionally REST-only. GraphQL keeps the standard
 `data` / `errors` contract, JSON-RPC keeps the standard `result` / `error` contract, and generic

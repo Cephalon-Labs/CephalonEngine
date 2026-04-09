@@ -334,16 +334,16 @@ public sealed class BehaviorRestOpenApiTests
     private sealed record EnvelopeLookupOutput(string WidgetId, string Label);
 
     [AppBehavior("tests.results.lookup")]
-    private sealed class EnvelopeLookupBehavior : IAppBehavior<EnvelopeLookupInput, BehaviorResult<EnvelopeLookupOutput>>
+    private sealed class EnvelopeLookupBehavior : IAppBehavior<EnvelopeLookupInput, Result<EnvelopeLookupOutput>>
     {
-        public Task<BehaviorResult<EnvelopeLookupOutput>> HandleAsync(
+        public Task<Result<EnvelopeLookupOutput>> HandleAsync(
             EnvelopeLookupInput input,
             IBehaviorContext context,
             CancellationToken cancellationToken = default)
         {
             if (string.Equals(input.WidgetId, "missing", StringComparison.OrdinalIgnoreCase))
             {
-                return Task.FromResult<BehaviorResult<EnvelopeLookupOutput>>(BehaviorResult.NotFound(
+                return Task.FromResult<Result<EnvelopeLookupOutput>>(Result.NotFound(
                     "tests.widgets.not_found",
                     $"Widget '{input.WidgetId}' was not found.",
                     new BehaviorFault
@@ -355,7 +355,7 @@ public sealed class BehaviorRestOpenApiTests
 
             if (string.Equals(input.WidgetId, "invalid", StringComparison.OrdinalIgnoreCase))
             {
-                return Task.FromResult<BehaviorResult<EnvelopeLookupOutput>>(BehaviorResult.Invalid(
+                return Task.FromResult<Result<EnvelopeLookupOutput>>(Result.Invalid(
                     "tests.widgets.invalid",
                     "Widget validation failed.",
                     new BehaviorFault
@@ -381,7 +381,7 @@ public sealed class BehaviorRestOpenApiTests
                     }));
             }
 
-            return Task.FromResult(BehaviorResult.Ok(
+            return Task.FromResult(Result.Ok(
                 new EnvelopeLookupOutput(input.WidgetId, "Cephalon Widget"),
                 message: "Widget resolved."));
         }
