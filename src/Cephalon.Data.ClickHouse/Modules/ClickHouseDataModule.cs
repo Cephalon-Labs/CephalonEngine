@@ -133,7 +133,7 @@ internal sealed class ClickHouseDataModule(ClickHouseDataOptions options) : Modu
         outboxes.Add(new OutboxDescriptor(
             id: "clickhouse-outbox",
             displayName: "ClickHouse Outbox",
-            description: "Stages durable outbound messages through the active ClickHouse ReplacingMergeTree table with eventual deduplication via ORDER BY (message_id).",
+            description: "Stages durable outbound messages through the active ClickHouse ReplacingMergeTree table with eventual deduplication via ORDER BY (message_id), but intentionally remains a staging-only path until ClickHouse can truthfully own mutable dispatch state.",
             sourceModuleId: Descriptor.Id,
             provider: ClickHouseDataOptions.ProviderId,
             mode: "replacing-merge-tree",
@@ -145,9 +145,19 @@ internal sealed class ClickHouseDataModule(ClickHouseDataOptions options) : Modu
                 ["table"] = $"{options.TablePrefix}outbox_messages",
                 ["idempotency"] = "replacing-merge-tree-eventual",
                 ["engine"] = "ReplacingMergeTree",
-                ["dispatchRuntime"] = "not-configured",
+                ["dispatchRuntime"] = "unsupported",
                 ["channelMode"] = "dynamic"
-            }));
+            },
+            dispatchPolicy: OutboxDispatchPolicyDescriptor.Unsupported(
+                outboxId: "clickhouse-outbox",
+                description: "ClickHouse can durably stage outbound events, but the current ReplacingMergeTree baseline does not yet provide truthful Cephalon-managed mutable dispatch-state ownership.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["reason"] = "append-only-analytics-store",
+                    ["storageSemantics"] = "replacing-merge-tree-eventual",
+                    ["mutableDispatchState"] = "not-supported",
+                    ["pendingDispatchIndex"] = "not-available"
+                })));
     }
 
     /// <inheritdoc />

@@ -27,15 +27,29 @@ internal sealed class EventingDispatchRuntimeSurfaceContributor(
             .Where(runtime => runtime.OutboxIds.Contains(outbox.Id, StringComparer.OrdinalIgnoreCase))
             .OrderBy(static runtime => runtime.Id, StringComparer.OrdinalIgnoreCase)
             .ToArray();
+        var dispatchStore = ResolvePolicyMetadata(
+            outbox.DispatchPolicy,
+            "dispatchStore",
+            string.Equals(outbox.DispatchPolicy.ExecutionMode, "disabled", StringComparison.OrdinalIgnoreCase)
+                ? "not-configured"
+                : "available");
+        var dispatchRuntime = ResolvePolicyMetadata(
+            outbox.DispatchPolicy,
+            "dispatchRuntime",
+            string.IsNullOrWhiteSpace(outbox.DispatchPolicy.RuntimeId)
+                ? "not-configured"
+                : "configured");
+        var dispatchRuntimeId = ResolvePolicyMetadata(
+            outbox.DispatchPolicy,
+            "dispatchRuntimeId",
+            string.IsNullOrWhiteSpace(outbox.DispatchPolicy.RuntimeId)
+                ? "not-configured"
+                : outbox.DispatchPolicy.RuntimeId);
         var metadata = new Dictionary<string, string>(outbox.Metadata, StringComparer.OrdinalIgnoreCase)
         {
             ["sourceModuleId"] = outbox.SourceModuleId,
-            ["dispatchStore"] = string.Equals(outbox.DispatchPolicy.ExecutionMode, "disabled", StringComparison.OrdinalIgnoreCase)
-                ? "not-configured"
-                : "available",
-            ["dispatchRuntime"] = string.IsNullOrWhiteSpace(outbox.DispatchPolicy.RuntimeId)
-                ? "not-configured"
-                : "configured",
+            ["dispatchStore"] = dispatchStore,
+            ["dispatchRuntime"] = dispatchRuntime,
             ["provider"] = outbox.Provider,
             ["mode"] = outbox.Mode,
             ["dispatchPolicyId"] = outbox.DispatchPolicy.PolicyId,
@@ -52,9 +66,9 @@ internal sealed class EventingDispatchRuntimeSurfaceContributor(
             metadata["tags"] = string.Join(",", outbox.Tags);
         }
 
-        if (!string.IsNullOrWhiteSpace(outbox.DispatchPolicy.RuntimeId))
+        if (!string.IsNullOrWhiteSpace(dispatchRuntimeId))
         {
-            metadata["dispatchRuntimeId"] = outbox.DispatchPolicy.RuntimeId;
+            metadata["dispatchRuntimeId"] = dispatchRuntimeId;
         }
 
         if (matchingRuntimes.Length > 0)
@@ -134,5 +148,16 @@ internal sealed class EventingDispatchRuntimeSurfaceContributor(
             displayName: outbox.DisplayName,
             description: outbox.Description,
             metadata: metadata);
+    }
+
+    private static string ResolvePolicyMetadata(
+        OutboxDispatchPolicyDescriptor policy,
+        string key,
+        string fallbackValue)
+    {
+        return policy.Metadata.TryGetValue(key, out var value) &&
+            !string.IsNullOrWhiteSpace(value)
+            ? value.Trim()
+            : fallbackValue;
     }
 }

@@ -117,4 +117,47 @@ public sealed class OutboxDispatchPolicyDescriptor
             executionMode: "disabled",
             metadata: metadata);
     }
+
+    /// <summary>
+    /// Creates an explicit unsupported dispatch policy for an outbox that can stage messages but does not
+    /// currently support Cephalon-managed mutable dispatch-state ownership.
+    /// </summary>
+    /// <param name="outboxId">The stable outbox identifier.</param>
+    /// <param name="description">
+    /// An optional operator-facing description explaining why the current provider intentionally remains
+    /// outside the managed-dispatch contract.
+    /// </param>
+    /// <param name="metadata">Optional operator-facing metadata associated with the policy.</param>
+    /// <returns>The explicit unsupported dispatch policy descriptor.</returns>
+    public static OutboxDispatchPolicyDescriptor Unsupported(
+        string outboxId,
+        string? description = null,
+        IReadOnlyDictionary<string, string>? metadata = null)
+    {
+        var policyMetadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["dispatchStore"] = "unsupported",
+            ["dispatchRuntime"] = "unsupported",
+            ["dispatchRuntimeId"] = "not-supported",
+            ["dispatchOwnership"] = "disabled"
+        };
+
+        if (metadata is not null)
+        {
+            foreach (var pair in metadata)
+            {
+                policyMetadata[pair.Key] = pair.Value;
+            }
+        }
+
+        return new OutboxDispatchPolicyDescriptor(
+            outboxId: outboxId,
+            policyId: "unsupported",
+            displayName: "Dispatch Unsupported",
+            description: string.IsNullOrWhiteSpace(description)
+                ? "This outbox can stage durable events, but the current provider pack does not yet support Cephalon-managed mutable dispatch-state ownership for it."
+                : description,
+            executionMode: "disabled",
+            metadata: policyMetadata);
+    }
 }

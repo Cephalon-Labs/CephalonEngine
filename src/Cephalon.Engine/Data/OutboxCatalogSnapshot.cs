@@ -96,22 +96,35 @@ internal sealed class OutboxCatalogSnapshot : IOutboxCatalog
         IOutboxDispatchPolicyCatalog? dispatchPolicyCatalog)
     {
         var policy = dispatchPolicyCatalog?.GetByOutboxId(outbox.Id) ?? outbox.DispatchPolicy;
+        var dispatchStore = ResolvePolicyMetadata(
+            policy,
+            "dispatchStore",
+            string.Equals(policy.ExecutionMode, "disabled", StringComparison.OrdinalIgnoreCase)
+                ? "not-configured"
+                : "available");
+        var dispatchRuntime = ResolvePolicyMetadata(
+            policy,
+            "dispatchRuntime",
+            string.IsNullOrWhiteSpace(policy.RuntimeId)
+                ? "not-configured"
+                : "configured");
+        var dispatchOwnership = ResolvePolicyMetadata(policy, "dispatchOwnership", policy.ExecutionMode);
+        var dispatchRuntimeId = ResolvePolicyMetadata(
+            policy,
+            "dispatchRuntimeId",
+            string.IsNullOrWhiteSpace(policy.RuntimeId)
+                ? "not-configured"
+                : policy.RuntimeId);
         var metadata = new Dictionary<string, string>(outbox.Metadata, StringComparer.OrdinalIgnoreCase)
         {
             ["dispatchPolicyId"] = policy.PolicyId,
             ["dispatchPolicyDisplayName"] = policy.DisplayName,
             ["dispatchExecutionMode"] = policy.ExecutionMode,
-            ["dispatchOwnership"] = policy.ExecutionMode,
+            ["dispatchOwnership"] = dispatchOwnership,
             ["dispatchBridge"] = policy.PolicyId,
-            ["dispatchStore"] = string.Equals(policy.ExecutionMode, "disabled", StringComparison.OrdinalIgnoreCase)
-                ? "not-configured"
-                : "available",
-            ["dispatchRuntime"] = string.IsNullOrWhiteSpace(policy.RuntimeId)
-                ? "not-configured"
-                : "configured",
-            ["dispatchRuntimeId"] = string.IsNullOrWhiteSpace(policy.RuntimeId)
-                ? "not-configured"
-                : policy.RuntimeId
+            ["dispatchStore"] = dispatchStore,
+            ["dispatchRuntime"] = dispatchRuntime,
+            ["dispatchRuntimeId"] = dispatchRuntimeId
         };
 
         foreach (var pair in policy.Metadata)
@@ -130,5 +143,16 @@ internal sealed class OutboxCatalogSnapshot : IOutboxCatalog
             tags: outbox.Tags,
             metadata: metadata,
             dispatchPolicy: policy);
+    }
+
+    private static string ResolvePolicyMetadata(
+        OutboxDispatchPolicyDescriptor policy,
+        string key,
+        string fallbackValue)
+    {
+        return policy.Metadata.TryGetValue(key, out var value) &&
+            !string.IsNullOrWhiteSpace(value)
+            ? value.Trim()
+            : fallbackValue;
     }
 }

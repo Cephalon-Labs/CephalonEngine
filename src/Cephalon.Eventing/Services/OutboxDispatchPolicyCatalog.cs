@@ -100,14 +100,7 @@ internal sealed class OutboxDispatchPolicyCatalog : IOutboxDispatchPolicyCatalog
                 });
         }
 
-        return OutboxDispatchPolicyDescriptor.Disabled(
-            outbox.Id,
-            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-            {
-                ["dispatchStore"] = "not-configured",
-                ["dispatchRuntime"] = "not-configured",
-                ["dispatchOwnership"] = "disabled"
-            });
+        return CreateDisabledPolicy(outbox.DispatchPolicy);
     }
 
     private static Dictionary<string, IEventDispatchStore> IndexDispatchStores(
@@ -181,5 +174,30 @@ internal sealed class OutboxDispatchPolicyCatalog : IOutboxDispatchPolicyCatalog
         }
 
         return $"{runtime.DisplayName} Dispatch";
+    }
+
+    private static OutboxDispatchPolicyDescriptor CreateDisabledPolicy(
+        OutboxDispatchPolicyDescriptor basePolicy)
+    {
+        var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["dispatchStore"] = "not-configured",
+            ["dispatchRuntime"] = "not-configured",
+            ["dispatchOwnership"] = "disabled"
+        };
+
+        foreach (var pair in basePolicy.Metadata)
+        {
+            metadata[pair.Key] = pair.Value;
+        }
+
+        return new OutboxDispatchPolicyDescriptor(
+            outboxId: basePolicy.OutboxId,
+            policyId: basePolicy.PolicyId,
+            displayName: basePolicy.DisplayName,
+            description: basePolicy.Description,
+            executionMode: basePolicy.ExecutionMode,
+            runtimeId: basePolicy.RuntimeId,
+            metadata: metadata);
     }
 }

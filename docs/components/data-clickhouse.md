@@ -9,6 +9,7 @@
 - ensures outbox staging is eventually idempotent through ClickHouse `ReplacingMergeTree(created_at_utc)` with `ORDER BY (message_id)` — duplicate rows with the same `message_id` are merged asynchronously by ClickHouse background merge processes
 - ensures inbox reads are idempotent via the `FINAL` modifier, which forces merge-time deduplication at query execution
 - exposes operator-facing outbox and inbox descriptors when the respective path is enabled
+- declares the ClickHouse outbox as `DispatchPolicy.PolicyId = unsupported` with `ExecutionMode = disabled` so `/engine/outboxes`, `event-dispatches`, and `/engine/snapshot` report staging-only truth instead of a generic "not configured" answer
 - projects the outbox descriptor through the `event-driven-integration` technology surface as `outbox-producers` with `provider: "clickhouse"` and `mode: "replacing-merge-tree"` when that technology is active
 - projects the inbox descriptor through the same technology surface as `inbox-stores` when the technology is active
 - publishes capability metadata `data.clickhouse`, `data.analytics-store`, and optionally `data.outbox.clickhouse` and `data.inbox.clickhouse` introspectable at runtime through the manifest
@@ -27,7 +28,7 @@
 
 This pack sits on top of `Cephalon.Data`, not in place of it. `Cephalon.Data` still owns the runtime-neutral `IReadStore` / `IWriteStore` dispatching surface. `Cephalon.Data.ClickHouse` adds the ClickHouse-backed outbox and inbox persistence paths that let event-driven workloads stage and track messages using an analytics-optimized columnar store.
 
-The slice is intentionally narrow: it proves the companion-pack pattern extends cleanly to ClickHouse, ships an eventually-idempotent outbox and inbox suited to high-throughput analytics workloads, and exposes the same runtime introspection surfaces as the other provider packs. `IReadStore` and `IWriteStore` are not backed directly by ClickHouse in this slice.
+The slice is intentionally narrow: it proves the companion-pack pattern extends cleanly to ClickHouse, ships an eventually-idempotent outbox and inbox suited to high-throughput analytics workloads, and exposes the same runtime introspection surfaces as the other provider packs. `IReadStore` and `IWriteStore` are not backed directly by ClickHouse in this slice, and the outbox remains explicitly staging-only until Cephalon has a truthful ClickHouse-native mutable dispatch-state design.
 
 ## Registration
 
@@ -138,16 +139,29 @@ When `ClickHouseDataModule` is active, the following capability keys appear in t
 
 When the `event-driven-integration` technology is active, the following entries appear under `/engine/snapshot`:
 
-| Surface | Entry id | `provider` metadata |
-|---------|----------|---------------------|
-| `outbox-producers` | `clickhouse-outbox` | `clickhouse` |
-| `inbox-stores` | `clickhouse-inbox` | `clickhouse` |
+| Surface | Entry id | Key metadata |
+|---------|----------|--------------|
+| `outbox-producers` | `clickhouse-outbox` | `provider = clickhouse`, `dispatchPolicyId = unsupported`, `dispatchExecutionMode = disabled` |
+| `inbox-stores` | `clickhouse-inbox` | `provider = clickhouse` |
+
+## Dispatch-policy stance
+
+When `RegisterOutbox = true`, the outbox descriptor stays visible through `/engine/outboxes`, `event-dispatches`, and `snapshot.Outboxes`, but it now answers with an explicit unsupported policy instead of a generic disabled/default placeholder:
+
+- `DispatchPolicy.PolicyId = unsupported`
+- `DispatchPolicy.ExecutionMode = disabled`
+- `dispatchStore = unsupported`
+- `dispatchRuntime = unsupported`
+- `dispatchPolicy.reason = append-only-analytics-store`
+
+That answer is deliberate. The current ClickHouse `ReplacingMergeTree` baseline is good for durable staging/history and analytics-style replay, but it is not yet the truthful owner for mutable pending-dispatch state in the same way as the current Entity Framework, MongoDB, Redis, Elasticsearch, OpenSearch, Neo4j, Qdrant, NATS, or Cassandra follow-through slices.
 
 ## Not shipped in this slice
 
 This pack intentionally does not claim:
 
 - batch dispatch or broker retry scheduling
+- provider-native `IEventDispatchStore` ownership for mutable pending-dispatch state
 - TTL-based expiry of outbox or inbox rows
 - Materialized Views for event stream projections
 - Dictionary-based deduplication (alternative to FINAL reads)
@@ -155,7 +169,7 @@ This pack intentionally does not claim:
 - transaction-scoped outbox staging (ClickHouse does not support multi-row ACID transactions)
 - strict exactly-once delivery guarantees (use `Cephalon.Data.Cassandra` LWT for that)
 
-These remain explicit later slices.
+These remain explicit later slices. Any future managed-dispatch follow-through for ClickHouse should start with a dedicated mutable pending-dispatch design rather than pretending the current staging table is already a truthful dispatch-state owner.
 
 ## Related docs
 

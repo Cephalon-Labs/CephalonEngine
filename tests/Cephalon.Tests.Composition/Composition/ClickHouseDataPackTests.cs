@@ -1,9 +1,12 @@
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.EventSourcing;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.ClickHouse.Configuration;
 using Cephalon.Data.ClickHouse.Registration;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
+using Cephalon.Eventing.Registration;
+using Cephalon.Eventing.Services;
 using Cephalon.EventSourcing.ClickHouse;
 using Cephalon.EventSourcing.ClickHouse.Hosting;
 using Cephalon.Tests.Support;
@@ -142,6 +145,11 @@ public sealed class ClickHouseDataPackTests
         Assert.Equal("clickhouse-outbox", descriptor.Id);
         Assert.Equal(ClickHouseDataOptions.ProviderId, descriptor.Provider);
         Assert.Equal("replacing-merge-tree", descriptor.Mode);
+        Assert.Equal("unsupported", descriptor.DispatchPolicy.PolicyId);
+        Assert.Equal("disabled", descriptor.DispatchPolicy.ExecutionMode);
+        Assert.Equal("unsupported", descriptor.Metadata["dispatchStore"]);
+        Assert.Equal("unsupported", descriptor.Metadata["dispatchRuntime"]);
+        Assert.Equal("append-only-analytics-store", descriptor.Metadata["dispatchPolicy.reason"]);
     }
 
     [Fact]
@@ -204,5 +212,54 @@ public sealed class ClickHouseDataPackTests
         Assert.Contains(runtime.Manifest.Capabilities, c => c.Key == "data.analytics-store");
         Assert.DoesNotContain(runtime.Manifest.Capabilities, c => c.Key == "data.outbox.clickhouse");
         Assert.DoesNotContain(runtime.Manifest.Capabilities, c => c.Key == "data.inbox.clickhouse");
+    }
+
+    [Fact]
+    public void AddClickHouseData_WithEventDrivenIntegration_KeepsDispatchPolicyExplicitlyUnsupported()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                data: new DataSettings(provider: "ClickHouse", outboxEnabled: true)));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "analytics-events",
+                    displayName: "Analytics Events",
+                    description: "ClickHouse staging test channel."));
+            });
+            engine.AddClickHouseData(OfflineHost, OfflineDatabase, configure: options =>
+            {
+                options.RegisterOutbox = true;
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var outboxCatalog = provider.GetRequiredService<IOutboxCatalog>();
+        var descriptor = Assert.Single(outboxCatalog.Outboxes);
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var dispatchSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
+        var dispatchEntry = Assert.Single(dispatchSurface.Entries, entry => entry.Id == "clickhouse-outbox");
+
+        Assert.Equal("unsupported", descriptor.DispatchPolicy.PolicyId);
+        Assert.Equal("disabled", descriptor.DispatchPolicy.ExecutionMode);
+        Assert.Equal("unsupported", descriptor.DispatchPolicy.Metadata["dispatchStore"]);
+        Assert.Equal("unsupported", descriptor.DispatchPolicy.Metadata["dispatchRuntime"]);
+        Assert.Equal("not-supported", descriptor.DispatchPolicy.Metadata["dispatchRuntimeId"]);
+        Assert.Equal("append-only-analytics-store", descriptor.DispatchPolicy.Metadata["reason"]);
+        Assert.Equal("unsupported", descriptor.Metadata["dispatchStore"]);
+        Assert.Equal("unsupported", descriptor.Metadata["dispatchRuntime"]);
+        Assert.Equal("not-supported", descriptor.Metadata["dispatchRuntimeId"]);
+        Assert.Equal("unsupported", dispatchEntry.Metadata["dispatchPolicyId"]);
+        Assert.Equal("disabled", dispatchEntry.Metadata["dispatchExecutionMode"]);
+        Assert.Equal("unsupported", dispatchEntry.Metadata["dispatchStore"]);
+        Assert.Equal("unsupported", dispatchEntry.Metadata["dispatchRuntime"]);
+        Assert.Equal("not-supported", dispatchEntry.Metadata["dispatchRuntimeId"]);
     }
 }
