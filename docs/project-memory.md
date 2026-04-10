@@ -216,6 +216,7 @@ Current standing examples from this collaboration:
 - keep one bounded context in one module when possible; do not split modules only to separate internal behaviors from REST-exposed behaviors
 - `Engine:Behaviors:AutoRegister` is now an opt-in fallback rather than the default behavior-ownership path; prefer explicit module ownership and only turn scanning back on when a host intentionally wants convention-based discovery
 - keep behavior return contracts transport-neutral by default: prefer raw `TOut` for simple success paths, prefer `Result<T>` for expected non-success branches, keep `BehaviorResult<T>` as a compatibility alias during the transition, and treat `ResultModel<T>` / `ResultModelError` as an optional REST wire-format policy rather than the universal engine contract
+- standardize provider-pack connection settings on `ConnectionStringName` plus `ConnectionString`, resolve named entries from the root `ConnectionStrings` section, and fail fast when both are configured at the same time
 
 ## Working assumptions for contributors
 

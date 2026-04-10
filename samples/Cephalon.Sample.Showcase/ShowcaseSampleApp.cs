@@ -10,7 +10,9 @@ using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Messaging.Hosting;
 using Cephalon.Behaviors.Patterns.Hosting;
 using Cephalon.Data.EntityFramework.Registration;
+using Cephalon.Data.MongoDB.Configuration;
 using Cephalon.Data.MongoDB.Registration;
+using Cephalon.Data.Redis.Configuration;
 using Cephalon.Data.Redis.Registration;
 using Cephalon.Data.Registration;
 using Cephalon.Eventing.Registration;
@@ -110,12 +112,10 @@ public static class ShowcaseSampleApp
             // --- MongoDB document store (Docker mode only) ---
             if (dockerMode)
             {
-                var mongoConn = config.GetConnectionString("MongoDB")
-                    ?? "mongodb://showcase:showcase_secret@localhost:27017";
-                var mongoDb = config.GetValue("Engine:Data:MongoDB:DatabaseName", "showcase_db")!;
-                engine.AddMongoDbData(mongoConn, mongoDb, opts =>
+                engine.AddMongoDbData(opts =>
                 {
-                    config.GetSection("Engine:Data:MongoDB").Bind(opts);
+                    config.GetSection(MongoDbDataOptions.SectionPath).Bind(opts);
+                    opts.ConnectionStringName ??= "MongoDB";
                     opts.RegisterOutbox = true;
                     opts.RegisterInbox = true;
                 });
@@ -124,10 +124,10 @@ public static class ShowcaseSampleApp
             // --- Redis cache (Docker mode only) ---
             if (dockerMode)
             {
-                var redisConn = config.GetConnectionString("Redis") ?? "localhost:6379";
-                engine.AddRedisData(redisConn, opts =>
+                engine.AddRedisData(opts =>
                 {
-                    config.GetSection("Engine:Data:Redis").Bind(opts);
+                    config.GetSection(RedisDataOptions.SectionPath).Bind(opts);
+                    opts.ConnectionStringName ??= "Redis";
                 });
             }
 

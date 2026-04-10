@@ -39,7 +39,7 @@ To enable the outbox and inbox paths:
 
 ```csharp
 engine.AddRedisData(
-    configuration: "localhost:6379",
+    connectionString: "localhost:6379",
     configure: options =>
     {
         options.RegisterOutbox = true;
@@ -48,13 +48,44 @@ engine.AddRedisData(
     });
 ```
 
-The `configuration` parameter accepts any StackExchange.Redis connection string, including options such as `abortConnect=false`, `password=...`, and `ssl=true`.
+The `connectionString` parameter accepts any StackExchange.Redis connection string, including options such as `abortConnect=false`, `password=...`, and `ssl=true`.
+
+For configuration-driven hosts, prefer the options overload and let the pack resolve either
+`ConnectionStringName` from the root `ConnectionStrings` section or `ConnectionString` directly:
+
+```csharp
+engine.AddRedisData(options =>
+{
+    configuration.GetSection(RedisDataOptions.SectionPath).Bind(options);
+    options.ConnectionStringName ??= "Redis";
+});
+```
+
+```json
+{
+  "ConnectionStrings": {
+    "Redis": "localhost:6379"
+  },
+  "Engine": {
+    "Data": {
+      "Redis": {
+        "ConnectionStringName": "Redis",
+        "KeyPrefix": "myapp:"
+      }
+    }
+  }
+}
+```
+
+`ConnectionStringName` and `ConnectionString` are mutually exclusive. If both are set, the pack
+fails fast during service resolution. If neither is set, Redis falls back to `localhost:6379`.
 
 ## Configuration options
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `Configuration` | `string` | `"localhost:6379"` | StackExchange.Redis connection string or configuration |
+| `ConnectionStringName` | `string?` | `null` | Root `ConnectionStrings` key to resolve for Redis |
+| `ConnectionString` | `string?` | `null` | Inline StackExchange.Redis connection string or configuration |
 | `KeyPrefix` | `string` | `"cephalon:"` | Prefix applied to all Cephalon-managed Redis keys |
 | `RegisterOutbox` | `bool` | `false` | Register `IOutbox` backed by a Redis Hash and Sorted Set |
 | `RegisterInbox` | `bool` | `false` | Register `IInbox` backed by a Redis Set |

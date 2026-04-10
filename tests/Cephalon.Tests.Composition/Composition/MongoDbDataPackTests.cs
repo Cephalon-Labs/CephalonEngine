@@ -8,6 +8,7 @@ using Cephalon.EventSourcing.MongoDB;
 using Cephalon.EventSourcing.MongoDB.Hosting;
 using Cephalon.Tests.Support;
 using EphemeralMongo;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Composition;
@@ -62,6 +63,72 @@ public sealed class MongoDbDataPackTests : IAsyncLifetime
 
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "data.mongodb");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "data.document-store");
+    }
+
+    [Fact]
+    public void AddMongoDbData_WithConnectionStringName_ResolvesFromConnectionStrings()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:MongoDbPrimary"] = ConnectionString
+            })
+            .Build();
+
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"],
+                data: new DataSettings(provider: "MongoDB")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddMongoDbData(options =>
+            {
+                options.ConnectionStringName = "MongoDbPrimary";
+                options.DatabaseName = "cephalon-config-test";
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var database = provider.GetRequiredService<MongoDB.Driver.IMongoDatabase>();
+
+        Assert.Equal("cephalon-config-test", database.DatabaseNamespace.DatabaseName);
+    }
+
+    [Fact]
+    public void AddMongoDbData_WithConnectionStringAndName_FailsFast()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:MongoDbPrimary"] = ConnectionString
+            })
+            .Build();
+
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"],
+                data: new DataSettings(provider: "MongoDB")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddMongoDbData(options =>
+            {
+                options.ConnectionStringName = "MongoDbPrimary";
+                options.ConnectionString = ConnectionString;
+                options.DatabaseName = "cephalon-config-test";
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            provider.GetRequiredService<MongoDB.Driver.IMongoClient>());
+
+        Assert.Contains("either ConnectionStringName or ConnectionString", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]

@@ -4,6 +4,8 @@ using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.Redis.Configuration;
 using Cephalon.Data.Redis.Services;
+using Cephalon.Engine.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using StackExchange.Redis;
@@ -32,8 +34,14 @@ internal sealed class RedisDataModule(RedisDataOptions options) : ModuleBase, II
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.TryAddSingleton<IConnectionMultiplexer>(_ =>
-            ConnectionMultiplexer.Connect(options.Configuration));
+        services.TryAddSingleton<IConnectionMultiplexer>(serviceProvider =>
+            ConnectionMultiplexer.Connect(ConnectionStringResolution.Resolve(
+                serviceProvider.GetService<IConfiguration>(),
+                options.ConnectionString,
+                options.ConnectionStringName,
+                RedisDataOptions.DefaultConnectionString,
+                RedisDataOptions.SectionPath,
+                "Redis")));
 
         if (options.RegisterOutbox)
         {

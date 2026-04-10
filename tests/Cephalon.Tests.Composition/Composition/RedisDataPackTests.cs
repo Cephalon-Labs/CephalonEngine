@@ -7,6 +7,7 @@ using Cephalon.Engine.Configuration;
 using Cephalon.EventSourcing.Redis;
 using Cephalon.EventSourcing.Redis.Hosting;
 using Cephalon.Tests.Support;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 
@@ -40,6 +41,70 @@ public sealed class RedisDataPackTests
         using var provider = services.BuildServiceProvider();
         var multiplexer = provider.GetRequiredService<IConnectionMultiplexer>();
         Assert.NotNull(multiplexer);
+    }
+
+    [Fact]
+    public void AddRedisData_WithConnectionStringName_ResolvesFromConnectionStrings()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:RedisPrimary"] = OfflineConnectionString
+            })
+            .Build();
+
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"],
+                data: new DataSettings(provider: "Redis")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddRedisData(options =>
+            {
+                options.ConnectionStringName = "RedisPrimary";
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var multiplexer = provider.GetRequiredService<IConnectionMultiplexer>();
+
+        Assert.NotNull(multiplexer);
+    }
+
+    [Fact]
+    public void AddRedisData_WithConnectionStringAndName_FailsFast()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:RedisPrimary"] = OfflineConnectionString
+            })
+            .Build();
+
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"],
+                data: new DataSettings(provider: "Redis")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddRedisData(options =>
+            {
+                options.ConnectionStringName = "RedisPrimary";
+                options.ConnectionString = OfflineConnectionString;
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            provider.GetRequiredService<IConnectionMultiplexer>());
+
+        Assert.Contains("either ConnectionStringName or ConnectionString", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]

@@ -41,6 +41,45 @@ public static class MongoDbDataEngineBuilderExtensions
 
         configure?.Invoke(options);
 
+        return AddMongoDbData(builder, options);
+    }
+
+    /// <summary>
+    /// Adds the MongoDB data pack using an options callback that can bind from configuration.
+    /// </summary>
+    /// <param name="builder">The engine builder to extend.</param>
+    /// <param name="configure">
+    /// The callback that configures the host-owned MongoDB pack options, including
+    /// <see cref="MongoDbDataOptions.ConnectionStringName" />,
+    /// <see cref="MongoDbDataOptions.ConnectionString" />, and <see cref="MongoDbDataOptions.DatabaseName" />.
+    /// </param>
+    /// <returns>The same engine builder for fluent composition.</returns>
+    /// <remarks>
+    /// Use either <see cref="MongoDbDataOptions.ConnectionStringName" /> or
+    /// <see cref="MongoDbDataOptions.ConnectionString" />. Leaving both unset falls back to
+    /// <c>mongodb://localhost:27017</c>.
+    /// </remarks>
+    public static EngineBuilder AddMongoDbData(
+        this EngineBuilder builder,
+        Action<MongoDbDataOptions> configure)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(configure);
+
+        var options = new MongoDbDataOptions();
+        configure(options);
+
+        return AddMongoDbData(builder, options);
+    }
+
+    private static EngineBuilder AddMongoDbData(
+        EngineBuilder builder,
+        MongoDbDataOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentException.ThrowIfNullOrWhiteSpace(options.DatabaseName);
+
         builder.AddModule(new MongoDbDataModule(options));
         return builder;
     }

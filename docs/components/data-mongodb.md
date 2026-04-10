@@ -53,11 +53,45 @@ engine.AddMongoDbData(
     });
 ```
 
+For configuration-driven hosts, prefer the options overload and let the pack resolve either
+`ConnectionStringName` from the root `ConnectionStrings` section or `ConnectionString` directly:
+
+```csharp
+engine.AddMongoDbData(options =>
+{
+    configuration.GetSection(MongoDbDataOptions.SectionPath).Bind(options);
+    options.ConnectionStringName ??= "MongoDB";
+    options.DatabaseName = "myapp";
+});
+```
+
+```json
+{
+  "ConnectionStrings": {
+    "MongoDB": "mongodb://localhost:27017"
+  },
+  "Engine": {
+    "Data": {
+      "MongoDB": {
+        "ConnectionStringName": "MongoDB",
+        "DatabaseName": "myapp",
+        "CollectionPrefix": "app_"
+      }
+    }
+  }
+}
+```
+
+`ConnectionStringName` and `ConnectionString` are mutually exclusive. If both are set, the pack
+fails fast during service resolution. If neither is set, MongoDB falls back to
+`mongodb://localhost:27017`.
+
 ## Configuration options (`Engine:Data:MongoDB`)
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `ConnectionString` | `string` | `"mongodb://localhost:27017"` | MongoDB connection string |
+| `ConnectionStringName` | `string?` | `null` | Root `ConnectionStrings` key to resolve for MongoDB |
+| `ConnectionString` | `string?` | `null` | Inline MongoDB connection string |
 | `DatabaseName` | `string` | `"cephalon"` | Target database name |
 | `CollectionPrefix` | `string` | `""` | Optional prefix for all Cephalon-managed collections |
 | `RegisterOutbox` | `bool` | `false` | Register `IOutbox` backed by the `outbox_messages` collection |

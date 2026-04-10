@@ -4,6 +4,8 @@ using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.MongoDB.Configuration;
 using Cephalon.Data.MongoDB.Services;
+using Cephalon.Engine.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MongoDB.Driver;
@@ -32,7 +34,14 @@ internal sealed class MongoDbDataModule(MongoDbDataOptions options) : ModuleBase
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.TryAddSingleton<IMongoClient>(_ => new MongoClient(options.ConnectionString));
+        services.TryAddSingleton<IMongoClient>(serviceProvider =>
+            new MongoClient(ConnectionStringResolution.Resolve(
+                serviceProvider.GetService<IConfiguration>(),
+                options.ConnectionString,
+                options.ConnectionStringName,
+                MongoDbDataOptions.DefaultConnectionString,
+                MongoDbDataOptions.SectionPath,
+                "MongoDB")));
         services.TryAddSingleton(serviceProvider =>
             serviceProvider.GetRequiredService<IMongoClient>().GetDatabase(options.DatabaseName));
 

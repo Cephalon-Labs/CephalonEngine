@@ -3,11 +3,22 @@ namespace Cephalon.Data.MongoDB.Configuration;
 /// <summary>Configuration options for the MongoDB data provider (Engine:Data:MongoDB).</summary>
 public sealed class MongoDbDataOptions
 {
+    /// <summary>Gets the configuration section path used by default for MongoDB data settings.</summary>
+    public const string SectionPath = "Engine:Data:MongoDB";
+
     /// <summary>Gets the canonical provider identifier emitted by the pack.</summary>
     public const string ProviderId = "mongodb";
 
-    /// <summary>Gets or sets the MongoDB connection string. Defaults to localhost.</summary>
-    public string ConnectionString { get; set; } = "mongodb://localhost:27017";
+    /// <summary>Gets the default MongoDB connection string used when neither connection setting is supplied.</summary>
+    public const string DefaultConnectionString = "mongodb://localhost:27017";
+
+    /// <summary>Gets or sets the root <c>ConnectionStrings</c> entry name to resolve for MongoDB.</summary>
+    /// <remarks>Use either <see cref="ConnectionStringName" /> or <see cref="ConnectionString" />.</remarks>
+    public string? ConnectionStringName { get; set; }
+
+    /// <summary>Gets or sets the inline MongoDB connection string.</summary>
+    /// <remarks>Use either <see cref="ConnectionString" /> or <see cref="ConnectionStringName" />.</remarks>
+    public string? ConnectionString { get; set; }
 
     /// <summary>Gets or sets the target database name.</summary>
     public string DatabaseName { get; set; } = "cephalon";
