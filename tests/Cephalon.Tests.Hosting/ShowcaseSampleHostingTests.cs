@@ -116,6 +116,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("outbox01", outbox.Schema);
         Assert.Contains("outbox", outbox.Consumers);
         Assert.Contains("write", outbox.CoLocatedRoles);
+        Assert.Equal("true", outbox.Metadata["inheritsResolvedRoleRuntime"]);
 
         Assert.NotNull(history);
         Assert.Equal("history", history.RequestedRoleId);
@@ -130,16 +131,24 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("entity-framework", history.Metadata["auditHistoryProvider"]);
         Assert.Equal(HealthState.Healthy, write.HealthState);
         Assert.Equal(HealthState.Healthy, read.HealthState);
+        Assert.Equal(HealthState.Healthy, outbox.HealthState);
         Assert.Equal(HealthState.Healthy, history.HealthState);
         Assert.Equal("manual-or-deploy-time", write.MigrationState);
         Assert.Equal("manual-or-deploy-time", read.MigrationState);
+        Assert.Equal("manual-or-deploy-time", outbox.MigrationState);
         Assert.Equal("manual-or-deploy-time", history.MigrationState);
         Assert.Equal("entity-framework", write.RuntimeMetadata["providerPack"]);
         Assert.Equal("entity-framework", read.RuntimeMetadata["providerPack"]);
+        Assert.Equal("entity-framework", outbox.RuntimeMetadata["providerPack"]);
         Assert.Equal("entity-framework", history.RuntimeMetadata["providerPack"]);
         Assert.Equal("manual-or-deploy-time", write.RuntimeMetadata["executionMode"]);
         Assert.Equal("manual-or-deploy-time", read.RuntimeMetadata["executionMode"]);
+        Assert.Equal("manual-or-deploy-time", outbox.RuntimeMetadata["executionMode"]);
         Assert.Equal("manual-or-deploy-time", history.RuntimeMetadata["executionMode"]);
+        Assert.Equal("succeeded", write.RuntimeMetadata["probeOutcome"]);
+        Assert.Equal("succeeded", read.RuntimeMetadata["probeOutcome"]);
+        Assert.Equal("succeeded", outbox.RuntimeMetadata["probeOutcome"]);
+        Assert.Equal("succeeded", history.RuntimeMetadata["probeOutcome"]);
         Assert.NotNull(migrations);
         Assert.Equal(3, migrations.Length);
         Assert.Contains(migrations, migration => migration.Id == "write" && migration.Status == DatabaseMigrationStatus.Planned);
@@ -152,10 +161,35 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("manual-or-deploy-time", historyMigration.ExecutionMode);
         Assert.Equal("InMemory", historyMigration.Provider);
         Assert.Equal("entity-framework", historyMigration.Metadata["runtimeProvider"]);
+        Assert.Equal("healthy", historyMigration.Metadata["roleHealthState"]);
+        Assert.Equal("manual-or-deploy-time", historyMigration.Metadata["roleMigrationState"]);
+        Assert.Equal("succeeded", historyMigration.Metadata["roleRuntime.probeOutcome"]);
+        Assert.Equal("bundle-or-script", historyMigration.Metadata["recommendedExecutionMode"]);
+        Assert.Collection(
+            historyMigration.Commands,
+            bundle =>
+            {
+                Assert.Equal("bundle", bundle.Id);
+                Assert.True(bundle.RecommendedForProduction);
+                Assert.Equal("dotnet ef migrations bundle --context ShowcaseAuditHistoryDbContext", bundle.CommandTemplate);
+            },
+            script =>
+            {
+                Assert.Equal("script", script.Id);
+                Assert.True(script.RecommendedForProduction);
+                Assert.Equal("dotnet ef migrations script --context ShowcaseAuditHistoryDbContext --idempotent", script.CommandTemplate);
+            },
+            update =>
+            {
+                Assert.Equal("update", update.Id);
+                Assert.False(update.RecommendedForProduction);
+                Assert.Equal("dotnet ef database update --context ShowcaseAuditHistoryDbContext", update.CommandTemplate);
+            });
 
         Assert.NotNull(snapshot);
         Assert.Equal(4, snapshot.DatabaseRoles.Count);
         Assert.Equal(3, snapshot.DatabaseMigrations.Count);
+        Assert.All(snapshot.DatabaseMigrations, migration => Assert.Equal(3, migration.Commands.Count));
     }
 
     [Fact]

@@ -7,6 +7,7 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
 {
     private readonly Lock gate = new();
     private readonly Dictionary<string, DatabaseMigrationDescriptor> databaseMigrationsById;
+    private readonly IDatabaseRoleCatalog databaseRoleCatalog;
 
     public EntityFrameworkDatabaseMigrationCatalog(
         AppProfile appProfile,
@@ -15,7 +16,7 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
     {
         ArgumentNullException.ThrowIfNull(appProfile);
         ArgumentNullException.ThrowIfNull(registrations);
-        ArgumentNullException.ThrowIfNull(databaseRoleCatalog);
+        this.databaseRoleCatalog = databaseRoleCatalog ?? throw new ArgumentNullException(nameof(databaseRoleCatalog));
 
         var migrationSelection = appProfile.Databases.Migrations;
         if (!migrationSelection.HasValues)
@@ -42,12 +43,23 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
     {
         get
         {
+            DatabaseMigrationDescriptor[] snapshot;
+
             lock (gate)
             {
-                return databaseMigrationsById.Values
+                snapshot = databaseMigrationsById.Values
                     .OrderBy(static entry => entry.Id, StringComparer.OrdinalIgnoreCase)
                     .ToArray();
             }
+
+            var rolesById = databaseRoleCatalog.DatabaseRoles
+                .ToDictionary(static role => role.Id, StringComparer.OrdinalIgnoreCase);
+
+            return snapshot
+                .Select(entry => DecorateWithRoleRuntime(entry, rolesById.GetValueOrDefault(entry.Id)))
+                .Where(static entry => entry is not null)
+                .Select(static entry => entry!)
+                .ToArray();
         }
     }
 
@@ -60,7 +72,9 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
 
         lock (gate)
         {
-            return databaseMigrationsById.GetValueOrDefault(databaseMigrationId.Trim());
+            return DecorateWithRoleRuntime(
+                databaseMigrationsById.GetValueOrDefault(databaseMigrationId.Trim()),
+                databaseRoleCatalog.GetById(databaseMigrationId.Trim()));
         }
     }
 
@@ -154,8 +168,43 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
             exitAfterApply: migrationSelection.ExitAfterApply == true,
             provider: role?.Provider,
             dbContextType: hasRegistration ? GetTypeName(registration!.DbContextType) : null,
+            commands: hasRegistration ? CreateCommands(targetRoleId, registration!) : null,
             lastError: error,
             metadata: CreateMetadata(targetRoleId, role, hasRegistration, registration));
+    }
+
+    private static IReadOnlyList<DatabaseMigrationCommandDescriptor> CreateCommands(
+        string targetRoleId,
+        EntityFrameworkDatabaseMigrationRegistration registration)
+    {
+        var dbContextName = registration.DbContextType.Name;
+        var dbContextTypeName = GetTypeName(registration.DbContextType);
+        var normalizedTarget = targetRoleId.Trim().ToLowerInvariant();
+
+        return
+        [
+            new DatabaseMigrationCommandDescriptor(
+                id: "bundle",
+                displayName: "EF Core migration bundle",
+                description: $"Build a deploy-time migration bundle for the '{normalizedTarget}' database role.",
+                commandTemplate: $"dotnet ef migrations bundle --context {dbContextName}",
+                recommendedForProduction: true,
+                metadata: CreateCommandMetadata(normalizedTarget, dbContextTypeName, "bundle", "deploy-time")),
+            new DatabaseMigrationCommandDescriptor(
+                id: "script",
+                displayName: "EF Core idempotent migration script",
+                description: $"Generate an idempotent SQL script for the '{normalizedTarget}' database role.",
+                commandTemplate: $"dotnet ef migrations script --context {dbContextName} --idempotent",
+                recommendedForProduction: true,
+                metadata: CreateCommandMetadata(normalizedTarget, dbContextTypeName, "script", "deploy-time")),
+            new DatabaseMigrationCommandDescriptor(
+                id: "update",
+                displayName: "EF Core direct database update",
+                description: $"Apply pending migrations directly for the '{normalizedTarget}' database role from the startup project.",
+                commandTemplate: $"dotnet ef database update --context {dbContextName}",
+                recommendedForProduction: false,
+                metadata: CreateCommandMetadata(normalizedTarget, dbContextTypeName, "update", "manual"))
+        ];
     }
 
     private static Dictionary<string, string> CreateMetadata(
@@ -203,6 +252,8 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
         {
             metadata["dbContext"] = GetTypeName(registration.DbContextType);
             metadata["registeredTargets"] = string.Join(",", registration.TargetRoleIds);
+            metadata["recommendedExecutionMode"] = "bundle-or-script";
+            metadata["commandIds"] = "bundle,script,update";
         }
         else
         {
@@ -211,6 +262,24 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
         }
 
         return metadata;
+    }
+
+    private static Dictionary<string, string> CreateCommandMetadata(
+        string targetRoleId,
+        string dbContextTypeName,
+        string commandId,
+        string executionCategory)
+    {
+        return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["runtimeProvider"] = "entity-framework",
+            ["tool"] = "dotnet-ef",
+            ["targetRole"] = targetRoleId,
+            ["dbContext"] = dbContextTypeName,
+            ["commandId"] = commandId,
+            ["executionCategory"] = executionCategory,
+            ["workingDirectoryHint"] = "startup-project"
+        };
     }
 
     private static string ToDisplayName(string role)
@@ -229,7 +298,8 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
         string? mechanism = null,
         DateTimeOffset? startedAtUtc = null,
         DateTimeOffset? completedAtUtc = null,
-        string? lastError = null)
+        string? lastError = null,
+        IReadOnlyDictionary<string, string>? metadata = null)
     {
         return new DatabaseMigrationDescriptor(
             id: entry.Id,
@@ -247,6 +317,51 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
             startedAtUtc: startedAtUtc ?? entry.StartedAtUtc,
             completedAtUtc: completedAtUtc ?? entry.CompletedAtUtc,
             lastError: lastError ?? entry.LastError,
-            metadata: entry.Metadata);
+            commands: entry.Commands,
+            metadata: metadata ?? entry.Metadata);
+    }
+
+    private static DatabaseMigrationDescriptor? DecorateWithRoleRuntime(
+        DatabaseMigrationDescriptor? entry,
+        DatabaseRoleDescriptor? role)
+    {
+        if (entry is null || role is null)
+        {
+            return entry;
+        }
+
+        var metadata = new Dictionary<string, string>(entry.Metadata, StringComparer.OrdinalIgnoreCase);
+
+        if (role.HealthState.HasValue)
+        {
+            metadata["roleHealthState"] = role.HealthState.Value.ToString().ToLowerInvariant();
+        }
+
+        if (!string.IsNullOrWhiteSpace(role.HealthDescription))
+        {
+            metadata["roleHealthDescription"] = role.HealthDescription;
+        }
+
+        if (!string.IsNullOrWhiteSpace(role.MigrationState))
+        {
+            metadata["roleMigrationState"] = role.MigrationState;
+        }
+
+        if (!string.IsNullOrWhiteSpace(role.MigrationDescription))
+        {
+            metadata["roleMigrationDescription"] = role.MigrationDescription;
+        }
+
+        if (role.ObservedAtUtc.HasValue)
+        {
+            metadata["roleObservedAtUtc"] = role.ObservedAtUtc.Value.ToString("O");
+        }
+
+        foreach (var pair in role.RuntimeMetadata)
+        {
+            metadata[$"roleRuntime.{pair.Key}"] = pair.Value;
+        }
+
+        return Clone(entry, metadata: metadata);
     }
 }

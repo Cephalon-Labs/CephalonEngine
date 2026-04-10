@@ -59,11 +59,14 @@ public sealed class EntityFrameworkAuditHistoryPackTests
 
         await hostedService.StartAsync(CancellationToken.None);
 
-        var role = Assert.Single(capturedRoles);
-        Assert.Equal("write", role.Role);
-        Assert.Equal("write", role.ResolvedRoleId);
-        Assert.Equal("WriteDb", role.ConnectionStringName);
-        Assert.Equal("Host=localhost;Database=cephalon_write", role.ConnectionString);
+        Assert.NotEmpty(capturedRoles);
+        Assert.All(capturedRoles, role =>
+        {
+            Assert.Equal("write", role.Role);
+            Assert.Equal("write", role.ResolvedRoleId);
+            Assert.Equal("WriteDb", role.ConnectionStringName);
+            Assert.Equal("Host=localhost;Database=cephalon_write", role.ConnectionString);
+        });
     }
 
     [Fact]
@@ -111,14 +114,16 @@ public sealed class EntityFrameworkAuditHistoryPackTests
 
         await hostedService.StartAsync(CancellationToken.None);
 
-        var role = Assert.Single(capturedRoles);
+        Assert.NotEmpty(capturedRoles);
         var auditStore = Assert.Single(provider.GetRequiredService<IAuditStoreCatalog>().AuditStores);
-
-        Assert.Equal("history", role.Role);
-        Assert.Equal("write", role.ResolvedRoleId);
-        Assert.Equal("WriteDb", role.ConnectionStringName);
-        Assert.Equal("audit01", role.Schema);
-        Assert.Equal(120, role.Runtime.CommandTimeoutSeconds);
+        Assert.All(capturedRoles, role =>
+        {
+            Assert.Equal("history", role.Role);
+            Assert.Equal("write", role.ResolvedRoleId);
+            Assert.Equal("WriteDb", role.ConnectionStringName);
+            Assert.Equal("audit01", role.Schema);
+            Assert.Equal(120, role.Runtime.CommandTimeoutSeconds);
+        });
 
         Assert.Equal("history", auditStore.Metadata["databaseRole"]);
         Assert.Equal("write", auditStore.Metadata["resolvedDatabaseRole"]);

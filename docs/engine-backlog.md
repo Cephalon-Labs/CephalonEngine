@@ -1617,6 +1617,42 @@ Remaining follow-through inside `ENG-067`:
 - add bundle/script orchestration metadata and deploy-time execution truth when Cephalon grows beyond hosted-service or manual migration stories
 - add provider-native migration diagnostics only when they stay additive and do not overfit the public catalog to Entity Framework
 
+### ENG-068 Live database-role health and provider-aware migration diagnostics baseline
+
+Status: done
+Estimate: 3
+
+Why:
+
+- the engine-owned database-role catalog exposed logical topology truth, but it still stopped short of proving whether the active provider pack could actually connect and what the current migration pressure looked like at runtime
+- dependent roles such as `outbox -> write` needed a truthful way to inherit resolved-role runtime health without inventing a second physical runtime surface
+- the engine-owned migration catalog now answered target identity and status, but it still stopped short of telling operators what bundle/script/update path they should actually run next
+- the database-topology roadmap already treats bundle/script-first deployment as the production path, so that guidance needed to become runtime-introspectable instead of living only in docs
+- provider packs needed a truthful way to publish runtime health, migration diagnostics, and deploy-time command templates without pretending the engine already orchestrates bundle generation or execution end to end
+
+Acceptance:
+
+- the engine-owned database-role catalog can carry provider-contributed live runtime health and migration diagnostics per logical role
+- dependent `UseRole` targets can inherit resolved-role runtime truth without lying about their logical identity
+- the engine-owned migration catalog can carry provider-added operator-facing command templates per logical target
+- `Cephalon.Data.EntityFramework` publishes connectivity plus pending-migration diagnostics for registered `DbContext` roles and bundle/script/update guidance for registered migration targets
+- `/engine/database-roles`, `/engine/database-migrations`, and `/engine/snapshot` keep the same health/diagnostic/guidance truth visible to operators and tooling
+- docs distinguish live provider diagnostics plus command-template guidance from actual bundle/script generation or execution orchestration
+
+Delivered:
+
+- `Cephalon.Data.EntityFramework` now probes registered `DbContext` roles live through the engine-owned database-role runtime surface, publishing connectivity outcome, provider identity, pending migration counts, applied migration counts, and last probe metadata without leaking Entity Framework APIs into `Cephalon.Abstractions`
+- the resolved database-role catalog now lets dependent `UseRole` targets such as `outbox -> write` inherit resolved-role runtime truth while staying explicit that the logical role is still `outbox`
+- `Cephalon.Abstractions` now ships `DatabaseMigrationCommandDescriptor`, and `DatabaseMigrationDescriptor` now carries a typed `Commands` collection instead of forcing deploy-time guidance into ad-hoc metadata keys only
+- `Cephalon.Data.EntityFramework` now decorates logical migration targets with role-health/runtime metadata and publishes `dotnet ef` bundle/script/update templates per target, marking bundle/script as production-recommended
+- the showcase sample plus hosting/composition tests now prove live role health, inherited role runtime, migration-runtime metadata, and command templates end to end through `/engine/database-roles`, `/engine/database-migrations`, and `snapshot`
+- component docs, architecture guidance, backlog, roadmap, and project memory now call out that live provider diagnostics and command templates are shipped while true bundle/script generation or execution orchestration remains a later slice
+
+Remaining follow-through inside `ENG-068`:
+
+- add bundle/script artifact generation or execution orchestration only when the engine can keep provider behavior truthful and additive
+- add richer provider-native diagnostics, per-step migration telemetry, or probe scheduling/caching only when the public catalog can stay stable across providers
+
 ## Sprint history and next 4 sprints
 
 Historical sprint buckets below are retrospective planning groups used to backfill iteration and estimate metadata for delivered work.

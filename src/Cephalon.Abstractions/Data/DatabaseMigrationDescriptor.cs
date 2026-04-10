@@ -23,6 +23,7 @@ public sealed class DatabaseMigrationDescriptor
     /// <param name="startedAtUtc">The latest start time observed for this target.</param>
     /// <param name="completedAtUtc">The latest completion time observed for this target.</param>
     /// <param name="lastError">The latest error observed for this target.</param>
+    /// <param name="commands">Optional operator-facing command templates for executing this target outside startup apply.</param>
     /// <param name="metadata">Optional operator-facing metadata associated with the migration target.</param>
     public DatabaseMigrationDescriptor(
         string id,
@@ -40,6 +41,7 @@ public sealed class DatabaseMigrationDescriptor
         DateTimeOffset? startedAtUtc = null,
         DateTimeOffset? completedAtUtc = null,
         string? lastError = null,
+        IReadOnlyList<DatabaseMigrationCommandDescriptor>? commands = null,
         IReadOnlyDictionary<string, string>? metadata = null)
     {
         if (string.IsNullOrWhiteSpace(id))
@@ -87,6 +89,7 @@ public sealed class DatabaseMigrationDescriptor
         StartedAtUtc = startedAtUtc;
         CompletedAtUtc = completedAtUtc;
         LastError = string.IsNullOrWhiteSpace(lastError) ? null : lastError.Trim();
+        Commands = commands?.ToArray() ?? [];
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
@@ -166,6 +169,11 @@ public sealed class DatabaseMigrationDescriptor
     /// Gets the latest error observed for this target.
     /// </summary>
     public string? LastError { get; }
+
+    /// <summary>
+    /// Gets optional operator-facing command templates for executing this target outside startup apply.
+    /// </summary>
+    public IReadOnlyList<DatabaseMigrationCommandDescriptor> Commands { get; }
 
     /// <summary>
     /// Gets optional operator-facing metadata associated with the migration target.

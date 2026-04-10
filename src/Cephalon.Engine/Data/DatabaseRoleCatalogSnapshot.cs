@@ -94,8 +94,8 @@ internal sealed class DatabaseRoleCatalogSnapshot(
         return configuredRoles
             .Select(role =>
             {
-                runtimeByRole.TryGetValue(role.RoleId, out var roleRuntime);
-                return CreateDescriptor(appProfile, role.RoleId, role.Resolution, configuredRoles, roleRuntime ?? []);
+                var roleRuntime = ResolveRuntimeDescriptors(role.RoleId, role.Resolution, runtimeByRole);
+                return CreateDescriptor(appProfile, role.RoleId, role.Resolution, configuredRoles, roleRuntime);
             })
             .ToArray();
     }
@@ -130,6 +130,11 @@ internal sealed class DatabaseRoleCatalogSnapshot(
             metadata["auditHistoryProvider"] = appProfile.Audit.History.Provider ?? "unknown";
             metadata["auditHistoryExportEnabled"] = appProfile.Audit.History.Export.Enabled == true ? "true" : "false";
             metadata["auditHistoryRetentionEnabled"] = appProfile.Audit.History.Retention.Enabled == true ? "true" : "false";
+        }
+
+        if (resolution.UsesRoleReference)
+        {
+            metadata["inheritsResolvedRoleRuntime"] = "true";
         }
 
         return new DatabaseRoleDescriptor(
@@ -211,6 +216,27 @@ internal sealed class DatabaseRoleCatalogSnapshot(
             maxRetryDelaySeconds: roleRuntime.MaxRetryDelaySeconds ?? sharedRuntime.MaxRetryDelaySeconds,
             commandTimeoutSeconds: roleRuntime.CommandTimeoutSeconds ?? sharedRuntime.CommandTimeoutSeconds,
             maxBatchSize: roleRuntime.MaxBatchSize ?? sharedRuntime.MaxBatchSize);
+    }
+
+    private static List<DatabaseRoleRuntimeDescriptor> ResolveRuntimeDescriptors(
+        string roleId,
+        DatabaseTopologyRoleResolution resolution,
+        Dictionary<string, IReadOnlyList<DatabaseRoleRuntimeDescriptor>> runtimeByRole)
+    {
+        var descriptors = new List<DatabaseRoleRuntimeDescriptor>();
+
+        if (resolution.UsesRoleReference &&
+            runtimeByRole.TryGetValue(resolution.ResolvedRoleId, out var resolvedRoleRuntime))
+        {
+            descriptors.AddRange(resolvedRoleRuntime);
+        }
+
+        if (runtimeByRole.TryGetValue(roleId, out var directRuntime))
+        {
+            descriptors.AddRange(directRuntime);
+        }
+
+        return descriptors;
     }
 
     private static string BuildDescription(string roleId, DatabaseTopologyRoleResolution resolution)

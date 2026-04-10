@@ -106,7 +106,9 @@ runtime truth for each active role, and `/engine/database-migrations` plus
 `/engine/database-migrations/{databaseMigrationId}` publish the logical migration targets and their
 current execution state. That split keeps requested configuration visible without losing
 operator-facing answers such as requested-versus-resolved role ids, `UseRole` resolution,
-consumers, co-location, audit-history metadata, and migration status.
+consumers, co-location, audit-history metadata, live provider-contributed role health,
+migration status, and provider-added deploy-time command templates such as Entity Framework
+bundle/script/update guidance.
 
 ## Related docs
 

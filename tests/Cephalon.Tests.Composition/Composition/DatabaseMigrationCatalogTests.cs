@@ -38,6 +38,7 @@ public sealed class DatabaseMigrationCatalogTests
         Assert.Equal("write", migration.Id);
         Assert.Equal(DatabaseMigrationStatus.Planned, migration.Status);
         Assert.Equal("startup-hosted-service", migration.ExecutionMode);
+        Assert.Empty(migration.Commands);
     }
 
     [Fact]

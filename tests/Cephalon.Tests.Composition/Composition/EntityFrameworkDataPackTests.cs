@@ -193,11 +193,14 @@ public sealed class EntityFrameworkDataPackTests
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
         var outboxRole = EntityFrameworkDatabaseRoleResolver.ResolveOutbox(scope.ServiceProvider);
+        var databaseRoleCatalog = provider.GetRequiredService<IDatabaseRoleCatalog>();
         var technologyCatalog = provider.GetRequiredService<global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeCatalog>();
         var databaseRoles = Assert.Single(
             technologyCatalog.GetByTechnology("data-management"),
             surface => surface.SurfaceId == "database-roles");
         var outboxEntry = Assert.Single(databaseRoles.Entries, entry => entry.Id == "entity-framework-outbox");
+        var writeRoleDescriptor = Assert.Single(databaseRoleCatalog.DatabaseRoles, role => role.Id == "write");
+        var outboxRoleDescriptor = Assert.Single(databaseRoleCatalog.DatabaseRoles, role => role.Id == "outbox");
 
         Assert.Equal("outbox", outboxRole.Role);
         Assert.Equal("write", outboxRole.ResolvedRoleId);
@@ -214,6 +217,10 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("true", outboxEntry.Metadata["usesRoleReference"]);
         Assert.Equal("WriteDb", outboxEntry.Metadata["connectionStringName"]);
         Assert.Equal("outbox01", outboxEntry.Metadata["schema"]);
+        Assert.Equal("true", outboxRoleDescriptor.Metadata["inheritsResolvedRoleRuntime"]);
+        Assert.Equal(writeRoleDescriptor.HealthState, outboxRoleDescriptor.HealthState);
+        Assert.Equal(writeRoleDescriptor.MigrationState, outboxRoleDescriptor.MigrationState);
+        Assert.Equal("succeeded", outboxRoleDescriptor.RuntimeMetadata["probeOutcome"]);
     }
 
     [Fact]
@@ -306,6 +313,10 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("true", pendingWrite.RuntimeMetadata["startupApplyEnabled"]);
         Assert.Equal("true", pendingWrite.RuntimeMetadata["migrationTargeted"]);
         Assert.Equal("startup-hosted-service", pendingWrite.RuntimeMetadata["executionMode"]);
+        Assert.Equal("succeeded", pendingWrite.RuntimeMetadata["probeOutcome"]);
+        Assert.Contains("InMemory", pendingWrite.RuntimeMetadata["providerNames"], StringComparison.Ordinal);
+        Assert.Equal("0", pendingWrite.RuntimeMetadata["pendingMigrationCount"]);
+        Assert.True(pendingWrite.ObservedAtUtc.HasValue);
 
         await hostedService.StartAsync(CancellationToken.None);
 
@@ -316,6 +327,8 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("succeeded", appliedWrite.RuntimeMetadata["lastOutcome"]);
         Assert.True(appliedWrite.ObservedAtUtc.HasValue);
         Assert.Contains("succeeded", appliedWrite.MigrationDescription ?? string.Empty, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("succeeded", appliedWrite.RuntimeMetadata["probeOutcome"]);
+        Assert.Equal("0", appliedWrite.RuntimeMetadata["pendingMigrationCount"]);
     }
 
     [Fact]
@@ -361,7 +374,33 @@ public sealed class EntityFrameworkDataPackTests
         Assert.False(pendingWrite.ExitAfterApply);
         Assert.Equal("entity-framework", pendingWrite.Metadata["runtimeProvider"]);
         Assert.Equal("engine-databases", pendingWrite.Metadata["topologySource"]);
+        Assert.Equal("bundle-or-script", pendingWrite.Metadata["recommendedExecutionMode"]);
+        Assert.Equal("bundle,script,update", pendingWrite.Metadata["commandIds"]);
+        Assert.Equal("healthy", pendingWrite.Metadata["roleHealthState"]);
+        Assert.Equal("pending-startup-apply", pendingWrite.Metadata["roleMigrationState"]);
+        Assert.Equal("succeeded", pendingWrite.Metadata["roleRuntime.probeOutcome"]);
         Assert.Equal(typeof(SingleCatalogDbContext).FullName, pendingWrite.DbContextType);
+        Assert.Collection(
+            pendingWrite.Commands,
+            bundle =>
+            {
+                Assert.Equal("bundle", bundle.Id);
+                Assert.True(bundle.RecommendedForProduction);
+                Assert.Equal("dotnet ef migrations bundle --context SingleCatalogDbContext", bundle.CommandTemplate);
+                Assert.Equal("dotnet-ef", bundle.Metadata["tool"]);
+            },
+            script =>
+            {
+                Assert.Equal("script", script.Id);
+                Assert.True(script.RecommendedForProduction);
+                Assert.Equal("dotnet ef migrations script --context SingleCatalogDbContext --idempotent", script.CommandTemplate);
+            },
+            update =>
+            {
+                Assert.Equal("update", update.Id);
+                Assert.False(update.RecommendedForProduction);
+                Assert.Equal("dotnet ef database update --context SingleCatalogDbContext", update.CommandTemplate);
+            });
 
         await hostedService.StartAsync(CancellationToken.None);
 
@@ -371,11 +410,51 @@ public sealed class EntityFrameworkDataPackTests
         Assert.True(appliedWrite.StartedAtUtc.HasValue);
         Assert.True(appliedWrite.CompletedAtUtc.HasValue);
         Assert.Null(appliedWrite.LastError);
+        Assert.Equal("healthy", appliedWrite.Metadata["roleHealthState"]);
+        Assert.Equal("succeeded", appliedWrite.Metadata["roleMigrationState"]);
+        Assert.Equal("succeeded", appliedWrite.Metadata["roleRuntime.probeOutcome"]);
 
         var snapshot = provider.GetRequiredService<global::Cephalon.Engine.Runtime.IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
         var snapshotMigration = Assert.Single(snapshot.DatabaseMigrations);
         Assert.Equal("write", snapshotMigration.Id);
         Assert.Equal(DatabaseMigrationStatus.Succeeded, snapshotMigration.Status);
+        Assert.Equal(3, snapshotMigration.Commands.Count);
+        Assert.Equal("healthy", snapshotMigration.Metadata["roleHealthState"]);
+        Assert.Equal("succeeded", snapshotMigration.Metadata["roleRuntime.probeOutcome"]);
+    }
+
+    [Fact]
+    public void TopologyBackedEntityFrameworkMarksRoleUnhealthyWhenConnectivityProbeFails()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:WriteDb"] = "Host=localhost;Database=cephalon_write",
+                ["Engine:Databases:Write:Provider"] = "PostgreSql",
+                ["Engine:Databases:Write:ConnectionStringName"] = "WriteDb"
+            })
+            .Build();
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(EngineSettings.FromConfiguration(configuration));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new EntityFrameworkSingleContextTestModule());
+            engine.AddData();
+            engine.AddEntityFrameworkData<SingleCatalogDbContext>(
+                configureDbContext: static (_, _) => { });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IDatabaseRoleCatalog>();
+
+        var writeRole = Assert.Single(catalog.DatabaseRoles, role => role.Id == "write");
+
+        Assert.Equal(HealthState.Unhealthy, writeRole.HealthState);
+        Assert.Equal("failed", writeRole.RuntimeMetadata["probeOutcome"]);
+        Assert.Contains("connectivity probe failed", writeRole.HealthDescription ?? string.Empty, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("No database provider has been configured", writeRole.RuntimeMetadata["lastProbeError"], StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
