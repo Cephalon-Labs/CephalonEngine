@@ -392,7 +392,7 @@ The shipped phase-8 data baseline is intentionally narrower than the long-term e
 Current recommendation:
 
 - keep `Engine:Data` as the logical app-model selection layer and let the shipped `Engine:Databases` contract own physical runtime tuning, the first named roles, and nested migration policy
-- treat named roles such as `Write`, `Read`, and `History` as first-class runtime descriptors that the engine can validate and expose through introspection, including `/engine/databases`
+- treat named roles such as `Write`, `Read`, and `History` as first-class runtime descriptors that the engine can validate and expose through introspection, including `/engine/databases` for raw topology and `/engine/database-roles` for resolved runtime truth
 - keep durable audit history as an additive provider-pack follow-through instead of pretending the current `Cephalon.Audit` baseline already owns one durable storage model
 - prefer provider registration helpers, shared model-builder slices, and interceptors over mandatory `DbContext` base classes; convenience base classes can exist later, but they should stay optional DX helpers
 

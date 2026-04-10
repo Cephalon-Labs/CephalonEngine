@@ -279,6 +279,7 @@ public sealed class AspNetCoreHostingTests
         var manifest = await client.GetFromJsonAsync<RuntimeManifest>("/engine");
         var appModel = await client.GetFromJsonAsync<AppProfile>("/engine/app-model");
         var databases = await client.GetFromJsonAsync<DatabaseTopologySelection>("/engine/databases");
+        var databaseRoles = await client.GetFromJsonAsync<DatabaseRoleDescriptor[]>("/engine/database-roles");
         var scaffold = await client.GetFromJsonAsync<ScaffoldPlan>("/engine/scaffold");
         var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
         var packages = await client.GetFromJsonAsync<PackageManifest[]>("/engine/packages");
@@ -390,6 +391,12 @@ public sealed class AspNetCoreHostingTests
         Assert.True(databases.Runtime.EnableRetryOnFailure);
         Assert.Equal(5, databases.Runtime.MaxRetryCount);
         Assert.Equal("HistoryDb", databases.History.ConnectionStringName);
+        Assert.NotNull(databaseRoles);
+        Assert.Equal(4, databaseRoles.Length);
+        Assert.Contains(databaseRoles, role => role.Id == "write" && role.ResolvedRoleId == "write");
+        Assert.Contains(databaseRoles, role => role.Id == "read" && role.ResolvedRoleId == "read");
+        Assert.Contains(databaseRoles, role => role.Id == "outbox" && role.ResolvedRoleId == "outbox");
+        Assert.Contains(databaseRoles, role => role.Id == "history" && role.ResolvedRoleId == "history");
 
         Assert.NotNull(scaffold);
         Assert.Contains(scaffold.Projects, project =>

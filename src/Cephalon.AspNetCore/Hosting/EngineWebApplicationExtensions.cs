@@ -104,6 +104,15 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonAppModel");
         engineGroup.MapGet("/databases", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Databases))
             .WithName("GetCephalonDatabases");
+        engineGroup.MapGet("/database-roles", (IDatabaseRoleCatalog catalog) => TypedResults.Ok(catalog.DatabaseRoles))
+            .WithName("GetCephalonDatabaseRoles");
+        engineGroup.MapGet("/database-roles/{databaseRoleId}", (string databaseRoleId, IDatabaseRoleCatalog catalog) =>
+            {
+                var databaseRole = catalog.GetById(databaseRoleId);
+
+                return databaseRole is null ? Results.NotFound() : Results.Ok(databaseRole);
+            })
+            .WithName("GetCephalonDatabaseRole");
         engineGroup.MapGet("/scaffold", (RuntimeManifest manifest) =>
                 manifest.AppProfile.Scaffold is null
                     ? Results.NotFound()

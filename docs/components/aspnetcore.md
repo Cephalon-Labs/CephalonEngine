@@ -8,6 +8,7 @@
 - project-level split-configuration loading through `AddCephalonProjectConfigurations()` and `AddCephalon(...)`
 - runtime startup and shutdown integration through hosted services
 - `/engine/*` metadata, status, diagnostics, and policy endpoints
+- `/engine/database-roles` when the engine-owned database-role catalog is active
 - `/engine/audit-history` and `/engine/audit-history/export` when durable audit-history services are active
 - `/engine/package-policy`, `/engine/packages`, and the rest of the engine governance surface
 - `/health`, `/health/live`, and `/health/ready` surfaces
@@ -96,6 +97,13 @@ The same host adapter now carries the first durable audit-history export helper 
 cap. Applications that want their own public export endpoint can reuse
 `AuditHistoryExportHttpResponseExtensions.WriteAuditHistoryNdjsonAsync(...)` instead of rewriting
 response headers and newline-delimited serialization by hand.
+
+The host now also exposes the engine-owned database-role catalog directly. `/engine/databases`
+remains the raw requested-topology answer projected from `AppProfile.Databases`, while
+`/engine/database-roles` and `/engine/database-roles/{databaseRoleId}` publish the resolved runtime
+truth for each active role. That split keeps requested configuration visible without losing
+operator-facing answers such as requested-versus-resolved role ids, `UseRole` resolution,
+consumers, co-location, and audit-history metadata.
 
 ## Related docs
 

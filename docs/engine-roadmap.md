@@ -102,6 +102,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 31` follow-through: `ENG-063` is now shipped on top of the first durable history baseline so audit history now includes a host-agnostic filtered-page reader contract, engine-owned retention settings, `/engine/audit-history` operator routes, and showcase-facing `/api/v1/showcase/audit/history` endpoints instead of staying write-only
 - `Sprint 31` follow-through: `ENG-064` is now shipped on top of the same durable history baseline so audit history now also includes a host-agnostic bounded export contract, `Engine:Audit:History:Export`, `/engine/audit-history/export`, and showcase-facing `/api/v1/showcase/audit/history/export` endpoints
 - `Sprint 31` follow-through: `ENG-065` is now shipped on top of the same topology baseline so dependent database targets can explicitly reference `write` through `UseRole`, `Cephalon.Data.EntityFramework` plus `Cephalon.Audit.EntityFramework` now surface requested versus resolved roles truthfully, and the showcase sample now demonstrates explicit `Outbox -> write` routing while keeping a dedicated `HistoryDb` role for truthful relational bootstrap
+- `Sprint 31` follow-through: `ENG-066` is now shipped on top of the same topology baseline so the engine now exposes `IDatabaseRoleCatalog`, `/engine/database-roles`, `/engine/database-roles/{databaseRoleId}`, and `snapshot.DatabaseRoles` with requested versus resolved role truth, role-consumer metadata, co-location answers, and audit-history enrichment
 - `Sprint 36–37 (Phase 11)`: planned resilience foundation — circuit breaker, retry/timeout/bulkhead, rate limiting, `onion-architecture` and `anti-corruption-layer` pattern descriptors
 - `Sprint 38–39 (Phase 12)`: planned migration and advanced coordination — strangler fig, saga choreography, BFF pattern, feature flags, durable execution foundations
 - `Sprint 40–41 (Phase 13)`: planned next-generation patterns — cell-based architecture, data mesh, CDC
@@ -563,6 +564,7 @@ Planned deliverables:
 - `ENG-062` durable audit-history follow-through that keeps `Cephalon.Audit` narrow while letting a first provider-backed store target a named database role
 - `ENG-063` durable audit-history reader, retention, and operator-surface follow-through on top of the first provider-backed store
 - `ENG-064` durable audit-history export follow-through on top of the same provider-backed store
+- `ENG-066` engine-owned database-role catalog and operator surface on top of the raw topology contract
 
 Current truth:
 
@@ -572,7 +574,8 @@ Current truth:
 - `ENG-063` is now shipped: durable audit history now also includes `Engine:Audit:History:Retention`, a host-agnostic `IAuditHistoryReader`, `/engine/audit-history`, and showcase-facing audit-history endpoints over the same durable store
 - `ENG-064` is now shipped: durable audit history now also includes `Engine:Audit:History:Export`, a host-agnostic `IAuditHistoryExporter`, `/engine/audit-history/export`, and showcase-facing NDJSON export endpoints over the same durable store
 - `ENG-065` is now shipped: dependent `Outbox` / `History` roles can explicitly reuse `write` through `UseRole`, and runtime metadata now reports requested versus resolved roles for the first truthful role-reference baseline
-- the remaining phase-10 work is now broader provider consumption, broader role graphs beyond `UseRole -> write`, richer topology/runtime metadata, dedicated outbox execution, bundle/script orchestration guidance, and replay follow-through plus richer export formats for durable history
+- `ENG-066` is now shipped: the engine now exposes a first-class resolved database-role catalog through `IDatabaseRoleCatalog`, `/engine/database-roles`, `/engine/database-roles/{databaseRoleId}`, and `snapshot.DatabaseRoles`, including co-location, consumers, and audit-history metadata
+- the remaining phase-10 work is now broader provider consumption, broader role graphs beyond `UseRole -> write`, live role health and migration-execution diagnostics, dedicated outbox execution, bundle/script orchestration guidance, and replay follow-through plus richer export formats for durable history
 
 Exit criteria:
 

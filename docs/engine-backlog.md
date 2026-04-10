@@ -1378,20 +1378,21 @@ Delivered so far:
 
 - `Engine:Databases` now exists as the engine-owned physical-topology contract with `Runtime`, `Write`, `Read`, `Outbox`, `History`, and nested `Migrations`
 - the contract now projects into `EngineSettings`, `AppProfile.Databases`, `/engine/databases`, `/engine/app-model`, and `/engine/snapshot`
+- the engine now also ships an additive `IDatabaseRoleCatalog` so `/engine/database-roles` and `snapshot.DatabaseRoles` expose requested versus resolved roles, `UseRole` truth, consumers, co-location, and additive metadata over the same topology contract
 - the first validation baseline now covers role-pattern alignment, migration-target validity, and mutually exclusive named versus inline connection settings
 - the contract now also supports narrow dependent role references through `UseRole` so `Outbox` and `History` can explicitly reuse the concrete `write` role while layering local schema/runtime overrides
 
 Remaining follow-through inside `ENG-060`:
 
 - broaden the current one-step `UseRole -> write` contract only when provider packs and runtime surfaces can keep requested versus resolved roles truthful
-- deepen the runtime answer beyond the current topology snapshot when provider packs begin contributing richer per-role metadata
+- deepen the runtime answer beyond the current role catalog when provider packs begin contributing richer per-role metadata
 - keep the contract aligned across docs, templates, and samples as the provider follow-through lands
 
 Planned follow-through:
 
 - add engine-owned configuration types and validation for role-based database topology
 - keep provider-family standards intact inside the topology model instead of flattening every store into one fake universal connection shape
-- add a runtime catalog and introspection surface for active database roles and their operator-facing metadata
+- keep the runtime role catalog additive and host-agnostic instead of making provider packs or hosts invent competing topology answers
 - keep `Engine:Data` focused on logical selection (`Provider`, `ReadWriteSplit`, `Outbox`, `Ids`) while `Engine:Databases` owns physical deployment detail
 
 ### ENG-061 Role-aware relational runtime and migration orchestration baseline
@@ -1525,6 +1526,66 @@ Remaining follow-through inside `ENG-064`:
 - add replay flows on top of the shipped export baseline without conflating replay with reporting
 - add richer export formats such as CSV or provider-native batch handoff only when they stay truthful and benchmarkable
 - add non-relational export-capable audit-history providers only when they can implement the same bounded contract honestly
+
+### ENG-065 Truthful dependent database-role reference baseline
+
+Status: done
+Estimate: 5
+
+Why:
+
+- the first `Engine:Databases` baseline could describe dependent roles through `UseRole`, but the runtime story still blurred requested versus resolved truth once `Outbox` or `History` reused `write`
+- additive provider packs and operator surfaces needed one honest answer for co-located roles before broader role graphs could be considered safely
+- the showcase sample needed to prove that one codebase can keep distinct root roles while intentionally aliasing dependent infrastructure roles
+
+Acceptance:
+
+- dependent `Outbox` and `History` roles can explicitly reuse `write` through `UseRole`
+- runtime metadata reports requested versus resolved roles truthfully for the first dependent-role baseline
+- the showcase sample demonstrates explicit `Outbox -> write` routing while keeping a dedicated `HistoryDb` root role
+
+Delivered:
+
+- `Engine:Databases` now supports the narrow `UseRole -> write` baseline for dependent `Outbox` and `History` targets
+- `Cephalon.Data.EntityFramework` and `Cephalon.Audit.EntityFramework` now surface requested versus resolved role truth when those references are active
+- runtime metadata now reports dependent-role co-location instead of pretending every configured role is always a separate physical target
+- the showcase sample now keeps `WriteDb`, `ReadDb`, and `HistoryDb` as explicit roots while proving `Outbox -> write` routing end to end
+
+Remaining follow-through inside `ENG-065`:
+
+- broaden role graphs beyond `UseRole -> write` only when runtime surfaces, provider packs, and migration guidance can stay truthful
+- add richer operator answers for co-located roles, schema overrides, and provider-family nuance without overfitting the contract to Entity Framework
+
+### ENG-066 Engine-owned database-role catalog and operator surface
+
+Status: done
+Estimate: 5
+
+Why:
+
+- `/engine/databases` projected the raw topology contract, but operators and provider packs still lacked one engine-owned answer for resolved runtime roles
+- requested versus resolved role truth, role consumers, co-location, and audit-history metadata needed a host-agnostic contract that did not depend on one provider pack's runtime surface
+- the broader topology story needed a stable public abstraction before more providers or role-health follow-through could build on it cleanly
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes a public database-role catalog contract for resolved runtime roles
+- `/engine/database-roles`, `/engine/database-roles/{databaseRoleId}`, and `/engine/snapshot` expose the same operator-facing role truth
+- the catalog reports requested versus resolved roles, `UseRole`, provider, connection mode, schema, merged runtime tuning, consumers, and co-located role metadata
+- durable audit-history metadata can attach to the selected logical role without coupling the role catalog to a specific provider pack
+
+Delivered:
+
+- `IDatabaseRoleCatalog` and `DatabaseRoleDescriptor` now ship in `Cephalon.Abstractions` as the engine-owned runtime catalog contract
+- `Cephalon.Engine` now projects resolved database roles into `snapshot.DatabaseRoles` with requested versus resolved role truth, `UseRole` metadata, consumers, co-located roles, and merged runtime tuning
+- ASP.NET Core hosts now expose `/engine/database-roles` plus `/engine/database-roles/{databaseRoleId}` as the operator-facing role catalog
+- audit-history selection now enriches the selected role with provider, export, and retention metadata so operator answers stay cross-pack and truthful
+- the showcase sample and hosting tests now prove the catalog end to end, including `Outbox -> write`, dedicated `HistoryDb`, and snapshot alignment
+
+Remaining follow-through inside `ENG-066`:
+
+- add live database-role health, migration-execution progress, and richer provider-specific diagnostics only when they can stay truthful and additive
+- broaden the catalog beyond the current named roles only when the engine can preserve deterministic ordering, validation, and operator clarity
 
 ## Sprint history and next 4 sprints
 

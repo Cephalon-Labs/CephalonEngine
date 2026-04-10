@@ -59,6 +59,11 @@ public sealed record RuntimeIntrospectionSnapshot(
     public IReadOnlyList<InboxDescriptor> Inboxes { get; init; } = [];
 
     /// <summary>
+    /// Gets the engine-owned database-role catalog visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<DatabaseRoleDescriptor> DatabaseRoles { get; init; } = [];
+
+    /// <summary>
     /// Gets the authorization policies contributed by active modules and visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<AuthorizationPolicyDescriptor> AuthorizationPolicies { get; init; } = [];

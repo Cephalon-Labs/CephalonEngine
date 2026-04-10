@@ -603,6 +603,9 @@ public sealed class EngineBuilder
             Services.TryAddSingleton(technologySelection);
             Services.TryAddSingleton<IReadOnlyList<OwnedBehaviorRegistration>>(ownedBehaviorRegistrations);
             Services.TryAddSingleton<IReadOnlyList<AuditStoreDescriptor>>(_ => auditStores.ToArray());
+            Services.TryAddSingleton<DatabaseRoleCatalogSnapshot>(_ => new DatabaseRoleCatalogSnapshot(appProfile));
+            Services.TryAddSingleton<IDatabaseRoleCatalog>(serviceProvider =>
+                serviceProvider.GetRequiredService<DatabaseRoleCatalogSnapshot>());
             Services.TryAddSingleton<IProjectionCatalog>(_ => new ProjectionCatalogSnapshot(projections));
             Services.TryAddSingleton<IOutboxCatalog>(_ => new OutboxCatalogSnapshot(outboxes));
             Services.TryAddSingleton<IInboxCatalog>(_ => new InboxCatalogSnapshot(inboxes));

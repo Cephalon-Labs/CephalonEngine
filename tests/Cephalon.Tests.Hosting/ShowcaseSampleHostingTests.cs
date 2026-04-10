@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
+using Cephalon.Abstractions.Data;
 using Cephalon.Sample.Showcase;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -73,6 +74,48 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("HistoryDb", profile.Databases.History.ConnectionStringName);
         Assert.False(profile.Databases.Migrations.ApplyOnStartup);
         Assert.Equal(["history", "read", "write"], profile.Databases.Migrations.Targets);
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleExposesDatabaseRoleCatalogWithRequestedAndResolvedTruth()
+    {
+        await using var app = ShowcaseSampleApp.Build(
+            configureBuilder: builder => builder.WebHost.UseTestServer());
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var roles = await client.GetFromJsonAsync<DatabaseRoleDescriptor[]>("/engine/database-roles");
+        var outbox = await client.GetFromJsonAsync<DatabaseRoleDescriptor>("/engine/database-roles/outbox");
+        var history = await client.GetFromJsonAsync<DatabaseRoleDescriptor>("/engine/database-roles/history");
+        var snapshot = await client.GetFromJsonAsync<Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(roles);
+        Assert.Equal(4, roles.Length);
+
+        Assert.NotNull(outbox);
+        Assert.Equal("outbox", outbox.RequestedRoleId);
+        Assert.Equal("write", outbox.ResolvedRoleId);
+        Assert.Equal("role-reference", outbox.ResolutionMode);
+        Assert.True(outbox.UsesRoleReference);
+        Assert.Equal("write", outbox.UseRole);
+        Assert.Equal("WriteDb", outbox.ConnectionStringName);
+        Assert.Equal("outbox01", outbox.Schema);
+        Assert.Contains("outbox", outbox.Consumers);
+        Assert.Contains("write", outbox.CoLocatedRoles);
+
+        Assert.NotNull(history);
+        Assert.Equal("history", history.RequestedRoleId);
+        Assert.Equal("history", history.ResolvedRoleId);
+        Assert.Equal("direct", history.ResolutionMode);
+        Assert.False(history.UsesRoleReference);
+        Assert.Equal("HistoryDb", history.ConnectionStringName);
+        Assert.Contains("audit-history", history.Consumers);
+        Assert.Contains("migrations", history.Consumers);
+        Assert.Equal("entity-framework", history.Metadata["auditHistoryProvider"]);
+
+        Assert.NotNull(snapshot);
+        Assert.Equal(4, snapshot.DatabaseRoles.Count);
     }
 
     [Fact]

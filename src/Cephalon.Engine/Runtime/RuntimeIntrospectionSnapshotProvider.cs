@@ -14,6 +14,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
     IProjectionCatalog projectionCatalog,
     IOutboxCatalog outboxCatalog,
     IInboxCatalog inboxCatalog,
+    IDatabaseRoleCatalog databaseRoleCatalog,
     IAuditStoreCatalog auditStoreCatalog,
     IAuthorizationPolicyCatalog authorizationPolicyCatalog,
     ITechnologyRuntimeCatalog technologyRuntimeCatalog,
@@ -33,6 +34,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             Projections = projectionCatalog.Projections,
             Outboxes = outboxCatalog.Outboxes,
             Inboxes = inboxCatalog.Inboxes,
+            DatabaseRoles = databaseRoleCatalog.DatabaseRoles,
             AuditStores = auditStoreCatalog.AuditStores,
             AuthorizationPolicies = authorizationPolicyCatalog.Policies
         };

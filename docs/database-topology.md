@@ -16,13 +16,15 @@ That baseline currently includes:
 - projection into `EngineSettings`
 - projection into `AppProfile.Databases`
 - validation in the app-profile selection pipeline
-- introspection through `/engine/databases`, `/engine/app-model`, and `/engine/snapshot`
+- introspection through `/engine/databases`, `/engine/database-roles`, `/engine/app-model`, and `/engine/snapshot`
 
 This means Cephalon now has one engine-owned answer for database topology instead of leaving every host or provider pack to invent its own shape.
 
 The first provider follow-through is also now in place: `Cephalon.Data.EntityFramework` consumes the engine-owned `Write` and optional `Read` roles directly, projects those choices into the `data-management/database-roles` runtime surface, and can apply startup schema creation or migrations for the registered relational `DbContext` roles through a generic-host hosted service when `Engine:Databases:Migrations:ApplyOnStartup` is enabled.
 
 The first durable audit-history follow-through is also now shipped: `Cephalon.Audit.EntityFramework` consumes `Engine:Audit:History` plus the selected engine-owned database role named by `Engine:Audit:History:DatabaseRole`, persists audit rows through a dedicated EF Core `DbContext`, publishes a durable audit-store descriptor through `/engine/audit-stores` and `/engine/snapshot`, exposes filtered-page reads through `IAuditHistoryReader`, exposes bounded NDJSON export streams through `IAuditHistoryExporter`, and can run engine-owned retention passes through `Engine:Audit:History:Retention`.
+
+The next runtime follow-through is now also shipped: `Cephalon.Abstractions` exposes `IDatabaseRoleCatalog`, the engine now projects a resolved `DatabaseRoles` set into `/engine/snapshot`, and ASP.NET Core hosts now expose `/engine/database-roles` plus `/engine/database-roles/{databaseRoleId}`. That catalog answers requested versus resolved roles, `UseRole` truth, connection mode, provider, schema, merged runtime tuning, operator-facing consumers, co-located role references, and audit-history metadata without forcing provider packs or hosts to invent their own runtime topology story.
 
 ## Current shipped shape
 
@@ -66,13 +68,15 @@ The shipped baseline currently validates:
 The new baseline is visible through:
 
 - `/engine/databases`
+- `/engine/database-roles`
+- `/engine/database-roles/{databaseRoleId}`
 - `/engine/app-model`
 - `/engine/audit-stores`
 - `/engine/audit-history`
 - `/engine/audit-history/export`
 - `/engine/snapshot`
 
-That keeps database-topology choices explicit and operator-visible even before deeper provider packs consume every part of the contract.
+`/engine/databases` remains the raw engine-owned topology answer. `/engine/database-roles` is the resolved operator catalog for active roles and their runtime metadata. Together they keep database-topology choices explicit and operator-visible even before deeper provider packs consume every part of the contract.
 
 ## Current example
 
@@ -157,7 +161,7 @@ The engine now owns the topology contract, but several follow-through slices are
 - dedicated relational-role sharing still needs truthful migration/bootstrap guidance when multiple `DbContext` models point at the same physical database
 - there is not yet an engine-owned bundle/script orchestration path for deploy-time database changes
 - replay UX and richer export formats or delivery automation for durable audit history are not yet shipped
-- Cephalon does not yet expose a richer runtime catalog with role health, resolved provider metadata, or migration-execution state beyond the current topology snapshot and audit-store descriptor set
+- Cephalon does not yet expose live database-role health, migration-execution progress, or provider-specific operational diagnostics beyond the current resolved role catalog, topology snapshot, and audit-store descriptor set
 
 ## Recommended next direction
 
