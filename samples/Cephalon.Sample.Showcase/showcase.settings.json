@@ -22,10 +22,12 @@
         "Generator": "Sfid"
       },
       "MongoDB": {
+        "ConnectionStringName": "MongoDB",
         "DatabaseName": "showcase_db",
         "CollectionPrefix": "showcase_"
       },
       "Redis": {
+        "ConnectionStringName": "Redis",
         "KeyPrefix": "showcase:"
       }
     },
