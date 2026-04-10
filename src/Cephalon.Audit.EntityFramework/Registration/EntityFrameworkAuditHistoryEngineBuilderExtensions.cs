@@ -35,12 +35,12 @@ public static class EntityFrameworkAuditHistoryEngineBuilderExtensions
     }
 
     /// <summary>
-    /// Adds the Entity Framework durable audit-history provider with the history role resolved from <c>Engine:Databases</c>.
+    /// Adds the Entity Framework durable audit-history provider with the configured audit-history role resolved from <c>Engine:Databases</c>.
     /// </summary>
     /// <typeparam name="TDbContext">The <see cref="DbContext" /> type that persists audit-history rows.</typeparam>
     /// <param name="builder">The engine builder to extend.</param>
     /// <param name="configureDbContext">
-    /// The callback that selects the EF Core provider for the resolved history role and applies provider-specific tuning.
+    /// The callback that selects the EF Core provider for the resolved audit-history role and applies provider-specific tuning.
     /// </param>
     /// <param name="configure">An optional callback that configures host-owned audit-history provider options.</param>
     /// <returns>The same engine builder for fluent composition.</returns>

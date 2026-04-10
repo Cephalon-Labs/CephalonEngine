@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Audit;
+using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Audit.EntityFramework.Configuration;
 using Cephalon.Audit.EntityFramework.Services;
@@ -46,9 +47,9 @@ internal sealed class EntityFrameworkAuditHistoryModule<TDbContext>(
 
         if (options.UsesEngineDatabaseTopology)
         {
-            services.AddSingleton(new EntityFrameworkDatabaseMigrationRegistration(
+            services.AddSingleton(serviceProvider => new EntityFrameworkDatabaseMigrationRegistration(
                 typeof(TDbContext),
-                ["history"]));
+                [EntityFrameworkAuditHistorySelection.ResolveDatabaseRole(serviceProvider.GetRequiredService<AppProfile>())]));
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, EntityFrameworkDatabaseMigrationHostedService>());
         }
     }

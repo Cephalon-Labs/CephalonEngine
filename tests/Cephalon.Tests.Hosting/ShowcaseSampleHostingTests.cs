@@ -2,10 +2,12 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Cephalon.Abstractions.AppModel;
+using Cephalon.Abstractions.Audit;
 using Cephalon.Sample.Showcase;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Hosting;
 
@@ -51,7 +53,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("Sfid", profile.Data.IdGenerator);
         Assert.True(profile.Audit.Enabled);
         Assert.True(profile.Audit.History.Enabled);
-        Assert.Equal("EntityFramework", profile.Audit.History.Provider);
+        Assert.Equal("entity-framework", profile.Audit.History.Provider);
         Assert.Equal("history", profile.Audit.History.DatabaseRole);
         Assert.True(profile.Identity.Enabled);
         Assert.True(profile.Tenancy.Enabled);
@@ -268,6 +270,40 @@ public sealed class ShowcaseSampleHostingTests
         var body = await response.Content.ReadAsStringAsync();
         Assert.Contains("TEST-CREATE-001", body, StringComparison.Ordinal);
         Assert.Contains("Test Product", body, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleKeepsCommittedWritesSuccessfulWhenAuditWriterFails()
+    {
+        await using var app = ShowcaseSampleApp.Build(configureBuilder: builder =>
+        {
+            builder.WebHost.UseTestServer();
+            builder.Services.AddSingleton<IAuditWriter, FailingAuditWriter>();
+        });
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var payload = new
+        {
+            sku = "AUDIT-FAIL-001",
+            name = "Audit Failure Safe Product",
+            description = "Create should still succeed when the audit writer fails.",
+            category = "Testing",
+            priceInCents = 2999,
+            currency = "USD",
+            tags = new[] { "audit", "failure" }
+        };
+
+        var response = await client.PostAsync("/api/v1/showcase/catalog/products", JsonContent.Create(payload));
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+        var listResponse = await client.GetAsync("/api/v1/showcase/catalog/products");
+        Assert.Equal(HttpStatusCode.OK, listResponse.StatusCode);
+
+        var body = await listResponse.Content.ReadAsStringAsync();
+        Assert.Contains("AUDIT-FAIL-001", body, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -982,5 +1018,15 @@ public sealed class ShowcaseSampleHostingTests
             builder.WebHost.UseTestServer();
             builder.Configuration["ApiRoutes:ResultEnvelope:Enabled"] = "true";
         });
+    }
+
+    private sealed class FailingAuditWriter : IAuditWriter
+    {
+        public ValueTask WriteAsync(AuditEntry entry, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(entry);
+
+            throw new InvalidOperationException("Synthetic audit writer failure for showcase integration coverage.");
+        }
     }
 }

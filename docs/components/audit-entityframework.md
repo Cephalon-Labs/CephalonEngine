@@ -5,10 +5,10 @@
 ## What it owns
 
 - registers a durable audit-history `DbContext` through companion-pack registration instead of host-specific startup code
-- consumes `Engine:Audit:History` plus `Engine:Databases:History` as the canonical history-routing contract
+- consumes `Engine:Audit:History` plus the selected `Engine:Databases` role named by `Engine:Audit:History:DatabaseRole`
 - persists audit entries through `IAuditWriter` without pushing storage concerns back into modules
 - publishes a durable audit-store descriptor through `/engine/audit-stores` and `/engine/snapshot`
-- can participate in startup schema apply when `Engine:Databases:Migrations:ApplyOnStartup` is enabled and a history `DbContext` is registered truthfully
+- can participate in startup schema apply when `Engine:Databases:Migrations:ApplyOnStartup` is enabled and the selected audit-history `DbContext` role is registered truthfully
 
 ## Main surfaces
 
@@ -24,7 +24,7 @@
 
 This pack keeps `Cephalon.Audit` narrow. The host-agnostic audit pack still owns low-ceremony recording plus the optional in-memory baseline, while `Cephalon.Audit.EntityFramework` adds the first truthful durable write path on the relational golden path.
 
-The pack is intentionally aligned with the engine-owned database-topology contract. Durable audit history is turned on through `Engine:Audit:History`, targets the logical `history` database role by default, and uses the same topology introspection surface as the rest of the role-aware data follow-through. That keeps audit-history routing, startup schema apply, and operator-facing runtime answers aligned instead of inventing another storage section.
+The pack is intentionally aligned with the engine-owned database-topology contract. Durable audit history is turned on through `Engine:Audit:History`, targets the logical `history` database role by default, and can be redirected to another engine-owned role through `Engine:Audit:History:DatabaseRole`. The canonical provider id is `entity-framework`, while the pack also accepts the legacy `EntityFramework` alias during this POC phase. That keeps audit-history routing, startup schema apply, and operator-facing runtime answers aligned instead of inventing another storage section.
 
 This pack currently owns the durable write path only. Retention, replay/query UX, export pipelines, and non-relational audit-history providers remain later additive slices.
 

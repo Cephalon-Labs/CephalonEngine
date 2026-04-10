@@ -21,7 +21,7 @@ This means Cephalon now has one engine-owned answer for database topology instea
 
 The first provider follow-through is also now in place: `Cephalon.Data.EntityFramework` consumes the engine-owned `Write` and optional `Read` roles directly, projects those choices into the `data-management/database-roles` runtime surface, and can apply startup schema creation or migrations for the registered relational `DbContext` roles through a generic-host hosted service when `Engine:Databases:Migrations:ApplyOnStartup` is enabled.
 
-The first durable audit-history follow-through is also now shipped: `Cephalon.Audit.EntityFramework` consumes `Engine:Audit:History` plus the engine-owned `History` role, persists audit rows through a dedicated EF Core `DbContext`, and publishes a durable audit-store descriptor through `/engine/audit-stores` and `/engine/snapshot`.
+The first durable audit-history follow-through is also now shipped: `Cephalon.Audit.EntityFramework` consumes `Engine:Audit:History` plus the selected engine-owned database role named by `Engine:Audit:History:DatabaseRole`, persists audit rows through a dedicated EF Core `DbContext`, and publishes a durable audit-store descriptor through `/engine/audit-stores` and `/engine/snapshot`.
 
 ## Current shipped shape
 
@@ -38,7 +38,7 @@ The current shape is:
 
 Each target currently carries its own provider plus either `ConnectionStringName` or `ConnectionString`, along with optional per-role runtime overrides.
 
-That is not yet the final long-term shape, but it is now a truthful engine contract that also owns the first durable audit-history route.
+That is not yet the final long-term shape, but it is now a truthful engine contract that also owns the first durable audit-history route. The audit-history path defaults to the `History` role, but it can now target any supported engine-owned role through `Engine:Audit:History:DatabaseRole`.
 
 ## Current validation rules
 
@@ -85,7 +85,7 @@ That keeps database-topology choices explicit and operator-visible even before d
       "Enabled": true,
       "History": {
         "Enabled": true,
-        "Provider": "EntityFramework",
+        "Provider": "entity-framework",
         "DatabaseRole": "history"
       }
     },

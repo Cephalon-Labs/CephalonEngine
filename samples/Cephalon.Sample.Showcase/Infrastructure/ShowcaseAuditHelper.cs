@@ -2,6 +2,7 @@ using Cephalon.Abstractions.Audit;
 using Cephalon.Audit.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Sample.Showcase.Infrastructure;
 
@@ -10,8 +11,16 @@ namespace Cephalon.Sample.Showcase.Infrastructure;
 /// </summary>
 internal static class ShowcaseAuditHelper
 {
+    private static readonly Action<ILogger, string, string, Exception?> AuditRecordingFailedMessage =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Warning,
+            new EventId(2901, "ShowcaseAuditRecordingFailed"),
+            "Showcase audit recording failed for category '{Category}' and action '{Action}' after the primary operation completed.");
+
     /// <summary>
     /// Records an audit entry when the active request can resolve an <see cref="IAuditRecorder" />.
+    /// Durable audit persistence is best-effort in the showcase so already-committed business writes
+    /// do not report false HTTP failures when the additive audit path fails afterward.
     /// </summary>
     /// <param name="httpContext">The active HTTP request context.</param>
     /// <param name="request">The audit request to record.</param>
@@ -29,7 +38,23 @@ internal static class ShowcaseAuditHelper
             return;
         }
 
-        await recorder.RecordAsync(request, httpContext.RequestAborted).ConfigureAwait(false);
+        try
+        {
+            await recorder.RecordAsync(request, httpContext.RequestAborted).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (httpContext.RequestAborted.IsCancellationRequested)
+        {
+        }
+        catch (Exception exception)
+        {
+            var logger = httpContext.RequestServices
+                .GetService<ILoggerFactory>()
+                ?.CreateLogger("Cephalon.Sample.Showcase.Audit");
+            if (logger is not null)
+            {
+                AuditRecordingFailedMessage(logger, request.Category, request.Action, exception);
+            }
+        }
     }
 
     /// <summary>

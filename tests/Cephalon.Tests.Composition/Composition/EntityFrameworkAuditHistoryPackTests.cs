@@ -18,21 +18,21 @@ namespace Cephalon.Tests.Composition;
 public sealed class EntityFrameworkAuditHistoryPackTests
 {
     [Fact]
-    public async Task AddEntityFrameworkAuditHistoryCanResolveTheHistoryRoleFromEngineDatabases()
+    public async Task AddEntityFrameworkAuditHistoryCanResolveTheConfiguredAuditHistoryRoleFromEngineDatabases()
     {
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["ConnectionStrings:HistoryDb"] = "Host=localhost;Database=cephalon_history",
+                ["ConnectionStrings:WriteDb"] = "Host=localhost;Database=cephalon_write",
                 ["Engine:Audit:Enabled"] = "true",
                 ["Engine:Audit:History:Enabled"] = "true",
-                ["Engine:Audit:History:Provider"] = "EntityFramework",
-                ["Engine:Audit:History:DatabaseRole"] = "history",
+                ["Engine:Audit:History:Provider"] = "entity-framework",
+                ["Engine:Audit:History:DatabaseRole"] = "write",
                 ["Engine:Audit:EnableInMemoryWriter"] = "false",
-                ["Engine:Databases:History:Provider"] = "PostgreSql",
-                ["Engine:Databases:History:ConnectionStringName"] = "HistoryDb",
+                ["Engine:Databases:Write:Provider"] = "PostgreSql",
+                ["Engine:Databases:Write:ConnectionStringName"] = "WriteDb",
                 ["Engine:Databases:Migrations:ApplyOnStartup"] = "true",
-                ["Engine:Databases:Migrations:Targets:0"] = "history"
+                ["Engine:Databases:Migrations:Targets:0"] = "write"
             })
             .Build();
         var capturedRoles = new List<EntityFrameworkDatabaseRoleContext>();
@@ -59,10 +59,10 @@ public sealed class EntityFrameworkAuditHistoryPackTests
         await hostedService.StartAsync(CancellationToken.None);
 
         var role = Assert.Single(capturedRoles);
-        Assert.Equal("history", role.Role);
-        Assert.Equal("history", role.ResolvedRoleId);
-        Assert.Equal("HistoryDb", role.ConnectionStringName);
-        Assert.Equal("Host=localhost;Database=cephalon_history", role.ConnectionString);
+        Assert.Equal("write", role.Role);
+        Assert.Equal("write", role.ResolvedRoleId);
+        Assert.Equal("WriteDb", role.ConnectionStringName);
+        Assert.Equal("Host=localhost;Database=cephalon_write", role.ConnectionString);
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public sealed class EntityFrameworkAuditHistoryPackTests
             {
                 ["Engine:Audit:Enabled"] = "true",
                 ["Engine:Audit:History:Enabled"] = "true",
-                ["Engine:Audit:History:Provider"] = "EntityFramework",
+                ["Engine:Audit:History:Provider"] = "entity-framework",
                 ["Engine:Audit:History:DatabaseRole"] = "history",
                 ["Engine:Audit:EnableInMemoryWriter"] = "false",
                 ["Engine:Databases:History:Provider"] = "Sqlite",
@@ -122,6 +122,51 @@ public sealed class EntityFrameworkAuditHistoryPackTests
         Assert.Equal("history", auditStore.Metadata["databaseRole"]);
         Assert.Equal(typeof(TestAuditHistoryDbContext).FullName, auditStore.Metadata["dbContext"]);
         Assert.Equal(auditStore.Id, snapshotStore.Id);
+    }
+
+    [Fact]
+    public async Task AddEntityFrameworkAuditHistoryAcceptsLegacyProviderAliasForSelection()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Engine:Audit:Enabled"] = "true",
+                ["Engine:Audit:History:Enabled"] = "true",
+                ["Engine:Audit:History:Provider"] = "EntityFramework",
+                ["Engine:Audit:History:DatabaseRole"] = "history",
+                ["Engine:Audit:EnableInMemoryWriter"] = "false",
+                ["Engine:Databases:History:Provider"] = "Sqlite",
+                ["Engine:Databases:History:ConnectionString"] = "Data Source=ignored-for-inmemory"
+            })
+            .Build();
+        var databaseName = $"cephalon-audit-store-legacy-{Guid.NewGuid():N}";
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(EngineSettings.FromConfiguration(configuration));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddAudit();
+            engine.AddEntityFrameworkAuditHistory<TestAuditHistoryDbContext>(options =>
+            {
+                options.UseInMemoryDatabase(databaseName);
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var recorder = provider.GetRequiredService<IAuditRecorder>();
+
+        await recorder.RecordAsync(new AuditRecordRequest(
+            category: "catalog",
+            action: "product-created",
+            summary: "Created a product through the legacy durable audit configuration.",
+            subjectType: "product",
+            subjectId: "prod-legacy",
+            outcome: AuditOutcome.Succeeded));
+
+        await using var scope = provider.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<TestAuditHistoryDbContext>();
+        Assert.Equal(1, await dbContext.AuditEntries.CountAsync());
     }
 
     private sealed class TestAuditHistoryDbContext(DbContextOptions<TestAuditHistoryDbContext> options)

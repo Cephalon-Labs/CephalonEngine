@@ -246,7 +246,7 @@ The runtime should support configuration-driven blueprint, pattern, technology, 
       "Enabled": true,
       "History": {
         "Enabled": true,
-        "Provider": "EntityFramework",
+        "Provider": "entity-framework",
         "DatabaseRole": "history"
       }
     },
@@ -411,7 +411,7 @@ Use the `Engine` section as the primary source of truth for blueprint, pattern, 
       "Enabled": true,
       "History": {
         "Enabled": true,
-        "Provider": "EntityFramework",
+        "Provider": "entity-framework",
         "DatabaseRole": "history"
       }
     },

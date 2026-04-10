@@ -75,7 +75,14 @@ public static class EntityFrameworkDatabaseRoleResolver
     /// <returns>The resolved Entity Framework database-role context.</returns>
     public static EntityFrameworkDatabaseRoleContext ResolveHistory(IServiceProvider serviceProvider)
     {
-        return ResolveRole(serviceProvider, AuditHistorySettings.DefaultDatabaseRole);
+        ArgumentNullException.ThrowIfNull(serviceProvider);
+
+        var appProfile = serviceProvider.GetRequiredService<AppProfile>();
+        var requestedRoleId = string.IsNullOrWhiteSpace(appProfile.Audit.History.DatabaseRole)
+            ? AuditHistorySettings.DefaultDatabaseRole
+            : appProfile.Audit.History.DatabaseRole.Trim();
+
+        return ResolveRole(serviceProvider, requestedRoleId);
     }
 
     /// <summary>

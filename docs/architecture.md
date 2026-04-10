@@ -396,7 +396,7 @@ Current recommendation:
 - keep durable audit history as an additive provider-pack follow-through instead of pretending the current `Cephalon.Audit` baseline already owns one durable storage model
 - prefer provider registration helpers, shared model-builder slices, and interceptors over mandatory `DbContext` base classes; convenience base classes can exist later, but they should stay optional DX helpers
 
-The first shipped follow-through on that rule is `Cephalon.Audit.EntityFramework`, which persists durable audit history through `Engine:Audit:History` plus the engine-owned `History` database role while keeping `Cephalon.Audit` narrow and host-agnostic. See [Database topology](database-topology.md) for the current baseline and the remaining post-`ENG-062` gaps.
+The first shipped follow-through on that rule is `Cephalon.Audit.EntityFramework`, which persists durable audit history through `Engine:Audit:History` plus a selected engine-owned database role, defaulting to `History`, while keeping `Cephalon.Audit` narrow and host-agnostic. See [Database topology](database-topology.md) for the current baseline and the remaining post-`ENG-062` gaps.
 
 ## Next expansion points
 

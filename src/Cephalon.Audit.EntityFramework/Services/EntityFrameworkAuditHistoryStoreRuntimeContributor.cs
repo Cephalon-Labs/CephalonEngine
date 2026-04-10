@@ -14,17 +14,12 @@ internal sealed class EntityFrameworkAuditHistoryStoreRuntimeContributor<TDbCont
     {
         if (appProfile.Audit.Enabled == false ||
             appProfile.Audit.History.Enabled != true ||
-            !string.Equals(
-                appProfile.Audit.History.Provider,
-                "EntityFramework",
-                StringComparison.OrdinalIgnoreCase))
+            !EntityFrameworkAuditHistorySelection.MatchesProvider(appProfile.Audit.History.Provider))
         {
             return [];
         }
 
-        var databaseRole = string.IsNullOrWhiteSpace(appProfile.Audit.History.DatabaseRole)
-            ? AuditHistorySettings.DefaultDatabaseRole
-            : appProfile.Audit.History.DatabaseRole.Trim();
+        var databaseRole = EntityFrameworkAuditHistorySelection.ResolveDatabaseRole(appProfile);
         var target = ResolveTarget(appProfile.Databases, databaseRole);
         if (!target.HasValues)
         {

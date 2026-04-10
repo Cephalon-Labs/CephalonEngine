@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
+using Cephalon.Audit.EntityFramework.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Audit.EntityFramework.Services;
@@ -20,10 +21,7 @@ internal sealed class EntityFrameworkAuditHistoryWriter<TDbContext>(
 
         if (appProfile.Audit.Enabled == false ||
             appProfile.Audit.History.Enabled != true ||
-            !string.Equals(
-                appProfile.Audit.History.Provider,
-                "EntityFramework",
-                StringComparison.OrdinalIgnoreCase))
+            !EntityFrameworkAuditHistorySelection.MatchesProvider(appProfile.Audit.History.Provider))
         {
             return;
         }

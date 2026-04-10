@@ -87,7 +87,7 @@
       "EnableInMemoryWriter": false,
       "History": {
         "Enabled": true,
-        "Provider": "EntityFramework",
+        "Provider": "entity-framework",
         "DatabaseRole": "history"
       }
     },

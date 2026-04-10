@@ -1449,7 +1449,7 @@ Delivered:
 - `Cephalon.Audit.EntityFramework` now ships as the first durable audit-history provider pack on the relational golden path
 - `Engine:Audit:History` now projects into `EngineSettings`, `AppProfile.Audit`, `/engine/app-model`, and `/engine/snapshot`
 - `IAuditStoreRuntimeContributor` now lets additive provider packs publish durable audit-store descriptors without widening `Cephalon.Audit` into a mandatory storage abstraction
-- durable audit history now targets a named database role, defaults to `history`, and publishes its runtime truth through `/engine/audit-stores` and `/engine/snapshot`
+- durable audit history now targets a named database role, defaults to `history`, can be redirected through `Engine:Audit:History:DatabaseRole`, and publishes its runtime truth through `/engine/audit-stores` and `/engine/snapshot`
 - the showcase sample now uses distinct `WriteDb`, `ReadDb`, and `HistoryDb` roles and records durable audit history through the new provider pack
 
 Remaining follow-through inside `ENG-062`:
