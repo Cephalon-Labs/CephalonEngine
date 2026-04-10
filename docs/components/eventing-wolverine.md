@@ -28,7 +28,7 @@
 
 This package is intentionally thin, but it is no longer just a passive host-wiring shim. Cephalon now has an official Wolverine path that can be selected and introspected without pushing Wolverine APIs into the engine core, and it can optionally own the durable staged-event dispatch loop when the app deliberately enables that behavior.
 
-Today the pack does two concrete things truthfully. First, it registers Wolverine host wiring and projects that choice back into Cephalon runtime introspection through `eventing.wolverine` and the `wolverine-adapter` surface. Second, when `EnableDispatchLoop` is turned on and a real `IEventDispatchStore` is available, it runs a hosted `wolverine-managed` dispatch pump that reads staged `EventPublication` payloads, publishes them through Wolverine, records durable dispatch outcomes, and reports execution/runtime metadata back through the shared eventing surfaces. That bridge is no longer limited to the Entity Framework outbox baseline; the current MongoDB, Redis, Elasticsearch, and OpenSearch outbox packs now register the same runtime-neutral dispatch-store contract as well.
+Today the pack does two concrete things truthfully. First, it registers Wolverine host wiring and projects that choice back into Cephalon runtime introspection through `eventing.wolverine` and the `wolverine-adapter` surface. Second, when `EnableDispatchLoop` is turned on and a real `IEventDispatchStore` is available, it runs a hosted `wolverine-managed` dispatch pump that reads staged `EventPublication` payloads, publishes them through Wolverine, records durable dispatch outcomes, and reports execution/runtime metadata back through the shared eventing surfaces. That bridge is no longer limited to the Entity Framework outbox baseline; the current MongoDB, Redis, Elasticsearch, OpenSearch, Neo4j, and Qdrant outbox packs now register the same runtime-neutral dispatch-store contract as well.
 
 That runtime story is now visible in three complementary places:
 
@@ -43,7 +43,7 @@ That means the package now has two truthful operating modes:
 - baseline mode: Wolverine host wiring is active, while durable dispatch remains consumer-managed
 - managed-loop mode: Wolverine owns the staged-event dispatch loop and reports `dispatchBridge = wolverine-managed`
 
-The remaining work is therefore not to invent a first durable bridge from scratch, but to deepen observability, richer retry/runtime answers, broader provider-native dispatch-store follow-through where a pack can truthfully persist dispatch outcomes, and later broker-specific follow-through on top of the same `IEventDispatchStore` and `IEventDispatchRuntimeReporter` contract set.
+The remaining work is therefore not to invent a first durable bridge from scratch, but to deepen observability, richer retry/runtime answers, broader provider-native dispatch-store follow-through where a pack can truthfully persist dispatch outcomes, and later broker-specific follow-through on top of the same `IEventDispatchStore` and `IEventDispatchRuntimeReporter` contract set. The current deliberate provider gaps are Cassandra, ClickHouse, and NATS, where storage-model truth is still more important than parity for its own sake.
 
 The showcase sample now wires this package directly, so local and test hosts can expose `/engine/event-dispatch-runtimes`, `/engine/event-dispatches`, `/engine/outboxes`, and matching `snapshot.EventDispatchRuntimes` / `snapshot.EventDispatchStates` answers without custom host-only code.
 

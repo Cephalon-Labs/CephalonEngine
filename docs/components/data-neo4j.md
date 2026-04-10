@@ -6,6 +6,7 @@
 
 - registers a singleton `IDriver` from a Bolt URI and credentials using `TryAdd` semantics so a host-owned driver is never displaced
 - registers a scoped `IOutbox` backed by Neo4j `:OutboxMessage` graph nodes when `RegisterOutbox` is enabled; node labels honour the optional `LabelPrefix`
+- registers a scoped `IEventDispatchStore` against the same Neo4j outbox nodes when `RegisterOutbox` is enabled so consumer-managed or adapter-managed dispatch can read pending staged messages and persist durable dispatch outcomes without a relational bridge
 - registers a scoped `IInbox` backed by Neo4j `:InboxReceipt` graph nodes when `RegisterInbox` is enabled; node labels honour the optional `LabelPrefix`
 - ensures that outbox staging is idempotent via Cypher `MERGE` on `messageId` — the `ON CREATE SET` clause fires only for new nodes, making repeated `EnqueueAsync` calls with the same message id safe no-ops
 - ensures that inbox tracking is idempotent via the same `MERGE` pattern on `messageId`
@@ -21,6 +22,7 @@
 - `Modules/Neo4jDataModule.cs`
 - `Registration/Neo4jDataEngineBuilderExtensions.cs`
 - `Services/Neo4jOutbox.cs`
+- `Services/Neo4jEventDispatchStore.cs`
 - `Services/Neo4jOutboxRuntimeSurfaceContributor.cs`
 - `Services/Neo4jInbox.cs`
 - `Services/Neo4jInboxRuntimeSurfaceContributor.cs`
@@ -29,7 +31,7 @@
 
 This pack sits on top of `Cephalon.Data`, not in place of it. `Cephalon.Data` still owns the runtime-neutral `IReadStore` / `IWriteStore` dispatching surface. `Cephalon.Data.Neo4j` adds the Neo4j-backed outbox and inbox persistence paths that let event-driven workloads stage and track messages against a graph store without switching to a relational or document-oriented provider.
 
-The slice is intentionally narrow: it proves the companion-pack pattern works for graph-oriented stores, ships idempotent outbox and inbox implementations, and exposes the same runtime introspection surfaces as the MongoDB and Redis providers.
+The slice is intentionally narrow: it proves the companion-pack pattern works for graph-oriented stores, ships idempotent outbox and inbox implementations, adds a consumer-managed dispatch-store baseline for staged outboxes, and exposes the same runtime introspection surfaces as the MongoDB and Redis providers.
 
 ## Registration
 
@@ -115,6 +117,8 @@ The node label is `{LabelPrefix}OutboxMessage` (default: `:CephalonOutboxMessage
 | `occurredAtUtc` | string | ISO 8601 UTC timestamp when the domain event occurred |
 | `createdAtUtc` | string | ISO 8601 UTC timestamp when the message was staged |
 | `dispatchAttemptCount` | int | Initialized to `0`; incremented by dispatch adapters |
+| `dispatchedAtUtc` | string | Optional ISO 8601 UTC timestamp written when dispatch succeeds or is skipped |
+| `nextAttemptAtUtc` | string | Optional ISO 8601 UTC timestamp written when dispatch is delayed for retry |
 | `headersJson` | string | `System.Text.Json`-serialized headers dictionary |
 | `metadataJson` | string | `System.Text.Json`-serialized metadata dictionary |
 
@@ -174,7 +178,7 @@ This pack intentionally does not claim:
 - APOC procedure integration
 - `IReadStore` / `IWriteStore` dispatch backed by Neo4j — query and command handlers should use `IDriver` directly
 - transaction-scoped outbox staging spanning multiple graph operations
-- adapter-owned dispatch loops or broker retry scheduling
+- adapter-owned dispatch loops or broker retry scheduling beyond the shipped consumer-managed dispatch-store baseline
 - change-data-capture or Neo4j streams integration
 
 These remain explicit later slices to keep the initial provider claim honest.

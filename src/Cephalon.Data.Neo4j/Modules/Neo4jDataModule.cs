@@ -5,6 +5,7 @@ using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.Neo4j.Configuration;
 using Cephalon.Data.Neo4j.Services;
 using Cephalon.Engine.Configuration;
+using Cephalon.Eventing.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -52,6 +53,11 @@ internal sealed class Neo4jDataModule(Neo4jDataOptions options) : ModuleBase, II
             {
                 var driver = serviceProvider.GetRequiredService<IDriver>();
                 return new Neo4jOutbox(driver, options);
+            });
+            services.TryAddScoped<IEventDispatchStore>(serviceProvider =>
+            {
+                var driver = serviceProvider.GetRequiredService<IDriver>();
+                return new Neo4jEventDispatchStore(driver, options);
             });
         }
 

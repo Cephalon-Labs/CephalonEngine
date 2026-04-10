@@ -3,6 +3,8 @@ using Cephalon.Abstractions.EventSourcing;
 using Cephalon.Data.Neo4j.Registration;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
+using Cephalon.Eventing.Registration;
+using Cephalon.Eventing.Services;
 using Cephalon.EventSourcing.Neo4j;
 using Cephalon.EventSourcing.Neo4j.Hosting;
 using Cephalon.Tests.Support;
@@ -87,6 +89,43 @@ public sealed class Neo4jDataPackTests
         using var scope = provider.CreateScope();
         var inbox = scope.ServiceProvider.GetRequiredService<IInbox>();
         Assert.NotNull(inbox);
+    }
+
+    [Fact]
+    public void AddNeo4jData_WithEventDrivenIntegration_RegistersConsumerManagedDispatchStore()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                data: new DataSettings(provider: "Neo4j", outboxEnabled: true)));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "test-events",
+                    displayName: "Test Events",
+                    description: "Dispatch-store test channel."));
+            });
+            engine.AddNeo4jData(OfflineUri, OfflineUsername, OfflinePassword, configure: options =>
+            {
+                options.RegisterOutbox = true;
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var outboxCatalog = provider.GetRequiredService<IOutboxCatalog>();
+        var descriptor = Assert.Single(outboxCatalog.Outboxes);
+        Assert.Equal("consumer-managed", descriptor.DispatchPolicy.PolicyId);
+        Assert.Equal("consumer-managed", descriptor.DispatchPolicy.ExecutionMode);
+
+        using var scope = provider.CreateScope();
+        var dispatchStore = scope.ServiceProvider.GetRequiredService<IEventDispatchStore>();
+        Assert.NotNull(dispatchStore);
+        Assert.Equal("neo4j-outbox", Assert.Single(dispatchStore.OutboxIds));
     }
 
     [Fact]

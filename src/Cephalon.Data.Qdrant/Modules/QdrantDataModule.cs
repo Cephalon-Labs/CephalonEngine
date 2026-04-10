@@ -4,6 +4,7 @@ using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.Qdrant.Configuration;
 using Cephalon.Data.Qdrant.Services;
+using Cephalon.Eventing.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Qdrant.Client;
@@ -43,6 +44,11 @@ internal sealed class QdrantDataModule(QdrantDataOptions options) : ModuleBase, 
             {
                 var client = serviceProvider.GetRequiredService<QdrantClient>();
                 return new QdrantOutbox(client, outboxCollection);
+            });
+            services.TryAddScoped<IEventDispatchStore>(serviceProvider =>
+            {
+                var client = serviceProvider.GetRequiredService<QdrantClient>();
+                return new QdrantEventDispatchStore(client, outboxCollection);
             });
         }
 

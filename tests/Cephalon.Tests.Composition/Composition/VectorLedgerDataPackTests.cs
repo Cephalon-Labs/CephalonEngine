@@ -5,6 +5,8 @@ using Cephalon.Data.Qdrant.Configuration;
 using Cephalon.Data.Qdrant.Registration;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
+using Cephalon.Eventing.Registration;
+using Cephalon.Eventing.Services;
 using Cephalon.Tests.Support;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -83,6 +85,43 @@ public sealed class VectorLedgerDataPackTests
         Assert.Equal("point-id", descriptor.Metadata["idempotency"]);
     }
 
+    [Fact]
+    public void AddQdrantData_WithEventDrivenIntegration_RegistersConsumerManagedDispatchStore()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                data: new DataSettings(provider: "Qdrant", outboxEnabled: true)));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "test-events",
+                    displayName: "Test Events",
+                    description: "Dispatch-store test channel."));
+            });
+            engine.AddQdrantData("localhost", configure: options =>
+            {
+                options.RegisterOutbox = true;
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var outboxCatalog = provider.GetRequiredService<IOutboxCatalog>();
+        var descriptor = Assert.Single(outboxCatalog.Outboxes);
+        Assert.Equal("consumer-managed", descriptor.DispatchPolicy.PolicyId);
+        Assert.Equal("consumer-managed", descriptor.DispatchPolicy.ExecutionMode);
+
+        using var scope = provider.CreateScope();
+        var dispatchStore = scope.ServiceProvider.GetRequiredService<IEventDispatchStore>();
+        Assert.NotNull(dispatchStore);
+        Assert.Equal("qdrant-outbox", Assert.Single(dispatchStore.OutboxIds));
+    }
+
     // === NATS ===
 
     [Fact]
@@ -154,7 +193,7 @@ public sealed class VectorLedgerDataPackTests
     }
 
     [Fact]
-    public void AddNatsData_UsesNamedUriFromConfiguration()
+    public async Task AddNatsData_UsesNamedUriFromConfiguration()
     {
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
@@ -173,7 +212,7 @@ public sealed class VectorLedgerDataPackTests
                 options.UriName = "Messaging";
             });
         });
-        using var provider = services.BuildServiceProvider();
+        await using var provider = services.BuildServiceProvider();
         var connection = provider.GetRequiredService<NATS.Client.Core.INatsConnection>();
         var runtime = provider.GetRequiredService<Cephalon.Engine.Runtime.IRuntime>();
         var capability = Assert.Single(runtime.Manifest.Capabilities, c => c.Key == "data.nats");
