@@ -1,6 +1,6 @@
 # Cephalon Project Memory
 
-Project memory in this document reflects the repository state observed on `April 9, 2026`.
+Project memory in this document reflects the repository state observed on `April 10, 2026`.
 
 This page is a repo-oriented orientation snapshot. It is meant to help contributors recover context quickly before they change code, docs, planning, or package surfaces.
 
@@ -218,7 +218,7 @@ Current standing examples from this collaboration:
 - keep behavior return contracts transport-neutral by default: prefer raw `TOut` for simple success paths, prefer `Result<T>` for expected non-success branches, keep `BehaviorResult<T>` as a compatibility alias during the transition, and treat `ResultModel<T>` / `ResultModelError` as an optional REST wire-format policy rather than the universal engine contract
 - standardize provider-pack settings by family instead of forcing one property shape on every pack: use `ConnectionStringName` plus `ConnectionString` for connection-string-native providers, use `UriName` plus `Uri` for URI-first providers, resolve named entries from the root `ConnectionStrings` or `Uris` sections as appropriate, fail fast when both named and inline settings are configured together, and keep topology-first providers such as Cassandra and Qdrant explicit
 - preferred long-term data direction: keep `Engine:Data` as the logical app-model and capability-selection layer, use the shipped engine-owned `Engine:Databases` baseline for physical roles, migrations, and topology introspection, do not make mandatory `DbContext` base classes the primary engine contract, and keep durable audit history as additive provider-pack follow-through instead of overloading the narrow `Cephalon.Audit` baseline
-- the current durable audit-history baseline is `Cephalon.Audit.EntityFramework`, driven by `Engine:Audit:History` plus a selected engine-owned database role that defaults to `history`, with the showcase sample now proving distinct `WriteDb`, `ReadDb`, and `HistoryDb` topology end to end
+- the current durable audit-history baseline is `Cephalon.Audit.EntityFramework`, driven by `Engine:Audit:History` plus a selected engine-owned database role that defaults to `history`, with `Engine:Audit:History:Retention`, `IAuditHistoryReader`, `/engine/audit-history`, and showcase-facing `/api/v1/showcase/audit/history` routes now proving read plus retention follow-through on top of distinct `WriteDb`, `ReadDb`, and `HistoryDb` topology
 
 ## Working assumptions for contributors
 

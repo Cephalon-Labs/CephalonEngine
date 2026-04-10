@@ -12,6 +12,7 @@
 - stable diagnostics conventions for successful and failed audit-entry writes
 - additive audit-store catalog contributions that flow into `/engine/audit-stores` and `/engine/snapshot`, so consumer-contributed stores remain visible when `AddAudit()` is active and the built-in memory store only disappears when it is explicitly disabled
 - low-ceremony follow-through from `Cephalon.Identity.AspNetCore` when an authenticated ASP.NET Core principal can be projected into the ambient audit actor contract without requiring the consumer host to write a custom actor accessor
+- additive query/read contracts through `IAuditHistoryReader`, which durable provider packs may implement without widening `Cephalon.Audit` into a mandatory storage or API stack
 
 ## Main surfaces
 
@@ -36,7 +37,7 @@ This pack stays intentionally narrow. It gives consumer apps a ready-to-use audi
 
 The audit path is also designed to stay low ceremony. Consumer apps can turn the pack on, record audit events through one service, let ambient tenant and actor context fill the repetitive fields, and keep the remaining hand-written code focused on business behavior instead of boilerplate audit plumbing. In ASP.NET Core hosts that also enable `Cephalon.Identity.AspNetCore`, the authenticated principal can now flow into the ambient audit actor contract automatically unless the consumer has already registered its own actor accessor. Just as importantly, the pack now layers on top of consumer audit-store contributions instead of replacing them, so teams can add durable stores or custom query surfaces without losing truthful `/engine/audit-stores` answers when the built-in writer is enabled or disabled.
 
-That provider-aware follow-through now starts with [Cephalon.Audit.EntityFramework](audit-entityframework.md). Durable history remains additive and configuration-driven through `Engine:Audit:History` plus the engine-owned `Engine:Databases` role contract, so `Cephalon.Audit` still does not become a mandatory storage opinion by itself. See [Database topology](../database-topology.md).
+That provider-aware follow-through now starts with [Cephalon.Audit.EntityFramework](audit-entityframework.md). Durable history remains additive and configuration-driven through `Engine:Audit:History` plus the engine-owned `Engine:Databases` role contract, so `Cephalon.Audit` still does not become a mandatory storage opinion by itself. The same provider pack now also proves the first queryable audit-history path through `IAuditHistoryReader`, while the core audit pack still stays host-agnostic and storage-agnostic. See [Database topology](../database-topology.md).
 
 ## Related docs
 

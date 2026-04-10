@@ -23,14 +23,17 @@ public sealed class AuditHistorySettings
     /// <param name="enabled">Whether durable audit history was explicitly enabled.</param>
     /// <param name="provider">The selected durable history provider identifier.</param>
     /// <param name="databaseRole">The selected logical database role for durable history.</param>
+    /// <param name="retention">The selected retention settings for durable history.</param>
     public AuditHistorySettings(
         bool? enabled = null,
         string? provider = null,
-        string? databaseRole = null)
+        string? databaseRole = null,
+        AuditHistoryRetentionSettings? retention = null)
     {
         Enabled = enabled;
         Provider = Normalize(provider);
         DatabaseRole = Normalize(databaseRole);
+        Retention = retention ?? AuditHistoryRetentionSettings.Empty;
     }
 
     /// <summary>
@@ -49,12 +52,18 @@ public sealed class AuditHistorySettings
     public string? DatabaseRole { get; }
 
     /// <summary>
+    /// Gets the configured retention settings for durable history.
+    /// </summary>
+    public AuditHistoryRetentionSettings Retention { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any durable audit-history settings were explicitly supplied.
     /// </summary>
     public bool HasValues =>
         Enabled.HasValue ||
         Provider is not null ||
-        DatabaseRole is not null;
+        DatabaseRole is not null ||
+        Retention.HasValues;
 
     /// <summary>
     /// Reads durable audit-history settings from the supplied configuration section.
@@ -71,7 +80,8 @@ public sealed class AuditHistorySettings
         return new AuditHistorySettings(
             enabled: TryParseBoolean(section["Enabled"]),
             provider: section["Provider"],
-            databaseRole: section["DatabaseRole"]);
+            databaseRole: section["DatabaseRole"],
+            retention: AuditHistoryRetentionSettings.FromSection(section.GetSection("Retention")));
     }
 
     private static bool? TryParseBoolean(string? value)

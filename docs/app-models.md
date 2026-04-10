@@ -247,7 +247,13 @@ The runtime should support configuration-driven blueprint, pattern, technology, 
       "History": {
         "Enabled": true,
         "Provider": "entity-framework",
-        "DatabaseRole": "history"
+        "DatabaseRole": "history",
+        "Retention": {
+          "Enabled": true,
+          "MaxAgeDays": 90,
+          "DeleteBatchSize": 250,
+          "ApplyOnStartup": true
+        }
       }
     },
     "Messaging": {
@@ -412,7 +418,13 @@ Use the `Engine` section as the primary source of truth for blueprint, pattern, 
       "History": {
         "Enabled": true,
         "Provider": "entity-framework",
-        "DatabaseRole": "history"
+        "DatabaseRole": "history",
+        "Retention": {
+          "Enabled": true,
+          "MaxAgeDays": 90,
+          "DeleteBatchSize": 250,
+          "ApplyOnStartup": true
+        }
       }
     },
     "Messaging": {}

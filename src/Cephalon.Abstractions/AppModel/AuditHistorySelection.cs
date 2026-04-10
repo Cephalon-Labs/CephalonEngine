@@ -18,15 +18,18 @@ public sealed class AuditHistorySelection
     /// <param name="enabled">Whether durable audit history was explicitly enabled.</param>
     /// <param name="provider">The selected durable history provider identifier.</param>
     /// <param name="databaseRole">The selected database role used by the durable history path.</param>
+    /// <param name="retention">The resolved retention inputs for durable audit history.</param>
     [JsonConstructor]
     public AuditHistorySelection(
         bool? enabled = null,
         string? provider = null,
-        string? databaseRole = null)
+        string? databaseRole = null,
+        AuditHistoryRetentionSelection? retention = null)
     {
         Enabled = enabled;
         Provider = string.IsNullOrWhiteSpace(provider) ? null : provider.Trim();
         DatabaseRole = string.IsNullOrWhiteSpace(databaseRole) ? null : databaseRole.Trim();
+        Retention = retention ?? AuditHistoryRetentionSelection.Empty;
     }
 
     /// <summary>
@@ -45,10 +48,16 @@ public sealed class AuditHistorySelection
     public string? DatabaseRole { get; }
 
     /// <summary>
+    /// Gets the resolved retention inputs for durable audit history.
+    /// </summary>
+    public AuditHistoryRetentionSelection Retention { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any durable audit-history inputs were explicitly supplied.
     /// </summary>
     public bool HasValues =>
         Enabled.HasValue ||
         Provider is not null ||
-        DatabaseRole is not null;
+        DatabaseRole is not null ||
+        Retention.HasValues;
 }

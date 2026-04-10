@@ -75,6 +75,10 @@ public sealed class EntityFrameworkAuditHistoryPackTests
                 ["Engine:Audit:History:Enabled"] = "true",
                 ["Engine:Audit:History:Provider"] = "entity-framework",
                 ["Engine:Audit:History:DatabaseRole"] = "history",
+                ["Engine:Audit:History:Retention:Enabled"] = "true",
+                ["Engine:Audit:History:Retention:MaxAgeDays"] = "90",
+                ["Engine:Audit:History:Retention:DeleteBatchSize"] = "250",
+                ["Engine:Audit:History:Retention:ApplyOnStartup"] = "true",
                 ["Engine:Audit:EnableInMemoryWriter"] = "false",
                 ["Engine:Databases:History:Provider"] = "Sqlite",
                 ["Engine:Databases:History:ConnectionString"] = "Data Source=ignored-for-inmemory"
@@ -120,8 +124,223 @@ public sealed class EntityFrameworkAuditHistoryPackTests
         Assert.Equal("entity-framework", auditStore.Provider);
         Assert.Equal("transactional-table", auditStore.Mode);
         Assert.Equal("history", auditStore.Metadata["databaseRole"]);
+        Assert.Equal("filtered-page-reader", auditStore.Metadata["queryMode"]);
+        Assert.Equal("startup-only", auditStore.Metadata["retentionMode"]);
+        Assert.Equal("90", auditStore.Metadata["retentionMaxAgeDays"]);
+        Assert.Equal("250", auditStore.Metadata["retentionDeleteBatchSize"]);
+        Assert.Equal("true", auditStore.Metadata["retentionApplyOnStartup"]);
         Assert.Equal(typeof(TestAuditHistoryDbContext).FullName, auditStore.Metadata["dbContext"]);
         Assert.Equal(auditStore.Id, snapshotStore.Id);
+    }
+
+    [Fact]
+    public async Task AddEntityFrameworkAuditHistoryAppliesConfiguredRetentionOnStartup()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Engine:Audit:Enabled"] = "true",
+                ["Engine:Audit:History:Enabled"] = "true",
+                ["Engine:Audit:History:Provider"] = "entity-framework",
+                ["Engine:Audit:History:DatabaseRole"] = "history",
+                ["Engine:Audit:History:Retention:Enabled"] = "true",
+                ["Engine:Audit:History:Retention:MaxAgeDays"] = "30",
+                ["Engine:Audit:History:Retention:DeleteBatchSize"] = "2",
+                ["Engine:Audit:History:Retention:ApplyOnStartup"] = "true",
+                ["Engine:Audit:EnableInMemoryWriter"] = "false",
+                ["Engine:Databases:History:Provider"] = "Sqlite",
+                ["Engine:Databases:History:ConnectionString"] = "Data Source=ignored-for-inmemory"
+            })
+            .Build();
+        var databaseName = $"cephalon-audit-retention-{Guid.NewGuid():N}";
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddSingleton<TimeProvider>(new FakeTimeProvider(new DateTimeOffset(2026, 04, 10, 0, 0, 0, TimeSpan.Zero)));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(EngineSettings.FromConfiguration(configuration));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddAudit();
+            engine.AddEntityFrameworkAuditHistory<TestAuditHistoryDbContext>(options =>
+            {
+                options.UseInMemoryDatabase(databaseName);
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        await using (var scope = provider.CreateAsyncScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<TestAuditHistoryDbContext>();
+            dbContext.AuditEntries.AddRange(
+                new EntityFrameworkAuditHistoryEntry
+                {
+                    Id = "audit-old-001",
+                    Category = "catalog",
+                    Action = "product-created",
+                    Summary = "Old audit row.",
+                    SubjectType = "product",
+                    SubjectId = "prod-old",
+                    OccurredAtUtc = new DateTimeOffset(2026, 01, 01, 0, 0, 0, TimeSpan.Zero),
+                    PersistedAtUtc = new DateTimeOffset(2026, 01, 01, 0, 5, 0, TimeSpan.Zero),
+                    ActorId = "system",
+                    ActorDisplayName = "system",
+                    ActorType = "system",
+                    Outcome = AuditOutcome.Succeeded.ToString()
+                },
+                new EntityFrameworkAuditHistoryEntry
+                {
+                    Id = "audit-old-002",
+                    Category = "catalog",
+                    Action = "product-updated",
+                    Summary = "Another old audit row.",
+                    SubjectType = "product",
+                    SubjectId = "prod-old-2",
+                    OccurredAtUtc = new DateTimeOffset(2026, 02, 01, 0, 0, 0, TimeSpan.Zero),
+                    PersistedAtUtc = new DateTimeOffset(2026, 02, 01, 0, 5, 0, TimeSpan.Zero),
+                    ActorId = "system",
+                    ActorDisplayName = "system",
+                    ActorType = "system",
+                    Outcome = AuditOutcome.Succeeded.ToString()
+                },
+                new EntityFrameworkAuditHistoryEntry
+                {
+                    Id = "audit-new-001",
+                    Category = "orders",
+                    Action = "order-created",
+                    Summary = "Recent audit row.",
+                    SubjectType = "order",
+                    SubjectId = "ord-001",
+                    OccurredAtUtc = new DateTimeOffset(2026, 04, 05, 0, 0, 0, TimeSpan.Zero),
+                    PersistedAtUtc = new DateTimeOffset(2026, 04, 05, 0, 5, 0, TimeSpan.Zero),
+                    ActorId = "system",
+                    ActorDisplayName = "system",
+                    ActorType = "system",
+                    Outcome = AuditOutcome.Succeeded.ToString()
+                });
+            await dbContext.SaveChangesAsync();
+        }
+
+        var retentionHostedService = provider
+            .GetServices<IHostedService>()
+            .Single(service => service.GetType().Name.StartsWith("EntityFrameworkAuditHistoryRetentionHostedService", StringComparison.Ordinal));
+
+        await retentionHostedService.StartAsync(CancellationToken.None);
+        await retentionHostedService.StopAsync(CancellationToken.None);
+
+        await using var verificationScope = provider.CreateAsyncScope();
+        var verificationDbContext = verificationScope.ServiceProvider.GetRequiredService<TestAuditHistoryDbContext>();
+        var retainedIds = await verificationDbContext.AuditEntries
+            .OrderBy(entry => entry.Id)
+            .Select(entry => entry.Id)
+            .ToArrayAsync();
+
+        Assert.Equal(["audit-new-001"], retainedIds);
+    }
+
+    [Fact]
+    public async Task AddEntityFrameworkAuditHistoryCanQueryPersistedAuditEntries()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Engine:Audit:Enabled"] = "true",
+                ["Engine:Audit:History:Enabled"] = "true",
+                ["Engine:Audit:History:Provider"] = "entity-framework",
+                ["Engine:Audit:History:DatabaseRole"] = "history",
+                ["Engine:Audit:EnableInMemoryWriter"] = "false",
+                ["Engine:Databases:History:Provider"] = "Sqlite",
+                ["Engine:Databases:History:ConnectionString"] = "Data Source=ignored-for-inmemory"
+            })
+            .Build();
+        var databaseName = $"cephalon-audit-query-{Guid.NewGuid():N}";
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(EngineSettings.FromConfiguration(configuration));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddAudit();
+            engine.AddEntityFrameworkAuditHistory<TestAuditHistoryDbContext>(options =>
+            {
+                options.UseInMemoryDatabase(databaseName);
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var recorder = provider.GetRequiredService<IAuditRecorder>();
+        var reader = provider.GetRequiredService<IAuditHistoryReader>();
+
+        await recorder.RecordAsync(new AuditRecordRequest(
+            category: "catalog",
+            action: "product-created",
+            summary: "Created product prod-001.",
+            subjectType: "product",
+            subjectId: "prod-001",
+            outcome: AuditOutcome.Succeeded,
+            tenantId: "tenant-alpha",
+            correlationId: "corr-001",
+            tags: ["catalog", "create"]));
+
+        var failedEntry = await recorder.RecordAsync(new AuditRecordRequest(
+            category: "orders",
+            action: "order-cancelled",
+            summary: "Cancelled order ord-001.",
+            subjectType: "order",
+            subjectId: "ord-001",
+            outcome: AuditOutcome.Failed,
+            tenantId: "tenant-beta",
+            correlationId: "corr-002",
+            tags: ["orders", "cancel"]));
+
+        await recorder.RecordAsync(new AuditRecordRequest(
+            category: "catalog",
+            action: "product-updated",
+            summary: "Updated product prod-001.",
+            subjectType: "product",
+            subjectId: "prod-001",
+            outcome: AuditOutcome.Succeeded,
+            tenantId: "tenant-alpha",
+            correlationId: "corr-003",
+            tags: ["catalog", "update"]));
+
+        var directEntry = await reader.GetByIdAsync(failedEntry.Id);
+        var catalogPage = await reader.QueryAsync(new AuditHistoryQuery(
+            category: "catalog",
+            subjectType: "product",
+            tenantId: "tenant-alpha",
+            outcome: AuditOutcome.Succeeded,
+            limit: 1));
+        var nextCatalogPage = await reader.QueryAsync(new AuditHistoryQuery(
+            category: "catalog",
+            subjectType: "product",
+            tenantId: "tenant-alpha",
+            outcome: AuditOutcome.Succeeded,
+            offset: 1,
+            limit: 1));
+
+        Assert.NotNull(directEntry);
+        Assert.Equal(failedEntry.Id, directEntry.Id);
+        Assert.Equal("orders", directEntry.Category);
+        Assert.Equal(AuditOutcome.Failed, directEntry.Outcome);
+        Assert.Equal("tenant-beta", directEntry.TenantId);
+
+        Assert.Equal(2, catalogPage.TotalCount);
+        Assert.Single(catalogPage.Entries);
+        Assert.True(catalogPage.HasMore);
+        Assert.All(catalogPage.Entries, entry =>
+        {
+            Assert.Equal("catalog", entry.Category);
+            Assert.Equal("product", entry.SubjectType);
+            Assert.Equal(AuditOutcome.Succeeded, entry.Outcome);
+            Assert.Equal("tenant-alpha", entry.TenantId);
+        });
+
+        Assert.Equal(2, nextCatalogPage.TotalCount);
+        Assert.Single(nextCatalogPage.Entries);
+        Assert.False(nextCatalogPage.HasMore);
+        Assert.Equal("catalog", nextCatalogPage.Entries[0].Category);
+        Assert.Equal("product", nextCatalogPage.Entries[0].SubjectType);
+        Assert.Equal("tenant-alpha", nextCatalogPage.Entries[0].TenantId);
     }
 
     [Fact]
@@ -179,6 +398,16 @@ public sealed class EntityFrameworkAuditHistoryPackTests
             ArgumentNullException.ThrowIfNull(modelBuilder);
 
             modelBuilder.ConfigureCephalonAuditHistory(tableName: "test_audit_history");
+        }
+    }
+
+    private sealed class FakeTimeProvider(DateTimeOffset now) : TimeProvider
+    {
+        private readonly DateTimeOffset now = now;
+
+        public override DateTimeOffset GetUtcNow()
+        {
+            return now;
         }
     }
 }

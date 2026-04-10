@@ -2,6 +2,7 @@ using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
 using Cephalon.Audit.EntityFramework.Configuration;
 using Cephalon.Engine.Configuration;
+using System.Globalization;
 
 namespace Cephalon.Audit.EntityFramework.Services;
 
@@ -29,8 +30,7 @@ internal sealed class EntityFrameworkAuditHistoryStoreRuntimeContributor<TDbCont
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["writeMode"] = "transactional-table",
-            ["queryMode"] = "not-configured",
-            ["retentionMode"] = "not-configured",
+            ["queryMode"] = "filtered-page-reader",
             ["durability"] = "durable",
             ["databaseRole"] = databaseRole,
             ["databaseProvider"] = target.Provider ?? "unknown",
@@ -38,6 +38,8 @@ internal sealed class EntityFrameworkAuditHistoryStoreRuntimeContributor<TDbCont
             ["dbContext"] = GetTypeName(options.DbContextType),
             ["topologySource"] = options.UsesEngineDatabaseTopology ? "engine-databases" : "registration-callbacks"
         };
+
+        ApplyRetentionMetadata(metadata, appProfile.Audit.History.Retention);
 
         if (target.ConnectionStringName is not null)
         {
@@ -105,5 +107,34 @@ internal sealed class EntityFrameworkAuditHistoryStoreRuntimeContributor<TDbCont
             .Where(char.IsLetterOrDigit)
             .Select(char.ToUpperInvariant)
             .ToArray());
+    }
+
+    private static void ApplyRetentionMetadata(
+        Dictionary<string, string> metadata,
+        AuditHistoryRetentionSelection retention)
+    {
+        ArgumentNullException.ThrowIfNull(metadata);
+        ArgumentNullException.ThrowIfNull(retention);
+
+        if (retention.Enabled != true)
+        {
+            metadata["retentionMode"] = "disabled";
+            return;
+        }
+
+        metadata["retentionMode"] = retention.RunIntervalMinutes is > 0
+            ? retention.ApplyOnStartup == true ? "startup-and-interval" : "interval"
+            : "startup-only";
+        metadata["retentionMaxAgeDays"] = retention.MaxAgeDays!.Value.ToString(CultureInfo.InvariantCulture);
+        metadata["retentionDeleteBatchSize"] = (retention.DeleteBatchSize ?? AuditHistoryRetentionSettings.DefaultDeleteBatchSize)
+            .ToString(CultureInfo.InvariantCulture);
+        metadata["retentionApplyOnStartup"] = retention.ApplyOnStartup == true
+            ? "true"
+            : "false";
+
+        if (retention.RunIntervalMinutes is > 0)
+        {
+            metadata["retentionRunIntervalMinutes"] = retention.RunIntervalMinutes.Value.ToString(CultureInfo.InvariantCulture);
+        }
     }
 }

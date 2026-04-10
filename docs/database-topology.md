@@ -21,7 +21,7 @@ This means Cephalon now has one engine-owned answer for database topology instea
 
 The first provider follow-through is also now in place: `Cephalon.Data.EntityFramework` consumes the engine-owned `Write` and optional `Read` roles directly, projects those choices into the `data-management/database-roles` runtime surface, and can apply startup schema creation or migrations for the registered relational `DbContext` roles through a generic-host hosted service when `Engine:Databases:Migrations:ApplyOnStartup` is enabled.
 
-The first durable audit-history follow-through is also now shipped: `Cephalon.Audit.EntityFramework` consumes `Engine:Audit:History` plus the selected engine-owned database role named by `Engine:Audit:History:DatabaseRole`, persists audit rows through a dedicated EF Core `DbContext`, and publishes a durable audit-store descriptor through `/engine/audit-stores` and `/engine/snapshot`.
+The first durable audit-history follow-through is also now shipped: `Cephalon.Audit.EntityFramework` consumes `Engine:Audit:History` plus the selected engine-owned database role named by `Engine:Audit:History:DatabaseRole`, persists audit rows through a dedicated EF Core `DbContext`, publishes a durable audit-store descriptor through `/engine/audit-stores` and `/engine/snapshot`, exposes filtered-page reads through `IAuditHistoryReader`, and can run engine-owned retention passes through `Engine:Audit:History:Retention`.
 
 ## Current shipped shape
 
@@ -38,7 +38,7 @@ The current shape is:
 
 Each target currently carries its own provider plus either `ConnectionStringName` or `ConnectionString`, along with optional per-role runtime overrides.
 
-That is not yet the final long-term shape, but it is now a truthful engine contract that also owns the first durable audit-history route. The audit-history path defaults to the `History` role, but it can now target any supported engine-owned role through `Engine:Audit:History:DatabaseRole`.
+That is not yet the final long-term shape, but it is now a truthful engine contract that also owns the first durable audit-history route. The audit-history path defaults to the `History` role, but it can now target any supported engine-owned role through `Engine:Audit:History:DatabaseRole`, expose operator answers through `/engine/audit-history`, and drive retention through `Engine:Audit:History:Retention`.
 
 ## Current validation rules
 
@@ -52,6 +52,8 @@ The shipped baseline currently validates:
 - migration targets must be one of `Write`, `Read`, `Outbox`, or `History`
 - migration targets must reference a configured role
 - a database target cannot set both `ConnectionStringName` and `ConnectionString`
+- durable audit-history retention requires a positive `MaxAgeDays` value when enabled
+- durable audit-history retention must either run on startup or define a recurring `RunIntervalMinutes` value
 
 ## Introspection surface
 
@@ -60,6 +62,7 @@ The new baseline is visible through:
 - `/engine/databases`
 - `/engine/app-model`
 - `/engine/audit-stores`
+- `/engine/audit-history`
 - `/engine/snapshot`
 
 That keeps database-topology choices explicit and operator-visible even before deeper provider packs consume every part of the contract.
@@ -86,7 +89,13 @@ That keeps database-topology choices explicit and operator-visible even before d
       "History": {
         "Enabled": true,
         "Provider": "entity-framework",
-        "DatabaseRole": "history"
+        "DatabaseRole": "history",
+        "Retention": {
+          "Enabled": true,
+          "MaxAgeDays": 90,
+          "DeleteBatchSize": 250,
+          "ApplyOnStartup": true
+        }
       }
     },
     "Databases": {
@@ -137,7 +146,7 @@ The engine now owns the topology contract, but several follow-through slices are
 - `Outbox` and `History` still use full target blocks instead of role references such as `UseRole`
 - the shipped Entity Framework baseline does not yet expose role references such as `UseRole` for dependent targets that intentionally share one physical database target
 - there is not yet an engine-owned bundle/script orchestration path for deploy-time database changes
-- retention, replay/query UX, and export pipelines for durable audit history are not yet shipped
+- replay UX and export pipelines for durable audit history are not yet shipped
 - Cephalon does not yet expose a richer runtime catalog with role health, resolved provider metadata, or migration-execution state beyond the current topology snapshot and audit-store descriptor set
 
 ## Recommended next direction
@@ -147,7 +156,7 @@ The next follow-through should deepen this baseline instead of replacing it:
 1. expand provider-pack consumption beyond `Cephalon.Data.EntityFramework` and keep the role contract consistent across companion packs
 2. add role references so dependent stores do not duplicate provider and connection settings
 3. deepen migration orchestration beyond the shipped Entity Framework startup hosted service while keeping production guidance bundle- and script-first
-4. deepen durable audit history with retention, replay/query, and additional provider packs
+4. deepen durable audit history with replay/export flows and additional provider packs on top of the shipped reader plus retention baseline
 
 ## What not to do
 

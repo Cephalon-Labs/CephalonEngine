@@ -24,6 +24,10 @@ public sealed class EngineSettingsTests
                 ["Engine:Audit:History:Enabled"] = "true",
                 ["Engine:Audit:History:Provider"] = "EntityFramework",
                 ["Engine:Audit:History:DatabaseRole"] = "History",
+                ["Engine:Audit:History:Retention:Enabled"] = "true",
+                ["Engine:Audit:History:Retention:MaxAgeDays"] = "90",
+                ["Engine:Audit:History:Retention:DeleteBatchSize"] = "250",
+                ["Engine:Audit:History:Retention:ApplyOnStartup"] = "true",
                 ["Engine:Messaging:Provider"] = "Wolverine",
                 ["Engine:Databases:Runtime:EnableDetailedErrors"] = "true",
                 ["Engine:Databases:Runtime:EnableRetryOnFailure"] = "true",
@@ -61,6 +65,11 @@ public sealed class EngineSettingsTests
         Assert.True(settings.Audit.History.Enabled);
         Assert.Equal("EntityFramework", settings.Audit.History.Provider);
         Assert.Equal("History", settings.Audit.History.DatabaseRole);
+        Assert.True(settings.Audit.History.Retention.Enabled);
+        Assert.Equal(90, settings.Audit.History.Retention.MaxAgeDays);
+        Assert.Equal(250, settings.Audit.History.Retention.DeleteBatchSize);
+        Assert.True(settings.Audit.History.Retention.ApplyOnStartup);
+        Assert.Null(settings.Audit.History.Retention.RunIntervalMinutes);
         Assert.Equal("Wolverine", settings.Messaging.Provider);
         Assert.True(settings.Databases.Runtime.EnableDetailedErrors);
         Assert.True(settings.Databases.Runtime.EnableRetryOnFailure);

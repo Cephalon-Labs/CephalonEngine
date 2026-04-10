@@ -69,7 +69,16 @@ public static class AppProfileFactory
                 databaseRole: settings.Audit.History.Enabled == true &&
                     string.IsNullOrWhiteSpace(settings.Audit.History.DatabaseRole)
                     ? AuditHistorySettings.DefaultDatabaseRole
-                    : settings.Audit.History.DatabaseRole)));
+                    : settings.Audit.History.DatabaseRole,
+                retention: new Abstractions.AppModel.AuditHistoryRetentionSelection(
+                    enabled: settings.Audit.History.Retention.Enabled,
+                    maxAgeDays: settings.Audit.History.Retention.MaxAgeDays,
+                    deleteBatchSize: settings.Audit.History.Retention.Enabled == true &&
+                        !settings.Audit.History.Retention.DeleteBatchSize.HasValue
+                        ? AuditHistoryRetentionSettings.DefaultDeleteBatchSize
+                        : settings.Audit.History.Retention.DeleteBatchSize,
+                    applyOnStartup: settings.Audit.History.Retention.ApplyOnStartup,
+                    runIntervalMinutes: settings.Audit.History.Retention.RunIntervalMinutes))));
         builder.UseMessagingSelection(new Abstractions.AppModel.MessagingSelection(
             provider: settings.Messaging.Provider));
     }

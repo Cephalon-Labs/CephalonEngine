@@ -168,6 +168,65 @@ public static class EngineWebApplicationExtensions
                 return auditStore is null ? Results.NotFound() : Results.Ok(auditStore);
             })
             .WithName("GetCephalonAuditStore");
+        engineGroup.MapGet("/audit-history", async (
+                string? category,
+                string? action,
+                string? subjectType,
+                string? subjectId,
+                string? actorId,
+                string? tenantId,
+                string? correlationId,
+                string? outcome,
+                DateTimeOffset? occurredFromUtc,
+                DateTimeOffset? occurredToUtc,
+                int? offset,
+                int? limit,
+                HttpContext httpContext,
+                CancellationToken cancellationToken) =>
+            {
+                var reader = httpContext.RequestServices.GetService<IAuditHistoryReader>();
+                if (reader is null)
+                {
+                    return Results.NotFound();
+                }
+
+                if (!TryParseAuditOutcome(outcome, out var parsedOutcome))
+                {
+                    return Results.BadRequest($"Audit outcome '{outcome}' is not supported.");
+                }
+
+                var query = new AuditHistoryQuery(
+                    category: category,
+                    action: action,
+                    subjectType: subjectType,
+                    subjectId: subjectId,
+                    actorId: actorId,
+                    tenantId: tenantId,
+                    correlationId: correlationId,
+                    outcome: parsedOutcome,
+                    occurredFromUtc: occurredFromUtc,
+                    occurredToUtc: occurredToUtc,
+                    offset: offset ?? 0,
+                    limit: limit ?? AuditHistoryQuery.DefaultLimit);
+
+                return Results.Ok(await reader.QueryAsync(query, cancellationToken).ConfigureAwait(false));
+            })
+            .WithName("GetCephalonAuditHistory");
+        engineGroup.MapGet("/audit-history/{auditEntryId}", async (
+                string auditEntryId,
+                HttpContext httpContext,
+                CancellationToken cancellationToken) =>
+            {
+                var reader = httpContext.RequestServices.GetService<IAuditHistoryReader>();
+                if (reader is null)
+                {
+                    return Results.NotFound();
+                }
+
+                var entry = await reader.GetByIdAsync(auditEntryId, cancellationToken).ConfigureAwait(false);
+                return entry is null ? Results.NotFound() : Results.Ok(entry);
+            })
+            .WithName("GetCephalonAuditHistoryEntry");
         engineGroup.MapGet("/authorization-policies", (IAuthorizationPolicyCatalog catalog) => TypedResults.Ok(catalog.Policies))
             .WithName("GetCephalonAuthorizationPolicies");
         engineGroup.MapGet("/authorization-policies/{policyId}", (string policyId, IAuthorizationPolicyCatalog catalog) =>
@@ -526,6 +585,26 @@ public static class EngineWebApplicationExtensions
     private static string BuildVersionedAssetReference(string route)
     {
         return $"{route}?v={DocumentationAssetVersion}";
+    }
+
+    private static bool TryParseAuditOutcome(
+        string? value,
+        out AuditOutcome? outcome)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            outcome = null;
+            return true;
+        }
+
+        if (Enum.TryParse<AuditOutcome>(value.Trim(), ignoreCase: true, out var parsed))
+        {
+            outcome = parsed;
+            return true;
+        }
+
+        outcome = null;
+        return false;
     }
 
     private static string BuildScalarCanonicalPath(string scalarRoutePrefix, string documentName, QueryString queryString)

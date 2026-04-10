@@ -217,6 +217,7 @@ internal static class AppProfileSelectionValidator
 
         var databaseRole = ResolveAuditHistoryDatabaseRole(audit.History);
         ValidateAuditHistoryDatabaseRole(databaseRole, databases);
+        ValidateAuditHistoryRetentionSelection(audit.History.Retention);
     }
 
     private static string ResolveAuditHistoryDatabaseRole(
@@ -281,5 +282,40 @@ internal static class AppProfileSelectionValidator
 
         throw new InvalidOperationException(
             $"Durable audit history selected unsupported database role '{databaseRole}'. Supported roles: Write, Read, Outbox, History.");
+    }
+
+    private static void ValidateAuditHistoryRetentionSelection(
+        AuditHistoryRetentionSelection retention)
+    {
+        ArgumentNullException.ThrowIfNull(retention);
+
+        if (retention.Enabled != true)
+        {
+            return;
+        }
+
+        if (retention.MaxAgeDays is not > 0)
+        {
+            throw new InvalidOperationException(
+                "Durable audit-history retention requires a positive MaxAgeDays value under Engine:Audit:History:Retention:MaxAgeDays.");
+        }
+
+        if (retention.DeleteBatchSize is not null && retention.DeleteBatchSize <= 0)
+        {
+            throw new InvalidOperationException(
+                "Durable audit-history retention DeleteBatchSize must be greater than zero when supplied.");
+        }
+
+        if (retention.RunIntervalMinutes is not null && retention.RunIntervalMinutes <= 0)
+        {
+            throw new InvalidOperationException(
+                "Durable audit-history retention RunIntervalMinutes must be greater than zero when supplied.");
+        }
+
+        if (retention.ApplyOnStartup != true && retention.RunIntervalMinutes is null)
+        {
+            throw new InvalidOperationException(
+                "Durable audit-history retention must either apply on startup or define a recurring RunIntervalMinutes value.");
+        }
     }
 }

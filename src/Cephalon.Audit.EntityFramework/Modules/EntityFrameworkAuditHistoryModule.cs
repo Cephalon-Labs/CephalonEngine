@@ -44,6 +44,8 @@ internal sealed class EntityFrameworkAuditHistoryModule<TDbContext>(
         services.TryAddSingleton<EntityFrameworkAuditHistoryStoreRuntimeContributor<TDbContext>>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IAuditStoreRuntimeContributor, EntityFrameworkAuditHistoryStoreRuntimeContributor<TDbContext>>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IAuditWriter, EntityFrameworkAuditHistoryWriter<TDbContext>>());
+        services.TryAddSingleton<IAuditHistoryReader, EntityFrameworkAuditHistoryReader<TDbContext>>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, EntityFrameworkAuditHistoryRetentionHostedService<TDbContext>>());
 
         if (options.UsesEngineDatabaseTopology)
         {

@@ -99,6 +99,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 36`: `ENG-060` established the engine-owned database topology baseline so physical database roles, migration targets, outbox routing, and history stores stop drifting across provider packs
 - `Sprint 37`: `ENG-061` is now shipped on top of that topology contract: `Cephalon.Data.EntityFramework` consumes `Engine:Databases` write/read roles directly, publishes role and migration metadata through the runtime surface, and supplies the migration-registration primitives that also let additive companion packs register truthful history-role execution
 - `Sprint 38`: `ENG-062` is now shipped: `Cephalon.Audit.EntityFramework` provides the first durable audit-history baseline through `Engine:Audit:History` plus a selected engine-owned database role, defaulting to `History`, and the showcase sample now uses distinct `WriteDb`, `ReadDb`, and `HistoryDb` databases to prove the topology end to end
+- `Sprint 31` follow-through: `ENG-063` is now shipped on top of the first durable history baseline so audit history now includes a host-agnostic filtered-page reader contract, engine-owned retention settings, `/engine/audit-history` operator routes, and showcase-facing `/api/v1/showcase/audit/history` endpoints instead of staying write-only
 - `Sprint 36–37 (Phase 11)`: planned resilience foundation — circuit breaker, retry/timeout/bulkhead, rate limiting, `onion-architecture` and `anti-corruption-layer` pattern descriptors
 - `Sprint 38–39 (Phase 12)`: planned migration and advanced coordination — strangler fig, saga choreography, BFF pattern, feature flags, durable execution foundations
 - `Sprint 40–41 (Phase 13)`: planned next-generation patterns — cell-based architecture, data mesh, CDC
@@ -558,13 +559,15 @@ Planned deliverables:
 - `ENG-061` role-aware relational follow-through so `Cephalon.Data.EntityFramework` consumes database-role topology instead of inventing a separate physical-layout model
 - migration targeting that references named roles, keeps startup apply explicit, and treats bundle/script-based deployment as the production path
 - `ENG-062` durable audit-history follow-through that keeps `Cephalon.Audit` narrow while letting a first provider-backed store target a named database role
+- `ENG-063` durable audit-history reader, retention, and operator-surface follow-through on top of the first provider-backed store
 
 Current truth:
 
 - the initial `ENG-060` baseline is now shipped: `Engine:Databases` projects into `EngineSettings`, `AppProfile.Databases`, `/engine/databases`, `/engine/app-model`, and `/engine/snapshot`
 - `ENG-061` is now shipped: `Cephalon.Data.EntityFramework` consumes the engine-owned `write` and optional `read` roles directly, exposes role and migration metadata through the runtime surface, and can execute startup schema apply for those registered `DbContext` roles through a generic-host hosted service
 - `ENG-062` is now shipped: `Cephalon.Audit.EntityFramework` consumes `Engine:Audit:History` plus the selected engine-owned database role named by `Engine:Audit:History:DatabaseRole`, publishes durable audit-store metadata, and proves the topology in the showcase sample with distinct write/read/history databases
-- the remaining phase-10 work is now broader provider consumption, role references, richer topology/runtime metadata, dedicated outbox execution, bundle/script orchestration guidance, and retention/replay/export follow-through for durable history
+- `ENG-063` is now shipped: durable audit history now also includes `Engine:Audit:History:Retention`, a host-agnostic `IAuditHistoryReader`, `/engine/audit-history`, and showcase-facing audit-history endpoints over the same durable store
+- the remaining phase-10 work is now broader provider consumption, role references, richer topology/runtime metadata, dedicated outbox execution, bundle/script orchestration guidance, and replay/export follow-through for durable history
 
 Exit criteria:
 

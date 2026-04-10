@@ -3,6 +3,8 @@ using Cephalon.Engine.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 using Cephalon.Engine.Runtime;
 
@@ -65,6 +67,9 @@ public static class EngineServiceCollectionExtensions
         configure(builder);
 
         var runtime = builder.Build();
+        services.TryAddSingleton<ILoggerFactory>(NullLoggerFactory.Instance);
+        services.TryAddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+        services.TryAddSingleton<TimeProvider>(TimeProvider.System);
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, EngineDiagnosticsConventionContributor>());
         services.AddSingleton<IRuntime>(runtime);
         services.AddSingleton(runtime);

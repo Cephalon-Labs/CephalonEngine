@@ -1442,7 +1442,7 @@ Acceptance:
 - durable audit history can be turned on or off through `Engine:Audit` without changing module code
 - the first durable history path targets a named database role instead of hardcoding its own connection model
 - runtime audit-store answers expose whether history is in-memory only, durable, or disabled
-- the baseline keeps query/replay and retention follow-through explicit without pretending those surfaces already exist
+- the baseline keeps replay/export follow-through explicit without pretending those surfaces already exist
 
 Delivered:
 
@@ -1451,12 +1451,44 @@ Delivered:
 - `IAuditStoreRuntimeContributor` now lets additive provider packs publish durable audit-store descriptors without widening `Cephalon.Audit` into a mandatory storage abstraction
 - durable audit history now targets a named database role, defaults to `history`, can be redirected through `Engine:Audit:History:DatabaseRole`, and publishes its runtime truth through `/engine/audit-stores` and `/engine/snapshot`
 - the showcase sample now uses distinct `WriteDb`, `ReadDb`, and `HistoryDb` roles and records durable audit history through the new provider pack
+- the same baseline now includes `Engine:Audit:History:Retention`, the first engine-owned retention pass, `IAuditHistoryReader`, `/engine/audit-history`, and showcase-facing audit-history read endpoints
 
 Remaining follow-through inside `ENG-062`:
 
-- add retention, replay/query, and export follow-through on top of the first durable write path
+- add replay and export follow-through on top of the shipped durable write, read, and retention path
 - add non-relational audit-history providers only when they can stay truthful and additive
 - keep ASP.NET Core actor bridging and tenant context additive without turning the audit pack into a host-specific storage abstraction
+
+### ENG-063 Durable audit-history query/read and retention operator surface
+
+Status: done
+Estimate: 5
+
+Why:
+
+- the first durable audit-history baseline proved write-path persistence, but operators and sample consumers still lacked a truthful read/query surface
+- retention policy also needed to become a real engine-owned contract instead of a doc-only promise
+- Cephalon needs one host-agnostic reader contract that durable providers can implement without forcing REST or host APIs back into `Cephalon.Audit`
+
+Acceptance:
+
+- durable provider packs can expose filtered, paged reads through a host-agnostic reader contract
+- ASP.NET Core hosts expose operator-facing audit-history routes only when a durable reader is active
+- durable audit-history retention validates and projects through `EngineSettings`, `AppProfile`, and runtime metadata truthfully
+- the showcase sample demonstrates public audit-history routes without pretending every host must expose them
+
+Delivered:
+
+- `Cephalon.Abstractions` now exposes `IAuditHistoryReader`, `AuditHistoryQuery`, `AuditHistoryQueryResult`, and `AuditHistoryEntry`
+- `Cephalon.Audit.EntityFramework` now ships a filtered-page reader plus retention hosted service on top of the durable write path
+- `/engine/audit-history` and `/engine/audit-history/{auditEntryId}` now expose operator-facing reads when a durable reader is registered
+- the showcase sample now publishes `/api/v1/showcase/audit/history` and `/api/v1/showcase/audit/history/{auditEntryId}` through a dedicated module-owned REST surface
+- engine runtime registration now supplies baseline `TimeProvider` and `ILogger<T>` services so timer-driven or logged companion services can activate cleanly in code-first hosts and tests
+
+Remaining follow-through inside `ENG-063`:
+
+- add replay/export workflows over durable history without turning the reader contract into a report engine
+- add richer operator filters or aggregation endpoints only when they stay provider-truthful and benchmarkable
 
 ## Sprint history and next 4 sprints
 

@@ -55,6 +55,11 @@ public sealed class ShowcaseSampleHostingTests
         Assert.True(profile.Audit.History.Enabled);
         Assert.Equal("entity-framework", profile.Audit.History.Provider);
         Assert.Equal("history", profile.Audit.History.DatabaseRole);
+        Assert.True(profile.Audit.History.Retention.Enabled);
+        Assert.Equal(90, profile.Audit.History.Retention.MaxAgeDays);
+        Assert.Equal(250, profile.Audit.History.Retention.DeleteBatchSize);
+        Assert.True(profile.Audit.History.Retention.ApplyOnStartup);
+        Assert.Null(profile.Audit.History.Retention.RunIntervalMinutes);
         Assert.True(profile.Identity.Enabled);
         Assert.True(profile.Tenancy.Enabled);
         Assert.Equal("PostgreSql", profile.Databases.Write.Provider);
@@ -66,6 +71,24 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("HistoryDb", profile.Databases.History.ConnectionStringName);
         Assert.False(profile.Databases.Migrations.ApplyOnStartup);
         Assert.Equal(["history", "read", "write"], profile.Databases.Migrations.Targets);
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleDocumentsAuditHistoryRouteAndReturnsServiceUnavailableWithoutDurableReader()
+    {
+        await using var app = ShowcaseSampleApp.Build(
+            configureBuilder: builder => builder.WebHost.UseTestServer());
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var openApiPayload = await client.GetStringAsync("/openapi/v1.json");
+        var response = await client.GetAsync("/api/v1/showcase/audit/history");
+        var body = await response.Content.ReadAsStringAsync();
+
+        Assert.Contains("/api/v1/showcase/audit/history", openApiPayload, StringComparison.Ordinal);
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
+        Assert.Contains("Audit history reader unavailable", body, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
