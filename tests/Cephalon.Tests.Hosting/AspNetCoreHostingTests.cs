@@ -201,6 +201,8 @@ public sealed class AspNetCoreHostingTests
         builder.WebHost.UseTestServer();
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
         builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "StrategyPattern";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:1"] = "CQRS";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:2"] = "Outbox";
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:1"] = "JsonRpc";
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:2"] = "Grpc";
@@ -212,6 +214,24 @@ public sealed class AspNetCoreHostingTests
         builder.Configuration[$"{EngineSettings.SectionName}:Technologies:2"] = "RealtimeExperience";
         builder.Configuration[$"{EngineSettings.SectionName}:Technologies:3"] = "EdgeNativeDelivery";
         builder.Configuration[$"{EngineSettings.SectionName}:Options:Capabilities:platform.clock"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Data:Provider"] = "EntityFramework";
+        builder.Configuration[$"{EngineSettings.SectionName}:Data:ReadWriteSplit"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Data:Outbox:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Databases:Runtime:EnableRetryOnFailure"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Databases:Runtime:MaxRetryCount"] = "5";
+        builder.Configuration[$"{EngineSettings.SectionName}:Databases:Write:Provider"] = "PostgreSql";
+        builder.Configuration[$"{EngineSettings.SectionName}:Databases:Write:ConnectionStringName"] = "WriteDb";
+        builder.Configuration[$"{EngineSettings.SectionName}:Databases:Read:Provider"] = "PostgreSql";
+        builder.Configuration[$"{EngineSettings.SectionName}:Databases:Read:ConnectionStringName"] = "ReadDb";
+        builder.Configuration[$"{EngineSettings.SectionName}:Databases:Outbox:Provider"] = "PostgreSql";
+        builder.Configuration[$"{EngineSettings.SectionName}:Databases:Outbox:ConnectionStringName"] = "WriteDb";
+        builder.Configuration[$"{EngineSettings.SectionName}:Databases:Outbox:Schema"] = "outbox01";
+        builder.Configuration[$"{EngineSettings.SectionName}:Databases:History:Provider"] = "PostgreSql";
+        builder.Configuration[$"{EngineSettings.SectionName}:Databases:History:ConnectionStringName"] = "HistoryDb";
+        builder.Configuration[$"{EngineSettings.SectionName}:Databases:Migrations:ApplyOnStartup"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Databases:Migrations:Targets:0"] = "write";
+        builder.Configuration[$"{EngineSettings.SectionName}:Databases:Migrations:Targets:1"] = "outbox";
+        builder.Configuration[$"{EngineSettings.SectionName}:Databases:Migrations:Targets:2"] = "history";
         builder.Configuration["OpenApi:Title"] = "Cephalon Test REST API";
         builder.Configuration["OpenApi:SecuritySchemes:0:Name"] = "Bearer";
         builder.Configuration["OpenApi:SecuritySchemes:0:Type"] = "Http";
@@ -258,6 +278,7 @@ public sealed class AspNetCoreHostingTests
 
         var manifest = await client.GetFromJsonAsync<RuntimeManifest>("/engine");
         var appModel = await client.GetFromJsonAsync<AppProfile>("/engine/app-model");
+        var databases = await client.GetFromJsonAsync<DatabaseTopologySelection>("/engine/databases");
         var scaffold = await client.GetFromJsonAsync<ScaffoldPlan>("/engine/scaffold");
         var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
         var packages = await client.GetFromJsonAsync<PackageManifest[]>("/engine/packages");
@@ -358,6 +379,17 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal("modular-vertical-slice", appModel.BlueprintId);
         Assert.NotNull(appModel.Scaffold);
         Assert.Equal("modular-vertical-slice", appModel.Scaffold.Id);
+        Assert.Equal("WriteDb", appModel.Databases.Write.ConnectionStringName);
+        Assert.Equal("ReadDb", appModel.Databases.Read.ConnectionStringName);
+        Assert.Equal("outbox01", appModel.Databases.Outbox.Schema);
+        Assert.Equal(["history", "outbox", "write"], appModel.Databases.Migrations.Targets);
+
+        Assert.NotNull(databases);
+        Assert.Equal("PostgreSql", databases.Write.Provider);
+        Assert.Equal("WriteDb", databases.Write.ConnectionStringName);
+        Assert.True(databases.Runtime.EnableRetryOnFailure);
+        Assert.Equal(5, databases.Runtime.MaxRetryCount);
+        Assert.Equal("HistoryDb", databases.History.ConnectionStringName);
 
         Assert.NotNull(scaffold);
         Assert.Contains(scaffold.Projects, project =>

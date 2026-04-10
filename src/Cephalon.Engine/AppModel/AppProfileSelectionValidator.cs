@@ -19,6 +19,7 @@ internal static class AppProfileSelectionValidator
 
     public static void Validate(
         DataSelection data,
+        DatabaseTopologySelection databases,
         IdentitySelection identity,
         TenancySelection tenancy,
         MessagingSelection messaging,
@@ -26,6 +27,7 @@ internal static class AppProfileSelectionValidator
         IReadOnlyDictionary<string, TechnologyDescriptor> selectedTechnologies)
     {
         ArgumentNullException.ThrowIfNull(data);
+        ArgumentNullException.ThrowIfNull(databases);
         ArgumentNullException.ThrowIfNull(identity);
         ArgumentNullException.ThrowIfNull(tenancy);
         ArgumentNullException.ThrowIfNull(messaging);
@@ -42,6 +44,41 @@ internal static class AppProfileSelectionValidator
         {
             throw new InvalidOperationException(
                 "Data outbox support requires the 'outbox' pattern.");
+        }
+
+        if (databases.Read.HasValues && !selectedPatterns.ContainsKey("cqrs"))
+        {
+            throw new InvalidOperationException(
+                "A dedicated read database target requires the 'cqrs' pattern.");
+        }
+
+        if (databases.Outbox.HasValues && !selectedPatterns.ContainsKey("outbox"))
+        {
+            throw new InvalidOperationException(
+                "A dedicated outbox database target requires the 'outbox' pattern.");
+        }
+
+        if (data.ReadWriteSplit == false && databases.Read.HasValues)
+        {
+            throw new InvalidOperationException(
+                "A dedicated read database target cannot be configured when data read/write split is explicitly disabled.");
+        }
+
+        if (data.OutboxEnabled == false && databases.Outbox.HasValues)
+        {
+            throw new InvalidOperationException(
+                "An outbox database target cannot be configured when outbox support is explicitly disabled.");
+        }
+
+        if (databases.Migrations.ExitAfterApply == true && databases.Migrations.ApplyOnStartup != true)
+        {
+            throw new InvalidOperationException(
+                "Database migrations cannot exit after apply unless ApplyOnStartup is explicitly enabled.");
+        }
+
+        foreach (var target in databases.Migrations.Targets)
+        {
+            ValidateMigrationTarget(target, databases);
         }
 
         if (messaging.Provider is not null &&
@@ -87,6 +124,7 @@ internal static class AppProfileSelectionValidator
             throw new InvalidOperationException(
                 "Tenancy settings require the 'multi-tenancy' technology.");
         }
+
     }
 
     private static string NormalizeKey(string value)
@@ -95,5 +133,59 @@ internal static class AppProfileSelectionValidator
             .Where(char.IsLetterOrDigit)
             .Select(char.ToUpperInvariant)
             .ToArray());
+    }
+
+    private static void ValidateMigrationTarget(
+        string target,
+        DatabaseTopologySelection databases)
+    {
+        var normalizedTarget = NormalizeKey(target);
+
+        if (normalizedTarget == "WRITE")
+        {
+            if (!databases.Write.HasValues)
+            {
+                throw new InvalidOperationException(
+                    "The 'write' migration target requires a configured write database role.");
+            }
+
+            return;
+        }
+
+        if (normalizedTarget == "READ")
+        {
+            if (!databases.Read.HasValues)
+            {
+                throw new InvalidOperationException(
+                    "The 'read' migration target requires a configured read database role.");
+            }
+
+            return;
+        }
+
+        if (normalizedTarget == "OUTBOX")
+        {
+            if (!databases.Outbox.HasValues)
+            {
+                throw new InvalidOperationException(
+                    "The 'outbox' migration target requires a configured outbox database role.");
+            }
+
+            return;
+        }
+
+        if (normalizedTarget == "HISTORY")
+        {
+            if (!databases.History.HasValues)
+            {
+                throw new InvalidOperationException(
+                    "The 'history' migration target requires a configured history database role.");
+            }
+
+            return;
+        }
+
+        throw new InvalidOperationException(
+            $"Database migration target '{target}' is not supported. Supported targets: Write, Read, Outbox, History.");
     }
 }

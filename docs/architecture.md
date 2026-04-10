@@ -7,14 +7,14 @@ Architecture recommendations: `docs/architecture-recommendations.md`
 Database direction: `docs/database-topology.md`
 Docs hub: `docs/README.md`
 Component docs: `docs/components/README.md`
-Database topology direction: `docs/database-topology.md`
+Database topology: `docs/database-topology.md`
 
 ## Related research references
 
 - [Architecture patterns research](architecture-patterns-research.md)
 - [Design patterns reference](architecture/design-patterns-reference.md)
 - [.NET ecosystem reference](dotnet-ecosystem-reference.md)
-- [Database topology direction](database-topology.md)
+- [Database topology](database-topology.md)
 
 ## North star
 
@@ -385,18 +385,18 @@ Companion adapter packages:
 - adapter packages must be registered for transports that are not built into the host core
 - REST endpoints can opt into capability enforcement through `RequireCapability(...)`
 
-## Database topology direction
+## Database topology
 
 The shipped phase-8 data baseline is intentionally narrower than the long-term engine direction.
 
 Current recommendation:
 
-- keep `Engine:Data` as the logical app-model selection layer and move physical database roles, migrations, and history targeting into a future `Engine:Databases` contract
-- treat named roles such as `Write`, `Read`, and `History` as first-class runtime descriptors that the engine can validate and expose through introspection
+- keep `Engine:Data` as the logical app-model selection layer and let the shipped `Engine:Databases` contract own physical runtime tuning, the first named roles, and nested migration policy
+- treat named roles such as `Write`, `Read`, and `History` as first-class runtime descriptors that the engine can validate and expose through introspection, including `/engine/databases`
 - keep durable audit history as an additive provider-pack follow-through instead of pretending the current `Cephalon.Audit` baseline already owns one durable storage model
 - prefer provider registration helpers, shared model-builder slices, and interceptors over mandatory `DbContext` base classes; convenience base classes can exist later, but they should stay optional DX helpers
 
-See [Database topology direction](database-topology.md) for the full design direction and the planned `ENG-060` to `ENG-062` follow-through.
+See [Database topology](database-topology.md) for the current baseline, remaining gaps, and the planned `ENG-060` to `ENG-062` follow-through.
 
 ## Next expansion points
 

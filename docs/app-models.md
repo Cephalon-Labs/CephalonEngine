@@ -208,11 +208,17 @@ public sealed class AppProfile
     public ScaffoldPlan? Scaffold { get; }
     public IReadOnlyList<TechnologyDescriptor> Technologies { get; }
     public IReadOnlyList<TransportDescriptor> Transports { get; }
+    public DataSelection Data { get; }
+    public DatabaseTopologySelection Databases { get; }
+    public IdentitySelection Identity { get; }
+    public TenancySelection Tenancy { get; }
+    public AuditSelection Audit { get; }
+    public MessagingSelection Messaging { get; }
 }
 ```
 
 The current runtime still resolves app-level `AppProfile` objects only. The suite layer is now modeled separately through `SuiteBlueprint`, with the built-in `MicroserviceSuite` blueprint composing repeatable service slots from the shipped `Microservice` scaffold contract instead of redefining service internals at the suite layer.
-The resolved app profile now also carries structured phase-8 selections for `Data`, `Identity`, `Tenancy`, `Audit`, and `Messaging`. Legacy display-name aliases still resolve for compatibility, but the shipped starter and template surfaces now emit canonical kebab-case ids plus those structured sections by default.
+The resolved app profile now also carries structured configuration selections for `Data`, `Databases`, `Identity`, `Tenancy`, `Audit`, and `Messaging`. The new `Databases` block is the engine-owned physical-topology baseline for shared runtime tuning plus the first named roles (`Write`, `Read`, `Outbox`, `History`) and nested migration policy. Legacy display-name aliases still resolve for compatibility, but the shipped starter and template surfaces now emit canonical kebab-case ids plus those structured sections by default.
 
 The runtime should support configuration-driven blueprint, pattern, technology, and transport selection, for example:
 

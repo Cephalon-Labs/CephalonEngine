@@ -54,6 +54,7 @@ public static class AppProfileFactory
             readWriteSplit: settings.Data.ReadWriteSplit,
             outboxEnabled: settings.Data.OutboxEnabled,
             idGenerator: settings.Data.IdGenerator));
+        builder.UseDatabaseSelection(ToDatabaseSelection(settings.Databases));
         builder.UseIdentitySelection(new Abstractions.AppModel.IdentitySelection(
             enabled: settings.Identity.Enabled,
             authorizationModes: settings.Identity.AuthorizationModes));
@@ -64,5 +65,41 @@ public static class AppProfileFactory
             enabled: settings.Audit.Enabled));
         builder.UseMessagingSelection(new Abstractions.AppModel.MessagingSelection(
             provider: settings.Messaging.Provider));
+    }
+
+    private static Abstractions.AppModel.DatabaseTopologySelection ToDatabaseSelection(DatabaseTopologySettings settings)
+    {
+        return new Abstractions.AppModel.DatabaseTopologySelection(
+            runtime: ToDatabaseRuntimeSelection(settings.Runtime),
+            write: ToDatabaseTargetSelection(settings.Write),
+            read: ToDatabaseTargetSelection(settings.Read),
+            outbox: ToDatabaseTargetSelection(settings.Outbox),
+            history: ToDatabaseTargetSelection(settings.History),
+            migrations: new Abstractions.AppModel.DatabaseMigrationsSelection(
+                applyOnStartup: settings.Migrations.ApplyOnStartup,
+                exitAfterApply: settings.Migrations.ExitAfterApply,
+                targets: settings.Migrations.Targets));
+    }
+
+    private static Abstractions.AppModel.DatabaseTargetSelection ToDatabaseTargetSelection(DatabaseTargetSettings settings)
+    {
+        return new Abstractions.AppModel.DatabaseTargetSelection(
+            provider: settings.Provider,
+            connectionStringName: settings.ConnectionStringName,
+            connectionString: settings.ConnectionString,
+            schema: settings.Schema,
+            runtime: ToDatabaseRuntimeSelection(settings.Runtime));
+    }
+
+    private static Abstractions.AppModel.DatabaseRuntimeSelection ToDatabaseRuntimeSelection(DatabaseRuntimeSettings settings)
+    {
+        return new Abstractions.AppModel.DatabaseRuntimeSelection(
+            enableDetailedErrors: settings.EnableDetailedErrors,
+            enableSensitiveDataLogging: settings.EnableSensitiveDataLogging,
+            enableRetryOnFailure: settings.EnableRetryOnFailure,
+            maxRetryCount: settings.MaxRetryCount,
+            maxRetryDelaySeconds: settings.MaxRetryDelaySeconds,
+            commandTimeoutSeconds: settings.CommandTimeoutSeconds,
+            maxBatchSize: settings.MaxBatchSize);
     }
 }

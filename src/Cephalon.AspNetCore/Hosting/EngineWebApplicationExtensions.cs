@@ -101,6 +101,8 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonSnapshot");
         engineGroup.MapGet("/app-model", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile))
             .WithName("GetCephalonAppModel");
+        engineGroup.MapGet("/databases", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Databases))
+            .WithName("GetCephalonDatabases");
         engineGroup.MapGet("/scaffold", (RuntimeManifest manifest) =>
                 manifest.AppProfile.Scaffold is null
                     ? Results.NotFound()

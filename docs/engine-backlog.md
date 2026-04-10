@@ -1358,7 +1358,7 @@ Follow-up later:
 
 ### ENG-060 Engine-owned database topology and runtime catalog baseline
 
-Status: planned
+Status: in progress
 Estimate: 8
 
 Why:
@@ -1373,6 +1373,18 @@ Acceptance:
 - named database roles such as `Write`, `Read`, and `History` can be validated and surfaced through runtime introspection without leaking EF Core or ASP.NET Core specifics into `Cephalon.Abstractions`
 - outbox and audit-history follow-through can target a named role instead of duplicating provider/connection settings ad hoc
 - `/engine/snapshot` and a dedicated database catalog answer the active role, provider-family, and topology truthfully
+
+Delivered so far:
+
+- `Engine:Databases` now exists as the engine-owned physical-topology contract with `Runtime`, `Write`, `Read`, `Outbox`, `History`, and nested `Migrations`
+- the contract now projects into `EngineSettings`, `AppProfile.Databases`, `/engine/databases`, `/engine/app-model`, and `/engine/snapshot`
+- the first validation baseline now covers role-pattern alignment, migration-target validity, and mutually exclusive named versus inline connection settings
+
+Remaining follow-through inside `ENG-060`:
+
+- move from fixed dependent-role blocks toward explicit role references where that meaning is sharper than duplicating provider and connection settings
+- deepen the runtime answer beyond the current topology snapshot when provider packs begin contributing richer per-role metadata
+- keep the contract aligned across docs, templates, and samples as the provider follow-through lands
 
 Planned follow-through:
 

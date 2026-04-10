@@ -21,6 +21,7 @@ public sealed class AppProfile
     /// <param name="technologies">The selected technology profiles.</param>
     /// <param name="transports">The selected transports.</param>
     /// <param name="data">The selected data inputs.</param>
+    /// <param name="databases">The selected database topology inputs.</param>
     /// <param name="identity">The selected identity and authorization inputs.</param>
     /// <param name="tenancy">The selected multi-tenancy inputs.</param>
     /// <param name="audit">The selected audit inputs.</param>
@@ -33,6 +34,7 @@ public sealed class AppProfile
         IReadOnlyList<TechnologyDescriptor>? technologies = null,
         IReadOnlyList<TransportDescriptor>? transports = null,
         DataSelection? data = null,
+        DatabaseTopologySelection? databases = null,
         IdentitySelection? identity = null,
         TenancySelection? tenancy = null,
         AuditSelection? audit = null,
@@ -46,6 +48,7 @@ public sealed class AppProfile
             technologies: technologies,
             transports: transports,
             data: data,
+            databases: databases,
             identity: identity,
             tenancy: tenancy,
             audit: audit,
@@ -64,6 +67,7 @@ public sealed class AppProfile
     /// <param name="technologies">The selected technology profiles.</param>
     /// <param name="transports">The selected transports.</param>
     /// <param name="data">The selected data inputs.</param>
+    /// <param name="databases">The selected database topology inputs.</param>
     /// <param name="identity">The selected identity and authorization inputs.</param>
     /// <param name="tenancy">The selected multi-tenancy inputs.</param>
     /// <param name="audit">The selected audit inputs.</param>
@@ -78,6 +82,7 @@ public sealed class AppProfile
         IReadOnlyList<TechnologyDescriptor>? technologies = null,
         IReadOnlyList<TransportDescriptor>? transports = null,
         DataSelection? data = null,
+        DatabaseTopologySelection? databases = null,
         IdentitySelection? identity = null,
         TenancySelection? tenancy = null,
         AuditSelection? audit = null,
@@ -106,6 +111,7 @@ public sealed class AppProfile
         Technologies = technologies ?? [];
         Transports = transports ?? [];
         Data = data ?? DataSelection.Empty;
+        Databases = databases ?? DatabaseTopologySelection.Empty;
         Identity = identity ?? IdentitySelection.Empty;
         Tenancy = tenancy ?? TenancySelection.Empty;
         Audit = audit ?? AuditSelection.Empty;
@@ -151,6 +157,11 @@ public sealed class AppProfile
     /// Gets the selected data inputs.
     /// </summary>
     public DataSelection Data { get; }
+
+    /// <summary>
+    /// Gets the selected database topology inputs.
+    /// </summary>
+    public DatabaseTopologySelection Databases { get; }
 
     /// <summary>
     /// Gets the selected identity and authorization inputs.

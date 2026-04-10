@@ -21,7 +21,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [Kubernetes deployment](kubernetes-deployment.md)
 - [Linux systemd deployment](linux-systemd-deployment.md)
 - [Architecture](architecture.md)
-- [Database topology direction](database-topology.md)
+- [Database topology](database-topology.md)
 - [Component catalog](components/README.md)
 - [Compatibility](compatibility.md)
 - [App models](app-models.md)

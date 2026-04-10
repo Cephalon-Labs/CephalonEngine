@@ -26,6 +26,7 @@ public sealed class EngineSettings
     /// <param name="trustPolicy">Capability and package trust policy values.</param>
     /// <param name="packagePolicy">Package metadata and integrity policy values.</param>
     /// <param name="data">Configuration-driven data settings.</param>
+    /// <param name="databases">Configuration-driven database topology settings.</param>
     /// <param name="identity">Configuration-driven identity and authorization settings.</param>
     /// <param name="tenancy">Configuration-driven multi-tenancy settings.</param>
     /// <param name="audit">Configuration-driven audit settings.</param>
@@ -42,6 +43,7 @@ public sealed class EngineSettings
         TrustPolicy? trustPolicy = null,
         PackagePolicy? packagePolicy = null,
         DataSettings? data = null,
+        DatabaseTopologySettings? databases = null,
         IdentitySettings? identity = null,
         TenancySettings? tenancy = null,
         AuditSettings? audit = null,
@@ -67,6 +69,7 @@ public sealed class EngineSettings
         TrustPolicy = trustPolicy ?? TrustPolicy.Default;
         PackagePolicy = packagePolicy ?? PackagePolicy.Default;
         Data = data ?? DataSettings.Empty;
+        Databases = databases ?? DatabaseTopologySettings.Empty;
         Identity = identity ?? IdentitySettings.Empty;
         Tenancy = tenancy ?? TenancySettings.Empty;
         Audit = audit ?? AuditSettings.Empty;
@@ -129,6 +132,11 @@ public sealed class EngineSettings
     public DataSettings Data { get; }
 
     /// <summary>
+    /// Gets configuration-driven database topology settings.
+    /// </summary>
+    public DatabaseTopologySettings Databases { get; }
+
+    /// <summary>
     /// Gets configuration-driven identity and authorization settings.
     /// </summary>
     public IdentitySettings Identity { get; }
@@ -163,6 +171,7 @@ public sealed class EngineSettings
         TrustPolicy.HasValues ||
         PackagePolicy.HasValues ||
         Data.HasValues ||
+        Databases.HasValues ||
         Identity.HasValues ||
         Tenancy.HasValues ||
         Audit.HasValues ||
@@ -212,6 +221,7 @@ public sealed class EngineSettings
             trustPolicy: TrustPolicy.FromConfiguration(configuration, sectionPath),
             packagePolicy: PackagePolicy.FromConfiguration(configuration, sectionPath),
             data: DataSettings.FromConfiguration(configuration, sectionPath),
+            databases: DatabaseTopologySettings.FromConfiguration(configuration, sectionPath),
             identity: IdentitySettings.FromConfiguration(configuration, sectionPath),
             tenancy: TenancySettings.FromConfiguration(configuration, sectionPath),
             audit: AuditSettings.FromConfiguration(configuration, sectionPath),

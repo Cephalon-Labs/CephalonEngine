@@ -19,6 +19,7 @@ internal sealed class AppProfileBuilder
     private readonly HashSet<string> selectedTechnologies =
         new(StringComparer.OrdinalIgnoreCase);
     private DataSelection dataSelection = DataSelection.Empty;
+    private DatabaseTopologySelection databaseSelection = DatabaseTopologySelection.Empty;
     private IdentitySelection identitySelection = IdentitySelection.Empty;
     private TenancySelection tenancySelection = TenancySelection.Empty;
     private AuditSelection auditSelection = AuditSelection.Empty;
@@ -106,6 +107,11 @@ internal sealed class AppProfileBuilder
         dataSelection = selection ?? throw new ArgumentNullException(nameof(selection));
     }
 
+    public void UseDatabaseSelection(DatabaseTopologySelection selection)
+    {
+        databaseSelection = selection ?? throw new ArgumentNullException(nameof(selection));
+    }
+
     public void UseIdentitySelection(IdentitySelection selection)
     {
         identitySelection = selection ?? throw new ArgumentNullException(nameof(selection));
@@ -157,6 +163,7 @@ internal sealed class AppProfileBuilder
         Validate(selected, transports, resolvedTechnologies);
         AppProfileSelectionValidator.Validate(
             dataSelection,
+            databaseSelection,
             identitySelection,
             tenancySelection,
             messagingSelection,
@@ -184,6 +191,7 @@ internal sealed class AppProfileBuilder
             technologies: orderedTechnologies,
             transports: orderedTransports,
             data: dataSelection,
+            databases: databaseSelection,
             identity: identitySelection,
             tenancy: tenancySelection,
             audit: auditSelection,

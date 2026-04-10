@@ -1,6 +1,9 @@
 {
   "ConnectionStrings": {
     "PostgreSQL": "Host=localhost;Port=5432;Database=showcase_db;Username=showcase;Password=showcase_secret",
+    "WriteDb": "Host=localhost;Port=5432;Database=showcase_write;Username=showcase;Password=showcase_secret",
+    "ReadDb": "Host=localhost;Port=5432;Database=showcase_read;Username=showcase;Password=showcase_secret",
+    "HistoryDb": "Host=localhost;Port=5432;Database=showcase_history;Username=showcase;Password=showcase_secret",
     "MongoDB": "mongodb://showcase:showcase_secret@localhost:27017",
     "Redis": "localhost:6379"
   },
@@ -29,6 +32,46 @@
       "Redis": {
         "ConnectionStringName": "Redis",
         "KeyPrefix": "showcase:"
+      }
+    },
+    "Databases": {
+      "Runtime": {
+        "EnableDetailedErrors": true,
+        "EnableSensitiveDataLogging": false,
+        "EnableRetryOnFailure": true,
+        "MaxRetryCount": 5,
+        "MaxRetryDelaySeconds": 10,
+        "CommandTimeoutSeconds": 30,
+        "MaxBatchSize": 128
+      },
+      "Write": {
+        "Provider": "PostgreSql",
+        "ConnectionStringName": "WriteDb",
+        "Runtime": {
+          "EnableRetryOnFailure": false
+        }
+      },
+      "Read": {
+        "Provider": "PostgreSql",
+        "ConnectionStringName": "ReadDb"
+      },
+      "Outbox": {
+        "Provider": "PostgreSql",
+        "ConnectionStringName": "WriteDb",
+        "Schema": "outbox01"
+      },
+      "History": {
+        "Provider": "PostgreSql",
+        "ConnectionStringName": "HistoryDb"
+      },
+      "Migrations": {
+        "ApplyOnStartup": false,
+        "ExitAfterApply": false,
+        "Targets": [
+          "write",
+          "outbox",
+          "history"
+        ]
       }
     },
     "Identity": {
@@ -94,6 +137,9 @@
     "Description": "Comprehensive showcase exercising all 5 behavior patterns and 11 transports in CephalonEngine"
   },
   "ApiRoutes": {
+    "ResultEnvelope": {
+      "Enabled": true
+    },
     "Prefixes": {
       "Rest": "/api",
       "GraphQL": "/graphql",

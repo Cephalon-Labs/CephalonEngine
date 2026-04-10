@@ -49,6 +49,13 @@ public sealed class ShowcaseSampleHostingTests
         Assert.True(profile.Audit.Enabled);
         Assert.True(profile.Identity.Enabled);
         Assert.True(profile.Tenancy.Enabled);
+        Assert.Equal("PostgreSql", profile.Databases.Write.Provider);
+        Assert.Equal("WriteDb", profile.Databases.Write.ConnectionStringName);
+        Assert.Equal("ReadDb", profile.Databases.Read.ConnectionStringName);
+        Assert.Equal("outbox01", profile.Databases.Outbox.Schema);
+        Assert.Equal("HistoryDb", profile.Databases.History.ConnectionStringName);
+        Assert.False(profile.Databases.Migrations.ApplyOnStartup);
+        Assert.Equal(["history", "outbox", "write"], profile.Databases.Migrations.Targets);
     }
 
     [Fact]

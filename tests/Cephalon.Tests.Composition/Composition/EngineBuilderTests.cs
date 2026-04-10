@@ -1300,6 +1300,30 @@ public sealed class EngineBuilderTests
                 readWriteSplit: true,
                 outboxEnabled: true,
                 idGenerator: "Sfid"),
+            databases: new DatabaseTopologySettings(
+                runtime: new DatabaseRuntimeSettings(
+                    enableDetailedErrors: true,
+                    enableRetryOnFailure: true,
+                    maxRetryCount: 5,
+                    commandTimeoutSeconds: 30),
+                write: new DatabaseTargetSettings(
+                    provider: "PostgreSql",
+                    connectionStringName: "WriteDb",
+                    runtime: new DatabaseRuntimeSettings(
+                        enableRetryOnFailure: false)),
+                read: new DatabaseTargetSettings(
+                    provider: "PostgreSql",
+                    connectionStringName: "ReadDb"),
+                outbox: new DatabaseTargetSettings(
+                    provider: "PostgreSql",
+                    connectionStringName: "WriteDb",
+                    schema: "outbox01"),
+                history: new DatabaseTargetSettings(
+                    provider: "PostgreSql",
+                    connectionStringName: "HistoryDb"),
+                migrations: new DatabaseMigrationsSettings(
+                    applyOnStartup: true,
+                    targets: ["write", "outbox", "history"])),
             identity: new IdentitySettings(
                 enabled: true,
                 authorizationModes: ["RBAC", "Policy"]),
@@ -1328,6 +1352,17 @@ public sealed class EngineBuilderTests
         Assert.True(appProfile.Data.ReadWriteSplit);
         Assert.True(appProfile.Data.OutboxEnabled);
         Assert.Equal("Sfid", appProfile.Data.IdGenerator);
+        Assert.True(appProfile.Databases.Runtime.EnableDetailedErrors);
+        Assert.True(appProfile.Databases.Runtime.EnableRetryOnFailure);
+        Assert.Equal(5, appProfile.Databases.Runtime.MaxRetryCount);
+        Assert.Equal("PostgreSql", appProfile.Databases.Write.Provider);
+        Assert.Equal("WriteDb", appProfile.Databases.Write.ConnectionStringName);
+        Assert.False(appProfile.Databases.Write.Runtime.EnableRetryOnFailure);
+        Assert.Equal("ReadDb", appProfile.Databases.Read.ConnectionStringName);
+        Assert.Equal("outbox01", appProfile.Databases.Outbox.Schema);
+        Assert.Equal("HistoryDb", appProfile.Databases.History.ConnectionStringName);
+        Assert.True(appProfile.Databases.Migrations.ApplyOnStartup);
+        Assert.Equal(["history", "outbox", "write"], appProfile.Databases.Migrations.Targets);
         Assert.True(appProfile.Identity.Enabled);
         Assert.Equal(["RBAC", "Policy"], appProfile.Identity.AuthorizationModes);
         Assert.True(appProfile.Tenancy.Enabled);
@@ -1352,6 +1387,78 @@ public sealed class EngineBuilderTests
         var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
 
         Assert.Contains("cqrs", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildThrowsWhenReadDatabaseRoleIsConfiguredWithoutCqrsPattern()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularMonolith",
+            databases: new DatabaseTopologySettings(
+                read: new DatabaseTargetSettings(
+                    provider: "PostgreSql",
+                    connectionStringName: "ReadDb"))));
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("cqrs", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildThrowsWhenOutboxDatabaseRoleIsConfiguredWithoutOutboxPattern()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularMonolith",
+            databases: new DatabaseTopologySettings(
+                outbox: new DatabaseTargetSettings(
+                    provider: "PostgreSql",
+                    connectionStringName: "WriteDb"))));
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("outbox", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildThrowsWhenDatabaseMigrationTargetsReferenceMissingRoles()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularMonolith",
+            patterns: ["Outbox"],
+            databases: new DatabaseTopologySettings(
+                write: new DatabaseTargetSettings(
+                    provider: "PostgreSql",
+                    connectionStringName: "WriteDb"),
+                migrations: new DatabaseMigrationsSettings(
+                    applyOnStartup: true,
+                    targets: ["history"]))));
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("history", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildThrowsWhenDatabaseMigrationsExitAfterApplyWithoutStartupApply()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularMonolith",
+            databases: new DatabaseTopologySettings(
+                write: new DatabaseTargetSettings(
+                    provider: "PostgreSql",
+                    connectionStringName: "WriteDb"),
+                migrations: new DatabaseMigrationsSettings(
+                    applyOnStartup: false,
+                    exitAfterApply: true,
+                    targets: ["write"]))));
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("ApplyOnStartup", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

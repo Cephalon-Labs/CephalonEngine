@@ -549,7 +549,7 @@ Status: planned
 
 Goal: separate physical database role topology, migration targeting, and durable audit-history routing from the logical `Engine:Data` app-model slice so one Cephalon codebase can move between single-database, split read/write, dedicated outbox, and dedicated history layouts through configuration and additive companion packs.
 
-Target: Sprint 36–38
+Target: Sprint 31–33
 
 Planned deliverables:
 
@@ -558,6 +558,11 @@ Planned deliverables:
 - `ENG-061` role-aware relational follow-through so `Cephalon.Data.EntityFramework` consumes database-role topology instead of inventing a separate physical-layout model
 - migration targeting that references named roles, keeps startup apply explicit, and treats bundle/script-based deployment as the production path
 - `ENG-062` durable audit-history follow-through that keeps `Cephalon.Audit` narrow while letting a first provider-backed store target a named database role
+
+Current truth:
+
+- the initial `ENG-060` baseline is now shipped: `Engine:Databases` projects into `EngineSettings`, `AppProfile.Databases`, `/engine/databases`, `/engine/app-model`, and `/engine/snapshot`
+- the remaining phase-10 work is now deeper provider consumption, role references, richer topology/runtime metadata, migration execution follow-through, and durable history storage
 
 Exit criteria:
 
