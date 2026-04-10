@@ -150,12 +150,12 @@ public sealed class AppProfile
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection"></a>
+<a id="member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-databasetopologyselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection"></a>
 
 ##### `AppProfile`
 
 ```csharp
-AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging)
+AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, DatabaseTopologySelection databases, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging)
 ```
 
 Creates an app profile without scaffold metadata.
@@ -168,17 +168,18 @@ Parameters:
 - `technologies`: The selected technology profiles.
 - `transports`: The selected transports.
 - `data`: The selected data inputs.
+- `databases`: The selected database topology inputs.
 - `identity`: The selected identity and authorization inputs.
 - `tenancy`: The selected multi-tenancy inputs.
 - `audit`: The selected audit inputs.
 - `messaging`: The selected messaging inputs.
 
-<a id="member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection"></a>
+<a id="member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-databasetopologyselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection"></a>
 
 ##### `AppProfile`
 
 ```csharp
-AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, ScaffoldPlan scaffold, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging)
+AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, ScaffoldPlan scaffold, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, DatabaseTopologySelection databases, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging)
 ```
 
 Creates an app profile with optional scaffold metadata.
@@ -192,6 +193,7 @@ Parameters:
 - `technologies`: The selected technology profiles.
 - `transports`: The selected transports.
 - `data`: The selected data inputs.
+- `databases`: The selected database topology inputs.
 - `identity`: The selected identity and authorization inputs.
 - `tenancy`: The selected multi-tenancy inputs.
 - `audit`: The selected audit inputs.
@@ -248,6 +250,16 @@ DataSelection Data { get; }
 ```
 
 Gets the selected data inputs.
+
+<a id="member-p-cephalon-abstractions-appmodel-appprofile-databases"></a>
+
+##### `Databases`
+
+```csharp
+DatabaseTopologySelection Databases { get; }
+```
+
+Gets the selected database topology inputs.
 
 <a id="member-p-cephalon-abstractions-appmodel-appprofile-identity"></a>
 
@@ -319,6 +331,279 @@ IReadOnlyList<TransportDescriptor> Transports { get; }
 
 Gets the selected transports.
 
+<a id="type-cephalon-abstractions-appmodel-audithistoryexportselection"></a>
+
+### `AuditHistoryExportSelection`
+
+Describes the durable audit-history export inputs resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class AuditHistoryExportSelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-audithistoryexportselection-ctor-system-nullable-system-boolean-system-nullable-system-int32"></a>
+
+##### `AuditHistoryExportSelection`
+
+```csharp
+AuditHistoryExportSelection(bool? enabled, int? maxEntries)
+```
+
+Initializes a new instance of the `AuditHistoryExportSelection` class.
+
+Parameters:
+- `enabled`: Whether audit-history export was explicitly enabled.
+- `maxEntries`: The configured maximum number of entries that one export may stream.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryexportselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+AuditHistoryExportSelection Empty { get; }
+```
+
+Gets an empty audit-history export-selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryexportselection-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether audit-history export was explicitly enabled.
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryexportselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any audit-history export inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryexportselection-maxentries"></a>
+
+##### `MaxEntries`
+
+```csharp
+int? MaxEntries { get; }
+```
+
+Gets the configured maximum number of entries that one export may stream.
+
+<a id="type-cephalon-abstractions-appmodel-audithistoryretentionselection"></a>
+
+### `AuditHistoryRetentionSelection`
+
+Describes the durable audit-history retention inputs resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class AuditHistoryRetentionSelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-audithistoryretentionselection-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-boolean-system-nullable-system-int32"></a>
+
+##### `AuditHistoryRetentionSelection`
+
+```csharp
+AuditHistoryRetentionSelection(bool? enabled, int? maxAgeDays, int? deleteBatchSize, bool? applyOnStartup, int? runIntervalMinutes)
+```
+
+Initializes a new instance of the `AuditHistoryRetentionSelection` class.
+
+Parameters:
+- `enabled`: Whether retention was explicitly enabled.
+- `maxAgeDays`: The maximum age, in days, to retain durable audit rows.
+- `deleteBatchSize`: The maximum number of rows deleted per retention batch.
+- `applyOnStartup`: Whether one retention pass should run during host startup.
+- `runIntervalMinutes`: The optional recurring retention interval in minutes.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-applyonstartup"></a>
+
+##### `ApplyOnStartup`
+
+```csharp
+bool? ApplyOnStartup { get; }
+```
+
+Gets a value indicating whether one retention pass should run during host startup.
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-deletebatchsize"></a>
+
+##### `DeleteBatchSize`
+
+```csharp
+int? DeleteBatchSize { get; }
+```
+
+Gets the maximum number of rows deleted per retention batch.
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+AuditHistoryRetentionSelection Empty { get; }
+```
+
+Gets an empty audit-history retention selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether retention was explicitly enabled.
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any durable audit-history retention inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-maxagedays"></a>
+
+##### `MaxAgeDays`
+
+```csharp
+int? MaxAgeDays { get; }
+```
+
+Gets the maximum age, in days, to retain durable audit rows.
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-runintervalminutes"></a>
+
+##### `RunIntervalMinutes`
+
+```csharp
+int? RunIntervalMinutes { get; }
+```
+
+Gets the optional recurring retention interval in minutes.
+
+<a id="type-cephalon-abstractions-appmodel-audithistoryselection"></a>
+
+### `AuditHistorySelection`
+
+Describes the durable audit-history inputs resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class AuditHistorySelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-audithistoryselection-ctor-system-nullable-system-boolean-system-string-system-string-cephalon-abstractions-appmodel-audithistoryexportselection-cephalon-abstractions-appmodel-audithistoryretentionselection"></a>
+
+##### `AuditHistorySelection`
+
+```csharp
+AuditHistorySelection(bool? enabled, string provider, string databaseRole, AuditHistoryExportSelection export, AuditHistoryRetentionSelection retention)
+```
+
+Initializes a new instance of the `AuditHistorySelection` class.
+
+Parameters:
+- `enabled`: Whether durable audit history was explicitly enabled.
+- `provider`: The selected durable history provider identifier.
+- `databaseRole`: The selected database role used by the durable history path.
+- `export`: The resolved export inputs for durable audit history.
+- `retention`: The resolved retention inputs for durable audit history.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryselection-databaserole"></a>
+
+##### `DatabaseRole`
+
+```csharp
+string DatabaseRole { get; }
+```
+
+Gets the selected database role used by the durable history path.
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+AuditHistorySelection Empty { get; }
+```
+
+Gets an empty audit-history selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryselection-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether durable audit history was explicitly enabled.
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryselection-export"></a>
+
+##### `Export`
+
+```csharp
+AuditHistoryExportSelection Export { get; }
+```
+
+Gets the resolved export inputs for durable audit history.
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any durable audit-history inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryselection-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; }
+```
+
+Gets the selected durable history provider identifier.
+
+<a id="member-p-cephalon-abstractions-appmodel-audithistoryselection-retention"></a>
+
+##### `Retention`
+
+```csharp
+AuditHistoryRetentionSelection Retention { get; }
+```
+
+Gets the resolved retention inputs for durable audit history.
+
 <a id="type-cephalon-abstractions-appmodel-auditselection"></a>
 
 ### `AuditSelection`
@@ -332,18 +617,19 @@ public sealed class AuditSelection
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-appmodel-auditselection-ctor-system-nullable-system-boolean"></a>
+<a id="member-m-cephalon-abstractions-appmodel-auditselection-ctor-system-nullable-system-boolean-cephalon-abstractions-appmodel-audithistoryselection"></a>
 
 ##### `AuditSelection`
 
 ```csharp
-AuditSelection(bool? enabled)
+AuditSelection(bool? enabled, AuditHistorySelection history)
 ```
 
 Initializes a new instance of the `AuditSelection` class.
 
 Parameters:
 - `enabled`: Whether audit support was explicitly enabled.
+- `history`: The durable audit-history inputs resolved for the app.
 
 #### Properties
 
@@ -376,6 +662,416 @@ bool HasValues { get; }
 ```
 
 Gets a value indicating whether any audit-selection inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-auditselection-history"></a>
+
+##### `History`
+
+```csharp
+AuditHistorySelection History { get; }
+```
+
+Gets the durable audit-history inputs resolved for the app.
+
+<a id="type-cephalon-abstractions-appmodel-databasemigrationsselection"></a>
+
+### `DatabaseMigrationsSelection`
+
+Describes the active database-migration inputs resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class DatabaseMigrationsSelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-databasemigrationsselection-ctor-system-nullable-system-boolean-system-nullable-system-boolean-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `DatabaseMigrationsSelection`
+
+```csharp
+DatabaseMigrationsSelection(bool? applyOnStartup, bool? exitAfterApply, IReadOnlyList<string> targets)
+```
+
+Initializes a new instance of the `DatabaseMigrationsSelection` class.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-databasemigrationsselection-applyonstartup"></a>
+
+##### `ApplyOnStartup`
+
+```csharp
+bool? ApplyOnStartup { get; }
+```
+
+Gets a value indicating whether migrations should be applied during host startup.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasemigrationsselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+DatabaseMigrationsSelection Empty { get; }
+```
+
+Gets an empty database-migrations selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasemigrationsselection-exitafterapply"></a>
+
+##### `ExitAfterApply`
+
+```csharp
+bool? ExitAfterApply { get; }
+```
+
+Gets a value indicating whether the host should exit after applying migrations.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasemigrationsselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any migration-selection inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasemigrationsselection-targets"></a>
+
+##### `Targets`
+
+```csharp
+IReadOnlyList<string> Targets { get; }
+```
+
+Gets the logical migration targets selected for the app.
+
+<a id="type-cephalon-abstractions-appmodel-databaseruntimeselection"></a>
+
+### `DatabaseRuntimeSelection`
+
+Describes the active database runtime tuning inputs resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class DatabaseRuntimeSelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-databaseruntimeselection-ctor-system-nullable-system-boolean-system-nullable-system-boolean-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32"></a>
+
+##### `DatabaseRuntimeSelection`
+
+```csharp
+DatabaseRuntimeSelection(bool? enableDetailedErrors, bool? enableSensitiveDataLogging, bool? enableRetryOnFailure, int? maxRetryCount, int? maxRetryDelaySeconds, int? commandTimeoutSeconds, int? maxBatchSize)
+```
+
+Initializes a new instance of the `DatabaseRuntimeSelection` class.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-databaseruntimeselection-commandtimeoutseconds"></a>
+
+##### `CommandTimeoutSeconds`
+
+```csharp
+int? CommandTimeoutSeconds { get; }
+```
+
+Gets the command timeout in seconds when one was configured.
+
+<a id="member-p-cephalon-abstractions-appmodel-databaseruntimeselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+DatabaseRuntimeSelection Empty { get; }
+```
+
+Gets an empty database-runtime selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-databaseruntimeselection-enabledetailederrors"></a>
+
+##### `EnableDetailedErrors`
+
+```csharp
+bool? EnableDetailedErrors { get; }
+```
+
+Gets a value indicating whether detailed provider errors were explicitly selected.
+
+<a id="member-p-cephalon-abstractions-appmodel-databaseruntimeselection-enableretryonfailure"></a>
+
+##### `EnableRetryOnFailure`
+
+```csharp
+bool? EnableRetryOnFailure { get; }
+```
+
+Gets a value indicating whether transient-failure retries were explicitly selected.
+
+<a id="member-p-cephalon-abstractions-appmodel-databaseruntimeselection-enablesensitivedatalogging"></a>
+
+##### `EnableSensitiveDataLogging`
+
+```csharp
+bool? EnableSensitiveDataLogging { get; }
+```
+
+Gets a value indicating whether sensitive-data logging was explicitly selected.
+
+<a id="member-p-cephalon-abstractions-appmodel-databaseruntimeselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any database-runtime selection inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-databaseruntimeselection-maxbatchsize"></a>
+
+##### `MaxBatchSize`
+
+```csharp
+int? MaxBatchSize { get; }
+```
+
+Gets the maximum provider batch size when one was configured.
+
+<a id="member-p-cephalon-abstractions-appmodel-databaseruntimeselection-maxretrycount"></a>
+
+##### `MaxRetryCount`
+
+```csharp
+int? MaxRetryCount { get; }
+```
+
+Gets the maximum retry count when transient-failure retries were configured.
+
+<a id="member-p-cephalon-abstractions-appmodel-databaseruntimeselection-maxretrydelayseconds"></a>
+
+##### `MaxRetryDelaySeconds`
+
+```csharp
+int? MaxRetryDelaySeconds { get; }
+```
+
+Gets the maximum retry delay in seconds when transient-failure retries were configured.
+
+<a id="type-cephalon-abstractions-appmodel-databasetargetselection"></a>
+
+### `DatabaseTargetSelection`
+
+Describes one database role target resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class DatabaseTargetSelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-databasetargetselection-ctor-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-appmodel-databaseruntimeselection"></a>
+
+##### `DatabaseTargetSelection`
+
+```csharp
+DatabaseTargetSelection(string provider, string connectionStringName, string connectionString, string useRole, string schema, DatabaseRuntimeSelection runtime)
+```
+
+Initializes a new instance of the `DatabaseTargetSelection` class.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-databasetargetselection-connectionstring"></a>
+
+##### `ConnectionString`
+
+```csharp
+string ConnectionString { get; }
+```
+
+Gets the inline connection string selected for this database role.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasetargetselection-connectionstringname"></a>
+
+##### `ConnectionStringName`
+
+```csharp
+string ConnectionStringName { get; }
+```
+
+Gets the root connection-string name selected for this database role.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasetargetselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+DatabaseTargetSelection Empty { get; }
+```
+
+Gets an empty database-target selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasetargetselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any target-selection inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasetargetselection-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; }
+```
+
+Gets the selected logical provider identifier.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasetargetselection-runtime"></a>
+
+##### `Runtime`
+
+```csharp
+DatabaseRuntimeSelection Runtime { get; }
+```
+
+Gets the role-specific runtime overrides for this database target.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasetargetselection-schema"></a>
+
+##### `Schema`
+
+```csharp
+string Schema { get; }
+```
+
+Gets the schema override selected for this database role.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasetargetselection-userole"></a>
+
+##### `UseRole`
+
+```csharp
+string UseRole { get; }
+```
+
+Gets the referenced concrete database role that supplies the physical connection target.
+
+<a id="type-cephalon-abstractions-appmodel-databasetopologyselection"></a>
+
+### `DatabaseTopologySelection`
+
+Describes the active database topology inputs resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class DatabaseTopologySelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-databasetopologyselection-ctor-cephalon-abstractions-appmodel-databaseruntimeselection-cephalon-abstractions-appmodel-databasetargetselection-cephalon-abstractions-appmodel-databasetargetselection-cephalon-abstractions-appmodel-databasetargetselection-cephalon-abstractions-appmodel-databasetargetselection-cephalon-abstractions-appmodel-databasemigrationsselection"></a>
+
+##### `DatabaseTopologySelection`
+
+```csharp
+DatabaseTopologySelection(DatabaseRuntimeSelection runtime, DatabaseTargetSelection write, DatabaseTargetSelection read, DatabaseTargetSelection outbox, DatabaseTargetSelection history, DatabaseMigrationsSelection migrations)
+```
+
+Initializes a new instance of the `DatabaseTopologySelection` class.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-databasetopologyselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+DatabaseTopologySelection Empty { get; }
+```
+
+Gets an empty database-topology selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasetopologyselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any database-topology inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasetopologyselection-history"></a>
+
+##### `History`
+
+```csharp
+DatabaseTargetSelection History { get; }
+```
+
+Gets the audit-history database target selection.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasetopologyselection-migrations"></a>
+
+##### `Migrations`
+
+```csharp
+DatabaseMigrationsSelection Migrations { get; }
+```
+
+Gets the database-migration selection.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasetopologyselection-outbox"></a>
+
+##### `Outbox`
+
+```csharp
+DatabaseTargetSelection Outbox { get; }
+```
+
+Gets the outbox database target selection.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasetopologyselection-read"></a>
+
+##### `Read`
+
+```csharp
+DatabaseTargetSelection Read { get; }
+```
+
+Gets the read-side database target selection.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasetopologyselection-runtime"></a>
+
+##### `Runtime`
+
+```csharp
+DatabaseRuntimeSelection Runtime { get; }
+```
+
+Gets the shared runtime tuning selected for database roles.
+
+<a id="member-p-cephalon-abstractions-appmodel-databasetopologyselection-write"></a>
+
+##### `Write`
+
+```csharp
+DatabaseTargetSelection Write { get; }
+```
+
+Gets the write-side database target selection.
 
 <a id="type-cephalon-abstractions-appmodel-dataselection"></a>
 
@@ -1735,6 +2431,620 @@ string TenantId { get; }
 
 Gets the tenant identifier associated with the audited operation.
 
+<a id="type-cephalon-abstractions-audit-audithistoryentry"></a>
+
+### `AuditHistoryEntry`
+
+Represents one audit entry returned from a durable or queryable audit-history store.
+
+#### Declaration
+```csharp
+public sealed class AuditHistoryEntry
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-audit-audithistoryentry-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-datetimeoffset-cephalon-abstractions-audit-auditactor-cephalon-abstractions-audit-auditoutcome-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-audit-auditchange-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `AuditHistoryEntry`
+
+```csharp
+AuditHistoryEntry(string id, string category, string action, string summary, string subjectType, string subjectId, DateTimeOffset occurredAtUtc, DateTimeOffset persistedAtUtc, AuditActor actor, AuditOutcome outcome, string tenantId, string correlationId, IReadOnlyList<AuditChange> changes, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new audit-history entry.
+
+Parameters:
+- `id`: The stable audit-entry identifier.
+- `category`: The logical audit category such as `identity`, `tenant`, or `billing`.
+- `action`: The logical action identifier associated with the audit event.
+- `summary`: The human-readable audit summary.
+- `subjectType`: The logical subject type associated with the entry.
+- `subjectId`: The stable subject identifier associated with the entry when one is known.
+- `occurredAtUtc`: The time at which the audited operation occurred.
+- `persistedAtUtc`: The time at which the audit entry was durably persisted.
+- `actor`: The actor responsible for the audited operation.
+- `outcome`: The outcome recorded for the audited operation.
+- `tenantId`: The tenant identifier associated with the audited operation.
+- `correlationId`: The correlation identifier associated with the audited operation.
+- `changes`: Optional field-level changes captured for the operation.
+- `tags`: Optional descriptive tags associated with the entry.
+- `metadata`: Optional audit metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryentry-action"></a>
+
+##### `Action`
+
+```csharp
+string Action { get; }
+```
+
+Gets the logical action identifier associated with the audit event.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryentry-actor"></a>
+
+##### `Actor`
+
+```csharp
+AuditActor Actor { get; }
+```
+
+Gets the actor responsible for the audited operation.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryentry-category"></a>
+
+##### `Category`
+
+```csharp
+string Category { get; }
+```
+
+Gets the logical audit category.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryentry-changes"></a>
+
+##### `Changes`
+
+```csharp
+IReadOnlyList<AuditChange> Changes { get; }
+```
+
+Gets the field-level changes captured for the operation.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryentry-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the correlation identifier associated with the audited operation.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryentry-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable audit-entry identifier.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryentry-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets audit metadata associated with the entry.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryentry-occurredatutc"></a>
+
+##### `OccurredAtUtc`
+
+```csharp
+DateTimeOffset OccurredAtUtc { get; }
+```
+
+Gets the time at which the audited operation occurred.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryentry-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+AuditOutcome Outcome { get; }
+```
+
+Gets the outcome recorded for the audited operation.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryentry-persistedatutc"></a>
+
+##### `PersistedAtUtc`
+
+```csharp
+DateTimeOffset PersistedAtUtc { get; }
+```
+
+Gets the time at which the audit entry was durably persisted.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryentry-subjectid"></a>
+
+##### `SubjectId`
+
+```csharp
+string SubjectId { get; }
+```
+
+Gets the stable subject identifier associated with the entry when one is known.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryentry-subjecttype"></a>
+
+##### `SubjectType`
+
+```csharp
+string SubjectType { get; }
+```
+
+Gets the logical subject type associated with the entry.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryentry-summary"></a>
+
+##### `Summary`
+
+```csharp
+string Summary { get; }
+```
+
+Gets the human-readable audit summary.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryentry-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets descriptive tags associated with the entry.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryentry-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant identifier associated with the audited operation.
+
+<a id="type-cephalon-abstractions-audit-audithistoryexportrequest"></a>
+
+### `AuditHistoryExportRequest`
+
+Describes a host-agnostic audit-history export request against the active audit-history exporter.
+
+#### Declaration
+```csharp
+public sealed class AuditHistoryExportRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-audit-audithistoryexportrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-cephalon-abstractions-audit-auditoutcome-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32"></a>
+
+##### `AuditHistoryExportRequest`
+
+```csharp
+AuditHistoryExportRequest(string category, string action, string subjectType, string subjectId, string actorId, string tenantId, string correlationId, AuditOutcome? outcome, DateTimeOffset? occurredFromUtc, DateTimeOffset? occurredToUtc, int maxEntries)
+```
+
+Creates a new audit-history export request.
+
+Parameters:
+- `category`: An optional logical audit category filter.
+- `action`: An optional logical action identifier filter.
+- `subjectType`: An optional logical subject-type filter.
+- `subjectId`: An optional stable subject identifier filter.
+- `actorId`: An optional stable actor identifier filter.
+- `tenantId`: An optional tenant identifier filter.
+- `correlationId`: An optional correlation identifier filter.
+- `outcome`: An optional audit-outcome filter.
+- `occurredFromUtc`: An optional inclusive lower occurrence bound.
+- `occurredToUtc`: An optional inclusive upper occurrence bound.
+- `maxEntries`: The maximum number of exported entries.
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-audit-audithistoryexportrequest-defaultmaxentries"></a>
+
+##### `DefaultMaxEntries`
+
+```csharp
+const int DefaultMaxEntries
+```
+
+Gets the default maximum number of audit-history entries exported when the caller does not supply one.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryexportrequest-action"></a>
+
+##### `Action`
+
+```csharp
+string Action { get; }
+```
+
+Gets the optional logical action identifier filter.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryexportrequest-actorid"></a>
+
+##### `ActorId`
+
+```csharp
+string ActorId { get; }
+```
+
+Gets the optional stable actor identifier filter.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryexportrequest-category"></a>
+
+##### `Category`
+
+```csharp
+string Category { get; }
+```
+
+Gets the optional logical audit category filter.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryexportrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier filter.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryexportrequest-maxentries"></a>
+
+##### `MaxEntries`
+
+```csharp
+int MaxEntries { get; }
+```
+
+Gets the maximum number of entries to export.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryexportrequest-occurredfromutc"></a>
+
+##### `OccurredFromUtc`
+
+```csharp
+DateTimeOffset? OccurredFromUtc { get; }
+```
+
+Gets the optional inclusive lower occurrence bound.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryexportrequest-occurredtoutc"></a>
+
+##### `OccurredToUtc`
+
+```csharp
+DateTimeOffset? OccurredToUtc { get; }
+```
+
+Gets the optional inclusive upper occurrence bound.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryexportrequest-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+AuditOutcome? Outcome { get; }
+```
+
+Gets the optional audit-outcome filter.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryexportrequest-subjectid"></a>
+
+##### `SubjectId`
+
+```csharp
+string SubjectId { get; }
+```
+
+Gets the optional stable subject identifier filter.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryexportrequest-subjecttype"></a>
+
+##### `SubjectType`
+
+```csharp
+string SubjectType { get; }
+```
+
+Gets the optional logical subject-type filter.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryexportrequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the optional tenant identifier filter.
+
+<a id="type-cephalon-abstractions-audit-audithistoryquery"></a>
+
+### `AuditHistoryQuery`
+
+Describes a host-agnostic audit-history query against the active audit-history reader.
+
+#### Declaration
+```csharp
+public sealed class AuditHistoryQuery
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-audit-audithistoryquery-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-cephalon-abstractions-audit-auditoutcome-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-system-int32"></a>
+
+##### `AuditHistoryQuery`
+
+```csharp
+AuditHistoryQuery(string category, string action, string subjectType, string subjectId, string actorId, string tenantId, string correlationId, AuditOutcome? outcome, DateTimeOffset? occurredFromUtc, DateTimeOffset? occurredToUtc, int offset, int limit)
+```
+
+Creates a new audit-history query.
+
+Parameters:
+- `category`: An optional logical audit category filter.
+- `action`: An optional logical action identifier filter.
+- `subjectType`: An optional logical subject-type filter.
+- `subjectId`: An optional stable subject identifier filter.
+- `actorId`: An optional stable actor identifier filter.
+- `tenantId`: An optional tenant identifier filter.
+- `correlationId`: An optional correlation identifier filter.
+- `outcome`: An optional audit-outcome filter.
+- `occurredFromUtc`: An optional inclusive lower occurrence bound.
+- `occurredToUtc`: An optional inclusive upper occurrence bound.
+- `offset`: The zero-based query offset.
+- `limit`: The requested page size, clamped to the supported range.
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-audit-audithistoryquery-defaultlimit"></a>
+
+##### `DefaultLimit`
+
+```csharp
+const int DefaultLimit
+```
+
+Gets the default number of entries returned by a query when the caller does not supply one.
+
+<a id="member-f-cephalon-abstractions-audit-audithistoryquery-maxlimit"></a>
+
+##### `MaxLimit`
+
+```csharp
+const int MaxLimit
+```
+
+Gets the maximum number of entries returned by one query.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryquery-action"></a>
+
+##### `Action`
+
+```csharp
+string Action { get; }
+```
+
+Gets the optional logical action identifier filter.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryquery-actorid"></a>
+
+##### `ActorId`
+
+```csharp
+string ActorId { get; }
+```
+
+Gets the optional stable actor identifier filter.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryquery-category"></a>
+
+##### `Category`
+
+```csharp
+string Category { get; }
+```
+
+Gets the optional logical audit category filter.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryquery-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the optional correlation identifier filter.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryquery-limit"></a>
+
+##### `Limit`
+
+```csharp
+int Limit { get; }
+```
+
+Gets the requested page size after it has been normalized to the supported range.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryquery-occurredfromutc"></a>
+
+##### `OccurredFromUtc`
+
+```csharp
+DateTimeOffset? OccurredFromUtc { get; }
+```
+
+Gets the optional inclusive lower occurrence bound.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryquery-occurredtoutc"></a>
+
+##### `OccurredToUtc`
+
+```csharp
+DateTimeOffset? OccurredToUtc { get; }
+```
+
+Gets the optional inclusive upper occurrence bound.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryquery-offset"></a>
+
+##### `Offset`
+
+```csharp
+int Offset { get; }
+```
+
+Gets the zero-based query offset.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryquery-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+AuditOutcome? Outcome { get; }
+```
+
+Gets the optional audit-outcome filter.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryquery-subjectid"></a>
+
+##### `SubjectId`
+
+```csharp
+string SubjectId { get; }
+```
+
+Gets the optional stable subject identifier filter.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryquery-subjecttype"></a>
+
+##### `SubjectType`
+
+```csharp
+string SubjectType { get; }
+```
+
+Gets the optional logical subject-type filter.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryquery-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the optional tenant identifier filter.
+
+<a id="type-cephalon-abstractions-audit-audithistoryqueryresult"></a>
+
+### `AuditHistoryQueryResult`
+
+Represents one page of audit-history results returned by an `IAuditHistoryReader`.
+
+#### Declaration
+```csharp
+public sealed class AuditHistoryQueryResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-audit-audithistoryqueryresult-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-audit-audithistoryentry-system-int32-system-int32-system-int32"></a>
+
+##### `AuditHistoryQueryResult`
+
+```csharp
+AuditHistoryQueryResult(IReadOnlyList<AuditHistoryEntry> entries, int offset, int limit, int totalCount)
+```
+
+Creates a new audit-history query result.
+
+Parameters:
+- `entries`: The returned audit-history entries.
+- `offset`: The zero-based query offset that produced this page.
+- `limit`: The normalized page size used for the query.
+- `totalCount`: The total number of matching entries before paging was applied.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryqueryresult-entries"></a>
+
+##### `Entries`
+
+```csharp
+IReadOnlyList<AuditHistoryEntry> Entries { get; }
+```
+
+Gets the returned audit-history entries.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryqueryresult-hasmore"></a>
+
+##### `HasMore`
+
+```csharp
+bool HasMore { get; }
+```
+
+Gets a value indicating whether more entries remain beyond this page.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryqueryresult-limit"></a>
+
+##### `Limit`
+
+```csharp
+int Limit { get; }
+```
+
+Gets the normalized page size used for the query.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryqueryresult-offset"></a>
+
+##### `Offset`
+
+```csharp
+int Offset { get; }
+```
+
+Gets the zero-based query offset that produced this page.
+
+<a id="member-p-cephalon-abstractions-audit-audithistoryqueryresult-totalcount"></a>
+
+##### `TotalCount`
+
+```csharp
+int TotalCount { get; }
+```
+
+Gets the total number of matching entries before paging was applied.
+
 <a id="type-cephalon-abstractions-audit-auditoutcome"></a>
 
 ### `AuditOutcome`
@@ -1893,6 +3203,80 @@ IReadOnlyList<string> Tags { get; }
 
 Gets descriptive tags associated with the audit store.
 
+<a id="type-cephalon-abstractions-audit-iaudithistoryexporter"></a>
+
+### `IAuditHistoryExporter`
+
+Streams persisted audit-history entries for export-oriented operator or application flows.
+
+#### Declaration
+```csharp
+public interface IAuditHistoryExporter
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-audit-iaudithistoryexporter-exportasync-cephalon-abstractions-audit-audithistoryexportrequest-system-threading-cancellationtoken"></a>
+
+##### `ExportAsync`
+
+```csharp
+IAsyncEnumerable<AuditHistoryEntry> ExportAsync(AuditHistoryExportRequest request, CancellationToken cancellationToken)
+```
+
+Streams audit-history entries that match the supplied export request in stable export order.
+
+Returns: The matching audit-history entries.
+
+Parameters:
+- `request`: The export request to execute.
+- `cancellationToken`: The token that cancels the export stream.
+
+<a id="type-cephalon-abstractions-audit-iaudithistoryreader"></a>
+
+### `IAuditHistoryReader`
+
+Reads persisted audit-history entries from the active runtime.
+
+#### Declaration
+```csharp
+public interface IAuditHistoryReader
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-audit-iaudithistoryreader-getbyidasync-system-string-system-threading-cancellationtoken"></a>
+
+##### `GetByIdAsync`
+
+```csharp
+ValueTask<AuditHistoryEntry> GetByIdAsync(string auditEntryId, CancellationToken cancellationToken)
+```
+
+Resolves one audit-history entry by its stable identifier.
+
+Returns: The matching audit-history entry when one exists; otherwise `null`.
+
+Parameters:
+- `auditEntryId`: The stable audit-entry identifier to resolve.
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="member-m-cephalon-abstractions-audit-iaudithistoryreader-queryasync-cephalon-abstractions-audit-audithistoryquery-system-threading-cancellationtoken"></a>
+
+##### `QueryAsync`
+
+```csharp
+ValueTask<AuditHistoryQueryResult> QueryAsync(AuditHistoryQuery query, CancellationToken cancellationToken)
+```
+
+Queries audit-history entries using the supplied host-agnostic filter set.
+
+Returns: The resulting page of audit-history entries.
+
+Parameters:
+- `query`: The query to execute.
+- `cancellationToken`: The token that cancels the operation.
+
 <a id="type-cephalon-abstractions-audit-iauditstorecatalog"></a>
 
 ### `IAuditStoreCatalog`
@@ -2014,6 +3398,31 @@ Adds an audit store to the current runtime composition.
 
 Parameters:
 - `auditStore`: The audit-store descriptor to register.
+
+<a id="type-cephalon-abstractions-audit-iauditstoreruntimecontributor"></a>
+
+### `IAuditStoreRuntimeContributor`
+
+Contributes runtime-resolved audit-store descriptors to the active Cephalon audit surface.
+
+#### Declaration
+```csharp
+public interface IAuditStoreRuntimeContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-audit-iauditstoreruntimecontributor-describeauditstores"></a>
+
+##### `DescribeAuditStores`
+
+```csharp
+IReadOnlyList<AuditStoreDescriptor> DescribeAuditStores()
+```
+
+Describes the audit stores that should appear in the active runtime after configuration, topology, and provider-specific options have been resolved.
+
+Returns: The audit-store descriptors that should appear in the active runtime.
 
 <a id="type-cephalon-abstractions-audit-iauditwriter"></a>
 
@@ -3059,6 +4468,69 @@ string Message { get; set; }
 
 Gets or sets the fault message.
 
+<a id="member-p-cephalon-abstractions-behaviors-behaviorfault-severity"></a>
+
+##### `Severity`
+
+```csharp
+BehaviorFaultSeverity Severity { get; set; }
+```
+
+Gets or sets the fault severity.
+
+<a id="type-cephalon-abstractions-behaviors-behaviorfaultseverity"></a>
+
+### `BehaviorFaultSeverity`
+
+Severity levels for structured behavior faults.
+
+#### Declaration
+```csharp
+public enum BehaviorFaultSeverity
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-behaviors-behaviorfaultseverity-critical"></a>
+
+##### `Critical`
+
+```csharp
+const BehaviorFaultSeverity Critical
+```
+
+Critical fault details.
+
+<a id="member-f-cephalon-abstractions-behaviors-behaviorfaultseverity-error"></a>
+
+##### `Error`
+
+```csharp
+const BehaviorFaultSeverity Error
+```
+
+Error-level fault details.
+
+<a id="member-f-cephalon-abstractions-behaviors-behaviorfaultseverity-info"></a>
+
+##### `Info`
+
+```csharp
+const BehaviorFaultSeverity Info
+```
+
+Informational fault details.
+
+<a id="member-f-cephalon-abstractions-behaviors-behaviorfaultseverity-warning"></a>
+
+##### `Warning`
+
+```csharp
+const BehaviorFaultSeverity Warning
+```
+
+Warning-level fault details.
+
 <a id="type-cephalon-abstractions-behaviors-behaviornotfoundexception"></a>
 
 ### `BehaviorNotFoundException`
@@ -3110,6 +4582,340 @@ string BehaviorId { get; }
 ```
 
 Gets the behavior identifier that could not be resolved.
+
+<a id="type-cephalon-abstractions-behaviors-behaviorresult"></a>
+
+### `BehaviorResult`
+
+Provides legacy factory helpers for creating transport-neutral behavior results.
+
+Remarks: Prefer `Result` for new authoring code when the shorter name is a better fit. This type remains available as a compatibility alias.
+
+#### Declaration
+```csharp
+public static class BehaviorResult
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorresult-accepted-1-0-system-string-system-string"></a>
+
+##### `Accepted`
+
+```csharp
+BehaviorResult<T> Accepted<T>(T value, string message, string code)
+```
+
+Creates an accepted result with an optional payload value.
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorresult-conflict-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `Conflict`
+
+```csharp
+BehaviorResultDescriptor Conflict(string code, string message, BehaviorFault fault)
+```
+
+Creates a conflict result.
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorresult-conflict-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `Conflict`
+
+```csharp
+BehaviorResult<T> Conflict<T>(string code, string message, BehaviorFault fault)
+```
+
+Creates a conflict result for the specified payload type.
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorresult-created-1-0-system-string-system-string"></a>
+
+##### `Created`
+
+```csharp
+BehaviorResult<T> Created<T>(T value, string message, string code)
+```
+
+Creates a created result with a payload value.
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorresult-forbidden-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `Forbidden`
+
+```csharp
+BehaviorResultDescriptor Forbidden(string code, string message, BehaviorFault fault)
+```
+
+Creates a forbidden result.
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorresult-forbidden-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `Forbidden`
+
+```csharp
+BehaviorResult<T> Forbidden<T>(string code, string message, BehaviorFault fault)
+```
+
+Creates a forbidden result for the specified payload type.
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorresult-invalid-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `Invalid`
+
+```csharp
+BehaviorResultDescriptor Invalid(string code, string message, BehaviorFault fault)
+```
+
+Creates an invalid-request result.
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorresult-invalid-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `Invalid`
+
+```csharp
+BehaviorResult<T> Invalid<T>(string code, string message, BehaviorFault fault)
+```
+
+Creates an invalid-request result for the specified payload type.
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorresult-nocontent-system-string-system-string"></a>
+
+##### `NoContent`
+
+```csharp
+BehaviorResultDescriptor NoContent(string message, string code)
+```
+
+Creates a no-content result.
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorresult-nocontent-1-system-string-system-string"></a>
+
+##### `NoContent`
+
+```csharp
+BehaviorResult<T> NoContent<T>(string message, string code)
+```
+
+Creates a no-content result for the specified payload type.
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorresult-notfound-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `NotFound`
+
+```csharp
+BehaviorResultDescriptor NotFound(string code, string message, BehaviorFault fault)
+```
+
+Creates a not-found result.
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorresult-notfound-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `NotFound`
+
+```csharp
+BehaviorResult<T> NotFound<T>(string code, string message, BehaviorFault fault)
+```
+
+Creates a not-found result for the specified payload type.
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorresult-ok-1-0-system-string-system-string"></a>
+
+##### `Ok`
+
+```csharp
+BehaviorResult<T> Ok<T>(T value, string message, string code)
+```
+
+Creates a successful result with a payload value.
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorresult-unauthorized-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `Unauthorized`
+
+```csharp
+BehaviorResultDescriptor Unauthorized(string code, string message, BehaviorFault fault)
+```
+
+Creates an unauthorized result.
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorresult-unauthorized-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `Unauthorized`
+
+```csharp
+BehaviorResult<T> Unauthorized<T>(string code, string message, BehaviorFault fault)
+```
+
+Creates an unauthorized result for the specified payload type.
+
+<a id="type-cephalon-abstractions-behaviors-behaviorresultdescriptor"></a>
+
+### `BehaviorResultDescriptor`
+
+Represents a transport-neutral behavior outcome descriptor that does not carry a payload value.
+
+#### Declaration
+```csharp
+public struct BehaviorResultDescriptor
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorresultdescriptor-code"></a>
+
+##### `Code`
+
+```csharp
+string Code { get; }
+```
+
+Gets the stable outcome code when one was supplied.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorresultdescriptor-fault"></a>
+
+##### `Fault`
+
+```csharp
+BehaviorFault Fault { get; }
+```
+
+Gets the structured fault details when the outcome is not successful.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorresultdescriptor-message"></a>
+
+##### `Message`
+
+```csharp
+string Message { get; }
+```
+
+Gets the human-readable outcome message.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorresultdescriptor-status"></a>
+
+##### `Status`
+
+```csharp
+BehaviorResultStatus Status { get; }
+```
+
+Gets the transport-neutral outcome status.
+
+<a id="type-cephalon-abstractions-behaviors-behaviorresultstatus"></a>
+
+### `BehaviorResultStatus`
+
+Represents a transport-neutral behavior outcome.
+
+#### Declaration
+```csharp
+public enum BehaviorResultStatus
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-behaviors-behaviorresultstatus-accepted"></a>
+
+##### `Accepted`
+
+```csharp
+const BehaviorResultStatus Accepted
+```
+
+The behavior accepted the request for asynchronous work.
+
+<a id="member-f-cephalon-abstractions-behaviors-behaviorresultstatus-conflict"></a>
+
+##### `Conflict`
+
+```csharp
+const BehaviorResultStatus Conflict
+```
+
+The request conflicts with the current state of the target resource.
+
+<a id="member-f-cephalon-abstractions-behaviors-behaviorresultstatus-created"></a>
+
+##### `Created`
+
+```csharp
+const BehaviorResultStatus Created
+```
+
+The behavior created a new resource or record.
+
+<a id="member-f-cephalon-abstractions-behaviors-behaviorresultstatus-forbidden"></a>
+
+##### `Forbidden`
+
+```csharp
+const BehaviorResultStatus Forbidden
+```
+
+The caller is authenticated but not allowed to perform the requested action.
+
+<a id="member-f-cephalon-abstractions-behaviors-behaviorresultstatus-invalid"></a>
+
+##### `Invalid`
+
+```csharp
+const BehaviorResultStatus Invalid
+```
+
+The request was invalid for the target behavior.
+
+<a id="member-f-cephalon-abstractions-behaviors-behaviorresultstatus-nocontent"></a>
+
+##### `NoContent`
+
+```csharp
+const BehaviorResultStatus NoContent
+```
+
+The behavior completed successfully without a response payload.
+
+<a id="member-f-cephalon-abstractions-behaviors-behaviorresultstatus-notfound"></a>
+
+##### `NotFound`
+
+```csharp
+const BehaviorResultStatus NotFound
+```
+
+The requested resource or target was not found.
+
+<a id="member-f-cephalon-abstractions-behaviors-behaviorresultstatus-ok"></a>
+
+##### `Ok`
+
+```csharp
+const BehaviorResultStatus Ok
+```
+
+The behavior completed successfully and returned a value.
+
+<a id="member-f-cephalon-abstractions-behaviors-behaviorresultstatus-unauthorized"></a>
+
+##### `Unauthorized`
+
+```csharp
+const BehaviorResultStatus Unauthorized
+```
+
+The caller is not authenticated for the requested behavior.
+
+<a id="type-cephalon-abstractions-behaviors-behaviorresult-t"></a>
+
+### `BehaviorResult<T>`
+
+Represents a legacy transport-neutral behavior outcome with an optional payload value.
+
+Remarks: Prefer `Result<T>` for new authoring code when the shorter name is a better fit. This type remains available as a compatibility alias.
+
+#### Declaration
+```csharp
+public sealed class BehaviorResult<T>
+```
 
 <a id="type-cephalon-abstractions-behaviors-behaviorsecurityexception"></a>
 
@@ -3895,6 +5701,89 @@ void Add(BehaviorTopologyDescriptor descriptor)
 
 Adds a behavior topology descriptor to the registry.
 
+<a id="type-cephalon-abstractions-behaviors-ibehaviorresult"></a>
+
+### `IBehaviorResult`
+
+Describes a structured behavior outcome that can be projected into transport-specific responses.
+
+#### Declaration
+```csharp
+public interface IBehaviorResult
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorresult-code"></a>
+
+##### `Code`
+
+```csharp
+string Code { get; }
+```
+
+Gets the stable outcome code when one was supplied.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorresult-fault"></a>
+
+##### `Fault`
+
+```csharp
+BehaviorFault Fault { get; }
+```
+
+Gets the structured fault details when the outcome is not successful.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorresult-hasvalue"></a>
+
+##### `HasValue`
+
+```csharp
+bool HasValue { get; }
+```
+
+Gets a value indicating whether the result carries a payload value.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorresult-issuccess"></a>
+
+##### `IsSuccess`
+
+```csharp
+bool IsSuccess { get; }
+```
+
+Gets a value indicating whether the result represents a successful outcome.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorresult-message"></a>
+
+##### `Message`
+
+```csharp
+string Message { get; }
+```
+
+Gets the human-readable outcome message.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorresult-status"></a>
+
+##### `Status`
+
+```csharp
+BehaviorResultStatus Status { get; }
+```
+
+Gets the transport-neutral outcome status.
+
+<a id="member-p-cephalon-abstractions-behaviors-ibehaviorresult-value"></a>
+
+##### `Value`
+
+```csharp
+object Value { get; }
+```
+
+Gets the boxed payload value when one was supplied.
+
 <a id="type-cephalon-abstractions-behaviors-ibehaviortopologybuilder"></a>
 
 ### `IBehaviorTopologyBuilder`
@@ -4188,6 +6077,254 @@ string SourceModuleId { get; }
 
 Gets the stable module identifier that owns the behavior.
 
+<a id="type-cephalon-abstractions-behaviors-result"></a>
+
+### `Result`
+
+Provides concise factory helpers for creating transport-neutral behavior results.
+
+Remarks: Prefer this type for new behavior authoring code when the longer `BehaviorResult` naming does not add clarity.
+
+#### Declaration
+```csharp
+public static class Result
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-behaviors-result-accepted-1-0-system-string-system-string"></a>
+
+##### `Accepted`
+
+```csharp
+Result<T> Accepted<T>(T value, string message, string code)
+```
+
+Creates an accepted result with a payload value.
+
+<a id="member-m-cephalon-abstractions-behaviors-result-conflict-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `Conflict`
+
+```csharp
+BehaviorResultDescriptor Conflict(string code, string message, BehaviorFault fault)
+```
+
+Creates a conflict result.
+
+<a id="member-m-cephalon-abstractions-behaviors-result-conflict-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `Conflict`
+
+```csharp
+Result<T> Conflict<T>(string code, string message, BehaviorFault fault)
+```
+
+Creates a conflict result for the specified payload type.
+
+<a id="member-m-cephalon-abstractions-behaviors-result-created-1-0-system-string-system-string"></a>
+
+##### `Created`
+
+```csharp
+Result<T> Created<T>(T value, string message, string code)
+```
+
+Creates a created result with a payload value.
+
+<a id="member-m-cephalon-abstractions-behaviors-result-forbidden-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `Forbidden`
+
+```csharp
+BehaviorResultDescriptor Forbidden(string code, string message, BehaviorFault fault)
+```
+
+Creates a forbidden result.
+
+<a id="member-m-cephalon-abstractions-behaviors-result-forbidden-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `Forbidden`
+
+```csharp
+Result<T> Forbidden<T>(string code, string message, BehaviorFault fault)
+```
+
+Creates a forbidden result for the specified payload type.
+
+<a id="member-m-cephalon-abstractions-behaviors-result-invalid-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `Invalid`
+
+```csharp
+BehaviorResultDescriptor Invalid(string code, string message, BehaviorFault fault)
+```
+
+Creates an invalid-request result.
+
+<a id="member-m-cephalon-abstractions-behaviors-result-invalid-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `Invalid`
+
+```csharp
+Result<T> Invalid<T>(string code, string message, BehaviorFault fault)
+```
+
+Creates an invalid-request result for the specified payload type.
+
+<a id="member-m-cephalon-abstractions-behaviors-result-nocontent-system-string-system-string"></a>
+
+##### `NoContent`
+
+```csharp
+BehaviorResultDescriptor NoContent(string message, string code)
+```
+
+Creates a no-content result.
+
+<a id="member-m-cephalon-abstractions-behaviors-result-nocontent-1-system-string-system-string"></a>
+
+##### `NoContent`
+
+```csharp
+Result<T> NoContent<T>(string message, string code)
+```
+
+Creates a no-content result for the specified payload type.
+
+<a id="member-m-cephalon-abstractions-behaviors-result-notfound-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `NotFound`
+
+```csharp
+BehaviorResultDescriptor NotFound(string code, string message, BehaviorFault fault)
+```
+
+Creates a not-found result.
+
+<a id="member-m-cephalon-abstractions-behaviors-result-notfound-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `NotFound`
+
+```csharp
+Result<T> NotFound<T>(string code, string message, BehaviorFault fault)
+```
+
+Creates a not-found result for the specified payload type.
+
+<a id="member-m-cephalon-abstractions-behaviors-result-ok-1-0-system-string-system-string"></a>
+
+##### `Ok`
+
+```csharp
+Result<T> Ok<T>(T value, string message, string code)
+```
+
+Creates a successful result with a payload value.
+
+<a id="member-m-cephalon-abstractions-behaviors-result-unauthorized-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `Unauthorized`
+
+```csharp
+BehaviorResultDescriptor Unauthorized(string code, string message, BehaviorFault fault)
+```
+
+Creates an unauthorized result.
+
+<a id="member-m-cephalon-abstractions-behaviors-result-unauthorized-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault"></a>
+
+##### `Unauthorized`
+
+```csharp
+Result<T> Unauthorized<T>(string code, string message, BehaviorFault fault)
+```
+
+Creates an unauthorized result for the specified payload type.
+
+<a id="type-cephalon-abstractions-behaviors-result-t"></a>
+
+### `Result<T>`
+
+Represents a concise transport-neutral behavior outcome with an optional payload value.
+
+#### Declaration
+```csharp
+public class Result<T>
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-result-1-code"></a>
+
+##### `Code`
+
+```csharp
+string Code { get; }
+```
+
+Gets the stable outcome code when one was supplied.
+
+<a id="member-p-cephalon-abstractions-behaviors-result-1-fault"></a>
+
+##### `Fault`
+
+```csharp
+BehaviorFault Fault { get; }
+```
+
+Gets the structured fault details when the outcome is not successful.
+
+<a id="member-p-cephalon-abstractions-behaviors-result-1-hasvalue"></a>
+
+##### `HasValue`
+
+```csharp
+bool HasValue { get; }
+```
+
+Gets a value indicating whether the result carries a payload value.
+
+<a id="member-p-cephalon-abstractions-behaviors-result-1-issuccess"></a>
+
+##### `IsSuccess`
+
+```csharp
+bool IsSuccess { get; }
+```
+
+Gets a value indicating whether the result represents a successful outcome.
+
+<a id="member-p-cephalon-abstractions-behaviors-result-1-message"></a>
+
+##### `Message`
+
+```csharp
+string Message { get; }
+```
+
+Gets the human-readable outcome message.
+
+<a id="member-p-cephalon-abstractions-behaviors-result-1-status"></a>
+
+##### `Status`
+
+```csharp
+BehaviorResultStatus Status { get; }
+```
+
+Gets the transport-neutral outcome status.
+
+<a id="member-p-cephalon-abstractions-behaviors-result-1-value"></a>
+
+##### `Value`
+
+```csharp
+T Value { get; }
+```
+
+Gets the typed payload value when one was supplied.
+
 <a id="namespace-cephalon-abstractions-capabilities"></a>
 
 ## Namespace Cephalon.Abstractions.Capabilities
@@ -4336,6 +6473,1021 @@ Parameters:
 
 ## Namespace Cephalon.Abstractions.Data
 
+<a id="type-cephalon-abstractions-data-databasemigrationcommanddescriptor"></a>
+
+### `DatabaseMigrationCommandDescriptor`
+
+Describes one operator-facing command template for executing a database-migration target.
+
+#### Declaration
+```csharp
+public sealed class DatabaseMigrationCommandDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-databasemigrationcommanddescriptor-ctor-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `DatabaseMigrationCommandDescriptor`
+
+```csharp
+DatabaseMigrationCommandDescriptor(string id, string displayName, string description, string commandTemplate, bool recommendedForProduction, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new database-migration command descriptor.
+
+Parameters:
+- `id`: The stable command identifier such as `bundle`, `script`, or `update`.
+- `displayName`: The operator-facing command name.
+- `description`: The human-readable command description.
+- `commandTemplate`: The command template that operators can adapt for their environment.
+- `recommendedForProduction`: Whether this command is recommended for production use.
+- `metadata`: Optional operator-facing metadata associated with the command.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-commandtemplate"></a>
+
+##### `CommandTemplate`
+
+```csharp
+string CommandTemplate { get; }
+```
+
+Gets the command template that operators can adapt for their environment.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable command description.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing command name.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable command identifier.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing metadata associated with the command.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-recommendedforproduction"></a>
+
+##### `RecommendedForProduction`
+
+```csharp
+bool RecommendedForProduction { get; }
+```
+
+Gets a value indicating whether this command is recommended for production use.
+
+<a id="type-cephalon-abstractions-data-databasemigrationdescriptor"></a>
+
+### `DatabaseMigrationDescriptor`
+
+Describes one logical database-migration target visible to the active Cephalon runtime.
+
+#### Declaration
+```csharp
+public sealed class DatabaseMigrationDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-databasemigrationdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-data-databasemigrationstatus-system-boolean-system-boolean-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-data-databasemigrationcommanddescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `DatabaseMigrationDescriptor`
+
+```csharp
+DatabaseMigrationDescriptor(string id, string displayName, string description, string requestedRoleId, string resolvedRoleId, string executionMode, DatabaseMigrationStatus status, bool applyOnStartup, bool exitAfterApply, string provider, string dbContextType, string mechanism, DateTimeOffset? startedAtUtc, DateTimeOffset? completedAtUtc, string lastError, IReadOnlyList<DatabaseMigrationCommandDescriptor> commands, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new database-migration descriptor.
+
+Parameters:
+- `id`: The stable logical migration-target identifier.
+- `displayName`: The operator-facing migration-target name.
+- `description`: The human-readable migration-target description.
+- `requestedRoleId`: The logical database role requested by migration policy.
+- `resolvedRoleId`: The concrete database role that backs the target.
+- `executionMode`: The execution mode such as `startup-hosted-service` or `manual-or-deploy-time`.
+- `status`: The current execution status of the migration target.
+- `applyOnStartup`: Whether startup execution is enabled for this target.
+- `exitAfterApply`: Whether the host exits after startup execution completes.
+- `provider`: The effective provider identifier when known.
+- `dbContextType`: The DbContext type that can execute the target when known.
+- `mechanism`: The execution mechanism such as `migrate` or `ensure-created`.
+- `startedAtUtc`: The latest start time observed for this target.
+- `completedAtUtc`: The latest completion time observed for this target.
+- `lastError`: The latest error observed for this target.
+- `commands`: Optional operator-facing command templates for executing this target outside startup apply.
+- `metadata`: Optional operator-facing metadata associated with the migration target.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-applyonstartup"></a>
+
+##### `ApplyOnStartup`
+
+```csharp
+bool ApplyOnStartup { get; }
+```
+
+Gets a value indicating whether startup execution is enabled for this target.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-commands"></a>
+
+##### `Commands`
+
+```csharp
+IReadOnlyList<DatabaseMigrationCommandDescriptor> Commands { get; }
+```
+
+Gets optional operator-facing command templates for executing this target outside startup apply.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-completedatutc"></a>
+
+##### `CompletedAtUtc`
+
+```csharp
+DateTimeOffset? CompletedAtUtc { get; }
+```
+
+Gets the latest completion time observed for this target.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-dbcontexttype"></a>
+
+##### `DbContextType`
+
+```csharp
+string DbContextType { get; }
+```
+
+Gets the DbContext type that can execute the target when known.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable migration-target description.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing migration-target name.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-executionmode"></a>
+
+##### `ExecutionMode`
+
+```csharp
+string ExecutionMode { get; }
+```
+
+Gets the runtime execution mode for this target.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-exitafterapply"></a>
+
+##### `ExitAfterApply`
+
+```csharp
+bool ExitAfterApply { get; }
+```
+
+Gets a value indicating whether the host exits after startup execution completes.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable logical migration-target identifier.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-lasterror"></a>
+
+##### `LastError`
+
+```csharp
+string LastError { get; }
+```
+
+Gets the latest error observed for this target.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-mechanism"></a>
+
+##### `Mechanism`
+
+```csharp
+string Mechanism { get; }
+```
+
+Gets the execution mechanism such as `migrate` or `ensure-created`.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing metadata associated with the migration target.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; }
+```
+
+Gets the effective provider identifier when known.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-requestedroleid"></a>
+
+##### `RequestedRoleId`
+
+```csharp
+string RequestedRoleId { get; }
+```
+
+Gets the logical database role requested by migration policy.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-resolvedroleid"></a>
+
+##### `ResolvedRoleId`
+
+```csharp
+string ResolvedRoleId { get; }
+```
+
+Gets the concrete database role that backs the target.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-startedatutc"></a>
+
+##### `StartedAtUtc`
+
+```csharp
+DateTimeOffset? StartedAtUtc { get; }
+```
+
+Gets the latest start time observed for this target.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-status"></a>
+
+##### `Status`
+
+```csharp
+DatabaseMigrationStatus Status { get; }
+```
+
+Gets the current execution status of the migration target.
+
+<a id="type-cephalon-abstractions-data-databasemigrationstatus"></a>
+
+### `DatabaseMigrationStatus`
+
+Describes the current execution state of one logical database-migration target.
+
+#### Declaration
+```csharp
+public enum DatabaseMigrationStatus
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-databasemigrationstatus-failed"></a>
+
+##### `Failed`
+
+```csharp
+const DatabaseMigrationStatus Failed
+```
+
+The migration target failed during execution.
+
+<a id="member-f-cephalon-abstractions-data-databasemigrationstatus-planned"></a>
+
+##### `Planned`
+
+```csharp
+const DatabaseMigrationStatus Planned
+```
+
+The migration target is known to the runtime but has not started executing yet.
+
+<a id="member-f-cephalon-abstractions-data-databasemigrationstatus-running"></a>
+
+##### `Running`
+
+```csharp
+const DatabaseMigrationStatus Running
+```
+
+The migration target is currently executing.
+
+<a id="member-f-cephalon-abstractions-data-databasemigrationstatus-succeeded"></a>
+
+##### `Succeeded`
+
+```csharp
+const DatabaseMigrationStatus Succeeded
+```
+
+The migration target completed successfully.
+
+<a id="member-f-cephalon-abstractions-data-databasemigrationstatus-unsupported"></a>
+
+##### `Unsupported`
+
+```csharp
+const DatabaseMigrationStatus Unsupported
+```
+
+The runtime cannot execute the configured migration target with the active provider-pack registrations.
+
+<a id="type-cephalon-abstractions-data-databaseroledescriptor"></a>
+
+### `DatabaseRoleDescriptor`
+
+Describes one logical database role resolved for the active Cephalon runtime.
+
+#### Declaration
+```csharp
+public sealed class DatabaseRoleDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-databaseroledescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-appmodel-databaseruntimeselection-system-boolean-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-nullable-cephalon-abstractions-health-healthstate-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `DatabaseRoleDescriptor`
+
+```csharp
+DatabaseRoleDescriptor(string id, string displayName, string description, string provider, string requestedRoleId, string resolvedRoleId, string resolutionMode, DatabaseRuntimeSelection runtime, bool usesRoleReference, string useRole, string connectionMode, string connectionStringName, string schema, IReadOnlyList<string> consumers, IReadOnlyList<string> referencedByRoles, IReadOnlyList<string> coLocatedRoles, IReadOnlyDictionary<string, string> metadata, HealthState? healthState, string healthDescription, string migrationState, string migrationDescription, DateTimeOffset? observedAtUtc, IReadOnlyDictionary<string, string> runtimeMetadata)
+```
+
+Creates a new database-role descriptor.
+
+Parameters:
+- `id`: The stable logical database-role identifier.
+- `displayName`: The operator-facing database-role name.
+- `description`: The human-readable database-role description.
+- `provider`: The logical provider identifier that backs the effective target.
+- `requestedRoleId`: The logical role that was requested by configuration or runtime selection.
+- `resolvedRoleId`: The concrete role that ultimately backs the physical target.
+- `resolutionMode`: The runtime resolution mode such as `direct` or `role-reference`.
+- `runtime`: The effective runtime tuning resolved for this database role.
+- `usesRoleReference`: Whether the logical role resolves through `UseRole`.
+- `useRole`: The referenced role supplied through `UseRole`, when present.
+- `connectionMode`: The effective connection mode such as `named` or `inline`.
+- `connectionStringName`: The effective named connection-string reference, when used.
+- `schema`: The effective schema override, when configured.
+- `consumers`: The logical engine features that explicitly target this role.
+- `referencedByRoles`: Other logical roles that explicitly reference this role through `UseRole`.
+- `coLocatedRoles`: Other logical roles that resolve to the same concrete role target.
+- `metadata`: Optional operator-facing metadata associated with the database role.
+- `healthState`: The current runtime health state reported for the database role, when available.
+- `healthDescription`: The operator-facing health description reported for the database role, when available.
+- `migrationState`: The current migration execution state reported for the database role, when available.
+- `migrationDescription`: The operator-facing migration description reported for the database role, when available.
+- `observedAtUtc`: The UTC timestamp when runtime state was last observed for the database role, when available.
+- `runtimeMetadata`: Optional runtime metadata associated with the database role.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-colocatedroles"></a>
+
+##### `CoLocatedRoles`
+
+```csharp
+IReadOnlyList<string> CoLocatedRoles { get; }
+```
+
+Gets the logical roles that resolve to the same concrete role target.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-connectionmode"></a>
+
+##### `ConnectionMode`
+
+```csharp
+string ConnectionMode { get; }
+```
+
+Gets the effective connection mode.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-connectionstringname"></a>
+
+##### `ConnectionStringName`
+
+```csharp
+string ConnectionStringName { get; }
+```
+
+Gets the effective named connection-string reference, when used.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-consumers"></a>
+
+##### `Consumers`
+
+```csharp
+IReadOnlyList<string> Consumers { get; }
+```
+
+Gets the logical engine features that explicitly target this role.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable database-role description.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing database-role name.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-healthdescription"></a>
+
+##### `HealthDescription`
+
+```csharp
+string HealthDescription { get; }
+```
+
+Gets the operator-facing health description reported for the database role, when available.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-healthstate"></a>
+
+##### `HealthState`
+
+```csharp
+HealthState? HealthState { get; }
+```
+
+Gets the current runtime health state reported for the database role, when available.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable logical database-role identifier.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing metadata associated with the database role.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-migrationdescription"></a>
+
+##### `MigrationDescription`
+
+```csharp
+string MigrationDescription { get; }
+```
+
+Gets the operator-facing migration description reported for the database role, when available.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-migrationstate"></a>
+
+##### `MigrationState`
+
+```csharp
+string MigrationState { get; }
+```
+
+Gets the current migration execution state reported for the database role, when available.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-observedatutc"></a>
+
+##### `ObservedAtUtc`
+
+```csharp
+DateTimeOffset? ObservedAtUtc { get; }
+```
+
+Gets the UTC timestamp when runtime state was last observed for the database role, when available.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; }
+```
+
+Gets the logical provider identifier that backs the effective target.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-referencedbyroles"></a>
+
+##### `ReferencedByRoles`
+
+```csharp
+IReadOnlyList<string> ReferencedByRoles { get; }
+```
+
+Gets the logical roles that explicitly reference this role through `UseRole`.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-requestedroleid"></a>
+
+##### `RequestedRoleId`
+
+```csharp
+string RequestedRoleId { get; }
+```
+
+Gets the logical role requested by configuration or runtime selection.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-resolutionmode"></a>
+
+##### `ResolutionMode`
+
+```csharp
+string ResolutionMode { get; }
+```
+
+Gets the runtime resolution mode.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-resolvedroleid"></a>
+
+##### `ResolvedRoleId`
+
+```csharp
+string ResolvedRoleId { get; }
+```
+
+Gets the concrete role that ultimately backs the physical target.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-runtime"></a>
+
+##### `Runtime`
+
+```csharp
+DatabaseRuntimeSelection Runtime { get; }
+```
+
+Gets the effective runtime tuning resolved for this database role.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-runtimemetadata"></a>
+
+##### `RuntimeMetadata`
+
+```csharp
+IReadOnlyDictionary<string, string> RuntimeMetadata { get; }
+```
+
+Gets optional runtime metadata associated with the database role.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-schema"></a>
+
+##### `Schema`
+
+```csharp
+string Schema { get; }
+```
+
+Gets the effective schema override, when configured.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-userole"></a>
+
+##### `UseRole`
+
+```csharp
+string UseRole { get; }
+```
+
+Gets the referenced role supplied through `UseRole`, when present.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-usesrolereference"></a>
+
+##### `UsesRoleReference`
+
+```csharp
+bool UsesRoleReference { get; }
+```
+
+Gets a value indicating whether this role resolves through `UseRole`.
+
+<a id="type-cephalon-abstractions-data-databaseroleruntimedescriptor"></a>
+
+### `DatabaseRoleRuntimeDescriptor`
+
+Describes additive runtime state projected for one logical database role.
+
+#### Declaration
+```csharp
+public sealed class DatabaseRoleRuntimeDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-databaseroleruntimedescriptor-ctor-system-string-system-nullable-cephalon-abstractions-health-healthstate-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `DatabaseRoleRuntimeDescriptor`
+
+```csharp
+DatabaseRoleRuntimeDescriptor(string databaseRoleId, HealthState? healthState, string healthDescription, string migrationState, string migrationDescription, DateTimeOffset? observedAtUtc, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new database-role runtime descriptor.
+
+Parameters:
+- `databaseRoleId`: The logical database-role identifier that this runtime state applies to.
+- `healthState`: The current runtime health state for the role, when known.
+- `healthDescription`: The operator-facing health description for the role, when known.
+- `migrationState`: The current migration execution state for the role, when known.
+- `migrationDescription`: The operator-facing migration description for the role, when known.
+- `observedAtUtc`: The UTC timestamp when this runtime state was last observed.
+- `metadata`: Optional runtime metadata associated with the role.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-databaseroleid"></a>
+
+##### `DatabaseRoleId`
+
+```csharp
+string DatabaseRoleId { get; }
+```
+
+Gets the logical database-role identifier that this runtime state applies to.
+
+<a id="member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-healthdescription"></a>
+
+##### `HealthDescription`
+
+```csharp
+string HealthDescription { get; }
+```
+
+Gets the operator-facing health description for the role, when known.
+
+<a id="member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-healthstate"></a>
+
+##### `HealthState`
+
+```csharp
+HealthState? HealthState { get; }
+```
+
+Gets the current runtime health state for the role, when known.
+
+<a id="member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional runtime metadata associated with the role.
+
+<a id="member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-migrationdescription"></a>
+
+##### `MigrationDescription`
+
+```csharp
+string MigrationDescription { get; }
+```
+
+Gets the operator-facing migration description for the role, when known.
+
+<a id="member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-migrationstate"></a>
+
+##### `MigrationState`
+
+```csharp
+string MigrationState { get; }
+```
+
+Gets the current migration execution state for the role, when known.
+
+<a id="member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-observedatutc"></a>
+
+##### `ObservedAtUtc`
+
+```csharp
+DateTimeOffset? ObservedAtUtc { get; }
+```
+
+Gets the UTC timestamp when this runtime state was last observed.
+
+<a id="type-cephalon-abstractions-data-eventdispatchruntimedescriptor"></a>
+
+### `EventDispatchRuntimeDescriptor`
+
+Describes one operator-facing durable event-dispatch runtime available to the active Cephalon runtime.
+
+#### Declaration
+```csharp
+public sealed class EventDispatchRuntimeDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-eventdispatchruntimedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventDispatchRuntimeDescriptor`
+
+```csharp
+EventDispatchRuntimeDescriptor(string id, string displayName, string description, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new event-dispatch runtime descriptor.
+
+Parameters:
+- `id`: The stable dispatch-runtime identifier.
+- `displayName`: The operator-facing dispatch-runtime name.
+- `description`: The human-readable dispatch-runtime description.
+- `metadata`: Optional operator-facing metadata for the dispatch runtime.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable dispatch-runtime description.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing dispatch-runtime name.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable dispatch-runtime identifier.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata for the dispatch runtime.
+
+<a id="type-cephalon-abstractions-data-eventdispatchruntimestate"></a>
+
+### `EventDispatchRuntimeState`
+
+Describes the latest operator-facing runtime state reported for one durable event-dispatch path.
+
+#### Declaration
+```csharp
+public sealed class EventDispatchRuntimeState
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-eventdispatchruntimestate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventDispatchRuntimeState`
+
+```csharp
+EventDispatchRuntimeState(string OutboxId, string LastChannelId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastMessageId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int RetryScheduledCount, int SkippedCount, string LastError, IReadOnlyDictionary<string, string> Metadata)
+```
+
+Describes the latest operator-facing runtime state reported for one durable event-dispatch path.
+
+Parameters:
+- `OutboxId`: The stable outbox identifier that owns the dispatch path.
+- `LastChannelId`: The last stable channel identifier reported for this dispatch path.
+- `LastOutcome`: The last reported outcome identifier when one exists.
+- `LastObservedAtUtc`: The UTC timestamp when the last observation was reported.
+- `LastMessageId`: The last stable outbound message identifier when one was reported.
+- `LastAttempt`: The last reported dispatch attempt number.
+- `StartedCount`: The number of `started` observations reported so far.
+- `SucceededCount`: The number of `succeeded` observations reported so far.
+- `FailedCount`: The number of `failed` observations reported so far.
+- `RetryScheduledCount`: The number of `retry-scheduled` observations reported so far.
+- `SkippedCount`: The number of `skipped` observations reported so far.
+- `LastError`: The last operator-facing error summary when a failure was reported.
+- `Metadata`: The operator-facing metadata captured by the latest report.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-failedcount"></a>
+
+##### `FailedCount`
+
+```csharp
+int FailedCount { get; set; }
+```
+
+The number of `failed` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastattempt"></a>
+
+##### `LastAttempt`
+
+```csharp
+int LastAttempt { get; set; }
+```
+
+The last reported dispatch attempt number.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastchannelid"></a>
+
+##### `LastChannelId`
+
+```csharp
+string LastChannelId { get; set; }
+```
+
+The last stable channel identifier reported for this dispatch path.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-lasterror"></a>
+
+##### `LastError`
+
+```csharp
+string LastError { get; set; }
+```
+
+The last operator-facing error summary when a failure was reported.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastmessageid"></a>
+
+##### `LastMessageId`
+
+```csharp
+string LastMessageId { get; set; }
+```
+
+The last stable outbound message identifier when one was reported.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastobservedatutc"></a>
+
+##### `LastObservedAtUtc`
+
+```csharp
+DateTimeOffset? LastObservedAtUtc { get; set; }
+```
+
+The UTC timestamp when the last observation was reported.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastoutcome"></a>
+
+##### `LastOutcome`
+
+```csharp
+string LastOutcome { get; set; }
+```
+
+The last reported outcome identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+The operator-facing metadata captured by the latest report.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-outboxid"></a>
+
+##### `OutboxId`
+
+```csharp
+string OutboxId { get; set; }
+```
+
+The stable outbox identifier that owns the dispatch path.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-retrypending"></a>
+
+##### `RetryPending`
+
+```csharp
+bool RetryPending { get; }
+```
+
+Gets a value indicating whether the latest report says another retry attempt is pending.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-retryscheduledcount"></a>
+
+##### `RetryScheduledCount`
+
+```csharp
+int RetryScheduledCount { get; set; }
+```
+
+The number of `retry-scheduled` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-skippedcount"></a>
+
+##### `SkippedCount`
+
+```csharp
+int SkippedCount { get; set; }
+```
+
+The number of `skipped` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-startedcount"></a>
+
+##### `StartedCount`
+
+```csharp
+int StartedCount { get; set; }
+```
+
+The number of `started` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-succeededcount"></a>
+
+##### `SucceededCount`
+
+```csharp
+int SucceededCount { get; set; }
+```
+
+The number of `succeeded` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimestate-totalreports"></a>
+
+##### `TotalReports`
+
+```csharp
+int TotalReports { get; }
+```
+
+Gets the total number of observations reported for this dispatch path.
+
 <a id="type-cephalon-abstractions-data-icommand"></a>
 
 ### `ICommand`
@@ -4415,6 +7567,262 @@ Marks a write-side request that returns a value when it completes.
 ```csharp
 public interface ICommand<TResult>
 ```
+
+<a id="type-cephalon-abstractions-data-idatabasemigrationcatalog"></a>
+
+### `IDatabaseMigrationCatalog`
+
+Exposes the active runtime database-migration catalog for the current Cephalon host.
+
+#### Declaration
+```csharp
+public interface IDatabaseMigrationCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-idatabasemigrationcatalog-databasemigrations"></a>
+
+##### `DatabaseMigrations`
+
+```csharp
+IReadOnlyList<DatabaseMigrationDescriptor> DatabaseMigrations { get; }
+```
+
+Gets every migration target visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-idatabasemigrationcatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+DatabaseMigrationDescriptor GetById(string databaseMigrationId)
+```
+
+Gets one migration target by its logical identifier.
+
+Returns: The matching migration-target descriptor, or `null` when none exists.
+
+Parameters:
+- `databaseMigrationId`: The logical migration-target identifier.
+
+<a id="type-cephalon-abstractions-data-idatabasemigrationcontributor"></a>
+
+### `IDatabaseMigrationContributor`
+
+Contributes one or more database-migration descriptors to the active Cephalon runtime.
+
+#### Declaration
+```csharp
+public interface IDatabaseMigrationContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-idatabasemigrationcontributor-describedatabasemigrations"></a>
+
+##### `DescribeDatabaseMigrations`
+
+```csharp
+IReadOnlyList<DatabaseMigrationDescriptor> DescribeDatabaseMigrations()
+```
+
+Describes the database-migration targets that should appear in the active runtime catalog.
+
+Returns: The migration descriptors contributed by the current provider or module pack.
+
+<a id="type-cephalon-abstractions-data-idatabaserolecatalog"></a>
+
+### `IDatabaseRoleCatalog`
+
+Exposes the active engine-owned database-role catalog for the current runtime.
+
+#### Declaration
+```csharp
+public interface IDatabaseRoleCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-idatabaserolecatalog-databaseroles"></a>
+
+##### `DatabaseRoles`
+
+```csharp
+IReadOnlyList<DatabaseRoleDescriptor> DatabaseRoles { get; }
+```
+
+Gets every database role visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-idatabaserolecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+DatabaseRoleDescriptor GetById(string databaseRoleId)
+```
+
+Gets one database role by its logical identifier.
+
+Returns: The matching database-role descriptor, or `null` when none exists.
+
+Parameters:
+- `databaseRoleId`: The logical database-role identifier.
+
+<a id="member-m-cephalon-abstractions-data-idatabaserolecatalog-getbyprovider-system-string"></a>
+
+##### `GetByProvider`
+
+```csharp
+IReadOnlyList<DatabaseRoleDescriptor> GetByProvider(string provider)
+```
+
+Gets every database role backed by the supplied provider identifier.
+
+Returns: The matching database-role descriptors.
+
+Parameters:
+- `provider`: The provider identifier to match.
+
+<a id="member-m-cephalon-abstractions-data-idatabaserolecatalog-getbyresolvedrole-system-string"></a>
+
+##### `GetByResolvedRole`
+
+```csharp
+IReadOnlyList<DatabaseRoleDescriptor> GetByResolvedRole(string resolvedRoleId)
+```
+
+Gets every database role that resolves to the supplied concrete role identifier.
+
+Returns: The matching database-role descriptors.
+
+Parameters:
+- `resolvedRoleId`: The resolved concrete database-role identifier.
+
+<a id="type-cephalon-abstractions-data-idatabaseroleruntimecontributor"></a>
+
+### `IDatabaseRoleRuntimeContributor`
+
+Contributes additive runtime state for one or more logical database roles.
+
+#### Declaration
+```csharp
+public interface IDatabaseRoleRuntimeContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-idatabaseroleruntimecontributor-describedatabaseroleruntime"></a>
+
+##### `DescribeDatabaseRoleRuntime`
+
+```csharp
+IReadOnlyList<DatabaseRoleRuntimeDescriptor> DescribeDatabaseRoleRuntime()
+```
+
+Describes the runtime state that should be merged into the active database-role catalog.
+
+Returns: The runtime descriptors that should enrich the active database-role catalog.
+
+<a id="type-cephalon-abstractions-data-ieventdispatchruntimecatalog"></a>
+
+### `IEventDispatchRuntimeCatalog`
+
+Exposes the operator-facing dispatch runtime state currently reported for durable event publication paths.
+
+#### Declaration
+```csharp
+public interface IEventDispatchRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-ieventdispatchruntimecatalog-states"></a>
+
+##### `States`
+
+```csharp
+IReadOnlyList<EventDispatchRuntimeState> States { get; }
+```
+
+Gets the reported dispatch state entries visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchruntimecatalog-getbyoutboxid-system-string"></a>
+
+##### `GetByOutboxId`
+
+```csharp
+EventDispatchRuntimeState GetByOutboxId(string outboxId)
+```
+
+Gets the latest reported dispatch state for one outbox-backed publication path.
+
+Returns: The latest reported state, or `null` when that path has not reported runtime state.
+
+Parameters:
+- `outboxId`: The stable outbox identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchruntimecatalog-tryget-system-string-cephalon-abstractions-data-eventdispatchruntimestate"></a>
+
+##### `TryGet`
+
+```csharp
+bool TryGet(string outboxId, out EventDispatchRuntimeState state)
+```
+
+Tries to get the latest reported dispatch state for one outbox-backed publication path.
+
+Returns: `true` when a reported state exists; otherwise, `false`.
+
+Parameters:
+- `outboxId`: The stable outbox identifier to resolve.
+- `state`: Receives the latest reported state when the path has reported one.
+
+<a id="type-cephalon-abstractions-data-ieventdispatchruntimedescriptorcatalog"></a>
+
+### `IEventDispatchRuntimeDescriptorCatalog`
+
+Exposes the configured operator-facing durable dispatch runtimes visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IEventDispatchRuntimeDescriptorCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-ieventdispatchruntimedescriptorcatalog-runtimes"></a>
+
+##### `Runtimes`
+
+```csharp
+IReadOnlyList<EventDispatchRuntimeDescriptor> Runtimes { get; }
+```
+
+Gets the configured dispatch runtimes visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchruntimedescriptorcatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+EventDispatchRuntimeDescriptor GetById(string dispatchRuntimeId)
+```
+
+Gets one dispatch runtime by its stable identifier.
+
+Returns: The matching dispatch-runtime descriptor, or `null` when none exists.
+
+Parameters:
+- `dispatchRuntimeId`: The stable dispatch-runtime identifier to resolve.
 
 <a id="type-cephalon-abstractions-data-iinbox"></a>
 

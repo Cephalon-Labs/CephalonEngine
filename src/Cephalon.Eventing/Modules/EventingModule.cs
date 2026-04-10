@@ -82,6 +82,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         {
             services.TryAddSingleton<EventDispatchRuntimeDescriptorCatalog>();
             services.TryAddSingleton<EventDispatchRuntimeCatalog>();
+            services.TryAddSingleton<IEventDispatchRuntimeDescriptorCatalog>(static provider => provider.GetRequiredService<EventDispatchRuntimeDescriptorCatalog>());
             services.TryAddSingleton<IEventDispatchRuntimeCatalog>(static provider => provider.GetRequiredService<EventDispatchRuntimeCatalog>());
             services.TryAddSingleton<IEventDispatchRuntimeReporter>(static provider => provider.GetRequiredService<EventDispatchRuntimeCatalog>());
             services.TryAddScoped<IEventPublisher, OutboxBackedEventPublisher>();

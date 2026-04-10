@@ -11,6 +11,7 @@
 - `/engine/database-roles` when the engine-owned database-role catalog is active
 - `/engine/database-migrations` when the engine-owned database-migration catalog is active
 - `/engine/audit-history` and `/engine/audit-history/export` when durable audit-history services are active
+- `/engine/event-dispatch-runtimes` and `/engine/event-dispatches` when eventing packs register dispatch-runtime descriptors or live dispatch-state reporters
 - `/engine/package-policy`, `/engine/packages`, and the rest of the engine governance surface
 - `/health`, `/health/live`, and `/health/ready` surfaces
 - opt-in HTTP request/response logging with bounded request and response body capture plus default sensitive-value redaction under `Engine:Observability:HttpLogging`
@@ -109,6 +110,17 @@ operator-facing answers such as requested-versus-resolved role ids, `UseRole` re
 consumers, co-location, audit-history metadata, live provider-contributed role health,
 migration status, and provider-added deploy-time command templates such as Entity Framework
 bundle/script/update guidance.
+
+The host now also exposes additive event-dispatch operator answers directly. When eventing packs
+register the corresponding catalogs, `/engine/event-dispatch-runtimes` and
+`/engine/event-dispatch-runtimes/{dispatchRuntimeId}` publish configured dispatch-runtime
+descriptors such as runtime id, ownership metadata, bridge mode, and the outbox/runtime ids a
+managed loop is responsible for before any live work begins. `/engine/event-dispatches` and
+`/engine/event-dispatches/{outboxId}` publish the latest live dispatch state per outbox path,
+including reported outcome, retry intent, timestamps, and totals from
+`IEventDispatchRuntimeReporter`. Those same answers also flow into `/engine/snapshot` as
+`EventDispatchRuntimes` and `EventDispatchStates`, which keeps operator tooling aligned across the
+host route surface and the broader runtime snapshot.
 
 ## Related docs
 

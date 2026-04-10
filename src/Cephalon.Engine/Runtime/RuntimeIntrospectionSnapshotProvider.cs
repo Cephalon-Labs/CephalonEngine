@@ -8,6 +8,7 @@ using Cephalon.Engine.Diagnostics;
 namespace Cephalon.Engine.Runtime;
 
 internal sealed class RuntimeIntrospectionSnapshotProvider(
+    IServiceProvider serviceProvider,
     IRuntime runtime,
     IExecutionRuntimeCatalog executionRuntimeCatalog,
     IHostedExecutionRuntimeCatalog hostedExecutionRuntimeCatalog,
@@ -23,6 +24,9 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
 {
     public RuntimeIntrospectionSnapshot CreateSnapshot()
     {
+        var eventDispatchRuntimeDescriptorCatalog = serviceProvider.GetService(typeof(IEventDispatchRuntimeDescriptorCatalog)) as IEventDispatchRuntimeDescriptorCatalog;
+        var eventDispatchRuntimeCatalog = serviceProvider.GetService(typeof(IEventDispatchRuntimeCatalog)) as IEventDispatchRuntimeCatalog;
+
         return new RuntimeIntrospectionSnapshot(
             runtime.Manifest,
             runtime.StatusSnapshot,
@@ -37,6 +41,8 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             Inboxes = inboxCatalog.Inboxes,
             DatabaseRoles = databaseRoleCatalog.DatabaseRoles,
             DatabaseMigrations = databaseMigrationCatalog.DatabaseMigrations,
+            EventDispatchRuntimes = eventDispatchRuntimeDescriptorCatalog?.Runtimes ?? [],
+            EventDispatchStates = eventDispatchRuntimeCatalog?.States ?? [],
             AuditStores = auditStoreCatalog.AuditStores,
             AuthorizationPolicies = authorizationPolicyCatalog.Policies
         };

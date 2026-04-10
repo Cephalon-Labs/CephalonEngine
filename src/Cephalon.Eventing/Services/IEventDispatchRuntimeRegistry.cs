@@ -1,3 +1,5 @@
+using Cephalon.Abstractions.Data;
+
 namespace Cephalon.Eventing.Services;
 
 /// <summary>

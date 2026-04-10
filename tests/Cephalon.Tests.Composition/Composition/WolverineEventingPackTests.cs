@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Data;
 using Cephalon.Data.EntityFramework.Registration;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
@@ -109,6 +110,7 @@ public sealed class WolverineEventingPackTests
 
         await using var provider = services.BuildServiceProvider();
         var diagnosticsCatalog = provider.GetRequiredService<IRuntimeDiagnosticsCatalog>();
+        var dispatchRuntimeDescriptors = provider.GetRequiredService<IEventDispatchRuntimeDescriptorCatalog>();
         var hostedExecutions = provider.GetRequiredService<global::Cephalon.Abstractions.Execution.IHostedExecutionRuntimeCatalog>();
         var technologyCatalog = provider.GetRequiredService<global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeCatalog>();
         var hostedServices = provider.GetServices<IHostedService>();
@@ -120,6 +122,7 @@ public sealed class WolverineEventingPackTests
         var dispatchSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
         var adapterEntry = Assert.Single(adapterSurface.Entries, entry => entry.Id == "wolverine-eventing");
         var dispatchEntry = Assert.Single(dispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
+        var dispatchRuntimeDescriptor = Assert.Single(dispatchRuntimeDescriptors.Runtimes);
 
         Assert.Equal("wolverine-managed", adapterEntry.Metadata["dispatchBridge"]);
         Assert.Equal("enabled", adapterEntry.Metadata["dispatchLoop"]);
@@ -137,6 +140,9 @@ public sealed class WolverineEventingPackTests
         Assert.Equal(
             WolverineEventingRuntimeIds.HostedExecutionId,
             dispatchEntry.Metadata[$"dispatchRuntime.{WolverineEventingRuntimeIds.DispatchRuntimeId}.hostedExecutionId"]);
+        Assert.Equal(WolverineEventingRuntimeIds.DispatchRuntimeId, dispatchRuntimeDescriptor.Id);
+        Assert.Equal("Wolverine Dispatch Loop", dispatchRuntimeDescriptor.DisplayName);
+        Assert.Equal("wolverine", dispatchRuntimeDescriptor.Metadata["adapter"]);
         var diagnosticsConvention = Assert.Single(diagnosticsCatalog.GetBySource("Cephalon.Eventing.Wolverine"));
         Assert.Equal(4300, diagnosticsConvention.MinimumEventId);
         Assert.Equal(4305, diagnosticsConvention.MaximumEventId);

@@ -202,6 +202,137 @@ Parameters:
 - `value`: The suite blueprint identifier, display name, or alias to resolve.
 - `blueprint`: The resolved suite blueprint when the lookup succeeds.
 
+<a id="type-cephalon-engine-appmodel-databasetopologyroleresolution"></a>
+
+### `DatabaseTopologyRoleResolution`
+
+Describes one resolved `Engine:Databases` role selection, including any explicit role reference.
+
+#### Declaration
+```csharp
+public sealed class DatabaseTopologyRoleResolution
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-appmodel-databasetopologyroleresolution-ctor-system-string-system-string-cephalon-abstractions-appmodel-databasetargetselection-cephalon-abstractions-appmodel-databasetargetselection-system-string"></a>
+
+##### `DatabaseTopologyRoleResolution`
+
+```csharp
+DatabaseTopologyRoleResolution(string requestedRoleId, string resolvedRoleId, DatabaseTargetSelection requestedTarget, DatabaseTargetSelection effectiveTarget, string useRole)
+```
+
+Initializes a new instance of the `DatabaseTopologyRoleResolution` class.
+
+Parameters:
+- `requestedRoleId`: The logical role requested by the caller.
+- `resolvedRoleId`: The concrete role that supplied the physical database target.
+- `requestedTarget`: The target declared for the requested role.
+- `effectiveTarget`: The effective target after applying any role reference.
+- `useRole`: The referenced concrete role declared by the requested target, when present.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-appmodel-databasetopologyroleresolution-effectivetarget"></a>
+
+##### `EffectiveTarget`
+
+```csharp
+DatabaseTargetSelection EffectiveTarget { get; }
+```
+
+Gets the effective target after applying any role reference.
+
+<a id="member-p-cephalon-engine-appmodel-databasetopologyroleresolution-requestedroleid"></a>
+
+##### `RequestedRoleId`
+
+```csharp
+string RequestedRoleId { get; }
+```
+
+Gets the logical role requested by the caller.
+
+<a id="member-p-cephalon-engine-appmodel-databasetopologyroleresolution-requestedtarget"></a>
+
+##### `RequestedTarget`
+
+```csharp
+DatabaseTargetSelection RequestedTarget { get; }
+```
+
+Gets the target declared for the requested role.
+
+<a id="member-p-cephalon-engine-appmodel-databasetopologyroleresolution-resolutionmode"></a>
+
+##### `ResolutionMode`
+
+```csharp
+string ResolutionMode { get; }
+```
+
+Gets the stable resolution mode used by runtime introspection surfaces.
+
+<a id="member-p-cephalon-engine-appmodel-databasetopologyroleresolution-resolvedroleid"></a>
+
+##### `ResolvedRoleId`
+
+```csharp
+string ResolvedRoleId { get; }
+```
+
+Gets the concrete role that supplied the effective provider and connection settings.
+
+<a id="member-p-cephalon-engine-appmodel-databasetopologyroleresolution-userole"></a>
+
+##### `UseRole`
+
+```csharp
+string UseRole { get; }
+```
+
+Gets the referenced concrete role declared by the requested target, when present.
+
+<a id="member-p-cephalon-engine-appmodel-databasetopologyroleresolution-usesrolereference"></a>
+
+##### `UsesRoleReference`
+
+```csharp
+bool UsesRoleReference { get; }
+```
+
+Gets a value indicating whether the requested role resolved through an explicit role reference.
+
+<a id="type-cephalon-engine-appmodel-databasetopologyroleresolver"></a>
+
+### `DatabaseTopologyRoleResolver`
+
+Resolves `Engine:Databases` role selections into direct or role-referenced effective targets.
+
+#### Declaration
+```csharp
+public static class DatabaseTopologyRoleResolver
+```
+
+#### Methods
+
+<a id="member-m-cephalon-engine-appmodel-databasetopologyroleresolver-resolve-cephalon-abstractions-appmodel-databasetopologyselection-system-string"></a>
+
+##### `Resolve`
+
+```csharp
+DatabaseTopologyRoleResolution Resolve(DatabaseTopologySelection databases, string requestedRoleId)
+```
+
+Resolves the effective target for the supplied logical database role.
+
+Returns: The resolved role selection.
+
+Parameters:
+- `databases`: The active database-topology selection.
+- `requestedRoleId`: The logical role to resolve.
+
 <a id="namespace-cephalon-engine-appmodel-scaffolding"></a>
 
 ## Namespace Cephalon.Engine.AppModel.Scaffolding
@@ -779,6 +910,366 @@ Parameters:
 
 ## Namespace Cephalon.Engine.Configuration
 
+<a id="type-cephalon-engine-configuration-audithistoryexportsettings"></a>
+
+### `AuditHistoryExportSettings`
+
+Describes configuration-driven audit-history export settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class AuditHistoryExportSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-audithistoryexportsettings-ctor-system-nullable-system-boolean-system-nullable-system-int32"></a>
+
+##### `AuditHistoryExportSettings`
+
+```csharp
+AuditHistoryExportSettings(bool? enabled, int? maxEntries)
+```
+
+Initializes a new instance of the `AuditHistoryExportSettings` class.
+
+Parameters:
+- `enabled`: Whether audit-history export was explicitly enabled.
+- `maxEntries`: The configured maximum number of entries that one export may stream.
+
+#### Fields
+
+<a id="member-f-cephalon-engine-configuration-audithistoryexportsettings-defaultmaxentries"></a>
+
+##### `DefaultMaxEntries`
+
+```csharp
+const int DefaultMaxEntries
+```
+
+Gets the default maximum number of entries that one audit-history export may stream.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-audithistoryexportsettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+AuditHistoryExportSettings Empty { get; }
+```
+
+Gets an empty audit-history export-settings instance.
+
+<a id="member-p-cephalon-engine-configuration-audithistoryexportsettings-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether audit-history export was explicitly enabled.
+
+<a id="member-p-cephalon-engine-configuration-audithistoryexportsettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any audit-history export settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-audithistoryexportsettings-maxentries"></a>
+
+##### `MaxEntries`
+
+```csharp
+int? MaxEntries { get; }
+```
+
+Gets the configured maximum number of entries that one export may stream.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-audithistoryexportsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection"></a>
+
+##### `FromSection`
+
+```csharp
+AuditHistoryExportSettings FromSection(IConfigurationSection section)
+```
+
+Reads audit-history export settings from the supplied configuration section.
+
+Returns: The parsed audit-history export settings.
+
+Parameters:
+- `section`: The audit-history export configuration section to read.
+
+<a id="type-cephalon-engine-configuration-audithistoryretentionsettings"></a>
+
+### `AuditHistoryRetentionSettings`
+
+Describes configuration-driven retention settings for durable audit history.
+
+#### Declaration
+```csharp
+public sealed class AuditHistoryRetentionSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-audithistoryretentionsettings-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-boolean-system-nullable-system-int32"></a>
+
+##### `AuditHistoryRetentionSettings`
+
+```csharp
+AuditHistoryRetentionSettings(bool? enabled, int? maxAgeDays, int? deleteBatchSize, bool? applyOnStartup, int? runIntervalMinutes)
+```
+
+Initializes a new instance of the `AuditHistoryRetentionSettings` class.
+
+Parameters:
+- `enabled`: Whether retention was explicitly enabled.
+- `maxAgeDays`: The maximum age, in days, to retain durable audit rows.
+- `deleteBatchSize`: The maximum number of rows deleted per retention batch.
+- `applyOnStartup`: Whether one retention pass should run during host startup.
+- `runIntervalMinutes`: The optional recurring retention interval in minutes.
+
+#### Fields
+
+<a id="member-f-cephalon-engine-configuration-audithistoryretentionsettings-defaultdeletebatchsize"></a>
+
+##### `DefaultDeleteBatchSize`
+
+```csharp
+const int DefaultDeleteBatchSize
+```
+
+Gets the default delete-batch size used by the engine-owned retention baseline.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-audithistoryretentionsettings-applyonstartup"></a>
+
+##### `ApplyOnStartup`
+
+```csharp
+bool? ApplyOnStartup { get; }
+```
+
+Gets a value indicating whether one retention pass should run during host startup.
+
+<a id="member-p-cephalon-engine-configuration-audithistoryretentionsettings-deletebatchsize"></a>
+
+##### `DeleteBatchSize`
+
+```csharp
+int? DeleteBatchSize { get; }
+```
+
+Gets the maximum number of rows deleted per retention batch.
+
+<a id="member-p-cephalon-engine-configuration-audithistoryretentionsettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+AuditHistoryRetentionSettings Empty { get; }
+```
+
+Gets an empty audit-history retention settings instance.
+
+<a id="member-p-cephalon-engine-configuration-audithistoryretentionsettings-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether retention was explicitly enabled.
+
+<a id="member-p-cephalon-engine-configuration-audithistoryretentionsettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any retention settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-audithistoryretentionsettings-maxagedays"></a>
+
+##### `MaxAgeDays`
+
+```csharp
+int? MaxAgeDays { get; }
+```
+
+Gets the maximum age, in days, to retain durable audit rows.
+
+<a id="member-p-cephalon-engine-configuration-audithistoryretentionsettings-runintervalminutes"></a>
+
+##### `RunIntervalMinutes`
+
+```csharp
+int? RunIntervalMinutes { get; }
+```
+
+Gets the optional recurring retention interval in minutes.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-audithistoryretentionsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection"></a>
+
+##### `FromSection`
+
+```csharp
+AuditHistoryRetentionSettings FromSection(IConfigurationSection section)
+```
+
+Reads retention settings from the supplied configuration section.
+
+Returns: The parsed retention settings.
+
+Parameters:
+- `section`: The retention configuration section to read.
+
+<a id="type-cephalon-engine-configuration-audithistorysettings"></a>
+
+### `AuditHistorySettings`
+
+Describes configuration-driven durable audit-history settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class AuditHistorySettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-audithistorysettings-ctor-system-nullable-system-boolean-system-string-system-string-cephalon-engine-configuration-audithistoryexportsettings-cephalon-engine-configuration-audithistoryretentionsettings"></a>
+
+##### `AuditHistorySettings`
+
+```csharp
+AuditHistorySettings(bool? enabled, string provider, string databaseRole, AuditHistoryExportSettings export, AuditHistoryRetentionSettings retention)
+```
+
+Initializes a new instance of the `AuditHistorySettings` class.
+
+Parameters:
+- `enabled`: Whether durable audit history was explicitly enabled.
+- `provider`: The selected durable history provider identifier.
+- `databaseRole`: The selected logical database role for durable history.
+- `export`: The configured export settings for durable history.
+- `retention`: The selected retention settings for durable history.
+
+#### Fields
+
+<a id="member-f-cephalon-engine-configuration-audithistorysettings-defaultdatabaserole"></a>
+
+##### `DefaultDatabaseRole`
+
+```csharp
+const string DefaultDatabaseRole
+```
+
+Gets the default logical database role used by the durable audit-history path.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-audithistorysettings-databaserole"></a>
+
+##### `DatabaseRole`
+
+```csharp
+string DatabaseRole { get; }
+```
+
+Gets the selected logical database role used by durable history.
+
+<a id="member-p-cephalon-engine-configuration-audithistorysettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+AuditHistorySettings Empty { get; }
+```
+
+Gets an empty audit-history settings instance.
+
+<a id="member-p-cephalon-engine-configuration-audithistorysettings-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether durable audit history was explicitly enabled.
+
+<a id="member-p-cephalon-engine-configuration-audithistorysettings-export"></a>
+
+##### `Export`
+
+```csharp
+AuditHistoryExportSettings Export { get; }
+```
+
+Gets the configured export settings for durable history.
+
+<a id="member-p-cephalon-engine-configuration-audithistorysettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any durable audit-history settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-audithistorysettings-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; }
+```
+
+Gets the selected durable history provider identifier.
+
+<a id="member-p-cephalon-engine-configuration-audithistorysettings-retention"></a>
+
+##### `Retention`
+
+```csharp
+AuditHistoryRetentionSettings Retention { get; }
+```
+
+Gets the configured retention settings for durable history.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-audithistorysettings-fromsection-microsoft-extensions-configuration-iconfigurationsection"></a>
+
+##### `FromSection`
+
+```csharp
+AuditHistorySettings FromSection(IConfigurationSection section)
+```
+
+Reads durable audit-history settings from the supplied configuration section.
+
+Returns: The parsed durable audit-history settings.
+
+Parameters:
+- `section`: The audit-history configuration section to read.
+
 <a id="type-cephalon-engine-configuration-auditsettings"></a>
 
 ### `AuditSettings`
@@ -792,18 +1283,19 @@ public sealed class AuditSettings
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-auditsettings-ctor-system-nullable-system-boolean"></a>
+<a id="member-m-cephalon-engine-configuration-auditsettings-ctor-system-nullable-system-boolean-cephalon-engine-configuration-audithistorysettings"></a>
 
 ##### `AuditSettings`
 
 ```csharp
-AuditSettings(bool? enabled)
+AuditSettings(bool? enabled, AuditHistorySettings history)
 ```
 
 Initializes a new instance of the `AuditSettings` class.
 
 Parameters:
 - `enabled`: Whether audit support was explicitly enabled.
+- `history`: The durable audit-history settings resolved for the app.
 
 #### Properties
 
@@ -837,6 +1329,16 @@ bool HasValues { get; }
 
 Gets a value indicating whether any audit settings were explicitly supplied.
 
+<a id="member-p-cephalon-engine-configuration-auditsettings-history"></a>
+
+##### `History`
+
+```csharp
+AuditHistorySettings History { get; }
+```
+
+Gets the durable audit-history settings resolved for the app.
+
 #### Methods
 
 <a id="member-m-cephalon-engine-configuration-auditsettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
@@ -854,6 +1356,487 @@ Returns: The parsed audit settings.
 Parameters:
 - `configuration`: The configuration source that contains the engine section.
 - `sectionPath`: The root configuration section path to read from.
+
+<a id="type-cephalon-engine-configuration-connectionstringresolution"></a>
+
+### `ConnectionStringResolution`
+
+Resolves a provider connection string from either an inline value or a named entry under the root `ConnectionStrings` section.
+
+#### Declaration
+```csharp
+public static class ConnectionStringResolution
+```
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-connectionstringresolution-resolve-microsoft-extensions-configuration-iconfiguration-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `Resolve`
+
+```csharp
+string Resolve(IConfiguration configuration, string connectionString, string connectionStringName, string defaultConnectionString, string sectionPath, string providerDisplayName)
+```
+
+Resolves the effective connection string for a pack or provider.
+
+Returns: The resolved connection string.
+
+Parameters:
+- `configuration`: The application configuration root.
+- `connectionString`: The inline connection string value.
+- `connectionStringName`: The root-level `ConnectionStrings` key to resolve when an inline value is not used.
+- `defaultConnectionString`: The provider default to use when neither an inline value nor a named value is configured.
+- `sectionPath`: The logical provider options section used for diagnostics.
+- `providerDisplayName`: The provider name used in human-readable error messages.
+
+<a id="type-cephalon-engine-configuration-databasemigrationssettings"></a>
+
+### `DatabaseMigrationsSettings`
+
+Describes configuration-driven database migration behavior for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class DatabaseMigrationsSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-databasemigrationssettings-ctor-system-nullable-system-boolean-system-nullable-system-boolean-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `DatabaseMigrationsSettings`
+
+```csharp
+DatabaseMigrationsSettings(bool? applyOnStartup, bool? exitAfterApply, IReadOnlyList<string> targets)
+```
+
+Initializes a new instance of the `DatabaseMigrationsSettings` class.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-databasemigrationssettings-applyonstartup"></a>
+
+##### `ApplyOnStartup`
+
+```csharp
+bool? ApplyOnStartup { get; }
+```
+
+Gets a value indicating whether migrations should be applied during host startup.
+
+<a id="member-p-cephalon-engine-configuration-databasemigrationssettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+DatabaseMigrationsSettings Empty { get; }
+```
+
+Gets an empty database-migrations settings instance.
+
+<a id="member-p-cephalon-engine-configuration-databasemigrationssettings-exitafterapply"></a>
+
+##### `ExitAfterApply`
+
+```csharp
+bool? ExitAfterApply { get; }
+```
+
+Gets a value indicating whether the host should exit after applying migrations.
+
+<a id="member-p-cephalon-engine-configuration-databasemigrationssettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any migration settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-databasemigrationssettings-targets"></a>
+
+##### `Targets`
+
+```csharp
+IReadOnlyList<string> Targets { get; }
+```
+
+Gets the logical migration targets selected for the app.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-databasemigrationssettings-fromsection-microsoft-extensions-configuration-iconfigurationsection"></a>
+
+##### `FromSection`
+
+```csharp
+DatabaseMigrationsSettings FromSection(IConfigurationSection section)
+```
+
+Reads database-migration settings from the supplied configuration section.
+
+<a id="type-cephalon-engine-configuration-databaseruntimesettings"></a>
+
+### `DatabaseRuntimeSettings`
+
+Describes configuration-driven database runtime tuning for Cephalon apps.
+
+#### Declaration
+```csharp
+public sealed class DatabaseRuntimeSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-databaseruntimesettings-ctor-system-nullable-system-boolean-system-nullable-system-boolean-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32"></a>
+
+##### `DatabaseRuntimeSettings`
+
+```csharp
+DatabaseRuntimeSettings(bool? enableDetailedErrors, bool? enableSensitiveDataLogging, bool? enableRetryOnFailure, int? maxRetryCount, int? maxRetryDelaySeconds, int? commandTimeoutSeconds, int? maxBatchSize)
+```
+
+Initializes a new instance of the `DatabaseRuntimeSettings` class.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-databaseruntimesettings-commandtimeoutseconds"></a>
+
+##### `CommandTimeoutSeconds`
+
+```csharp
+int? CommandTimeoutSeconds { get; }
+```
+
+Gets the command timeout in seconds when one was configured.
+
+<a id="member-p-cephalon-engine-configuration-databaseruntimesettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+DatabaseRuntimeSettings Empty { get; }
+```
+
+Gets an empty database-runtime settings instance.
+
+<a id="member-p-cephalon-engine-configuration-databaseruntimesettings-enabledetailederrors"></a>
+
+##### `EnableDetailedErrors`
+
+```csharp
+bool? EnableDetailedErrors { get; }
+```
+
+Gets a value indicating whether detailed provider errors were explicitly enabled.
+
+<a id="member-p-cephalon-engine-configuration-databaseruntimesettings-enableretryonfailure"></a>
+
+##### `EnableRetryOnFailure`
+
+```csharp
+bool? EnableRetryOnFailure { get; }
+```
+
+Gets a value indicating whether transient-failure retries were explicitly enabled.
+
+<a id="member-p-cephalon-engine-configuration-databaseruntimesettings-enablesensitivedatalogging"></a>
+
+##### `EnableSensitiveDataLogging`
+
+```csharp
+bool? EnableSensitiveDataLogging { get; }
+```
+
+Gets a value indicating whether sensitive-data logging was explicitly enabled.
+
+<a id="member-p-cephalon-engine-configuration-databaseruntimesettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any database runtime settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-databaseruntimesettings-maxbatchsize"></a>
+
+##### `MaxBatchSize`
+
+```csharp
+int? MaxBatchSize { get; }
+```
+
+Gets the maximum provider batch size when one was configured.
+
+<a id="member-p-cephalon-engine-configuration-databaseruntimesettings-maxretrycount"></a>
+
+##### `MaxRetryCount`
+
+```csharp
+int? MaxRetryCount { get; }
+```
+
+Gets the maximum retry count when transient-failure retries were configured.
+
+<a id="member-p-cephalon-engine-configuration-databaseruntimesettings-maxretrydelayseconds"></a>
+
+##### `MaxRetryDelaySeconds`
+
+```csharp
+int? MaxRetryDelaySeconds { get; }
+```
+
+Gets the maximum retry delay in seconds when transient-failure retries were configured.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-databaseruntimesettings-fromsection-microsoft-extensions-configuration-iconfigurationsection"></a>
+
+##### `FromSection`
+
+```csharp
+DatabaseRuntimeSettings FromSection(IConfigurationSection section)
+```
+
+Reads database runtime settings from the supplied configuration section.
+
+<a id="type-cephalon-engine-configuration-databasetargetsettings"></a>
+
+### `DatabaseTargetSettings`
+
+Describes one configuration-driven database role target for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class DatabaseTargetSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-databasetargetsettings-ctor-system-string-system-string-system-string-system-string-system-string-cephalon-engine-configuration-databaseruntimesettings"></a>
+
+##### `DatabaseTargetSettings`
+
+```csharp
+DatabaseTargetSettings(string provider, string connectionStringName, string connectionString, string useRole, string schema, DatabaseRuntimeSettings runtime)
+```
+
+Initializes a new instance of the `DatabaseTargetSettings` class.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-databasetargetsettings-connectionstring"></a>
+
+##### `ConnectionString`
+
+```csharp
+string ConnectionString { get; }
+```
+
+Gets the selected inline connection string.
+
+<a id="member-p-cephalon-engine-configuration-databasetargetsettings-connectionstringname"></a>
+
+##### `ConnectionStringName`
+
+```csharp
+string ConnectionStringName { get; }
+```
+
+Gets the selected root connection-string name.
+
+<a id="member-p-cephalon-engine-configuration-databasetargetsettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+DatabaseTargetSettings Empty { get; }
+```
+
+Gets an empty database-target settings instance.
+
+<a id="member-p-cephalon-engine-configuration-databasetargetsettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any database-target settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-databasetargetsettings-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; }
+```
+
+Gets the selected logical provider identifier.
+
+<a id="member-p-cephalon-engine-configuration-databasetargetsettings-runtime"></a>
+
+##### `Runtime`
+
+```csharp
+DatabaseRuntimeSettings Runtime { get; }
+```
+
+Gets the role-specific runtime overrides.
+
+<a id="member-p-cephalon-engine-configuration-databasetargetsettings-schema"></a>
+
+##### `Schema`
+
+```csharp
+string Schema { get; }
+```
+
+Gets the selected schema override.
+
+<a id="member-p-cephalon-engine-configuration-databasetargetsettings-userole"></a>
+
+##### `UseRole`
+
+```csharp
+string UseRole { get; }
+```
+
+Gets the referenced concrete database role used to supply the physical connection target.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-databasetargetsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection"></a>
+
+##### `FromSection`
+
+```csharp
+DatabaseTargetSettings FromSection(IConfigurationSection section)
+```
+
+Reads database-target settings from the supplied configuration section.
+
+<a id="type-cephalon-engine-configuration-databasetopologysettings"></a>
+
+### `DatabaseTopologySettings`
+
+Describes configuration-driven database topology for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class DatabaseTopologySettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-databasetopologysettings-ctor-cephalon-engine-configuration-databaseruntimesettings-cephalon-engine-configuration-databasetargetsettings-cephalon-engine-configuration-databasetargetsettings-cephalon-engine-configuration-databasetargetsettings-cephalon-engine-configuration-databasetargetsettings-cephalon-engine-configuration-databasemigrationssettings"></a>
+
+##### `DatabaseTopologySettings`
+
+```csharp
+DatabaseTopologySettings(DatabaseRuntimeSettings runtime, DatabaseTargetSettings write, DatabaseTargetSettings read, DatabaseTargetSettings outbox, DatabaseTargetSettings history, DatabaseMigrationsSettings migrations)
+```
+
+Initializes a new instance of the `DatabaseTopologySettings` class.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-databasetopologysettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+DatabaseTopologySettings Empty { get; }
+```
+
+Gets an empty database-topology settings instance.
+
+<a id="member-p-cephalon-engine-configuration-databasetopologysettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any database-topology settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-databasetopologysettings-history"></a>
+
+##### `History`
+
+```csharp
+DatabaseTargetSettings History { get; }
+```
+
+Gets the audit-history database target.
+
+<a id="member-p-cephalon-engine-configuration-databasetopologysettings-migrations"></a>
+
+##### `Migrations`
+
+```csharp
+DatabaseMigrationsSettings Migrations { get; }
+```
+
+Gets the database-migration settings for the active topology.
+
+<a id="member-p-cephalon-engine-configuration-databasetopologysettings-outbox"></a>
+
+##### `Outbox`
+
+```csharp
+DatabaseTargetSettings Outbox { get; }
+```
+
+Gets the outbox database target.
+
+<a id="member-p-cephalon-engine-configuration-databasetopologysettings-read"></a>
+
+##### `Read`
+
+```csharp
+DatabaseTargetSettings Read { get; }
+```
+
+Gets the read-side database target.
+
+<a id="member-p-cephalon-engine-configuration-databasetopologysettings-runtime"></a>
+
+##### `Runtime`
+
+```csharp
+DatabaseRuntimeSettings Runtime { get; }
+```
+
+Gets the shared database runtime tuning.
+
+<a id="member-p-cephalon-engine-configuration-databasetopologysettings-write"></a>
+
+##### `Write`
+
+```csharp
+DatabaseTargetSettings Write { get; }
+```
+
+Gets the write-side database target.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-databasetopologysettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
+
+##### `FromConfiguration`
+
+```csharp
+DatabaseTopologySettings FromConfiguration(IConfiguration configuration, string sectionPath)
+```
+
+Reads database-topology settings from configuration.
 
 <a id="type-cephalon-engine-configuration-datasettings"></a>
 
@@ -1109,12 +2092,12 @@ public sealed class EngineSettings
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings"></a>
+<a id="member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings"></a>
 
 ##### `EngineSettings`
 
 ```csharp
-EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging)
+EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging)
 ```
 
 Initializes a new instance of the `EngineSettings` class.
@@ -1131,6 +2114,7 @@ Parameters:
 - `trustPolicy`: Capability and package trust policy values.
 - `packagePolicy`: Package metadata and integrity policy values.
 - `data`: Configuration-driven data settings.
+- `databases`: Configuration-driven database topology settings.
 - `identity`: Configuration-driven identity and authorization settings.
 - `tenancy`: Configuration-driven multi-tenancy settings.
 - `audit`: Configuration-driven audit settings.
@@ -1179,6 +2163,16 @@ DataSettings Data { get; }
 ```
 
 Gets configuration-driven data settings.
+
+<a id="member-p-cephalon-engine-configuration-enginesettings-databases"></a>
+
+##### `Databases`
+
+```csharp
+DatabaseTopologySettings Databases { get; }
+```
+
+Gets configuration-driven database topology settings.
 
 <a id="member-p-cephalon-engine-configuration-enginesettings-discovery"></a>
 
@@ -2657,6 +3651,39 @@ Returns: The explicit access configured for `capabilityKey`, or `DefaultCapabili
 
 Parameters:
 - `capabilityKey`: The capability key to evaluate.
+
+<a id="type-cephalon-engine-configuration-uriresolution"></a>
+
+### `UriResolution`
+
+Resolves a provider URI from either an inline value or a named entry under the root `Uris` section.
+
+#### Declaration
+```csharp
+public static class UriResolution
+```
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-uriresolution-resolve-microsoft-extensions-configuration-iconfiguration-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `Resolve`
+
+```csharp
+string Resolve(IConfiguration configuration, string uri, string uriName, string defaultUri, string sectionPath, string providerDisplayName)
+```
+
+Resolves the effective provider URI for a pack or provider.
+
+Returns: The resolved URI string.
+
+Parameters:
+- `configuration`: The application configuration root.
+- `uri`: The inline URI value.
+- `uriName`: The root-level `Uris` key to resolve when an inline value is not used.
+- `defaultUri`: The provider default to use when neither an inline value nor a named value is configured.
+- `sectionPath`: The logical provider options section used for diagnostics.
+- `providerDisplayName`: The provider name used in human-readable error messages.
 
 <a id="namespace-cephalon-engine-diagnostics"></a>
 
@@ -5602,7 +6629,7 @@ A value indicating whether the hosted execution is expected to become active whe
 
 Combines the main operator-facing runtime views into a single payload.
 
-Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data projection details, outbox details, inbox details, authorization-policy details, and lifecycle story data.
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data projection details, outbox details, inbox details, event-dispatch runtime details, authorization-policy details, and lifecycle story data.
 
 #### Declaration
 ```csharp
@@ -5621,7 +6648,7 @@ RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Sta
 
 Combines the main operator-facing runtime views into a single payload.
 
-Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data projection details, outbox details, inbox details, authorization-policy details, and lifecycle story data.
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data projection details, outbox details, inbox details, event-dispatch runtime details, authorization-policy details, and lifecycle story data.
 
 Parameters:
 - `Manifest`: The immutable manifest that describes the built runtime shape.
@@ -5653,6 +6680,26 @@ IReadOnlyList<AuthorizationPolicyDescriptor> AuthorizationPolicies { get; set; }
 
 Gets the authorization policies contributed by active modules and visible to the runtime at the time the snapshot was created.
 
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-databasemigrations"></a>
+
+##### `DatabaseMigrations`
+
+```csharp
+IReadOnlyList<DatabaseMigrationDescriptor> DatabaseMigrations { get; set; }
+```
+
+Gets the database-migration catalog visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-databaseroles"></a>
+
+##### `DatabaseRoles`
+
+```csharp
+IReadOnlyList<DatabaseRoleDescriptor> DatabaseRoles { get; set; }
+```
+
+Gets the engine-owned database-role catalog visible to the runtime at the time the snapshot was created.
+
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-diagnosticsconventions"></a>
 
 ##### `DiagnosticsConventions`
@@ -5662,6 +6709,26 @@ IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions { get; set; }
 ```
 
 The diagnostics conventions and published event-id catalogs visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-eventdispatchruntimes"></a>
+
+##### `EventDispatchRuntimes`
+
+```csharp
+IReadOnlyList<EventDispatchRuntimeDescriptor> EventDispatchRuntimes { get; set; }
+```
+
+Gets the configured event-dispatch runtimes visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-eventdispatchstates"></a>
+
+##### `EventDispatchStates`
+
+```csharp
+IReadOnlyList<EventDispatchRuntimeState> EventDispatchStates { get; set; }
+```
+
+Gets the latest reported event-dispatch runtime state entries visible to the runtime at the time the snapshot was created.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-executiongraphs"></a>
 

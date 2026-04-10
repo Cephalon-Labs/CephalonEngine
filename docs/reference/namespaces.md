@@ -6,7 +6,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.AppModel`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-appmodel): 8 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-appmodel): 15 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel)
 
 ## `Cephalon.Abstractions.AppModel.Scaffolding`
 
@@ -14,7 +14,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Audit`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-audit): 9 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-audit): 16 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit)
 
 ## `Cephalon.Abstractions.Authorization`
 
@@ -22,7 +22,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Behaviors`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-behaviors): 27 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-behaviors): 35 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors)
 
 ## `Cephalon.Abstractions.Capabilities`
 
@@ -30,7 +30,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Data`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-data): 25 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-data): 38 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data)
 
 ## `Cephalon.Abstractions.EventSourcing`
 
@@ -114,7 +114,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.AspNetCore.Hosting`
 
-- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-hosting): 5 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting)
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-hosting): 6 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting)
 
 ## `Cephalon.AspNetCore.JsonRpc.Hosting`
 
@@ -134,7 +134,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.AspNetCore.Transports.Rest`
 
-- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-transports-rest): 2 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest)
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-transports-rest): 5 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest)
 
 ## `Cephalon.AspNetCore.Transports.ServerSentEvents`
 
@@ -170,7 +170,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Data.EntityFramework.Configuration`
 
-- [Cephalon.Data.EntityFramework](cephalon-data-entityframework.md#namespace-cephalon-data-entityframework-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration)
+- [Cephalon.Data.EntityFramework](cephalon-data-entityframework.md#namespace-cephalon-data-entityframework-configuration): 3 public types [Browse](browse.html?assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration)
 
 ## `Cephalon.Data.EntityFramework.Modeling`
 
@@ -179,6 +179,10 @@ Browse the published API surface by namespace.
 ## `Cephalon.Data.EntityFramework.Registration`
 
 - [Cephalon.Data.EntityFramework](cephalon-data-entityframework.md#namespace-cephalon-data-entityframework-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Registration)
+
+## `Cephalon.Data.EntityFramework.Services`
+
+- [Cephalon.Data.EntityFramework](cephalon-data-entityframework.md#namespace-cephalon-data-entityframework-services): 2 public types [Browse](browse.html?assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Services)
 
 ## `Cephalon.Data.Registration`
 
@@ -198,7 +202,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Engine.AppModel`
 
-- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-appmodel): 3 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel)
+- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-appmodel): 5 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel)
 
 ## `Cephalon.Engine.AppModel.Scaffolding`
 
@@ -210,7 +214,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Engine.Configuration`
 
-- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-configuration): 17 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-configuration): 26 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
 
 ## `Cephalon.Engine.Diagnostics`
 
@@ -254,7 +258,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Eventing.Services`
 
-- [Cephalon.Eventing](cephalon-eventing.md#namespace-cephalon-eventing-services): 25 public types [Browse](browse.html?assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
+- [Cephalon.Eventing](cephalon-eventing.md#namespace-cephalon-eventing-services): 22 public types [Browse](browse.html?assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
 
 ## `Cephalon.Eventing.Wolverine.Configuration`
 

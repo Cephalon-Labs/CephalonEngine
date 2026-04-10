@@ -187,6 +187,18 @@ Gets the root configuration section used for OpenAPI endpoint routing.
 
 #### Properties
 
+<a id="member-p-cephalon-aspnetcore-documentation-openapiendpointoptions-behaviorrestdocumentedstatuscodes"></a>
+
+##### `BehaviorRestDocumentedStatusCodes`
+
+```csharp
+IReadOnlyList<int> BehaviorRestDocumentedStatusCodes { get; set; }
+```
+
+Gets or sets the HTTP status codes that Cephalon's behavior-owned REST helpers publish in OpenAPI documents by default.
+
+Remarks: This list controls documentation metadata only. It does not change the runtime HTTP status codes emitted by ASP.NET Core.
+
 <a id="member-p-cephalon-aspnetcore-documentation-openapiendpointoptions-routepattern"></a>
 
 ##### `RoutePattern`
@@ -651,6 +663,16 @@ string SsePrefix { get; set; }
 
 Gets or sets the canonical prefix used by the generic behavior Server-Sent Events binding surface.
 
+<a id="member-p-cephalon-aspnetcore-hosting-apiroutesoptions-useresultmodelenvelope"></a>
+
+##### `UseResultModelEnvelope`
+
+```csharp
+bool UseResultModelEnvelope { get; set; }
+```
+
+Gets or sets a value indicating whether behavior-aware REST endpoints should emit the Cephalon result envelope.
+
 <a id="member-p-cephalon-aspnetcore-hosting-apiroutesoptions-wsprefix"></a>
 
 ##### `WsPrefix`
@@ -678,6 +700,38 @@ Returns: The normalized route settings.
 Parameters:
 - `configuration`: The application configuration root.
 - `sectionPath`: The configuration section path to bind.
+
+<a id="type-cephalon-aspnetcore-hosting-audithistoryexporthttpresponseextensions"></a>
+
+### `AuditHistoryExportHttpResponseExtensions`
+
+Writes audit-history export responses for ASP.NET Core hosts.
+
+#### Declaration
+```csharp
+public static class AuditHistoryExportHttpResponseExtensions
+```
+
+#### Methods
+
+<a id="member-m-cephalon-aspnetcore-hosting-audithistoryexporthttpresponseextensions-writeaudithistoryndjsonasync-microsoft-aspnetcore-http-httpresponse-cephalon-abstractions-audit-iaudithistoryexporter-cephalon-abstractions-audit-audithistoryexportrequest-system-string-system-threading-cancellationtoken"></a>
+
+##### `WriteAuditHistoryNdjsonAsync`
+
+```csharp
+Task WriteAuditHistoryNdjsonAsync(this HttpResponse response, IAuditHistoryExporter exporter, AuditHistoryExportRequest request, string fileName, CancellationToken cancellationToken)
+```
+
+Writes the supplied audit-history export as newline-delimited JSON.
+
+Returns: A task that completes when the response has been written.
+
+Parameters:
+- `response`: The HTTP response to populate.
+- `exporter`: The audit-history exporter that supplies the entries.
+- `request`: The export request to execute.
+- `fileName`: An optional download file name.
+- `cancellationToken`: The token that cancels the response stream.
 
 <a id="type-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions"></a>
 
@@ -1119,6 +1173,179 @@ Returns: The same route handler builder for further convention chaining.
 Parameters:
 - `builder`: The route handler builder to protect.
 - `capabilityKey`: The capability key that must be allowed for the request.
+
+<a id="type-cephalon-aspnetcore-transports-rest-resultmodelerror"></a>
+
+### `ResultModelError`
+
+Represents the optional Cephalon REST error envelope projected by the ASP.NET Core adapter.
+
+#### Declaration
+```csharp
+public sealed class ResultModelError
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-transports-rest-resultmodelerror-ctor"></a>
+
+##### `ResultModelError`
+
+```csharp
+ResultModelError()
+```
+
+Initializes a new instance of the `ResultModelError` class.
+
+<a id="type-cephalon-aspnetcore-transports-rest-resultmodelerrordetail"></a>
+
+### `ResultModelErrorDetail`
+
+Represents structured error details inside a `ResultModel<T>`.
+
+#### Declaration
+```csharp
+public sealed class ResultModelErrorDetail
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-transports-rest-resultmodelerrordetail-ctor"></a>
+
+##### `ResultModelErrorDetail`
+
+```csharp
+ResultModelErrorDetail()
+```
+
+Initializes a new instance of the `ResultModelErrorDetail` class.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-transports-rest-resultmodelerrordetail-details"></a>
+
+##### `Details`
+
+```csharp
+string Details { get; set; }
+```
+
+Gets or sets additional error details when one was supplied.
+
+<a id="member-p-cephalon-aspnetcore-transports-rest-resultmodelerrordetail-key"></a>
+
+##### `Key`
+
+```csharp
+string Key { get; set; }
+```
+
+Gets or sets the stable error key.
+
+<a id="member-p-cephalon-aspnetcore-transports-rest-resultmodelerrordetail-message"></a>
+
+##### `Message`
+
+```csharp
+string Message { get; set; }
+```
+
+Gets or sets the human-readable error message.
+
+<a id="member-p-cephalon-aspnetcore-transports-rest-resultmodelerrordetail-severity"></a>
+
+##### `Severity`
+
+```csharp
+BehaviorFaultSeverity Severity { get; set; }
+```
+
+Gets or sets the error severity.
+
+<a id="type-cephalon-aspnetcore-transports-rest-resultmodel-tmodel"></a>
+
+### `ResultModel<TModel>`
+
+Represents the optional Cephalon REST success envelope projected by the ASP.NET Core adapter.
+
+#### Declaration
+```csharp
+public class ResultModel<TModel>
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-transports-rest-resultmodel-1-ctor"></a>
+
+##### `ResultModel<TModel>`
+
+```csharp
+ResultModel<TModel>()
+```
+
+Initializes a new instance of the `ResultModel<T>` class.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-data"></a>
+
+##### `Data`
+
+```csharp
+TModel Data { get; set; }
+```
+
+Gets or sets the payload returned by the endpoint.
+
+<a id="member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-errors"></a>
+
+##### `Errors`
+
+```csharp
+List<ResultModelErrorDetail> Errors { get; set; }
+```
+
+Gets or sets the structured error details when the response is not successful.
+
+<a id="member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-message"></a>
+
+##### `Message`
+
+```csharp
+string Message { get; set; }
+```
+
+Gets or sets the human-readable response message.
+
+<a id="member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-statuscode"></a>
+
+##### `StatusCode`
+
+```csharp
+int StatusCode { get; set; }
+```
+
+Gets or sets the effective HTTP status code associated with the response.
+
+<a id="member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-success"></a>
+
+##### `Success`
+
+```csharp
+bool Success { get; set; }
+```
+
+Gets or sets a value indicating whether the response is successful.
+
+<a id="member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-title"></a>
+
+##### `Title`
+
+```csharp
+string Title { get; set; }
+```
+
+Gets or sets the short response title.
 
 <a id="namespace-cephalon-aspnetcore-transports-serversentevents"></a>
 

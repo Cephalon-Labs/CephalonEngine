@@ -128,6 +128,8 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("IInboxCatalog", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("OutboxDescriptor", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("IOutboxCatalog", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EventDispatchRuntimeDescriptor", abstractionsPage.Contents, StringComparison.Ordinal);
+        Assert.Contains("IEventDispatchRuntimeCatalog", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Abstractions.EventSourcing", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("IDomainEvent", abstractionsPage.Contents, StringComparison.Ordinal);
         Assert.Contains("EventStreamConcurrencyException", abstractionsPage.Contents, StringComparison.Ordinal);
@@ -151,6 +153,8 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains("Projections", enginePage.Contents, StringComparison.Ordinal);
         Assert.Contains("Inboxes", enginePage.Contents, StringComparison.Ordinal);
         Assert.Contains("Outboxes", enginePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EventDispatchRuntimes", enginePage.Contents, StringComparison.Ordinal);
+        Assert.Contains("EventDispatchStates", enginePage.Contents, StringComparison.Ordinal);
         Assert.Contains("AuthorizationPolicies", enginePage.Contents, StringComparison.Ordinal);
     }
 

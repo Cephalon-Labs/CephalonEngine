@@ -1,6 +1,6 @@
 # Cephalon Project Memory
 
-Project memory in this document reflects the repository state observed on `April 10, 2026`.
+Project memory in this document reflects the repository state observed on `April 11, 2026`.
 
 This page is a repo-oriented orientation snapshot. It is meant to help contributors recover context quickly before they change code, docs, planning, or package surfaces.
 
@@ -225,6 +225,8 @@ Current standing examples from this collaboration:
 - `Cephalon.Data.EntityFramework` now contributes live role-probe metadata through the engine-owned database-role catalog, including connectivity outcome plus pending-migration diagnostics for registered `DbContext` roles, while dependent targets such as `outbox -> write` can inherit resolved-role runtime truth without losing their logical role identity
 - the engine-owned migration catalog now carries typed provider-added command templates through `DatabaseMigrationCommandDescriptor`; `Cephalon.Data.EntityFramework` uses that surface to publish bundle/script/update guidance per logical role while staying honest that true bundle/script generation or execution orchestration is still a later slice
 - durable audit-history export is intentionally NDJSON-only for the first shipped slice, configuration-gated through `Engine:Audit:History:Export`, and bounded by `MaxEntries`; replay UX, richer export formats, and delivery automation remain separate follow-through work
+- the current eventing operator baseline now splits configured dispatch ownership from live dispatch state explicitly: `IEventDispatchRuntimeDescriptorCatalog` plus `/engine/event-dispatch-runtimes` answer what managed dispatch runtimes are active and what outbox/runtime ids they own, while `IEventDispatchRuntimeCatalog` plus `/engine/event-dispatches` answer the latest reported dispatch outcome, retry intent, timestamps, and totals per outbox path; both sets also flow into `/engine/snapshot` as `EventDispatchRuntimes` and `EventDispatchStates`
+- the showcase sample now wires `Cephalon.Eventing.Wolverine` directly so the official `wolverine-managed` dispatch path stays visible through `/engine/event-dispatch-runtimes`, `/engine/event-dispatches`, and the runtime snapshot without custom sample-only operator code
 
 ## Working assumptions for contributors
 

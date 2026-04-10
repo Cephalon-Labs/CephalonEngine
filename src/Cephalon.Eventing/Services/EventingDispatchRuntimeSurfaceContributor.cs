@@ -1,7 +1,7 @@
+using Microsoft.Extensions.DependencyInjection;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Technologies;
 using System.Globalization;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Eventing.Services;
 

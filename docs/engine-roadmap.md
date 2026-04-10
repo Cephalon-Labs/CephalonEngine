@@ -2,7 +2,7 @@
 
 Editable roadmap diagram: `docs/cephalon-engine-roadmap.drawio`
 
-Planning baseline in this document reflects the repository state as of `April 10, 2026`.
+Planning baseline in this document reflects the repository state as of `April 11, 2026`.
 
 ## Target outcome
 
@@ -577,7 +577,8 @@ Current truth:
 - `ENG-066` is now shipped: the engine now exposes a first-class resolved database-role catalog through `IDatabaseRoleCatalog`, `/engine/database-roles`, `/engine/database-roles/{databaseRoleId}`, and `snapshot.DatabaseRoles`, including co-location, consumers, and audit-history metadata
 - `ENG-067` is now shipped: the engine now exposes a first-class database-migration catalog through `IDatabaseMigrationCatalog`, `/engine/database-migrations`, `/engine/database-migrations/{databaseMigrationId}`, and `snapshot.DatabaseMigrations`, while the showcase sample now keeps the same surfaces active outside Docker through unique in-memory fallback roles
 - `ENG-068` is now shipped: the engine-owned database-role catalog now carries live provider-contributed health and migration diagnostics, dependent `UseRole` targets can inherit resolved-role runtime truth, and the migration catalog now also carries provider-added deploy-time command templates through `DatabaseMigrationCommandDescriptor`; `Cephalon.Data.EntityFramework` publishes both live probe metadata and bundle/script/update guidance, and the showcase sample plus runtime snapshot keep that truth visible end to end
-- the remaining phase-10 work is now broader provider consumption, broader role graphs beyond `UseRole -> write`, dedicated outbox execution, bundle/script generation or execution orchestration, richer provider-native telemetry beyond the current probe baseline, and replay follow-through plus richer export formats for durable history
+- `ENG-069` is now shipped: host-agnostic event-dispatch runtime descriptor and state contracts now live in `Cephalon.Abstractions`, `/engine/snapshot` now carries `EventDispatchRuntimes` plus `EventDispatchStates`, ASP.NET Core now exposes `/engine/event-dispatch-runtimes` and `/engine/event-dispatches`, and the showcase sample now wires `Cephalon.Eventing.Wolverine` so the official managed dispatch path is visible end to end through the new operator surfaces
+- the remaining phase-10 work is now broader provider consumption, broader role graphs beyond `UseRole -> write`, broader dedicated outbox execution beyond the current Wolverine-managed baseline, bundle/script generation or execution orchestration, richer provider-native telemetry beyond the current probe baseline, and replay follow-through plus richer export formats for durable history
 
 Exit criteria:
 

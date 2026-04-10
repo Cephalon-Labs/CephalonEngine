@@ -1,4 +1,4 @@
-namespace Cephalon.Eventing.Services;
+namespace Cephalon.Abstractions.Data;
 
 /// <summary>
 /// Exposes the operator-facing dispatch runtime state currently reported for durable event publication paths.

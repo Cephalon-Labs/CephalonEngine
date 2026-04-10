@@ -1,18 +1,22 @@
 using Cephalon.Abstractions.Technologies;
+using Cephalon.Abstractions.Data;
 using Cephalon.Engine.Runtime;
 using Cephalon.Eventing.Services;
 using Cephalon.Eventing.Wolverine.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Eventing.Wolverine.Services;
 
 internal sealed class WolverineEventingRuntimeSurfaceContributor(
     WolverineEventingOptions options,
-    IEnumerable<IEventDispatchStore> dispatchStores,
+    IServiceProvider serviceProvider,
     IRuntime runtime,
     IEventDispatchRuntimeCatalog dispatchRuntimeCatalog) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
+        using var scope = serviceProvider.CreateScope();
+        var dispatchStores = scope.ServiceProvider.GetServices<IEventDispatchStore>();
         var dispatchStoreIds = dispatchStores
             .Select(static store => store.GetType().FullName ?? store.GetType().Name)
             .OrderBy(static typeName => typeName, StringComparer.OrdinalIgnoreCase)

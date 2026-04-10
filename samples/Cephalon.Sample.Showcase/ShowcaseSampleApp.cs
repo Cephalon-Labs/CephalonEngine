@@ -18,6 +18,7 @@ using Cephalon.Data.Redis.Configuration;
 using Cephalon.Data.Redis.Registration;
 using Cephalon.Data.Registration;
 using Cephalon.Eventing.Registration;
+using Cephalon.Eventing.Wolverine.Registration;
 using Cephalon.Identity.Registration;
 using Cephalon.Ids.Sfid.Registration;
 using Cephalon.MultiTenancy.Registration;
@@ -142,6 +143,13 @@ public static class ShowcaseSampleApp
 
             // --- Event-driven integration ---
             engine.AddEventing();
+            engine.AddWolverineEventing(options =>
+            {
+                options.EnableDispatchLoop = true;
+                options.DispatchBatchSize = 10;
+                options.DispatchPollingIntervalSeconds = 3;
+                options.RetryDelaySeconds = 15;
+            });
 
             // --- Cross-cutting: identity, tenancy, audit ---
             engine.AddIdentityAccess();

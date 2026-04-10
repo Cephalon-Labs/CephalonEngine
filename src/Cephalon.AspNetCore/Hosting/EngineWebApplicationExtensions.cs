@@ -169,6 +169,42 @@ public static class EngineWebApplicationExtensions
                 return outbox is null ? Results.NotFound() : Results.Ok(outbox);
             })
             .WithName("GetCephalonOutbox");
+        engineGroup.MapGet("/event-dispatch-runtimes", (HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<IEventDispatchRuntimeDescriptorCatalog>()?
+                    .Runtimes ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonEventDispatchRuntimes");
+        engineGroup.MapGet("/event-dispatch-runtimes/{dispatchRuntimeId}", (string dispatchRuntimeId, HttpContext httpContext) =>
+            {
+                var runtimeDescriptor = httpContext.RequestServices
+                    .GetService<IEventDispatchRuntimeDescriptorCatalog>()?
+                    .GetById(dispatchRuntimeId);
+
+                return runtimeDescriptor is null ? Results.NotFound() : Results.Ok(runtimeDescriptor);
+            })
+            .WithName("GetCephalonEventDispatchRuntime");
+        engineGroup.MapGet("/event-dispatches", (HttpContext httpContext) =>
+            {
+                var states = httpContext.RequestServices
+                    .GetService<IEventDispatchRuntimeCatalog>()?
+                    .States ?? [];
+
+                return Results.Ok(states);
+            })
+            .WithName("GetCephalonEventDispatches");
+        engineGroup.MapGet("/event-dispatches/{outboxId}", (string outboxId, HttpContext httpContext) =>
+            {
+                var state = httpContext.RequestServices
+                    .GetService<IEventDispatchRuntimeCatalog>()?
+                    .GetByOutboxId(outboxId);
+
+                return state is null ? Results.NotFound() : Results.Ok(state);
+            })
+            .WithName("GetCephalonEventDispatch");
         engineGroup.MapGet("/inboxes", (IInboxCatalog catalog) => TypedResults.Ok(catalog.Inboxes))
             .WithName("GetCephalonInboxes");
         engineGroup.MapGet("/inboxes/{inboxId}", (string inboxId, IInboxCatalog catalog) =>

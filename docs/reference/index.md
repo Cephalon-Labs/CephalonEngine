@@ -15,19 +15,19 @@ Quick links:
 
 ### Core
 
-- [Cephalon.Abstractions](cephalon-abstractions.md): Host-agnostic contracts that module and package authors build against. Contains 17 namespaces and 143 public types. [Browse](browse.html?assembly=Cephalon.Abstractions)
-- [Cephalon.Engine](cephalon-engine.md): Composition, runtime, policy, manifest, and introspection services. Contains 12 namespaces and 66 public types. [Browse](browse.html?assembly=Cephalon.Engine)
+- [Cephalon.Abstractions](cephalon-abstractions.md): Host-agnostic contracts that module and package authors build against. Contains 17 namespaces and 178 public types. [Browse](browse.html?assembly=Cephalon.Abstractions)
+- [Cephalon.Engine](cephalon-engine.md): Composition, runtime, policy, manifest, and introspection services. Contains 12 namespaces and 77 public types. [Browse](browse.html?assembly=Cephalon.Engine)
 
 ### Technology Packs
 
 - [Cephalon.Agentics](cephalon-agentics.md): Agentic workload runtime services and extension points. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Agentics)
 - [Cephalon.Edge](cephalon-edge.md): Edge-native delivery runtime services and extension points. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Edge)
-- [Cephalon.Eventing](cephalon-eventing.md): Event-driven integration runtime services and extension points. Contains 3 namespaces and 27 public types. [Browse](browse.html?assembly=Cephalon.Eventing)
+- [Cephalon.Eventing](cephalon-eventing.md): Event-driven integration runtime services and extension points. Contains 3 namespaces and 24 public types. [Browse](browse.html?assembly=Cephalon.Eventing)
 - [Cephalon.Retrieval](cephalon-retrieval.md): Knowledge retrieval runtime services and extension points. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Retrieval)
 
 ### Hosts
 
-- [Cephalon.AspNetCore](cephalon-aspnetcore.md): ASP.NET Core host core, REST surface, docs, health, and runtime endpoints. Contains 8 namespaces and 16 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore)
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md): ASP.NET Core host core, REST surface, docs, health, and runtime endpoints. Contains 8 namespaces and 20 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore)
 - [Cephalon.AspNetCore.GraphQL](cephalon-aspnetcore-graphql.md): GraphQL transport adapter for ASP.NET Core hosts. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore.GraphQL)
 - [Cephalon.AspNetCore.Grpc](cephalon-aspnetcore-grpc.md): gRPC transport adapter and contracts for ASP.NET Core hosts. Contains 3 namespaces and 10 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore.Grpc)
 - [Cephalon.AspNetCore.JsonRpc](cephalon-aspnetcore-jsonrpc.md): JSON-RPC transport adapter for ASP.NET Core hosts. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore.JsonRpc)
@@ -70,7 +70,7 @@ Quick links:
 
 - [Cephalon.Audit](cephalon-audit.md): Host-agnostic audit recording baseline with audit-store cataloging for Cephalon runtimes. Contains 4 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Audit)
 - [Cephalon.Data](cephalon-data.md): Runtime-neutral data dispatching services for Cephalon workloads. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Data)
-- [Cephalon.Data.EntityFramework](cephalon-data-entityframework.md): Entity Framework Core read/write, inbox, and outbox integration for Cephalon data workloads. Contains 3 namespaces and 7 public types. [Browse](browse.html?assembly=Cephalon.Data.EntityFramework)
+- [Cephalon.Data.EntityFramework](cephalon-data-entityframework.md): Entity Framework Core read/write, inbox, and outbox integration for Cephalon data workloads. Contains 4 namespaces and 11 public types. [Browse](browse.html?assembly=Cephalon.Data.EntityFramework)
 - [Cephalon.Eventing.Wolverine](cephalon-eventing-wolverine.md): Official Wolverine adapter and managed dispatch-loop integration for Cephalon eventing workloads. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Eventing.Wolverine)
 - [Cephalon.Identity](cephalon-identity.md): Host-agnostic identity and authorization baseline for Cephalon runtimes. Contains 3 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Identity)
 - [Cephalon.Identity.AspNetCore](cephalon-identity-aspnetcore.md): ASP.NET Core host adapter for Cephalon identity and authorization workloads. Contains 3 namespaces and 5 public types. [Browse](browse.html?assembly=Cephalon.Identity.AspNetCore)

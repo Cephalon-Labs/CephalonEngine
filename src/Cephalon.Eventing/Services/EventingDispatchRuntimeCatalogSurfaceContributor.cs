@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Technologies;
 
 namespace Cephalon.Eventing.Services;

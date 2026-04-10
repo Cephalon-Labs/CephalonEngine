@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Data;
 using Cephalon.Eventing.Services;
 using Cephalon.Eventing.Wolverine.Configuration;
 

@@ -10,6 +10,13 @@ namespace Cephalon.AspNetCore.Transports.Rest;
 public class ResultModel<TModel>
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="ResultModel{TModel}"/> class.
+    /// </summary>
+    public ResultModel()
+    {
+    }
+
+    /// <summary>
     /// Gets or sets the short response title.
     /// </summary>
     [JsonPropertyName("title")]
@@ -68,6 +75,13 @@ public sealed class ResultModelError : ResultModel<object?>
 /// </summary>
 public sealed class ResultModelErrorDetail
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ResultModelErrorDetail"/> class.
+    /// </summary>
+    public ResultModelErrorDetail()
+    {
+    }
+
     /// <summary>
     /// Gets or sets the stable error key.
     /// </summary>

@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `April 10, 2026`.
+Backlog status in this document reflects the repository state as of `April 11, 2026`.
 
 ## Completed foundation work
 
@@ -1653,6 +1653,35 @@ Remaining follow-through inside `ENG-068`:
 - add bundle/script artifact generation or execution orchestration only when the engine can keep provider behavior truthful and additive
 - add richer provider-native diagnostics, per-step migration telemetry, or probe scheduling/caching only when the public catalog can stay stable across providers
 
+### ENG-069 Event-dispatch runtime operator-surface baseline
+
+Status: done
+Estimate: 5
+
+Why:
+
+- the current eventing baseline could report live dispatch state, but its descriptor and state read contracts still lived in `Cephalon.Eventing` instead of the host-agnostic abstraction layer that other runtime catalogs use
+- `/engine/snapshot` still stopped short of exposing a first-class event-dispatch runtime answer even though operators already needed to understand both configured dispatch ownership and the latest reported state
+- ASP.NET Core hosts still lacked direct `/engine/*` operator routes for event-dispatch runtimes and live dispatch state, which forced tooling to reconstruct answers indirectly from broader technology surfaces
+- the showcase sample had the pieces for outbox-backed publication, but it did not yet prove the official Wolverine-managed dispatch path and the new operator routes end to end
+
+Acceptance:
+
+- host-agnostic read contracts for configured event-dispatch runtimes and live event-dispatch state live in `Cephalon.Abstractions`
+- `/engine/snapshot` carries additive `EventDispatchRuntimes` and `EventDispatchStates` answers when the corresponding catalogs are active
+- ASP.NET Core hosts expose `/engine/event-dispatch-runtimes`, `/engine/event-dispatch-runtimes/{dispatchRuntimeId}`, `/engine/event-dispatches`, and `/engine/event-dispatches/{outboxId}`
+- `Cephalon.Eventing.Wolverine` projects its managed loop through the new operator surfaces without leaking Wolverine APIs into the abstraction layer
+- the showcase sample wires the official Wolverine path so hosting tests can prove the new routes and runtime snapshot truthfully
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `EventDispatchRuntimeDescriptor`, `EventDispatchRuntimeState`, `IEventDispatchRuntimeCatalog`, and `IEventDispatchRuntimeDescriptorCatalog` as the host-agnostic read layer for configured dispatch ownership and latest reported dispatch state
+- `Cephalon.Eventing` now keeps registration, reporting, and catalog implementation in the companion pack while consuming the abstraction-layer contracts for public reads, including a dedicated `EventDispatchRuntimeDescriptorCatalog`
+- `Cephalon.Engine` now projects additive `EventDispatchRuntimes` and `EventDispatchStates` into `RuntimeIntrospectionSnapshot` through optional service resolution so the engine core stays additive and host-agnostic
+- `Cephalon.AspNetCore` now exposes `/engine/event-dispatch-runtimes`, `/engine/event-dispatch-runtimes/{dispatchRuntimeId}`, `/engine/event-dispatches`, and `/engine/event-dispatches/{outboxId}` as direct operator routes
+- `Cephalon.Eventing.Wolverine` now reports its managed dispatch loop through the new runtime-descriptor/state surfaces without holding scoped dependencies incorrectly in singleton services, and the showcase sample now wires the official Wolverine pack so those routes stay truthful end to end
+- hosting, composition, tooling, reference-doc, and showcase coverage now lock the new operator contract plus the moved public surface
+
 ## Sprint history and next 4 sprints
 
 Historical sprint buckets below are retrospective planning groups used to backfill iteration and estimate metadata for delivered work.
@@ -1897,3 +1926,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - benchmark support: `BenchmarkHotPathTypes.cs` with data stubs, behavior stubs, authorization policy module, InMemoryBenchmarkEventStore, InMemoryBenchmarkOutbox, BenchmarkDomainEvent
 - guardrail catalog expanded from 10 to 23 entries, `GuardrailValidatorTests` updated
 - benchmark project now references `Cephalon.Behaviors` for behavior dispatch measurement — **Shipped** · 648/648 tests
+
+### Sprint 31 follow-through
+
+- ENG-069 event-dispatch runtime operator surfaces: host-agnostic event-dispatch runtime/state read contracts now live in `Cephalon.Abstractions`, `/engine/snapshot` now carries `EventDispatchRuntimes` plus `EventDispatchStates`, ASP.NET Core now exposes `/engine/event-dispatch-runtimes` and `/engine/event-dispatches`, `Cephalon.Eventing.Wolverine` now projects its managed loop through those routes truthfully, and the showcase sample now wires the official Wolverine path end to end — **Shipped**

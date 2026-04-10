@@ -1,6 +1,8 @@
+using Cephalon.Abstractions.Data;
+
 namespace Cephalon.Eventing.Services;
 
-internal sealed class EventDispatchRuntimeDescriptorCatalog
+internal sealed class EventDispatchRuntimeDescriptorCatalog : IEventDispatchRuntimeDescriptorCatalog
 {
     private readonly Dictionary<string, EventDispatchRuntimeDescriptor> index;
 

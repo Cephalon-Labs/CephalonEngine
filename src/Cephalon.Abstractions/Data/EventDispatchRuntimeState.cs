@@ -1,4 +1,4 @@
-namespace Cephalon.Eventing.Services;
+namespace Cephalon.Abstractions.Data;
 
 /// <summary>
 /// Describes the latest operator-facing runtime state reported for one durable event-dispatch path.
@@ -39,5 +39,5 @@ public sealed record EventDispatchRuntimeState(
     /// <summary>
     /// Gets a value indicating whether the latest report says another retry attempt is pending.
     /// </summary>
-    public bool RetryPending => string.Equals(LastOutcome, EventDispatchExecutionOutcomes.RetryScheduled, StringComparison.OrdinalIgnoreCase);
+    public bool RetryPending => string.Equals(LastOutcome, "retry-scheduled", StringComparison.OrdinalIgnoreCase);
 }

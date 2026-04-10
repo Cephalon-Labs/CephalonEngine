@@ -9,6 +9,15 @@ Browse the published API surface by public member.
 - [Abac](cephalon-abstractions.md#member-f-cephalon-abstractions-authorization-authorizationmode-abac): `Fields` on `AuthorizationMode` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Abac&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Indicates an attribute-based access-control evaluation.
   - `const AuthorizationMode Abac`
+- [Accepted](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-accepted-1-0-system-string-system-string): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates an accepted result with an optional payload value.
+  - `BehaviorResult<T> Accepted<T>(T value, string message, string code)`
+- [Accepted](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorresultstatus-accepted): `Fields` on `BehaviorResultStatus` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - The behavior accepted the request for asynchronous work.
+  - `const BehaviorResultStatus Accepted`
+- [Accepted](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-accepted-1-0-system-string-system-string): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates an accepted result with a payload value.
+  - `Result<T> Accepted<T>(T value, string message, string code)`
 - [Access](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-access): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Access&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The effective access mode resolved from policy.
   - `CapabilityAccess Access { get; set; }`
@@ -20,6 +29,15 @@ Browse the published API surface by public member.
   - `string AclToken { get; set; }`
 - [Action](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-action): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Action&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the logical action identifier associated with the audit event.
+  - `string Action { get; }`
+- [Action](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryentry-action): `Properties` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Action&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the logical action identifier associated with the audit event.
+  - `string Action { get; }`
+- [Action](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryexportrequest-action): `Properties` on `AuditHistoryExportRequest` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Action&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional logical action identifier filter.
+  - `string Action { get; }`
+- [Action](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryquery-action): `Properties` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Action&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional logical action identifier filter.
   - `string Action { get; }`
 - [Action](cephalon-audit.md#member-f-cephalon-audit-conventions-auditmetadatakeys-action): `Fields` on `AuditMetadataKeys` in `Cephalon.Audit.Conventions` (`Cephalon.Audit`) [Browse](browse.html?q=Action&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Conventions&scope=members)
   - The metadata key that stores the audit action identifier.
@@ -54,11 +72,20 @@ Browse the published API surface by public member.
 - [Actor](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-actor): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Actor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the actor responsible for the audited operation.
   - `AuditActor Actor { get; }`
+- [Actor](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryentry-actor): `Properties` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Actor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the actor responsible for the audited operation.
+  - `AuditActor Actor { get; }`
 - [Actor](cephalon-audit.md#member-p-cephalon-audit-services-auditrecordrequest-actor): `Properties` on `AuditRecordRequest` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=Actor&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
   - Gets the actor responsible for the audited operation when one was supplied explicitly.
   - `AuditActor Actor { get; }`
 - [ActorId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditactor-actorid): `Properties` on `AuditActor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the stable actor identifier.
+  - `string ActorId { get; }`
+- [ActorId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryexportrequest-actorid): `Properties` on `AuditHistoryExportRequest` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional stable actor identifier filter.
+  - `string ActorId { get; }`
+- [ActorId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryquery-actorid): `Properties` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional stable actor identifier filter.
   - `string ActorId { get; }`
 - [ActorId](cephalon-audit.md#member-f-cephalon-audit-conventions-auditmetadatakeys-actorid): `Fields` on `AuditMetadataKeys` in `Cephalon.Audit.Conventions` (`Cephalon.Audit`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Conventions&scope=members)
   - The metadata key that stores the actor identifier associated with an audit entry.
@@ -96,7 +123,7 @@ Browse the published API surface by public member.
 - [Add](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventchannelregistry-add-cephalon-eventing-services-eventchanneldescriptor): `Methods` on `IEventChannelRegistry` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Add&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Adds an event channel descriptor to the registry.
   - `void Add(EventChannelDescriptor channel)`
-- [Add](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventdispatchruntimeregistry-add-cephalon-eventing-services-eventdispatchruntimedescriptor): `Methods` on `IEventDispatchRuntimeRegistry` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Add&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [Add](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventdispatchruntimeregistry-add-cephalon-abstractions-data-eventdispatchruntimedescriptor): `Methods` on `IEventDispatchRuntimeRegistry` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Add&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Adds one dispatch runtime to the current eventing technology composition.
   - `void Add(EventDispatchRuntimeDescriptor dispatchRuntime)`
 - [Add](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventsubscriptionregistry-add-cephalon-eventing-services-eventsubscriptiondescriptor): `Methods` on `IEventSubscriptionRegistry` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Add&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
@@ -348,6 +375,12 @@ Browse the published API surface by public member.
 - [AddEntityFrameworkData](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-registration-entityframeworkdataenginebuilderextensions-addentityframeworkdata-1-cephalon-engine-composition-enginebuilder-system-action-microsoft-entityframeworkcore-dbcontextoptionsbuilder-system-action-cephalon-data-entityframework-configuration-entityframeworkdataoptions): `Methods` on `EntityFrameworkDataEngineBuilderExtensions` in `Cephalon.Data.EntityFramework.Registration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=AddEntityFrameworkData&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Registration&scope=members)
   - Adds the Entity Framework Core data pack with one shared `DbContext` type for both read and write workloads.
   - `EngineBuilder AddEntityFrameworkData<TDbContext>(this EngineBuilder builder, Action<DbContextOptionsBuilder> configureDbContext, Action<EntityFrameworkDataOptions> configure)`
+- [AddEntityFrameworkData](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-registration-entityframeworkdataenginebuilderextensions-addentityframeworkdata-1-cephalon-engine-composition-enginebuilder-system-action-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-microsoft-entityframeworkcore-dbcontextoptionsbuilder-system-action-cephalon-data-entityframework-configuration-entityframeworkdataoptions): `Methods` on `EntityFrameworkDataEngineBuilderExtensions` in `Cephalon.Data.EntityFramework.Registration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=AddEntityFrameworkData&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Registration&scope=members)
+  - Adds the Entity Framework Core data pack with one shared `DbContext` type configured from the engine-owned `Engine:Databases` topology.
+  - `EngineBuilder AddEntityFrameworkData<TDbContext>(this EngineBuilder builder, Action<EntityFrameworkDatabaseRoleContext, DbContextOptionsBuilder> configureDbContext, Action<EntityFrameworkDataOptions> configure)`
+- [AddEntityFrameworkData](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-registration-entityframeworkdataenginebuilderextensions-addentityframeworkdata-2-cephalon-engine-composition-enginebuilder-system-action-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-microsoft-entityframeworkcore-dbcontextoptionsbuilder-system-action-cephalon-data-entityframework-configuration-entityframeworkdataoptions): `Methods` on `EntityFrameworkDataEngineBuilderExtensions` in `Cephalon.Data.EntityFramework.Registration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=AddEntityFrameworkData&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Registration&scope=members)
+  - Adds the Entity Framework Core data pack with distinct read and write `DbContext` types configured from the engine-owned `Engine:Databases` topology.
+  - `EngineBuilder AddEntityFrameworkData<TReadDbContext, TWriteDbContext>(this EngineBuilder builder, Action<EntityFrameworkDatabaseRoleContext, DbContextOptionsBuilder> configureDbContext, Action<EntityFrameworkDataOptions> configure)`
 - [AddEntityFrameworkData](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-registration-entityframeworkdataenginebuilderextensions-addentityframeworkdata-2-cephalon-engine-composition-enginebuilder-system-action-microsoft-entityframeworkcore-dbcontextoptionsbuilder-system-action-microsoft-entityframeworkcore-dbcontextoptionsbuilder-system-action-cephalon-data-entityframework-configuration-entityframeworkdataoptions): `Methods` on `EntityFrameworkDataEngineBuilderExtensions` in `Cephalon.Data.EntityFramework.Registration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=AddEntityFrameworkData&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Registration&scope=members)
   - Adds the Entity Framework Core data pack with explicit read and write `DbContext` types.
   - `EngineBuilder AddEntityFrameworkData<TReadDbContext, TWriteDbContext>(this EngineBuilder builder, Action<DbContextOptionsBuilder> configureReadDbContext, Action<DbContextOptionsBuilder> configureWriteDbContext, Action<EntityFrameworkDataOptions> configure)`
@@ -555,18 +588,33 @@ Browse the published API surface by public member.
 - [Apply](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-iaggregate-1-apply-0-cephalon-abstractions-eventsourcing-idomainevent): `Methods` on `IAggregate<TState>` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Apply&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Applies one event to the current state and returns the next state snapshot.
   - `TState Apply(TState current, IDomainEvent evt)`
+- [ApplyOnStartup](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-applyonstartup): `Properties` on `AuditHistoryRetentionSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApplyOnStartup&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether one retention pass should run during host startup.
+  - `bool? ApplyOnStartup { get; }`
+- [ApplyOnStartup](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistoryretentionsettings-applyonstartup): `Properties` on `AuditHistoryRetentionSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ApplyOnStartup&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether one retention pass should run during host startup.
+  - `bool? ApplyOnStartup { get; }`
+- [ApplyOnStartup](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-applyonstartup): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApplyOnStartup&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether startup execution is enabled for this target.
+  - `bool ApplyOnStartup { get; }`
+- [ApplyOnStartup](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasemigrationsselection-applyonstartup): `Properties` on `DatabaseMigrationsSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApplyOnStartup&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether migrations should be applied during host startup.
+  - `bool? ApplyOnStartup { get; }`
+- [ApplyOnStartup](cephalon-engine.md#member-p-cephalon-engine-configuration-databasemigrationssettings-applyonstartup): `Properties` on `DatabaseMigrationsSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ApplyOnStartup&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether migrations should be applied during host startup.
+  - `bool? ApplyOnStartup { get; }`
 - [ApplyReportAsync](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventdispatchstore-applyreportasync-cephalon-eventing-services-eventdispatchexecutionreport-system-threading-cancellationtoken): `Methods` on `IEventDispatchStore` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ApplyReportAsync&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Applies one durable dispatch outcome to the active staged-event store.
   - `ValueTask ApplyReportAsync(EventDispatchExecutionReport report, CancellationToken cancellationToken)`
 - [AppName](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-scaffoldrequest-appname): `Properties` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=AppName&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the application name to scaffold.
   - `string AppName { get; }`
-- [AppProfile](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection): `Constructors` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppProfile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+- [AppProfile](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-databasetopologyselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection): `Constructors` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppProfile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Creates an app profile without scaffold metadata.
-  - `AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging)`
-- [AppProfile](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection): `Constructors` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppProfile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - `AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, DatabaseTopologySelection databases, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging)`
+- [AppProfile](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-databasetopologyselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection): `Constructors` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppProfile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Creates an app profile with optional scaffold metadata.
-  - `AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, ScaffoldPlan scaffold, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging)`
+  - `AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, ScaffoldPlan scaffold, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, DatabaseTopologySelection databases, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging)`
 - [AppProfile](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedscaffold-appprofile): `Properties` on `RenderedScaffold` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=AppProfile&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the application profile used to drive generation.
   - `AppProfile AppProfile { get; }`
@@ -657,18 +705,48 @@ Browse the published API surface by public member.
 - [AuditEntry](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-auditentry-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-cephalon-abstractions-audit-auditactor-cephalon-abstractions-audit-auditoutcome-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-audit-auditchange-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuditEntry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Creates a new audit entry.
   - `AuditEntry(string id, string category, string action, string summary, string subjectType, string subjectId, DateTimeOffset occurredAtUtc, AuditActor actor, AuditOutcome outcome, string tenantId, string correlationId, IReadOnlyList<AuditChange> changes, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
+- [AuditHistoryEntry](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-audithistoryentry-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-datetimeoffset-cephalon-abstractions-audit-auditactor-cephalon-abstractions-audit-auditoutcome-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-audit-auditchange-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuditHistoryEntry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Creates a new audit-history entry.
+  - `AuditHistoryEntry(string id, string category, string action, string summary, string subjectType, string subjectId, DateTimeOffset occurredAtUtc, DateTimeOffset persistedAtUtc, AuditActor actor, AuditOutcome outcome, string tenantId, string correlationId, IReadOnlyList<AuditChange> changes, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
+- [AuditHistoryExportRequest](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-audithistoryexportrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-cephalon-abstractions-audit-auditoutcome-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32): `Constructors` on `AuditHistoryExportRequest` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuditHistoryExportRequest&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Creates a new audit-history export request.
+  - `AuditHistoryExportRequest(string category, string action, string subjectType, string subjectId, string actorId, string tenantId, string correlationId, AuditOutcome? outcome, DateTimeOffset? occurredFromUtc, DateTimeOffset? occurredToUtc, int maxEntries)`
+- [AuditHistoryExportSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-audithistoryexportselection-ctor-system-nullable-system-boolean-system-nullable-system-int32): `Constructors` on `AuditHistoryExportSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuditHistoryExportSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Initializes a new instance of the `AuditHistoryExportSelection` class.
+  - `AuditHistoryExportSelection(bool? enabled, int? maxEntries)`
+- [AuditHistoryExportSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-audithistoryexportsettings-ctor-system-nullable-system-boolean-system-nullable-system-int32): `Constructors` on `AuditHistoryExportSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=AuditHistoryExportSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `AuditHistoryExportSettings` class.
+  - `AuditHistoryExportSettings(bool? enabled, int? maxEntries)`
+- [AuditHistoryQuery](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-audithistoryquery-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-cephalon-abstractions-audit-auditoutcome-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-system-int32): `Constructors` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuditHistoryQuery&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Creates a new audit-history query.
+  - `AuditHistoryQuery(string category, string action, string subjectType, string subjectId, string actorId, string tenantId, string correlationId, AuditOutcome? outcome, DateTimeOffset? occurredFromUtc, DateTimeOffset? occurredToUtc, int offset, int limit)`
+- [AuditHistoryQueryResult](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-audithistoryqueryresult-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-audit-audithistoryentry-system-int32-system-int32-system-int32): `Constructors` on `AuditHistoryQueryResult` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuditHistoryQueryResult&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Creates a new audit-history query result.
+  - `AuditHistoryQueryResult(IReadOnlyList<AuditHistoryEntry> entries, int offset, int limit, int totalCount)`
+- [AuditHistoryRetentionSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-audithistoryretentionselection-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-boolean-system-nullable-system-int32): `Constructors` on `AuditHistoryRetentionSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuditHistoryRetentionSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Initializes a new instance of the `AuditHistoryRetentionSelection` class.
+  - `AuditHistoryRetentionSelection(bool? enabled, int? maxAgeDays, int? deleteBatchSize, bool? applyOnStartup, int? runIntervalMinutes)`
+- [AuditHistoryRetentionSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-audithistoryretentionsettings-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-boolean-system-nullable-system-int32): `Constructors` on `AuditHistoryRetentionSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=AuditHistoryRetentionSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `AuditHistoryRetentionSettings` class.
+  - `AuditHistoryRetentionSettings(bool? enabled, int? maxAgeDays, int? deleteBatchSize, bool? applyOnStartup, int? runIntervalMinutes)`
+- [AuditHistorySelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-audithistoryselection-ctor-system-nullable-system-boolean-system-string-system-string-cephalon-abstractions-appmodel-audithistoryexportselection-cephalon-abstractions-appmodel-audithistoryretentionselection): `Constructors` on `AuditHistorySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuditHistorySelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Initializes a new instance of the `AuditHistorySelection` class.
+  - `AuditHistorySelection(bool? enabled, string provider, string databaseRole, AuditHistoryExportSelection export, AuditHistoryRetentionSelection retention)`
+- [AuditHistorySettings](cephalon-engine.md#member-m-cephalon-engine-configuration-audithistorysettings-ctor-system-nullable-system-boolean-system-string-system-string-cephalon-engine-configuration-audithistoryexportsettings-cephalon-engine-configuration-audithistoryretentionsettings): `Constructors` on `AuditHistorySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=AuditHistorySettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `AuditHistorySettings` class.
+  - `AuditHistorySettings(bool? enabled, string provider, string databaseRole, AuditHistoryExportSettings export, AuditHistoryRetentionSettings retention)`
 - [AuditRecordRequest](cephalon-audit.md#member-m-cephalon-audit-services-auditrecordrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-cephalon-abstractions-audit-auditactor-cephalon-abstractions-audit-auditoutcome-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-audit-auditchange-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AuditRecordRequest` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=AuditRecordRequest&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
   - Creates a new audit-record request.
   - `AuditRecordRequest(string category, string action, string summary, string subjectType, string subjectId, string entryId, DateTimeOffset? occurredAtUtc, AuditActor actor, AuditOutcome outcome, string tenantId, string correlationId, IReadOnlyList<AuditChange> changes, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
 - [AuditRuntimeOptions](cephalon-audit.md#member-m-cephalon-audit-configuration-auditruntimeoptions-ctor-system-int32): `Constructors` on `AuditRuntimeOptions` in `Cephalon.Audit.Configuration` (`Cephalon.Audit`) [Browse](browse.html?q=AuditRuntimeOptions&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Configuration&scope=members)
   - Initializes a new instance of the `AuditRuntimeOptions` class.
   - `AuditRuntimeOptions(int inMemoryBufferCapacity)`
-- [AuditSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-auditselection-ctor-system-nullable-system-boolean): `Constructors` on `AuditSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuditSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+- [AuditSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-auditselection-ctor-system-nullable-system-boolean-cephalon-abstractions-appmodel-audithistoryselection): `Constructors` on `AuditSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuditSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Initializes a new instance of the `AuditSelection` class.
-  - `AuditSelection(bool? enabled)`
-- [AuditSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-auditsettings-ctor-system-nullable-system-boolean): `Constructors` on `AuditSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=AuditSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - `AuditSelection(bool? enabled, AuditHistorySelection history)`
+- [AuditSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-auditsettings-ctor-system-nullable-system-boolean-cephalon-engine-configuration-audithistorysettings): `Constructors` on `AuditSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=AuditSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `AuditSettings` class.
-  - `AuditSettings(bool? enabled)`
+  - `AuditSettings(bool? enabled, AuditHistorySettings history)`
 - [AuditStoreDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-auditstoredescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AuditStoreDescriptor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuditStoreDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Creates a new audit-store descriptor.
   - `AuditStoreDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string mode, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
@@ -777,6 +855,9 @@ Browse the published API surface by public member.
 - [BehaviorNotFoundException](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviornotfoundexception-ctor-system-string-system-exception): `Constructors` on `BehaviorNotFoundException` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorNotFoundException&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes the exception for the given behavior identifier with an inner exception.
   - `BehaviorNotFoundException(string behaviorId, Exception innerException)`
+- [BehaviorRestDocumentedStatusCodes](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-openapiendpointoptions-behaviorrestdocumentedstatuscodes): `Properties` on `OpenApiEndpointOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=BehaviorRestDocumentedStatusCodes&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
+  - Gets or sets the HTTP status codes that Cephalon's behavior-owned REST helpers publish in OpenAPI documents by default.
+  - `IReadOnlyList<int> BehaviorRestDocumentedStatusCodes { get; set; }`
 - [BehaviorSecurityException](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorsecurityexception-ctor-system-string-system-string): `Constructors` on `BehaviorSecurityException` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorSecurityException&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes the exception with the behavior identifier and a descriptive message.
   - `BehaviorSecurityException(string behaviorId, string message)`
@@ -888,6 +969,15 @@ Browse the published API surface by public member.
 - [Category](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-category): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Category&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the logical audit category.
   - `string Category { get; }`
+- [Category](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryentry-category): `Properties` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Category&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the logical audit category.
+  - `string Category { get; }`
+- [Category](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryexportrequest-category): `Properties` on `AuditHistoryExportRequest` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Category&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional logical audit category filter.
+  - `string Category { get; }`
+- [Category](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryquery-category): `Properties` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Category&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional logical audit category filter.
+  - `string Category { get; }`
 - [Category](cephalon-audit.md#member-f-cephalon-audit-conventions-auditmetadatakeys-category): `Fields` on `AuditMetadataKeys` in `Cephalon.Audit.Conventions` (`Cephalon.Audit`) [Browse](browse.html?q=Category&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Conventions&scope=members)
   - The metadata key that stores the audit category.
   - `const string Category`
@@ -904,6 +994,9 @@ Browse the published API surface by public member.
   - The signing certificate thumbprint used during verification, when certificate-backed trust was used.
   - `string CertificateThumbprint { get; set; }`
 - [Changes](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-changes): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Changes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the field-level changes captured for the operation.
+  - `IReadOnlyList<AuditChange> Changes { get; }`
+- [Changes](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryentry-changes): `Properties` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Changes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the field-level changes captured for the operation.
   - `IReadOnlyList<AuditChange> Changes { get; }`
 - [Changes](cephalon-audit.md#member-p-cephalon-audit-services-auditrecordrequest-changes): `Properties` on `AuditRecordRequest` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=Changes&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
@@ -993,6 +1086,15 @@ Browse the published API surface by public member.
 - [Code](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorfault-code): `Properties` on `BehaviorFault` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Code&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets or sets the fault code.
   - `string Code { get; set; }`
+- [Code](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorresultdescriptor-code): `Properties` on `BehaviorResultDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Code&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the stable outcome code when one was supplied.
+  - `string Code { get; }`
+- [Code](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorresult-code): `Properties` on `IBehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Code&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the stable outcome code when one was supplied.
+  - `string Code { get; }`
+- [Code](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-result-1-code): `Properties` on `Result<T>` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Code&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the stable outcome code when one was supplied.
+  - `string Code { get; }`
 - [Collections](cephalon-retrieval.md#member-p-cephalon-retrieval-services-iknowledgecatalog-collections): `Properties` on `IKnowledgeCatalog` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Collections&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets the effective collection set after host options and module contributors have both been applied.
   - `IReadOnlyList<KnowledgeCollectionDescriptor> Collections { get; }`
@@ -1035,6 +1137,24 @@ Browse the published API surface by public member.
 - [CollectorServiceName](cephalon-observability-openshift.md#member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-collectorservicename): `Properties` on `OpenShiftTelemetryExportOptions` in `Cephalon.Observability.OpenShift.Configuration` (`Cephalon.Observability.OpenShift`) [Browse](browse.html?q=CollectorServiceName&assembly=Cephalon.Observability.OpenShift&namespace=Cephalon.Observability.OpenShift.Configuration&scope=members)
   - Gets or sets the collector service name used to build the in-cluster OpenShift collector endpoint.
   - `string CollectorServiceName { get; set; }`
+- [CoLocatedRoles](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-colocatedroles): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CoLocatedRoles&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the logical roles that resolve to the same concrete role target.
+  - `IReadOnlyList<string> CoLocatedRoles { get; }`
+- [Commands](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-commands): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Commands&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets optional operator-facing command templates for executing this target outside startup apply.
+  - `IReadOnlyList<DatabaseMigrationCommandDescriptor> Commands { get; }`
+- [CommandTemplate](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-commandtemplate): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandTemplate&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the command template that operators can adapt for their environment.
+  - `string CommandTemplate { get; }`
+- [CommandTimeoutSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databaseruntimeselection-commandtimeoutseconds): `Properties` on `DatabaseRuntimeSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandTimeoutSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the command timeout in seconds when one was configured.
+  - `int? CommandTimeoutSeconds { get; }`
+- [CommandTimeoutSeconds](cephalon-engine.md#member-p-cephalon-engine-configuration-databaseruntimesettings-commandtimeoutseconds): `Properties` on `DatabaseRuntimeSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=CommandTimeoutSeconds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the command timeout in seconds when one was configured.
+  - `int? CommandTimeoutSeconds { get; }`
+- [CompletedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-completedatutc): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompletedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the latest completion time observed for this target.
+  - `DateTimeOffset? CompletedAtUtc { get; }`
 - [Composition](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-patternkind-composition): `Fields` on `PatternKind` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Composition&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Identifies a composition pattern.
   - `const PatternKind Composition`
@@ -1086,18 +1206,45 @@ Browse the published API surface by public member.
 - [ConfigureTopology](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-configuretopology): `Properties` on `OwnedBehaviorRegistration` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConfigureTopology&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the optional topology callback supplied by the owning module.
   - `Action<IBehaviorTopologyBuilder> ConfigureTopology { get; }`
+- [Conflict](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-conflict-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Conflict&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a conflict result.
+  - `BehaviorResultDescriptor Conflict(string code, string message, BehaviorFault fault)`
+- [Conflict](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-conflict-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Conflict&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a conflict result for the specified payload type.
+  - `BehaviorResult<T> Conflict<T>(string code, string message, BehaviorFault fault)`
+- [Conflict](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorresultstatus-conflict): `Fields` on `BehaviorResultStatus` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Conflict&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - The request conflicts with the current state of the target resource.
+  - `const BehaviorResultStatus Conflict`
+- [Conflict](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-conflict-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Conflict&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a conflict result.
+  - `BehaviorResultDescriptor Conflict(string code, string message, BehaviorFault fault)`
+- [Conflict](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-conflict-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Conflict&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a conflict result for the specified payload type.
+  - `Result<T> Conflict<T>(string code, string message, BehaviorFault fault)`
 - [ConflictsWith](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-conflictswith): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConflictsWith&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the pattern identifiers that conflict with this pattern.
   - `IReadOnlyList<string> ConflictsWith { get; }`
 - [ConflictsWith](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-conflictswith): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConflictsWith&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the technology identifiers that conflict with the technology.
   - `IReadOnlyList<string> ConflictsWith { get; }`
+- [ConnectionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-connectionmode): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConnectionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the effective connection mode.
+  - `string ConnectionMode { get; }`
 - [ConnectionString](cephalon-observability-azuremonitor.md#member-p-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-connectionstring): `Properties` on `AzureMonitorExportOptions` in `Cephalon.Observability.AzureMonitor.Configuration` (`Cephalon.Observability.AzureMonitor`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Observability.AzureMonitor&namespace=Cephalon.Observability.AzureMonitor.Configuration&scope=members)
   - Gets or sets the Azure Monitor / Application Insights connection string used by the exporter.
   - `string ConnectionString { get; set; }`
 - [ConnectionString](cephalon-observability-clickhousedependencies.md#member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-connectionstring): `Properties` on `ClickHouseDependencyDefinition` in `Cephalon.Observability.ClickHouseDependencies.Configuration` (`Cephalon.Observability.ClickHouseDependencies`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Observability.ClickHouseDependencies&namespace=Cephalon.Observability.ClickHouseDependencies.Configuration&scope=members)
   - Gets or sets the optional full ClickHouse connection string used for the probe.
   - `string ConnectionString { get; set; }`
+- [ConnectionString](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasetargetselection-connectionstring): `Properties` on `DatabaseTargetSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the inline connection string selected for this database role.
+  - `string ConnectionString { get; }`
+- [ConnectionString](cephalon-engine.md#member-p-cephalon-engine-configuration-databasetargetsettings-connectionstring): `Properties` on `DatabaseTargetSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the selected inline connection string.
+  - `string ConnectionString { get; }`
+- [ConnectionString](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-connectionstring): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Gets the resolved connection string for the selected role.
+  - `string ConnectionString { get; }`
 - [ConnectionString](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-connectionstring): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the optional full MongoDB connection string used for the probe.
   - `string ConnectionString { get; set; }`
@@ -1116,12 +1263,27 @@ Browse the published API surface by public member.
 - [ConnectionString](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-connectionstring): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the optional full SQL Server connection string used for the probe.
   - `string ConnectionString { get; set; }`
+- [ConnectionStringName](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-connectionstringname): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConnectionStringName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the effective named connection-string reference, when used.
+  - `string ConnectionStringName { get; }`
+- [ConnectionStringName](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasetargetselection-connectionstringname): `Properties` on `DatabaseTargetSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConnectionStringName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the root connection-string name selected for this database role.
+  - `string ConnectionStringName { get; }`
+- [ConnectionStringName](cephalon-engine.md#member-p-cephalon-engine-configuration-databasetargetsettings-connectionstringname): `Properties` on `DatabaseTargetSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ConnectionStringName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the selected root connection-string name.
+  - `string ConnectionStringName { get; }`
+- [ConnectionStringName](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-connectionstringname): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ConnectionStringName&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Gets the selected named connection-string reference, if one was declared.
+  - `string ConnectionStringName { get; }`
 - [ConsulDependencyDefinition](cephalon-observability-consuldependencies.md#member-m-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-ctor): `Constructors` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=ConsulDependencyDefinition&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
   - Initializes a new instance of the `ConsulDependencyDefinition` class.
   - `ConsulDependencyDefinition()`
 - [ConsulDependencyHealthOptions](cephalon-observability-consuldependencies.md#member-m-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions-ctor): `Constructors` on `ConsulDependencyHealthOptions` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=ConsulDependencyHealthOptions&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
   - Initializes a new instance of the `ConsulDependencyHealthOptions` class.
   - `ConsulDependencyHealthOptions()`
+- [Consumers](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-consumers): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Consumers&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the logical engine features that explicitly target this role.
+  - `IReadOnlyList<string> Consumers { get; }`
 - [ContactPoints](cephalon-observability-cassandradependencies.md#member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-contactpoints): `Properties` on `CassandraDependencyDefinition` in `Cephalon.Observability.CassandraDependencies.Configuration` (`Cephalon.Observability.CassandraDependencies`) [Browse](browse.html?q=ContactPoints&assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Configuration&scope=members)
   - Gets or sets the Cassandra contact points used to establish the probe session.
   - `IReadOnlyList<string> ContactPoints { get; set; }`
@@ -1188,6 +1350,15 @@ Browse the published API surface by public member.
 - [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-correlationid): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the correlation identifier associated with the audited operation.
   - `string CorrelationId { get; }`
+- [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryentry-correlationid): `Properties` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the correlation identifier associated with the audited operation.
+  - `string CorrelationId { get; }`
+- [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryexportrequest-correlationid): `Properties` on `AuditHistoryExportRequest` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional correlation identifier filter.
+  - `string CorrelationId { get; }`
+- [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryquery-correlationid): `Properties` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional correlation identifier filter.
+  - `string CorrelationId { get; }`
 - [CorrelationId](cephalon-audit.md#member-f-cephalon-audit-conventions-auditmetadatakeys-correlationid): `Fields` on `AuditMetadataKeys` in `Cephalon.Audit.Conventions` (`Cephalon.Audit`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Conventions&scope=members)
   - The metadata key that stores the correlation identifier associated with an audit entry.
   - `const string CorrelationId`
@@ -1230,6 +1401,15 @@ Browse the published API surface by public member.
 - [Create](cephalon-engine.md#member-m-cephalon-engine-appmodel-appprofilefactory-create-cephalon-engine-configuration-enginesettings): `Methods` on `AppProfileFactory` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=Create&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
   - Creates an app profile from the configured engine settings.
   - `AppProfile Create(EngineSettings settings)`
+- [Created](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-created-1-0-system-string-system-string): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Created&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a created result with a payload value.
+  - `BehaviorResult<T> Created<T>(T value, string message, string code)`
+- [Created](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorresultstatus-created): `Fields` on `BehaviorResultStatus` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Created&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - The behavior created a new resource or record.
+  - `const BehaviorResultStatus Created`
+- [Created](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-created-1-0-system-string-system-string): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Created&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a created result with a payload value.
+  - `Result<T> Created<T>(T value, string message, string code)`
 - [Created](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-created): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Created&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime has been created but not initialized.
   - `const RuntimeStatus Created`
@@ -1260,6 +1440,9 @@ Browse the published API surface by public member.
 - [Critical](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behavioradvisoryseverity-critical): `Fields` on `BehaviorAdvisorySeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Critical&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Critical — immediate attention recommended.
   - `const BehaviorAdvisorySeverity Critical`
+- [Critical](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorfaultseverity-critical): `Fields` on `BehaviorFaultSeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Critical&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Critical fault details.
+  - `const BehaviorFaultSeverity Critical`
 - [Critical](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-critical): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Critical&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The event indicates a critical condition that usually requires immediate attention.
   - `const DiagnosticSeverity Critical`
@@ -1284,6 +1467,9 @@ Browse the published API surface by public member.
 - [Data](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-patternkind-data): `Fields` on `PatternKind` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Data&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Identifies a data or persistence pattern.
   - `const PatternKind Data`
+- [Data](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-data): `Properties` on `ResultModel<TModel>` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Data&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
+  - Gets or sets the payload returned by the endpoint.
+  - `TModel Data { get; set; }`
 - [Data](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-data): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Data&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Identifies a data-oriented technology.
   - `const TechnologyKind Data`
@@ -1308,6 +1494,72 @@ Browse the published API surface by public member.
 - [Database](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-database): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=Database&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the database name used for the health query.
   - `string Database { get; set; }`
+- [DatabaseMigrationCommandDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-databasemigrationcommanddescriptor-ctor-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DatabaseMigrationCommandDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new database-migration command descriptor.
+  - `DatabaseMigrationCommandDescriptor(string id, string displayName, string description, string commandTemplate, bool recommendedForProduction, IReadOnlyDictionary<string, string> metadata)`
+- [DatabaseMigrationDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-databasemigrationdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-data-databasemigrationstatus-system-boolean-system-boolean-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-data-databasemigrationcommanddescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DatabaseMigrationDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new database-migration descriptor.
+  - `DatabaseMigrationDescriptor(string id, string displayName, string description, string requestedRoleId, string resolvedRoleId, string executionMode, DatabaseMigrationStatus status, bool applyOnStartup, bool exitAfterApply, string provider, string dbContextType, string mechanism, DateTimeOffset? startedAtUtc, DateTimeOffset? completedAtUtc, string lastError, IReadOnlyList<DatabaseMigrationCommandDescriptor> commands, IReadOnlyDictionary<string, string> metadata)`
+- [DatabaseMigrations](cephalon-abstractions.md#member-p-cephalon-abstractions-data-idatabasemigrationcatalog-databasemigrations): `Properties` on `IDatabaseMigrationCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DatabaseMigrations&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets every migration target visible to the current runtime.
+  - `IReadOnlyList<DatabaseMigrationDescriptor> DatabaseMigrations { get; }`
+- [DatabaseMigrations](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-databasemigrations): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DatabaseMigrations&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the database-migration catalog visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<DatabaseMigrationDescriptor> DatabaseMigrations { get; set; }`
+- [DatabaseMigrationsSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-databasemigrationsselection-ctor-system-nullable-system-boolean-system-nullable-system-boolean-system-collections-generic-ireadonlylist-system-string): `Constructors` on `DatabaseMigrationsSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=DatabaseMigrationsSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Initializes a new instance of the `DatabaseMigrationsSelection` class.
+  - `DatabaseMigrationsSelection(bool? applyOnStartup, bool? exitAfterApply, IReadOnlyList<string> targets)`
+- [DatabaseMigrationsSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-databasemigrationssettings-ctor-system-nullable-system-boolean-system-nullable-system-boolean-system-collections-generic-ireadonlylist-system-string): `Constructors` on `DatabaseMigrationsSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DatabaseMigrationsSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `DatabaseMigrationsSettings` class.
+  - `DatabaseMigrationsSettings(bool? applyOnStartup, bool? exitAfterApply, IReadOnlyList<string> targets)`
+- [DatabaseRole](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryselection-databaserole): `Properties` on `AuditHistorySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=DatabaseRole&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the selected database role used by the durable history path.
+  - `string DatabaseRole { get; }`
+- [DatabaseRole](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistorysettings-databaserole): `Properties` on `AuditHistorySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DatabaseRole&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the selected logical database role used by durable history.
+  - `string DatabaseRole { get; }`
+- [DatabaseRoleDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-databaseroledescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-appmodel-databaseruntimeselection-system-boolean-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-nullable-cephalon-abstractions-health-healthstate-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DatabaseRoleDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new database-role descriptor.
+  - `DatabaseRoleDescriptor(string id, string displayName, string description, string provider, string requestedRoleId, string resolvedRoleId, string resolutionMode, DatabaseRuntimeSelection runtime, bool usesRoleReference, string useRole, string connectionMode, string connectionStringName, string schema, IReadOnlyList<string> consumers, IReadOnlyList<string> referencedByRoles, IReadOnlyList<string> coLocatedRoles, IReadOnlyDictionary<string, string> metadata, HealthState? healthState, string healthDescription, string migrationState, string migrationDescription, DateTimeOffset? observedAtUtc, IReadOnlyDictionary<string, string> runtimeMetadata)`
+- [DatabaseRoleId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-databaseroleid): `Properties` on `DatabaseRoleRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DatabaseRoleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the logical database-role identifier that this runtime state applies to.
+  - `string DatabaseRoleId { get; }`
+- [DatabaseRoleRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-databaseroleruntimedescriptor-ctor-system-string-system-nullable-cephalon-abstractions-health-healthstate-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DatabaseRoleRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DatabaseRoleRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new database-role runtime descriptor.
+  - `DatabaseRoleRuntimeDescriptor(string databaseRoleId, HealthState? healthState, string healthDescription, string migrationState, string migrationDescription, DateTimeOffset? observedAtUtc, IReadOnlyDictionary<string, string> metadata)`
+- [DatabaseRoles](cephalon-abstractions.md#member-p-cephalon-abstractions-data-idatabaserolecatalog-databaseroles): `Properties` on `IDatabaseRoleCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DatabaseRoles&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets every database role visible to the current runtime.
+  - `IReadOnlyList<DatabaseRoleDescriptor> DatabaseRoles { get; }`
+- [DatabaseRoles](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-databaseroles): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DatabaseRoles&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the engine-owned database-role catalog visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<DatabaseRoleDescriptor> DatabaseRoles { get; set; }`
+- [DatabaseRuntimeSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-databaseruntimeselection-ctor-system-nullable-system-boolean-system-nullable-system-boolean-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `DatabaseRuntimeSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=DatabaseRuntimeSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Initializes a new instance of the `DatabaseRuntimeSelection` class.
+  - `DatabaseRuntimeSelection(bool? enableDetailedErrors, bool? enableSensitiveDataLogging, bool? enableRetryOnFailure, int? maxRetryCount, int? maxRetryDelaySeconds, int? commandTimeoutSeconds, int? maxBatchSize)`
+- [DatabaseRuntimeSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-databaseruntimesettings-ctor-system-nullable-system-boolean-system-nullable-system-boolean-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `DatabaseRuntimeSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DatabaseRuntimeSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `DatabaseRuntimeSettings` class.
+  - `DatabaseRuntimeSettings(bool? enableDetailedErrors, bool? enableSensitiveDataLogging, bool? enableRetryOnFailure, int? maxRetryCount, int? maxRetryDelaySeconds, int? commandTimeoutSeconds, int? maxBatchSize)`
+- [Databases](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-databases): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Databases&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the selected database topology inputs.
+  - `DatabaseTopologySelection Databases { get; }`
+- [Databases](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-databases): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Databases&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets configuration-driven database topology settings.
+  - `DatabaseTopologySettings Databases { get; }`
+- [DatabaseTargetSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-databasetargetselection-ctor-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-appmodel-databaseruntimeselection): `Constructors` on `DatabaseTargetSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=DatabaseTargetSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Initializes a new instance of the `DatabaseTargetSelection` class.
+  - `DatabaseTargetSelection(string provider, string connectionStringName, string connectionString, string useRole, string schema, DatabaseRuntimeSelection runtime)`
+- [DatabaseTargetSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-databasetargetsettings-ctor-system-string-system-string-system-string-system-string-system-string-cephalon-engine-configuration-databaseruntimesettings): `Constructors` on `DatabaseTargetSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DatabaseTargetSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `DatabaseTargetSettings` class.
+  - `DatabaseTargetSettings(string provider, string connectionStringName, string connectionString, string useRole, string schema, DatabaseRuntimeSettings runtime)`
+- [DatabaseTopologyRoleResolution](cephalon-engine.md#member-m-cephalon-engine-appmodel-databasetopologyroleresolution-ctor-system-string-system-string-cephalon-abstractions-appmodel-databasetargetselection-cephalon-abstractions-appmodel-databasetargetselection-system-string): `Constructors` on `DatabaseTopologyRoleResolution` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=DatabaseTopologyRoleResolution&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Initializes a new instance of the `DatabaseTopologyRoleResolution` class.
+  - `DatabaseTopologyRoleResolution(string requestedRoleId, string resolvedRoleId, DatabaseTargetSelection requestedTarget, DatabaseTargetSelection effectiveTarget, string useRole)`
+- [DatabaseTopologySelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-databasetopologyselection-ctor-cephalon-abstractions-appmodel-databaseruntimeselection-cephalon-abstractions-appmodel-databasetargetselection-cephalon-abstractions-appmodel-databasetargetselection-cephalon-abstractions-appmodel-databasetargetselection-cephalon-abstractions-appmodel-databasetargetselection-cephalon-abstractions-appmodel-databasemigrationsselection): `Constructors` on `DatabaseTopologySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=DatabaseTopologySelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Initializes a new instance of the `DatabaseTopologySelection` class.
+  - `DatabaseTopologySelection(DatabaseRuntimeSelection runtime, DatabaseTargetSelection write, DatabaseTargetSelection read, DatabaseTargetSelection outbox, DatabaseTargetSelection history, DatabaseMigrationsSelection migrations)`
+- [DatabaseTopologySettings](cephalon-engine.md#member-m-cephalon-engine-configuration-databasetopologysettings-ctor-cephalon-engine-configuration-databaseruntimesettings-cephalon-engine-configuration-databasetargetsettings-cephalon-engine-configuration-databasetargetsettings-cephalon-engine-configuration-databasetargetsettings-cephalon-engine-configuration-databasetargetsettings-cephalon-engine-configuration-databasemigrationssettings): `Constructors` on `DatabaseTopologySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DatabaseTopologySettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `DatabaseTopologySettings` class.
+  - `DatabaseTopologySettings(DatabaseRuntimeSettings runtime, DatabaseTargetSettings write, DatabaseTargetSettings read, DatabaseTargetSettings outbox, DatabaseTargetSettings history, DatabaseMigrationsSettings migrations)`
 - [Datacenter](cephalon-observability-consuldependencies.md#member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-datacenter): `Properties` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=Datacenter&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
   - Gets or sets the optional Consul datacenter name added as the `dc` query parameter.
   - `string Datacenter { get; set; }`
@@ -1326,6 +1578,12 @@ Browse the published API surface by public member.
 - [DataUploadEndpoint](cephalon-observability-oraclecloud.md#member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-datauploadendpoint): `Properties` on `OracleCloudTelemetryExportOptions` in `Cephalon.Observability.OracleCloud.Configuration` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=DataUploadEndpoint&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration&scope=members)
   - Gets or sets the Oracle Cloud APM data upload endpoint used to build direct managed OTLP/HTTP ingestion URLs.
   - `string DataUploadEndpoint { get; set; }`
+- [DbContextType](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-dbcontexttype): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DbContextType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the DbContext type that can execute the target when known.
+  - `string DbContextType { get; }`
+- [DbContextType](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-services-entityframeworkdatabasemigrationregistration-dbcontexttype): `Properties` on `EntityFrameworkDatabaseMigrationRegistration` in `Cephalon.Data.EntityFramework.Services` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=DbContextType&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Services&scope=members)
+  - Gets the `DbContext` type that can apply schema changes.
+  - `Type DbContextType { get; }`
 - [DeactivatedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-deactivatedatutc): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DeactivatedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when the graph most recently became inactive because the runtime stopped.
   - `DateTimeOffset? DeactivatedAtUtc { get; set; }`
@@ -1362,6 +1620,12 @@ Browse the published API surface by public member.
 - [DefaultCulture](cephalon-engine.md#member-p-cephalon-engine-localization-localizedtextcatalog-defaultculture): `Properties` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultCulture&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
   - Gets the default culture used when no explicit culture is requested.
   - `string DefaultCulture { get; }`
+- [DefaultDatabaseRole](cephalon-engine.md#member-f-cephalon-engine-configuration-audithistorysettings-defaultdatabaserole): `Fields` on `AuditHistorySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultDatabaseRole&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the default logical database role used by the durable audit-history path.
+  - `const string DefaultDatabaseRole`
+- [DefaultDeleteBatchSize](cephalon-engine.md#member-f-cephalon-engine-configuration-audithistoryretentionsettings-defaultdeletebatchsize): `Fields` on `AuditHistoryRetentionSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultDeleteBatchSize&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the default delete-batch size used by the engine-owned retention baseline.
+  - `const int DefaultDeleteBatchSize`
 - [DefaultDocument](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocshostingoptions-defaultdocument): `Properties` on `ReferenceDocsHostingOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=DefaultDocument&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Gets or sets the document that should open when a user requests the route prefix itself.
   - `string DefaultDocument { get; set; }`
@@ -1371,9 +1635,18 @@ Browse the published API surface by public member.
 - [DefaultDocumentPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-defaultdocumentpath): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=DefaultDocumentPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The hosted path to the configured default document.
   - `string DefaultDocumentPath { get; set; }`
+- [DefaultLimit](cephalon-abstractions.md#member-f-cephalon-abstractions-audit-audithistoryquery-defaultlimit): `Fields` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=DefaultLimit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the default number of entries returned by a query when the caller does not supply one.
+  - `const int DefaultLimit`
 - [DefaultManifestFileName](cephalon-engine.md#member-f-cephalon-engine-configuration-modulepackagedirectory-defaultmanifestfilename): `Fields` on `ModulePackageDirectory` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultManifestFileName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the default manifest file name expected inside package directories.
   - `const string DefaultManifestFileName`
+- [DefaultMaxEntries](cephalon-abstractions.md#member-f-cephalon-abstractions-audit-audithistoryexportrequest-defaultmaxentries): `Fields` on `AuditHistoryExportRequest` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=DefaultMaxEntries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the default maximum number of audit-history entries exported when the caller does not supply one.
+  - `const int DefaultMaxEntries`
+- [DefaultMaxEntries](cephalon-engine.md#member-f-cephalon-engine-configuration-audithistoryexportsettings-defaultmaxentries): `Fields` on `AuditHistoryExportSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultMaxEntries&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the default maximum number of entries that one audit-history export may stream.
+  - `const int DefaultMaxEntries`
 - [DefaultProvider](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-configuration-eventsourcingoptions-defaultprovider): `Properties` on `EventSourcingOptions` in `Cephalon.EventSourcing.Configuration` (`Cephalon.EventSourcing`) [Browse](browse.html?q=DefaultProvider&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Configuration&scope=members)
   - Gets or sets the default event-store provider identifier.
   - `string DefaultProvider { get; set; }`
@@ -1392,6 +1665,12 @@ Browse the published API surface by public member.
 - [Degraded](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimehealthstate-degraded): `Fields` on `RuntimeHealthState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Degraded&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime is available, but one or more dependencies need attention.
   - `const RuntimeHealthState Degraded`
+- [DeleteBatchSize](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-deletebatchsize): `Properties` on `AuditHistoryRetentionSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=DeleteBatchSize&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the maximum number of rows deleted per retention batch.
+  - `int? DeleteBatchSize { get; }`
+- [DeleteBatchSize](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistoryretentionsettings-deletebatchsize): `Properties` on `AuditHistoryRetentionSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DeleteBatchSize&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the maximum number of rows deleted per retention batch.
+  - `int? DeleteBatchSize { get; }`
 - [DeliveryMode](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-deliverymode): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DeliveryMode&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the declared delivery mode for the subscription.
   - `string DeliveryMode { get; }`
@@ -1428,6 +1707,15 @@ Browse the published API surface by public member.
 - [Deployment](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-deployment): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Deployment&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Identifies a deployment-oriented technology.
   - `const TechnologyKind Deployment`
+- [DescribeAuditStores](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iauditstoreruntimecontributor-describeauditstores): `Methods` on `IAuditStoreRuntimeContributor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=DescribeAuditStores&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Describes the audit stores that should appear in the active runtime after configuration, topology, and provider-specific options have been resolved.
+  - `IReadOnlyList<AuditStoreDescriptor> DescribeAuditStores()`
+- [DescribeDatabaseMigrations](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabasemigrationcontributor-describedatabasemigrations): `Methods` on `IDatabaseMigrationContributor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DescribeDatabaseMigrations&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Describes the database-migration targets that should appear in the active runtime catalog.
+  - `IReadOnlyList<DatabaseMigrationDescriptor> DescribeDatabaseMigrations()`
+- [DescribeDatabaseRoleRuntime](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabaseroleruntimecontributor-describedatabaseroleruntime): `Methods` on `IDatabaseRoleRuntimeContributor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DescribeDatabaseRoleRuntime&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Describes the runtime state that should be merged into the active database-role catalog.
+  - `IReadOnlyList<DatabaseRoleRuntimeDescriptor> DescribeDatabaseRoleRuntime()`
 - [DescribeDiagnosticsConvention](cephalon-engine.md#member-m-cephalon-engine-diagnostics-idiagnosticsconventioncontributor-describediagnosticsconvention): `Methods` on `IDiagnosticsConventionContributor` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=DescribeDiagnosticsConvention&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Describes the diagnostics convention owned by the contributor.
   - `DiagnosticsConvention DescribeDiagnosticsConvention()`
@@ -1455,6 +1743,15 @@ Browse the published API surface by public member.
 - [Description](cephalon-engine.md#member-p-cephalon-engine-manifest-capabilitymanifest-description): `Properties` on `CapabilityManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the capability description.
   - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-description): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the human-readable command description.
+  - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-description): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the human-readable migration-target description.
+  - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-description): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the human-readable database-role description.
+  - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-description): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The operator-facing health description.
   - `string Description { get; set; }`
@@ -1470,7 +1767,7 @@ Browse the published API surface by public member.
 - [Description](cephalon-eventing.md#member-p-cephalon-eventing-services-eventchanneldescriptor-description): `Properties` on `EventChannelDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Description&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the human-readable description of the channel.
   - `string Description { get; }`
-- [Description](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimedescriptor-description): `Properties` on `EventDispatchRuntimeDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Description&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-description): `Properties` on `EventDispatchRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the human-readable dispatch-runtime description.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-description): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
@@ -1569,6 +1866,9 @@ Browse the published API surface by public member.
 - [Details](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorfault-details): `Properties` on `BehaviorFault` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Details&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets or sets additional fault details.
   - `string Details { get; set; }`
+- [Details](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodelerrordetail-details): `Properties` on `ResultModelErrorDetail` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Details&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
+  - Gets or sets additional error details when one was supplied.
+  - `string Details { get; set; }`
 - [DiagnosticEventDefinition](cephalon-engine.md#member-m-cephalon-engine-diagnostics-diagnosticeventdefinition-ctor-system-int32-system-string-cephalon-engine-diagnostics-diagnosticseverity-system-string-system-string): `Constructors` on `DiagnosticEventDefinition` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=DiagnosticEventDefinition&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Describes one published diagnostics event id together with its intended meaning.
   - `DiagnosticEventDefinition(int Id, string Name, DiagnosticSeverity Severity, string MessageTemplate, string Description)`
@@ -1644,6 +1944,15 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-engine.md#member-p-cephalon-engine-manifest-capabilitymanifest-displayname): `Properties` on `CapabilityManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the operator-facing capability name.
   - `string DisplayName { get; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-displayname): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing command name.
+  - `string DisplayName { get; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-displayname): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing migration-target name.
+  - `string DisplayName { get; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-displayname): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing database-role name.
+  - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-displayname): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The human-readable dependency name.
   - `string DisplayName { get; set; }`
@@ -1653,7 +1962,7 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-eventing.md#member-p-cephalon-eventing-services-eventchanneldescriptor-displayname): `Properties` on `EventChannelDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the operator-facing display name for the channel.
   - `string DisplayName { get; }`
-- [DisplayName](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimedescriptor-displayname): `Properties` on `EventDispatchRuntimeDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-displayname): `Properties` on `EventDispatchRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing dispatch-runtime name.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-displayname): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
@@ -1776,18 +2085,63 @@ Browse the published API surface by public member.
 - [Edges](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphdescriptor-edges): `Properties` on `ExecutionGraphDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Edges&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the directed edges that connect graph nodes.
   - `IReadOnlyList<ExecutionGraphEdgeDescriptor> Edges { get; }`
+- [EffectiveTarget](cephalon-engine.md#member-p-cephalon-engine-appmodel-databasetopologyroleresolution-effectivetarget): `Properties` on `DatabaseTopologyRoleResolution` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=EffectiveTarget&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Gets the effective target after applying any role reference.
+  - `DatabaseTargetSelection EffectiveTarget { get; }`
 - [ElasticsearchDependencyDefinition](cephalon-observability-elasticsearchdependencies.md#member-m-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-ctor): `Constructors` on `ElasticsearchDependencyDefinition` in `Cephalon.Observability.ElasticsearchDependencies.Configuration` (`Cephalon.Observability.ElasticsearchDependencies`) [Browse](browse.html?q=ElasticsearchDependencyDefinition&assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Configuration&scope=members)
   - Initializes a new instance of the `ElasticsearchDependencyDefinition` class.
   - `ElasticsearchDependencyDefinition()`
 - [ElasticsearchDependencyHealthOptions](cephalon-observability-elasticsearchdependencies.md#member-m-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencyhealthoptions-ctor): `Constructors` on `ElasticsearchDependencyHealthOptions` in `Cephalon.Observability.ElasticsearchDependencies.Configuration` (`Cephalon.Observability.ElasticsearchDependencies`) [Browse](browse.html?q=ElasticsearchDependencyHealthOptions&assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Configuration&scope=members)
   - Initializes a new instance of the `ElasticsearchDependencyHealthOptions` class.
   - `ElasticsearchDependencyHealthOptions()`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryexportselection-empty): `Properties` on `AuditHistoryExportSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets an empty audit-history export-selection instance.
+  - `AuditHistoryExportSelection Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistoryexportsettings-empty): `Properties` on `AuditHistoryExportSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty audit-history export-settings instance.
+  - `AuditHistoryExportSettings Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-empty): `Properties` on `AuditHistoryRetentionSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets an empty audit-history retention selection instance.
+  - `AuditHistoryRetentionSelection Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistoryretentionsettings-empty): `Properties` on `AuditHistoryRetentionSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty audit-history retention settings instance.
+  - `AuditHistoryRetentionSettings Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryselection-empty): `Properties` on `AuditHistorySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets an empty audit-history selection instance.
+  - `AuditHistorySelection Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistorysettings-empty): `Properties` on `AuditHistorySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty audit-history settings instance.
+  - `AuditHistorySettings Empty { get; }`
 - [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-auditselection-empty): `Properties` on `AuditSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets an empty audit-selection instance.
   - `AuditSelection Empty { get; }`
 - [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-auditsettings-empty): `Properties` on `AuditSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets an empty audit-settings instance.
   - `AuditSettings Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasemigrationsselection-empty): `Properties` on `DatabaseMigrationsSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets an empty database-migrations selection instance.
+  - `DatabaseMigrationsSelection Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-databasemigrationssettings-empty): `Properties` on `DatabaseMigrationsSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty database-migrations settings instance.
+  - `DatabaseMigrationsSettings Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databaseruntimeselection-empty): `Properties` on `DatabaseRuntimeSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets an empty database-runtime selection instance.
+  - `DatabaseRuntimeSelection Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-databaseruntimesettings-empty): `Properties` on `DatabaseRuntimeSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty database-runtime settings instance.
+  - `DatabaseRuntimeSettings Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasetargetselection-empty): `Properties` on `DatabaseTargetSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets an empty database-target selection instance.
+  - `DatabaseTargetSelection Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-databasetargetsettings-empty): `Properties` on `DatabaseTargetSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty database-target settings instance.
+  - `DatabaseTargetSettings Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasetopologyselection-empty): `Properties` on `DatabaseTopologySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets an empty database-topology selection instance.
+  - `DatabaseTopologySelection Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-databasetopologysettings-empty): `Properties` on `DatabaseTopologySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty database-topology settings instance.
+  - `DatabaseTopologySettings Empty { get; }`
 - [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-dataselection-empty): `Properties` on `DataSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets an empty data-selection instance.
   - `DataSelection Empty { get; }`
@@ -1827,6 +2181,24 @@ Browse the published API surface by public member.
 - [EnableAwsSdkInstrumentation](cephalon-observability-aws.md#member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-enableawssdkinstrumentation): `Properties` on `AwsTelemetryExportOptions` in `Cephalon.Observability.Aws.Configuration` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=EnableAwsSdkInstrumentation&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Configuration&scope=members)
   - Gets or sets a value indicating whether AWS SDK client instrumentation should be enabled for traces.
   - `bool EnableAwsSdkInstrumentation { get; set; }`
+- [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryexportselection-enabled): `Properties` on `AuditHistoryExportSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether audit-history export was explicitly enabled.
+  - `bool? Enabled { get; }`
+- [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistoryexportsettings-enabled): `Properties` on `AuditHistoryExportSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether audit-history export was explicitly enabled.
+  - `bool? Enabled { get; }`
+- [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-enabled): `Properties` on `AuditHistoryRetentionSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether retention was explicitly enabled.
+  - `bool? Enabled { get; }`
+- [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistoryretentionsettings-enabled): `Properties` on `AuditHistoryRetentionSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether retention was explicitly enabled.
+  - `bool? Enabled { get; }`
+- [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryselection-enabled): `Properties` on `AuditHistorySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether durable audit history was explicitly enabled.
+  - `bool? Enabled { get; }`
+- [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistorysettings-enabled): `Properties` on `AuditHistorySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether durable audit history was explicitly enabled.
+  - `bool? Enabled { get; }`
 - [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-auditselection-enabled): `Properties` on `AuditSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether audit support was explicitly enabled.
   - `bool? Enabled { get; }`
@@ -1860,6 +2232,12 @@ Browse the published API surface by public member.
 - [EnableDefaultResolver](cephalon-multitenancy.md#member-p-cephalon-multitenancy-configuration-multitenancyruntimeoptions-enabledefaultresolver): `Properties` on `MultiTenancyRuntimeOptions` in `Cephalon.MultiTenancy.Configuration` (`Cephalon.MultiTenancy`) [Browse](browse.html?q=EnableDefaultResolver&assembly=Cephalon.MultiTenancy&namespace=Cephalon.MultiTenancy.Configuration&scope=members)
   - Gets or sets a value indicating whether the built-in configuration-driven tenant resolver is active.
   - `bool EnableDefaultResolver { get; set; }`
+- [EnableDetailedErrors](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databaseruntimeselection-enabledetailederrors): `Properties` on `DatabaseRuntimeSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=EnableDetailedErrors&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether detailed provider errors were explicitly selected.
+  - `bool? EnableDetailedErrors { get; }`
+- [EnableDetailedErrors](cephalon-engine.md#member-p-cephalon-engine-configuration-databaseruntimesettings-enabledetailederrors): `Properties` on `DatabaseRuntimeSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EnableDetailedErrors&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether detailed provider errors were explicitly enabled.
+  - `bool? EnableDetailedErrors { get; }`
 - [EnableDispatchLoop](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-enabledispatchloop): `Properties` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=EnableDispatchLoop&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
   - Gets or sets a value indicating whether the pack should own the durable staged-event dispatch loop instead of leaving dispatch consumer-managed. Defaults to `false`.
   - `bool EnableDispatchLoop { get; set; }`
@@ -1890,12 +2268,24 @@ Browse the published API surface by public member.
 - [EnableQuerying](cephalon-retrieval.md#member-p-cephalon-retrieval-configuration-retrievaloptions-enablequerying): `Properties` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=EnableQuerying&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
   - Gets or sets a value indicating whether query features are enabled.
   - `bool EnableQuerying { get; set; }`
+- [EnableRetryOnFailure](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databaseruntimeselection-enableretryonfailure): `Properties` on `DatabaseRuntimeSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=EnableRetryOnFailure&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether transient-failure retries were explicitly selected.
+  - `bool? EnableRetryOnFailure { get; }`
+- [EnableRetryOnFailure](cephalon-engine.md#member-p-cephalon-engine-configuration-databaseruntimesettings-enableretryonfailure): `Properties` on `DatabaseRuntimeSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EnableRetryOnFailure&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether transient-failure retries were explicitly enabled.
+  - `bool? EnableRetryOnFailure { get; }`
 - [EnableRuntimeSurface](cephalon-identity.md#member-p-cephalon-identity-configuration-identityruntimeoptions-enableruntimesurface): `Properties` on `IdentityRuntimeOptions` in `Cephalon.Identity.Configuration` (`Cephalon.Identity`) [Browse](browse.html?q=EnableRuntimeSurface&assembly=Cephalon.Identity&namespace=Cephalon.Identity.Configuration&scope=members)
   - Gets or sets a value indicating whether the pack should publish a runtime surface under `identity-access`.
   - `bool EnableRuntimeSurface { get; set; }`
 - [EnableRuntimeSurface](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-enableruntimesurface): `Properties` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=EnableRuntimeSurface&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
   - Gets or sets a value indicating whether the pack should publish its runtime surface into Cephalon technology introspection.
   - `bool EnableRuntimeSurface { get; set; }`
+- [EnableSensitiveDataLogging](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databaseruntimeselection-enablesensitivedatalogging): `Properties` on `DatabaseRuntimeSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=EnableSensitiveDataLogging&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether sensitive-data logging was explicitly selected.
+  - `bool? EnableSensitiveDataLogging { get; }`
+- [EnableSensitiveDataLogging](cephalon-engine.md#member-p-cephalon-engine-configuration-databaseruntimesettings-enablesensitivedatalogging): `Properties` on `DatabaseRuntimeSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EnableSensitiveDataLogging&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether sensitive-data logging was explicitly enabled.
+  - `bool? EnableSensitiveDataLogging { get; }`
 - [EnableSfidIdentifiers](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-enablesfididentifiers): `Properties` on `EntityFrameworkDataOptions` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=EnableSfidIdentifiers&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets or sets a value indicating whether the pack should enable official `Sfid.EntityFramework` conventions and key generation.
   - `bool EnableSfidIdentifiers { get; set; }`
@@ -1944,15 +2334,24 @@ Browse the published API surface by public member.
 - [EngineRuntime](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphdescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-hostedexecutiondescriptor): `Constructors` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EngineRuntime&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Initializes a new instance of the `EngineRuntime` class.
   - `EngineRuntime(IReadOnlyList<IModule> modules, RuntimeManifest manifest, FailurePolicy failurePolicy, IReadOnlyList<ExecutionGraphDescriptor> executionGraphs, IReadOnlyList<HostedExecutionDescriptor> hostedExecutions)`
-- [EngineSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings): `Constructors` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EngineSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+- [EngineSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings): `Constructors` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EngineSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `EngineSettings` class.
-  - `EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging)`
+  - `EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging)`
 - [EngineVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-runtimemanifest-engineversion): `Properties` on `RuntimeManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=EngineVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the engine version that produced the manifest.
   - `string EngineVersion { get; }`
 - [EnqueueAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ioutbox-enqueueasync-cephalon-abstractions-data-outboxmessage-system-threading-cancellationtoken): `Methods` on `IOutbox` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EnqueueAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Enqueues one message for later delivery.
   - `ValueTask EnqueueAsync(OutboxMessage message, CancellationToken cancellationToken)`
+- [EntityFrameworkDatabaseMigrationHostedService](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-services-entityframeworkdatabasemigrationhostedservice-ctor-system-iserviceprovider-cephalon-abstractions-appmodel-appprofile-system-collections-generic-ienumerable-cephalon-data-entityframework-services-entityframeworkdatabasemigrationregistration): `Constructors` on `EntityFrameworkDatabaseMigrationHostedService` in `Cephalon.Data.EntityFramework.Services` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=EntityFrameworkDatabaseMigrationHostedService&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Services&scope=members)
+  - Applies startup schema changes for Entity Framework Core database-role targets selected through `Engine:Databases`.
+  - `EntityFrameworkDatabaseMigrationHostedService(IServiceProvider serviceProvider, AppProfile appProfile, IEnumerable<EntityFrameworkDatabaseMigrationRegistration> registrations)`
+- [EntityFrameworkDatabaseMigrationRegistration](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-services-entityframeworkdatabasemigrationregistration-ctor-system-type-system-collections-generic-ireadonlylist-system-string): `Constructors` on `EntityFrameworkDatabaseMigrationRegistration` in `Cephalon.Data.EntityFramework.Services` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=EntityFrameworkDatabaseMigrationRegistration&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Services&scope=members)
+  - Initializes a new instance of the `EntityFrameworkDatabaseMigrationRegistration` class.
+  - `EntityFrameworkDatabaseMigrationRegistration(Type dbContextType, IReadOnlyList<string> targetRoleIds)`
+- [EntityFrameworkDatabaseRoleContext](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-ctor-system-string-system-string-cephalon-abstractions-appmodel-databasetargetselection-cephalon-abstractions-appmodel-databaseruntimeselection-system-string): `Constructors` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=EntityFrameworkDatabaseRoleContext&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Initializes a new instance of the `EntityFrameworkDatabaseRoleContext` class.
+  - `EntityFrameworkDatabaseRoleContext(string requestedRoleId, string resolvedRoleId, DatabaseTargetSelection target, DatabaseRuntimeSelection runtime, string connectionString)`
 - [EntityFrameworkDataOptions](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-configuration-entityframeworkdataoptions-ctor-system-type-system-type): `Constructors` on `EntityFrameworkDataOptions` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=EntityFrameworkDataOptions&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Initializes a new instance of the `EntityFrameworkDataOptions` class.
   - `EntityFrameworkDataOptions(Type readDbContextType, Type writeDbContextType)`
@@ -1965,6 +2364,9 @@ Browse the published API surface by public member.
 - [EntityFrameworkOutboxEntry](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-modeling-entityframeworkoutboxentry-ctor): `Constructors` on `EntityFrameworkOutboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=EntityFrameworkOutboxEntry&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Initializes a new instance of the `EntityFrameworkOutboxEntry` class.
   - `EntityFrameworkOutboxEntry()`
+- [Entries](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryqueryresult-entries): `Properties` on `AuditHistoryQueryResult` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Entries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the returned audit-history entries.
+  - `IReadOnlyList<AuditHistoryEntry> Entries { get; }`
 - [Entries](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologyruntimesurface-entries): `Properties` on `TechnologyRuntimeSurface` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Entries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the entries currently projected by this surface.
   - `IReadOnlyList<TechnologyRuntimeEntry> Entries { get; }`
@@ -1977,6 +2379,9 @@ Browse the published API surface by public member.
 - [EntryNodeId](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-entrynodeid): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EntryNodeId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The entry node used when the graph begins execution.
   - `string EntryNodeId { get; set; }`
+- [Error](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorfaultseverity-error): `Fields` on `BehaviorFaultSeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Error&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Error-level fault details.
+  - `const BehaviorFaultSeverity Error`
 - [Error](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-compatibilityseverity-error): `Fields` on `CompatibilitySeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Error&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - The violation prevents application startup.
   - `const CompatibilitySeverity Error`
@@ -1989,6 +2394,9 @@ Browse the published API surface by public member.
 - [Error](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-error): `Properties` on `EventSubscriptionExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Error&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the operator-facing error summary when the observation represents a failure.
   - `string Error { get; }`
+- [Errors](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-errors): `Properties` on `ResultModel<TModel>` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Errors&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
+  - Gets or sets the structured error details when the response is not successful.
+  - `List<ResultModelErrorDetail> Errors { get; set; }`
 - [EvaluateAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-iauthorizationevaluator-evaluateasync-cephalon-abstractions-authorization-authorizationsubject-cephalon-abstractions-authorization-authorizationresource-cephalon-abstractions-authorization-authorizationcontext-system-threading-cancellationtoken): `Methods` on `IAuthorizationEvaluator` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=EvaluateAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Evaluates one authorization request.
   - `ValueTask<AuthorizationDecision> EvaluateAsync(AuthorizationSubject subject, AuthorizationResource resource, AuthorizationContext context, CancellationToken cancellationToken)`
@@ -2010,12 +2418,18 @@ Browse the published API surface by public member.
 - [EventDispatchItem](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchitem-ctor-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-datetimeoffset-system-int32-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventDispatchItem&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a new dispatch item.
   - `EventDispatchItem(string outboxId, string messageId, string channelId, string eventType, string payload, DateTimeOffset occurredAtUtc, DateTimeOffset createdAtUtc, int dispatchAttemptCount, string contentType, string correlationId, string tenantId, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> metadata)`
-- [EventDispatchRuntimeDescriptor](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchruntimedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventDispatchRuntimeDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventDispatchRuntimeDescriptor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
-  - Describes one operator-facing durable dispatch runtime available to the active eventing technology.
+- [EventDispatchRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventdispatchruntimedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventDispatchRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventDispatchRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new event-dispatch runtime descriptor.
   - `EventDispatchRuntimeDescriptor(string id, string displayName, string description, IReadOnlyDictionary<string, string> metadata)`
-- [EventDispatchRuntimeState](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchruntimestate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventDispatchRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventDispatchRuntimeState&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [EventDispatchRuntimes](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-eventdispatchruntimes): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EventDispatchRuntimes&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the configured event-dispatch runtimes visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<EventDispatchRuntimeDescriptor> EventDispatchRuntimes { get; set; }`
+- [EventDispatchRuntimeState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventdispatchruntimestate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventDispatchRuntimeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Describes the latest operator-facing runtime state reported for one durable event-dispatch path.
   - `EventDispatchRuntimeState(string OutboxId, string LastChannelId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastMessageId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int RetryScheduledCount, int SkippedCount, string LastError, IReadOnlyDictionary<string, string> Metadata)`
+- [EventDispatchStates](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-eventdispatchstates): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EventDispatchStates&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the latest reported event-dispatch runtime state entries visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<EventDispatchRuntimeState> EventDispatchStates { get; set; }`
 - [EventDrivenIntegration](cephalon-engine.md#member-p-cephalon-engine-technologies-builtintechnologies-eventdrivenintegration): `Properties` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=EventDrivenIntegration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
   - Gets the built-in event-driven-integration technology profile.
   - `TechnologyDescriptor EventDrivenIntegration { get; }`
@@ -2130,6 +2544,18 @@ Browse the published API surface by public member.
 - [ExecutionGraphTransitionCounterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-executiongraphtransitioncountername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=ExecutionGraphTransitionCounterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Gets the counter name for execution-graph lifecycle transitions.
   - `const string ExecutionGraphTransitionCounterName`
+- [ExecutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-executionmode): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the runtime execution mode for this target.
+  - `string ExecutionMode { get; }`
+- [ExitAfterApply](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-exitafterapply): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExitAfterApply&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the host exits after startup execution completes.
+  - `bool ExitAfterApply { get; }`
+- [ExitAfterApply](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasemigrationsselection-exitafterapply): `Properties` on `DatabaseMigrationsSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExitAfterApply&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether the host should exit after applying migrations.
+  - `bool? ExitAfterApply { get; }`
+- [ExitAfterApply](cephalon-engine.md#member-p-cephalon-engine-configuration-databasemigrationssettings-exitafterapply): `Properties` on `DatabaseMigrationsSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ExitAfterApply&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether the host should exit after applying migrations.
+  - `bool? ExitAfterApply { get; }`
 - [ExpectedStatusCodes](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-expectedstatuscodes): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=ExpectedStatusCodes&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the explicit HTTP status codes that should be treated as healthy.
   - `IReadOnlyList<int> ExpectedStatusCodes { get; set; }`
@@ -2139,6 +2565,15 @@ Browse the published API surface by public member.
 - [Experience](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-experience): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Experience&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Identifies an experience-oriented technology.
   - `const TechnologyKind Experience`
+- [Export](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryselection-export): `Properties` on `AuditHistorySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Export&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the resolved export inputs for durable audit history.
+  - `AuditHistoryExportSelection Export { get; }`
+- [Export](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistorysettings-export): `Properties` on `AuditHistorySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Export&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the configured export settings for durable history.
+  - `AuditHistoryExportSettings Export { get; }`
+- [ExportAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iaudithistoryexporter-exportasync-cephalon-abstractions-audit-audithistoryexportrequest-system-threading-cancellationtoken): `Methods` on `IAuditHistoryExporter` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExportAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Streams audit-history entries that match the supplied export request in stable export order.
+  - `IAsyncEnumerable<AuditHistoryEntry> ExportAsync(AuditHistoryExportRequest request, CancellationToken cancellationToken)`
 - [ExportLogs](cephalon-observability.md#member-p-cephalon-observability-configuration-telemetryexportoptions-exportlogs): `Properties` on `TelemetryExportOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=ExportLogs&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Gets or sets a value indicating whether logs should be exported.
   - `bool ExportLogs { get; set; }`
@@ -2154,6 +2589,9 @@ Browse the published API surface by public member.
 - [Failed](cephalon-abstractions.md#member-f-cephalon-abstractions-audit-auditoutcome-failed): `Fields` on `AuditOutcome` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Failed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Indicates the operation failed.
   - `const AuditOutcome Failed`
+- [Failed](cephalon-abstractions.md#member-f-cephalon-abstractions-data-databasemigrationstatus-failed): `Fields` on `DatabaseMigrationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Failed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The migration target failed during execution.
+  - `const DatabaseMigrationStatus Failed`
 - [Failed](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchexecutionoutcomes-failed): `Fields` on `EventDispatchExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Failed&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when dispatch fails for one staged message.
   - `const string Failed`
@@ -2166,7 +2604,7 @@ Browse the published API surface by public member.
 - [Failed](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-failed): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Failed&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime captured a lifecycle failure.
   - `const RuntimeStatus Failed`
-- [FailedCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimestate-failedcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [FailedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-failedcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of `failed` observations reported so far.
   - `int FailedCount { get; set; }`
 - [FailedCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-failedcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
@@ -2190,6 +2628,15 @@ Browse the published API surface by public member.
 - [FailurePolicy](cephalon-engine.md#member-p-cephalon-engine-runtime-iruntime-failurepolicy): `Properties` on `IRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=FailurePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the failure policy that governs startup, stop, and restart behavior.
   - `FailurePolicy FailurePolicy { get; }`
+- [Fault](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorresultdescriptor-fault): `Properties` on `BehaviorResultDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Fault&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the structured fault details when the outcome is not successful.
+  - `BehaviorFault Fault { get; }`
+- [Fault](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorresult-fault): `Properties` on `IBehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Fault&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the structured fault details when the outcome is not successful.
+  - `BehaviorFault Fault { get; }`
+- [Fault](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-result-1-fault): `Properties` on `Result<T>` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Fault&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the structured fault details when the outcome is not successful.
+  - `BehaviorFault Fault { get; }`
 - [Feature](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-scaffoldscopes-feature): `Fields` on `ScaffoldScopes` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Feature&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies a feature-level scaffold scope.
   - `const string Feature`
@@ -2229,6 +2676,21 @@ Browse the published API surface by public member.
 - [Folders](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-folders): `Properties` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Folders&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the folders emitted by the scaffold.
   - `IReadOnlyList<ScaffoldFolder> Folders { get; }`
+- [Forbidden](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-forbidden-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Forbidden&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a forbidden result.
+  - `BehaviorResultDescriptor Forbidden(string code, string message, BehaviorFault fault)`
+- [Forbidden](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-forbidden-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Forbidden&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a forbidden result for the specified payload type.
+  - `BehaviorResult<T> Forbidden<T>(string code, string message, BehaviorFault fault)`
+- [Forbidden](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorresultstatus-forbidden): `Fields` on `BehaviorResultStatus` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Forbidden&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - The caller is authenticated but not allowed to perform the requested action.
+  - `const BehaviorResultStatus Forbidden`
+- [Forbidden](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-forbidden-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Forbidden&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a forbidden result.
+  - `BehaviorResultDescriptor Forbidden(string code, string message, BehaviorFault fault)`
+- [Forbidden](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-forbidden-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Forbidden&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a forbidden result for the specified payload type.
+  - `Result<T> Forbidden<T>(string code, string message, BehaviorFault fault)`
 - [Foundation](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-patternkind-foundation): `Fields` on `PatternKind` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Foundation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Identifies a foundation pattern.
   - `const PatternKind Foundation`
@@ -2262,6 +2724,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability-consuldependencies.md#member-m-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `ConsulDependencyHealthOptions` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
   - Binds Consul dependency-health options from configuration.
   - `ConsulDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-databasetopologysettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `DatabaseTopologySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads database-topology settings from configuration.
+  - `DatabaseTopologySettings FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-datasettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `DataSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads data settings from configuration.
   - `DataSettings FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -2397,6 +2862,24 @@ Browse the published API surface by public member.
 - [FromNodeId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphedgedescriptor-fromnodeid): `Properties` on `ExecutionGraphEdgeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=FromNodeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the source node identifier.
   - `string FromNodeId { get; }`
+- [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-audithistoryexportsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `AuditHistoryExportSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads audit-history export settings from the supplied configuration section.
+  - `AuditHistoryExportSettings FromSection(IConfigurationSection section)`
+- [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-audithistoryretentionsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `AuditHistoryRetentionSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads retention settings from the supplied configuration section.
+  - `AuditHistoryRetentionSettings FromSection(IConfigurationSection section)`
+- [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-audithistorysettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `AuditHistorySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads durable audit-history settings from the supplied configuration section.
+  - `AuditHistorySettings FromSection(IConfigurationSection section)`
+- [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-databasemigrationssettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `DatabaseMigrationsSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads database-migration settings from the supplied configuration section.
+  - `DatabaseMigrationsSettings FromSection(IConfigurationSection section)`
+- [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-databaseruntimesettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `DatabaseRuntimeSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads database runtime settings from the supplied configuration section.
+  - `DatabaseRuntimeSettings FromSection(IConfigurationSection section)`
+- [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-databasetargetsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `DatabaseTargetSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads database-target settings from the supplied configuration section.
+  - `DatabaseTargetSettings FromSection(IConfigurationSection section)`
 
 ## G
 
@@ -2445,6 +2928,15 @@ Browse the published API surface by public member.
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-iauthorizationpolicycatalog-getbyid-system-string): `Methods` on `IAuthorizationPolicyCatalog` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets one authorization policy by its stable identifier.
   - `AuthorizationPolicyDescriptor GetById(string policyId)`
+- [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabasemigrationcatalog-getbyid-system-string): `Methods` on `IDatabaseMigrationCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets one migration target by its logical identifier.
+  - `DatabaseMigrationDescriptor GetById(string databaseMigrationId)`
+- [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabaserolecatalog-getbyid-system-string): `Methods` on `IDatabaseRoleCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets one database role by its logical identifier.
+  - `DatabaseRoleDescriptor GetById(string databaseRoleId)`
+- [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchruntimedescriptorcatalog-getbyid-system-string): `Methods` on `IEventDispatchRuntimeDescriptorCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets one dispatch runtime by its stable identifier.
+  - `EventDispatchRuntimeDescriptor GetById(string dispatchRuntimeId)`
 - [GetById](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventsubscriptionruntimecatalog-getbyid-system-string): `Methods` on `IEventSubscriptionRuntimeCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=GetById&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Looks up one reported runtime-state entry by declared subscription identifier.
   - `EventSubscriptionRuntimeState GetById(string subscriptionId)`
@@ -2463,10 +2955,13 @@ Browse the published API surface by public member.
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-data-iprojectioncatalog-getbyid-system-string): `Methods` on `IProjectionCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets one projection by its stable identifier.
   - `ProjectionDescriptor GetById(string projectionId)`
+- [GetByIdAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iaudithistoryreader-getbyidasync-system-string-system-threading-cancellationtoken): `Methods` on `IAuditHistoryReader` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByIdAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Resolves one audit-history entry by its stable identifier.
+  - `ValueTask<AuditHistoryEntry> GetByIdAsync(string auditEntryId, CancellationToken cancellationToken)`
 - [GetByMode](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-iauthorizationpolicycatalog-getbymode-cephalon-abstractions-authorization-authorizationmode): `Methods` on `IAuthorizationPolicyCatalog` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets all authorization policies that support the requested mode.
   - `IReadOnlyList<AuthorizationPolicyDescriptor> GetByMode(AuthorizationMode mode)`
-- [GetByOutboxId](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventdispatchruntimecatalog-getbyoutboxid-system-string): `Methods` on `IEventDispatchRuntimeCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=GetByOutboxId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [GetByOutboxId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchruntimecatalog-getbyoutboxid-system-string): `Methods` on `IEventDispatchRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByOutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest reported dispatch state for one outbox-backed publication path.
   - `EventDispatchRuntimeState GetByOutboxId(string outboxId)`
 - [GetByPattern](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviorcatalog-getbypattern-system-string): `Methods` on `IBehaviorCatalog` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByPattern&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
@@ -2478,6 +2973,9 @@ Browse the published API surface by public member.
 - [GetByProvider](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iauditstorecatalog-getbyprovider-system-string): `Methods` on `IAuditStoreCatalog` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets all audit stores backed by the requested provider identifier.
   - `IReadOnlyList<AuditStoreDescriptor> GetByProvider(string provider)`
+- [GetByProvider](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabaserolecatalog-getbyprovider-system-string): `Methods` on `IDatabaseRoleCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets every database role backed by the supplied provider identifier.
+  - `IReadOnlyList<DatabaseRoleDescriptor> GetByProvider(string provider)`
 - [GetByProvider](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-ieventstorecatalog-getbyprovider-system-string): `Methods` on `IEventStoreCatalog` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets all event streams backed by the requested provider identifier.
   - `IReadOnlyList<EventStreamDescriptor> GetByProvider(string provider)`
@@ -2487,6 +2985,9 @@ Browse the published API surface by public member.
 - [GetByProvider](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ioutboxcatalog-getbyprovider-system-string): `Methods` on `IOutboxCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all outboxes backed by the requested provider identifier.
   - `IReadOnlyList<OutboxDescriptor> GetByProvider(string provider)`
+- [GetByResolvedRole](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabaserolecatalog-getbyresolvedrole-system-string): `Methods` on `IDatabaseRoleCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByResolvedRole&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets every database role that resolves to the supplied concrete role identifier.
+  - `IReadOnlyList<DatabaseRoleDescriptor> GetByResolvedRole(string resolvedRoleId)`
 - [GetBySeverity](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehavioradvisorycatalog-getbyseverity-cephalon-abstractions-behaviors-behavioradvisoryseverity): `Methods` on `IBehaviorAdvisoryCatalog` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySeverity&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets advisories at or above the specified severity.
   - `IReadOnlyList<IBehaviorAdvisory> GetBySeverity(BehaviorAdvisorySeverity minimumSeverity)`
@@ -2586,14 +3087,65 @@ Browse the published API surface by public member.
 - [HandlerId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-handlerid): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=HandlerId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the logical handler or consumer identifier that receives the event.
   - `string HandlerId { get; }`
+- [HasMore](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryqueryresult-hasmore): `Properties` on `AuditHistoryQueryResult` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMore&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets a value indicating whether more entries remain beyond this page.
+  - `bool HasMore { get; }`
 - [HasProcessedAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-iinbox-hasprocessedasync-system-string-system-threading-cancellationtoken): `Methods` on `IInbox` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasProcessedAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Determines whether the requested message identifier has already been recorded as processed.
   - `ValueTask<bool> HasProcessedAsync(string messageId, CancellationToken cancellationToken)`
+- [HasValue](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorresult-hasvalue): `Properties` on `IBehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValue&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets a value indicating whether the result carries a payload value.
+  - `bool HasValue { get; }`
+- [HasValue](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-result-1-hasvalue): `Properties` on `Result<T>` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValue&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets a value indicating whether the result carries a payload value.
+  - `bool HasValue { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryexportselection-hasvalues): `Properties` on `AuditHistoryExportSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether any audit-history export inputs were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistoryexportsettings-hasvalues): `Properties` on `AuditHistoryExportSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any audit-history export settings were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-hasvalues): `Properties` on `AuditHistoryRetentionSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether any durable audit-history retention inputs were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistoryretentionsettings-hasvalues): `Properties` on `AuditHistoryRetentionSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any retention settings were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryselection-hasvalues): `Properties` on `AuditHistorySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether any durable audit-history inputs were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistorysettings-hasvalues): `Properties` on `AuditHistorySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any durable audit-history settings were explicitly supplied.
+  - `bool HasValues { get; }`
 - [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-auditselection-hasvalues): `Properties` on `AuditSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether any audit-selection inputs were explicitly supplied.
   - `bool HasValues { get; }`
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-auditsettings-hasvalues): `Properties` on `AuditSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether any audit settings were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasemigrationsselection-hasvalues): `Properties` on `DatabaseMigrationsSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether any migration-selection inputs were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-databasemigrationssettings-hasvalues): `Properties` on `DatabaseMigrationsSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any migration settings were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databaseruntimeselection-hasvalues): `Properties` on `DatabaseRuntimeSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether any database-runtime selection inputs were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-databaseruntimesettings-hasvalues): `Properties` on `DatabaseRuntimeSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any database runtime settings were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasetargetselection-hasvalues): `Properties` on `DatabaseTargetSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether any target-selection inputs were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-databasetargetsettings-hasvalues): `Properties` on `DatabaseTargetSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any database-target settings were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasetopologyselection-hasvalues): `Properties` on `DatabaseTopologySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether any database-topology inputs were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-databasetopologysettings-hasvalues): `Properties` on `DatabaseTopologySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any database-topology settings were explicitly supplied.
   - `bool HasValues { get; }`
 - [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-dataselection-hasvalues): `Properties` on `DataSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether any data-selection inputs were explicitly supplied.
@@ -2685,6 +3237,12 @@ Browse the published API surface by public member.
 - [HealthCommand](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-healthcommand): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=HealthCommand&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the MongoDB database command executed to verify the dependency.
   - `string HealthCommand { get; set; }`
+- [HealthDescription](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-healthdescription): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HealthDescription&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing health description reported for the database role, when available.
+  - `string HealthDescription { get; }`
+- [HealthDescription](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-healthdescription): `Properties` on `DatabaseRoleRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HealthDescription&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing health description for the role, when known.
+  - `string HealthDescription { get; }`
 - [HealthQuery](cephalon-observability-cassandradependencies.md#member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-healthquery): `Properties` on `CassandraDependencyDefinition` in `Cephalon.Observability.CassandraDependencies.Configuration` (`Cephalon.Observability.CassandraDependencies`) [Browse](browse.html?q=HealthQuery&assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Configuration&scope=members)
   - Gets or sets the CQL statement executed to verify the dependency.
   - `string HealthQuery { get; set; }`
@@ -2706,6 +3264,12 @@ Browse the published API surface by public member.
 - [HealthQuery](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-healthquery): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=HealthQuery&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the SQL statement executed to verify the dependency.
   - `string HealthQuery { get; set; }`
+- [HealthState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-healthstate): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HealthState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current runtime health state reported for the database role, when available.
+  - `HealthState? HealthState { get; }`
+- [HealthState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-healthstate): `Properties` on `DatabaseRoleRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HealthState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current runtime health state for the role, when known.
+  - `HealthState? HealthState { get; }`
 - [Healthy](cephalon-abstractions.md#member-f-cephalon-abstractions-health-healthstate-healthy): `Fields` on `HealthState` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Healthy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - Indicates the dependency is healthy.
   - `const HealthState Healthy`
@@ -2715,6 +3279,18 @@ Browse the published API surface by public member.
 - [HexagonalArchitecture](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-hexagonalarchitecture): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=HexagonalArchitecture&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the hexagonal-architecture pattern.
   - `PatternDescriptor HexagonalArchitecture { get; }`
+- [History](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-auditselection-history): `Properties` on `AuditSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=History&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the durable audit-history inputs resolved for the app.
+  - `AuditHistorySelection History { get; }`
+- [History](cephalon-engine.md#member-p-cephalon-engine-configuration-auditsettings-history): `Properties` on `AuditSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=History&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the durable audit-history settings resolved for the app.
+  - `AuditHistorySettings History { get; }`
+- [History](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasetopologyselection-history): `Properties` on `DatabaseTopologySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=History&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the audit-history database target selection.
+  - `DatabaseTargetSelection History { get; }`
+- [History](cephalon-engine.md#member-p-cephalon-engine-configuration-databasetopologysettings-history): `Properties` on `DatabaseTopologySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=History&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the audit-history database target.
+  - `DatabaseTargetSettings History { get; }`
 - [Host](cephalon-observability-clickhousedependencies.md#member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-host): `Properties` on `ClickHouseDependencyDefinition` in `Cephalon.Observability.ClickHouseDependencies.Configuration` (`Cephalon.Observability.ClickHouseDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.ClickHouseDependencies&namespace=Cephalon.Observability.ClickHouseDependencies.Configuration&scope=members)
   - Gets or sets the ClickHouse host name or IP address to probe when no full connection string is supplied.
   - `string Host { get; set; }`
@@ -2841,6 +3417,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-id): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the stable audit-entry identifier.
   - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryentry-id): `Properties` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the stable audit-entry identifier.
+  - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditstoredescriptor-id): `Properties` on `AuditStoreDescriptor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the stable audit-store identifier.
   - `string Id { get; }`
@@ -2849,6 +3428,15 @@ Browse the published API surface by public member.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-id): `Properties` on `BehaviorTopologyDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the behavior identifier.
+  - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-id): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable command identifier.
+  - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-id): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable logical migration-target identifier.
+  - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-id): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable logical database-role identifier.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-id): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The stable dependency identifier.
@@ -2871,7 +3459,7 @@ Browse the published API surface by public member.
 - [Id](cephalon-eventing.md#member-p-cephalon-eventing-services-eventchanneldescriptor-id): `Properties` on `EventChannelDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Id&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable channel identifier.
   - `string Id { get; }`
-- [Id](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimedescriptor-id): `Properties` on `EventDispatchRuntimeDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Id&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-id): `Properties` on `EventDispatchRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable dispatch-runtime identifier.
   - `string Id { get; }`
 - [Id](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-id): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Id&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
@@ -3027,6 +3615,9 @@ Browse the published API surface by public member.
 - [Info](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behavioradvisoryseverity-info): `Fields` on `BehaviorAdvisorySeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Info&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Informational — no action required.
   - `const BehaviorAdvisorySeverity Info`
+- [Info](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorfaultseverity-info): `Fields` on `BehaviorFaultSeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Info&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Informational fault details.
+  - `const BehaviorFaultSeverity Info`
 - [Information](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-information): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Information&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The event describes expected informational runtime behavior.
   - `const DiagnosticSeverity Information`
@@ -3066,6 +3657,21 @@ Browse the published API surface by public member.
 - [Intelligence](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-intelligence): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Intelligence&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Identifies an intelligence-oriented technology.
   - `const TechnologyKind Intelligence`
+- [Invalid](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-invalid-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Invalid&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates an invalid-request result.
+  - `BehaviorResultDescriptor Invalid(string code, string message, BehaviorFault fault)`
+- [Invalid](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-invalid-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Invalid&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates an invalid-request result for the specified payload type.
+  - `BehaviorResult<T> Invalid<T>(string code, string message, BehaviorFault fault)`
+- [Invalid](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorresultstatus-invalid): `Fields` on `BehaviorResultStatus` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Invalid&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - The request was invalid for the target behavior.
+  - `const BehaviorResultStatus Invalid`
+- [Invalid](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-invalid-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Invalid&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates an invalid-request result.
+  - `BehaviorResultDescriptor Invalid(string code, string message, BehaviorFault fault)`
+- [Invalid](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-invalid-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Invalid&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates an invalid-request result for the specified payload type.
+  - `Result<T> Invalid<T>(string code, string message, BehaviorFault fault)`
 - [IsActive](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-isactive): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=IsActive&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets a value indicating whether the execution graph is currently active with the runtime.
   - `bool IsActive { get; }`
@@ -3096,6 +3702,9 @@ Browse the published API surface by public member.
 - [IsDeactivated](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehostedexecutionstate-isdeactivated): `Properties` on `RuntimeHostedExecutionState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=IsDeactivated&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets a value indicating whether the hosted execution most recently observed a deactivation event.
   - `bool IsDeactivated { get; }`
+- [IsFallback](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-isfallback): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=IsFallback&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Gets a value indicating whether the requested role resolved through another configured role.
+  - `bool IsFallback { get; }`
 - [IsHealthy](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-ishealthy): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=IsHealthy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets a value indicating whether the report represents a healthy state.
   - `bool IsHealthy { get; }`
@@ -3138,6 +3747,12 @@ Browse the published API surface by public member.
 - [IsStopped](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isstopped): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=IsStopped&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets a value indicating whether the module most recently completed shutdown.
   - `bool IsStopped { get; }`
+- [IsSuccess](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorresult-issuccess): `Properties` on `IBehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsSuccess&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets a value indicating whether the result represents a successful outcome.
+  - `bool IsSuccess { get; }`
+- [IsSuccess](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-result-1-issuccess): `Properties` on `Result<T>` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsSuccess&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets a value indicating whether the result represents a successful outcome.
+  - `bool IsSuccess { get; }`
 - [IsSystem](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditactor-issystem): `Properties` on `AuditActor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsSystem&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets a value indicating whether the actor represents system-owned automation.
   - `bool IsSystem { get; }`
@@ -3186,6 +3801,9 @@ Browse the published API surface by public member.
 - [Key](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedproject-key): `Properties` on `RenderedProject` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Key&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the unique key of the rendered project instance.
   - `string Key { get; }`
+- [Key](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodelerrordetail-key): `Properties` on `ResultModelErrorDetail` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Key&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
+  - Gets or sets the stable error key.
+  - `string Key { get; set; }`
 - [KeyId](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-keyid): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=KeyId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared signature key identifier.
   - `string KeyId { get; }`
@@ -3231,16 +3849,19 @@ Browse the published API surface by public member.
 
 ## L
 
-- [LastAttempt](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimestate-lastattempt): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastAttempt&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [LastAttempt](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastattempt): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastAttempt&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The last reported dispatch attempt number.
   - `int LastAttempt { get; set; }`
 - [LastAttempt](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastattempt): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastAttempt&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The last reported application-managed attempt number.
   - `int LastAttempt { get; set; }`
-- [LastChannelId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimestate-lastchannelid): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastChannelId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [LastChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastchannelid): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The last stable channel identifier reported for this dispatch path.
   - `string LastChannelId { get; set; }`
-- [LastError](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimestate-lasterror): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastError&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [LastError](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-lasterror): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastError&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the latest error observed for this target.
+  - `string LastError { get; }`
+- [LastError](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lasterror): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastError&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The last operator-facing error summary when a failure was reported.
   - `string LastError { get; set; }`
 - [LastError](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lasterror): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastError&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
@@ -3261,13 +3882,13 @@ Browse the published API surface by public member.
 - [LastFailure](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-lastfailure): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastFailure&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The last captured failure, if the runtime has faulted.
   - `RuntimeFailureInfo LastFailure { get; set; }`
-- [LastMessageId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimestate-lastmessageid): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastMessageId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [LastMessageId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastmessageid): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastMessageId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The last stable outbound message identifier when one was reported.
   - `string LastMessageId { get; set; }`
 - [LastMessageId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastmessageid): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastMessageId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The last stable inbound message identifier when one was reported.
   - `string LastMessageId { get; set; }`
-- [LastObservedAtUtc](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimestate-lastobservedatutc): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [LastObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastobservedatutc): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The UTC timestamp when the last observation was reported.
   - `DateTimeOffset? LastObservedAtUtc { get; set; }`
 - [LastObservedAtUtc](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastobservedatutc): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
@@ -3291,7 +3912,7 @@ Browse the published API surface by public member.
 - [LastObservedPhase](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-lastobservedphase): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastObservedPhase&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The last lifecycle phase recorded for the module.
   - `string LastObservedPhase { get; set; }`
-- [LastOutcome](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimestate-lastoutcome): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [LastOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastoutcome): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The last reported outcome identifier when one exists.
   - `string LastOutcome { get; set; }`
 - [LastOutcome](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastoutcome): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
@@ -3303,6 +3924,12 @@ Browse the published API surface by public member.
 - [LicenseKey](cephalon-observability-newrelic.md#member-p-cephalon-observability-newrelic-configuration-newrelictelemetryexportoptions-licensekey): `Properties` on `NewRelicTelemetryExportOptions` in `Cephalon.Observability.NewRelic.Configuration` (`Cephalon.Observability.NewRelic`) [Browse](browse.html?q=LicenseKey&assembly=Cephalon.Observability.NewRelic&namespace=Cephalon.Observability.NewRelic.Configuration&scope=members)
   - Gets or sets the New Relic license key used to build the required `api-key` header when the package should construct OTLP headers from structured settings.
   - `string LicenseKey { get; set; }`
+- [Limit](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryquery-limit): `Properties` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Limit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the requested page size after it has been normalized to the supported range.
+  - `int Limit { get; }`
+- [Limit](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryqueryresult-limit): `Properties` on `AuditHistoryQueryResult` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Limit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the normalized page size used for the query.
+  - `int Limit { get; }`
 - [Liveness](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-liveness): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Liveness&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The current liveness report.
   - `RuntimeHealthReport Liveness { get; set; }`
@@ -3426,6 +4053,27 @@ Browse the published API surface by public member.
 - [MarkProcessedAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-iinbox-markprocessedasync-cephalon-abstractions-data-inboxmessage-system-threading-cancellationtoken): `Methods` on `IInbox` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MarkProcessedAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Records one inbound message as processed.
   - `ValueTask MarkProcessedAsync(InboxMessage message, CancellationToken cancellationToken)`
+- [MaxAgeDays](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-maxagedays): `Properties` on `AuditHistoryRetentionSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxAgeDays&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the maximum age, in days, to retain durable audit rows.
+  - `int? MaxAgeDays { get; }`
+- [MaxAgeDays](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistoryretentionsettings-maxagedays): `Properties` on `AuditHistoryRetentionSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxAgeDays&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the maximum age, in days, to retain durable audit rows.
+  - `int? MaxAgeDays { get; }`
+- [MaxBatchSize](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databaseruntimeselection-maxbatchsize): `Properties` on `DatabaseRuntimeSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxBatchSize&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the maximum provider batch size when one was configured.
+  - `int? MaxBatchSize { get; }`
+- [MaxBatchSize](cephalon-engine.md#member-p-cephalon-engine-configuration-databaseruntimesettings-maxbatchsize): `Properties` on `DatabaseRuntimeSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxBatchSize&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the maximum provider batch size when one was configured.
+  - `int? MaxBatchSize { get; }`
+- [MaxEntries](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryexportrequest-maxentries): `Properties` on `AuditHistoryExportRequest` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxEntries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the maximum number of entries to export.
+  - `int MaxEntries { get; }`
+- [MaxEntries](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryexportselection-maxentries): `Properties` on `AuditHistoryExportSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxEntries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the configured maximum number of entries that one export may stream.
+  - `int? MaxEntries { get; }`
+- [MaxEntries](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistoryexportsettings-maxentries): `Properties` on `AuditHistoryExportSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxEntries&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the configured maximum number of entries that one export may stream.
+  - `int? MaxEntries { get; }`
 - [MaximumEngineVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-maximumengineversion): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=MaximumEngineVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the maximum engine version supported by the package manifest, when available.
   - `string MaximumEngineVersion { get; }`
@@ -3435,9 +4083,27 @@ Browse the published API surface by public member.
 - [MaximumVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-packagedependencymanifest-maximumversion): `Properties` on `PackageDependencyManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=MaximumVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the maximum acceptable version of the required package, when declared.
   - `string MaximumVersion { get; }`
+- [MaxLimit](cephalon-abstractions.md#member-f-cephalon-abstractions-audit-audithistoryquery-maxlimit): `Fields` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxLimit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the maximum number of entries returned by one query.
+  - `const int MaxLimit`
 - [MaxRestartAttempts](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-maxrestartattempts): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxRestartAttempts&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the maximum number of manual restarts.
   - `int MaxRestartAttempts { get; }`
+- [MaxRetryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databaseruntimeselection-maxretrycount): `Properties` on `DatabaseRuntimeSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxRetryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the maximum retry count when transient-failure retries were configured.
+  - `int? MaxRetryCount { get; }`
+- [MaxRetryCount](cephalon-engine.md#member-p-cephalon-engine-configuration-databaseruntimesettings-maxretrycount): `Properties` on `DatabaseRuntimeSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxRetryCount&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the maximum retry count when transient-failure retries were configured.
+  - `int? MaxRetryCount { get; }`
+- [MaxRetryDelaySeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databaseruntimeselection-maxretrydelayseconds): `Properties` on `DatabaseRuntimeSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxRetryDelaySeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the maximum retry delay in seconds when transient-failure retries were configured.
+  - `int? MaxRetryDelaySeconds { get; }`
+- [MaxRetryDelaySeconds](cephalon-engine.md#member-p-cephalon-engine-configuration-databaseruntimesettings-maxretrydelayseconds): `Properties` on `DatabaseRuntimeSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxRetryDelaySeconds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the maximum retry delay in seconds when transient-failure retries were configured.
+  - `int? MaxRetryDelaySeconds { get; }`
+- [Mechanism](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-mechanism): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mechanism&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the execution mechanism such as `migrate` or `ensure-created`.
+  - `string Mechanism { get; }`
 - [MediatorPattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-mediatorpattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=MediatorPattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the mediator design pattern.
   - `PatternDescriptor MediatorPattern { get; }`
@@ -3465,8 +4131,23 @@ Browse the published API surface by public member.
 - [Message](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorfault-message): `Properties` on `BehaviorFault` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Message&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets or sets the fault message.
   - `string Message { get; set; }`
+- [Message](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorresultdescriptor-message): `Properties` on `BehaviorResultDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Message&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the human-readable outcome message.
+  - `string Message { get; }`
 - [Message](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-message): `Properties` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Message&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - The message rendered for the caller.
+  - `string Message { get; set; }`
+- [Message](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorresult-message): `Properties` on `IBehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Message&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the human-readable outcome message.
+  - `string Message { get; }`
+- [Message](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-result-1-message): `Properties` on `Result<T>` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Message&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the human-readable outcome message.
+  - `string Message { get; }`
+- [Message](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-message): `Properties` on `ResultModel<TModel>` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Message&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
+  - Gets or sets the human-readable response message.
+  - `string Message { get; set; }`
+- [Message](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodelerrordetail-message): `Properties` on `ResultModelErrorDetail` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Message&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
+  - Gets or sets the human-readable error message.
   - `string Message { get; set; }`
 - [Message](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-message): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Message&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The failure message surfaced to operators.
@@ -3528,6 +4209,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-metadata): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets audit metadata associated with the entry.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryentry-metadata): `Properties` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets audit metadata associated with the entry.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-audit.md#member-p-cephalon-audit-services-auditrecordrequest-metadata): `Properties` on `AuditRecordRequest` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
   - Gets audit metadata associated with the entry.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -3549,16 +4233,28 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-engine.md#member-p-cephalon-engine-manifest-capabilitymanifest-metadata): `Properties` on `CapabilityManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets additional capability metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-metadata): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets optional operator-facing metadata associated with the command.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-metadata): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets optional operator-facing metadata associated with the migration target.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-metadata): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets optional operator-facing metadata associated with the database role.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-metadata): `Properties` on `DatabaseRoleRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets optional runtime metadata associated with the role.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-metadata): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets optional operator-facing metadata captured alongside the observation.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchitem-metadata): `Properties` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets optional message metadata associated with the dispatch item.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
-- [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimedescriptor-metadata): `Properties` on `EventDispatchRuntimeDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-metadata): `Properties` on `EventDispatchRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets operator-facing metadata for the dispatch runtime.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
-- [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimestate-metadata): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-metadata): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The operator-facing metadata captured by the latest report.
   - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
 - [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-metadata): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
@@ -3684,6 +4380,24 @@ Browse the published API surface by public member.
 - [MicroserviceTopology](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-microservicetopology): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=MicroserviceTopology&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the microservice deployment topology pattern.
   - `PatternDescriptor MicroserviceTopology { get; }`
+- [MigrationDescription](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-migrationdescription): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MigrationDescription&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing migration description reported for the database role, when available.
+  - `string MigrationDescription { get; }`
+- [MigrationDescription](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-migrationdescription): `Properties` on `DatabaseRoleRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MigrationDescription&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing migration description for the role, when known.
+  - `string MigrationDescription { get; }`
+- [Migrations](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasetopologyselection-migrations): `Properties` on `DatabaseTopologySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Migrations&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the database-migration selection.
+  - `DatabaseMigrationsSelection Migrations { get; }`
+- [Migrations](cephalon-engine.md#member-p-cephalon-engine-configuration-databasetopologysettings-migrations): `Properties` on `DatabaseTopologySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Migrations&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the database-migration settings for the active topology.
+  - `DatabaseMigrationsSettings Migrations { get; }`
+- [MigrationState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-migrationstate): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MigrationState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current migration execution state reported for the database role, when available.
+  - `string MigrationState { get; }`
+- [MigrationState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-migrationstate): `Properties` on `DatabaseRoleRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MigrationState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current migration execution state for the role, when known.
+  - `string MigrationState { get; }`
 - [MinimumEngineVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-minimumengineversion): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=MinimumEngineVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the minimum engine version required by the package manifest, when available.
   - `string MinimumEngineVersion { get; }`
@@ -3888,6 +4602,21 @@ Browse the published API surface by public member.
 - [NextAttemptAtUtc](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkoutboxentry-nextattemptatutc): `Properties` on `EntityFrameworkOutboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=NextAttemptAtUtc&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the time at which the outbox row becomes eligible for the next dispatch attempt, when delayed retry is in effect.
   - `DateTimeOffset? NextAttemptAtUtc { get; set; }`
+- [NoContent](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-nocontent-system-string-system-string): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=NoContent&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a no-content result.
+  - `BehaviorResultDescriptor NoContent(string message, string code)`
+- [NoContent](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-nocontent-1-system-string-system-string): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=NoContent&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a no-content result for the specified payload type.
+  - `BehaviorResult<T> NoContent<T>(string message, string code)`
+- [NoContent](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorresultstatus-nocontent): `Fields` on `BehaviorResultStatus` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=NoContent&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - The behavior completed successfully without a response payload.
+  - `const BehaviorResultStatus NoContent`
+- [NoContent](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-nocontent-system-string-system-string): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=NoContent&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a no-content result.
+  - `BehaviorResultDescriptor NoContent(string message, string code)`
+- [NoContent](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-nocontent-1-system-string-system-string): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=NoContent&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a no-content result for the specified payload type.
+  - `Result<T> NoContent<T>(string message, string code)`
 - [NodeName](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-nodename): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=NodeName&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
   - Gets or sets the Kubernetes node name to stamp onto exported resources.
   - `string NodeName { get; set; }`
@@ -3903,12 +4632,33 @@ Browse the published API surface by public member.
 - [None](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-transportfeatures-none): `Fields` on `TransportFeatures` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=None&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Indicates no transport features.
   - `const TransportFeatures None`
+- [NotFound](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-notfound-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotFound&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a not-found result.
+  - `BehaviorResultDescriptor NotFound(string code, string message, BehaviorFault fault)`
+- [NotFound](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-notfound-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotFound&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a not-found result for the specified payload type.
+  - `BehaviorResult<T> NotFound<T>(string code, string message, BehaviorFault fault)`
+- [NotFound](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorresultstatus-notfound): `Fields` on `BehaviorResultStatus` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotFound&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - The requested resource or target was not found.
+  - `const BehaviorResultStatus NotFound`
+- [NotFound](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-notfound-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotFound&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a not-found result.
+  - `BehaviorResultDescriptor NotFound(string code, string message, BehaviorFault fault)`
+- [NotFound](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-notfound-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotFound&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a not-found result for the specified payload type.
+  - `Result<T> NotFound<T>(string code, string message, BehaviorFault fault)`
 
 ## O
 
 - [ObservabilityOptions](cephalon-observability.md#member-m-cephalon-observability-configuration-observabilityoptions-ctor): `Constructors` on `ObservabilityOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=ObservabilityOptions&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Creates observability options with the default startup diagnostics behavior.
   - `ObservabilityOptions()`
+- [ObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-observedatutc): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the UTC timestamp when runtime state was last observed for the database role, when available.
+  - `DateTimeOffset? ObservedAtUtc { get; }`
+- [ObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-observedatutc): `Properties` on `DatabaseRoleRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the UTC timestamp when this runtime state was last observed.
+  - `DateTimeOffset? ObservedAtUtc { get; }`
 - [ObservedAtUtc](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-observedatutc): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the UTC timestamp when the observation occurred.
   - `DateTimeOffset ObservedAtUtc { get; }`
@@ -3916,6 +4666,9 @@ Browse the published API surface by public member.
   - Gets the UTC timestamp when the observation occurred.
   - `DateTimeOffset ObservedAtUtc { get; }`
 - [OccurredAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-occurredatutc): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the time at which the audited operation occurred.
+  - `DateTimeOffset OccurredAtUtc { get; }`
+- [OccurredAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryentry-occurredatutc): `Properties` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the time at which the audited operation occurred.
   - `DateTimeOffset OccurredAtUtc { get; }`
 - [OccurredAtUtc](cephalon-audit.md#member-p-cephalon-audit-services-auditrecordrequest-occurredatutc): `Properties` on `AuditRecordRequest` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
@@ -3948,6 +4701,33 @@ Browse the published API surface by public member.
 - [OccurredAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimelifecycleevent-occurredatutc): `Properties` on `RuntimeLifecycleEvent` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when the event was recorded.
   - `DateTimeOffset OccurredAtUtc { get; set; }`
+- [OccurredFromUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryexportrequest-occurredfromutc): `Properties` on `AuditHistoryExportRequest` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=OccurredFromUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional inclusive lower occurrence bound.
+  - `DateTimeOffset? OccurredFromUtc { get; }`
+- [OccurredFromUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryquery-occurredfromutc): `Properties` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=OccurredFromUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional inclusive lower occurrence bound.
+  - `DateTimeOffset? OccurredFromUtc { get; }`
+- [OccurredToUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryexportrequest-occurredtoutc): `Properties` on `AuditHistoryExportRequest` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=OccurredToUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional inclusive upper occurrence bound.
+  - `DateTimeOffset? OccurredToUtc { get; }`
+- [OccurredToUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryquery-occurredtoutc): `Properties` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=OccurredToUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional inclusive upper occurrence bound.
+  - `DateTimeOffset? OccurredToUtc { get; }`
+- [Offset](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryquery-offset): `Properties` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Offset&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the zero-based query offset.
+  - `int Offset { get; }`
+- [Offset](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryqueryresult-offset): `Properties` on `AuditHistoryQueryResult` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Offset&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the zero-based query offset that produced this page.
+  - `int Offset { get; }`
+- [Ok](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-ok-1-0-system-string-system-string): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Ok&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a successful result with a payload value.
+  - `BehaviorResult<T> Ok<T>(T value, string message, string code)`
+- [Ok](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorresultstatus-ok): `Fields` on `BehaviorResultStatus` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Ok&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - The behavior completed successfully and returned a value.
+  - `const BehaviorResultStatus Ok`
+- [Ok](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-ok-1-0-system-string-system-string): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Ok&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates a successful result with a payload value.
+  - `Result<T> Ok<T>(T value, string message, string code)`
 - [OldValue](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditchange-oldvalue): `Properties` on `AuditChange` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=OldValue&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the previous serialized value when one is known.
   - `string OldValue { get; }`
@@ -3996,6 +4776,12 @@ Browse the published API surface by public member.
 - [Organization](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-patternkind-organization): `Fields` on `PatternKind` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Organization&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Identifies an organization pattern.
   - `const PatternKind Organization`
+- [Outbox](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasetopologyselection-outbox): `Properties` on `DatabaseTopologySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Outbox&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the outbox database target selection.
+  - `DatabaseTargetSelection Outbox { get; }`
+- [Outbox](cephalon-engine.md#member-p-cephalon-engine-configuration-databasetopologysettings-outbox): `Properties` on `DatabaseTopologySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Outbox&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the outbox database target.
+  - `DatabaseTargetSettings Outbox { get; }`
 - [OutboxDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-outboxdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `OutboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutboxDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new outbox descriptor.
   - `OutboxDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string mode, IReadOnlyList<string> channelIds, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
@@ -4023,7 +4809,7 @@ Browse the published API surface by public member.
 - [OutboxId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchitem-outboxid): `Properties` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable outbox identifier that owns the staged message.
   - `string OutboxId { get; }`
-- [OutboxId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimestate-outboxid): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [OutboxId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-outboxid): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The stable outbox identifier that owns the dispatch path.
   - `string OutboxId { get; set; }`
 - [OutboxMessage](cephalon-abstractions.md#member-m-cephalon-abstractions-data-outboxmessage-ctor-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutboxMessage&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -4038,6 +4824,15 @@ Browse the published API surface by public member.
 - [Outcome](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-outcome): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the outcome recorded for the audited operation.
   - `AuditOutcome Outcome { get; }`
+- [Outcome](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryentry-outcome): `Properties` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the outcome recorded for the audited operation.
+  - `AuditOutcome Outcome { get; }`
+- [Outcome](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryexportrequest-outcome): `Properties` on `AuditHistoryExportRequest` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional audit-outcome filter.
+  - `AuditOutcome? Outcome { get; }`
+- [Outcome](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryquery-outcome): `Properties` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional audit-outcome filter.
+  - `AuditOutcome? Outcome { get; }`
 - [Outcome](cephalon-audit.md#member-p-cephalon-audit-services-auditrecordrequest-outcome): `Properties` on `AuditRecordRequest` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
   - Gets the outcome recorded for the audited operation.
   - `AuditOutcome Outcome { get; }`
@@ -4254,6 +5049,9 @@ Browse the published API surface by public member.
 - [Payload](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-payload): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Payload&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the serialized payload that should be delivered later.
   - `string Payload { get; }`
+- [PersistedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryentry-persistedatutc): `Properties` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=PersistedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the time at which the audit entry was durably persisted.
+  - `DateTimeOffset PersistedAtUtc { get; }`
 - [Phase](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-phase): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Phase&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The lifecycle phase that failed, such as `initialize`, `start`, or `stop`.
   - `string Phase { get; set; }`
@@ -4263,6 +5061,9 @@ Browse the published API surface by public member.
 - [PipelinePattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-pipelinepattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=PipelinePattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the pipeline design pattern.
   - `PatternDescriptor PipelinePattern { get; }`
+- [Planned](cephalon-abstractions.md#member-f-cephalon-abstractions-data-databasemigrationstatus-planned): `Fields` on `DatabaseMigrationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Planned&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The migration target is known to the runtime but has not started executing yet.
+  - `const DatabaseMigrationStatus Planned`
 - [Platform](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-platform): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Platform&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Identifies a platform- or runtime-oriented technology.
   - `const TechnologyKind Platform`
@@ -4383,14 +5184,35 @@ Browse the published API surface by public member.
 - [Provenance](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-provenance): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Provenance&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the provenance metadata declared by the package manifest, when available.
   - `PackageProvenanceManifest Provenance { get; }`
+- [Provider](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryselection-provider): `Properties` on `AuditHistorySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Provider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the selected durable history provider identifier.
+  - `string Provider { get; }`
+- [Provider](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistorysettings-provider): `Properties` on `AuditHistorySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Provider&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the selected durable history provider identifier.
+  - `string Provider { get; }`
 - [Provider](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditstoredescriptor-provider): `Properties` on `AuditStoreDescriptor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Provider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the logical provider identifier that backs the audit-store surface.
+  - `string Provider { get; }`
+- [Provider](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-provider): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Provider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the effective provider identifier when known.
+  - `string Provider { get; }`
+- [Provider](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-provider): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Provider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the logical provider identifier that backs the effective target.
+  - `string Provider { get; }`
+- [Provider](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasetargetselection-provider): `Properties` on `DatabaseTargetSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Provider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the selected logical provider identifier.
+  - `string Provider { get; }`
+- [Provider](cephalon-engine.md#member-p-cephalon-engine-configuration-databasetargetsettings-provider): `Properties` on `DatabaseTargetSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Provider&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the selected logical provider identifier.
   - `string Provider { get; }`
 - [Provider](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-dataselection-provider): `Properties` on `DataSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Provider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the selected primary data-provider family or implementation identifier.
   - `string Provider { get; }`
 - [Provider](cephalon-engine.md#member-p-cephalon-engine-configuration-datasettings-provider): `Properties` on `DataSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Provider&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the selected primary data-provider family or implementation identifier.
+  - `string Provider { get; }`
+- [Provider](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-provider): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=Provider&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Gets the selected provider identifier, if one was declared.
   - `string Provider { get; }`
 - [Provider](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-provider): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Provider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the normalized provider identifier.
@@ -4452,6 +5274,9 @@ Browse the published API surface by public member.
 
 ## Q
 
+- [QueryAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iaudithistoryreader-queryasync-cephalon-abstractions-audit-audithistoryquery-system-threading-cancellationtoken): `Methods` on `IAuditHistoryReader` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueryAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Queries audit-history entries using the supplied host-agnostic filter set.
+  - `ValueTask<AuditHistoryQueryResult> QueryAsync(AuditHistoryQuery query, CancellationToken cancellationToken)`
 - [QuotaProjectId](cephalon-observability-gcp.md#member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-quotaprojectid): `Properties` on `GcpTelemetryExportOptions` in `Cephalon.Observability.Gcp.Configuration` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=QuotaProjectId&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Configuration&scope=members)
   - Gets or sets the optional quota project header used for Google-managed ingestion requests.
   - `string QuotaProjectId { get; set; }`
@@ -4467,6 +5292,12 @@ Browse the published API surface by public member.
 - [Rbac](cephalon-abstractions.md#member-f-cephalon-abstractions-authorization-authorizationmode-rbac): `Fields` on `AuthorizationMode` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Rbac&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Indicates a role-based access-control evaluation.
   - `const AuthorizationMode Rbac`
+- [Read](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasetopologyselection-read): `Properties` on `DatabaseTopologySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Read&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the read-side database target selection.
+  - `DatabaseTargetSelection Read { get; }`
+- [Read](cephalon-engine.md#member-p-cephalon-engine-configuration-databasetopologysettings-read): `Properties` on `DatabaseTopologySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Read&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the read-side database target.
+  - `DatabaseTargetSettings Read { get; }`
 - [ReadDbContextType](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-readdbcontexttype): `Properties` on `EntityFrameworkDataOptions` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ReadDbContextType&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets the read-side `DbContext` type.
   - `Type ReadDbContextType { get; }`
@@ -4515,6 +5346,9 @@ Browse the published API surface by public member.
 - [ReceivedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-inboxmessage-receivedatutc): `Properties` on `InboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReceivedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the time at which the message was received.
   - `DateTimeOffset ReceivedAtUtc { get; }`
+- [RecommendedForProduction](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-recommendedforproduction): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RecommendedForProduction&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether this command is recommended for production use.
+  - `bool RecommendedForProduction { get; }`
 - [RecordAsync](cephalon-audit.md#member-m-cephalon-audit-services-iauditrecorder-recordasync-cephalon-audit-services-auditrecordrequest-system-threading-cancellationtoken): `Methods` on `IAuditRecorder` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=RecordAsync&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
   - Records one audit entry and returns the normalized entry that was written.
   - `ValueTask<AuditEntry> RecordAsync(AuditRecordRequest request, CancellationToken cancellationToken)`
@@ -4533,6 +5367,9 @@ Browse the published API surface by public member.
 - [RedisDependencyHealthOptions](cephalon-observability-redisdependencies.md#member-m-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions-ctor): `Constructors` on `RedisDependencyHealthOptions` in `Cephalon.Observability.RedisDependencies.Configuration` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=RedisDependencyHealthOptions&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Configuration&scope=members)
   - Initializes a new instance of the `RedisDependencyHealthOptions` class.
   - `RedisDependencyHealthOptions()`
+- [ReferencedByRoles](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-referencedbyroles): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReferencedByRoles&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the logical roles that explicitly reference this role through `UseRole`.
+  - `IReadOnlyList<string> ReferencedByRoles { get; }`
 - [ReferenceDocFile](cephalon-referencedocs.md#member-m-cephalon-referencedocs-generation-referencedocfile-ctor-system-string-system-string): `Constructors` on `ReferenceDocFile` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=ReferenceDocFile&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Creates a new generated reference documentation file.
   - `ReferenceDocFile(string path, string contents)`
@@ -4680,6 +5517,21 @@ Browse the published API surface by public member.
 - [RequestBodyLimit](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-requestbodylimit): `Properties` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RequestBodyLimit&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets or sets the maximum number of request-body characters to log before the payload is truncated.
   - `int RequestBodyLimit { get; set; }`
+- [RequestedRoleId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-requestedroleid): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequestedRoleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the logical database role requested by migration policy.
+  - `string RequestedRoleId { get; }`
+- [RequestedRoleId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-requestedroleid): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequestedRoleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the logical role requested by configuration or runtime selection.
+  - `string RequestedRoleId { get; }`
+- [RequestedRoleId](cephalon-engine.md#member-p-cephalon-engine-appmodel-databasetopologyroleresolution-requestedroleid): `Properties` on `DatabaseTopologyRoleResolution` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=RequestedRoleId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Gets the logical role requested by the caller.
+  - `string RequestedRoleId { get; }`
+- [RequestedRoleId](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-requestedroleid): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=RequestedRoleId&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Gets the logical database role requested by the caller.
+  - `string RequestedRoleId { get; }`
+- [RequestedTarget](cephalon-engine.md#member-p-cephalon-engine-appmodel-databasetopologyroleresolution-requestedtarget): `Properties` on `DatabaseTopologyRoleResolution` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=RequestedTarget&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Gets the target declared for the requested role.
+  - `DatabaseTargetSelection RequestedTarget { get; }`
 - [RequestedTenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-tenancy-tenantresolutionrequest-requestedtenantid): `Properties` on `TenantResolutionRequest` in `Cephalon.Abstractions.Tenancy` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequestedTenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Tenancy&scope=members)
   - Gets the explicitly requested tenant identifier when one is known.
   - `string RequestedTenantId { get; }`
@@ -4770,6 +5622,12 @@ Browse the published API surface by public member.
 - [RequireVersion](cephalon-engine.md#member-p-cephalon-engine-configuration-packagepolicy-requireversion): `Properties` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RequireVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether package manifests must declare a version.
   - `bool RequireVersion { get; }`
+- [ResolutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-resolutionmode): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResolutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the runtime resolution mode.
+  - `string ResolutionMode { get; }`
+- [ResolutionMode](cephalon-engine.md#member-p-cephalon-engine-appmodel-databasetopologyroleresolution-resolutionmode): `Properties` on `DatabaseTopologyRoleResolution` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=ResolutionMode&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Gets the stable resolution mode used by runtime introspection surfaces.
+  - `string ResolutionMode { get; }`
 - [Resolve](cephalon-engine.md#member-m-cephalon-engine-appmodel-builtinblueprints-resolve-system-string): `Methods` on `BuiltInBlueprints` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=Resolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
   - Resolves a blueprint identifier, display name, or alias.
   - `AppBlueprint Resolve(string value)`
@@ -4785,6 +5643,15 @@ Browse the published API surface by public member.
 - [Resolve](cephalon-engine.md#member-m-cephalon-engine-transports-builtintransports-resolve-system-string): `Methods` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=Resolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
   - Resolves a transport identifier, display name, or alias.
   - `TransportDescriptor Resolve(string value)`
+- [Resolve](cephalon-engine.md#member-m-cephalon-engine-configuration-connectionstringresolution-resolve-microsoft-extensions-configuration-iconfiguration-system-string-system-string-system-string-system-string-system-string): `Methods` on `ConnectionStringResolution` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Resolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Resolves the effective connection string for a pack or provider.
+  - `string Resolve(IConfiguration configuration, string connectionString, string connectionStringName, string defaultConnectionString, string sectionPath, string providerDisplayName)`
+- [Resolve](cephalon-engine.md#member-m-cephalon-engine-appmodel-databasetopologyroleresolver-resolve-cephalon-abstractions-appmodel-databasetopologyselection-system-string): `Methods` on `DatabaseTopologyRoleResolver` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=Resolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Resolves the effective target for the supplied logical database role.
+  - `DatabaseTopologyRoleResolution Resolve(DatabaseTopologySelection databases, string requestedRoleId)`
+- [Resolve](cephalon-engine.md#member-m-cephalon-engine-configuration-uriresolution-resolve-microsoft-extensions-configuration-iconfiguration-system-string-system-string-system-string-system-string-system-string): `Methods` on `UriResolution` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Resolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Resolves the effective provider URI for a pack or provider.
+  - `string Resolve(IConfiguration configuration, string uri, string uriName, string defaultUri, string sectionPath, string providerDisplayName)`
 - [ResolveAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-tenancy-itenantresolver-resolveasync-cephalon-abstractions-tenancy-tenantresolutionrequest-system-threading-cancellationtoken): `Methods` on `ITenantResolver` in `Cephalon.Abstractions.Tenancy` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResolveAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Tenancy&scope=members)
   - Resolves the tenant context for the supplied request.
   - `ValueTask<TenantResolutionResult> ResolveAsync(TenantResolutionRequest request, CancellationToken cancellationToken)`
@@ -4794,12 +5661,42 @@ Browse the published API surface by public member.
 - [ResolvedCulture](cephalon-abstractions.md#member-p-cephalon-abstractions-localization-localizedresourcessnapshot-resolvedculture): `Properties` on `LocalizedResourcesSnapshot` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResolvedCulture&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
   - Gets the culture actually resolved for the snapshot.
   - `string ResolvedCulture { get; }`
+- [ResolvedRoleId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-resolvedroleid): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResolvedRoleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the concrete database role that backs the target.
+  - `string ResolvedRoleId { get; }`
+- [ResolvedRoleId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-resolvedroleid): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResolvedRoleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the concrete role that ultimately backs the physical target.
+  - `string ResolvedRoleId { get; }`
+- [ResolvedRoleId](cephalon-engine.md#member-p-cephalon-engine-appmodel-databasetopologyroleresolution-resolvedroleid): `Properties` on `DatabaseTopologyRoleResolution` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=ResolvedRoleId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Gets the concrete role that supplied the effective provider and connection settings.
+  - `string ResolvedRoleId { get; }`
+- [ResolvedRoleId](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-resolvedroleid): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ResolvedRoleId&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Gets the logical database role that supplied the effective target.
+  - `string ResolvedRoleId { get; }`
+- [ResolveHistory](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-configuration-entityframeworkdatabaseroleresolver-resolvehistory-system-iserviceprovider): `Methods` on `EntityFrameworkDatabaseRoleResolver` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ResolveHistory&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Resolves the audit-history database role.
+  - `EntityFrameworkDatabaseRoleContext ResolveHistory(IServiceProvider serviceProvider)`
+- [ResolveOutbox](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-configuration-entityframeworkdatabaseroleresolver-resolveoutbox-system-iserviceprovider): `Methods` on `EntityFrameworkDatabaseRoleResolver` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ResolveOutbox&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Resolves the outbox database role, falling back to the write role when a dedicated outbox role is not configured.
+  - `EntityFrameworkDatabaseRoleContext ResolveOutbox(IServiceProvider serviceProvider)`
+- [ResolveRead](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-configuration-entityframeworkdatabaseroleresolver-resolveread-system-iserviceprovider): `Methods` on `EntityFrameworkDatabaseRoleResolver` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ResolveRead&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Resolves the read database role.
+  - `EntityFrameworkDatabaseRoleContext ResolveRead(IServiceProvider serviceProvider)`
+- [ResolveRole](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-configuration-entityframeworkdatabaseroleresolver-resolverole-system-iserviceprovider-system-string): `Methods` on `EntityFrameworkDatabaseRoleResolver` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ResolveRole&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Resolves an arbitrary supported database role from `Engine:Databases`.
+  - `EntityFrameworkDatabaseRoleContext ResolveRole(IServiceProvider serviceProvider, string requestedRoleId)`
+- [ResolveSharedWrite](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-configuration-entityframeworkdatabaseroleresolver-resolvesharedwrite-system-iserviceprovider): `Methods` on `EntityFrameworkDatabaseRoleResolver` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ResolveSharedWrite&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Resolves the shared write role used when one `DbContext` type serves both reads and writes.
+  - `EntityFrameworkDatabaseRoleContext ResolveSharedWrite(IServiceProvider serviceProvider)`
 - [ResolveText](cephalon-abstractions.md#member-m-cephalon-abstractions-localization-ilocalizedtextcatalog-resolvetext-system-string-system-string-system-string): `Methods` on `ILocalizedTextCatalog` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResolveText&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
   - Resolves one localized text value with an optional fallback.
   - `string ResolveText(string key, string culture, string fallback)`
 - [ResolveText](cephalon-engine.md#member-m-cephalon-engine-localization-localizedtextcatalog-resolvetext-system-string-system-string-system-string): `Methods` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=ResolveText&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
   - Resolves a localized value or returns the provided fallback.
   - `string ResolveText(string key, string culture, string fallback)`
+- [ResolveWrite](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-configuration-entityframeworkdatabaseroleresolver-resolvewrite-system-iserviceprovider): `Methods` on `EntityFrameworkDatabaseRoleResolver` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ResolveWrite&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Resolves the write database role.
+  - `EntityFrameworkDatabaseRoleContext ResolveWrite(IServiceProvider serviceProvider)`
 - [ResourceAttributePrefix](cephalon-identity.md#member-f-cephalon-identity-policies-identitypolicymetadatakeys-resourceattributeprefix): `Fields` on `IdentityPolicyMetadataKeys` in `Cephalon.Identity.Policies` (`Cephalon.Identity`) [Browse](browse.html?q=ResourceAttributePrefix&assembly=Cephalon.Identity&namespace=Cephalon.Identity.Policies&scope=members)
   - The metadata key prefix for required resource attributes.
   - `const string ResourceAttributePrefix`
@@ -4854,13 +5751,28 @@ Browse the published API surface by public member.
 - [RestPrefix](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-apiroutesoptions-restprefix): `Properties` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RestPrefix&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets or sets the root prefix used by the built-in REST transport mapper.
   - `string RestPrefix { get; set; }`
+- [ResultModel<TModel>](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-transports-rest-resultmodel-1-ctor): `Constructors` on `ResultModel<TModel>` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ResultModel%3CTModel%3E&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
+  - Initializes a new instance of the `ResultModel<T>` class.
+  - `ResultModel<TModel>()`
+- [ResultModelError](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-transports-rest-resultmodelerror-ctor): `Constructors` on `ResultModelError` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ResultModelError&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
+  - Initializes a new instance of the `ResultModelError` class.
+  - `ResultModelError()`
+- [ResultModelErrorDetail](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-transports-rest-resultmodelerrordetail-ctor): `Constructors` on `ResultModelErrorDetail` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ResultModelErrorDetail&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
+  - Initializes a new instance of the `ResultModelErrorDetail` class.
+  - `ResultModelErrorDetail()`
+- [Retention](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryselection-retention): `Properties` on `AuditHistorySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Retention&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the resolved retention inputs for durable audit history.
+  - `AuditHistoryRetentionSelection Retention { get; }`
+- [Retention](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistorysettings-retention): `Properties` on `AuditHistorySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Retention&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the configured retention settings for durable history.
+  - `AuditHistoryRetentionSettings Retention { get; }`
 - [RetrievalOptions](cephalon-retrieval.md#member-m-cephalon-retrieval-configuration-retrievaloptions-ctor): `Constructors` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=RetrievalOptions&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
   - Creates retrieval options with the default host-owned features enabled.
   - `RetrievalOptions()`
 - [RetryDelaySeconds](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-retrydelayseconds): `Properties` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=RetryDelaySeconds&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
   - Gets or sets the number of seconds the Wolverine-owned dispatch loop should wait before retrying a failed dispatch attempt.
   - `int RetryDelaySeconds { get; set; }`
-- [RetryPending](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimestate-retrypending): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryPending&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [RetryPending](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-retrypending): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryPending&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the latest report says another retry attempt is pending.
   - `bool RetryPending { get; }`
 - [RetryPending](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-retrypending): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryPending&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
@@ -4872,12 +5784,15 @@ Browse the published API surface by public member.
 - [RetryScheduled](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionexecutionoutcomes-retryscheduled): `Fields` on `EventSubscriptionExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryScheduled&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when subscription handling schedules or expects another retry attempt.
   - `const string RetryScheduled`
-- [RetryScheduledCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimestate-retryscheduledcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryScheduledCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [RetryScheduledCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-retryscheduledcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryScheduledCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of `retry-scheduled` observations reported so far.
   - `int RetryScheduledCount { get; set; }`
 - [RetryScheduledCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-retryscheduledcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryScheduledCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The number of `retry-scheduled` observations reported so far.
   - `int RetryScheduledCount { get; set; }`
+- [Role](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-role): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=Role&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Gets the convenience role identifier used by most host callbacks.
+  - `string Role { get; }`
 - [Role](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedproject-role): `Properties` on `RenderedProject` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Role&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the scaffold role of the project.
   - `string Role { get; }`
@@ -4917,6 +5832,33 @@ Browse the published API surface by public member.
 - [RunAsync](cephalon-referencedocs.md#member-m-cephalon-referencedocs-referencedocsapplication-runasync-system-string-system-io-textwriter-system-io-textwriter-system-threading-cancellationtoken): `Methods` on `ReferenceDocsApplication` in `Cephalon.ReferenceDocs` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=RunAsync&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs&scope=members)
   - Runs the reference docs generator for the supplied arguments and writers.
   - `Task<int> RunAsync(string[] args, TextWriter output, TextWriter error, CancellationToken cancellationToken)`
+- [RunIntervalMinutes](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-runintervalminutes): `Properties` on `AuditHistoryRetentionSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=RunIntervalMinutes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the optional recurring retention interval in minutes.
+  - `int? RunIntervalMinutes { get; }`
+- [RunIntervalMinutes](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistoryretentionsettings-runintervalminutes): `Properties` on `AuditHistoryRetentionSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RunIntervalMinutes&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the optional recurring retention interval in minutes.
+  - `int? RunIntervalMinutes { get; }`
+- [Running](cephalon-abstractions.md#member-f-cephalon-abstractions-data-databasemigrationstatus-running): `Fields` on `DatabaseMigrationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Running&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The migration target is currently executing.
+  - `const DatabaseMigrationStatus Running`
+- [Runtime](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-runtime): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Runtime&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the effective runtime tuning resolved for this database role.
+  - `DatabaseRuntimeSelection Runtime { get; }`
+- [Runtime](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasetargetselection-runtime): `Properties` on `DatabaseTargetSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Runtime&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the role-specific runtime overrides for this database target.
+  - `DatabaseRuntimeSelection Runtime { get; }`
+- [Runtime](cephalon-engine.md#member-p-cephalon-engine-configuration-databasetargetsettings-runtime): `Properties` on `DatabaseTargetSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Runtime&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the role-specific runtime overrides.
+  - `DatabaseRuntimeSettings Runtime { get; }`
+- [Runtime](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasetopologyselection-runtime): `Properties` on `DatabaseTopologySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Runtime&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the shared runtime tuning selected for database roles.
+  - `DatabaseRuntimeSelection Runtime { get; }`
+- [Runtime](cephalon-engine.md#member-p-cephalon-engine-configuration-databasetopologysettings-runtime): `Properties` on `DatabaseTopologySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Runtime&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the shared database runtime tuning.
+  - `DatabaseRuntimeSettings Runtime { get; }`
+- [Runtime](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-runtime): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=Runtime&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Gets the merged runtime settings for the selected role.
+  - `DatabaseRuntimeSelection Runtime { get; }`
 - [Runtime](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimelifecycleeventscope-runtime): `Fields` on `RuntimeLifecycleEventScope` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Runtime&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The event belongs to the overall runtime lifecycle.
   - `const RuntimeLifecycleEventScope Runtime`
@@ -4947,6 +5889,9 @@ Browse the published API surface by public member.
 - [RuntimeManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-runtimemanifest-ctor-system-string-system-string-system-datetimeoffset-cephalon-abstractions-appmodel-appprofile-system-collections-generic-ireadonlylist-cephalon-engine-manifest-modulemanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-capabilitymanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest): `Constructors` on `RuntimeManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Creates a new runtime manifest.
   - `RuntimeManifest(string manifestVersion, string engineVersion, DateTimeOffset generatedAtUtc, AppProfile appProfile, IReadOnlyList<ModuleManifest> modules, IReadOnlyList<CapabilityManifest> capabilities, IReadOnlyList<PackageManifest> packages)`
+- [RuntimeMetadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-runtimemetadata): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RuntimeMetadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets optional runtime metadata associated with the database role.
+  - `IReadOnlyDictionary<string, string> RuntimeMetadata { get; }`
 - [RuntimeModuleLifecycleState](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimemodulelifecyclestate-ctor-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-nullable-system-datetimeoffset-cephalon-engine-runtime-runtimefailureinfo): `Constructors` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeModuleLifecycleState&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Describes the current operator-facing lifecycle state for one loaded module.
   - `RuntimeModuleLifecycleState(string ModuleId, string DisplayName, string Version, string AssemblyName, string PackageId, DateTimeOffset? LoadedAtUtc, DateTimeOffset? InitializedAtUtc, DateTimeOffset? StartedAtUtc, DateTimeOffset? StoppedAtUtc, string LastObservedPhase, DateTimeOffset? LastObservedAtUtc, RuntimeFailureInfo LastFailure)`
@@ -4956,6 +5901,9 @@ Browse the published API surface by public member.
 - [RuntimeRestartCounterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-runtimerestartcountername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeRestartCounterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Gets the counter name for runtime restart attempts.
   - `const string RuntimeRestartCounterName`
+- [Runtimes](cephalon-abstractions.md#member-p-cephalon-abstractions-data-ieventdispatchruntimedescriptorcatalog-runtimes): `Properties` on `IEventDispatchRuntimeDescriptorCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Runtimes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the configured dispatch runtimes visible to the current runtime.
+  - `IReadOnlyList<EventDispatchRuntimeDescriptor> Runtimes { get; }`
 - [RuntimeStatus](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-runtimestatus): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeStatus&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime lifecycle status at the time of evaluation.
   - `RuntimeStatus RuntimeStatus { get; set; }`
@@ -5016,6 +5964,18 @@ Browse the published API surface by public member.
 - [ScalarRoutePrefix](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-openapiendpointoptions-scalarrouteprefix): `Properties` on `OpenApiEndpointOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ScalarRoutePrefix&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Gets or sets the route prefix used by the Scalar UI.
   - `string ScalarRoutePrefix { get; set; }`
+- [Schema](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-schema): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Schema&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the effective schema override, when configured.
+  - `string Schema { get; }`
+- [Schema](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasetargetselection-schema): `Properties` on `DatabaseTargetSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Schema&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the schema override selected for this database role.
+  - `string Schema { get; }`
+- [Schema](cephalon-engine.md#member-p-cephalon-engine-configuration-databasetargetsettings-schema): `Properties` on `DatabaseTargetSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Schema&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the selected schema override.
+  - `string Schema { get; }`
+- [Schema](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-schema): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=Schema&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Gets the selected schema override, if one was declared.
+  - `string Schema { get; }`
 - [Scheme](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-scheme): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Scheme&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
   - Gets or sets the URI scheme used when building a discrete endpoint, such as `neo4j`, `neo4j+s`, `bolt`, or `bolt+s`.
   - `string Scheme { get; set; }`
@@ -5097,12 +6057,18 @@ Browse the published API surface by public member.
 - [Severity](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorcompatibilityviolation-severity): `Properties` on `BehaviorCompatibilityViolation` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Severity&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the violation severity.
   - `CompatibilitySeverity Severity { get; }`
+- [Severity](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorfault-severity): `Properties` on `BehaviorFault` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Severity&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets or sets the fault severity.
+  - `BehaviorFaultSeverity Severity { get; set; }`
 - [Severity](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-severity): `Properties` on `DiagnosticEventDefinition` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Severity&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The intended severity for the event.
   - `DiagnosticSeverity Severity { get; set; }`
 - [Severity](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehavioradvisory-severity): `Properties` on `IBehaviorAdvisory` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Severity&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the severity of this advisory.
   - `BehaviorAdvisorySeverity Severity { get; }`
+- [Severity](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodelerrordetail-severity): `Properties` on `ResultModelErrorDetail` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Severity&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
+  - Gets or sets the error severity.
+  - `BehaviorFaultSeverity Severity { get; set; }`
 - [SfidIdOptions](cephalon-ids-sfid.md#member-m-cephalon-ids-sfid-configuration-sfididoptions-ctor-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `SfidIdOptions` in `Cephalon.Ids.Sfid.Configuration` (`Cephalon.Ids.Sfid`) [Browse](browse.html?q=SfidIdOptions&assembly=Cephalon.Ids.Sfid&namespace=Cephalon.Ids.Sfid.Configuration&scope=members)
   - Initializes a new instance of the `SfidIdOptions` class.
   - `SfidIdOptions(int? datacenterId, int? workerId, int? workerCapacity, int? clockRegressionToleranceMilliseconds)`
@@ -5172,7 +6138,7 @@ Browse the published API surface by public member.
 - [Skipped](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionexecutionoutcomes-skipped): `Fields` on `EventSubscriptionExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Skipped&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when subscription handling intentionally skips one message.
   - `const string Skipped`
-- [SkippedCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimestate-skippedcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SkippedCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [SkippedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-skippedcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SkippedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of `skipped` observations reported so far.
   - `int SkippedCount { get; set; }`
 - [SkippedCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-skippedcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SkippedCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
@@ -5277,6 +6243,9 @@ Browse the published API surface by public member.
 - [StartAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-startasync-system-iserviceprovider-system-threading-cancellationtoken): `Methods` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StartAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Starts the runtime and its modules.
   - `Task StartAsync(IServiceProvider services, CancellationToken cancellationToken)`
+- [StartAsync](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-services-entityframeworkdatabasemigrationhostedservice-startasync-system-threading-cancellationtoken): `Methods` on `EntityFrameworkDatabaseMigrationHostedService` in `Cephalon.Data.EntityFramework.Services` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=StartAsync&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Services&scope=members)
+  - Applies the configured startup migration policy for every targeted Entity Framework database role.
+  - `Task StartAsync(CancellationToken cancellationToken)`
 - [StartAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-imodulelifecycle-startasync-cephalon-abstractions-modules-modulecontext-system-threading-cancellationtoken): `Methods` on `IModuleLifecycle` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Starts the module after initialization has completed.
   - `Task StartAsync(ModuleContext context, CancellationToken cancellationToken)`
@@ -5295,13 +6264,16 @@ Browse the published API surface by public member.
 - [Started](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-started): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Started&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime is fully started.
   - `const RuntimeStatus Started`
+- [StartedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-startedatutc): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the latest start time observed for this target.
+  - `DateTimeOffset? StartedAtUtc { get; }`
 - [StartedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-startedatutc): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StartedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when module startup last completed successfully.
   - `DateTimeOffset? StartedAtUtc { get; set; }`
 - [StartedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-startedatutc): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StartedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when startup completed, if it has completed.
   - `DateTimeOffset? StartedAtUtc { get; set; }`
-- [StartedCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimestate-startedcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=StartedCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [StartedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-startedcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of `started` observations reported so far.
   - `int StartedCount { get; set; }`
 - [StartedCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-startedcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=StartedCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
@@ -5334,18 +6306,30 @@ Browse the published API surface by public member.
 - [StatementUri](cephalon-engine.md#member-p-cephalon-engine-manifest-packageprovenancemanifest-statementuri): `Properties` on `PackageProvenanceManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=StatementUri&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared provenance statement or attestation URI, when available.
   - `string StatementUri { get; }`
-- [States](cephalon-eventing.md#member-p-cephalon-eventing-services-ieventdispatchruntimecatalog-states): `Properties` on `IEventDispatchRuntimeCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=States&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [States](cephalon-abstractions.md#member-p-cephalon-abstractions-data-ieventdispatchruntimecatalog-states): `Properties` on `IEventDispatchRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=States&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the reported dispatch state entries visible to the current runtime.
   - `IReadOnlyList<EventDispatchRuntimeState> States { get; }`
 - [States](cephalon-eventing.md#member-p-cephalon-eventing-services-ieventsubscriptionruntimecatalog-states): `Properties` on `IEventSubscriptionRuntimeCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=States&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the currently known runtime-state entries ordered by subscription identifier.
   - `IReadOnlyList<EventSubscriptionRuntimeState> States { get; }`
+- [Status](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorresultdescriptor-status): `Properties` on `BehaviorResultDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Status&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the transport-neutral outcome status.
+  - `BehaviorResultStatus Status { get; }`
+- [Status](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-status): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Status&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the current execution status of the migration target.
+  - `DatabaseMigrationStatus Status { get; }`
 - [Status](cephalon-engine.md#member-p-cephalon-engine-runtime-engineruntime-status): `Properties` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Status&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the current lifecycle status.
   - `RuntimeStatus Status { get; }`
+- [Status](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorresult-status): `Properties` on `IBehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Status&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the transport-neutral outcome status.
+  - `BehaviorResultStatus Status { get; }`
 - [Status](cephalon-engine.md#member-p-cephalon-engine-runtime-iruntime-status): `Properties` on `IRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Status&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the current lifecycle status of the runtime.
   - `RuntimeStatus Status { get; }`
+- [Status](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-result-1-status): `Properties` on `Result<T>` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Status&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the transport-neutral outcome status.
+  - `BehaviorResultStatus Status { get; }`
 - [Status](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-status): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Status&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The current lifecycle status of the runtime.
   - `RuntimeStatusSnapshot Status { get; set; }`
@@ -5358,6 +6342,9 @@ Browse the published API surface by public member.
 - [StatusBeforeFailure](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-statusbeforefailure): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StatusBeforeFailure&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime status immediately before the failure was captured.
   - `RuntimeStatus StatusBeforeFailure { get; set; }`
+- [StatusCode](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-statuscode): `Properties` on `ResultModel<TModel>` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=StatusCode&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
+  - Gets or sets the effective HTTP status code associated with the response.
+  - `int StatusCode { get; set; }`
 - [StatusSnapshot](cephalon-engine.md#member-p-cephalon-engine-runtime-engineruntime-statussnapshot): `Properties` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StatusSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets a serialization-friendly snapshot of the current runtime status.
   - `RuntimeStatusSnapshot StatusSnapshot { get; }`
@@ -5366,6 +6353,9 @@ Browse the published API surface by public member.
   - `RuntimeStatusSnapshot StatusSnapshot { get; }`
 - [StopAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-stopasync-system-threading-cancellationtoken): `Methods` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StopAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Stops started modules and transitions the runtime to a stopped state.
+  - `Task StopAsync(CancellationToken cancellationToken)`
+- [StopAsync](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-services-entityframeworkdatabasemigrationhostedservice-stopasync-system-threading-cancellationtoken): `Methods` on `EntityFrameworkDatabaseMigrationHostedService` in `Cephalon.Data.EntityFramework.Services` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=StopAsync&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Services&scope=members)
+  - Stops the hosted service. Entity Framework startup migration execution is synchronous during startup, so there is no background work to drain.
   - `Task StopAsync(CancellationToken cancellationToken)`
 - [StopAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-imodulelifecycle-stopasync-cephalon-abstractions-modules-modulecontext-system-threading-cancellationtoken): `Methods` on `IModuleLifecycle` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=StopAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Stops the module during runtime shutdown.
@@ -5439,6 +6429,15 @@ Browse the published API surface by public member.
 - [SubjectId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-subjectid): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=SubjectId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the stable subject identifier associated with the entry when one is known.
   - `string SubjectId { get; }`
+- [SubjectId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryentry-subjectid): `Properties` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=SubjectId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the stable subject identifier associated with the entry when one is known.
+  - `string SubjectId { get; }`
+- [SubjectId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryexportrequest-subjectid): `Properties` on `AuditHistoryExportRequest` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=SubjectId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional stable subject identifier filter.
+  - `string SubjectId { get; }`
+- [SubjectId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryquery-subjectid): `Properties` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=SubjectId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional stable subject identifier filter.
+  - `string SubjectId { get; }`
 - [SubjectId](cephalon-audit.md#member-f-cephalon-audit-conventions-auditmetadatakeys-subjectid): `Fields` on `AuditMetadataKeys` in `Cephalon.Audit.Conventions` (`Cephalon.Audit`) [Browse](browse.html?q=SubjectId&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Conventions&scope=members)
   - The metadata key that stores the audited subject identifier.
   - `const string SubjectId`
@@ -5456,6 +6455,15 @@ Browse the published API surface by public member.
   - `List<string> SubjectIdClaimTypes { get; }`
 - [SubjectType](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-subjecttype): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=SubjectType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the logical subject type associated with the entry.
+  - `string SubjectType { get; }`
+- [SubjectType](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryentry-subjecttype): `Properties` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=SubjectType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the logical subject type associated with the entry.
+  - `string SubjectType { get; }`
+- [SubjectType](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryexportrequest-subjecttype): `Properties` on `AuditHistoryExportRequest` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=SubjectType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional logical subject-type filter.
+  - `string SubjectType { get; }`
+- [SubjectType](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryquery-subjecttype): `Properties` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=SubjectType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional logical subject-type filter.
   - `string SubjectType { get; }`
 - [SubjectType](cephalon-audit.md#member-f-cephalon-audit-conventions-auditmetadatakeys-subjecttype): `Fields` on `AuditMetadataKeys` in `Cephalon.Audit.Conventions` (`Cephalon.Audit`) [Browse](browse.html?q=SubjectType&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Conventions&scope=members)
   - The metadata key that stores the audited subject type.
@@ -5481,6 +6489,9 @@ Browse the published API surface by public member.
 - [Succeeded](cephalon-abstractions.md#member-f-cephalon-abstractions-audit-auditoutcome-succeeded): `Fields` on `AuditOutcome` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Indicates the operation completed successfully.
   - `const AuditOutcome Succeeded`
+- [Succeeded](cephalon-abstractions.md#member-f-cephalon-abstractions-data-databasemigrationstatus-succeeded): `Fields` on `DatabaseMigrationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The migration target completed successfully.
+  - `const DatabaseMigrationStatus Succeeded`
 - [Succeeded](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchexecutionoutcomes-succeeded): `Fields` on `EventDispatchExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when dispatch completes successfully for one staged message.
   - `const string Succeeded`
@@ -5490,12 +6501,15 @@ Browse the published API surface by public member.
 - [Succeeded](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimelifecycleeventoutcome-succeeded): `Fields` on `RuntimeLifecycleEventOutcome` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The lifecycle event completed successfully.
   - `const RuntimeLifecycleEventOutcome Succeeded`
-- [SucceededCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimestate-succeededcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SucceededCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [SucceededCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-succeededcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SucceededCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of `succeeded` observations reported so far.
   - `int SucceededCount { get; set; }`
 - [SucceededCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-succeededcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SucceededCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The number of `succeeded` observations reported so far.
   - `int SucceededCount { get; set; }`
+- [Success](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-success): `Properties` on `ResultModel<TModel>` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Success&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
+  - Gets or sets a value indicating whether the response is successful.
+  - `bool Success { get; set; }`
 - [Suite](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-scaffoldscopes-suite): `Fields` on `ScaffoldScopes` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Suite&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies a suite-level scaffold scope.
   - `const string Suite`
@@ -5509,6 +6523,9 @@ Browse the published API surface by public member.
   - Creates a suite-scaffold service description.
   - `SuiteScaffoldService(string id, string displayName, string description, string blueprintId, string nameTemplate, string pathTemplate, IReadOnlyList<string> dependsOn, IReadOnlyDictionary<string, string> metadata)`
 - [Summary](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-summary): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Summary&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the human-readable audit summary.
+  - `string Summary { get; }`
+- [Summary](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryentry-summary): `Properties` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Summary&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the human-readable audit summary.
   - `string Summary { get; }`
 - [Summary](cephalon-audit.md#member-p-cephalon-audit-services-auditrecordrequest-summary): `Properties` on `AuditRecordRequest` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=Summary&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
@@ -5548,6 +6565,9 @@ Browse the published API surface by public member.
   - Gets the normalized tag set associated with the tool.
   - `IReadOnlyList<string> Tags { get; }`
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-tags): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets descriptive tags associated with the entry.
+  - `IReadOnlyList<string> Tags { get; }`
+- [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryentry-tags): `Properties` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets descriptive tags associated with the entry.
   - `IReadOnlyList<string> Tags { get; }`
 - [Tags](cephalon-audit.md#member-p-cephalon-audit-services-auditrecordrequest-tags): `Properties` on `AuditRecordRequest` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=Tags&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
@@ -5610,12 +6630,24 @@ Browse the published API surface by public member.
 - [TanzuTelemetryExportOptions](cephalon-observability-tanzu.md#member-m-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-ctor): `Constructors` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=TanzuTelemetryExportOptions&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
   - Initializes a new instance of the `TanzuTelemetryExportOptions` class.
   - `TanzuTelemetryExportOptions()`
+- [Target](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-target): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=Target&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Gets the effective database target metadata after applying any configured role reference.
+  - `DatabaseTargetSelection Target { get; }`
 - [TargetFramework](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-targetframework): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=TargetFramework&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the target framework to read from.
   - `string TargetFramework { get; }`
 - [TargetFramework](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-scaffoldrequest-targetframework): `Properties` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=TargetFramework&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the target framework for generated projects.
   - `string TargetFramework { get; }`
+- [TargetRoleIds](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-services-entityframeworkdatabasemigrationregistration-targetroleids): `Properties` on `EntityFrameworkDatabaseMigrationRegistration` in `Cephalon.Data.EntityFramework.Services` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=TargetRoleIds&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Services&scope=members)
+  - Gets the logical migration targets satisfied by the context.
+  - `IReadOnlyList<string> TargetRoleIds { get; }`
+- [Targets](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasemigrationsselection-targets): `Properties` on `DatabaseMigrationsSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Targets&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the logical migration targets selected for the app.
+  - `IReadOnlyList<string> Targets { get; }`
+- [Targets](cephalon-engine.md#member-p-cephalon-engine-configuration-databasemigrationssettings-targets): `Properties` on `DatabaseMigrationsSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Targets&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the logical migration targets selected for the app.
+  - `IReadOnlyList<string> Targets { get; }`
 - [TargetStoreId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-projectiondescriptor-targetstoreid): `Properties` on `ProjectionDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TargetStoreId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the logical target store or read-model identifier populated by the projection.
   - `string TargetStoreId { get; }`
@@ -5694,6 +6726,15 @@ Browse the published API surface by public member.
 - [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-tenantid): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the tenant identifier associated with the audited operation.
   - `string TenantId { get; }`
+- [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryentry-tenantid): `Properties` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the tenant identifier associated with the audited operation.
+  - `string TenantId { get; }`
+- [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryexportrequest-tenantid): `Properties` on `AuditHistoryExportRequest` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional tenant identifier filter.
+  - `string TenantId { get; }`
+- [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryquery-tenantid): `Properties` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the optional tenant identifier filter.
+  - `string TenantId { get; }`
 - [TenantId](cephalon-audit.md#member-f-cephalon-audit-conventions-auditmetadatakeys-tenantid): `Fields` on `AuditMetadataKeys` in `Cephalon.Audit.Conventions` (`Cephalon.Audit`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Conventions&scope=members)
   - The metadata key that stores the tenant identifier associated with an audit entry.
   - `const string TenantId`
@@ -5760,6 +6801,9 @@ Browse the published API surface by public member.
 - [Timeline](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperationalstory-timeline): `Properties` on `RuntimeOperationalStory` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Timeline&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The ordered lifecycle narrative for package load, execution-graph transitions, hosted-execution transitions, module transitions, runtime transitions, and failures.
   - `IReadOnlyList<RuntimeLifecycleEvent> Timeline { get; set; }`
+- [Title](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-title): `Properties` on `ResultModel<TModel>` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Title&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
+  - Gets or sets the short response title.
+  - `string Title { get; set; }`
 - [TlsServerName](cephalon-observability-mqttdependencies.md#member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-tlsservername): `Properties` on `MqttDependencyDefinition` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=TlsServerName&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
   - Gets or sets the TLS server name used for certificate validation when `UseTls` is enabled.
   - `string TlsServerName { get; set; }`
@@ -5781,7 +6825,10 @@ Browse the published API surface by public member.
 - [Topic](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-topic): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=Topic&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
   - Gets or sets the optional topic name that should be present in returned cluster metadata.
   - `string Topic { get; set; }`
-- [TotalReports](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchruntimestate-totalreports): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [TotalCount](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryqueryresult-totalcount): `Properties` on `AuditHistoryQueryResult` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
+  - Gets the total number of matching entries before paging was applied.
+  - `int TotalCount { get; }`
+- [TotalReports](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-totalreports): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the total number of observations reported for this dispatch path.
   - `int TotalReports { get; }`
 - [TotalReports](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-totalreports): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
@@ -5880,7 +6927,7 @@ Browse the published API surface by public member.
 - [TryGet](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventchannelcatalog-tryget-system-string-cephalon-eventing-services-eventchanneldescriptor): `Methods` on `IEventChannelCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Attempts to resolve an event channel descriptor by identifier.
   - `bool TryGet(string channelId, out EventChannelDescriptor channel)`
-- [TryGet](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventdispatchruntimecatalog-tryget-system-string-cephalon-eventing-services-eventdispatchruntimestate): `Methods` on `IEventDispatchRuntimeCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [TryGet](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchruntimecatalog-tryget-system-string-cephalon-abstractions-data-eventdispatchruntimestate): `Methods` on `IEventDispatchRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Tries to get the latest reported dispatch state for one outbox-backed publication path.
   - `bool TryGet(string outboxId, out EventDispatchRuntimeState state)`
 - [TryGet](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventsubscriptioncatalog-tryget-system-string-cephalon-eventing-services-eventsubscriptiondescriptor): `Methods` on `IEventSubscriptionCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
@@ -5934,6 +6981,21 @@ Browse the published API surface by public member.
 
 ## U
 
+- [Unauthorized](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-unauthorized-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unauthorized&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates an unauthorized result.
+  - `BehaviorResultDescriptor Unauthorized(string code, string message, BehaviorFault fault)`
+- [Unauthorized](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-unauthorized-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unauthorized&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates an unauthorized result for the specified payload type.
+  - `BehaviorResult<T> Unauthorized<T>(string code, string message, BehaviorFault fault)`
+- [Unauthorized](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorresultstatus-unauthorized): `Fields` on `BehaviorResultStatus` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unauthorized&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - The caller is not authenticated for the requested behavior.
+  - `const BehaviorResultStatus Unauthorized`
+- [Unauthorized](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-unauthorized-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unauthorized&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates an unauthorized result.
+  - `BehaviorResultDescriptor Unauthorized(string code, string message, BehaviorFault fault)`
+- [Unauthorized](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-unauthorized-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unauthorized&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Creates an unauthorized result for the specified payload type.
+  - `Result<T> Unauthorized<T>(string code, string message, BehaviorFault fault)`
 - [Unhealthy](cephalon-abstractions.md#member-f-cephalon-abstractions-health-healthstate-unhealthy): `Fields` on `HealthState` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unhealthy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - Indicates the dependency is unhealthy.
   - `const HealthState Unhealthy`
@@ -5943,6 +7005,9 @@ Browse the published API surface by public member.
 - [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-audit-auditoutcome-unknown): `Fields` on `AuditOutcome` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Indicates the operation outcome was not explicitly classified.
   - `const AuditOutcome Unknown`
+- [Unsupported](cephalon-abstractions.md#member-f-cephalon-abstractions-data-databasemigrationstatus-unsupported): `Fields` on `DatabaseMigrationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unsupported&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The runtime cannot execute the configured migration target with the active provider-pack registrations.
+  - `const DatabaseMigrationStatus Unsupported`
 - [Uri](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-uri): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Uri&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
   - Gets or sets the optional full Neo4j endpoint URI such as `neo4j://graph.internal.example:7687` or `neo4j+s://graph.internal.example:7687`.
   - `string Uri { get; set; }`
@@ -6006,6 +7071,9 @@ Browse the published API surface by public member.
 - [UsePublicTraceDataKey](cephalon-observability-oraclecloud.md#member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-usepublictracedatakey): `Properties` on `OracleCloudTelemetryExportOptions` in `Cephalon.Observability.OracleCloud.Configuration` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=UsePublicTraceDataKey&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration&scope=members)
   - Gets or sets a value indicating whether trace ingestion should use the public Oracle Cloud APM data key path instead of the private data key path.
   - `bool UsePublicTraceDataKey { get; set; }`
+- [UseResultModelEnvelope](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-apiroutesoptions-useresultmodelenvelope): `Properties` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=UseResultModelEnvelope&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or sets a value indicating whether behavior-aware REST endpoints should emit the Cephalon result envelope.
+  - `bool UseResultModelEnvelope { get; set; }`
 - [UserId](cephalon-abstractions.md#member-p-cephalon-abstractions-tenancy-tenantresolutionrequest-userid): `Properties` on `TenantResolutionRequest` in `Cephalon.Abstractions.Tenancy` (`Cephalon.Abstractions`) [Browse](browse.html?q=UserId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Tenancy&scope=members)
   - Gets the current user identifier when one is known.
   - `string UserId { get; }`
@@ -6054,15 +7122,39 @@ Browse the published API surface by public member.
 - [Username](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-username): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=Username&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the optional user name used for authentication when no full connection string is supplied.
   - `string Username { get; set; }`
+- [UseRole](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-userole): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=UseRole&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the referenced role supplied through `UseRole`, when present.
+  - `string UseRole { get; }`
+- [UseRole](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasetargetselection-userole): `Properties` on `DatabaseTargetSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=UseRole&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the referenced concrete database role that supplies the physical connection target.
+  - `string UseRole { get; }`
+- [UseRole](cephalon-engine.md#member-p-cephalon-engine-configuration-databasetargetsettings-userole): `Properties` on `DatabaseTargetSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=UseRole&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the referenced concrete database role used to supply the physical connection target.
+  - `string UseRole { get; }`
+- [UseRole](cephalon-engine.md#member-p-cephalon-engine-appmodel-databasetopologyroleresolution-userole): `Properties` on `DatabaseTopologyRoleResolution` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=UseRole&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Gets the referenced concrete role declared by the requested target, when present.
+  - `string UseRole { get; }`
 - [UseSelfHostedDefaults](cephalon-observability.md#member-p-cephalon-observability-configuration-telemetryexportoptions-useselfhosteddefaults): `Properties` on `TelemetryExportOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=UseSelfHostedDefaults&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Gets or sets a value indicating whether companion packages should apply the supported self-hosted collector and runtime defaults when the export endpoint is omitted.
   - `bool UseSelfHostedDefaults { get; set; }`
+- [UsesEngineDatabaseTopology](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-usesenginedatabasetopology): `Properties` on `EntityFrameworkDataOptions` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=UsesEngineDatabaseTopology&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Gets or sets a value indicating whether the pack resolves read/write roles from `Engine:Databases`.
+  - `bool UsesEngineDatabaseTopology { get; set; }`
 - [UseSettings](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-usesettings-cephalon-engine-configuration-enginesettings): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Applies a preconstructed `EngineSettings` instance to the builder.
   - `EngineBuilder UseSettings(EngineSettings settings)`
+- [UsesNamedConnectionString](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-usesnamedconnectionstring): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=UsesNamedConnectionString&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
+  - Gets a value indicating whether the role resolved through a named connection string.
+  - `bool UsesNamedConnectionString { get; }`
 - [UsesReadWriteSplit](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-usesreadwritesplit): `Properties` on `EntityFrameworkDataOptions` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=UsesReadWriteSplit&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets a value indicating whether distinct read and write `DbContext` types were selected.
   - `bool UsesReadWriteSplit { get; }`
+- [UsesRoleReference](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-usesrolereference): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=UsesRoleReference&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether this role resolves through `UseRole`.
+  - `bool UsesRoleReference { get; }`
+- [UsesRoleReference](cephalon-engine.md#member-p-cephalon-engine-appmodel-databasetopologyroleresolution-usesrolereference): `Properties` on `DatabaseTopologyRoleResolution` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=UsesRoleReference&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
+  - Gets a value indicating whether the requested role resolved through an explicit role reference.
+  - `bool UsesRoleReference { get; }`
 - [UseTls](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-usetls): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=UseTls&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the optional value that controls whether TLS should be used for the probe.
   - `bool? UseTls { get; set; }`
@@ -6087,6 +7179,12 @@ Browse the published API surface by public member.
 
 ## V
 
+- [Value](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorresult-value): `Properties` on `IBehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Value&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the boxed payload value when one was supplied.
+  - `object Value { get; }`
+- [Value](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-result-1-value): `Properties` on `Result<T>` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Value&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the typed payload value when one was supplied.
+  - `T Value { get; }`
 - [VerificationReason](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-verificationreason): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=VerificationReason&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the verification outcome summary for this signature.
   - `string VerificationReason { get; }`
@@ -6150,6 +7248,9 @@ Browse the published API surface by public member.
 - [Warning](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behavioradvisoryseverity-warning): `Fields` on `BehaviorAdvisorySeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Warning&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Warning — review recommended.
   - `const BehaviorAdvisorySeverity Warning`
+- [Warning](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorfaultseverity-warning): `Fields` on `BehaviorFaultSeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Warning&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Warning-level fault details.
+  - `const BehaviorFaultSeverity Warning`
 - [Warning](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-compatibilityseverity-warning): `Fields` on `CompatibilitySeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Warning&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - The violation may cause runtime issues but does not prevent startup.
   - `const CompatibilitySeverity Warning`
@@ -6180,6 +7281,12 @@ Browse the published API surface by public member.
 - [WorkerId](cephalon-ids-sfid.md#member-p-cephalon-ids-sfid-configuration-sfididoptions-workerid): `Properties` on `SfidIdOptions` in `Cephalon.Ids.Sfid.Configuration` (`Cephalon.Ids.Sfid`) [Browse](browse.html?q=WorkerId&assembly=Cephalon.Ids.Sfid&namespace=Cephalon.Ids.Sfid.Configuration&scope=members)
   - Gets the worker identifier supplied to the generator.
   - `int? WorkerId { get; set; }`
+- [Write](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasetopologyselection-write): `Properties` on `DatabaseTopologySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Write&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the write-side database target selection.
+  - `DatabaseTargetSelection Write { get; }`
+- [Write](cephalon-engine.md#member-p-cephalon-engine-configuration-databasetopologysettings-write): `Properties` on `DatabaseTopologySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Write&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the write-side database target.
+  - `DatabaseTargetSettings Write { get; }`
 - [WriteAsync](cephalon-scaffolding.md#member-m-cephalon-scaffolding-io-filesystemscaffoldwriter-writeasync-system-string-cephalon-scaffolding-generation-renderedscaffold-system-boolean-system-threading-cancellationtoken): `Methods` on `FileSystemScaffoldWriter` in `Cephalon.Scaffolding.IO` (`Cephalon.Scaffolding`) [Browse](browse.html?q=WriteAsync&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.IO&scope=members)
   - Writes the supplied scaffold to disk.
   - `Task WriteAsync(string rootPath, RenderedScaffold scaffold, bool overwrite, CancellationToken cancellationToken)`
@@ -6189,6 +7296,9 @@ Browse the published API surface by public member.
 - [WriteAsync](cephalon-referencedocs.md#member-m-cephalon-referencedocs-io-referencedocswriter-writeasync-cephalon-referencedocs-generation-renderedreferencedocs-system-boolean-system-threading-cancellationtoken): `Methods` on `ReferenceDocsWriter` in `Cephalon.ReferenceDocs.IO` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=WriteAsync&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.IO&scope=members)
   - Writes the supplied reference docs output to disk.
   - `Task WriteAsync(RenderedReferenceDocs rendered, bool overwrite, CancellationToken cancellationToken)`
+- [WriteAuditHistoryNdjsonAsync](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-audithistoryexporthttpresponseextensions-writeaudithistoryndjsonasync-microsoft-aspnetcore-http-httpresponse-cephalon-abstractions-audit-iaudithistoryexporter-cephalon-abstractions-audit-audithistoryexportrequest-system-string-system-threading-cancellationtoken): `Methods` on `AuditHistoryExportHttpResponseExtensions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=WriteAuditHistoryNdjsonAsync&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Writes the supplied audit-history export as newline-delimited JSON.
+  - `Task WriteAuditHistoryNdjsonAsync(this HttpResponse response, IAuditHistoryExporter exporter, AuditHistoryExportRequest request, string fileName, CancellationToken cancellationToken)`
 - [WriteDbContextType](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-writedbcontexttype): `Properties` on `EntityFrameworkDataOptions` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=WriteDbContextType&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets the write-side `DbContext` type.
   - `Type WriteDbContextType { get; }`

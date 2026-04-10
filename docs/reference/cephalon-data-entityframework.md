@@ -8,10 +8,257 @@ Generated from XML comments and the public API surface of the compiled assembly.
 - `Cephalon.Data.EntityFramework.Configuration`
 - `Cephalon.Data.EntityFramework.Modeling`
 - `Cephalon.Data.EntityFramework.Registration`
+- `Cephalon.Data.EntityFramework.Services`
 
 <a id="namespace-cephalon-data-entityframework-configuration"></a>
 
 ## Namespace Cephalon.Data.EntityFramework.Configuration
+
+<a id="type-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext"></a>
+
+### `EntityFrameworkDatabaseRoleContext`
+
+Describes one resolved `Engine:Databases` role as consumed by the Entity Framework pack.
+
+#### Declaration
+```csharp
+public sealed class EntityFrameworkDatabaseRoleContext
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-ctor-system-string-system-string-cephalon-abstractions-appmodel-databasetargetselection-cephalon-abstractions-appmodel-databaseruntimeselection-system-string"></a>
+
+##### `EntityFrameworkDatabaseRoleContext`
+
+```csharp
+EntityFrameworkDatabaseRoleContext(string requestedRoleId, string resolvedRoleId, DatabaseTargetSelection target, DatabaseRuntimeSelection runtime, string connectionString)
+```
+
+Initializes a new instance of the `EntityFrameworkDatabaseRoleContext` class.
+
+Parameters:
+- `requestedRoleId`: The logical role the caller requested, such as `write` or `read`.
+- `resolvedRoleId`: The logical role that ultimately supplied the effective database target.
+- `target`: The effective database target metadata after applying any configured role reference.
+- `runtime`: The merged runtime settings for the role.
+- `connectionString`: The resolved connection string for the role.
+
+#### Properties
+
+<a id="member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-connectionstring"></a>
+
+##### `ConnectionString`
+
+```csharp
+string ConnectionString { get; }
+```
+
+Gets the resolved connection string for the selected role.
+
+<a id="member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-connectionstringname"></a>
+
+##### `ConnectionStringName`
+
+```csharp
+string ConnectionStringName { get; }
+```
+
+Gets the selected named connection-string reference, if one was declared.
+
+<a id="member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-isfallback"></a>
+
+##### `IsFallback`
+
+```csharp
+bool IsFallback { get; }
+```
+
+Gets a value indicating whether the requested role resolved through another configured role.
+
+<a id="member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; }
+```
+
+Gets the selected provider identifier, if one was declared.
+
+<a id="member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-requestedroleid"></a>
+
+##### `RequestedRoleId`
+
+```csharp
+string RequestedRoleId { get; }
+```
+
+Gets the logical database role requested by the caller.
+
+<a id="member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-resolvedroleid"></a>
+
+##### `ResolvedRoleId`
+
+```csharp
+string ResolvedRoleId { get; }
+```
+
+Gets the logical database role that supplied the effective target.
+
+<a id="member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-role"></a>
+
+##### `Role`
+
+```csharp
+string Role { get; }
+```
+
+Gets the convenience role identifier used by most host callbacks.
+
+<a id="member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-runtime"></a>
+
+##### `Runtime`
+
+```csharp
+DatabaseRuntimeSelection Runtime { get; }
+```
+
+Gets the merged runtime settings for the selected role.
+
+<a id="member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-schema"></a>
+
+##### `Schema`
+
+```csharp
+string Schema { get; }
+```
+
+Gets the selected schema override, if one was declared.
+
+<a id="member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-target"></a>
+
+##### `Target`
+
+```csharp
+DatabaseTargetSelection Target { get; }
+```
+
+Gets the effective database target metadata after applying any configured role reference.
+
+<a id="member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-usesnamedconnectionstring"></a>
+
+##### `UsesNamedConnectionString`
+
+```csharp
+bool UsesNamedConnectionString { get; }
+```
+
+Gets a value indicating whether the role resolved through a named connection string.
+
+<a id="type-cephalon-data-entityframework-configuration-entityframeworkdatabaseroleresolver"></a>
+
+### `EntityFrameworkDatabaseRoleResolver`
+
+Resolves `Engine:Databases` role selections into Entity Framework-specific role contexts.
+
+#### Declaration
+```csharp
+public static class EntityFrameworkDatabaseRoleResolver
+```
+
+#### Methods
+
+<a id="member-m-cephalon-data-entityframework-configuration-entityframeworkdatabaseroleresolver-resolvehistory-system-iserviceprovider"></a>
+
+##### `ResolveHistory`
+
+```csharp
+EntityFrameworkDatabaseRoleContext ResolveHistory(IServiceProvider serviceProvider)
+```
+
+Resolves the audit-history database role.
+
+Returns: The resolved Entity Framework database-role context.
+
+Parameters:
+- `serviceProvider`: The current service provider.
+
+<a id="member-m-cephalon-data-entityframework-configuration-entityframeworkdatabaseroleresolver-resolveoutbox-system-iserviceprovider"></a>
+
+##### `ResolveOutbox`
+
+```csharp
+EntityFrameworkDatabaseRoleContext ResolveOutbox(IServiceProvider serviceProvider)
+```
+
+Resolves the outbox database role, falling back to the write role when a dedicated outbox role is not configured.
+
+Returns: The resolved Entity Framework database-role context.
+
+Parameters:
+- `serviceProvider`: The current service provider.
+
+<a id="member-m-cephalon-data-entityframework-configuration-entityframeworkdatabaseroleresolver-resolveread-system-iserviceprovider"></a>
+
+##### `ResolveRead`
+
+```csharp
+EntityFrameworkDatabaseRoleContext ResolveRead(IServiceProvider serviceProvider)
+```
+
+Resolves the read database role.
+
+Returns: The resolved Entity Framework database-role context.
+
+Parameters:
+- `serviceProvider`: The current service provider.
+
+<a id="member-m-cephalon-data-entityframework-configuration-entityframeworkdatabaseroleresolver-resolverole-system-iserviceprovider-system-string"></a>
+
+##### `ResolveRole`
+
+```csharp
+EntityFrameworkDatabaseRoleContext ResolveRole(IServiceProvider serviceProvider, string requestedRoleId)
+```
+
+Resolves an arbitrary supported database role from `Engine:Databases`.
+
+Returns: The resolved Entity Framework database-role context.
+
+Parameters:
+- `serviceProvider`: The current service provider.
+- `requestedRoleId`: The logical database role identifier to resolve.
+
+<a id="member-m-cephalon-data-entityframework-configuration-entityframeworkdatabaseroleresolver-resolvesharedwrite-system-iserviceprovider"></a>
+
+##### `ResolveSharedWrite`
+
+```csharp
+EntityFrameworkDatabaseRoleContext ResolveSharedWrite(IServiceProvider serviceProvider)
+```
+
+Resolves the shared write role used when one `DbContext` type serves both reads and writes.
+
+Returns: The resolved Entity Framework database-role context.
+
+Parameters:
+- `serviceProvider`: The current service provider.
+
+<a id="member-m-cephalon-data-entityframework-configuration-entityframeworkdatabaseroleresolver-resolvewrite-system-iserviceprovider"></a>
+
+##### `ResolveWrite`
+
+```csharp
+EntityFrameworkDatabaseRoleContext ResolveWrite(IServiceProvider serviceProvider)
+```
+
+Resolves the write database role.
+
+Returns: The resolved Entity Framework database-role context.
+
+Parameters:
+- `serviceProvider`: The current service provider.
 
 <a id="type-cephalon-data-entityframework-configuration-entityframeworkdataoptions"></a>
 
@@ -123,6 +370,16 @@ bool RegisterProviderCapability { get; set; }
 ```
 
 Gets or sets a value indicating whether the pack should publish the provider capability.
+
+<a id="member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-usesenginedatabasetopology"></a>
+
+##### `UsesEngineDatabaseTopology`
+
+```csharp
+bool UsesEngineDatabaseTopology { get; set; }
+```
+
+Gets or sets a value indicating whether the pack resolves read/write roles from `Engine:Databases`.
 
 <a id="member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-usesreadwritesplit"></a>
 
@@ -578,6 +835,49 @@ Parameters:
 - `configureDbContext`: The callback that configures the shared Entity Framework Core `DbContext`.
 - `configure`: An optional callback that configures the host-owned Entity Framework pack options.
 
+<a id="member-m-cephalon-data-entityframework-registration-entityframeworkdataenginebuilderextensions-addentityframeworkdata-1-cephalon-engine-composition-enginebuilder-system-action-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-microsoft-entityframeworkcore-dbcontextoptionsbuilder-system-action-cephalon-data-entityframework-configuration-entityframeworkdataoptions"></a>
+
+##### `AddEntityFrameworkData`
+
+```csharp
+EngineBuilder AddEntityFrameworkData<TDbContext>(this EngineBuilder builder, Action<EntityFrameworkDatabaseRoleContext, DbContextOptionsBuilder> configureDbContext, Action<EntityFrameworkDataOptions> configure)
+```
+
+Adds the Entity Framework Core data pack with one shared `DbContext` type configured from the engine-owned `Engine:Databases` topology.
+
+Remarks: This overload keeps the physical connection topology inside `Engine:Databases` while leaving the provider package selection with the consuming host or provider companion pack.
+
+Returns: The same engine builder for fluent composition.
+
+Type parameters:
+- `TDbContext`: The shared `DbContext` type.
+
+Parameters:
+- `builder`: The engine builder to extend.
+- `configureDbContext`: The callback that selects the EF Core provider for the resolved role and applies provider-specific tuning such as retries.
+- `configure`: An optional callback that configures the host-owned Entity Framework pack options.
+
+<a id="member-m-cephalon-data-entityframework-registration-entityframeworkdataenginebuilderextensions-addentityframeworkdata-2-cephalon-engine-composition-enginebuilder-system-action-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-microsoft-entityframeworkcore-dbcontextoptionsbuilder-system-action-cephalon-data-entityframework-configuration-entityframeworkdataoptions"></a>
+
+##### `AddEntityFrameworkData`
+
+```csharp
+EngineBuilder AddEntityFrameworkData<TReadDbContext, TWriteDbContext>(this EngineBuilder builder, Action<EntityFrameworkDatabaseRoleContext, DbContextOptionsBuilder> configureDbContext, Action<EntityFrameworkDataOptions> configure)
+```
+
+Adds the Entity Framework Core data pack with distinct read and write `DbContext` types configured from the engine-owned `Engine:Databases` topology.
+
+Returns: The same engine builder for fluent composition.
+
+Type parameters:
+- `TReadDbContext`: The read-side `DbContext` type.
+- `TWriteDbContext`: The write-side `DbContext` type.
+
+Parameters:
+- `builder`: The engine builder to extend.
+- `configureDbContext`: The callback that selects the EF Core provider for each resolved role and applies provider-specific tuning such as retries.
+- `configure`: An optional callback that configures the host-owned Entity Framework pack options.
+
 <a id="member-m-cephalon-data-entityframework-registration-entityframeworkdataenginebuilderextensions-addentityframeworkdata-2-cephalon-engine-composition-enginebuilder-system-action-microsoft-entityframeworkcore-dbcontextoptionsbuilder-system-action-microsoft-entityframeworkcore-dbcontextoptionsbuilder-system-action-cephalon-data-entityframework-configuration-entityframeworkdataoptions"></a>
 
 ##### `AddEntityFrameworkData`
@@ -601,3 +901,109 @@ Parameters:
 - `configureReadDbContext`: The callback that configures the read-side Entity Framework Core `DbContext`.
 - `configureWriteDbContext`: The callback that configures the write-side Entity Framework Core `DbContext`.
 - `configure`: An optional callback that configures the host-owned Entity Framework pack options.
+
+<a id="namespace-cephalon-data-entityframework-services"></a>
+
+## Namespace Cephalon.Data.EntityFramework.Services
+
+<a id="type-cephalon-data-entityframework-services-entityframeworkdatabasemigrationhostedservice"></a>
+
+### `EntityFrameworkDatabaseMigrationHostedService`
+
+Applies startup schema changes for Entity Framework Core database-role targets selected through `Engine:Databases`.
+
+#### Declaration
+```csharp
+public sealed class EntityFrameworkDatabaseMigrationHostedService
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-data-entityframework-services-entityframeworkdatabasemigrationhostedservice-ctor-system-iserviceprovider-cephalon-abstractions-appmodel-appprofile-system-collections-generic-ienumerable-cephalon-data-entityframework-services-entityframeworkdatabasemigrationregistration"></a>
+
+##### `EntityFrameworkDatabaseMigrationHostedService`
+
+```csharp
+EntityFrameworkDatabaseMigrationHostedService(IServiceProvider serviceProvider, AppProfile appProfile, IEnumerable<EntityFrameworkDatabaseMigrationRegistration> registrations)
+```
+
+Applies startup schema changes for Entity Framework Core database-role targets selected through `Engine:Databases`.
+
+#### Methods
+
+<a id="member-m-cephalon-data-entityframework-services-entityframeworkdatabasemigrationhostedservice-startasync-system-threading-cancellationtoken"></a>
+
+##### `StartAsync`
+
+```csharp
+Task StartAsync(CancellationToken cancellationToken)
+```
+
+Applies the configured startup migration policy for every targeted Entity Framework database role.
+
+Parameters:
+- `cancellationToken`: The token that cancels startup migration execution.
+
+<a id="member-m-cephalon-data-entityframework-services-entityframeworkdatabasemigrationhostedservice-stopasync-system-threading-cancellationtoken"></a>
+
+##### `StopAsync`
+
+```csharp
+Task StopAsync(CancellationToken cancellationToken)
+```
+
+Stops the hosted service. Entity Framework startup migration execution is synchronous during startup, so there is no background work to drain.
+
+Returns: A completed task.
+
+Parameters:
+- `cancellationToken`: The token that cancels shutdown.
+
+<a id="type-cephalon-data-entityframework-services-entityframeworkdatabasemigrationregistration"></a>
+
+### `EntityFrameworkDatabaseMigrationRegistration`
+
+Describes one Entity Framework Core `DbContext` type that can satisfy one or more logical `Engine:Databases` migration targets.
+
+#### Declaration
+```csharp
+public sealed class EntityFrameworkDatabaseMigrationRegistration
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-data-entityframework-services-entityframeworkdatabasemigrationregistration-ctor-system-type-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `EntityFrameworkDatabaseMigrationRegistration`
+
+```csharp
+EntityFrameworkDatabaseMigrationRegistration(Type dbContextType, IReadOnlyList<string> targetRoleIds)
+```
+
+Initializes a new instance of the `EntityFrameworkDatabaseMigrationRegistration` class.
+
+Parameters:
+- `dbContextType`: The `DbContext` type that can apply schema changes.
+- `targetRoleIds`: The logical migration targets satisfied by the context.
+
+#### Properties
+
+<a id="member-p-cephalon-data-entityframework-services-entityframeworkdatabasemigrationregistration-dbcontexttype"></a>
+
+##### `DbContextType`
+
+```csharp
+Type DbContextType { get; }
+```
+
+Gets the `DbContext` type that can apply schema changes.
+
+<a id="member-p-cephalon-data-entityframework-services-entityframeworkdatabasemigrationregistration-targetroleids"></a>
+
+##### `TargetRoleIds`
+
+```csharp
+IReadOnlyList<string> TargetRoleIds { get; }
+```
+
+Gets the logical migration targets satisfied by the context.

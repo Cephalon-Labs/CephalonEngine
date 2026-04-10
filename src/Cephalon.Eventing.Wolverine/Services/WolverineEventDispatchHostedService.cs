@@ -11,7 +11,6 @@ namespace Cephalon.Eventing.Wolverine.Services;
 internal sealed class WolverineEventDispatchHostedService(
     IServiceScopeFactory scopeFactory,
     WolverineEventingOptions options,
-    IMessageBus messageBus,
     ILogger<WolverineEventDispatchHostedService> logger) : BackgroundService
 {
     private static readonly Action<ILogger, int, int, Exception?> LogDispatchLoopStartedMessage =
@@ -41,7 +40,7 @@ internal sealed class WolverineEventDispatchHostedService(
         IEventDispatchRuntimeReporter runtimeReporter,
         IMessageBus messageBus,
         ILogger<WolverineEventDispatchHostedService> logger)
-        : this(new DirectScopeFactory(dispatchStore, runtimeReporter), options, messageBus, logger)
+        : this(new DirectScopeFactory(dispatchStore, runtimeReporter, messageBus), options, logger)
     {
     }
 
@@ -93,6 +92,7 @@ internal sealed class WolverineEventDispatchHostedService(
         using var scope = scopeFactory.CreateScope();
         var dispatchStore = scope.ServiceProvider.GetRequiredService<IEventDispatchStore>();
         var runtimeReporter = scope.ServiceProvider.GetRequiredService<IEventDispatchRuntimeReporter>();
+        var messageBus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
 
         try
         {
@@ -113,7 +113,7 @@ internal sealed class WolverineEventDispatchHostedService(
         foreach (var pendingDispatch in pendingDispatches)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await DispatchAsync(pendingDispatch, dispatchStore, runtimeReporter, cancellationToken).ConfigureAwait(false);
+            await DispatchAsync(pendingDispatch, dispatchStore, runtimeReporter, messageBus, cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -121,6 +121,7 @@ internal sealed class WolverineEventDispatchHostedService(
         EventDispatchItem item,
         IEventDispatchStore dispatchStore,
         IEventDispatchRuntimeReporter runtimeReporter,
+        IMessageBus messageBus,
         CancellationToken cancellationToken)
     {
         var attempt = checked(item.DispatchAttemptCount + 1);
@@ -392,7 +393,8 @@ internal sealed class WolverineEventDispatchHostedService(
 
     private sealed class DirectScopeFactory(
         IEventDispatchStore dispatchStore,
-        IEventDispatchRuntimeReporter runtimeReporter) : IServiceScopeFactory, IServiceScope, IServiceProvider
+        IEventDispatchRuntimeReporter runtimeReporter,
+        IMessageBus messageBus) : IServiceScopeFactory, IServiceScope, IServiceProvider
     {
         public IServiceScope CreateScope() => this;
 
@@ -408,6 +410,11 @@ internal sealed class WolverineEventDispatchHostedService(
             if (serviceType == typeof(IEventDispatchRuntimeReporter))
             {
                 return runtimeReporter;
+            }
+
+            if (serviceType == typeof(IMessageBus))
+            {
+                return messageBus;
             }
 
             return null;

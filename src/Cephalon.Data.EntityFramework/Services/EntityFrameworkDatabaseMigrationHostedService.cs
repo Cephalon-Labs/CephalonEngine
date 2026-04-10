@@ -20,7 +20,10 @@ public sealed class EntityFrameworkDatabaseMigrationHostedService(
     private readonly EntityFrameworkDatabaseMigrationRegistration[] registrations = registrations?.ToArray()
         ?? throw new ArgumentNullException(nameof(registrations));
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Applies the configured startup migration policy for every targeted Entity Framework database role.
+    /// </summary>
+    /// <param name="cancellationToken">The token that cancels startup migration execution.</param>
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         var migrationSelection = appProfile.Databases.Migrations;
@@ -91,7 +94,11 @@ public sealed class EntityFrameworkDatabaseMigrationHostedService(
         }
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Stops the hosted service. Entity Framework startup migration execution is synchronous during startup, so there is no background work to drain.
+    /// </summary>
+    /// <param name="cancellationToken">The token that cancels shutdown.</param>
+    /// <returns>A completed task.</returns>
     public Task StopAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
