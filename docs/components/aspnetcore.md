@@ -8,6 +8,7 @@
 - project-level split-configuration loading through `AddCephalonProjectConfigurations()` and `AddCephalon(...)`
 - runtime startup and shutdown integration through hosted services
 - `/engine/*` metadata, status, diagnostics, and policy endpoints
+- `/engine/audit-history` and `/engine/audit-history/export` when durable audit-history services are active
 - `/engine/package-policy`, `/engine/packages`, and the rest of the engine governance surface
 - `/health`, `/health/live`, and `/health/ready` surfaces
 - opt-in HTTP request/response logging with bounded request and response body capture plus default sensitive-value redaction under `Engine:Observability:HttpLogging`
@@ -18,6 +19,7 @@
 
 ## Main surfaces
 
+- `Hosting/AuditHistoryExportHttpResponseExtensions.cs`
 - `Hosting/EngineWebApplicationBuilderExtensions.cs`
 - `Hosting/EngineWebApplicationExtensions.cs`
 - `Hosting/EngineHostedService.cs`
@@ -86,6 +88,14 @@ payloads or transport-neutral `Result<T>` outcomes through `ResultModel<T>` /
 collection. That setting is intentionally REST-only. GraphQL keeps the standard
 `data` / `errors` contract, JSON-RPC keeps the standard `result` / `error` contract, and generic
 behavior HTTP bindings do not get forced through the REST envelope.
+
+The same host adapter now carries the first durable audit-history export helper for HTTP responses. When
+`Engine:Audit:History:Export:Enabled = true` and a provider pack such as
+`Cephalon.Audit.EntityFramework` registers `IAuditHistoryExporter`, the engine route
+`/engine/audit-history/export` becomes available and streams NDJSON with a bounded `maxEntries`
+cap. Applications that want their own public export endpoint can reuse
+`AuditHistoryExportHttpResponseExtensions.WriteAuditHistoryNdjsonAsync(...)` instead of rewriting
+response headers and newline-delimited serialization by hand.
 
 ## Related docs
 

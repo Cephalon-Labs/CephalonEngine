@@ -23,16 +23,19 @@ public sealed class AuditHistorySettings
     /// <param name="enabled">Whether durable audit history was explicitly enabled.</param>
     /// <param name="provider">The selected durable history provider identifier.</param>
     /// <param name="databaseRole">The selected logical database role for durable history.</param>
+    /// <param name="export">The configured export settings for durable history.</param>
     /// <param name="retention">The selected retention settings for durable history.</param>
     public AuditHistorySettings(
         bool? enabled = null,
         string? provider = null,
         string? databaseRole = null,
+        AuditHistoryExportSettings? export = null,
         AuditHistoryRetentionSettings? retention = null)
     {
         Enabled = enabled;
         Provider = Normalize(provider);
         DatabaseRole = Normalize(databaseRole);
+        Export = export ?? AuditHistoryExportSettings.Empty;
         Retention = retention ?? AuditHistoryRetentionSettings.Empty;
     }
 
@@ -47,9 +50,14 @@ public sealed class AuditHistorySettings
     public string? Provider { get; }
 
     /// <summary>
-    /// Gets the selected logical database role used by durable audit history.
+    /// Gets the selected logical database role used by durable history.
     /// </summary>
     public string? DatabaseRole { get; }
+
+    /// <summary>
+    /// Gets the configured export settings for durable history.
+    /// </summary>
+    public AuditHistoryExportSettings Export { get; }
 
     /// <summary>
     /// Gets the configured retention settings for durable history.
@@ -63,6 +71,7 @@ public sealed class AuditHistorySettings
         Enabled.HasValue ||
         Provider is not null ||
         DatabaseRole is not null ||
+        Export.HasValues ||
         Retention.HasValues;
 
     /// <summary>
@@ -81,6 +90,7 @@ public sealed class AuditHistorySettings
             enabled: TryParseBoolean(section["Enabled"]),
             provider: section["Provider"],
             databaseRole: section["DatabaseRole"],
+            export: AuditHistoryExportSettings.FromSection(section.GetSection("Export")),
             retention: AuditHistoryRetentionSettings.FromSection(section.GetSection("Retention")));
     }
 

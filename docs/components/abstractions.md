@@ -44,6 +44,9 @@
 - `Tenancy/TenantContext.cs`
 - `Tenancy/ITenantResolver.cs`
 - `Audit/AuditEntry.cs`
+- `Audit/AuditHistoryExportRequest.cs`
+- `Audit/IAuditHistoryExporter.cs`
+- `Audit/IAuditHistoryReader.cs`
 - `Audit/AuditStoreDescriptor.cs`
 - `Audit/IAuditStoreCatalog.cs`
 - `Ids/IIdGenerator.cs`
@@ -85,7 +88,7 @@ The phase-8 families stay runtime-neutral on purpose:
 - `Data` defines CQRS, projection, outbox/inbox, and outbox-catalog contracts without picking Entity Framework, Wolverine, or any storage engine.
 - `Authorization` defines subjects, resources, policies, and evaluation contracts without binding to ASP.NET Core identity types.
 - `Tenancy` defines tenant context and resolution contracts without assuming HTTP, DNS, or a single tenancy topology.
-- `Audit` defines audit actors, entries, write contracts, and audit-store descriptors without hard-coding storage or observability sinks.
+- `Audit` defines audit actors, entries, write/query/export contracts, and audit-store descriptors without hard-coding storage or observability sinks.
 - `Ids` defines identifier-generation hints and the generator contract without choosing a concrete strategy such as `Sfid`.
 
 ## Related docs

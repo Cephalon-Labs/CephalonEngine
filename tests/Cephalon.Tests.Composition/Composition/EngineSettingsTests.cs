@@ -24,6 +24,8 @@ public sealed class EngineSettingsTests
                 ["Engine:Audit:History:Enabled"] = "true",
                 ["Engine:Audit:History:Provider"] = "EntityFramework",
                 ["Engine:Audit:History:DatabaseRole"] = "History",
+                ["Engine:Audit:History:Export:Enabled"] = "true",
+                ["Engine:Audit:History:Export:MaxEntries"] = "750",
                 ["Engine:Audit:History:Retention:Enabled"] = "true",
                 ["Engine:Audit:History:Retention:MaxAgeDays"] = "90",
                 ["Engine:Audit:History:Retention:DeleteBatchSize"] = "250",
@@ -65,6 +67,8 @@ public sealed class EngineSettingsTests
         Assert.True(settings.Audit.History.Enabled);
         Assert.Equal("EntityFramework", settings.Audit.History.Provider);
         Assert.Equal("History", settings.Audit.History.DatabaseRole);
+        Assert.True(settings.Audit.History.Export.Enabled);
+        Assert.Equal(750, settings.Audit.History.Export.MaxEntries);
         Assert.True(settings.Audit.History.Retention.Enabled);
         Assert.Equal(90, settings.Audit.History.Retention.MaxAgeDays);
         Assert.Equal(250, settings.Audit.History.Retention.DeleteBatchSize);

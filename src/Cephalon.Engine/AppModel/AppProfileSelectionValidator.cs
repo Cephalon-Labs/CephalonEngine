@@ -198,6 +198,8 @@ internal static class AppProfileSelectionValidator
         AuditSelection audit,
         DatabaseTopologySelection databases)
     {
+        ValidateAuditHistoryExportSelection(audit);
+
         if (audit.History.Enabled != true)
         {
             return;
@@ -316,6 +318,30 @@ internal static class AppProfileSelectionValidator
         {
             throw new InvalidOperationException(
                 "Durable audit-history retention must either apply on startup or define a recurring RunIntervalMinutes value.");
+        }
+    }
+
+    private static void ValidateAuditHistoryExportSelection(
+        AuditSelection audit)
+    {
+        ArgumentNullException.ThrowIfNull(audit);
+
+        var export = audit.History.Export;
+        if (export.Enabled != true)
+        {
+            return;
+        }
+
+        if (audit.History.Enabled != true)
+        {
+            throw new InvalidOperationException(
+                "Durable audit-history export cannot be enabled unless durable audit history is explicitly enabled.");
+        }
+
+        if (export.MaxEntries is not null && export.MaxEntries <= 0)
+        {
+            throw new InvalidOperationException(
+                "Durable audit-history export MaxEntries must be greater than zero when supplied.");
         }
     }
 }

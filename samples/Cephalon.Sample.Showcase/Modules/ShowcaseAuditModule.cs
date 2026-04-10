@@ -1,6 +1,8 @@
+using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
+using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Modules;
 using Cephalon.AspNetCore.Transports.Rest;
 using Cephalon.Behaviors.Http.Hosting;
@@ -11,16 +13,17 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Cephalon.Sample.Showcase.Modules;
 
 /// <summary>
-/// Exposes a public showcase-facing audit-history read surface.
+/// Exposes a public showcase-facing audit-history read and export surface.
 /// </summary>
 public sealed class ShowcaseAuditModule : ModuleBase, IEndpointModule
 {
     private const string ReadCapabilityKey = "showcase.audit.history.read";
+    private const string ExportCapabilityKey = "showcase.audit.history.export";
 
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "showcase.audit",
         displayName: "Showcase Audit",
-        description: "Audit-history query module for the showcase sample.",
+        description: "Audit-history read and export module for the showcase sample.",
         tags: ["showcase", "audit", "history", "operations"],
         version: "1.0.0");
 
@@ -36,6 +39,10 @@ public sealed class ShowcaseAuditModule : ModuleBase, IEndpointModule
             key: ReadCapabilityKey,
             displayName: "Audit history read",
             description: "Read access to the showcase audit-history surface."));
+        capabilities.Add(new Capability(
+            key: ExportCapabilityKey,
+            displayName: "Audit history export",
+            description: "NDJSON export access to the showcase audit-history surface."));
     }
 
     /// <inheritdoc />
@@ -43,6 +50,7 @@ public sealed class ShowcaseAuditModule : ModuleBase, IEndpointModule
     {
         ArgumentNullException.ThrowIfNull(endpoints);
 
+        var appProfile = endpoints.ServiceProvider.GetRequiredService<AppProfile>();
         var group = endpoints.MapBehaviorRestGroup(this, "/showcase/audit");
         var routes = group.Routes;
 
@@ -131,6 +139,71 @@ public sealed class ShowcaseAuditModule : ModuleBase, IEndpointModule
             .Produces(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status503ServiceUnavailable);
+
+        if (appProfile.Audit.History.Export.Enabled == true)
+        {
+            routes.MapGet("/history/export", async (
+                    string? category,
+                    string? action,
+                    string? subjectType,
+                    string? subjectId,
+                    string? actorId,
+                    string? tenantId,
+                    string? correlationId,
+                    string? outcome,
+                    DateTimeOffset? occurredFromUtc,
+                    DateTimeOffset? occurredToUtc,
+                    int? maxEntries,
+                    HttpContext httpContext,
+                    CancellationToken cancellationToken) =>
+                {
+                    var exporter = httpContext.RequestServices.GetService<IAuditHistoryExporter>();
+                    if (exporter is null)
+                    {
+                        return Results.Problem(
+                            statusCode: StatusCodes.Status503ServiceUnavailable,
+                            title: "Audit history exporter unavailable",
+                            detail: "The showcase host is not currently configured with an export-capable durable audit-history provider.");
+                    }
+
+                    if (!TryParseAuditOutcome(outcome, out var parsedOutcome))
+                    {
+                        return Results.Problem(
+                            statusCode: StatusCodes.Status400BadRequest,
+                            title: "Invalid audit outcome filter",
+                            detail: $"Audit outcome '{outcome}' is not supported.");
+                    }
+
+                    var request = new AuditHistoryExportRequest(
+                        category: category,
+                        action: action,
+                        subjectType: subjectType,
+                        subjectId: subjectId,
+                        actorId: actorId,
+                        tenantId: tenantId,
+                        correlationId: correlationId,
+                        outcome: parsedOutcome,
+                        occurredFromUtc: occurredFromUtc,
+                        occurredToUtc: occurredToUtc,
+                        maxEntries: ResolveExportMaxEntries(appProfile, maxEntries));
+
+                    await httpContext.Response.WriteAuditHistoryNdjsonAsync(
+                        exporter,
+                        request,
+                        fileName: "showcase-audit-history.ndjson",
+                        cancellationToken: cancellationToken).ConfigureAwait(false);
+
+                    return Results.Empty;
+                })
+                .RequireCapability(ExportCapabilityKey)
+                .WithName("ExportShowcaseAuditHistory")
+                .WithSummary("Export showcase audit history.")
+                .WithDescription("Streams matching showcase audit-history entries as NDJSON when the showcase is running with an export-capable durable audit-history provider.")
+                .Produces(StatusCodes.Status200OK, typeof(void), "application/x-ndjson")
+                .ProducesProblem(StatusCodes.Status400BadRequest)
+                .ProducesProblem(StatusCodes.Status403Forbidden)
+                .ProducesProblem(StatusCodes.Status503ServiceUnavailable);
+        }
     }
 
     private static bool TryParseAuditOutcome(
@@ -151,5 +224,21 @@ public sealed class ShowcaseAuditModule : ModuleBase, IEndpointModule
 
         outcome = null;
         return false;
+    }
+
+    private static int ResolveExportMaxEntries(
+        AppProfile appProfile,
+        int? requestedMaxEntries)
+    {
+        ArgumentNullException.ThrowIfNull(appProfile);
+
+        var configuredMaxEntries = appProfile.Audit.History.Export.MaxEntries
+            ?? Engine.Configuration.AuditHistoryExportSettings.DefaultMaxEntries;
+        if (requestedMaxEntries is not > 0)
+        {
+            return configuredMaxEntries;
+        }
+
+        return Math.Min(requestedMaxEntries.Value, configuredMaxEntries);
     }
 }

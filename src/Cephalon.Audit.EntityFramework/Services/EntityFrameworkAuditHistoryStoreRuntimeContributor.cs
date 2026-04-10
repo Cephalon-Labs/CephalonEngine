@@ -31,6 +31,9 @@ internal sealed class EntityFrameworkAuditHistoryStoreRuntimeContributor<TDbCont
         {
             ["writeMode"] = "transactional-table",
             ["queryMode"] = "filtered-page-reader",
+            ["exportMode"] = appProfile.Audit.History.Export.Enabled == true
+                ? "ndjson-stream"
+                : "disabled",
             ["durability"] = "durable",
             ["databaseRole"] = databaseRole,
             ["databaseProvider"] = target.Provider ?? "unknown",
@@ -38,6 +41,12 @@ internal sealed class EntityFrameworkAuditHistoryStoreRuntimeContributor<TDbCont
             ["dbContext"] = GetTypeName(options.DbContextType),
             ["topologySource"] = options.UsesEngineDatabaseTopology ? "engine-databases" : "registration-callbacks"
         };
+
+        if (appProfile.Audit.History.Export.Enabled == true &&
+            appProfile.Audit.History.Export.MaxEntries is { } maxEntries)
+        {
+            metadata["exportMaxEntries"] = maxEntries.ToString(CultureInfo.InvariantCulture);
+        }
 
         ApplyRetentionMetadata(metadata, appProfile.Audit.History.Retention);
 

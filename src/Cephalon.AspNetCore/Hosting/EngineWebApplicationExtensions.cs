@@ -1,6 +1,7 @@
 using Cephalon.AspNetCore.Documentation;
 using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Health;
+using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Authorization;
 using Cephalon.Abstractions.Data;
@@ -22,8 +23,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Scalar.AspNetCore;
-using System.Reflection;
 using System.Globalization;
+using System.Reflection;
 
 namespace Cephalon.AspNetCore.Hosting;
 
@@ -227,6 +228,58 @@ public static class EngineWebApplicationExtensions
                 return entry is null ? Results.NotFound() : Results.Ok(entry);
             })
             .WithName("GetCephalonAuditHistoryEntry");
+        if (runtime.Manifest.AppProfile.Audit.History.Export.Enabled == true)
+        {
+            engineGroup.MapGet("/audit-history/export", async (
+                    string? category,
+                    string? action,
+                    string? subjectType,
+                    string? subjectId,
+                    string? actorId,
+                    string? tenantId,
+                    string? correlationId,
+                    string? outcome,
+                    DateTimeOffset? occurredFromUtc,
+                    DateTimeOffset? occurredToUtc,
+                    int? maxEntries,
+                    HttpContext httpContext,
+                    CancellationToken cancellationToken) =>
+                {
+                    var exporter = httpContext.RequestServices.GetService<IAuditHistoryExporter>();
+                    if (exporter is null)
+                    {
+                        return Results.NotFound();
+                    }
+
+                    if (!TryParseAuditOutcome(outcome, out var parsedOutcome))
+                    {
+                        return Results.BadRequest($"Audit outcome '{outcome}' is not supported.");
+                    }
+
+                    var exportLimit = ResolveAuditHistoryExportMaxEntries(runtime.Manifest.AppProfile, maxEntries);
+                    var request = new AuditHistoryExportRequest(
+                        category: category,
+                        action: action,
+                        subjectType: subjectType,
+                        subjectId: subjectId,
+                        actorId: actorId,
+                        tenantId: tenantId,
+                        correlationId: correlationId,
+                        outcome: parsedOutcome,
+                        occurredFromUtc: occurredFromUtc,
+                        occurredToUtc: occurredToUtc,
+                        maxEntries: exportLimit);
+
+                    await httpContext.Response.WriteAuditHistoryNdjsonAsync(
+                        exporter,
+                        request,
+                        fileName: "cephalon-audit-history.ndjson",
+                        cancellationToken: cancellationToken).ConfigureAwait(false);
+
+                    return Results.Empty;
+                })
+                .WithName("ExportCephalonAuditHistory");
+        }
         engineGroup.MapGet("/authorization-policies", (IAuthorizationPolicyCatalog catalog) => TypedResults.Ok(catalog.Policies))
             .WithName("GetCephalonAuthorizationPolicies");
         engineGroup.MapGet("/authorization-policies/{policyId}", (string policyId, IAuthorizationPolicyCatalog catalog) =>
@@ -605,6 +658,22 @@ public static class EngineWebApplicationExtensions
 
         outcome = null;
         return false;
+    }
+
+    private static int ResolveAuditHistoryExportMaxEntries(
+        AppProfile appProfile,
+        int? requestedMaxEntries)
+    {
+        ArgumentNullException.ThrowIfNull(appProfile);
+
+        var configuredMaxEntries = appProfile.Audit.History.Export.MaxEntries
+            ?? AuditHistoryExportSettings.DefaultMaxEntries;
+        if (requestedMaxEntries is not > 0)
+        {
+            return configuredMaxEntries;
+        }
+
+        return Math.Min(requestedMaxEntries.Value, configuredMaxEntries);
     }
 
     private static string BuildScalarCanonicalPath(string scalarRoutePrefix, string documentName, QueryString queryString)

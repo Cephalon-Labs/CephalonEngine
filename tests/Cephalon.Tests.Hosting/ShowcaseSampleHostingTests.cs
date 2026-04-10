@@ -74,7 +74,7 @@ public sealed class ShowcaseSampleHostingTests
     }
 
     [Fact]
-    public async Task ShowcaseSampleDocumentsAuditHistoryRouteAndReturnsServiceUnavailableWithoutDurableReader()
+    public async Task ShowcaseSampleDocumentsAuditHistoryRoutesAndReturnsServiceUnavailableWithoutDurableReader()
     {
         await using var app = ShowcaseSampleApp.Build(
             configureBuilder: builder => builder.WebHost.UseTestServer());
@@ -83,12 +83,17 @@ public sealed class ShowcaseSampleHostingTests
         var client = app.GetTestClient();
 
         var openApiPayload = await client.GetStringAsync("/openapi/v1.json");
-        var response = await client.GetAsync("/api/v1/showcase/audit/history");
-        var body = await response.Content.ReadAsStringAsync();
+        var queryResponse = await client.GetAsync("/api/v1/showcase/audit/history");
+        var queryBody = await queryResponse.Content.ReadAsStringAsync();
+        var exportResponse = await client.GetAsync("/api/v1/showcase/audit/history/export");
+        var exportBody = await exportResponse.Content.ReadAsStringAsync();
 
         Assert.Contains("/api/v1/showcase/audit/history", openApiPayload, StringComparison.Ordinal);
-        Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
-        Assert.Contains("Audit history reader unavailable", body, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("/api/v1/showcase/audit/history/export", openApiPayload, StringComparison.Ordinal);
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, queryResponse.StatusCode);
+        Assert.Contains("Audit history reader unavailable", queryBody, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, exportResponse.StatusCode);
+        Assert.Contains("Audit history exporter unavailable", exportBody, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

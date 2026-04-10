@@ -89,6 +89,10 @@
         "Enabled": true,
         "Provider": "entity-framework",
         "DatabaseRole": "history",
+        "Export": {
+          "Enabled": true,
+          "MaxEntries": 1000
+        },
         "Retention": {
           "Enabled": true,
           "MaxAgeDays": 90,

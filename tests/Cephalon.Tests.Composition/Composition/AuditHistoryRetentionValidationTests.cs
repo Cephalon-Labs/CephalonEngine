@@ -8,6 +8,35 @@ namespace Cephalon.Tests.Composition;
 public sealed class AuditHistoryRetentionValidationTests
 {
     [Fact]
+    public void AddCephalonRejectsAuditHistoryExportWithoutDurableHistory()
+    {
+        var services = new ServiceCollection();
+        var settings = new EngineSettings(
+            blueprint: "ModularMonolith",
+            databases: new DatabaseTopologySettings(
+                history: new DatabaseTargetSettings(
+                    provider: "Sqlite",
+                    connectionString: "Data Source=history.db")),
+            audit: new AuditSettings(
+                enabled: true,
+                history: new AuditHistorySettings(
+                    enabled: false,
+                    export: new AuditHistoryExportSettings(
+                        enabled: true,
+                        maxEntries: 250))));
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            services.AddCephalon(engine =>
+            {
+                engine.UseSettings(settings);
+                engine.AddModule(new PlatformTestModule());
+            }));
+
+        Assert.Contains("export", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("durable audit history", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void AddCephalonRejectsRetentionWithoutStartupOrIntervalTrigger()
     {
         var services = new ServiceCollection();

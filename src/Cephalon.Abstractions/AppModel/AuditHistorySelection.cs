@@ -18,17 +18,20 @@ public sealed class AuditHistorySelection
     /// <param name="enabled">Whether durable audit history was explicitly enabled.</param>
     /// <param name="provider">The selected durable history provider identifier.</param>
     /// <param name="databaseRole">The selected database role used by the durable history path.</param>
+    /// <param name="export">The resolved export inputs for durable audit history.</param>
     /// <param name="retention">The resolved retention inputs for durable audit history.</param>
     [JsonConstructor]
     public AuditHistorySelection(
         bool? enabled = null,
         string? provider = null,
         string? databaseRole = null,
+        AuditHistoryExportSelection? export = null,
         AuditHistoryRetentionSelection? retention = null)
     {
         Enabled = enabled;
         Provider = string.IsNullOrWhiteSpace(provider) ? null : provider.Trim();
         DatabaseRole = string.IsNullOrWhiteSpace(databaseRole) ? null : databaseRole.Trim();
+        Export = export ?? AuditHistoryExportSelection.Empty;
         Retention = retention ?? AuditHistoryRetentionSelection.Empty;
     }
 
@@ -48,6 +51,11 @@ public sealed class AuditHistorySelection
     public string? DatabaseRole { get; }
 
     /// <summary>
+    /// Gets the resolved export inputs for durable audit history.
+    /// </summary>
+    public AuditHistoryExportSelection Export { get; }
+
+    /// <summary>
     /// Gets the resolved retention inputs for durable audit history.
     /// </summary>
     public AuditHistoryRetentionSelection Retention { get; }
@@ -59,5 +67,6 @@ public sealed class AuditHistorySelection
         Enabled.HasValue ||
         Provider is not null ||
         DatabaseRole is not null ||
+        Export.HasValues ||
         Retention.HasValues;
 }

@@ -1455,7 +1455,7 @@ Delivered:
 
 Remaining follow-through inside `ENG-062`:
 
-- add replay and export follow-through on top of the shipped durable write, read, and retention path
+- add replay follow-through and richer export formats on top of the shipped durable write, read, export, and retention path
 - add non-relational audit-history providers only when they can stay truthful and additive
 - keep ASP.NET Core actor bridging and tenant context additive without turning the audit pack into a host-specific storage abstraction
 
@@ -1487,8 +1487,41 @@ Delivered:
 
 Remaining follow-through inside `ENG-063`:
 
-- add replay/export workflows over durable history without turning the reader contract into a report engine
+- add replay workflows over durable history without turning the reader contract into a report engine
 - add richer operator filters or aggregation endpoints only when they stay provider-truthful and benchmarkable
+
+### ENG-064 Durable audit-history export baseline
+
+Status: done
+Estimate: 5
+
+Why:
+
+- the shipped durable audit-history reader closed the write-only gap, but operators and samples still lacked a truthful export surface for offline analysis, incident handoff, or controlled data movement
+- Cephalon needed one additive export contract that durable provider packs can implement without turning `Cephalon.Audit` into a report engine or locking the platform to one host shape
+- the first export slice needed to stay narrow, benchmarkable, and replay-friendly without prematurely claiming full replay semantics
+
+Acceptance:
+
+- durable provider packs can expose a bounded export stream through a host-agnostic exporter contract
+- ASP.NET Core hosts expose operator-facing audit-history export routes only when export is explicitly enabled
+- the showcase sample documents a public audit-history export endpoint and fails truthfully when no export-capable durable provider is active
+- runtime metadata and app-model projection expose whether export is enabled and how many entries one export may stream
+
+Delivered:
+
+- `Cephalon.Abstractions` now exposes `IAuditHistoryExporter`, `AuditHistoryExportRequest`, and `AuditHistoryExportSelection`
+- `Engine:Audit:History:Export` now projects into `EngineSettings`, `AppProfile.Audit`, `/engine/app-model`, and `/engine/snapshot`
+- `Cephalon.Audit.EntityFramework` now ships the first bounded export baseline and publishes truthful export metadata through `/engine/audit-stores`
+- `/engine/audit-history/export` now exposes operator-facing NDJSON export when a durable exporter is registered and export is enabled
+- the showcase sample now publishes `/api/v1/showcase/audit/history/export` through a dedicated module-owned REST surface
+- `Cephalon.AspNetCore` now ships `AuditHistoryExportHttpResponseExtensions` so application modules can reuse the NDJSON response wiring instead of rewriting it
+
+Remaining follow-through inside `ENG-064`:
+
+- add replay flows on top of the shipped export baseline without conflating replay with reporting
+- add richer export formats such as CSV or provider-native batch handoff only when they stay truthful and benchmarkable
+- add non-relational export-capable audit-history providers only when they can implement the same bounded contract honestly
 
 ## Sprint history and next 4 sprints
 

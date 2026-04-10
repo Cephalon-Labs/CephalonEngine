@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
@@ -9,7 +10,7 @@ namespace Cephalon.Audit.EntityFramework.Services;
 
 internal sealed class EntityFrameworkAuditHistoryReader<TDbContext>(
     IServiceScopeFactory scopeFactory,
-    AppProfile appProfile) : IAuditHistoryReader
+    AppProfile appProfile) : IAuditHistoryReader, IAuditHistoryExporter
     where TDbContext : DbContext, IEntityFrameworkAuditHistoryContext
 {
     private static readonly JsonSerializerOptions SerializerOptions = new(JsonSerializerDefaults.Web);
@@ -54,64 +55,10 @@ internal sealed class EntityFrameworkAuditHistoryReader<TDbContext>(
 
         await using var scope = scopeFactory.CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
-        IQueryable<EntityFrameworkAuditHistoryEntry> entries = dbContext.AuditEntries.AsNoTracking();
+        var filteredEntries = ApplyFilters(dbContext.AuditEntries.AsNoTracking(), query);
 
-        if (query.Category is not null)
-        {
-            entries = entries.Where(entry => entry.Category == query.Category);
-        }
-
-        if (query.Action is not null)
-        {
-            entries = entries.Where(entry => entry.Action == query.Action);
-        }
-
-        if (query.SubjectType is not null)
-        {
-            entries = entries.Where(entry => entry.SubjectType == query.SubjectType);
-        }
-
-        if (query.SubjectId is not null)
-        {
-            entries = entries.Where(entry => entry.SubjectId == query.SubjectId);
-        }
-
-        if (query.ActorId is not null)
-        {
-            entries = entries.Where(entry => entry.ActorId == query.ActorId);
-        }
-
-        if (query.TenantId is not null)
-        {
-            entries = entries.Where(entry => entry.TenantId == query.TenantId);
-        }
-
-        if (query.CorrelationId is not null)
-        {
-            entries = entries.Where(entry => entry.CorrelationId == query.CorrelationId);
-        }
-
-        if (query.Outcome is { } outcome)
-        {
-            var outcomeValue = outcome.ToString();
-            entries = entries.Where(entry => entry.Outcome == outcomeValue);
-        }
-
-        if (query.OccurredFromUtc is { } occurredFromUtc)
-        {
-            entries = entries.Where(entry => entry.OccurredAtUtc >= occurredFromUtc);
-        }
-
-        if (query.OccurredToUtc is { } occurredToUtc)
-        {
-            entries = entries.Where(entry => entry.OccurredAtUtc <= occurredToUtc);
-        }
-
-        var totalCount = await entries.CountAsync(cancellationToken).ConfigureAwait(false);
-        var page = await entries
-            .OrderByDescending(entry => entry.OccurredAtUtc)
-            .ThenByDescending(entry => entry.PersistedAtUtc)
-            .ThenByDescending(entry => entry.Id)
+        var totalCount = await filteredEntries.CountAsync(cancellationToken).ConfigureAwait(false);
+        var page = await OrderForExport(filteredEntries)
             .Skip(query.Offset)
             .Take(query.Limit)
             .ToListAsync(cancellationToken)
@@ -124,11 +71,156 @@ internal sealed class EntityFrameworkAuditHistoryReader<TDbContext>(
             totalCount: totalCount);
     }
 
+    public async IAsyncEnumerable<AuditHistoryEntry> ExportAsync(
+        AuditHistoryExportRequest request,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (!IsEnabled())
+        {
+            yield break;
+        }
+
+        await using var scope = scopeFactory.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
+        var filteredEntries = ApplyFilters(dbContext.AuditEntries.AsNoTracking(), request);
+
+        var exportEntries = OrderForExport(filteredEntries)
+            .Take(request.MaxEntries)
+            .AsAsyncEnumerable();
+
+        await foreach (var entity in exportEntries.WithCancellation(cancellationToken).ConfigureAwait(false))
+        {
+            yield return Map(entity);
+        }
+    }
+
     private bool IsEnabled()
     {
         return appProfile.Audit.Enabled != false &&
             appProfile.Audit.History.Enabled == true &&
             EntityFrameworkAuditHistorySelection.MatchesProvider(appProfile.Audit.History.Provider);
+    }
+
+    private static IQueryable<EntityFrameworkAuditHistoryEntry> ApplyFilters(
+        IQueryable<EntityFrameworkAuditHistoryEntry> entries,
+        AuditHistoryQuery query)
+    {
+        ArgumentNullException.ThrowIfNull(entries);
+        ArgumentNullException.ThrowIfNull(query);
+
+        return ApplyFilters(
+            entries,
+            query.Category,
+            query.Action,
+            query.SubjectType,
+            query.SubjectId,
+            query.ActorId,
+            query.TenantId,
+            query.CorrelationId,
+            query.Outcome,
+            query.OccurredFromUtc,
+            query.OccurredToUtc);
+    }
+
+    private static IQueryable<EntityFrameworkAuditHistoryEntry> ApplyFilters(
+        IQueryable<EntityFrameworkAuditHistoryEntry> entries,
+        AuditHistoryExportRequest request)
+    {
+        ArgumentNullException.ThrowIfNull(entries);
+        ArgumentNullException.ThrowIfNull(request);
+
+        return ApplyFilters(
+            entries,
+            request.Category,
+            request.Action,
+            request.SubjectType,
+            request.SubjectId,
+            request.ActorId,
+            request.TenantId,
+            request.CorrelationId,
+            request.Outcome,
+            request.OccurredFromUtc,
+            request.OccurredToUtc);
+    }
+
+    private static IQueryable<EntityFrameworkAuditHistoryEntry> ApplyFilters(
+        IQueryable<EntityFrameworkAuditHistoryEntry> entries,
+        string? category,
+        string? action,
+        string? subjectType,
+        string? subjectId,
+        string? actorId,
+        string? tenantId,
+        string? correlationId,
+        AuditOutcome? outcome,
+        DateTimeOffset? occurredFromUtc,
+        DateTimeOffset? occurredToUtc)
+    {
+        if (category is not null)
+        {
+            entries = entries.Where(entry => entry.Category == category);
+        }
+
+        if (action is not null)
+        {
+            entries = entries.Where(entry => entry.Action == action);
+        }
+
+        if (subjectType is not null)
+        {
+            entries = entries.Where(entry => entry.SubjectType == subjectType);
+        }
+
+        if (subjectId is not null)
+        {
+            entries = entries.Where(entry => entry.SubjectId == subjectId);
+        }
+
+        if (actorId is not null)
+        {
+            entries = entries.Where(entry => entry.ActorId == actorId);
+        }
+
+        if (tenantId is not null)
+        {
+            entries = entries.Where(entry => entry.TenantId == tenantId);
+        }
+
+        if (correlationId is not null)
+        {
+            entries = entries.Where(entry => entry.CorrelationId == correlationId);
+        }
+
+        if (outcome is { } parsedOutcome)
+        {
+            var outcomeValue = parsedOutcome.ToString();
+            entries = entries.Where(entry => entry.Outcome == outcomeValue);
+        }
+
+        if (occurredFromUtc is { } from)
+        {
+            entries = entries.Where(entry => entry.OccurredAtUtc >= from);
+        }
+
+        if (occurredToUtc is { } to)
+        {
+            entries = entries.Where(entry => entry.OccurredAtUtc <= to);
+        }
+
+        return entries;
+    }
+
+    private static IOrderedQueryable<EntityFrameworkAuditHistoryEntry> OrderForExport(
+        IQueryable<EntityFrameworkAuditHistoryEntry> entries)
+    {
+        ArgumentNullException.ThrowIfNull(entries);
+
+        return entries
+            .OrderByDescending(entry => entry.OccurredAtUtc)
+            .ThenByDescending(entry => entry.PersistedAtUtc)
+            .ThenByDescending(entry => entry.Id);
     }
 
     private static AuditHistoryEntry Map(EntityFrameworkAuditHistoryEntry entity)

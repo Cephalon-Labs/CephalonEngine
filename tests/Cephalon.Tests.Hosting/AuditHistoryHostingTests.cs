@@ -32,6 +32,8 @@ public sealed class AuditHistoryHostingTests
         builder.Configuration[$"{EngineSettings.SectionName}:Audit:History:Enabled"] = "true";
         builder.Configuration[$"{EngineSettings.SectionName}:Audit:History:Provider"] = "entity-framework";
         builder.Configuration[$"{EngineSettings.SectionName}:Audit:History:DatabaseRole"] = "history";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:History:Export:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Audit:History:Export:MaxEntries"] = "10";
         builder.Configuration[$"{EngineSettings.SectionName}:Databases:History:Provider"] = "Sqlite";
         builder.Configuration[$"{EngineSettings.SectionName}:Databases:History:ConnectionString"] = "Data Source=ignored-for-inmemory";
         builder.AddCephalon(engine =>
@@ -71,6 +73,10 @@ public sealed class AuditHistoryHostingTests
         var queryResult = await queryResponse.Content.ReadFromJsonAsync<AuditHistoryQueryResult>();
         var byIdResponse = await client.GetAsync($"/engine/audit-history/{failedEntry.Id}");
         var byIdEntry = await byIdResponse.Content.ReadFromJsonAsync<AuditHistoryEntry>();
+        var exportResponse = await client.GetAsync("/engine/audit-history/export?category=catalog&maxEntries=10");
+        var exportPayload = await exportResponse.Content.ReadAsStringAsync();
+        var exportLines = exportPayload
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
         Assert.Equal(HttpStatusCode.OK, queryResponse.StatusCode);
         Assert.NotNull(queryResult);
@@ -86,6 +92,13 @@ public sealed class AuditHistoryHostingTests
         Assert.Equal("orders", byIdEntry.Category);
         Assert.Equal(AuditOutcome.Failed, byIdEntry.Outcome);
         Assert.Equal("tenant-beta", byIdEntry.TenantId);
+        Assert.Equal(HttpStatusCode.OK, exportResponse.StatusCode);
+        Assert.Equal("application/x-ndjson; charset=utf-8", exportResponse.Content.Headers.ContentType?.ToString());
+        Assert.Contains("cephalon-audit-history.ndjson", exportResponse.Content.Headers.ContentDisposition?.FileName ?? string.Empty, StringComparison.OrdinalIgnoreCase);
+        Assert.Single(exportLines);
+        Assert.Contains(createdEntry.Id, exportLines[0], StringComparison.Ordinal);
+        Assert.Contains("\"category\":\"catalog\"", exportLines[0], StringComparison.Ordinal);
+        Assert.Contains("\"outcome\":1", exportLines[0], StringComparison.Ordinal);
     }
 
     private sealed class TestAuditHistoryDbContext(DbContextOptions<TestAuditHistoryDbContext> options)

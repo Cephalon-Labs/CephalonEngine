@@ -75,6 +75,8 @@ public sealed class EntityFrameworkAuditHistoryPackTests
                 ["Engine:Audit:History:Enabled"] = "true",
                 ["Engine:Audit:History:Provider"] = "entity-framework",
                 ["Engine:Audit:History:DatabaseRole"] = "history",
+                ["Engine:Audit:History:Export:Enabled"] = "true",
+                ["Engine:Audit:History:Export:MaxEntries"] = "150",
                 ["Engine:Audit:History:Retention:Enabled"] = "true",
                 ["Engine:Audit:History:Retention:MaxAgeDays"] = "90",
                 ["Engine:Audit:History:Retention:DeleteBatchSize"] = "250",
@@ -125,6 +127,8 @@ public sealed class EntityFrameworkAuditHistoryPackTests
         Assert.Equal("transactional-table", auditStore.Mode);
         Assert.Equal("history", auditStore.Metadata["databaseRole"]);
         Assert.Equal("filtered-page-reader", auditStore.Metadata["queryMode"]);
+        Assert.Equal("ndjson-stream", auditStore.Metadata["exportMode"]);
+        Assert.Equal("150", auditStore.Metadata["exportMaxEntries"]);
         Assert.Equal("startup-only", auditStore.Metadata["retentionMode"]);
         Assert.Equal("90", auditStore.Metadata["retentionMaxAgeDays"]);
         Assert.Equal("250", auditStore.Metadata["retentionDeleteBatchSize"]);
@@ -247,6 +251,8 @@ public sealed class EntityFrameworkAuditHistoryPackTests
                 ["Engine:Audit:History:Enabled"] = "true",
                 ["Engine:Audit:History:Provider"] = "entity-framework",
                 ["Engine:Audit:History:DatabaseRole"] = "history",
+                ["Engine:Audit:History:Export:Enabled"] = "true",
+                ["Engine:Audit:History:Export:MaxEntries"] = "2",
                 ["Engine:Audit:EnableInMemoryWriter"] = "false",
                 ["Engine:Databases:History:Provider"] = "Sqlite",
                 ["Engine:Databases:History:ConnectionString"] = "Data Source=ignored-for-inmemory"
@@ -269,6 +275,7 @@ public sealed class EntityFrameworkAuditHistoryPackTests
         await using var provider = services.BuildServiceProvider();
         var recorder = provider.GetRequiredService<IAuditRecorder>();
         var reader = provider.GetRequiredService<IAuditHistoryReader>();
+        var exporter = provider.GetRequiredService<IAuditHistoryExporter>();
 
         await recorder.RecordAsync(new AuditRecordRequest(
             category: "catalog",
@@ -317,6 +324,16 @@ public sealed class EntityFrameworkAuditHistoryPackTests
             outcome: AuditOutcome.Succeeded,
             offset: 1,
             limit: 1));
+        var exportedCatalogEntries = new List<AuditHistoryEntry>();
+        await foreach (var entry in exporter.ExportAsync(new AuditHistoryExportRequest(
+                           category: "catalog",
+                           subjectType: "product",
+                           tenantId: "tenant-alpha",
+                           outcome: AuditOutcome.Succeeded,
+                           maxEntries: 2)))
+        {
+            exportedCatalogEntries.Add(entry);
+        }
 
         Assert.NotNull(directEntry);
         Assert.Equal(failedEntry.Id, directEntry.Id);
@@ -341,6 +358,14 @@ public sealed class EntityFrameworkAuditHistoryPackTests
         Assert.Equal("catalog", nextCatalogPage.Entries[0].Category);
         Assert.Equal("product", nextCatalogPage.Entries[0].SubjectType);
         Assert.Equal("tenant-alpha", nextCatalogPage.Entries[0].TenantId);
+        Assert.Equal(2, exportedCatalogEntries.Count);
+        Assert.All(exportedCatalogEntries, entry =>
+        {
+            Assert.Equal("catalog", entry.Category);
+            Assert.Equal("product", entry.SubjectType);
+            Assert.Equal("tenant-alpha", entry.TenantId);
+            Assert.Equal(AuditOutcome.Succeeded, entry.Outcome);
+        });
     }
 
     [Fact]

@@ -70,6 +70,12 @@ public static class AppProfileFactory
                     string.IsNullOrWhiteSpace(settings.Audit.History.DatabaseRole)
                     ? AuditHistorySettings.DefaultDatabaseRole
                     : settings.Audit.History.DatabaseRole,
+                export: new Abstractions.AppModel.AuditHistoryExportSelection(
+                    enabled: settings.Audit.History.Export.Enabled,
+                    maxEntries: settings.Audit.History.Export.Enabled == true &&
+                        !settings.Audit.History.Export.MaxEntries.HasValue
+                        ? AuditHistoryExportSettings.DefaultMaxEntries
+                        : settings.Audit.History.Export.MaxEntries),
                 retention: new Abstractions.AppModel.AuditHistoryRetentionSelection(
                     enabled: settings.Audit.History.Retention.Enabled,
                     maxAgeDays: settings.Audit.History.Retention.MaxAgeDays,
