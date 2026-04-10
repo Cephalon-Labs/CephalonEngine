@@ -152,7 +152,19 @@
         "PermitLimit": 200,
         "QueueLimit": 20,
         "WindowSeconds": 60,
-        "SegmentsPerWindow": 4
+        "SegmentsPerWindow": 4,
+        "Overrides": {
+          "cart-read-hot-path": {
+            "Behaviors": [
+              "cart.get"
+            ],
+            "Transports": [
+              "rest-api"
+            ],
+            "PermitLimit": 400,
+            "QueueLimit": 40
+          }
+        }
       }
     },
     "Observability": {

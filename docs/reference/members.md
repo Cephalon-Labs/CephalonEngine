@@ -495,6 +495,12 @@ Browse the published API surface by public member.
 - [Algorithm](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-algorithm): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Algorithm&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared signature algorithm.
   - `string Algorithm { get; }`
+- [Algorithm](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-algorithm): `Properties` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Algorithm&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the requested rate-limiting algorithm, such as `FixedWindow` or `TokenBucket`.
+  - `string Algorithm { get; }`
+- [Algorithm](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingoverridesettings-algorithm): `Properties` on `RateLimitingOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Algorithm&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the requested rate-limiting algorithm, such as `FixedWindow` or `TokenBucket`.
+  - `string Algorithm { get; }`
 - [Algorithm](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingselection-algorithm): `Properties` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Algorithm&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the requested rate-limiting algorithm, such as `FixedWindow` or `TokenBucket`.
   - `string Algorithm { get; }`
@@ -597,6 +603,9 @@ Browse the published API surface by public member.
 - [Apply](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-iaggregate-1-apply-0-cephalon-abstractions-eventsourcing-idomainevent): `Methods` on `IAggregate<TState>` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Apply&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Applies one event to the current state and returns the next state snapshot.
   - `TState Apply(TState current, IDomainEvent evt)`
+- [ApplyCephalonRateLimiting](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-cephalonratelimitingendpointconventionbuilderextensions-applycephalonratelimiting-1-0-system-iserviceprovider-system-string-system-string): `Methods` on `CephalonRateLimitingEndpointConventionBuilderExtensions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ApplyCephalonRateLimiting&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Applies the effective Cephalon rate-limiting policy for the supplied transport and optional behavior identifier onto the endpoint builder.
+  - `TBuilder ApplyCephalonRateLimiting<TBuilder>(this TBuilder builder, IServiceProvider services, string transportId, string behaviorId)`
 - [ApplyOnStartup](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-applyonstartup): `Properties` on `AuditHistoryRetentionSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApplyOnStartup&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether one retention pass should run during host startup.
   - `bool? ApplyOnStartup { get; }`
@@ -876,6 +885,12 @@ Browse the published API surface by public member.
 - [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-behaviorid): `Properties` on `OwnedBehaviorRegistration` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the stable behavior identifier.
   - `string BehaviorId { get; }`
+- [BehaviorIds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-behaviorids): `Properties` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the behavior identifiers targeted by this override.
+  - `IReadOnlyList<string> BehaviorIds { get; }`
+- [BehaviorIds](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingoverridesettings-behaviorids): `Properties` on `RateLimitingOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BehaviorIds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the targeted behavior identifiers.
+  - `IReadOnlyList<string> BehaviorIds { get; }`
 - [BehaviorNotFoundException](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviornotfoundexception-ctor-system-string): `Constructors` on `BehaviorNotFoundException` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorNotFoundException&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes the exception for the given behavior identifier.
   - `BehaviorNotFoundException(string behaviorId)`
@@ -2343,6 +2358,12 @@ Browse the published API surface by public member.
 - [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-identitysettings-enabled): `Properties` on `IdentitySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether identity and authorization support was explicitly enabled.
   - `bool? Enabled { get; }`
+- [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-enabled): `Properties` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether rate limiting was explicitly enabled or disabled for the targeted surface.
+  - `bool? Enabled { get; }`
+- [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingoverridesettings-enabled): `Properties` on `RateLimitingOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether rate limiting was explicitly enabled or disabled.
+  - `bool? Enabled { get; }`
 - [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingselection-enabled): `Properties` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether rate limiting was explicitly enabled.
   - `bool? Enabled { get; }`
@@ -3267,6 +3288,9 @@ Browse the published API surface by public member.
 - [HandlerId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-handlerid): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=HandlerId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the logical handler or consumer identifier that receives the event.
   - `string HandlerId { get; }`
+- [HasCephalonRateLimiting](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-cephalonratelimitingendpointconventionbuilderextensions-hascephalonratelimiting-system-iserviceprovider-system-string-system-string): `Methods` on `CephalonRateLimitingEndpointConventionBuilderExtensions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=HasCephalonRateLimiting&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Determines whether the effective Cephalon rate-limiting policy for the supplied transport and optional behavior identifier actively enforces a limiter.
+  - `bool HasCephalonRateLimiting(this IServiceProvider services, string transportId, string behaviorId)`
 - [HasMore](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryqueryresult-hasmore): `Properties` on `AuditHistoryQueryResult` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMore&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets a value indicating whether more entries remain beyond this page.
   - `bool HasMore { get; }`
@@ -3380,6 +3404,12 @@ Browse the published API surface by public member.
   - `bool HasValues { get; }`
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-packagepolicy-hasvalues): `Properties` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether the policy differs from the default baseline.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-hasvalues): `Properties` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether any override values were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingoverridesettings-hasvalues): `Properties` on `RateLimitingOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any override settings were explicitly supplied.
   - `bool HasValues { get; }`
 - [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingselection-hasvalues): `Properties` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether any rate-limiting-selection inputs were explicitly supplied.
@@ -3737,6 +3767,12 @@ Browse the published API surface by public member.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-projectiondescriptor-id): `Properties` on `ProjectionDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable projection identifier.
+  - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-id): `Properties` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the stable override identifier.
+  - `string Id { get; }`
+- [Id](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingoverridesettings-id): `Properties` on `RateLimitingOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the stable override identifier.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-id): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The stable runtime policy identifier.
@@ -5142,6 +5178,12 @@ Browse the published API surface by public member.
 - [OutputPath](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-outputpath): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=OutputPath&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the output directory where reference docs should be written.
   - `string OutputPath { get; }`
+- [Overrides](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingselection-overrides): `Properties` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Overrides&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the named override policies targeted at specific transports or behaviors.
+  - `IReadOnlyList<RateLimitingOverrideSelection> Overrides { get; }`
+- [Overrides](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingsettings-overrides): `Properties` on `RateLimitingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Overrides&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the named override policies targeted at specific transports or behaviors.
+  - `IReadOnlyList<RateLimitingOverrideSettings> Overrides { get; }`
 - [OwnedBehaviorRegistration](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ownedbehaviorregistration-ctor-system-string-system-string-system-type-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder): `Constructors` on `OwnedBehaviorRegistration` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnedBehaviorRegistration&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes a new `OwnedBehaviorRegistration`.
   - `OwnedBehaviorRegistration(string sourceModuleId, string behaviorId, Type behaviorType, Action<IBehaviorTopologyBuilder> configureTopology)`
@@ -5343,6 +5385,12 @@ Browse the published API surface by public member.
 - [Payload](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-payload): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Payload&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the serialized payload that should be delivered later.
   - `string Payload { get; }`
+- [PermitLimit](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-permitlimit): `Properties` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=PermitLimit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the maximum permits available per limiter window or bucket.
+  - `int? PermitLimit { get; }`
+- [PermitLimit](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingoverridesettings-permitlimit): `Properties` on `RateLimitingOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=PermitLimit&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the maximum permits available per limiter window or bucket.
+  - `int? PermitLimit { get; }`
 - [PermitLimit](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingselection-permitlimit): `Properties` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=PermitLimit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the maximum permits available per limiter window or bucket.
   - `int? PermitLimit { get; }`
@@ -5586,6 +5634,12 @@ Browse the published API surface by public member.
 - [QueryAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iaudithistoryreader-queryasync-cephalon-abstractions-audit-audithistoryquery-system-threading-cancellationtoken): `Methods` on `IAuditHistoryReader` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueryAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Queries audit-history entries using the supplied host-agnostic filter set.
   - `ValueTask<AuditHistoryQueryResult> QueryAsync(AuditHistoryQuery query, CancellationToken cancellationToken)`
+- [QueueLimit](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-queuelimit): `Properties` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueueLimit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the maximum queued requests allowed before rejection.
+  - `int? QueueLimit { get; }`
+- [QueueLimit](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingoverridesettings-queuelimit): `Properties` on `RateLimitingOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=QueueLimit&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the maximum queued requests allowed before rejection.
+  - `int? QueueLimit { get; }`
 - [QueueLimit](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingselection-queuelimit): `Properties` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueueLimit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the maximum queued requests allowed before rejection.
   - `int? QueueLimit { get; }`
@@ -5610,18 +5664,24 @@ Browse the published API surface by public member.
 - [RateLimiting](cephalon-engine.md#member-p-cephalon-engine-configuration-resiliencesettings-ratelimiting): `Properties` on `ResilienceSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RateLimiting&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the rate-limiting settings resolved for the app.
   - `RateLimitingSettings RateLimiting { get; }`
+- [RateLimitingOverrideSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-ratelimitingoverrideselection-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=RateLimitingOverrideSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Initializes a new instance of the `RateLimitingOverrideSelection` class.
+  - `RateLimitingOverrideSelection(string id, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> transportIds, bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow)`
+- [RateLimitingOverrideSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-ratelimitingoverridesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `RateLimitingOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RateLimitingOverrideSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `RateLimitingOverrideSettings` class.
+  - `RateLimitingOverrideSettings(string id, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> transportIds, bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow)`
 - [RateLimitingPolicies](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-ratelimitingpolicies): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RateLimitingPolicies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the effective rate-limiting policies visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<RateLimitingRuntimeDescriptor> RateLimitingPolicies { get; set; }`
 - [RateLimitingRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-appmodel-ratelimitingselection-cephalon-abstractions-appmodel-ratelimitingselection-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=RateLimitingRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Describes one effective HTTP rate-limiting policy exposed by the current runtime.
   - `RateLimitingRuntimeDescriptor(string Id, string DisplayName, string Description, string ExecutionMode, string Scope, int RejectionStatusCode, IReadOnlyList<string> TransportIds, IReadOnlyList<string> ExcludedPathPrefixes, RateLimitingSelection Requested, RateLimitingSelection Effective, IReadOnlyDictionary<string, string> Metadata)`
-- [RateLimitingSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-ratelimitingselection-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=RateLimitingSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+- [RateLimitingSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-ratelimitingselection-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-ratelimitingoverrideselection): `Constructors` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=RateLimitingSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Initializes a new instance of the `RateLimitingSelection` class.
-  - `RateLimitingSelection(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow)`
-- [RateLimitingSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-ratelimitingsettings-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `RateLimitingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RateLimitingSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - `RateLimitingSelection(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow, IReadOnlyList<RateLimitingOverrideSelection> overrides)`
+- [RateLimitingSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-ratelimitingsettings-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-collections-generic-ireadonlylist-cephalon-engine-configuration-ratelimitingoverridesettings): `Constructors` on `RateLimitingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RateLimitingSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `RateLimitingSettings` class.
-  - `RateLimitingSettings(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow)`
+  - `RateLimitingSettings(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow, IReadOnlyList<RateLimitingOverrideSettings> overrides)`
 - [Rbac](cephalon-abstractions.md#member-f-cephalon-abstractions-authorization-authorizationmode-rbac): `Fields` on `AuthorizationMode` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Rbac&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Indicates a role-based access-control evaluation.
   - `const AuthorizationMode Rbac`
@@ -6405,6 +6465,12 @@ Browse the published API surface by public member.
 - [SecurityProtocol](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-securityprotocol): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=SecurityProtocol&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
   - Gets or sets the optional Kafka security protocol, such as `Plaintext`, `Ssl`, `SaslPlaintext`, or `SaslSsl`.
   - `string SecurityProtocol { get; set; }`
+- [SegmentsPerWindow](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-segmentsperwindow): `Properties` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=SegmentsPerWindow&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the number of segments per window when sliding windows are used.
+  - `int? SegmentsPerWindow { get; }`
+- [SegmentsPerWindow](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingoverridesettings-segmentsperwindow): `Properties` on `RateLimitingOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=SegmentsPerWindow&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the number of segments per window when sliding windows are used.
+  - `int? SegmentsPerWindow { get; }`
 - [SegmentsPerWindow](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingselection-segmentsperwindow): `Properties` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=SegmentsPerWindow&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the number of segments per window when sliding windows are used.
   - `int? SegmentsPerWindow { get; }`
@@ -7284,6 +7350,12 @@ Browse the published API surface by public member.
 - [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-transportids): `Properties` on `BehaviorTopologyDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the transport identifiers configured for this behavior.
   - `IReadOnlyList<string> TransportIds { get; }`
+- [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-transportids): `Properties` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the transport identifiers targeted by this override.
+  - `IReadOnlyList<string> TransportIds { get; }`
+- [TransportIds](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingoverridesettings-transportids): `Properties` on `RateLimitingOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the targeted transport identifiers.
+  - `IReadOnlyList<string> TransportIds { get; }`
 - [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-transportids): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The transport identifiers whose HTTP surfaces are covered by the policy.
   - `IReadOnlyList<string> TransportIds { get; set; }`
@@ -7698,6 +7770,12 @@ Browse the published API surface by public member.
 - [WebSocket](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-websocket): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=WebSocket&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
   - Gets the built-in WebSocket transport descriptor.
   - `TransportDescriptor WebSocket { get; }`
+- [WindowSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-windowseconds): `Properties` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=WindowSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the limiter window duration in seconds when the selected algorithm uses windows.
+  - `int? WindowSeconds { get; }`
+- [WindowSeconds](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingoverridesettings-windowseconds): `Properties` on `RateLimitingOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=WindowSeconds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the limiter window duration in seconds when the selected algorithm uses windows.
+  - `int? WindowSeconds { get; }`
 - [WindowSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingselection-windowseconds): `Properties` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=WindowSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the limiter window duration in seconds when the selected algorithm uses windows.
   - `int? WindowSeconds { get; }`

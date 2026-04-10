@@ -96,9 +96,12 @@ surface, `/engine/resilience` is now the direct operator route for that requeste
 longer lags the roadmap. The new host-agnostic `IRateLimitingRuntimeCatalog` and
 `RateLimitingRuntimeDescriptor` contracts also let host adapters publish effective enforcement into
 `snapshot.RateLimitingPolicies` without pretending the engine core itself performs HTTP throttling.
-The first shipped follow-through is ASP.NET Core public-HTTP rate limiting plus an effective runtime
-catalog; behavior-pipeline enforcement for retry, timeout, circuit breaker, bulkhead, and finer
-per-behavior rate limiting remains later work.
+`RateLimitingSelection` now also carries additive `Overrides` projected as
+`RateLimitingOverrideSelection` entries so the public app model can describe narrower behavior- or
+transport-scoped intent without leaking ASP.NET Core-specific types into the engine core. The current
+shipped follow-through is ASP.NET Core public-HTTP rate limiting plus an endpoint-scoped effective
+runtime catalog; behavior-pipeline enforcement for retry, timeout, circuit breaker, bulkhead, and
+broader transport-native rate-limiting semantics beyond HTTP route mapping remain later work.
 
 Package loading is also governed here. `cephalon.package.json` compatibility metadata, external distribution and provenance hints, publisher/signature provenance fields, optional integrity hashes, detached signature verification against trusted public keys or trusted signing certificate chains, publisher/signer/checksum-based trust allow-lists, and `/engine/packages` manifest output are all part of the engine contract rather than host-specific behavior.
 

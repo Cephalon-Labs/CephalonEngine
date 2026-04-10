@@ -235,7 +235,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             return routes;
         }
 
-        var documentedStatusCodes = ResolveDocumentedStatusCodes(endpoints.ServiceProvider);
+        var documentedStatusCodes = ResolveDocumentedStatusCodes(endpoints.ServiceProvider, "rest-api");
         routes = endpoints.MapGroup(BuildResolvedRoutePrefix());
         routes.WithGroupName(OpenApiDocumentName);
         routes.WithTags(TagName);
@@ -338,7 +338,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             pattern,
             static (HttpContext context, BehaviorDispatcher dispatcher) =>
                 InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher));
-        return ApplyEndpointConventions<TInput, TOutput>(builder, contract, acceptsBody: false);
+        return ApplyEndpointConventions<TInput, TOutput>(builder, contract, acceptsBody: false)
+            .ApplyCephalonRateLimiting(group.endpoints.ServiceProvider, "rest-api", contract.BehaviorId);
     }
 
     private static RouteHandlerBuilder MapBehaviorPostCore<TBehavior, TInput, TOutput>(
@@ -351,7 +352,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             pattern,
             static (HttpContext context, BehaviorDispatcher dispatcher) =>
                 InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher));
-        return ApplyEndpointConventions<TInput, TOutput>(builder, contract, acceptsBody: true);
+        return ApplyEndpointConventions<TInput, TOutput>(builder, contract, acceptsBody: true)
+            .ApplyCephalonRateLimiting(group.endpoints.ServiceProvider, "rest-api", contract.BehaviorId);
     }
 
     private static RouteHandlerBuilder MapBehaviorPutCore<TBehavior, TInput, TOutput>(
@@ -364,7 +366,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             pattern,
             static (HttpContext context, BehaviorDispatcher dispatcher) =>
                 InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher));
-        return ApplyEndpointConventions<TInput, TOutput>(builder, contract, acceptsBody: true);
+        return ApplyEndpointConventions<TInput, TOutput>(builder, contract, acceptsBody: true)
+            .ApplyCephalonRateLimiting(group.endpoints.ServiceProvider, "rest-api", contract.BehaviorId);
     }
 
     private static RouteHandlerBuilder MapBehaviorPatchCore<TBehavior, TInput, TOutput>(
@@ -378,7 +381,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             ["PATCH"],
             static (HttpContext context, BehaviorDispatcher dispatcher) =>
                 InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher));
-        return ApplyEndpointConventions<TInput, TOutput>(builder, contract, acceptsBody: true);
+        return ApplyEndpointConventions<TInput, TOutput>(builder, contract, acceptsBody: true)
+            .ApplyCephalonRateLimiting(group.endpoints.ServiceProvider, "rest-api", contract.BehaviorId);
     }
 
     private static RouteHandlerBuilder MapBehaviorDeleteCore<TBehavior, TInput, TOutput>(
@@ -391,7 +395,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             pattern,
             static (HttpContext context, BehaviorDispatcher dispatcher) =>
                 InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher));
-        return ApplyEndpointConventions<TInput, TOutput>(builder, contract, acceptsBody: false);
+        return ApplyEndpointConventions<TInput, TOutput>(builder, contract, acceptsBody: false)
+            .ApplyCephalonRateLimiting(group.endpoints.ServiceProvider, "rest-api", contract.BehaviorId);
     }
 
     private static RouteHandlerBuilder ApplyEndpointConventions<TInput, TOutput>(
@@ -662,15 +667,19 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             : fallbackDescription.Trim();
     }
 
-    private static HashSet<int> ResolveDocumentedStatusCodes(IServiceProvider services)
+    private static HashSet<int> ResolveDocumentedStatusCodes(
+        IServiceProvider services,
+        string transportId,
+        string? behaviorId = null)
     {
         ArgumentNullException.ThrowIfNull(services);
+        ArgumentException.ThrowIfNullOrWhiteSpace(transportId);
 
         var configuration = services.GetService<IConfiguration>();
         var statusCodes = configuration is null
             ? new HashSet<int>(new OpenApiEndpointOptions().BehaviorRestDocumentedStatusCodes)
             : new HashSet<int>(OpenApiEndpointOptions.FromConfiguration(configuration).BehaviorRestDocumentedStatusCodes);
-        if (services.GetService<IRateLimitingRuntimeCatalog>()?.GetByTransportId("rest-api").Count > 0)
+        if (services.HasCephalonRateLimiting(transportId, behaviorId))
         {
             statusCodes.Add(StatusCodes.Status429TooManyRequests);
         }
@@ -765,7 +774,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             var configuration = services.GetService<IConfiguration>();
             var useResultModelEnvelope = configuration is not null &&
                 ApiRoutesOptions.FromConfiguration(configuration).UseResultModelEnvelope;
-            var documentedStatusCodes = ResolveDocumentedStatusCodes(services);
+            var documentedStatusCodes = ResolveDocumentedStatusCodes(services, "rest-api", behaviorId);
 
             return new BehaviorRestEndpointContract(
                 moduleDescriptor.Id,

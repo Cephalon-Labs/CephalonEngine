@@ -19,7 +19,8 @@ internal sealed class RestTransportRouteMapper : ITransportRouteMapper
 
     public void MapRoutes(WebApplication app, IRuntime runtime)
     {
-        var apiGroup = app.MapGroup(options.RestPrefix);
+        var apiGroup = app.MapGroup(options.RestPrefix)
+            .ApplyCephalonRateLimiting(app.Services, TransportId);
         foreach (var module in runtime.Modules.OfType<IRestModule>())
         {
             module.MapRestEndpoints(apiGroup);

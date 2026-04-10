@@ -451,7 +451,7 @@ public sealed class AspNetCoreHostingTests
         Assert.NotNull(rateLimitingPolicies);
         var rateLimitingPolicy = Assert.Single(rateLimitingPolicies);
         Assert.Equal("cephalon-public-http", rateLimitingPolicy.Id);
-        Assert.Equal("aspnetcore-global-middleware", rateLimitingPolicy.ExecutionMode);
+        Assert.Equal("aspnetcore-endpoint-policy", rateLimitingPolicy.ExecutionMode);
         Assert.Equal("public-http-endpoints", rateLimitingPolicy.Scope);
         Assert.Equal(429, rateLimitingPolicy.RejectionStatusCode);
         Assert.Contains("graphql", rateLimitingPolicy.TransportIds);
@@ -732,7 +732,7 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal(HttpStatusCode.OK, secondOpenApiResponse.StatusCode);
         Assert.NotNull(policies);
         var policy = Assert.Single(policies);
-        Assert.Equal("aspnetcore-global-middleware", policy.ExecutionMode);
+        Assert.Equal("aspnetcore-endpoint-policy", policy.ExecutionMode);
         Assert.Equal("FixedWindow", policy.Effective.Algorithm);
         Assert.Equal(1, policy.Effective.PermitLimit);
         Assert.Equal(0, policy.Effective.QueueLimit);

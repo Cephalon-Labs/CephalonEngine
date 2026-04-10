@@ -20,7 +20,8 @@ internal sealed class ServerSentEventsTransportRouteMapper : ITransportRouteMapp
 
     public void MapRoutes(WebApplication app, IRuntime runtime)
     {
-        var eventsGroup = app.MapGroup(options.SsePrefix);
+        var eventsGroup = app.MapGroup(options.SsePrefix)
+            .ApplyCephalonRateLimiting(app.Services, TransportId);
         eventsGroup.ExcludeFromDescription();
         foreach (var module in runtime.Modules.OfType<IServerSentEventsModule>())
         {

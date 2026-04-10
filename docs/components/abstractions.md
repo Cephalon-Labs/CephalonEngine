@@ -93,9 +93,12 @@ The phase-8 families stay runtime-neutral on purpose:
 
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,
-`BulkheadSelection`, and `RateLimitingSelection`. Those types stay transport- and host-agnostic on
-purpose: they capture requested resilience intent in the public model without forcing ASP.NET Core,
-Polly, or behavior-pipeline enforcement details into `Cephalon.Abstractions`.
+`BulkheadSelection`, and `RateLimitingSelection`. `RateLimitingSelection` now also carries additive
+`RateLimitingOverrideSelection` entries so the public app model can describe narrower behavior- or
+transport-scoped intent without leaking ASP.NET Core-specific endpoint conventions into
+`Cephalon.Abstractions`. Those types stay transport- and host-agnostic on purpose: they capture
+requested resilience intent in the public model without forcing ASP.NET Core, Polly, or
+behavior-pipeline enforcement details into `Cephalon.Abstractions`.
 
 When a host adapter does enforce HTTP rate limiting, the same package now also carries the narrow
 runtime-facing `IRateLimitingRuntimeCatalog` and `RateLimitingRuntimeDescriptor` contracts. That

@@ -30,6 +30,7 @@ internal sealed class GraphQLTransportRouteMapper : ITransportRouteMapper
 
         app.UseWebSockets();
         app.MapGraphQL(options.GraphQLPrefix)
-            .WithDisplayName("Cephalon GraphQL");
+            .WithDisplayName("Cephalon GraphQL")
+            .ApplyCephalonRateLimiting(app.Services, TransportId);
     }
 }

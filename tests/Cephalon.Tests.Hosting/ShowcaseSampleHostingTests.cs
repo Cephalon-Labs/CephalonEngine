@@ -88,6 +88,13 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(20, profile.Resilience.RateLimiting.QueueLimit);
         Assert.Equal(60, profile.Resilience.RateLimiting.WindowSeconds);
         Assert.Equal(4, profile.Resilience.RateLimiting.SegmentsPerWindow);
+        var overridePolicy = Assert.Single(profile.Resilience.RateLimiting.Overrides);
+        Assert.Equal("cart-read-hot-path", overridePolicy.Id);
+        Assert.Equal(["cart.get"], overridePolicy.BehaviorIds);
+        Assert.Equal(["rest-api"], overridePolicy.TransportIds);
+        Assert.Null(overridePolicy.Enabled);
+        Assert.Equal(400, overridePolicy.PermitLimit);
+        Assert.Equal(40, overridePolicy.QueueLimit);
     }
 
     [Fact]
@@ -103,20 +110,29 @@ public sealed class ShowcaseSampleHostingTests
         var snapshot = await client.GetFromJsonAsync<Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
         Assert.NotNull(policies);
-        var policy = Assert.Single(policies);
-        Assert.Equal("cephalon-public-http", policy.Id);
-        Assert.Equal("aspnetcore-global-middleware", policy.ExecutionMode);
-        Assert.Contains("behavior-http", policy.TransportIds);
-        Assert.Contains("rest-api", policy.TransportIds);
-        Assert.Contains("/engine", policy.ExcludedPathPrefixes);
-        Assert.Contains("/openapi", policy.ExcludedPathPrefixes);
-        Assert.Contains("/scalar", policy.ExcludedPathPrefixes);
-        Assert.True(policy.Effective.Enabled);
-        Assert.Equal("SlidingWindow", policy.Effective.Algorithm);
-        Assert.Equal(200, policy.Effective.PermitLimit);
+        Assert.Equal(2, policies.Length);
+        var defaultPolicy = Assert.Single(policies, policy => policy.Id == "cephalon-public-http");
+        Assert.Equal("aspnetcore-endpoint-policy", defaultPolicy.ExecutionMode);
+        Assert.Contains("behavior-http", defaultPolicy.TransportIds);
+        Assert.Contains("rest-api", defaultPolicy.TransportIds);
+        Assert.Contains("/engine", defaultPolicy.ExcludedPathPrefixes);
+        Assert.Contains("/openapi", defaultPolicy.ExcludedPathPrefixes);
+        Assert.Contains("/scalar", defaultPolicy.ExcludedPathPrefixes);
+        Assert.True(defaultPolicy.Effective.Enabled);
+        Assert.Equal("SlidingWindow", defaultPolicy.Effective.Algorithm);
+        Assert.Equal(200, defaultPolicy.Effective.PermitLimit);
+        var overridePolicy = Assert.Single(policies, policy => policy.Id == "cephalon-rate-limit-cart-read-hot-path");
+        Assert.Equal("aspnetcore-endpoint-policy", overridePolicy.ExecutionMode);
+        Assert.Equal("behavior-transport-endpoints", overridePolicy.Scope);
+        Assert.Equal("cart.get", overridePolicy.Metadata["behaviorIds"]);
+        Assert.Equal("rest-api", overridePolicy.Metadata["transportIds"]);
+        Assert.Equal("true", overridePolicy.Metadata["isOverride"]);
+        Assert.Equal(400, overridePolicy.Effective.PermitLimit);
+        Assert.Equal(40, overridePolicy.Effective.QueueLimit);
         Assert.NotNull(snapshot);
-        Assert.Single(snapshot.RateLimitingPolicies);
-        Assert.Equal("cephalon-public-http", snapshot.RateLimitingPolicies[0].Id);
+        Assert.Equal(2, snapshot.RateLimitingPolicies.Count);
+        Assert.Contains(snapshot.RateLimitingPolicies, policy => policy.Id == "cephalon-public-http");
+        Assert.Contains(snapshot.RateLimitingPolicies, policy => policy.Id == "cephalon-rate-limit-cart-read-hot-path");
     }
 
     [Fact]

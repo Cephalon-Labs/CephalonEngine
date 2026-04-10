@@ -314,6 +314,64 @@ internal static class AppProfileSelectionValidator
             throw new InvalidOperationException(
                 "Rate limiting SegmentsPerWindow must be greater than zero when supplied.");
         }
+
+        foreach (var entry in rateLimiting.Overrides)
+        {
+            ValidateRateLimitingOverrideSelection(entry);
+        }
+    }
+
+    private static void ValidateRateLimitingOverrideSelection(RateLimitingOverrideSelection overrideSelection)
+    {
+        ArgumentNullException.ThrowIfNull(overrideSelection);
+
+        if (overrideSelection.BehaviorIds.Count == 0 && overrideSelection.TransportIds.Count == 0)
+        {
+            throw new InvalidOperationException(
+                $"Rate limiting override '{overrideSelection.Id}' must target at least one behavior or transport.");
+        }
+
+        if (!overrideSelection.Enabled.HasValue &&
+            overrideSelection.Algorithm is null &&
+            !overrideSelection.PermitLimit.HasValue &&
+            !overrideSelection.QueueLimit.HasValue &&
+            !overrideSelection.WindowSeconds.HasValue &&
+            !overrideSelection.SegmentsPerWindow.HasValue)
+        {
+            throw new InvalidOperationException(
+                $"Rate limiting override '{overrideSelection.Id}' must specify Enabled or at least one limiter value such as PermitLimit or Algorithm.");
+        }
+
+        if (overrideSelection.Algorithm is not null &&
+            !SupportedRateLimitingAlgorithmIndex.Contains(NormalizeKey(overrideSelection.Algorithm)))
+        {
+            throw new InvalidOperationException(
+                $"Rate limiting override '{overrideSelection.Id}' selected unsupported algorithm '{overrideSelection.Algorithm}'. Supported algorithms: {string.Join(", ", SupportedRateLimitingAlgorithms)}.");
+        }
+
+        if (overrideSelection.PermitLimit is not null && overrideSelection.PermitLimit <= 0)
+        {
+            throw new InvalidOperationException(
+                $"Rate limiting override '{overrideSelection.Id}' PermitLimit must be greater than zero when supplied.");
+        }
+
+        if (overrideSelection.QueueLimit is not null && overrideSelection.QueueLimit < 0)
+        {
+            throw new InvalidOperationException(
+                $"Rate limiting override '{overrideSelection.Id}' QueueLimit cannot be negative when supplied.");
+        }
+
+        if (overrideSelection.WindowSeconds is not null && overrideSelection.WindowSeconds <= 0)
+        {
+            throw new InvalidOperationException(
+                $"Rate limiting override '{overrideSelection.Id}' WindowSeconds must be greater than zero when supplied.");
+        }
+
+        if (overrideSelection.SegmentsPerWindow is not null && overrideSelection.SegmentsPerWindow <= 0)
+        {
+            throw new InvalidOperationException(
+                $"Rate limiting override '{overrideSelection.Id}' SegmentsPerWindow must be greater than zero when supplied.");
+        }
     }
 
     private static void ValidateDatabaseRoleReferences(

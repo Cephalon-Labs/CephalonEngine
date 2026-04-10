@@ -1486,6 +1486,142 @@ string Provider { get; }
 
 Gets the selected messaging provider or runtime adapter.
 
+<a id="type-cephalon-abstractions-appmodel-ratelimitingoverrideselection"></a>
+
+### `RateLimitingOverrideSelection`
+
+Describes one named rate-limiting override requested for a subset of transports or behaviors.
+
+#### Declaration
+```csharp
+public sealed class RateLimitingOverrideSelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-ratelimitingoverrideselection-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32"></a>
+
+##### `RateLimitingOverrideSelection`
+
+```csharp
+RateLimitingOverrideSelection(string id, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> transportIds, bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow)
+```
+
+Initializes a new instance of the `RateLimitingOverrideSelection` class.
+
+Parameters:
+- `id`: The stable override identifier.
+- `behaviorIds`: The targeted behavior identifiers.
+- `transportIds`: The targeted transport identifiers.
+- `enabled`: Whether the override explicitly enables or disables rate limiting for the targeted surface.
+- `algorithm`: The requested rate-limiting algorithm, such as `FixedWindow` or `TokenBucket`.
+- `permitLimit`: The maximum permits available per limiter window or bucket.
+- `queueLimit`: The maximum queued requests allowed before rejection.
+- `windowSeconds`: The limiter window duration in seconds when the selected algorithm uses windows.
+- `segmentsPerWindow`: The number of segments per window when sliding windows are used.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-algorithm"></a>
+
+##### `Algorithm`
+
+```csharp
+string Algorithm { get; }
+```
+
+Gets the requested rate-limiting algorithm, such as `FixedWindow` or `TokenBucket`.
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-behaviorids"></a>
+
+##### `BehaviorIds`
+
+```csharp
+IReadOnlyList<string> BehaviorIds { get; }
+```
+
+Gets the behavior identifiers targeted by this override.
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether rate limiting was explicitly enabled or disabled for the targeted surface.
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any override values were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable override identifier.
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-permitlimit"></a>
+
+##### `PermitLimit`
+
+```csharp
+int? PermitLimit { get; }
+```
+
+Gets the maximum permits available per limiter window or bucket.
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-queuelimit"></a>
+
+##### `QueueLimit`
+
+```csharp
+int? QueueLimit { get; }
+```
+
+Gets the maximum queued requests allowed before rejection.
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-segmentsperwindow"></a>
+
+##### `SegmentsPerWindow`
+
+```csharp
+int? SegmentsPerWindow { get; }
+```
+
+Gets the number of segments per window when sliding windows are used.
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-transportids"></a>
+
+##### `TransportIds`
+
+```csharp
+IReadOnlyList<string> TransportIds { get; }
+```
+
+Gets the transport identifiers targeted by this override.
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-windowseconds"></a>
+
+##### `WindowSeconds`
+
+```csharp
+int? WindowSeconds { get; }
+```
+
+Gets the limiter window duration in seconds when the selected algorithm uses windows.
+
 <a id="type-cephalon-abstractions-appmodel-ratelimitingselection"></a>
 
 ### `RateLimitingSelection`
@@ -1499,12 +1635,12 @@ public sealed class RateLimitingSelection
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-appmodel-ratelimitingselection-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32"></a>
+<a id="member-m-cephalon-abstractions-appmodel-ratelimitingselection-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-ratelimitingoverrideselection"></a>
 
 ##### `RateLimitingSelection`
 
 ```csharp
-RateLimitingSelection(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow)
+RateLimitingSelection(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow, IReadOnlyList<RateLimitingOverrideSelection> overrides)
 ```
 
 Initializes a new instance of the `RateLimitingSelection` class.
@@ -1516,6 +1652,7 @@ Parameters:
 - `queueLimit`: The maximum queued requests allowed before rejection.
 - `windowSeconds`: The limiter window duration in seconds when the selected algorithm uses windows.
 - `segmentsPerWindow`: The number of segments per window when sliding windows are used.
+- `overrides`: The named override policies targeted at specific transports or behaviors.
 
 #### Properties
 
@@ -1558,6 +1695,16 @@ bool HasValues { get; }
 ```
 
 Gets a value indicating whether any rate-limiting-selection inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingselection-overrides"></a>
+
+##### `Overrides`
+
+```csharp
+IReadOnlyList<RateLimitingOverrideSelection> Overrides { get; }
+```
+
+Gets the named override policies targeted at specific transports or behaviors.
 
 <a id="member-p-cephalon-abstractions-appmodel-ratelimitingselection-permitlimit"></a>
 

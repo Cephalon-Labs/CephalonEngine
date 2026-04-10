@@ -157,6 +157,16 @@ public static class AppProfileFactory
                 permitLimit: settings.RateLimiting.PermitLimit,
                 queueLimit: settings.RateLimiting.QueueLimit,
                 windowSeconds: settings.RateLimiting.WindowSeconds,
-                segmentsPerWindow: settings.RateLimiting.SegmentsPerWindow));
+                segmentsPerWindow: settings.RateLimiting.SegmentsPerWindow,
+                overrides: settings.RateLimiting.Overrides.Select(static entry => new Abstractions.AppModel.RateLimitingOverrideSelection(
+                    id: entry.Id,
+                    behaviorIds: entry.BehaviorIds,
+                    transportIds: entry.TransportIds,
+                    enabled: entry.Enabled,
+                    algorithm: entry.Algorithm,
+                    permitLimit: entry.PermitLimit,
+                    queueLimit: entry.QueueLimit,
+                    windowSeconds: entry.WindowSeconds,
+                    segmentsPerWindow: entry.SegmentsPerWindow)).ToArray()));
     }
 }

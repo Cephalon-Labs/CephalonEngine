@@ -22,7 +22,8 @@ internal sealed class WebSocketTransportRouteMapper : ITransportRouteMapper
     {
         app.UseWebSockets();
 
-        var webSocketGroup = app.MapGroup(options.WsPrefix);
+        var webSocketGroup = app.MapGroup(options.WsPrefix)
+            .ApplyCephalonRateLimiting(app.Services, TransportId);
         webSocketGroup.ExcludeFromDescription();
         foreach (var module in runtime.Modules.OfType<IWebSocketModule>())
         {

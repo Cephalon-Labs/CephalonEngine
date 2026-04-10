@@ -21,7 +21,8 @@ internal sealed class JsonRpcTransportRouteMapper : ITransportRouteMapper
 
     public void MapRoutes(WebApplication app, IRuntime runtime)
     {
-        var rpcGroup = app.MapGroup(options.JsonRpcPrefix);
+        var rpcGroup = app.MapGroup(options.JsonRpcPrefix)
+            .ApplyCephalonRateLimiting(app.Services, TransportId);
         rpcGroup.ExcludeFromDescription();
         foreach (var module in runtime.Modules.OfType<IJsonRpcModule>())
         {

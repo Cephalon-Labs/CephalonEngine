@@ -21,13 +21,15 @@ public sealed class RateLimitingSettings
     /// <param name="queueLimit">The maximum queued requests allowed before rejection.</param>
     /// <param name="windowSeconds">The limiter window duration in seconds when the selected algorithm uses windows.</param>
     /// <param name="segmentsPerWindow">The number of segments per window when sliding windows are used.</param>
+    /// <param name="overrides">The named override policies targeted at specific transports or behaviors.</param>
     public RateLimitingSettings(
         bool? enabled = null,
         string? algorithm = null,
         int? permitLimit = null,
         int? queueLimit = null,
         int? windowSeconds = null,
-        int? segmentsPerWindow = null)
+        int? segmentsPerWindow = null,
+        IReadOnlyList<RateLimitingOverrideSettings>? overrides = null)
     {
         Enabled = enabled;
         Algorithm = string.IsNullOrWhiteSpace(algorithm) ? null : algorithm.Trim();
@@ -35,6 +37,9 @@ public sealed class RateLimitingSettings
         QueueLimit = queueLimit;
         WindowSeconds = windowSeconds;
         SegmentsPerWindow = segmentsPerWindow;
+        Overrides = overrides?
+            .Where(static entry => entry is not null)
+            .ToArray() ?? [];
     }
 
     /// <summary>
@@ -68,6 +73,11 @@ public sealed class RateLimitingSettings
     public int? SegmentsPerWindow { get; }
 
     /// <summary>
+    /// Gets the named override policies targeted at specific transports or behaviors.
+    /// </summary>
+    public IReadOnlyList<RateLimitingOverrideSettings> Overrides { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any rate-limiting settings were explicitly supplied.
     /// </summary>
     public bool HasValues =>
@@ -76,7 +86,8 @@ public sealed class RateLimitingSettings
         PermitLimit.HasValue ||
         QueueLimit.HasValue ||
         WindowSeconds.HasValue ||
-        SegmentsPerWindow.HasValue;
+        SegmentsPerWindow.HasValue ||
+        Overrides.Count > 0;
 
     internal static RateLimitingSettings FromSection(IConfiguration section)
     {
@@ -88,7 +99,8 @@ public sealed class RateLimitingSettings
             permitLimit: TryParseInt32(section["PermitLimit"]),
             queueLimit: TryParseInt32(section["QueueLimit"]),
             windowSeconds: TryParseInt32(section["WindowSeconds"]),
-            segmentsPerWindow: TryParseInt32(section["SegmentsPerWindow"]));
+            segmentsPerWindow: TryParseInt32(section["SegmentsPerWindow"]),
+            overrides: RateLimitingOverrideSettings.FromSection(section.GetSection("Overrides")));
     }
 
     private static bool? TryParseBoolean(string? value)

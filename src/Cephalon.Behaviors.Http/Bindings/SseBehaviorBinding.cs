@@ -108,7 +108,9 @@ public sealed class SseBehaviorBinding : IHttpBehaviorBinding
                         .ConfigureAwait(false);
                     await ctx.Response.Body.FlushAsync(CancellationToken.None).ConfigureAwait(false);
                 }
-            }).ExcludeFromDescription();
+            })
+            .ApplyCephalonRateLimiting(app.Services, TransportId, descriptor.Id)
+            .ExcludeFromDescription();
         }
 
         return Task.CompletedTask;

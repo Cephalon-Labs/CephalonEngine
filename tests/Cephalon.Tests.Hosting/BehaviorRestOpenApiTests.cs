@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Abstractions.Resilience;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Transports.Rest;
 using Cephalon.Behaviors.Http.Hosting;
@@ -278,6 +279,154 @@ public sealed class BehaviorRestOpenApiTests
             .GetProperty("responses");
 
         Assert.True(responses.TryGetProperty("429", out _));
+    }
+
+    [Fact]
+    public async Task BehaviorRestOpenApiOmits429WhenBehaviorOverrideDisablesRateLimiting()
+    {
+        const string route = "/api/v1/tests/results/widgets/widget-1";
+
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["Engine:Resilience:RateLimiting:Enabled"] = "true";
+        builder.Configuration["Engine:Resilience:RateLimiting:Algorithm"] = "FixedWindow";
+        builder.Configuration["Engine:Resilience:RateLimiting:PermitLimit"] = "1";
+        builder.Configuration["Engine:Resilience:RateLimiting:QueueLimit"] = "0";
+        builder.Configuration["Engine:Resilience:RateLimiting:WindowSeconds"] = "60";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:widget-free-pass:Behaviors:0"] = "tests.results.lookup";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:widget-free-pass:Transports:0"] = "rest-api";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:widget-free-pass:Enabled"] = "false";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new EnvelopeResultModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var firstResponse = await client.GetAsync(route);
+        var secondResponse = await client.GetAsync(route);
+        using var document = JsonDocument.Parse(await client.GetStringAsync("/openapi/v1.json"));
+        var responses = document.RootElement
+            .GetProperty("paths")
+            .GetProperty("/api/v1/tests/results/widgets/{widgetId}")
+            .GetProperty("get")
+            .GetProperty("responses");
+
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, secondResponse.StatusCode);
+        Assert.False(responses.TryGetProperty("429", out _));
+    }
+
+    [Fact]
+    public async Task BehaviorRestTransportOverrideCanEnableLimiterWithoutDefaultPolicy()
+    {
+        const string route = "/api/v1/tests/results/widgets/widget-1";
+
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:rest-only:Transports:0"] = "rest-api";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:rest-only:Algorithm"] = "FixedWindow";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:rest-only:PermitLimit"] = "1";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:rest-only:QueueLimit"] = "0";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:rest-only:WindowSeconds"] = "60";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new EnvelopeResultModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var firstResponse = await client.GetAsync(route);
+        var secondResponse = await client.GetAsync(route);
+        var policies = await client.GetFromJsonAsync<RateLimitingRuntimeDescriptor[]>("/engine/rate-limiting");
+        using var document = JsonDocument.Parse(await client.GetStringAsync("/openapi/v1.json"));
+        var responses = document.RootElement
+            .GetProperty("paths")
+            .GetProperty("/api/v1/tests/results/widgets/{widgetId}")
+            .GetProperty("get")
+            .GetProperty("responses");
+
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.TooManyRequests, secondResponse.StatusCode);
+        Assert.True(responses.TryGetProperty("429", out _));
+        Assert.NotNull(policies);
+        var policy = Assert.Single(policies);
+        Assert.Equal("cephalon-rate-limit-rest-only", policy.Id);
+        Assert.Equal("rest-api", policy.Metadata["transportIds"]);
+        Assert.Equal(1, policy.Effective.PermitLimit);
+    }
+
+    [Fact]
+    public async Task BehaviorRestBehaviorTransportOverrideBeatsTransportOverride()
+    {
+        const string lookupRoute = "/api/v1/tests/results/widgets/widget-1";
+        const string echoRoute = "/api/v1/tests/envelope/cart/cart-123/items";
+
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:rest-relaxed:Transports:0"] = "rest-api";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:rest-relaxed:Algorithm"] = "FixedWindow";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:rest-relaxed:PermitLimit"] = "10";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:rest-relaxed:QueueLimit"] = "0";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:rest-relaxed:WindowSeconds"] = "60";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:widget-tight:Behaviors:0"] = "tests.results.lookup";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:widget-tight:Transports:0"] = "rest-api";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:widget-tight:Algorithm"] = "FixedWindow";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:widget-tight:PermitLimit"] = "1";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:widget-tight:QueueLimit"] = "0";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:widget-tight:WindowSeconds"] = "60";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new EnvelopeResultModule());
+            engine.AddModule(new EnvelopeEchoModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var firstLookupResponse = await client.GetAsync(lookupRoute);
+        var secondLookupResponse = await client.GetAsync(lookupRoute);
+        var firstEchoResponse = await client.PostAsJsonAsync(echoRoute, new { productName = "Keyboard", quantity = 1 });
+        var secondEchoResponse = await client.PostAsJsonAsync(echoRoute, new { productName = "Mouse", quantity = 1 });
+        var policies = await client.GetFromJsonAsync<RateLimitingRuntimeDescriptor[]>("/engine/rate-limiting");
+
+        Assert.Equal(HttpStatusCode.OK, firstLookupResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.TooManyRequests, secondLookupResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, firstEchoResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, secondEchoResponse.StatusCode);
+        Assert.NotNull(policies);
+        Assert.Equal(2, policies.Length);
+        Assert.Contains(policies, policy => policy.Id == "cephalon-rate-limit-rest-relaxed");
+        Assert.Contains(policies, policy => policy.Id == "cephalon-rate-limit-widget-tight");
     }
 
     [Fact]

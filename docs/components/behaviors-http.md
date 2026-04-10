@@ -218,6 +218,9 @@ separate concerns:
   `OpenApi:BehaviorRest:DocumentedStatusCodes`
 - the default documented status set is `200`, `201`, `202`, `204`, `400`, `401`, `403`, `404`,
   `409`, and `500`, so server-error responses stay visible in docs by default
+- when ASP.NET Core rate limiting is enabled, `429` is documented per endpoint when the effective
+  rate-limiting policy actually applies to that REST route, and behavior/transport overrides can
+  suppress it again for specific endpoints through `Engine:Resilience:RateLimiting:Overrides`
 - GraphQL and JSON-RPC keep their protocol-native response shapes and are intentionally not wrapped
   in `ResultModel`
 

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-10T22:51:54.2431141+00:00",
+  "GeneratedAtUtc": "2026-04-10T23:32:16.862763+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 18,
-      "TypeCount": 189
+      "TypeCount": 190
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -127,7 +127,7 @@
       "Description": "ASP.NET Core host core, REST surface, docs, health, and runtime endpoints.",
       "FileName": "cephalon-aspnetcore.md",
       "NamespaceCount": 8,
-      "TypeCount": 20
+      "TypeCount": 21
     },
     {
       "AssemblyName": "Cephalon.AspNetCore.GraphQL",
@@ -199,7 +199,7 @@
       "Description": "Composition, runtime, policy, manifest, and introspection services.",
       "FileName": "cephalon-engine.md",
       "NamespaceCount": 12,
-      "TypeCount": 83
+      "TypeCount": 84
     },
     {
       "AssemblyName": "Cephalon.Eventing",
@@ -568,7 +568,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-appmodel",
-      "TypeCount": 21
+      "TypeCount": 22
     },
     {
       "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
@@ -764,7 +764,7 @@
       "AssemblyName": "Cephalon.AspNetCore",
       "FileName": "cephalon-aspnetcore.md",
       "AnchorId": "namespace-cephalon-aspnetcore-hosting",
-      "TypeCount": 6
+      "TypeCount": 7
     },
     {
       "NamespaceName": "Cephalon.AspNetCore.JsonRpc.Hosting",
@@ -939,7 +939,7 @@
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
       "AnchorId": "namespace-cephalon-engine-configuration",
-      "TypeCount": 32
+      "TypeCount": 33
     },
     {
       "NamespaceName": "Cephalon.Engine.Diagnostics",
@@ -2782,6 +2782,21 @@
       "AnchorId": "type-cephalon-observability-cassandradependencies-hosting-cassandradependencyhealthservicecollectionextensions",
       "Declaration": "public static class CassandraDependencyHealthServiceCollectionExtensions",
       "Summary": "Adds Cassandra dependency-health services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "CephalonRateLimitingEndpointConventionBuilderExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-hosting-cephalonratelimitingendpointconventionbuilderextensions",
+      "Declaration": "public static class CephalonRateLimitingEndpointConventionBuilderExtensions",
+      "Summary": "Applies Cephalon ASP.NET Core rate-limiting conventions to endpoint builders by consulting the host\u0027s effective rate-limiting policy catalog.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -7680,6 +7695,36 @@
       }
     },
     {
+      "DisplayName": "RateLimitingOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-appmodel-ratelimitingoverrideselection",
+      "Declaration": "public sealed class RateLimitingOverrideSelection",
+      "Summary": "Describes one named rate-limiting override requested for a subset of transports or behaviors.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 10,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "RateLimitingOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-ratelimitingoverridesettings",
+      "Declaration": "public sealed class RateLimitingOverrideSettings",
+      "Summary": "Describes one named rate-limiting override configured for a subset of transports or behaviors.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 10,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "RateLimitingRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Resilience",
       "AssemblyName": "Cephalon.Abstractions",
@@ -7705,7 +7750,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 8,
+        "Properties": 9,
         "Methods": 0
       }
     },
@@ -7720,7 +7765,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 8,
+        "Properties": 9,
         "Methods": 0
       }
     },
@@ -10827,6 +10872,28 @@
     {
       "DisplayName": "Algorithm",
       "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-algorithm",
+      "Signature": "string Algorithm { get; }",
+      "Summary": "Gets the requested rate-limiting algorithm, such as \u0060FixedWindow\u0060 or \u0060TokenBucket\u0060."
+    },
+    {
+      "DisplayName": "Algorithm",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingoverridesettings-algorithm",
+      "Signature": "string Algorithm { get; }",
+      "Summary": "Gets the requested rate-limiting algorithm, such as \u0060FixedWindow\u0060 or \u0060TokenBucket\u0060."
+    },
+    {
+      "DisplayName": "Algorithm",
+      "Category": "Properties",
       "DeclaringTypeName": "RateLimitingSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -11197,6 +11264,17 @@
       "AnchorId": "member-m-cephalon-abstractions-eventsourcing-iaggregate-1-apply-0-cephalon-abstractions-eventsourcing-idomainevent",
       "Signature": "TState Apply(TState current, IDomainEvent evt)",
       "Summary": "Applies one event to the current state and returns the next state snapshot."
+    },
+    {
+      "DisplayName": "ApplyCephalonRateLimiting",
+      "Category": "Methods",
+      "DeclaringTypeName": "CephalonRateLimitingEndpointConventionBuilderExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-hosting-cephalonratelimitingendpointconventionbuilderextensions-applycephalonratelimiting-1-0-system-iserviceprovider-system-string-system-string",
+      "Signature": "TBuilder ApplyCephalonRateLimiting\u003CTBuilder\u003E(this TBuilder builder, IServiceProvider services, string transportId, string behaviorId)",
+      "Summary": "Applies the effective Cephalon rate-limiting policy for the supplied transport and optional behavior identifier onto the endpoint builder."
     },
     {
       "DisplayName": "ApplyOnStartup",
@@ -12209,6 +12287,28 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-behaviorid",
       "Signature": "string BehaviorId { get; }",
       "Summary": "Gets the stable behavior identifier."
+    },
+    {
+      "DisplayName": "BehaviorIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-behaviorids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E BehaviorIds { get; }",
+      "Summary": "Gets the behavior identifiers targeted by this override."
+    },
+    {
+      "DisplayName": "BehaviorIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingoverridesettings-behaviorids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E BehaviorIds { get; }",
+      "Summary": "Gets the targeted behavior identifiers."
     },
     {
       "DisplayName": "BehaviorNotFoundException",
@@ -17559,6 +17659,28 @@
     {
       "DisplayName": "Enabled",
       "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-enabled",
+      "Signature": "bool? Enabled { get; }",
+      "Summary": "Gets a value indicating whether rate limiting was explicitly enabled or disabled for the targeted surface."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingoverridesettings-enabled",
+      "Signature": "bool? Enabled { get; }",
+      "Summary": "Gets a value indicating whether rate limiting was explicitly enabled or disabled."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
       "DeclaringTypeName": "RateLimitingSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -20912,6 +21034,17 @@
       "Summary": "Gets the logical handler or consumer identifier that receives the event."
     },
     {
+      "DisplayName": "HasCephalonRateLimiting",
+      "Category": "Methods",
+      "DeclaringTypeName": "CephalonRateLimitingEndpointConventionBuilderExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-hosting-cephalonratelimitingendpointconventionbuilderextensions-hascephalonratelimiting-system-iserviceprovider-system-string-system-string",
+      "Signature": "bool HasCephalonRateLimiting(this IServiceProvider services, string transportId, string behaviorId)",
+      "Summary": "Determines whether the effective Cephalon rate-limiting policy for the supplied transport and optional behavior identifier actively enforces a limiter."
+    },
+    {
       "DisplayName": "HasMore",
       "Category": "Properties",
       "DeclaringTypeName": "AuditHistoryQueryResult",
@@ -21328,6 +21461,28 @@
       "AnchorId": "member-p-cephalon-engine-configuration-packagepolicy-hasvalues",
       "Signature": "bool HasValues { get; }",
       "Summary": "Gets a value indicating whether the policy differs from the default baseline."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any override values were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingoverridesettings-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any override settings were explicitly supplied."
     },
     {
       "DisplayName": "HasValues",
@@ -22626,6 +22781,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-projectiondescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable projection identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable override identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingoverridesettings-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable override identifier."
     },
     {
       "DisplayName": "Id",
@@ -27710,6 +27887,28 @@
       "Summary": "Gets the output directory where reference docs should be written."
     },
     {
+      "DisplayName": "Overrides",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingselection-overrides",
+      "Signature": "IReadOnlyList\u003CRateLimitingOverrideSelection\u003E Overrides { get; }",
+      "Summary": "Gets the named override policies targeted at specific transports or behaviors."
+    },
+    {
+      "DisplayName": "Overrides",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingsettings-overrides",
+      "Signature": "IReadOnlyList\u003CRateLimitingOverrideSettings\u003E Overrides { get; }",
+      "Summary": "Gets the named override policies targeted at specific transports or behaviors."
+    },
+    {
       "DisplayName": "OwnedBehaviorRegistration",
       "Category": "Constructors",
       "DeclaringTypeName": "OwnedBehaviorRegistration",
@@ -28434,6 +28633,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-outboxmessage-payload",
       "Signature": "string Payload { get; }",
       "Summary": "Gets the serialized payload that should be delivered later."
+    },
+    {
+      "DisplayName": "PermitLimit",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-permitlimit",
+      "Signature": "int? PermitLimit { get; }",
+      "Summary": "Gets the maximum permits available per limiter window or bucket."
+    },
+    {
+      "DisplayName": "PermitLimit",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingoverridesettings-permitlimit",
+      "Signature": "int? PermitLimit { get; }",
+      "Summary": "Gets the maximum permits available per limiter window or bucket."
     },
     {
       "DisplayName": "PermitLimit",
@@ -29318,6 +29539,28 @@
     {
       "DisplayName": "QueueLimit",
       "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-queuelimit",
+      "Signature": "int? QueueLimit { get; }",
+      "Summary": "Gets the maximum queued requests allowed before rejection."
+    },
+    {
+      "DisplayName": "QueueLimit",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingoverridesettings-queuelimit",
+      "Signature": "int? QueueLimit { get; }",
+      "Summary": "Gets the maximum queued requests allowed before rejection."
+    },
+    {
+      "DisplayName": "QueueLimit",
+      "Category": "Properties",
       "DeclaringTypeName": "RateLimitingSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -29393,6 +29636,28 @@
       "Summary": "Gets the rate-limiting settings resolved for the app."
     },
     {
+      "DisplayName": "RateLimitingOverrideSelection",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RateLimitingOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-appmodel-ratelimitingoverrideselection-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32",
+      "Signature": "RateLimitingOverrideSelection(string id, IReadOnlyList\u003Cstring\u003E behaviorIds, IReadOnlyList\u003Cstring\u003E transportIds, bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow)",
+      "Summary": "Initializes a new instance of the \u0060RateLimitingOverrideSelection\u0060 class."
+    },
+    {
+      "DisplayName": "RateLimitingOverrideSettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RateLimitingOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-ratelimitingoverridesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32",
+      "Signature": "RateLimitingOverrideSettings(string id, IReadOnlyList\u003Cstring\u003E behaviorIds, IReadOnlyList\u003Cstring\u003E transportIds, bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow)",
+      "Summary": "Initializes a new instance of the \u0060RateLimitingOverrideSettings\u0060 class."
+    },
+    {
       "DisplayName": "RateLimitingPolicies",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
@@ -29421,8 +29686,8 @@
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-appmodel-ratelimitingselection-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32",
-      "Signature": "RateLimitingSelection(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow)",
+      "AnchorId": "member-m-cephalon-abstractions-appmodel-ratelimitingselection-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-ratelimitingoverrideselection",
+      "Signature": "RateLimitingSelection(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow, IReadOnlyList\u003CRateLimitingOverrideSelection\u003E overrides)",
       "Summary": "Initializes a new instance of the \u0060RateLimitingSelection\u0060 class."
     },
     {
@@ -29432,8 +29697,8 @@
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-configuration-ratelimitingsettings-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32",
-      "Signature": "RateLimitingSettings(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow)",
+      "AnchorId": "member-m-cephalon-engine-configuration-ratelimitingsettings-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-collections-generic-ireadonlylist-cephalon-engine-configuration-ratelimitingoverridesettings",
+      "Signature": "RateLimitingSettings(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow, IReadOnlyList\u003CRateLimitingOverrideSettings\u003E overrides)",
       "Summary": "Initializes a new instance of the \u0060RateLimitingSettings\u0060 class."
     },
     {
@@ -32295,6 +32560,28 @@
       "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-securityprotocol",
       "Signature": "string SecurityProtocol { get; set; }",
       "Summary": "Gets or sets the optional Kafka security protocol, such as \u0060Plaintext\u0060, \u0060Ssl\u0060, \u0060SaslPlaintext\u0060, or \u0060SaslSsl\u0060."
+    },
+    {
+      "DisplayName": "SegmentsPerWindow",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-segmentsperwindow",
+      "Signature": "int? SegmentsPerWindow { get; }",
+      "Summary": "Gets the number of segments per window when sliding windows are used."
+    },
+    {
+      "DisplayName": "SegmentsPerWindow",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingoverridesettings-segmentsperwindow",
+      "Signature": "int? SegmentsPerWindow { get; }",
+      "Summary": "Gets the number of segments per window when sliding windows are used."
     },
     {
       "DisplayName": "SegmentsPerWindow",
@@ -35511,6 +35798,28 @@
     {
       "DisplayName": "TransportIds",
       "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-transportids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; }",
+      "Summary": "Gets the transport identifiers targeted by this override."
+    },
+    {
+      "DisplayName": "TransportIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingoverridesettings-transportids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; }",
+      "Summary": "Gets the targeted transport identifiers."
+    },
+    {
+      "DisplayName": "TransportIds",
+      "Category": "Properties",
       "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Resilience",
       "AssemblyName": "Cephalon.Abstractions",
@@ -36992,6 +37301,28 @@
       "AnchorId": "member-p-cephalon-engine-transports-builtintransports-websocket",
       "Signature": "TransportDescriptor WebSocket { get; }",
       "Summary": "Gets the built-in WebSocket transport descriptor."
+    },
+    {
+      "DisplayName": "WindowSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-windowseconds",
+      "Signature": "int? WindowSeconds { get; }",
+      "Summary": "Gets the limiter window duration in seconds when the selected algorithm uses windows."
+    },
+    {
+      "DisplayName": "WindowSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingoverridesettings-windowseconds",
+      "Signature": "int? WindowSeconds { get; }",
+      "Summary": "Gets the limiter window duration in seconds when the selected algorithm uses windows."
     },
     {
       "DisplayName": "WindowSeconds",

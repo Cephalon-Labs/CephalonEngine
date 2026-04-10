@@ -733,6 +733,57 @@ Parameters:
 - `fileName`: An optional download file name.
 - `cancellationToken`: The token that cancels the response stream.
 
+<a id="type-cephalon-aspnetcore-hosting-cephalonratelimitingendpointconventionbuilderextensions"></a>
+
+### `CephalonRateLimitingEndpointConventionBuilderExtensions`
+
+Applies Cephalon ASP.NET Core rate-limiting conventions to endpoint builders by consulting the host's effective rate-limiting policy catalog.
+
+#### Declaration
+```csharp
+public static class CephalonRateLimitingEndpointConventionBuilderExtensions
+```
+
+#### Methods
+
+<a id="member-m-cephalon-aspnetcore-hosting-cephalonratelimitingendpointconventionbuilderextensions-applycephalonratelimiting-1-0-system-iserviceprovider-system-string-system-string"></a>
+
+##### `ApplyCephalonRateLimiting`
+
+```csharp
+TBuilder ApplyCephalonRateLimiting<TBuilder>(this TBuilder builder, IServiceProvider services, string transportId, string behaviorId)
+```
+
+Applies the effective Cephalon rate-limiting policy for the supplied transport and optional behavior identifier onto the endpoint builder.
+
+Returns: The same builder instance for fluent composition.
+
+Type parameters:
+- `TBuilder`: The endpoint convention builder type.
+
+Parameters:
+- `builder`: The endpoint builder to configure.
+- `services`: The application service provider.
+- `transportId`: The transport identifier used by the endpoint.
+- `behaviorId`: The optional behavior identifier when the endpoint maps a single behavior.
+
+<a id="member-m-cephalon-aspnetcore-hosting-cephalonratelimitingendpointconventionbuilderextensions-hascephalonratelimiting-system-iserviceprovider-system-string-system-string"></a>
+
+##### `HasCephalonRateLimiting`
+
+```csharp
+bool HasCephalonRateLimiting(this IServiceProvider services, string transportId, string behaviorId)
+```
+
+Determines whether the effective Cephalon rate-limiting policy for the supplied transport and optional behavior identifier actively enforces a limiter.
+
+Returns: `true` when the endpoint will require a limiter; otherwise `false`.
+
+Parameters:
+- `services`: The application service provider.
+- `transportId`: The transport identifier used by the endpoint.
+- `behaviorId`: The optional behavior identifier when the endpoint maps a single behavior.
+
 <a id="type-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions"></a>
 
 ### `EngineWebApplicationBuilderExtensions`

@@ -73,7 +73,9 @@ public sealed class GraphqlHttpBehaviorBinding : IHttpBehaviorBinding
                         errors = new[] { new { message = ex.Message } }
                     });
                 }
-            }).ExcludeFromDescription();
+            })
+            .ApplyCephalonRateLimiting(app.Services, TransportId, descriptor.Id)
+            .ExcludeFromDescription();
         }
 
         return Task.CompletedTask;

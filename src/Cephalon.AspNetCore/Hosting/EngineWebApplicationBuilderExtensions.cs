@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -93,8 +94,17 @@ public static class EngineWebApplicationBuilderExtensions
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, EngineHostedService>());
         builder.AddReferenceDocsHosting();
         builder.Services.AddCephalon(builder.Configuration, configure);
-        builder.Services.TryAddSingleton<IRateLimitingRuntimeCatalog, AspNetCoreRateLimitingRuntimeCatalog>();
-        AddAspNetCoreRateLimiting(builder);
+        var referenceDocsOptions = ReferenceDocsHostingOptions.FromConfiguration(
+            builder.Configuration,
+            contentRootPath: builder.Environment.ContentRootPath);
+        var rateLimitingPolicyCatalog = CreateRateLimitingPolicyCatalog(
+            builder.Services,
+            builder.Configuration,
+            referenceDocsOptions);
+        builder.Services.AddSingleton(rateLimitingPolicyCatalog);
+        builder.Services.TryAddSingleton<IRateLimitingRuntimeCatalog>(_ =>
+            new AspNetCoreRateLimitingRuntimeCatalog(rateLimitingPolicyCatalog));
+        AddAspNetCoreRateLimiting(builder, rateLimitingPolicyCatalog);
 
         return builder;
     }
@@ -108,27 +118,35 @@ public static class EngineWebApplicationBuilderExtensions
         options.AddDocumentTransformer<ResultModelDocumentTransformer>();
     }
 
-    private static void AddAspNetCoreRateLimiting(WebApplicationBuilder builder)
+    private static AspNetCoreRateLimitingPolicyCatalog CreateRateLimitingPolicyCatalog(
+        IServiceCollection services,
+        IConfiguration configuration,
+        ReferenceDocsHostingOptions referenceDocsOptions)
     {
-        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configuration);
+        ArgumentNullException.ThrowIfNull(referenceDocsOptions);
 
-        var runtimeManifest = TryResolveRuntimeManifest(builder.Services);
+        var runtimeManifest = TryResolveRuntimeManifest(services);
         if (runtimeManifest is null)
         {
-            return;
+            return new AspNetCoreRateLimitingPolicyCatalog([]);
         }
 
-        var referenceDocsOptions = ReferenceDocsHostingOptions.FromConfiguration(
-            builder.Configuration,
-            contentRootPath: builder.Environment.ContentRootPath);
-        var resolvedPolicy = AspNetCoreRateLimitingPolicyResolver.Resolve(
+        return AspNetCoreRateLimitingPolicyResolver.ResolvePolicies(
             runtimeManifest,
-            builder.Configuration,
+            configuration,
             referenceDocsOptions);
-        if (!string.Equals(
-                resolvedPolicy.ExecutionMode,
-                AspNetCoreRateLimitingPolicyResolver.EnabledExecutionMode,
-                StringComparison.OrdinalIgnoreCase))
+    }
+
+    private static void AddAspNetCoreRateLimiting(
+        WebApplicationBuilder builder,
+        AspNetCoreRateLimitingPolicyCatalog policyCatalog)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(policyCatalog);
+
+        if (!policyCatalog.HasEnabledPolicies)
         {
             return;
         }
@@ -138,16 +156,15 @@ public static class EngineWebApplicationBuilderExtensions
         builder.Services.AddRateLimiter(options =>
         {
             options.RejectionStatusCode = AspNetCoreRateLimitingPolicyResolver.RejectionStatusCode;
-            options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+            foreach (var policy in policyCatalog.EnabledPolicies)
             {
-                if (ShouldBypassRateLimiting(httpContext, resolvedPolicy))
+                options.AddPolicy(policy.Id, httpContext =>
                 {
-                    return RateLimitPartition.GetNoLimiter("cephalon-rate-limit-excluded");
-                }
+                    var partitionKey = ResolveRateLimitingPartitionKey(httpContext);
+                    return CreatePartition(policy, partitionKey);
+                });
+            }
 
-                var partitionKey = ResolveRateLimitingPartitionKey(httpContext);
-                return CreatePartition(resolvedPolicy, partitionKey);
-            });
             options.OnRejected = (context, cancellationToken) =>
                 WriteRateLimitRejectedResponseAsync(context, apiRoutesOptions.UseResultModelEnvelope, cancellationToken);
         });
@@ -258,24 +275,6 @@ public static class EngineWebApplicationBuilderExtensions
         return context.Connection.RemoteIpAddress is not null
             ? "ip:" + context.Connection.RemoteIpAddress
             : "anonymous";
-    }
-
-    private static bool ShouldBypassRateLimiting(
-        HttpContext context,
-        ResolvedAspNetCoreRateLimitingPolicy resolvedPolicy)
-    {
-        ArgumentNullException.ThrowIfNull(context);
-        ArgumentNullException.ThrowIfNull(resolvedPolicy);
-
-        var path = context.Request.Path;
-        if (!path.HasValue)
-        {
-            return false;
-        }
-
-        return resolvedPolicy.ExcludedPathPrefixes.Any(prefix =>
-            !string.IsNullOrWhiteSpace(prefix) &&
-            path.StartsWithSegments(prefix, StringComparison.OrdinalIgnoreCase));
     }
 
     private static async ValueTask WriteRateLimitRejectedResponseAsync(
