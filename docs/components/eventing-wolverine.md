@@ -11,7 +11,7 @@
 - defaults to `dispatchBridge = consumer-managed` when the pack is only being used for host wiring and runtime-surface projection
 - can opt into a `wolverine-managed` durable dispatch loop on top of `IEventDispatchStore` by enabling `EnableDispatchLoop`
 - projects that managed loop back through hosted-execution, execution-graph, capability, and event-dispatch runtime surfaces without leaking Wolverine APIs into the core eventing contract
-- contributes named dispatch-runtime descriptors that flow through `/engine/event-dispatch-runtimes`, `/engine/event-dispatches`, and `snapshot.EventDispatchRuntimes` / `snapshot.EventDispatchStates`
+- contributes named dispatch-runtime descriptors that flow through `/engine/event-dispatch-runtimes`, `/engine/event-dispatches`, `/engine/outboxes`, and `snapshot.EventDispatchRuntimes` / `snapshot.EventDispatchStates`
 - contributes a dedicated diagnostics convention so `/engine/diagnostics` can advertise the Wolverine loop event ids and message templates alongside the shared eventing diagnostics catalog
 
 ## Main surfaces
@@ -34,6 +34,7 @@ That runtime story is now visible in three complementary places:
 
 - `wolverine-adapter` shows the adapter configuration plus aggregate dispatch state such as total reports, retry-pending count, and the latest observed outcome/error
 - `/engine/event-dispatch-runtimes` publishes the configured runtime descriptors such as the Wolverine-managed loop id, ownership metadata, and the outbox/runtime ids it is responsible for before any dispatch work occurs
+- `/engine/outboxes` now also shows the effective `DispatchPolicy` for each outbox, so the same managed loop is visible as `wolverine-managed` / `runtime-managed` without reading runtime-specific metadata by hand
 - `event-dispatches` can now project configured dispatch-runtime descriptor metadata for each outbox path before any runtime report exists, then layer the latest operator-facing report metadata on top once dispatch activity starts
 - `/engine/diagnostics` now exposes the Wolverine-specific loop diagnostics convention so host operators can discover the stable `4300-4303` event ids without reading the source
 
@@ -44,7 +45,7 @@ That means the package now has two truthful operating modes:
 
 The remaining work is therefore not to invent a first durable bridge from scratch, but to deepen observability, richer retry/runtime answers, and later broker-specific follow-through on top of the same `IEventDispatchStore` and `IEventDispatchRuntimeReporter` contract set.
 
-The showcase sample now wires this package directly, so local and test hosts can expose `/engine/event-dispatch-runtimes`, `/engine/event-dispatches`, and matching `snapshot.EventDispatchRuntimes` / `snapshot.EventDispatchStates` answers without custom host-only code.
+The showcase sample now wires this package directly, so local and test hosts can expose `/engine/event-dispatch-runtimes`, `/engine/event-dispatches`, `/engine/outboxes`, and matching `snapshot.EventDispatchRuntimes` / `snapshot.EventDispatchStates` answers without custom host-only code.
 
 ## Related docs
 

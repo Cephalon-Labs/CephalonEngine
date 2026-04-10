@@ -10,6 +10,11 @@ namespace Cephalon.Eventing.Services;
 public interface IEventDispatchStore
 {
     /// <summary>
+    /// Gets the outbox identifiers explicitly owned by the dispatch store.
+    /// </summary>
+    IReadOnlyList<string> OutboxIds { get; }
+
+    /// <summary>
     /// Reads pending staged events that are eligible for dispatch.
     /// </summary>
     /// <param name="maximumCount">The maximum number of staged events to read.</param>

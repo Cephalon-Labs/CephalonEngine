@@ -1321,6 +1321,18 @@ Remarks: This contract stays runtime-neutral on purpose. It does not claim broke
 public interface IEventDispatchStore
 ```
 
+#### Properties
+
+<a id="member-p-cephalon-eventing-services-ieventdispatchstore-outboxids"></a>
+
+##### `OutboxIds`
+
+```csharp
+IReadOnlyList<string> OutboxIds { get; }
+```
+
+Gets the outbox identifiers explicitly owned by the dispatch store.
+
 #### Methods
 
 <a id="member-m-cephalon-eventing-services-ieventdispatchstore-applyreportasync-cephalon-eventing-services-eventdispatchexecutionreport-system-threading-cancellationtoken"></a>

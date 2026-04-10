@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-10T17:57:59.2431599+00:00",
+  "GeneratedAtUtc": "2026-04-10T18:37:49.2100421+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 17,
-      "TypeCount": 178
+      "TypeCount": 180
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -507,7 +507,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 38
+      "TypeCount": 40
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3740,7 +3740,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 4,
+        "Properties": 5,
         "Methods": 0
       }
     },
@@ -5300,7 +5300,7 @@
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
-        "Properties": 0,
+        "Properties": 1,
         "Methods": 2
       }
     },
@@ -5856,6 +5856,21 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IOutboxDispatchPolicyCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-ioutboxdispatchpolicycatalog",
+      "Declaration": "public interface IOutboxDispatchPolicyCatalog",
+      "Summary": "Exposes the effective dispatch-execution policies visible to the current runtime for active outbox surfaces.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
         "Methods": 1
       }
     },
@@ -7100,8 +7115,23 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 9,
-        "Methods": 0
+        "Properties": 10,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "OutboxDispatchPolicyDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-outboxdispatchpolicydescriptor",
+      "Declaration": "public sealed class OutboxDispatchPolicyDescriptor",
+      "Summary": "Describes the active dispatch-execution policy for one durable outbox surface.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 1
       }
     },
     {
@@ -15247,6 +15277,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "OutboxDispatchPolicyDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable dispatch-policy description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "PatternDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -15553,6 +15594,17 @@
       "Summary": "Gets or sets the directory that contains the generated reference-doc output."
     },
     {
+      "DisplayName": "Disabled",
+      "Category": "Methods",
+      "DeclaringTypeName": "OutboxDispatchPolicyDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-outboxdispatchpolicydescriptor-disabled-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "OutboxDispatchPolicyDescriptor Disabled(string outboxId, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates the default disabled dispatch policy for an outbox."
+    },
+    {
       "DisplayName": "Discovery",
       "Category": "Properties",
       "DeclaringTypeName": "EngineSettings",
@@ -15628,6 +15680,17 @@
       "AnchorId": "member-p-cephalon-data-entityframework-modeling-entityframeworkoutboxentry-dispatchedatutc",
       "Signature": "DateTimeOffset? DispatchedAtUtc { get; set; }",
       "Summary": "Gets or sets the time at which the outbox row was dispatched, when known."
+    },
+    {
+      "DisplayName": "DispatchPolicy",
+      "Category": "Properties",
+      "DeclaringTypeName": "OutboxDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-outboxdescriptor-dispatchpolicy",
+      "Signature": "OutboxDispatchPolicyDescriptor DispatchPolicy { get; }",
+      "Summary": "Gets the effective dispatch-execution policy for the outbox."
     },
     {
       "DisplayName": "DispatchPollingIntervalSeconds",
@@ -15947,6 +16010,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-outboxdescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing outbox name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "OutboxDispatchPolicyDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing dispatch-policy name."
     },
     {
       "DisplayName": "DisplayName",
@@ -17473,8 +17547,8 @@
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchruntimedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "EventDispatchRuntimeDescriptor(string id, string displayName, string description, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchruntimedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string",
+      "Signature": "EventDispatchRuntimeDescriptor(string id, string displayName, string description, IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyList\u003Cstring\u003E outboxIds)",
       "Summary": "Creates a new event-dispatch runtime descriptor."
     },
     {
@@ -17938,6 +18012,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasemigrationdescriptor-executionmode",
       "Signature": "string ExecutionMode { get; }",
       "Summary": "Gets the runtime execution mode for this target."
+    },
+    {
+      "DisplayName": "ExecutionMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "OutboxDispatchPolicyDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-executionmode",
+      "Signature": "string ExecutionMode { get; }",
+      "Summary": "Gets the execution ownership mode for the outbox."
     },
     {
       "DisplayName": "ExitAfterApply",
@@ -19445,6 +19530,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchruntimecatalog-getbyoutboxid-system-string",
       "Signature": "EventDispatchRuntimeState GetByOutboxId(string outboxId)",
       "Summary": "Gets the latest reported dispatch state for one outbox-backed publication path."
+    },
+    {
+      "DisplayName": "GetByOutboxId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IOutboxDispatchPolicyCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ioutboxdispatchpolicycatalog-getbyoutboxid-system-string",
+      "Signature": "OutboxDispatchPolicyDescriptor GetByOutboxId(string outboxId)",
+      "Summary": "Gets the effective dispatch policy for one outbox by its stable identifier."
     },
     {
       "DisplayName": "GetByPattern",
@@ -24289,6 +24385,17 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "OutboxDispatchPolicyDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets operator-facing metadata associated with the dispatch policy."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "OutboxMessage",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -26031,9 +26138,20 @@
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-data-outboxdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "OutboxDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string mode, IReadOnlyList\u003Cstring\u003E channelIds, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "AnchorId": "member-m-cephalon-abstractions-data-outboxdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-cephalon-abstractions-data-outboxdispatchpolicydescriptor",
+      "Signature": "OutboxDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string mode, IReadOnlyList\u003Cstring\u003E channelIds, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata, OutboxDispatchPolicyDescriptor dispatchPolicy)",
       "Summary": "Creates a new outbox descriptor."
+    },
+    {
+      "DisplayName": "OutboxDispatchPolicyDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "OutboxDispatchPolicyDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-outboxdispatchpolicydescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "OutboxDispatchPolicyDescriptor(string outboxId, string policyId, string displayName, string description, string executionMode, string runtimeId, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new outbox dispatch-policy descriptor."
     },
     {
       "DisplayName": "OutboxEnabled",
@@ -26133,6 +26251,39 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimestate-outboxid",
       "Signature": "string OutboxId { get; set; }",
       "Summary": "The stable outbox identifier that owns the dispatch path."
+    },
+    {
+      "DisplayName": "OutboxId",
+      "Category": "Properties",
+      "DeclaringTypeName": "OutboxDispatchPolicyDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-outboxid",
+      "Signature": "string OutboxId { get; }",
+      "Summary": "Gets the stable outbox identifier that the policy applies to."
+    },
+    {
+      "DisplayName": "OutboxIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-outboxids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E OutboxIds { get; }",
+      "Summary": "Gets the outbox identifiers explicitly owned by the dispatch runtime."
+    },
+    {
+      "DisplayName": "OutboxIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "IEventDispatchStore",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-ieventdispatchstore-outboxids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E OutboxIds { get; }",
+      "Summary": "Gets the outbox identifiers explicitly owned by the dispatch store."
     },
     {
       "DisplayName": "OutboxMessage",
@@ -27092,6 +27243,17 @@
       "Summary": "Gets all authorization policies visible to the current runtime."
     },
     {
+      "DisplayName": "Policies",
+      "Category": "Properties",
+      "DeclaringTypeName": "IOutboxDispatchPolicyCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-ioutboxdispatchpolicycatalog-policies",
+      "Signature": "IReadOnlyList\u003COutboxDispatchPolicyDescriptor\u003E Policies { get; }",
+      "Summary": "Gets the effective dispatch policies visible to the current runtime."
+    },
+    {
       "DisplayName": "Policy",
       "Category": "Fields",
       "DeclaringTypeName": "AuthorizationMode",
@@ -27134,6 +27296,17 @@
       "AnchorId": "member-p-cephalon-abstractions-authorization-authorizationdecision-policyid",
       "Signature": "string PolicyId { get; }",
       "Summary": "Gets the policy identifier that produced the decision when one is known."
+    },
+    {
+      "DisplayName": "PolicyId",
+      "Category": "Properties",
+      "DeclaringTypeName": "OutboxDispatchPolicyDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-policyid",
+      "Signature": "string PolicyId { get; }",
+      "Summary": "Gets the stable dispatch-policy identifier."
     },
     {
       "DisplayName": "PolicyId",
@@ -30016,6 +30189,17 @@
       "AnchorId": "member-m-cephalon-engine-runtime-runtimehostedexecutionstate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-nullable-system-datetimeoffset",
       "Signature": "RuntimeHostedExecutionState(string HostedExecutionId, string DisplayName, string Description, string SourceModuleId, string SourceModuleVersion, string Kind, string ExecutionGraphId, bool StartsWithHost, DateTimeOffset? LoadedAtUtc, DateTimeOffset? ActivatedAtUtc, DateTimeOffset? DeactivatedAtUtc, string LastObservedPhase, DateTimeOffset? LastObservedAtUtc)",
       "Summary": "Describes the current operator-facing lifecycle state for one hosted execution visible to the runtime."
+    },
+    {
+      "DisplayName": "RuntimeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "OutboxDispatchPolicyDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-runtimeid",
+      "Signature": "string RuntimeId { get; }",
+      "Summary": "Gets the optional dispatch-runtime identifier that explicitly owns execution for the outbox."
     },
     {
       "DisplayName": "RuntimeIntrospectionSnapshot",
@@ -35043,6 +35227,17 @@
       "AnchorId": "member-m-cephalon-identity-aspnetcore-transports-rest-identityendpointconventionbuilderextensions-withcephalonauthenticationschemes-1-0-system-string",
       "Signature": "TBuilder WithCephalonAuthenticationSchemes\u003CTBuilder\u003E(this TBuilder builder, string[] authenticationSchemes)",
       "Summary": "Declares the ASP.NET Core authentication schemes that should own challenge and forbid responses for an endpoint or route group."
+    },
+    {
+      "DisplayName": "WithDispatchPolicy",
+      "Category": "Methods",
+      "DeclaringTypeName": "OutboxDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-outboxdescriptor-withdispatchpolicy-cephalon-abstractions-data-outboxdispatchpolicydescriptor",
+      "Signature": "OutboxDescriptor WithDispatchPolicy(OutboxDispatchPolicyDescriptor dispatchPolicy)",
+      "Summary": "Creates a copy of the outbox descriptor with a different dispatch policy."
     },
     {
       "DisplayName": "WithMetadata",

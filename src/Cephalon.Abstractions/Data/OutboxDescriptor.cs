@@ -17,6 +17,9 @@ public sealed class OutboxDescriptor
     /// <param name="channelIds">Optional channel identifiers that this outbox is explicitly scoped to.</param>
     /// <param name="tags">Optional descriptive tags associated with the outbox.</param>
     /// <param name="metadata">Optional operator-facing metadata associated with the outbox.</param>
+    /// <param name="dispatchPolicy">
+    /// The optional effective dispatch-execution policy. When omitted, Cephalon defaults the outbox to a disabled dispatch policy.
+    /// </param>
     public OutboxDescriptor(
         string id,
         string displayName,
@@ -26,7 +29,8 @@ public sealed class OutboxDescriptor
         string mode = "transactional-store",
         IReadOnlyList<string>? channelIds = null,
         IReadOnlyList<string>? tags = null,
-        IReadOnlyDictionary<string, string>? metadata = null)
+        IReadOnlyDictionary<string, string>? metadata = null,
+        OutboxDispatchPolicyDescriptor? dispatchPolicy = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -69,6 +73,7 @@ public sealed class OutboxDescriptor
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
+        DispatchPolicy = ValidateDispatchPolicy(dispatchPolicy, Id);
     }
 
     /// <summary>
@@ -116,6 +121,31 @@ public sealed class OutboxDescriptor
     /// </summary>
     public IReadOnlyDictionary<string, string> Metadata { get; }
 
+    /// <summary>
+    /// Gets the effective dispatch-execution policy for the outbox.
+    /// </summary>
+    public OutboxDispatchPolicyDescriptor DispatchPolicy { get; }
+
+    /// <summary>
+    /// Creates a copy of the outbox descriptor with a different dispatch policy.
+    /// </summary>
+    /// <param name="dispatchPolicy">The effective dispatch policy to apply.</param>
+    /// <returns>A new outbox descriptor with the requested dispatch policy.</returns>
+    public OutboxDescriptor WithDispatchPolicy(OutboxDispatchPolicyDescriptor dispatchPolicy)
+    {
+        return new OutboxDescriptor(
+            id: Id,
+            displayName: DisplayName,
+            description: Description,
+            sourceModuleId: SourceModuleId,
+            provider: Provider,
+            mode: Mode,
+            channelIds: ChannelIds,
+            tags: Tags,
+            metadata: Metadata,
+            dispatchPolicy: dispatchPolicy);
+    }
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?
@@ -124,5 +154,24 @@ public sealed class OutboxDescriptor
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
             .ToArray() ?? [];
+    }
+
+    private static OutboxDispatchPolicyDescriptor ValidateDispatchPolicy(
+        OutboxDispatchPolicyDescriptor? dispatchPolicy,
+        string outboxId)
+    {
+        if (dispatchPolicy is null)
+        {
+            return OutboxDispatchPolicyDescriptor.Disabled(outboxId);
+        }
+
+        if (!string.Equals(dispatchPolicy.OutboxId, outboxId, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                $"Dispatch policy outbox id '{dispatchPolicy.OutboxId}' does not match outbox '{outboxId}'.",
+                nameof(dispatchPolicy));
+        }
+
+        return dispatchPolicy;
     }
 }

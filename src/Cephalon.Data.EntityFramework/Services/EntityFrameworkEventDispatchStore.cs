@@ -9,6 +9,8 @@ internal sealed class EntityFrameworkEventDispatchStore(
     DbContext dbContext,
     IEntityFrameworkOutboxContext outboxContext) : IEventDispatchStore
 {
+    public IReadOnlyList<string> OutboxIds => [EntityFrameworkDataRuntimeIds.OutboxId];
+
     public async ValueTask<IReadOnlyList<EventDispatchItem>> ReadPendingAsync(
         int maximumCount,
         CancellationToken cancellationToken = default)

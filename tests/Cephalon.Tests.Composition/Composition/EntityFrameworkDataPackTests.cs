@@ -657,6 +657,9 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("entity-framework", outboxDescriptor.Provider);
         Assert.Equal("transactional-table", outboxDescriptor.Mode);
         Assert.Equal("not-configured", outboxDescriptor.Metadata["dispatchRuntime"]);
+        Assert.Equal("disabled", outboxDescriptor.DispatchPolicy.PolicyId);
+        Assert.Equal("disabled", outboxDescriptor.DispatchPolicy.ExecutionMode);
+        Assert.Equal("not-configured", outboxDescriptor.Metadata["dispatchStore"]);
         Assert.Equal("false", outboxDescriptor.Metadata["eventingLinked"]);
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "data.outbox");
     }
@@ -883,15 +886,21 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("transactional-table", outboxEntry.Metadata["mode"]);
         Assert.Equal("entity-framework-data", outboxEntry.Metadata["sourceModuleId"]);
         Assert.Equal("dynamic", outboxEntry.Metadata["channelMode"]);
+        Assert.Equal("consumer-managed", outboxEntry.Metadata["dispatchPolicyId"]);
+        Assert.Equal("consumer-managed", outboxEntry.Metadata["dispatchExecutionMode"]);
         Assert.Equal("outbox-backed-publisher", publisherEntry.Id);
         Assert.Equal("outbox", publisherEntry.Metadata["handoff"]);
         Assert.Equal("not-configured", publisherEntry.Metadata["dispatchRuntime"]);
         Assert.Equal("available", publisherEntry.Metadata["dispatchStore"]);
+        Assert.Equal("1", publisherEntry.Metadata["consumerManagedOutboxCount"]);
+        Assert.Equal("0", publisherEntry.Metadata["managedOutboxCount"]);
         Assert.Equal("catalog-events", publisherEntry.Metadata["channelIds"]);
         Assert.Equal("entity-framework-outbox", dispatchEntry.Id);
         Assert.Equal("available", dispatchEntry.Metadata["dispatchStore"]);
         Assert.Equal("not-reported", dispatchEntry.Metadata["runtimeState"]);
         Assert.Equal("entity-framework", dispatchEntry.Metadata["provider"]);
+        Assert.Equal("consumer-managed", dispatchEntry.Metadata["dispatchPolicyId"]);
+        Assert.Equal("consumer-managed", dispatchEntry.Metadata["dispatchExecutionMode"]);
         Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["runtimeState"] == "available");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["dispatchStore"] == "available");

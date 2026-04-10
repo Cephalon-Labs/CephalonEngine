@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Technologies;
 using System.Globalization;
@@ -8,8 +7,7 @@ namespace Cephalon.Eventing.Services;
 internal sealed class EventingPublishingRuntimeSurfaceContributor(
     IEventChannelCatalog channels,
     IOutboxCatalog outboxes,
-    IServiceProvider serviceProvider,
-    EventDispatchRuntimeDescriptorCatalog dispatchRuntimes) : ITechnologyRuntimeContributor
+    IEventDispatchRuntimeDescriptorCatalog dispatchRuntimes) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -18,12 +16,22 @@ internal sealed class EventingPublishingRuntimeSurfaceContributor(
             .Select(static channel => channel.Id)
             .OrderBy(static channelId => channelId, StringComparer.OrdinalIgnoreCase)
             .ToArray();
-
-        using var scope = serviceProvider.CreateScope();
-        var hasDispatchStore = scope.ServiceProvider.GetServices<IEventDispatchStore>().Any();
         var runtimeIds = dispatchRuntimes.Runtimes
             .Select(static runtime => runtime.Id)
             .OrderBy(static runtimeId => runtimeId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var hasDispatchStore = outboxEntries.Any(static outbox =>
+            !string.Equals(outbox.DispatchPolicy.ExecutionMode, "disabled", StringComparison.OrdinalIgnoreCase));
+        var managedOutboxCount = outboxEntries.Count(static outbox =>
+            string.Equals(outbox.DispatchPolicy.ExecutionMode, "runtime-managed", StringComparison.OrdinalIgnoreCase));
+        var consumerManagedOutboxCount = outboxEntries.Count(static outbox =>
+            string.Equals(outbox.DispatchPolicy.ExecutionMode, "consumer-managed", StringComparison.OrdinalIgnoreCase));
+        var disabledOutboxCount = outboxEntries.Count(static outbox =>
+            string.Equals(outbox.DispatchPolicy.ExecutionMode, "disabled", StringComparison.OrdinalIgnoreCase));
+        var dispatchPolicyIds = outboxEntries
+            .Select(static outbox => outbox.DispatchPolicy.PolicyId)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static policyId => policyId, StringComparer.OrdinalIgnoreCase)
             .ToArray();
 
         return new TechnologyRuntimeSurface(
@@ -46,6 +54,10 @@ internal sealed class EventingPublishingRuntimeSurfaceContributor(
                         ["channelIds"] = string.Join(",", channelIds),
                         ["outboxCount"] = outboxEntries.Length.ToString(CultureInfo.InvariantCulture),
                         ["outboxIds"] = string.Join(",", outboxEntries.Select(static outbox => outbox.Id)),
+                        ["managedOutboxCount"] = managedOutboxCount.ToString(CultureInfo.InvariantCulture),
+                        ["consumerManagedOutboxCount"] = consumerManagedOutboxCount.ToString(CultureInfo.InvariantCulture),
+                        ["disabledOutboxCount"] = disabledOutboxCount.ToString(CultureInfo.InvariantCulture),
+                        ["dispatchPolicyIds"] = string.Join(",", dispatchPolicyIds),
                         ["dispatchRuntimeCount"] = runtimeIds.Length.ToString(CultureInfo.InvariantCulture),
                         ["dispatchRuntimeIds"] = string.Join(",", runtimeIds)
                     })

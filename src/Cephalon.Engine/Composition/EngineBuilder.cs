@@ -603,6 +603,7 @@ public sealed class EngineBuilder
             Services.TryAddSingleton(technologySelection);
             Services.TryAddSingleton<IReadOnlyList<OwnedBehaviorRegistration>>(ownedBehaviorRegistrations);
             Services.TryAddSingleton<IReadOnlyList<AuditStoreDescriptor>>(_ => auditStores.ToArray());
+            Services.TryAddSingleton<IReadOnlyList<OutboxDescriptor>>(_ => outboxes.ToArray());
             Services.TryAddSingleton<DatabaseRoleCatalogSnapshot>(serviceProvider =>
                 new DatabaseRoleCatalogSnapshot(
                     appProfile,
@@ -615,7 +616,10 @@ public sealed class EngineBuilder
             Services.TryAddSingleton<IDatabaseMigrationCatalog>(serviceProvider =>
                 serviceProvider.GetRequiredService<DatabaseMigrationCatalogSnapshot>());
             Services.TryAddSingleton<IProjectionCatalog>(_ => new ProjectionCatalogSnapshot(projections));
-            Services.TryAddSingleton<IOutboxCatalog>(_ => new OutboxCatalogSnapshot(outboxes));
+            Services.TryAddSingleton<IOutboxCatalog>(serviceProvider =>
+                new OutboxCatalogSnapshot(
+                    serviceProvider.GetRequiredService<IReadOnlyList<OutboxDescriptor>>(),
+                    serviceProvider.GetService<IOutboxDispatchPolicyCatalog>()));
             Services.TryAddSingleton<IInboxCatalog>(_ => new InboxCatalogSnapshot(inboxes));
             Services.TryAddSingleton<IAuditStoreCatalog>(_ => new AuditStoreCatalogSnapshot(auditStores));
             Services.TryAddSingleton<IAuthorizationPolicyCatalog>(_ => new AuthorizationPolicyCatalogSnapshot(authorizationPolicies));

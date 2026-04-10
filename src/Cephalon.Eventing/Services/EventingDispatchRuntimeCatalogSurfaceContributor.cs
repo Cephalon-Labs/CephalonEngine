@@ -18,7 +18,18 @@ internal sealed class EventingDispatchRuntimeCatalogSurfaceContributor(
                     id: runtime.Id,
                     displayName: runtime.DisplayName,
                     description: runtime.Description,
-                    metadata: runtime.Metadata))
+                    metadata: CreateMetadata(runtime)))
                 .ToArray());
+    }
+
+    private static Dictionary<string, string> CreateMetadata(EventDispatchRuntimeDescriptor runtime)
+    {
+        var metadata = new Dictionary<string, string>(runtime.Metadata, StringComparer.OrdinalIgnoreCase)
+        {
+            ["outboxCount"] = runtime.OutboxIds.Count.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["outboxIds"] = string.Join(",", runtime.OutboxIds)
+        };
+
+        return metadata;
     }
 }

@@ -203,14 +203,20 @@ public sealed class ShowcaseSampleHostingTests
 
         var runtimes = await client.GetFromJsonAsync<EventDispatchRuntimeDescriptor[]>("/engine/event-dispatch-runtimes");
         var runtime = await client.GetFromJsonAsync<EventDispatchRuntimeDescriptor>("/engine/event-dispatch-runtimes/wolverine-dispatch-loop");
+        var outboxes = await client.GetFromJsonAsync<OutboxDescriptor[]>("/engine/outboxes");
         var snapshot = await client.GetFromJsonAsync<Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
         Assert.NotNull(runtimes);
         var descriptor = Assert.Single(runtimes);
         Assert.Equal("wolverine-dispatch-loop", descriptor.Id);
         Assert.Equal("wolverine", descriptor.Metadata["adapter"]);
+        Assert.Equal(["entity-framework-outbox"], descriptor.OutboxIds);
         Assert.NotNull(runtime);
         Assert.Equal("wolverine-dispatch-loop", runtime.Id);
+        Assert.NotNull(outboxes);
+        var outbox = Assert.Single(outboxes);
+        Assert.Equal("wolverine-managed", outbox.DispatchPolicy.PolicyId);
+        Assert.Equal("runtime-managed", outbox.DispatchPolicy.ExecutionMode);
         Assert.NotNull(snapshot);
         Assert.Single(snapshot.EventDispatchRuntimes);
         Assert.Equal("wolverine-dispatch-loop", snapshot.EventDispatchRuntimes[0].Id);

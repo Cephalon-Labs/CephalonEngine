@@ -53,6 +53,28 @@ public sealed class Phase8ContractTests
         Assert.Equal(["outbox", "tenant"], descriptor.Tags);
         Assert.Equal("not-configured", descriptor.Metadata["dispatchruntime"]);
         Assert.Equal("durable", descriptor.Metadata["consistency"]);
+        Assert.Equal("disabled", descriptor.DispatchPolicy.PolicyId);
+        Assert.Equal("disabled", descriptor.DispatchPolicy.ExecutionMode);
+        Assert.Equal("tenant-event-outbox", descriptor.DispatchPolicy.OutboxId);
+    }
+
+    [Fact]
+    public void EventDispatchRuntimeDescriptorNormalizesOwnedOutboxIdsAndMetadata()
+    {
+        var descriptor = new EventDispatchRuntimeDescriptor(
+            id: "wolverine-dispatch-loop",
+            displayName: "Wolverine Dispatch Loop",
+            description: "Manages staged event handoff through Wolverine.",
+            metadata: new Dictionary<string, string?>
+            {
+                ["Adapter"] = "wolverine",
+                ["DispatchBridge"] = "wolverine-managed"
+            }!.ToDictionary(pair => pair.Key, pair => pair.Value ?? string.Empty, StringComparer.OrdinalIgnoreCase),
+            outboxIds: [" entity-framework-outbox ", "ENTITY-FRAMEWORK-OUTBOX", "catalog-outbox"]);
+
+        Assert.Equal(["catalog-outbox", "entity-framework-outbox"], descriptor.OutboxIds);
+        Assert.Equal("wolverine", descriptor.Metadata["adapter"]);
+        Assert.Equal("wolverine-managed", descriptor.Metadata["dispatchbridge"]);
     }
 
     [Fact]

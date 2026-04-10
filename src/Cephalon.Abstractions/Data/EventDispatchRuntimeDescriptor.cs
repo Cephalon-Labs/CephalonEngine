@@ -12,11 +12,15 @@ public sealed class EventDispatchRuntimeDescriptor
     /// <param name="displayName">The operator-facing dispatch-runtime name.</param>
     /// <param name="description">The human-readable dispatch-runtime description.</param>
     /// <param name="metadata">Optional operator-facing metadata for the dispatch runtime.</param>
+    /// <param name="outboxIds">
+    /// Optional outbox identifiers explicitly owned by the dispatch runtime when execution ownership is bounded to specific outboxes.
+    /// </param>
     public EventDispatchRuntimeDescriptor(
         string id,
         string displayName,
         string description,
-        IReadOnlyDictionary<string, string>? metadata = null)
+        IReadOnlyDictionary<string, string>? metadata = null,
+        IReadOnlyList<string>? outboxIds = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -39,6 +43,7 @@ public sealed class EventDispatchRuntimeDescriptor
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
+        OutboxIds = Normalize(outboxIds);
     }
 
     /// <summary>
@@ -60,4 +65,19 @@ public sealed class EventDispatchRuntimeDescriptor
     /// Gets operator-facing metadata for the dispatch runtime.
     /// </summary>
     public IReadOnlyDictionary<string, string> Metadata { get; }
+
+    /// <summary>
+    /// Gets the outbox identifiers explicitly owned by the dispatch runtime.
+    /// </summary>
+    public IReadOnlyList<string> OutboxIds { get; }
+
+    private static string[] Normalize(IReadOnlyList<string>? values)
+    {
+        return values?
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Select(static value => value.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
+            .ToArray() ?? [];
+    }
 }

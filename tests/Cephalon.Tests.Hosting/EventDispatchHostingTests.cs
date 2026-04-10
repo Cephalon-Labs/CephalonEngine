@@ -61,6 +61,7 @@ public sealed class EventDispatchHostingTests
         var client = app.GetTestClient();
         var runtimeDescriptors = await client.GetFromJsonAsync<EventDispatchRuntimeDescriptor[]>("/engine/event-dispatch-runtimes");
         var runtimeDescriptor = await client.GetFromJsonAsync<EventDispatchRuntimeDescriptor>("/engine/event-dispatch-runtimes/wolverine-dispatch-loop");
+        var outboxes = await client.GetFromJsonAsync<OutboxDescriptor[]>("/engine/outboxes");
         var initialStates = await client.GetFromJsonAsync<EventDispatchRuntimeState[]>("/engine/event-dispatches");
         var missingStateResponse = await client.GetAsync("/engine/event-dispatches/entity-framework-outbox");
 
@@ -68,8 +69,14 @@ public sealed class EventDispatchHostingTests
         var descriptor = Assert.Single(runtimeDescriptors);
         Assert.Equal("wolverine-dispatch-loop", descriptor.Id);
         Assert.Equal("wolverine", descriptor.Metadata["adapter"]);
+        Assert.Equal(["entity-framework-outbox"], descriptor.OutboxIds);
         Assert.NotNull(runtimeDescriptor);
         Assert.Equal("wolverine-dispatch-loop", runtimeDescriptor.Id);
+        Assert.NotNull(outboxes);
+        var outbox = Assert.Single(outboxes);
+        Assert.Equal("wolverine-managed", outbox.DispatchPolicy.PolicyId);
+        Assert.Equal("runtime-managed", outbox.DispatchPolicy.ExecutionMode);
+        Assert.Equal("wolverine-dispatch-loop", outbox.DispatchPolicy.RuntimeId);
         Assert.NotNull(initialStates);
         Assert.Empty(initialStates);
         Assert.Equal(HttpStatusCode.NotFound, missingStateResponse.StatusCode);

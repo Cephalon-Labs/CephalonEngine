@@ -54,6 +54,8 @@ public sealed class WolverineEventingPackTests
         var technologyCatalog = provider.GetRequiredService<global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeCatalog>();
         var diagnosticsCatalog = provider.GetRequiredService<IRuntimeDiagnosticsCatalog>();
         var messageBus = provider.GetService<IMessageBus>();
+        var outboxCatalog = provider.GetRequiredService<IOutboxCatalog>();
+        var outboxDescriptor = Assert.Single(outboxCatalog.Outboxes);
 
         Assert.NotNull(messageBus);
         var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
@@ -64,6 +66,8 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("consumer-managed", adapterEntry.Metadata["dispatchBridge"]);
         Assert.Equal("available", adapterEntry.Metadata["dispatchStore"]);
         Assert.Contains("EntityFrameworkEventDispatchStore", adapterEntry.Metadata["dispatchStoreTypes"], StringComparison.Ordinal);
+        Assert.Equal("consumer-managed", outboxDescriptor.DispatchPolicy.PolicyId);
+        Assert.Equal("consumer-managed", outboxDescriptor.DispatchPolicy.ExecutionMode);
         Assert.Empty(diagnosticsCatalog.GetBySource("Cephalon.Eventing.Wolverine"));
         Assert.Contains(
             runtime.Manifest.Capabilities,
@@ -114,6 +118,7 @@ public sealed class WolverineEventingPackTests
         var hostedExecutions = provider.GetRequiredService<global::Cephalon.Abstractions.Execution.IHostedExecutionRuntimeCatalog>();
         var technologyCatalog = provider.GetRequiredService<global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeCatalog>();
         var hostedServices = provider.GetServices<IHostedService>();
+        var outboxCatalog = provider.GetRequiredService<IOutboxCatalog>();
         var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
         var hostedExecution = Assert.Single(hostedExecutions.HostedExecutions, execution => execution.Id == WolverineEventingRuntimeIds.HostedExecutionId);
         var adapterSurface = Assert.Single(
@@ -123,6 +128,7 @@ public sealed class WolverineEventingPackTests
         var adapterEntry = Assert.Single(adapterSurface.Entries, entry => entry.Id == "wolverine-eventing");
         var dispatchEntry = Assert.Single(dispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
         var dispatchRuntimeDescriptor = Assert.Single(dispatchRuntimeDescriptors.Runtimes);
+        var outboxDescriptor = Assert.Single(outboxCatalog.Outboxes);
 
         Assert.Equal("wolverine-managed", adapterEntry.Metadata["dispatchBridge"]);
         Assert.Equal("enabled", adapterEntry.Metadata["dispatchLoop"]);
@@ -143,6 +149,10 @@ public sealed class WolverineEventingPackTests
         Assert.Equal(WolverineEventingRuntimeIds.DispatchRuntimeId, dispatchRuntimeDescriptor.Id);
         Assert.Equal("Wolverine Dispatch Loop", dispatchRuntimeDescriptor.DisplayName);
         Assert.Equal("wolverine", dispatchRuntimeDescriptor.Metadata["adapter"]);
+        Assert.Equal(["entity-framework-outbox"], dispatchRuntimeDescriptor.OutboxIds);
+        Assert.Equal("wolverine-managed", outboxDescriptor.DispatchPolicy.PolicyId);
+        Assert.Equal("runtime-managed", outboxDescriptor.DispatchPolicy.ExecutionMode);
+        Assert.Equal(WolverineEventingRuntimeIds.DispatchRuntimeId, outboxDescriptor.DispatchPolicy.RuntimeId);
         var diagnosticsConvention = Assert.Single(diagnosticsCatalog.GetBySource("Cephalon.Eventing.Wolverine"));
         Assert.Equal(4300, diagnosticsConvention.MinimumEventId);
         Assert.Equal(4305, diagnosticsConvention.MaximumEventId);
@@ -358,6 +368,12 @@ public sealed class WolverineEventingPackTests
     private sealed class TestEventDispatchStore(params EventDispatchItem[] items) : IEventDispatchStore
     {
         private readonly List<EventDispatchItem> pendingItems = [.. items];
+
+        public IReadOnlyList<string> OutboxIds { get; } = items
+            .Select(static item => item.OutboxId)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static outboxId => outboxId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
 
         public List<EventDispatchExecutionReport> AppliedReports { get; } = [];
 

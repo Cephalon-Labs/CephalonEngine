@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Technologies;
 using System.Globalization;
@@ -8,33 +7,39 @@ namespace Cephalon.Eventing.Services;
 internal sealed class EventingDispatchRuntimeSurfaceContributor(
     IOutboxCatalog outboxes,
     IEventDispatchRuntimeCatalog runtimeCatalog,
-    IServiceProvider serviceProvider,
-    EventDispatchRuntimeDescriptorCatalog dispatchRuntimes) : ITechnologyRuntimeContributor
+    IEventDispatchRuntimeDescriptorCatalog dispatchRuntimes) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
-        using var scope = serviceProvider.CreateScope();
-        var dispatchStores = scope.ServiceProvider.GetServices<IEventDispatchStore>();
-
         return new TechnologyRuntimeSurface(
             technologyId: "event-driven-integration",
             surfaceId: "event-dispatches",
             displayName: "Event Dispatches",
             description: "Reported runtime state for durable event-dispatch paths backed by the active outbox surfaces.",
             entries: outboxes.Outboxes
-                .Select(outbox => CreateEntry(outbox, dispatchStores))
+                .Select(CreateEntry)
                 .ToArray());
     }
 
-    private TechnologyRuntimeEntry CreateEntry(OutboxDescriptor outbox, IEnumerable<IEventDispatchStore> dispatchStores)
+    private TechnologyRuntimeEntry CreateEntry(OutboxDescriptor outbox)
     {
+        var matchingRuntimes = dispatchRuntimes.Runtimes
+            .Where(runtime => runtime.OutboxIds.Contains(outbox.Id, StringComparer.OrdinalIgnoreCase))
+            .OrderBy(static runtime => runtime.Id, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
         var metadata = new Dictionary<string, string>(outbox.Metadata, StringComparer.OrdinalIgnoreCase)
         {
             ["sourceModuleId"] = outbox.SourceModuleId,
-            ["dispatchStore"] = dispatchStores.Any() ? "available" : "not-configured",
-            ["dispatchRuntime"] = dispatchRuntimes.Runtimes.Count > 0 ? "configured" : "not-configured",
+            ["dispatchStore"] = string.Equals(outbox.DispatchPolicy.ExecutionMode, "disabled", StringComparison.OrdinalIgnoreCase)
+                ? "not-configured"
+                : "available",
+            ["dispatchRuntime"] = string.IsNullOrWhiteSpace(outbox.DispatchPolicy.RuntimeId)
+                ? "not-configured"
+                : "configured",
             ["provider"] = outbox.Provider,
-            ["mode"] = outbox.Mode
+            ["mode"] = outbox.Mode,
+            ["dispatchPolicyId"] = outbox.DispatchPolicy.PolicyId,
+            ["dispatchExecutionMode"] = outbox.DispatchPolicy.ExecutionMode
         };
 
         if (outbox.ChannelIds.Count > 0)
@@ -47,20 +52,22 @@ internal sealed class EventingDispatchRuntimeSurfaceContributor(
             metadata["tags"] = string.Join(",", outbox.Tags);
         }
 
-        if (dispatchRuntimes.Runtimes.Count > 0)
+        if (!string.IsNullOrWhiteSpace(outbox.DispatchPolicy.RuntimeId))
         {
-            metadata["dispatchRuntimeCount"] = dispatchRuntimes.Runtimes.Count.ToString(CultureInfo.InvariantCulture);
-            metadata["dispatchRuntimeIds"] = string.Join(
-                ",",
-                dispatchRuntimes.Runtimes
-                    .Select(static runtime => runtime.Id)
-                    .OrderBy(static runtimeId => runtimeId, StringComparer.OrdinalIgnoreCase));
+            metadata["dispatchRuntimeId"] = outbox.DispatchPolicy.RuntimeId;
+        }
 
-            foreach (var runtime in dispatchRuntimes.Runtimes
-                         .OrderBy(static runtime => runtime.Id, StringComparer.OrdinalIgnoreCase))
+        if (matchingRuntimes.Length > 0)
+        {
+            metadata["dispatchRuntimeCount"] = matchingRuntimes.Length.ToString(CultureInfo.InvariantCulture);
+            metadata["dispatchRuntimeIds"] = string.Join(",", matchingRuntimes.Select(static runtime => runtime.Id));
+
+            foreach (var runtime in matchingRuntimes)
             {
                 metadata[$"dispatchRuntime.{runtime.Id}.displayName"] = runtime.DisplayName;
                 metadata[$"dispatchRuntime.{runtime.Id}.description"] = runtime.Description;
+                metadata[$"dispatchRuntime.{runtime.Id}.outboxCount"] = runtime.OutboxIds.Count.ToString(CultureInfo.InvariantCulture);
+                metadata[$"dispatchRuntime.{runtime.Id}.outboxIds"] = string.Join(",", runtime.OutboxIds);
 
                 foreach (var pair in runtime.Metadata.OrderBy(static pair => pair.Key, StringComparer.OrdinalIgnoreCase))
                 {

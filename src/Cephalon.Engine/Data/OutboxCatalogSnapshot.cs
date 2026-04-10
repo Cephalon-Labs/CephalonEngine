@@ -10,11 +10,15 @@ internal sealed class OutboxCatalogSnapshot : IOutboxCatalog
     private readonly Dictionary<string, IReadOnlyList<OutboxDescriptor>> outboxesByProvider;
     private readonly Dictionary<string, IReadOnlyList<OutboxDescriptor>> outboxesByChannelId;
 
-    public OutboxCatalogSnapshot(IEnumerable<OutboxDescriptor> outboxes)
+    public OutboxCatalogSnapshot(
+        IEnumerable<OutboxDescriptor> outboxes,
+        IOutboxDispatchPolicyCatalog? dispatchPolicyCatalog = null)
     {
         ArgumentNullException.ThrowIfNull(outboxes);
 
-        this.outboxes = outboxes.ToArray();
+        this.outboxes = outboxes
+            .Select(outbox => ApplyDispatchPolicy(outbox, dispatchPolicyCatalog))
+            .ToArray();
         outboxesById = this.outboxes.ToDictionary(static outbox => outbox.Id, StringComparer.OrdinalIgnoreCase);
         outboxesBySourceModule = this.outboxes
             .GroupBy(static outbox => outbox.SourceModuleId, StringComparer.OrdinalIgnoreCase)
@@ -85,5 +89,46 @@ internal sealed class OutboxCatalogSnapshot : IOutboxCatalog
         return outboxesByChannelId.TryGetValue(channelId.Trim(), out var matches)
             ? matches
             : [];
+    }
+
+    private static OutboxDescriptor ApplyDispatchPolicy(
+        OutboxDescriptor outbox,
+        IOutboxDispatchPolicyCatalog? dispatchPolicyCatalog)
+    {
+        var policy = dispatchPolicyCatalog?.GetByOutboxId(outbox.Id) ?? outbox.DispatchPolicy;
+        var metadata = new Dictionary<string, string>(outbox.Metadata, StringComparer.OrdinalIgnoreCase)
+        {
+            ["dispatchPolicyId"] = policy.PolicyId,
+            ["dispatchPolicyDisplayName"] = policy.DisplayName,
+            ["dispatchExecutionMode"] = policy.ExecutionMode,
+            ["dispatchOwnership"] = policy.ExecutionMode,
+            ["dispatchBridge"] = policy.PolicyId,
+            ["dispatchStore"] = string.Equals(policy.ExecutionMode, "disabled", StringComparison.OrdinalIgnoreCase)
+                ? "not-configured"
+                : "available",
+            ["dispatchRuntime"] = string.IsNullOrWhiteSpace(policy.RuntimeId)
+                ? "not-configured"
+                : "configured",
+            ["dispatchRuntimeId"] = string.IsNullOrWhiteSpace(policy.RuntimeId)
+                ? "not-configured"
+                : policy.RuntimeId
+        };
+
+        foreach (var pair in policy.Metadata)
+        {
+            metadata[$"dispatchPolicy.{pair.Key}"] = pair.Value;
+        }
+
+        return new OutboxDescriptor(
+            id: outbox.Id,
+            displayName: outbox.DisplayName,
+            description: outbox.Description,
+            sourceModuleId: outbox.SourceModuleId,
+            provider: outbox.Provider,
+            mode: outbox.Mode,
+            channelIds: outbox.ChannelIds,
+            tags: outbox.Tags,
+            metadata: metadata,
+            dispatchPolicy: policy);
     }
 }

@@ -7240,12 +7240,12 @@ public sealed class EventDispatchRuntimeDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-data-eventdispatchruntimedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-data-eventdispatchruntimedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string"></a>
 
 ##### `EventDispatchRuntimeDescriptor`
 
 ```csharp
-EventDispatchRuntimeDescriptor(string id, string displayName, string description, IReadOnlyDictionary<string, string> metadata)
+EventDispatchRuntimeDescriptor(string id, string displayName, string description, IReadOnlyDictionary<string, string> metadata, IReadOnlyList<string> outboxIds)
 ```
 
 Creates a new event-dispatch runtime descriptor.
@@ -7255,6 +7255,7 @@ Parameters:
 - `displayName`: The operator-facing dispatch-runtime name.
 - `description`: The human-readable dispatch-runtime description.
 - `metadata`: Optional operator-facing metadata for the dispatch runtime.
+- `outboxIds`: Optional outbox identifiers explicitly owned by the dispatch runtime when execution ownership is bounded to specific outboxes.
 
 #### Properties
 
@@ -7297,6 +7298,16 @@ IReadOnlyDictionary<string, string> Metadata { get; }
 ```
 
 Gets operator-facing metadata for the dispatch runtime.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-outboxids"></a>
+
+##### `OutboxIds`
+
+```csharp
+IReadOnlyList<string> OutboxIds { get; }
+```
+
+Gets the outbox identifiers explicitly owned by the dispatch runtime.
 
 <a id="type-cephalon-abstractions-data-eventdispatchruntimestate"></a>
 
@@ -8409,6 +8420,46 @@ Registers one or more outbox descriptors with the supplied registry.
 Parameters:
 - `outboxes`: The registry that collects contributed outbox descriptors.
 
+<a id="type-cephalon-abstractions-data-ioutboxdispatchpolicycatalog"></a>
+
+### `IOutboxDispatchPolicyCatalog`
+
+Exposes the effective dispatch-execution policies visible to the current runtime for active outbox surfaces.
+
+#### Declaration
+```csharp
+public interface IOutboxDispatchPolicyCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-ioutboxdispatchpolicycatalog-policies"></a>
+
+##### `Policies`
+
+```csharp
+IReadOnlyList<OutboxDispatchPolicyDescriptor> Policies { get; }
+```
+
+Gets the effective dispatch policies visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-ioutboxdispatchpolicycatalog-getbyoutboxid-system-string"></a>
+
+##### `GetByOutboxId`
+
+```csharp
+OutboxDispatchPolicyDescriptor GetByOutboxId(string outboxId)
+```
+
+Gets the effective dispatch policy for one outbox by its stable identifier.
+
+Returns: The matching dispatch policy, or `null` when the outbox is not active.
+
+Parameters:
+- `outboxId`: The stable outbox identifier to resolve.
+
 <a id="type-cephalon-abstractions-data-ioutboxregistry"></a>
 
 ### `IOutboxRegistry`
@@ -8719,12 +8770,12 @@ public sealed class OutboxDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-data-outboxdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-data-outboxdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-cephalon-abstractions-data-outboxdispatchpolicydescriptor"></a>
 
 ##### `OutboxDescriptor`
 
 ```csharp
-OutboxDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string mode, IReadOnlyList<string> channelIds, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+OutboxDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string mode, IReadOnlyList<string> channelIds, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata, OutboxDispatchPolicyDescriptor dispatchPolicy)
 ```
 
 Creates a new outbox descriptor.
@@ -8739,6 +8790,7 @@ Parameters:
 - `channelIds`: Optional channel identifiers that this outbox is explicitly scoped to.
 - `tags`: Optional descriptive tags associated with the outbox.
 - `metadata`: Optional operator-facing metadata associated with the outbox.
+- `dispatchPolicy`: The optional effective dispatch-execution policy. When omitted, Cephalon defaults the outbox to a disabled dispatch policy.
 
 #### Properties
 
@@ -8761,6 +8813,16 @@ string Description { get; }
 ```
 
 Gets the human-readable outbox description.
+
+<a id="member-p-cephalon-abstractions-data-outboxdescriptor-dispatchpolicy"></a>
+
+##### `DispatchPolicy`
+
+```csharp
+OutboxDispatchPolicyDescriptor DispatchPolicy { get; }
+```
+
+Gets the effective dispatch-execution policy for the outbox.
 
 <a id="member-p-cephalon-abstractions-data-outboxdescriptor-displayname"></a>
 
@@ -8831,6 +8893,145 @@ IReadOnlyList<string> Tags { get; }
 ```
 
 Gets descriptive tags associated with the outbox.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-outboxdescriptor-withdispatchpolicy-cephalon-abstractions-data-outboxdispatchpolicydescriptor"></a>
+
+##### `WithDispatchPolicy`
+
+```csharp
+OutboxDescriptor WithDispatchPolicy(OutboxDispatchPolicyDescriptor dispatchPolicy)
+```
+
+Creates a copy of the outbox descriptor with a different dispatch policy.
+
+Returns: A new outbox descriptor with the requested dispatch policy.
+
+Parameters:
+- `dispatchPolicy`: The effective dispatch policy to apply.
+
+<a id="type-cephalon-abstractions-data-outboxdispatchpolicydescriptor"></a>
+
+### `OutboxDispatchPolicyDescriptor`
+
+Describes the active dispatch-execution policy for one durable outbox surface.
+
+#### Declaration
+```csharp
+public sealed class OutboxDispatchPolicyDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-outboxdispatchpolicydescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `OutboxDispatchPolicyDescriptor`
+
+```csharp
+OutboxDispatchPolicyDescriptor(string outboxId, string policyId, string displayName, string description, string executionMode, string runtimeId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new outbox dispatch-policy descriptor.
+
+Parameters:
+- `outboxId`: The stable outbox identifier that the policy applies to.
+- `policyId`: The stable dispatch-policy identifier.
+- `displayName`: The operator-facing dispatch-policy name.
+- `description`: The human-readable dispatch-policy description.
+- `executionMode`: The execution ownership mode, such as `disabled`, `consumer-managed`, or `runtime-managed`.
+- `runtimeId`: The optional dispatch-runtime identifier that explicitly owns execution for the outbox when the policy is runtime-managed.
+- `metadata`: Optional operator-facing metadata associated with the dispatch policy.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable dispatch-policy description.
+
+<a id="member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing dispatch-policy name.
+
+<a id="member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-executionmode"></a>
+
+##### `ExecutionMode`
+
+```csharp
+string ExecutionMode { get; }
+```
+
+Gets the execution ownership mode for the outbox.
+
+<a id="member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata associated with the dispatch policy.
+
+<a id="member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-outboxid"></a>
+
+##### `OutboxId`
+
+```csharp
+string OutboxId { get; }
+```
+
+Gets the stable outbox identifier that the policy applies to.
+
+<a id="member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-policyid"></a>
+
+##### `PolicyId`
+
+```csharp
+string PolicyId { get; }
+```
+
+Gets the stable dispatch-policy identifier.
+
+<a id="member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-runtimeid"></a>
+
+##### `RuntimeId`
+
+```csharp
+string RuntimeId { get; }
+```
+
+Gets the optional dispatch-runtime identifier that explicitly owns execution for the outbox.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-outboxdispatchpolicydescriptor-disabled-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `Disabled`
+
+```csharp
+OutboxDispatchPolicyDescriptor Disabled(string outboxId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates the default disabled dispatch policy for an outbox.
+
+Returns: The default disabled dispatch policy descriptor.
+
+Parameters:
+- `outboxId`: The stable outbox identifier.
+- `metadata`: Optional operator-facing metadata associated with the policy.
 
 <a id="type-cephalon-abstractions-data-outboxmessage"></a>
 

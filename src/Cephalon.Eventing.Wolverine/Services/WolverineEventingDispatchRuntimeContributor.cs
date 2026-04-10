@@ -1,11 +1,13 @@
 using Cephalon.Abstractions.Data;
 using Cephalon.Eventing.Services;
 using Cephalon.Eventing.Wolverine.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Eventing.Wolverine.Services;
 
 internal sealed class WolverineEventingDispatchRuntimeContributor(
-    WolverineEventingOptions options) : IEventDispatchRuntimeContributor
+    WolverineEventingOptions options,
+    IServiceProvider serviceProvider) : IEventDispatchRuntimeContributor
 {
     public void RegisterDispatchRuntimes(IEventDispatchRuntimeRegistry dispatchRuntimes)
     {
@@ -15,6 +17,13 @@ internal sealed class WolverineEventingDispatchRuntimeContributor(
         {
             return;
         }
+
+        using var scope = serviceProvider.CreateScope();
+        var outboxIds = scope.ServiceProvider.GetServices<IEventDispatchStore>()
+            .SelectMany(static dispatchStore => dispatchStore.OutboxIds)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static outboxId => outboxId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
 
         dispatchRuntimes.Add(new EventDispatchRuntimeDescriptor(
             id: WolverineEventingRuntimeIds.DispatchRuntimeId,
@@ -29,6 +38,7 @@ internal sealed class WolverineEventingDispatchRuntimeContributor(
                 ["publisherId"] = WolverineEventingRuntimeIds.PublisherId,
                 ["hostedExecutionId"] = WolverineEventingRuntimeIds.HostedExecutionId,
                 ["executionGraphId"] = WolverineEventingRuntimeIds.ExecutionGraphId
-            }));
+            },
+            outboxIds: outboxIds));
     }
 }
