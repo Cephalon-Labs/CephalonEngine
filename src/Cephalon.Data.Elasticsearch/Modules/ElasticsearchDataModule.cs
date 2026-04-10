@@ -4,8 +4,10 @@ using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.Elasticsearch.Configuration;
 using Cephalon.Data.Elasticsearch.Services;
+using Cephalon.Engine.Configuration;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Transport;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -36,7 +38,14 @@ internal sealed class ElasticsearchDataModule(ElasticsearchDataOptions options)
 
         services.TryAddSingleton<ElasticsearchClient>(_ =>
         {
-            var settings = new ElasticsearchClientSettings(new Uri(options.Uri));
+            var effectiveUri = UriResolution.Resolve(
+                _.GetService<IConfiguration>(),
+                options.Uri,
+                options.UriName,
+                ElasticsearchDataOptions.DefaultUri,
+                ElasticsearchDataOptions.SectionPath,
+                "Elasticsearch");
+            var settings = new ElasticsearchClientSettings(new Uri(effectiveUri));
             if (!string.IsNullOrWhiteSpace(options.Username))
             {
                 settings = settings.Authentication(new BasicAuthentication(options.Username, options.Password ?? string.Empty));
@@ -77,7 +86,7 @@ internal sealed class ElasticsearchDataModule(ElasticsearchDataOptions options)
         ArgumentNullException.ThrowIfNull(capabilities);
         capabilities.Add(new Capability("data.elasticsearch", "Elasticsearch Data Provider",
             "Registers Elasticsearch as the backing data provider for Cephalon data workloads.",
-            new Dictionary<string, string> { ["pack"] = "Cephalon.Data.Elasticsearch", ["provider"] = ElasticsearchDataOptions.ProviderId }));
+            CreateProviderMetadata()));
         capabilities.Add(new Capability("data.search-store", "Search Store",
             "The active data provider is a search-oriented document store.",
             new Dictionary<string, string> { ["pack"] = "Cephalon.Data.Elasticsearch", ["provider"] = ElasticsearchDataOptions.ProviderId }));
@@ -134,6 +143,26 @@ internal sealed class ElasticsearchDataModule(ElasticsearchDataOptions options)
                 ["channelMode"] = "dynamic",
                 ["idempotency"] = "message-id",
                 ["subscriptionRuntime"] = "not-configured"
-            }));
+            })); 
+    }
+
+    private Dictionary<string, string> CreateProviderMetadata()
+    {
+        var metadata = new Dictionary<string, string>
+        {
+            ["pack"] = "Cephalon.Data.Elasticsearch",
+            ["provider"] = ElasticsearchDataOptions.ProviderId
+        };
+
+        if (!string.IsNullOrWhiteSpace(options.Uri))
+        {
+            metadata["uri"] = options.Uri.Trim();
+        }
+        else if (!string.IsNullOrWhiteSpace(options.UriName))
+        {
+            metadata["uriName"] = options.UriName.Trim();
+        }
+
+        return metadata;
     }
 }

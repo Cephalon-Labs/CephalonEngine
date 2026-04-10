@@ -4,6 +4,8 @@ using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.OpenSearch.Configuration;
 using Cephalon.Data.OpenSearch.Services;
+using Cephalon.Engine.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using OpenSearch.Client;
@@ -35,7 +37,14 @@ internal sealed class OpenSearchDataModule(OpenSearchDataOptions options)
 
         services.TryAddSingleton<OpenSearchClient>(_ =>
         {
-            var settings = new ConnectionSettings(new Uri(options.Uri));
+            var effectiveUri = UriResolution.Resolve(
+                _.GetService<IConfiguration>(),
+                options.Uri,
+                options.UriName,
+                OpenSearchDataOptions.DefaultUri,
+                OpenSearchDataOptions.SectionPath,
+                "OpenSearch");
+            var settings = new ConnectionSettings(new Uri(effectiveUri));
             if (!string.IsNullOrWhiteSpace(options.Username))
             {
                 settings = settings.BasicAuthentication(options.Username, options.Password ?? string.Empty);
@@ -76,7 +85,7 @@ internal sealed class OpenSearchDataModule(OpenSearchDataOptions options)
         ArgumentNullException.ThrowIfNull(capabilities);
         capabilities.Add(new Capability("data.opensearch", "OpenSearch Data Provider",
             "Registers OpenSearch as the backing data provider for Cephalon data workloads.",
-            new Dictionary<string, string> { ["pack"] = "Cephalon.Data.OpenSearch", ["provider"] = OpenSearchDataOptions.ProviderId }));
+            CreateProviderMetadata()));
         capabilities.Add(new Capability("data.search-store", "Search Store",
             "The active data provider is a search-oriented document store.",
             new Dictionary<string, string> { ["pack"] = "Cephalon.Data.OpenSearch", ["provider"] = OpenSearchDataOptions.ProviderId }));
@@ -133,6 +142,26 @@ internal sealed class OpenSearchDataModule(OpenSearchDataOptions options)
                 ["channelMode"] = "dynamic",
                 ["idempotency"] = "message-id",
                 ["subscriptionRuntime"] = "not-configured"
-            }));
+            })); 
+    }
+
+    private Dictionary<string, string> CreateProviderMetadata()
+    {
+        var metadata = new Dictionary<string, string>
+        {
+            ["pack"] = "Cephalon.Data.OpenSearch",
+            ["provider"] = OpenSearchDataOptions.ProviderId
+        };
+
+        if (!string.IsNullOrWhiteSpace(options.Uri))
+        {
+            metadata["uri"] = options.Uri.Trim();
+        }
+        else if (!string.IsNullOrWhiteSpace(options.UriName))
+        {
+            metadata["uriName"] = options.UriName.Trim();
+        }
+
+        return metadata;
     }
 }

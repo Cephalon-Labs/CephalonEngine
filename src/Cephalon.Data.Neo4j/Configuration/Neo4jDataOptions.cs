@@ -5,11 +5,22 @@ namespace Cephalon.Data.Neo4j.Configuration;
 /// </summary>
 public sealed class Neo4jDataOptions
 {
+    /// <summary>The configuration section path used by default for Neo4j data settings.</summary>
+    public const string SectionPath = "Engine:Data:Neo4j";
+
     /// <summary>The provider identifier used in capability and descriptor metadata.</summary>
     public const string ProviderId = "neo4j";
 
-    /// <summary>The Neo4j Bolt URI (e.g. <c>bolt://localhost:7687</c>).</summary>
-    public string Uri { get; set; } = "bolt://localhost:7687";
+    /// <summary>The default Neo4j Bolt URI used when neither URI setting is supplied.</summary>
+    public const string DefaultUri = "bolt://localhost:7687";
+
+    /// <summary>The root <c>Uris</c> entry name to resolve for Neo4j.</summary>
+    /// <remarks>Use either <see cref="UriName" /> or <see cref="Uri" />.</remarks>
+    public string? UriName { get; set; }
+
+    /// <summary>The inline Neo4j Bolt URI (e.g. <c>bolt://localhost:7687</c>).</summary>
+    /// <remarks>Use either <see cref="Uri" /> or <see cref="UriName" />.</remarks>
+    public string? Uri { get; set; }
 
     /// <summary>Neo4j username.</summary>
     public string Username { get; set; } = "neo4j";

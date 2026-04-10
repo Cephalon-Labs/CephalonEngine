@@ -4,6 +4,8 @@ using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.Nats.Configuration;
 using Cephalon.Data.Nats.Services;
+using Cephalon.Engine.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NATS.Client.Core;
@@ -34,7 +36,17 @@ internal sealed class NatsDataModule(NatsDataOptions options) : ModuleBase, IInb
 
         // NatsConnection does NOT connect on construction — connection is deferred to first use.
         // This allows DI resolution tests without a live NATS server.
-        services.TryAddSingleton<INatsConnection>(_ => new NatsConnection(new NatsOpts { Url = options.Url }));
+        services.TryAddSingleton<INatsConnection>(serviceProvider =>
+        {
+            var effectiveUri = UriResolution.Resolve(
+                serviceProvider.GetService<IConfiguration>(),
+                options.Uri,
+                options.UriName,
+                NatsDataOptions.DefaultUri,
+                NatsDataOptions.SectionPath,
+                "NATS");
+            return new NatsConnection(new NatsOpts { Url = effectiveUri });
+        });
 
         var outboxBucket = $"{options.BucketPrefix}-outbox";
         var inboxBucket = $"{options.BucketPrefix}-inbox";
@@ -89,12 +101,7 @@ internal sealed class NatsDataModule(NatsDataOptions options) : ModuleBase, IInb
             key: "data.nats",
             displayName: "NATS Data Provider",
             description: "Registers NATS JetStream KV as the backing data provider for Cephalon data workloads.",
-            metadata: new Dictionary<string, string>
-            {
-                ["pack"] = "Cephalon.Data.Nats",
-                ["provider"] = NatsDataOptions.ProviderId,
-                ["url"] = options.Url
-            }));
+            metadata: CreateProviderMetadata()));
 
         capabilities.Add(new Capability(
             key: "data.ledger-store",
@@ -187,6 +194,26 @@ internal sealed class NatsDataModule(NatsDataOptions options) : ModuleBase, IInb
                 ["dispatchRuntime"] = "not-configured",
                 ["channelMode"] = "dynamic",
                 ["subscriptionRuntime"] = "not-configured"
-            }));
+            })); 
+    }
+
+    private Dictionary<string, string> CreateProviderMetadata()
+    {
+        var metadata = new Dictionary<string, string>
+        {
+            ["pack"] = "Cephalon.Data.Nats",
+            ["provider"] = NatsDataOptions.ProviderId
+        };
+
+        if (!string.IsNullOrWhiteSpace(options.Uri))
+        {
+            metadata["uri"] = options.Uri.Trim();
+        }
+        else if (!string.IsNullOrWhiteSpace(options.UriName))
+        {
+            metadata["uriName"] = options.UriName.Trim();
+        }
+
+        return metadata;
     }
 }

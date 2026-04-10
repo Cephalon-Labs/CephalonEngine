@@ -54,11 +54,43 @@ engine.AddOpenSearchData("https://my-cluster.opensearch.example.com:9200", optio
 });
 ```
 
+To resolve the node URI from the root `Uris` section:
+
+```csharp
+engine.AddOpenSearchData(options =>
+{
+    options.UriName = "SearchCluster";
+    options.Username = "admin";
+    options.Password = "secret";
+    options.RegisterOutbox = true;
+});
+```
+
+```json
+{
+  "Uris": {
+    "SearchCluster": "https://my-cluster.opensearch.example.com:9200"
+  },
+  "Engine": {
+    "Data": {
+      "OpenSearch": {
+        "UriName": "SearchCluster",
+        "IndexPrefix": "myapp-"
+      }
+    }
+  }
+}
+```
+
+`UriName` and `Uri` are mutually exclusive. If both are set, the pack throws during service
+registration. Leaving both unset falls back to `http://localhost:9200`.
+
 ## Configuration options
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `Uri` | `string` | `"http://localhost:9200"` | OpenSearch node URI |
+| `UriName` | `string?` | `null` | Root `Uris` key to resolve for OpenSearch |
+| `Uri` | `string?` | `null` | Inline OpenSearch node URI |
 | `Username` | `string?` | `null` | Optional username for Basic authentication |
 | `Password` | `string?` | `null` | Optional password for Basic authentication |
 | `IndexPrefix` | `string` | `""` | Prefix applied to all Cephalon-managed index names |

@@ -40,7 +40,7 @@ To enable the outbox and inbox paths:
 
 ```csharp
 engine.AddNatsData(
-    url: "nats://localhost:4222",
+    uri: "nats://localhost:4222",
     configure: options =>
     {
         options.RegisterOutbox = true;
@@ -49,11 +49,43 @@ engine.AddNatsData(
     });
 ```
 
+To resolve the server URI from the root `Uris` section:
+
+```csharp
+engine.AddNatsData(options =>
+{
+    options.UriName = "Messaging";
+    options.RegisterOutbox = true;
+    options.RegisterInbox = true;
+    options.BucketPrefix = "myapp";
+});
+```
+
+```json
+{
+  "Uris": {
+    "Messaging": "nats://localhost:4222"
+  },
+  "Engine": {
+    "Data": {
+      "Nats": {
+        "UriName": "Messaging",
+        "BucketPrefix": "myapp"
+      }
+    }
+  }
+}
+```
+
+`UriName` and `Uri` are mutually exclusive. If both are set, the pack throws during service
+registration. Leaving both unset falls back to `nats://localhost:4222`.
+
 ## Configuration options
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `Url` | `string` | `"nats://localhost:4222"` | NATS server URL |
+| `UriName` | `string?` | `null` | Root `Uris` key to resolve for NATS |
+| `Uri` | `string?` | `null` | Inline NATS server URI |
 | `BucketPrefix` | `string` | `"cephalon"` | Prefix applied to all managed JetStream KV bucket names |
 | `RegisterOutbox` | `bool` | `false` | Register `IOutbox` backed by a NATS JetStream KV bucket |
 | `RegisterInbox` | `bool` | `false` | Register `IInbox` backed by a NATS JetStream KV bucket |

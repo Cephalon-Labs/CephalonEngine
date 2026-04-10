@@ -6,6 +6,7 @@ using Cephalon.Engine.Configuration;
 using Cephalon.EventSourcing.Neo4j;
 using Cephalon.EventSourcing.Neo4j.Hosting;
 using Cephalon.Tests.Support;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Neo4j.Driver;
 
@@ -202,5 +203,40 @@ public sealed class Neo4jDataPackTests
         Assert.Contains(runtime.Manifest.Capabilities, c => c.Key == "data.graph-store");
         Assert.DoesNotContain(runtime.Manifest.Capabilities, c => c.Key == "data.outbox.neo4j");
         Assert.DoesNotContain(runtime.Manifest.Capabilities, c => c.Key == "data.inbox.neo4j");
+    }
+
+    [Fact]
+    public void AddNeo4jData_UsesNamedUriFromConfiguration()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Uris:Graph"] = OfflineUri
+            })
+            .Build();
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"],
+                data: new DataSettings(provider: "Neo4j")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddNeo4jData(options =>
+            {
+                options.UriName = "Graph";
+                options.Username = OfflineUsername;
+                options.Password = OfflinePassword;
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var driver = provider.GetRequiredService<IDriver>();
+        var runtime = provider.GetRequiredService<Cephalon.Engine.Runtime.IRuntime>();
+        var capability = Assert.Single(runtime.Manifest.Capabilities, c => c.Key == "data.neo4j");
+
+        Assert.NotNull(driver);
+        Assert.Equal("Graph", capability.Metadata["uriName"]);
     }
 }

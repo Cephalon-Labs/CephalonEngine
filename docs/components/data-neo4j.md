@@ -55,11 +55,44 @@ engine.AddNeo4jData(
     });
 ```
 
+To resolve the Bolt URI from the root `Uris` section:
+
+```csharp
+engine.AddNeo4jData(options =>
+{
+    options.UriName = "Graph";
+    options.Username = "neo4j";
+    options.Password = "secret";
+    options.RegisterOutbox = true;
+});
+```
+
+```json
+{
+  "Uris": {
+    "Graph": "bolt://localhost:7687"
+  },
+  "Engine": {
+    "Data": {
+      "Neo4j": {
+        "UriName": "Graph",
+        "Username": "neo4j",
+        "Password": "secret"
+      }
+    }
+  }
+}
+```
+
+`UriName` and `Uri` are mutually exclusive. If both are set, the pack throws during service
+registration. Leaving both unset falls back to `bolt://localhost:7687`.
+
 ## Configuration options
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `Uri` | `string` | `"bolt://localhost:7687"` | Neo4j Bolt URI |
+| `UriName` | `string?` | `null` | Root `Uris` key to resolve for Neo4j |
+| `Uri` | `string?` | `null` | Inline Neo4j Bolt URI |
 | `Username` | `string` | `"neo4j"` | Neo4j username |
 | `Password` | `string` | `""` | Neo4j password |
 | `LabelPrefix` | `string` | `"Cephalon"` | Prefix applied to all managed node labels |

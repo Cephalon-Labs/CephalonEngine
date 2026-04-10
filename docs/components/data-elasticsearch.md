@@ -54,11 +54,43 @@ engine.AddElasticsearchData("https://my-cluster.es.io:9200", options =>
 });
 ```
 
+To resolve the node URI from the root `Uris` section:
+
+```csharp
+engine.AddElasticsearchData(options =>
+{
+    options.UriName = "SearchCluster";
+    options.Username = "elastic";
+    options.Password = "secret";
+    options.RegisterOutbox = true;
+});
+```
+
+```json
+{
+  "Uris": {
+    "SearchCluster": "https://my-cluster.es.io:9200"
+  },
+  "Engine": {
+    "Data": {
+      "Elasticsearch": {
+        "UriName": "SearchCluster",
+        "IndexPrefix": "myapp-"
+      }
+    }
+  }
+}
+```
+
+`UriName` and `Uri` are mutually exclusive. If both are set, the pack throws during service
+registration. Leaving both unset falls back to `http://localhost:9200`.
+
 ## Configuration options
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `Uri` | `string` | `"http://localhost:9200"` | Elasticsearch node URI |
+| `UriName` | `string?` | `null` | Root `Uris` key to resolve for Elasticsearch |
+| `Uri` | `string?` | `null` | Inline Elasticsearch node URI |
 | `Username` | `string?` | `null` | Optional username for Basic authentication |
 | `Password` | `string?` | `null` | Optional password for Basic authentication |
 | `IndexPrefix` | `string` | `""` | Prefix applied to all Cephalon-managed index names |

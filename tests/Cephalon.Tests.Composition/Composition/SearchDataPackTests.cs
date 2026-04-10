@@ -6,6 +6,7 @@ using Cephalon.Data.OpenSearch.Registration;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Tests.Support;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Composition;
@@ -94,6 +95,39 @@ public sealed class SearchDataPackTests
         Assert.Equal("message-id", descriptor.Metadata["idempotency"]);
     }
 
+    [Fact]
+    public void AddElasticsearchData_UsesNamedUriFromConfiguration()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Uris:SearchCluster"] = "http://configured-es:9200"
+            })
+            .Build();
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"],
+                data: new DataSettings(provider: "Elasticsearch")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddElasticsearchData(options =>
+            {
+                options.UriName = "SearchCluster";
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var client = provider.GetRequiredService<Elastic.Clients.Elasticsearch.ElasticsearchClient>();
+        var runtime = provider.GetRequiredService<Cephalon.Engine.Runtime.IRuntime>();
+        var capability = Assert.Single(runtime.Manifest.Capabilities, c => c.Key == "data.elasticsearch");
+
+        Assert.NotNull(client);
+        Assert.Equal("SearchCluster", capability.Metadata["uriName"]);
+    }
+
     // === OpenSearch ===
 
     [Fact]
@@ -174,5 +208,38 @@ public sealed class SearchDataPackTests
         Assert.Equal("opensearch-inbox", descriptor.Id);
         Assert.Equal(OpenSearchDataOptions.ProviderId, descriptor.Provider);
         Assert.Equal("message-id", descriptor.Metadata["idempotency"]);
+    }
+
+    [Fact]
+    public void AddOpenSearchData_ThrowsWhenBothUriAndUriNameAreConfigured()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Uris:SearchCluster"] = "http://configured-os:9200"
+            })
+            .Build();
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"],
+                data: new DataSettings(provider: "OpenSearch")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddOpenSearchData(options =>
+            {
+                options.Uri = "http://inline-os:9200";
+                options.UriName = "SearchCluster";
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            provider.GetRequiredService<OpenSearch.Client.OpenSearchClient>());
+
+        Assert.Contains("either UriName or Uri", exception.Message, StringComparison.Ordinal);
     }
 }

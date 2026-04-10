@@ -6,6 +6,7 @@ using Cephalon.Data.Qdrant.Registration;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Tests.Support;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Composition;
@@ -150,5 +151,34 @@ public sealed class VectorLedgerDataPackTests
         Assert.Equal("nats-inbox", descriptor.Id);
         Assert.Equal(NatsDataOptions.ProviderId, descriptor.Provider);
         Assert.Equal("kv-create", descriptor.Metadata["idempotency"]);
+    }
+
+    [Fact]
+    public void AddNatsData_UsesNamedUriFromConfiguration()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Uris:Messaging"] = "nats://configured:4222"
+            })
+            .Build();
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(blueprint: "ModularVerticalSlice", patterns: ["CQRS"], data: new DataSettings(provider: "Nats")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddNatsData(options =>
+            {
+                options.UriName = "Messaging";
+            });
+        });
+        using var provider = services.BuildServiceProvider();
+        var connection = provider.GetRequiredService<NATS.Client.Core.INatsConnection>();
+        var runtime = provider.GetRequiredService<Cephalon.Engine.Runtime.IRuntime>();
+        var capability = Assert.Single(runtime.Manifest.Capabilities, c => c.Key == "data.nats");
+
+        Assert.NotNull(connection);
+        Assert.Equal("Messaging", capability.Metadata["uriName"]);
     }
 }

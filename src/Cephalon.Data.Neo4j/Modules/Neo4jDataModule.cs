@@ -4,6 +4,8 @@ using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.Neo4j.Configuration;
 using Cephalon.Data.Neo4j.Services;
+using Cephalon.Engine.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Neo4j.Driver;
@@ -32,8 +34,17 @@ internal sealed class Neo4jDataModule(Neo4jDataOptions options) : ModuleBase, II
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.TryAddSingleton<IDriver>(_ =>
-            GraphDatabase.Driver(options.Uri, AuthTokens.Basic(options.Username, options.Password)));
+        services.TryAddSingleton<IDriver>(serviceProvider =>
+        {
+            var effectiveUri = UriResolution.Resolve(
+                serviceProvider.GetService<IConfiguration>(),
+                options.Uri,
+                options.UriName,
+                Neo4jDataOptions.DefaultUri,
+                Neo4jDataOptions.SectionPath,
+                "Neo4j");
+            return GraphDatabase.Driver(effectiveUri, AuthTokens.Basic(options.Username, options.Password));
+        });
 
         if (options.RegisterOutbox)
         {
@@ -85,12 +96,7 @@ internal sealed class Neo4jDataModule(Neo4jDataOptions options) : ModuleBase, II
             key: "data.neo4j",
             displayName: "Neo4j Data Provider",
             description: "Registers Neo4j graph store as the backing data provider for Cephalon data workloads.",
-            metadata: new Dictionary<string, string>
-            {
-                ["pack"] = "Cephalon.Data.Neo4j",
-                ["provider"] = Neo4jDataOptions.ProviderId,
-                ["uri"] = options.Uri
-            }));
+            metadata: CreateProviderMetadata()));
 
         capabilities.Add(new Capability(
             key: "data.graph-store",
@@ -183,6 +189,26 @@ internal sealed class Neo4jDataModule(Neo4jDataOptions options) : ModuleBase, II
                 ["dispatchRuntime"] = "not-configured",
                 ["channelMode"] = "dynamic",
                 ["subscriptionRuntime"] = "not-configured"
-            }));
+            })); 
+    }
+
+    private Dictionary<string, string> CreateProviderMetadata()
+    {
+        var metadata = new Dictionary<string, string>
+        {
+            ["pack"] = "Cephalon.Data.Neo4j",
+            ["provider"] = Neo4jDataOptions.ProviderId
+        };
+
+        if (!string.IsNullOrWhiteSpace(options.Uri))
+        {
+            metadata["uri"] = options.Uri.Trim();
+        }
+        else if (!string.IsNullOrWhiteSpace(options.UriName))
+        {
+            metadata["uriName"] = options.UriName.Trim();
+        }
+
+        return metadata;
     }
 }
