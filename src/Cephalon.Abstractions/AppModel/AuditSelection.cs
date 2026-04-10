@@ -16,10 +16,14 @@ public sealed class AuditSelection
     /// Initializes a new instance of the <see cref="AuditSelection" /> class.
     /// </summary>
     /// <param name="enabled">Whether audit support was explicitly enabled.</param>
+    /// <param name="history">The durable audit-history inputs resolved for the app.</param>
     [JsonConstructor]
-    public AuditSelection(bool? enabled = null)
+    public AuditSelection(
+        bool? enabled = null,
+        AuditHistorySelection? history = null)
     {
         Enabled = enabled;
+        History = history ?? AuditHistorySelection.Empty;
     }
 
     /// <summary>
@@ -28,7 +32,14 @@ public sealed class AuditSelection
     public bool? Enabled { get; }
 
     /// <summary>
+    /// Gets the durable audit-history inputs resolved for the app.
+    /// </summary>
+    public AuditHistorySelection History { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any audit-selection inputs were explicitly supplied.
     /// </summary>
-    public bool HasValues => Enabled.HasValue;
+    public bool HasValues =>
+        Enabled.HasValue ||
+        History.HasValues;
 }

@@ -34,6 +34,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.AppModel.AppBlueprint).Assembly,
             typeof(global::Cephalon.Abstractions.AppModel.AppBlueprint),
             typeof(global::Cephalon.Abstractions.AppModel.AppProfile),
+            typeof(global::Cephalon.Abstractions.AppModel.AuditHistorySelection),
             typeof(global::Cephalon.Abstractions.AppModel.AuditSelection),
             typeof(global::Cephalon.Abstractions.AppModel.DataSelection),
             typeof(global::Cephalon.Abstractions.AppModel.DatabaseMigrationsSelection),
@@ -58,6 +59,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Audit.AuditStoreDescriptor),
             typeof(global::Cephalon.Abstractions.Audit.IAuditStoreCatalog),
             typeof(global::Cephalon.Abstractions.Audit.IAuditStoreContributor),
+            typeof(global::Cephalon.Abstractions.Audit.IAuditStoreRuntimeContributor),
             typeof(global::Cephalon.Abstractions.Audit.IAuditStoreRegistry),
             typeof(global::Cephalon.Abstractions.Audit.IAuditWriter),
             typeof(global::Cephalon.Abstractions.Authorization.AuthorizationContext),
@@ -602,12 +604,15 @@ public sealed class PackageSurfaceTests
         AssertExportedTypes(
             typeof(global::Cephalon.Data.EntityFramework.Registration.EntityFrameworkDataEngineBuilderExtensions).Assembly,
             typeof(global::Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions),
+            typeof(global::Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleResolver),
             typeof(global::Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext),
             typeof(global::Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry),
             typeof(global::Cephalon.Data.EntityFramework.Modeling.EntityFrameworkModelBuilderExtensions),
             typeof(global::Cephalon.Data.EntityFramework.Modeling.IEntityFrameworkInboxContext),
             typeof(global::Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry),
             typeof(global::Cephalon.Data.EntityFramework.Modeling.IEntityFrameworkOutboxContext),
+            typeof(global::Cephalon.Data.EntityFramework.Services.EntityFrameworkDatabaseMigrationHostedService),
+            typeof(global::Cephalon.Data.EntityFramework.Services.EntityFrameworkDatabaseMigrationRegistration),
             typeof(global::Cephalon.Data.EntityFramework.Registration.EntityFrameworkDataEngineBuilderExtensions));
     }
 
@@ -688,6 +693,18 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Audit.Services.AuditRecordRequest),
             typeof(global::Cephalon.Audit.Services.IAuditActorAccessor),
             typeof(global::Cephalon.Audit.Services.IAuditRecorder));
+    }
+
+    [Fact]
+    public void AuditEntityFrameworkAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Audit.EntityFramework.Registration.EntityFrameworkAuditHistoryEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Audit.EntityFramework.Configuration.EntityFrameworkAuditHistoryOptions),
+            typeof(global::Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry),
+            typeof(global::Cephalon.Audit.EntityFramework.IEntityFrameworkAuditHistoryContext),
+            typeof(global::Cephalon.Audit.EntityFramework.Modeling.EntityFrameworkAuditHistoryModelBuilderExtensions),
+            typeof(global::Cephalon.Audit.EntityFramework.Registration.EntityFrameworkAuditHistoryEngineBuilderExtensions));
     }
 
     [Fact]

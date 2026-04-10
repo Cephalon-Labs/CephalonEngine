@@ -36,6 +36,7 @@
     <ProjectReference Include="..\..\src\Cephalon.Identity\Cephalon.Identity.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy\Cephalon.MultiTenancy.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Audit\Cephalon.Audit.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Audit.EntityFramework\Cephalon.Audit.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Ids.Sfid\Cephalon.Ids.Sfid.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability\Cephalon.Observability.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.OpenTelemetry\Cephalon.Observability.OpenTelemetry.csproj" />

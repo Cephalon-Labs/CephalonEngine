@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Description>Entity Framework Core durable audit-history provider for the Cephalon audit companion pack.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cephalon.Audit\Cephalon.Audit.csproj" />
+    <ProjectReference Include="..\Cephalon.Data.EntityFramework\Cephalon.Data.EntityFramework.csproj" />
+    <ProjectReference Include="..\Cephalon.Engine\Cephalon.Engine.csproj" />
+  </ItemGroup>
+</Project>

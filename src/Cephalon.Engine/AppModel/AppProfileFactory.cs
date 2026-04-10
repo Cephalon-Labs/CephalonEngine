@@ -62,7 +62,14 @@ public static class AppProfileFactory
             enabled: settings.Tenancy.Enabled,
             mode: settings.Tenancy.Mode));
         builder.UseAuditSelection(new Abstractions.AppModel.AuditSelection(
-            enabled: settings.Audit.Enabled));
+            enabled: settings.Audit.Enabled,
+            history: new Abstractions.AppModel.AuditHistorySelection(
+                enabled: settings.Audit.History.Enabled,
+                provider: settings.Audit.History.Provider,
+                databaseRole: settings.Audit.History.Enabled == true &&
+                    string.IsNullOrWhiteSpace(settings.Audit.History.DatabaseRole)
+                    ? AuditHistorySettings.DefaultDatabaseRole
+                    : settings.Audit.History.DatabaseRole)));
         builder.UseMessagingSelection(new Abstractions.AppModel.MessagingSelection(
             provider: settings.Messaging.Provider));
     }

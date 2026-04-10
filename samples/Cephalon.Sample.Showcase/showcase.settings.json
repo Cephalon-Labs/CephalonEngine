@@ -1,6 +1,8 @@
 {
   "ConnectionStrings": {
     "WriteDb": "Host=localhost;Port=5432;Database=showcase_write;Username=showcase;Password=showcase_secret",
+    "ReadDb": "Host=localhost;Port=5432;Database=showcase_read;Username=showcase;Password=showcase_secret",
+    "HistoryDb": "Host=localhost;Port=5432;Database=showcase_history;Username=showcase;Password=showcase_secret",
     "MongoDB": "mongodb://showcase:showcase_secret@localhost:27017",
     "Redis": "localhost:6379"
   },
@@ -19,7 +21,7 @@
     ],
     "Data": {
       "Provider": "EntityFramework",
-      "ReadWriteSplit": false,
+      "ReadWriteSplit": true,
       "Outbox": {
         "Enabled": true
       },
@@ -53,11 +55,21 @@
           "EnableRetryOnFailure": false
         }
       },
+      "Read": {
+        "Provider": "PostgreSql",
+        "ConnectionStringName": "ReadDb"
+      },
+      "History": {
+        "Provider": "PostgreSql",
+        "ConnectionStringName": "HistoryDb"
+      },
       "Migrations": {
         "ApplyOnStartup": false,
         "ExitAfterApply": false,
         "Targets": [
-          "write"
+          "write",
+          "read",
+          "history"
         ]
       }
     },
@@ -71,7 +83,13 @@
       "Enabled": true
     },
     "Audit": {
-      "Enabled": true
+      "Enabled": true,
+      "EnableInMemoryWriter": false,
+      "History": {
+        "Enabled": true,
+        "Provider": "EntityFramework",
+        "DatabaseRole": "history"
+      }
     },
     "EventSourcing": {
       "Enabled": false

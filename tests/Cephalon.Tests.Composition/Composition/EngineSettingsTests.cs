@@ -21,6 +21,9 @@ public sealed class EngineSettingsTests
                 ["Engine:Tenancy:Enabled"] = "true",
                 ["Engine:Tenancy:Mode"] = "SharedDatabase",
                 ["Engine:Audit:Enabled"] = "true",
+                ["Engine:Audit:History:Enabled"] = "true",
+                ["Engine:Audit:History:Provider"] = "EntityFramework",
+                ["Engine:Audit:History:DatabaseRole"] = "History",
                 ["Engine:Messaging:Provider"] = "Wolverine",
                 ["Engine:Databases:Runtime:EnableDetailedErrors"] = "true",
                 ["Engine:Databases:Runtime:EnableRetryOnFailure"] = "true",
@@ -55,6 +58,9 @@ public sealed class EngineSettingsTests
         Assert.True(settings.Tenancy.Enabled);
         Assert.Equal("SharedDatabase", settings.Tenancy.Mode);
         Assert.True(settings.Audit.Enabled);
+        Assert.True(settings.Audit.History.Enabled);
+        Assert.Equal("EntityFramework", settings.Audit.History.Provider);
+        Assert.Equal("History", settings.Audit.History.DatabaseRole);
         Assert.Equal("Wolverine", settings.Messaging.Provider);
         Assert.True(settings.Databases.Runtime.EnableDetailedErrors);
         Assert.True(settings.Databases.Runtime.EnableRetryOnFailure);

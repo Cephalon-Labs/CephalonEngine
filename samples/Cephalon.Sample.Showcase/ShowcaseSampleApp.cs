@@ -4,6 +4,7 @@ using Cephalon.AspNetCore.GraphQL.Hosting;
 using Cephalon.AspNetCore.Grpc.Hosting;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.JsonRpc.Hosting;
+using Cephalon.Audit.EntityFramework.Registration;
 using Cephalon.Audit.Registration;
 using Cephalon.Behaviors.Hosting;
 using Cephalon.Behaviors.Http.Hosting;
@@ -99,7 +100,7 @@ public static class ShowcaseSampleApp
             // --- PostgreSQL via Entity Framework (Docker mode only) ---
             if (dockerMode)
             {
-                engine.AddEntityFrameworkData<ShowcaseDbContext>(
+                engine.AddEntityFrameworkData<ShowcaseReadDbContext, ShowcaseWriteDbContext>(
                     configureDbContext: (role, opts) => opts.UseNpgsql(
                         role.ConnectionString,
                         npgsql =>
@@ -129,6 +130,32 @@ public static class ShowcaseSampleApp
                         efOpts.RegisterOutbox = true;
                         efOpts.RegisterInbox = true;
                     });
+
+                engine.AddEntityFrameworkAuditHistory<ShowcaseAuditHistoryDbContext>(
+                    configureDbContext: (role, opts) => opts.UseNpgsql(
+                        role.ConnectionString,
+                        npgsql =>
+                        {
+                            if (role.Runtime.CommandTimeoutSeconds is { } commandTimeoutSeconds)
+                            {
+                                npgsql.CommandTimeout(commandTimeoutSeconds);
+                            }
+
+                            if (role.Runtime.MaxBatchSize is { } maxBatchSize)
+                            {
+                                npgsql.MaxBatchSize(maxBatchSize);
+                            }
+
+                            if (role.Runtime.EnableRetryOnFailure == true)
+                            {
+                                npgsql.EnableRetryOnFailure(
+                                    maxRetryCount: role.Runtime.MaxRetryCount ?? 6,
+                                    maxRetryDelay: role.Runtime.MaxRetryDelaySeconds is { } seconds
+                                        ? TimeSpan.FromSeconds(seconds)
+                                        : TimeSpan.FromSeconds(30),
+                                    errorCodesToAdd: null);
+                            }
+                        }));
             }
 
             // --- MongoDB document store (Docker mode only) ---
@@ -243,13 +270,29 @@ public static class ShowcaseSampleApp
     private static void InitializeDatabase(WebApplication app)
     {
         using var scope = app.Services.CreateScope();
-        var db = scope.ServiceProvider.GetService<ShowcaseDbContext>();
-        if (db is null) return;
+        var writeDb = scope.ServiceProvider.GetService<ShowcaseWriteDbContext>();
+        var readDb = scope.ServiceProvider.GetService<ShowcaseReadDbContext>();
+        var historyDb = scope.ServiceProvider.GetService<ShowcaseAuditHistoryDbContext>();
 
-        // Create tables if not exist
-        db.Database.EnsureCreated();
+        writeDb?.Database.EnsureCreated();
+        readDb?.Database.EnsureCreated();
+        historyDb?.Database.EnsureCreated();
 
-        // Seed products from in-memory store if database is empty
+        if (writeDb is not null)
+        {
+            SeedCommerceReferenceData(writeDb);
+        }
+
+        if (readDb is not null)
+        {
+            SeedCommerceReferenceData(readDb);
+        }
+    }
+
+    private static void SeedCommerceReferenceData(ShowcaseCommerceDbContextBase db)
+    {
+        ArgumentNullException.ThrowIfNull(db);
+
         if (!db.Products.Any())
         {
             foreach (var product in ShowcaseDataStore.Products.Values)
@@ -273,7 +316,6 @@ public static class ShowcaseSampleApp
             db.SaveChanges();
         }
 
-        // Seed inventory from in-memory store if database is empty
         if (!db.InventoryItems.Any())
         {
             foreach (var item in ShowcaseDataStore.Inventory.Values)

@@ -97,8 +97,8 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 35`: **shipped** ENG-059 runtime hot-path benchmark expansion — data layer dispatch, behavior dispatch, authorization evaluation, tenant resolution, event sourcing, outbox staging — 13 new benchmarks across 6 classes, guardrails 10→23, 648/648 tests
 - `Sprint 31`: **shipped** ENG-054 provider configuration follow-through — connection-string-native packs now share `ConnectionStringName` plus `ConnectionString` (`Cephalon.Data.MongoDB`, `Cephalon.Data.Redis`), URI-first packs now share `UriName` plus `Uri` (`Cephalon.Data.Elasticsearch`, `Cephalon.Data.OpenSearch`, `Cephalon.Data.Neo4j`, `Cephalon.Data.Nats`), named values resolve from the root `ConnectionStrings` or `Uris` sections as appropriate, packs fail fast when both settings are supplied, and the docs now call out the provider-family contract explicitly while Cassandra/Qdrant remain topology-first
 - `Sprint 36`: `ENG-060` established the engine-owned database topology baseline so physical database roles, migration targets, outbox routing, and history stores stop drifting across provider packs
-- `Sprint 37`: `ENG-061` is now in progress on top of that topology contract: `Cephalon.Data.EntityFramework` consumes `Engine:Databases` write/read roles directly, publishes role and migration metadata through the runtime surface, and can apply startup schema creation or migrations for the registered write/read `DbContext` roles through a generic-host hosted service while bundle/script deployment remains the recommended production path
-- `Sprint 38`: planned `ENG-062` durable audit-history provider baseline so `Cephalon.Audit` can move beyond the narrow in-memory recorder without collapsing storage concerns back into hosts or modules
+- `Sprint 37`: `ENG-061` is now shipped on top of that topology contract: `Cephalon.Data.EntityFramework` consumes `Engine:Databases` write/read roles directly, publishes role and migration metadata through the runtime surface, and supplies the migration-registration primitives that also let additive companion packs register truthful history-role execution
+- `Sprint 38`: `ENG-062` is now shipped: `Cephalon.Audit.EntityFramework` provides the first durable audit-history baseline through `Engine:Audit:History` plus the engine-owned `History` role, and the showcase sample now uses distinct `WriteDb`, `ReadDb`, and `HistoryDb` databases to prove the topology end to end
 - `Sprint 36–37 (Phase 11)`: planned resilience foundation — circuit breaker, retry/timeout/bulkhead, rate limiting, `onion-architecture` and `anti-corruption-layer` pattern descriptors
 - `Sprint 38–39 (Phase 12)`: planned migration and advanced coordination — strangler fig, saga choreography, BFF pattern, feature flags, durable execution foundations
 - `Sprint 40–41 (Phase 13)`: planned next-generation patterns — cell-based architecture, data mesh, CDC
@@ -562,8 +562,9 @@ Planned deliverables:
 Current truth:
 
 - the initial `ENG-060` baseline is now shipped: `Engine:Databases` projects into `EngineSettings`, `AppProfile.Databases`, `/engine/databases`, `/engine/app-model`, and `/engine/snapshot`
-- `ENG-061` is now underway: `Cephalon.Data.EntityFramework` consumes the engine-owned `write` and optional `read` roles directly, exposes role and migration metadata through the runtime surface, and can execute startup schema apply for those registered `DbContext` roles through a generic-host hosted service
-- the remaining phase-10 work is now broader provider consumption, role references, richer topology/runtime metadata, dedicated outbox/history execution, bundle/script orchestration guidance, and durable history storage
+- `ENG-061` is now shipped: `Cephalon.Data.EntityFramework` consumes the engine-owned `write` and optional `read` roles directly, exposes role and migration metadata through the runtime surface, and can execute startup schema apply for those registered `DbContext` roles through a generic-host hosted service
+- `ENG-062` is now shipped: `Cephalon.Audit.EntityFramework` consumes `Engine:Audit:History` plus the engine-owned `history` role, publishes durable audit-store metadata, and proves the topology in the showcase sample with distinct write/read/history databases
+- the remaining phase-10 work is now broader provider consumption, role references, richer topology/runtime metadata, dedicated outbox execution, bundle/script orchestration guidance, and retention/replay/export follow-through for durable history
 
 Exit criteria:
 

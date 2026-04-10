@@ -1,16 +1,16 @@
 using System.Text.Json;
+using Cephalon.Audit.EntityFramework;
+using Cephalon.Audit.EntityFramework.Modeling;
 using Cephalon.Data.EntityFramework.Modeling;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cephalon.Sample.Showcase.Infrastructure;
 
 /// <summary>
-/// Entity Framework Core DbContext for the showcase sample, backed by PostgreSQL.
-/// Provides tables for all five bounded contexts plus the outbox and inbox tables
-/// required by event-driven and saga patterns.
+/// Shared Entity Framework Core model for the showcase sample commerce read and write databases.
 /// </summary>
-public sealed class ShowcaseDbContext(DbContextOptions<ShowcaseDbContext> options)
-    : DbContext(options), IEntityFrameworkOutboxContext, IEntityFrameworkInboxContext
+public abstract class ShowcaseCommerceDbContextBase(DbContextOptions options)
+    : DbContext(options)
 {
     /// <summary>Gets the catalog products table.</summary>
     public DbSet<ShowcaseProductEntity> Products => Set<ShowcaseProductEntity>();
@@ -26,12 +26,6 @@ public sealed class ShowcaseDbContext(DbContextOptions<ShowcaseDbContext> option
 
     /// <summary>Gets the shipments table.</summary>
     public DbSet<ShowcaseShipmentEntity> Shipments => Set<ShowcaseShipmentEntity>();
-
-    /// <inheritdoc />
-    public DbSet<EntityFrameworkOutboxEntry> OutboxMessages => Set<EntityFrameworkOutboxEntry>();
-
-    /// <inheritdoc />
-    public DbSet<EntityFrameworkInboxEntry> InboxMessages => Set<EntityFrameworkInboxEntry>();
 
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -119,8 +113,53 @@ public sealed class ShowcaseDbContext(DbContextOptions<ShowcaseDbContext> option
             entity.HasIndex(e => e.Status);
         });
 
+    }
+}
+
+/// <summary>
+/// Read-side Entity Framework Core DbContext for the showcase sample.
+/// </summary>
+public sealed class ShowcaseReadDbContext(DbContextOptions<ShowcaseReadDbContext> options)
+    : ShowcaseCommerceDbContextBase(options);
+
+/// <summary>
+/// Write-side Entity Framework Core DbContext for the showcase sample.
+/// </summary>
+public sealed class ShowcaseWriteDbContext(DbContextOptions<ShowcaseWriteDbContext> options)
+    : ShowcaseCommerceDbContextBase(options), IEntityFrameworkOutboxContext, IEntityFrameworkInboxContext
+{
+    /// <inheritdoc />
+    public DbSet<EntityFrameworkOutboxEntry> OutboxMessages => Set<EntityFrameworkOutboxEntry>();
+
+    /// <inheritdoc />
+    public DbSet<EntityFrameworkInboxEntry> InboxMessages => Set<EntityFrameworkInboxEntry>();
+
+    /// <inheritdoc />
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        ArgumentNullException.ThrowIfNull(modelBuilder);
+
+        base.OnModelCreating(modelBuilder);
         modelBuilder.ConfigureCephalonOutbox();
         modelBuilder.ConfigureCephalonInbox();
+    }
+}
+
+/// <summary>
+/// Durable audit-history Entity Framework Core DbContext for the showcase sample.
+/// </summary>
+public sealed class ShowcaseAuditHistoryDbContext(DbContextOptions<ShowcaseAuditHistoryDbContext> options)
+    : DbContext(options), IEntityFrameworkAuditHistoryContext
+{
+    /// <inheritdoc />
+    public DbSet<EntityFrameworkAuditHistoryEntry> AuditEntries => Set<EntityFrameworkAuditHistoryEntry>();
+
+    /// <inheritdoc />
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        ArgumentNullException.ThrowIfNull(modelBuilder);
+
+        modelBuilder.ConfigureCephalonAuditHistory(tableName: "showcase_audit_history");
     }
 }
 

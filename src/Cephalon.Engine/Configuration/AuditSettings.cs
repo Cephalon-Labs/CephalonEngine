@@ -16,9 +16,13 @@ public sealed class AuditSettings
     /// Initializes a new instance of the <see cref="AuditSettings" /> class.
     /// </summary>
     /// <param name="enabled">Whether audit support was explicitly enabled.</param>
-    public AuditSettings(bool? enabled = null)
+    /// <param name="history">The durable audit-history settings resolved for the app.</param>
+    public AuditSettings(
+        bool? enabled = null,
+        AuditHistorySettings? history = null)
     {
         Enabled = enabled;
+        History = history ?? AuditHistorySettings.Empty;
     }
 
     /// <summary>
@@ -27,9 +31,16 @@ public sealed class AuditSettings
     public bool? Enabled { get; }
 
     /// <summary>
+    /// Gets the durable audit-history settings resolved for the app.
+    /// </summary>
+    public AuditHistorySettings History { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any audit settings were explicitly supplied.
     /// </summary>
-    public bool HasValues => Enabled.HasValue;
+    public bool HasValues =>
+        Enabled.HasValue ||
+        History.HasValues;
 
     /// <summary>
     /// Reads audit settings from configuration.
@@ -47,7 +58,9 @@ public sealed class AuditSettings
             .GetSection(sectionPath)
             .GetSection("Audit");
 
-        return new AuditSettings(TryParseBoolean(section["Enabled"]));
+        return new AuditSettings(
+            enabled: TryParseBoolean(section["Enabled"]),
+            history: AuditHistorySettings.FromSection(section.GetSection("History")));
     }
 
     private static bool? TryParseBoolean(string? value)

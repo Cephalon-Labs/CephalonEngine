@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Patterns;
 using Cephalon.Abstractions.Technologies;
+using Cephalon.Engine.Configuration;
 
 namespace Cephalon.Engine.AppModel;
 
@@ -22,6 +23,7 @@ internal static class AppProfileSelectionValidator
         DatabaseTopologySelection databases,
         IdentitySelection identity,
         TenancySelection tenancy,
+        AuditSelection audit,
         MessagingSelection messaging,
         IReadOnlyDictionary<string, PatternDescriptor> selectedPatterns,
         IReadOnlyDictionary<string, TechnologyDescriptor> selectedTechnologies)
@@ -30,6 +32,7 @@ internal static class AppProfileSelectionValidator
         ArgumentNullException.ThrowIfNull(databases);
         ArgumentNullException.ThrowIfNull(identity);
         ArgumentNullException.ThrowIfNull(tenancy);
+        ArgumentNullException.ThrowIfNull(audit);
         ArgumentNullException.ThrowIfNull(messaging);
         ArgumentNullException.ThrowIfNull(selectedPatterns);
         ArgumentNullException.ThrowIfNull(selectedTechnologies);
@@ -69,6 +72,8 @@ internal static class AppProfileSelectionValidator
             throw new InvalidOperationException(
                 "An outbox database target cannot be configured when outbox support is explicitly disabled.");
         }
+
+        ValidateAuditHistorySelection(audit, databases);
 
         if (databases.Migrations.ExitAfterApply == true && databases.Migrations.ApplyOnStartup != true)
         {
@@ -187,5 +192,94 @@ internal static class AppProfileSelectionValidator
 
         throw new InvalidOperationException(
             $"Database migration target '{target}' is not supported. Supported targets: Write, Read, Outbox, History.");
+    }
+
+    private static void ValidateAuditHistorySelection(
+        AuditSelection audit,
+        DatabaseTopologySelection databases)
+    {
+        if (audit.History.Enabled != true)
+        {
+            return;
+        }
+
+        if (audit.Enabled == false)
+        {
+            throw new InvalidOperationException(
+                "Durable audit history cannot be enabled when audit support is explicitly disabled.");
+        }
+
+        if (string.IsNullOrWhiteSpace(audit.History.Provider))
+        {
+            throw new InvalidOperationException(
+                "Durable audit history requires a provider selection under Engine:Audit:History:Provider.");
+        }
+
+        var databaseRole = ResolveAuditHistoryDatabaseRole(audit.History);
+        ValidateAuditHistoryDatabaseRole(databaseRole, databases);
+    }
+
+    private static string ResolveAuditHistoryDatabaseRole(
+        AuditHistorySelection history)
+    {
+        ArgumentNullException.ThrowIfNull(history);
+
+        return string.IsNullOrWhiteSpace(history.DatabaseRole)
+            ? AuditHistorySettings.DefaultDatabaseRole
+            : history.DatabaseRole.Trim();
+    }
+
+    private static void ValidateAuditHistoryDatabaseRole(
+        string databaseRole,
+        DatabaseTopologySelection databases)
+    {
+        var normalizedRole = NormalizeKey(databaseRole);
+
+        if (normalizedRole == "WRITE")
+        {
+            if (!databases.Write.HasValues)
+            {
+                throw new InvalidOperationException(
+                    "Durable audit history selected the 'write' database role, but no write database target is configured.");
+            }
+
+            return;
+        }
+
+        if (normalizedRole == "READ")
+        {
+            if (!databases.Read.HasValues)
+            {
+                throw new InvalidOperationException(
+                    "Durable audit history selected the 'read' database role, but no read database target is configured.");
+            }
+
+            return;
+        }
+
+        if (normalizedRole == "OUTBOX")
+        {
+            if (!databases.Outbox.HasValues)
+            {
+                throw new InvalidOperationException(
+                    "Durable audit history selected the 'outbox' database role, but no outbox database target is configured.");
+            }
+
+            return;
+        }
+
+        if (normalizedRole == "HISTORY")
+        {
+            if (!databases.History.HasValues)
+            {
+                throw new InvalidOperationException(
+                    "Durable audit history selected the 'history' database role, but no history database target is configured.");
+            }
+
+            return;
+        }
+
+        throw new InvalidOperationException(
+            $"Durable audit history selected unsupported database role '{databaseRole}'. Supported roles: Write, Read, Outbox, History.");
     }
 }

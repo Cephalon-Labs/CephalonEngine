@@ -21,6 +21,7 @@
     <Project Path="src/Cephalon.Abstractions/Cephalon.Abstractions.csproj" />
     <Project Path="src/Cephalon.Agentics/Cephalon.Agentics.csproj" />
     <Project Path="src/Cephalon.Audit/Cephalon.Audit.csproj" />
+    <Project Path="src/Cephalon.Audit.EntityFramework/Cephalon.Audit.EntityFramework.csproj" />
     <Project Path="src/Cephalon.Cli/Cephalon.Cli.csproj" />
     <Project Path="src/Cephalon.Data.EntityFramework/Cephalon.Data.EntityFramework.csproj" />
     <Project Path="src/Cephalon.Data.Cassandra/Cephalon.Data.Cassandra.csproj" />

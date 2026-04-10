@@ -19,11 +19,12 @@ services:
     environment:
       POSTGRES_USER: showcase
       POSTGRES_PASSWORD: showcase_secret
-      POSTGRES_DB: showcase_db
+      POSTGRES_DB: showcase_write
     ports:
       - "5432:5432"
     volumes:
       - showcase-postgres-data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U showcase"]
       interval: 5s

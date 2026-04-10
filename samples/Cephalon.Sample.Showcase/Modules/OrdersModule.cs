@@ -1,5 +1,7 @@
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Abstractions.Audit;
+using System.Globalization;
 using Cephalon.AspNetCore.Modules;
 using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Sample.Showcase.Domain.Orders.Models;
@@ -49,7 +51,9 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
 
         routes.MapGet(string.Empty, async (HttpContext ctx) =>
         {
-            var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
+            var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
+            var writeDb = ctx.RequestServices.GetService<ShowcaseWriteDbContext>();
+            ShowcaseCommerceDbContextBase? db = readDb is not null ? readDb : writeDb;
             if (db is not null)
             {
                 var entities = await db.Orders
@@ -68,7 +72,9 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
 
         routes.MapGet("/{orderId}", async (string orderId, HttpContext ctx) =>
         {
-            var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
+            var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
+            var writeDb = ctx.RequestServices.GetService<ShowcaseWriteDbContext>();
+            ShowcaseCommerceDbContextBase? db = readDb is not null ? readDb : writeDb;
             if (db is not null)
             {
                 var entity = await db.Orders
@@ -86,9 +92,10 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
         routes.MapPost(string.Empty, async (PlaceOrderInput input, HttpContext ctx) =>
         {
             var orderId = $"ord-{Guid.NewGuid():N}"[..16];
-            var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
+            var writeDb = ctx.RequestServices.GetService<ShowcaseWriteDbContext>();
+            var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
 
-            if (db is not null)
+            if (writeDb is not null)
             {
                 var entity = new ShowcaseOrderEntity
                 {
@@ -107,8 +114,32 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
                         UnitPriceInCents = i.UnitPriceInCents
                     }).ToList()
                 };
-                db.Orders.Add(entity);
-                await db.SaveChangesAsync();
+                writeDb.Orders.Add(entity);
+                await writeDb.SaveChangesAsync(ctx.RequestAborted);
+
+                if (readDb is not null)
+                {
+                    await UpsertReadOrderAsync(readDb, entity, ctx.RequestAborted);
+                }
+
+                await ShowcaseAuditHelper.RecordAsync(
+                    ctx,
+                    new Cephalon.Audit.Services.AuditRecordRequest(
+                        category: "orders",
+                        action: "order-placed",
+                        summary: $"Placed order '{orderId}'.",
+                        subjectType: "order",
+                        subjectId: orderId,
+                        outcome: AuditOutcome.Succeeded,
+                        changes:
+                        [
+                            new AuditChange("status", null, entity.Status),
+                            new AuditChange("totalInCents", null, entity.TotalInCents.ToString(CultureInfo.InvariantCulture)),
+                            new AuditChange("itemCount", null, entity.Items.Count.ToString(CultureInfo.InvariantCulture))
+                        ],
+                        tags: ["orders", "place", "event-driven"],
+                        metadata: ShowcaseAuditHelper.CreateMetadata(Descriptor.Id, "/api/v1/showcase/orders")));
+
                 return Results.Created(BuildCreatedLocation(ctx, orderId), new PlaceOrderOutput(orderId, "Pending"));
             }
 
@@ -132,10 +163,11 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
 
         routes.MapPut("/{orderId}/cancel", async (string orderId, CancelOrderInput input, HttpContext ctx) =>
         {
-            var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
-            if (db is not null)
+            var writeDb = ctx.RequestServices.GetService<ShowcaseWriteDbContext>();
+            var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
+            if (writeDb is not null)
             {
-                var entity = await db.Orders.FindAsync(orderId);
+                var entity = await writeDb.Orders.FindAsync([orderId], ctx.RequestAborted);
                 if (entity is null)
                 {
                     return Results.NotFound();
@@ -149,7 +181,30 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
                 entity.Status = "Cancelled";
                 entity.CancellationReason = input.Reason;
                 entity.UpdatedAtUtc = DateTime.UtcNow;
-                await db.SaveChangesAsync();
+                await writeDb.SaveChangesAsync(ctx.RequestAborted);
+
+                if (readDb is not null)
+                {
+                    await UpsertReadOrderAsync(readDb, entity, ctx.RequestAborted);
+                }
+
+                await ShowcaseAuditHelper.RecordAsync(
+                    ctx,
+                    new Cephalon.Audit.Services.AuditRecordRequest(
+                        category: "orders",
+                        action: "order-cancelled",
+                        summary: $"Cancelled order '{orderId}'.",
+                        subjectType: "order",
+                        subjectId: orderId,
+                        outcome: AuditOutcome.Succeeded,
+                        changes:
+                        [
+                            new AuditChange("status", "Pending", "Cancelled"),
+                            new AuditChange("cancellationReason", null, input.Reason)
+                        ],
+                        tags: ["orders", "cancel", "event-driven"],
+                        metadata: ShowcaseAuditHelper.CreateMetadata(Descriptor.Id, $"/api/v1/showcase/orders/{orderId}/cancel")));
+
                 return Results.Ok(new CancelOrderOutput(orderId, "Cancelled"));
             }
 
@@ -168,6 +223,55 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
             order.UpdatedAtUtc = DateTime.UtcNow;
             return Results.Ok(new CancelOrderOutput(orderId, "Cancelled"));
         });
+    }
+
+    private static async Task UpsertReadOrderAsync(
+        ShowcaseReadDbContext readDb,
+        ShowcaseOrderEntity source,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(readDb);
+        ArgumentNullException.ThrowIfNull(source);
+
+        var projection = await readDb.Orders
+            .Include(order => order.Items)
+            .FirstOrDefaultAsync(order => order.OrderId == source.OrderId, cancellationToken);
+        if (projection is null)
+        {
+            projection = new ShowcaseOrderEntity
+            {
+                OrderId = source.OrderId
+            };
+            readDb.Orders.Add(projection);
+        }
+        else
+        {
+            var existingItems = await readDb.OrderLineItems
+                .Where(item => item.OrderId == source.OrderId)
+                .ToListAsync(cancellationToken);
+            readDb.OrderLineItems.RemoveRange(existingItems);
+        }
+
+        projection.CustomerId = source.CustomerId;
+        projection.TenantId = source.TenantId;
+        projection.Status = source.Status;
+        projection.TotalInCents = source.TotalInCents;
+        projection.ShippingAddress = source.ShippingAddress;
+        projection.PlacedAtUtc = source.PlacedAtUtc;
+        projection.UpdatedAtUtc = source.UpdatedAtUtc;
+        projection.CancellationReason = source.CancellationReason;
+        projection.Items = source.Items
+            .Select(item => new ShowcaseOrderLineItemEntity
+            {
+                OrderId = source.OrderId,
+                ProductId = item.ProductId,
+                ProductName = item.ProductName,
+                Quantity = item.Quantity,
+                UnitPriceInCents = item.UnitPriceInCents
+            })
+            .ToList();
+
+        await readDb.SaveChangesAsync(cancellationToken);
     }
 
     private static object ToOrderDto(ShowcaseOrderEntity entity)

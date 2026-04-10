@@ -166,6 +166,7 @@ internal sealed class AppProfileBuilder
             databaseSelection,
             identitySelection,
             tenancySelection,
+            auditSelection,
             messagingSelection,
             selected,
             resolvedTechnologies);

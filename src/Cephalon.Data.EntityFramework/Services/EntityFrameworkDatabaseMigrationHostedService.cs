@@ -7,7 +7,10 @@ using Microsoft.Extensions.Hosting;
 
 namespace Cephalon.Data.EntityFramework.Services;
 
-internal sealed class EntityFrameworkDatabaseMigrationHostedService(
+/// <summary>
+/// Applies startup schema changes for Entity Framework Core database-role targets selected through <c>Engine:Databases</c>.
+/// </summary>
+public sealed class EntityFrameworkDatabaseMigrationHostedService(
     IServiceProvider serviceProvider,
     AppProfile appProfile,
     IEnumerable<EntityFrameworkDatabaseMigrationRegistration> registrations) : IHostedService
@@ -17,6 +20,7 @@ internal sealed class EntityFrameworkDatabaseMigrationHostedService(
     private readonly EntityFrameworkDatabaseMigrationRegistration[] registrations = registrations?.ToArray()
         ?? throw new ArgumentNullException(nameof(registrations));
 
+    /// <inheritdoc />
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         var migrationSelection = appProfile.Databases.Migrations;
@@ -68,6 +72,7 @@ internal sealed class EntityFrameworkDatabaseMigrationHostedService(
         }
     }
 
+    /// <inheritdoc />
     public Task StopAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;

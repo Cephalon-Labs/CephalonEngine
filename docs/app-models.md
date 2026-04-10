@@ -243,7 +243,12 @@ The runtime should support configuration-driven blueprint, pattern, technology, 
       "Enabled": false
     },
     "Audit": {
-      "Enabled": true
+      "Enabled": true,
+      "History": {
+        "Enabled": true,
+        "Provider": "EntityFramework",
+        "DatabaseRole": "history"
+      }
     },
     "Messaging": {
       "Provider": "Wolverine"
@@ -403,7 +408,12 @@ Use the `Engine` section as the primary source of truth for blueprint, pattern, 
       "Enabled": false
     },
     "Audit": {
-      "Enabled": true
+      "Enabled": true,
+      "History": {
+        "Enabled": true,
+        "Provider": "EntityFramework",
+        "DatabaseRole": "history"
+      }
     },
     "Messaging": {}
   }

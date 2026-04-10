@@ -44,6 +44,9 @@ internal sealed class AuditModule(Action<AuditRuntimeOptions>? configureOptions)
         services.AddSingleton<IAuditStoreCatalog>(serviceProvider =>
             new ConfiguredAuditStoreCatalog(
                 serviceProvider.GetRequiredService<IReadOnlyList<AuditStoreDescriptor>>()
+                    .Concat(serviceProvider
+                        .GetServices<IAuditStoreRuntimeContributor>()
+                        .SelectMany(static contributor => contributor.DescribeAuditStores()))
                     .Concat(CreateAuditStores(
                         serviceProvider.GetRequiredService<AuditRuntimeOptions>()))));
         services.TryAddSingleton<IAuditRecorder, DefaultAuditRecorder>();

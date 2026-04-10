@@ -60,6 +60,7 @@ See also: [Docs hub](../README.md)
 ## Phase 8 companion packs
 
 - [Cephalon.Audit](audit.md)
+- [Cephalon.Audit.EntityFramework](audit-entityframework.md)
 - [Cephalon.Data](data.md)
 - [Cephalon.Data.EntityFramework](data-entityframework.md)
 - [Cephalon.Data.MongoDB](data-mongodb.md)

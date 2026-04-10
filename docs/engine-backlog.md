@@ -1358,7 +1358,7 @@ Follow-up later:
 
 ### ENG-060 Engine-owned database topology and runtime catalog baseline
 
-Status: in progress
+Status: done
 Estimate: 8
 
 Why:
@@ -1395,7 +1395,7 @@ Planned follow-through:
 
 ### ENG-061 Role-aware relational runtime and migration orchestration baseline
 
-Status: in progress
+Status: done
 Estimate: 13
 
 Why:
@@ -1416,18 +1416,19 @@ Delivered so far:
 - `Cephalon.Data.EntityFramework` now ships topology-aware `AddEntityFrameworkData(...)` overloads that resolve the engine-owned `write` and optional `read` roles directly from `Engine:Databases`
 - the Entity Framework pack now publishes role and migration-policy metadata through the `data-management/database-roles` runtime surface
 - `Engine:Databases:Migrations:ApplyOnStartup` now activates a generic-host hosted service inside `Cephalon.Data.EntityFramework` that applies startup schema creation or migrations for the registered `write` and optional `read` `DbContext` roles
-- dedicated `outbox` and `history` migration targets remain intentionally unsupported by the current Entity Framework startup-apply path so the pack does not pretend those roles have dedicated `DbContext` execution yet
+- the same migration-registration primitives now also back truthful `history`-role execution when a companion pack registers a dedicated history `DbContext`, which is how `Cephalon.Audit.EntityFramework` plugs into the baseline
+- the showcase sample now demonstrates distinct `WriteDb`, `ReadDb`, and `HistoryDb` roles instead of a single relational database pretending to cover every concern
 
 Remaining follow-through inside `ENG-061`:
 
-- add dedicated outbox/history role execution only when the pack can back those roles with truthful `DbContext` ownership
+- add dedicated outbox role execution only when a companion pack can back that role with truthful `DbContext` ownership
 - keep marker interfaces, model-builder extensions, and interceptors as the preferred reusable primitives
 - treat convenience `DbContext` base classes as optional later DX helpers rather than the primary contract
 - add CLI, docs, and sample guidance for separate migrations projects plus bundle/script-first production deployment
 
 ### ENG-062 Durable audit-history provider baseline
 
-Status: planned
+Status: done
 Estimate: 8
 
 Why:
@@ -1443,11 +1444,18 @@ Acceptance:
 - runtime audit-store answers expose whether history is in-memory only, durable, or disabled
 - the baseline keeps query/replay and retention follow-through explicit without pretending those surfaces already exist
 
-Planned follow-through:
+Delivered:
 
-- add a first durable provider pack on the relational golden path, starting with `Cephalon.Audit.EntityFramework`
-- align history targeting with `Engine:Databases:Roles` plus `Engine:Audit:History`
-- keep retention, replay, and export as later additive slices after the first durable write path is truthful
+- `Cephalon.Audit.EntityFramework` now ships as the first durable audit-history provider pack on the relational golden path
+- `Engine:Audit:History` now projects into `EngineSettings`, `AppProfile.Audit`, `/engine/app-model`, and `/engine/snapshot`
+- `IAuditStoreRuntimeContributor` now lets additive provider packs publish durable audit-store descriptors without widening `Cephalon.Audit` into a mandatory storage abstraction
+- durable audit history now targets a named database role, defaults to `history`, and publishes its runtime truth through `/engine/audit-stores` and `/engine/snapshot`
+- the showcase sample now uses distinct `WriteDb`, `ReadDb`, and `HistoryDb` roles and records durable audit history through the new provider pack
+
+Remaining follow-through inside `ENG-062`:
+
+- add retention, replay/query, and export follow-through on top of the first durable write path
+- add non-relational audit-history providers only when they can stay truthful and additive
 - keep ASP.NET Core actor bridging and tenant context additive without turning the audit pack into a host-specific storage abstraction
 
 ## Sprint history and next 4 sprints

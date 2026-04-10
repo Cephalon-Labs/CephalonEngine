@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Abstractions.Audit;
 using Cephalon.AspNetCore.Modules;
 using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Sample.Showcase.Domain.Shipping.Models;
@@ -49,7 +50,9 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
 
         routes.MapGet(string.Empty, async (HttpContext ctx) =>
         {
-            var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
+            var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
+            var writeDb = ctx.RequestServices.GetService<ShowcaseWriteDbContext>();
+            ShowcaseCommerceDbContextBase? db = readDb is not null ? readDb : writeDb;
             if (db is not null)
             {
                 var entities = await db.Shipments
@@ -67,7 +70,9 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
 
         routes.MapGet("/{shipmentId}", async (string shipmentId, HttpContext ctx) =>
         {
-            var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
+            var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
+            var writeDb = ctx.RequestServices.GetService<ShowcaseWriteDbContext>();
+            ShowcaseCommerceDbContextBase? db = readDb is not null ? readDb : writeDb;
             if (db is not null)
             {
                 var entity = await db.Shipments
@@ -87,8 +92,9 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
             var trackingNumber = $"TRK-{Guid.NewGuid():N}"[..16].ToUpperInvariant();
             var estimatedDelivery = DateTime.UtcNow.AddDays(3);
 
-            var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
-            if (db is not null)
+            var writeDb = ctx.RequestServices.GetService<ShowcaseWriteDbContext>();
+            var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
+            if (writeDb is not null)
             {
                 var entity = new ShowcaseShipmentEntity
                 {
@@ -101,8 +107,31 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
                     EstimatedDeliveryUtc = estimatedDelivery,
                     CreatedAtUtc = DateTime.UtcNow
                 };
-                db.Shipments.Add(entity);
-                await db.SaveChangesAsync();
+                writeDb.Shipments.Add(entity);
+                await writeDb.SaveChangesAsync(ctx.RequestAborted);
+
+                if (readDb is not null)
+                {
+                    await UpsertReadShipmentAsync(readDb, entity, ctx.RequestAborted);
+                }
+
+                await ShowcaseAuditHelper.RecordAsync(
+                    ctx,
+                    new Cephalon.Audit.Services.AuditRecordRequest(
+                        category: "shipping",
+                        action: "shipment-initiated",
+                        summary: $"Initiated shipment '{shipmentId}' for order '{input.OrderId}'.",
+                        subjectType: "shipment",
+                        subjectId: shipmentId,
+                        outcome: AuditOutcome.Succeeded,
+                        changes:
+                        [
+                            new AuditChange("status", null, entity.Status),
+                            new AuditChange("trackingNumber", null, entity.TrackingNumber)
+                        ],
+                        tags: ["shipping", "initiate", "process-manager"],
+                        metadata: ShowcaseAuditHelper.CreateMetadata(Descriptor.Id, "/api/v1/showcase/shipping")));
+
                 return Results.Created(
                     BuildCreatedLocation(ctx, shipmentId),
                     new InitiateShippingOutput(shipmentId, "LabelCreated", estimatedDelivery));
@@ -126,10 +155,11 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
 
         routes.MapPut("/{shipmentId}/deliver", async (string shipmentId, ConfirmDeliveryInput input, HttpContext ctx) =>
         {
-            var db = ctx.RequestServices.GetService<ShowcaseDbContext>();
-            if (db is not null)
+            var writeDb = ctx.RequestServices.GetService<ShowcaseWriteDbContext>();
+            var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
+            if (writeDb is not null)
             {
-                var entity = await db.Shipments.FindAsync(shipmentId);
+                var entity = await writeDb.Shipments.FindAsync([shipmentId], ctx.RequestAborted);
                 if (entity is null)
                 {
                     return Results.NotFound();
@@ -137,15 +167,41 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
 
                 entity.Status = "Delivered";
                 entity.DeliveredAtUtc = DateTime.UtcNow;
-                await db.SaveChangesAsync();
+                await writeDb.SaveChangesAsync(ctx.RequestAborted);
 
-                var order = await db.Orders.FindAsync(entity.OrderId);
+                var order = await writeDb.Orders.FindAsync([entity.OrderId], ctx.RequestAborted);
                 if (order is not null)
                 {
                     order.Status = "Delivered";
                     order.UpdatedAtUtc = DateTime.UtcNow;
-                    await db.SaveChangesAsync();
+                    await writeDb.SaveChangesAsync(ctx.RequestAborted);
                 }
+
+                if (readDb is not null)
+                {
+                    await UpsertReadShipmentAsync(readDb, entity, ctx.RequestAborted);
+                    if (order is not null)
+                    {
+                        await UpsertReadOrderStatusAsync(readDb, order, ctx.RequestAborted);
+                    }
+                }
+
+                await ShowcaseAuditHelper.RecordAsync(
+                    ctx,
+                    new Cephalon.Audit.Services.AuditRecordRequest(
+                        category: "shipping",
+                        action: "shipment-delivered",
+                        summary: $"Confirmed delivery for shipment '{shipmentId}'.",
+                        subjectType: "shipment",
+                        subjectId: shipmentId,
+                        outcome: AuditOutcome.Succeeded,
+                        changes:
+                        [
+                            new AuditChange("status", "LabelCreated", "Delivered"),
+                            new AuditChange("recipientName", null, input.RecipientName)
+                        ],
+                        tags: ["shipping", "deliver", "tracking"],
+                        metadata: ShowcaseAuditHelper.CreateMetadata(Descriptor.Id, $"/api/v1/showcase/shipping/{shipmentId}/deliver")));
 
                 return Results.Ok(new ConfirmDeliveryOutput(
                     shipmentId,
@@ -172,6 +228,56 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
                 "Delivered",
                 shipment.DeliveredAtUtc!.Value));
         });
+    }
+
+    private static async Task UpsertReadShipmentAsync(
+        ShowcaseReadDbContext readDb,
+        ShowcaseShipmentEntity source,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(readDb);
+        ArgumentNullException.ThrowIfNull(source);
+
+        var projection = await readDb.Shipments.FindAsync([source.ShipmentId], cancellationToken);
+        if (projection is null)
+        {
+            projection = new ShowcaseShipmentEntity
+            {
+                ShipmentId = source.ShipmentId
+            };
+            readDb.Shipments.Add(projection);
+        }
+
+        projection.OrderId = source.OrderId;
+        projection.DestinationAddress = source.DestinationAddress;
+        projection.Carrier = source.Carrier;
+        projection.TrackingNumber = source.TrackingNumber;
+        projection.Status = source.Status;
+        projection.EstimatedDeliveryUtc = source.EstimatedDeliveryUtc;
+        projection.DeliveredAtUtc = source.DeliveredAtUtc;
+        projection.CreatedAtUtc = source.CreatedAtUtc;
+
+        await readDb.SaveChangesAsync(cancellationToken);
+    }
+
+    private static async Task UpsertReadOrderStatusAsync(
+        ShowcaseReadDbContext readDb,
+        ShowcaseOrderEntity source,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(readDb);
+        ArgumentNullException.ThrowIfNull(source);
+
+        var projection = await readDb.Orders.FindAsync([source.OrderId], cancellationToken);
+        if (projection is null)
+        {
+            return;
+        }
+
+        projection.Status = source.Status;
+        projection.UpdatedAtUtc = source.UpdatedAtUtc;
+        projection.CancellationReason = source.CancellationReason;
+        await readDb.SaveChangesAsync(cancellationToken);
     }
 
     private static object ToShipmentDto(ShowcaseShipmentEntity entity)

@@ -5,8 +5,17 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Data.EntityFramework.Configuration;
 
-internal static class EntityFrameworkDatabaseRoleResolver
+/// <summary>
+/// Resolves <c>Engine:Databases</c> role selections into Entity Framework-specific role contexts.
+/// </summary>
+public static class EntityFrameworkDatabaseRoleResolver
 {
+    /// <summary>
+    /// Resolves the shared write role used when one <see cref="Microsoft.EntityFrameworkCore.DbContext" />
+    /// type serves both reads and writes.
+    /// </summary>
+    /// <param name="serviceProvider">The current service provider.</param>
+    /// <returns>The resolved Entity Framework database-role context.</returns>
     public static EntityFrameworkDatabaseRoleContext ResolveSharedWrite(IServiceProvider serviceProvider)
     {
         ArgumentNullException.ThrowIfNull(serviceProvider);
@@ -18,28 +27,86 @@ internal static class EntityFrameworkDatabaseRoleResolver
                 "Shared DbContext registration cannot consume a dedicated read database role from Engine:Databases. Use the split read/write DbContext overload instead.");
         }
 
-        return ResolveRole(serviceProvider, "write", appProfile.Databases.Write, appProfile.Databases.Runtime);
+        return ResolveRole(serviceProvider, "write");
     }
 
+    /// <summary>
+    /// Resolves the write database role.
+    /// </summary>
+    /// <param name="serviceProvider">The current service provider.</param>
+    /// <returns>The resolved Entity Framework database-role context.</returns>
     public static EntityFrameworkDatabaseRoleContext ResolveWrite(IServiceProvider serviceProvider)
     {
-        ArgumentNullException.ThrowIfNull(serviceProvider);
-
-        var appProfile = serviceProvider.GetRequiredService<AppProfile>();
-        return ResolveRole(serviceProvider, "write", appProfile.Databases.Write, appProfile.Databases.Runtime);
+        return ResolveRole(serviceProvider, "write");
     }
 
+    /// <summary>
+    /// Resolves the read database role.
+    /// </summary>
+    /// <param name="serviceProvider">The current service provider.</param>
+    /// <returns>The resolved Entity Framework database-role context.</returns>
     public static EntityFrameworkDatabaseRoleContext ResolveRead(IServiceProvider serviceProvider)
+    {
+        return ResolveRole(serviceProvider, "read");
+    }
+
+    /// <summary>
+    /// Resolves the outbox database role, falling back to the write role when a dedicated outbox role is not configured.
+    /// </summary>
+    /// <param name="serviceProvider">The current service provider.</param>
+    /// <returns>The resolved Entity Framework database-role context.</returns>
+    public static EntityFrameworkDatabaseRoleContext ResolveOutbox(IServiceProvider serviceProvider)
     {
         ArgumentNullException.ThrowIfNull(serviceProvider);
 
         var appProfile = serviceProvider.GetRequiredService<AppProfile>();
-        return ResolveRole(serviceProvider, "read", appProfile.Databases.Read, appProfile.Databases.Runtime);
+        if (appProfile.Databases.Outbox.HasValues)
+        {
+            return ResolveRole(serviceProvider, "outbox");
+        }
+
+        return ResolveRole(serviceProvider, "write");
+    }
+
+    /// <summary>
+    /// Resolves the audit-history database role.
+    /// </summary>
+    /// <param name="serviceProvider">The current service provider.</param>
+    /// <returns>The resolved Entity Framework database-role context.</returns>
+    public static EntityFrameworkDatabaseRoleContext ResolveHistory(IServiceProvider serviceProvider)
+    {
+        return ResolveRole(serviceProvider, AuditHistorySettings.DefaultDatabaseRole);
+    }
+
+    /// <summary>
+    /// Resolves an arbitrary supported database role from <c>Engine:Databases</c>.
+    /// </summary>
+    /// <param name="serviceProvider">The current service provider.</param>
+    /// <param name="requestedRoleId">The logical database role identifier to resolve.</param>
+    /// <returns>The resolved Entity Framework database-role context.</returns>
+    public static EntityFrameworkDatabaseRoleContext ResolveRole(
+        IServiceProvider serviceProvider,
+        string requestedRoleId)
+    {
+        ArgumentNullException.ThrowIfNull(serviceProvider);
+        ArgumentException.ThrowIfNullOrWhiteSpace(requestedRoleId);
+
+        var normalizedRoleId = requestedRoleId.Trim();
+        var appProfile = serviceProvider.GetRequiredService<AppProfile>();
+        var (resolvedRoleId, target) = ResolveTarget(appProfile.Databases, normalizedRoleId);
+
+        return ResolveRole(
+            serviceProvider,
+            requestedRoleId: normalizedRoleId,
+            resolvedRoleId: resolvedRoleId,
+            target: target,
+            sharedRuntime: appProfile.Databases.Runtime);
     }
 
     private static EntityFrameworkDatabaseRoleContext ResolveRole(
         IServiceProvider serviceProvider,
         string requestedRoleId,
+        string resolvedRoleId,
         DatabaseTargetSelection target,
         DatabaseRuntimeSelection sharedRuntime)
     {
@@ -50,31 +117,31 @@ internal static class EntityFrameworkDatabaseRoleResolver
         if (!target.HasValues)
         {
             throw new InvalidOperationException(
-                $"Engine:Databases:{ToSectionName(requestedRoleId)} must be configured when Cephalon.Data.EntityFramework uses topology-driven registration for the '{requestedRoleId}' role.");
+                $"Engine:Databases:{ToSectionName(resolvedRoleId)} must be configured when Cephalon.Data.EntityFramework uses topology-driven registration for the '{requestedRoleId}' role.");
         }
 
         if (string.IsNullOrWhiteSpace(target.Provider))
         {
             throw new InvalidOperationException(
-                $"Engine:Databases:{ToSectionName(requestedRoleId)}:Provider is required when Cephalon.Data.EntityFramework uses topology-driven registration for the '{requestedRoleId}' role.");
+                $"Engine:Databases:{ToSectionName(resolvedRoleId)}:Provider is required when Cephalon.Data.EntityFramework uses topology-driven registration for the '{requestedRoleId}' role.");
         }
 
         if (string.IsNullOrWhiteSpace(target.ConnectionStringName) &&
             string.IsNullOrWhiteSpace(target.ConnectionString))
         {
             throw new InvalidOperationException(
-                $"Engine:Databases:{ToSectionName(requestedRoleId)} must choose either ConnectionStringName or ConnectionString when Cephalon.Data.EntityFramework uses topology-driven registration for the '{requestedRoleId}' role.");
+                $"Engine:Databases:{ToSectionName(resolvedRoleId)} must choose either ConnectionStringName or ConnectionString when Cephalon.Data.EntityFramework uses topology-driven registration for the '{requestedRoleId}' role.");
         }
 
         var configuration = serviceProvider.GetService<IConfiguration>();
-        var sectionPath = $"{EngineSettings.SectionName}:Databases:{ToSectionName(requestedRoleId)}";
+        var sectionPath = $"{EngineSettings.SectionName}:Databases:{ToSectionName(resolvedRoleId)}";
         var connectionString = ConnectionStringResolution.Resolve(
             configuration,
             target.ConnectionString,
             target.ConnectionStringName,
             defaultConnectionString: string.Empty,
             sectionPath: sectionPath,
-            providerDisplayName: $"{target.Provider} database role '{requestedRoleId}'");
+            providerDisplayName: $"{target.Provider} database role '{resolvedRoleId}'");
 
         if (string.IsNullOrWhiteSpace(connectionString))
         {
@@ -84,10 +151,44 @@ internal static class EntityFrameworkDatabaseRoleResolver
 
         return new EntityFrameworkDatabaseRoleContext(
             requestedRoleId: requestedRoleId,
-            resolvedRoleId: requestedRoleId,
+            resolvedRoleId: resolvedRoleId,
             target: target,
             runtime: MergeRuntime(sharedRuntime, target.Runtime),
             connectionString: connectionString);
+    }
+
+    private static (string ResolvedRoleId, DatabaseTargetSelection Target) ResolveTarget(
+        DatabaseTopologySelection databases,
+        string requestedRoleId)
+    {
+        ArgumentNullException.ThrowIfNull(databases);
+
+        var normalizedRole = NormalizeRoleKey(requestedRoleId);
+
+        if (normalizedRole == "WRITE")
+        {
+            return ("write", databases.Write);
+        }
+
+        if (normalizedRole == "READ")
+        {
+            return ("read", databases.Read);
+        }
+
+        if (normalizedRole == "OUTBOX")
+        {
+            return databases.Outbox.HasValues
+                ? ("outbox", databases.Outbox)
+                : ("write", databases.Write);
+        }
+
+        if (normalizedRole == "HISTORY")
+        {
+            return ("history", databases.History);
+        }
+
+        throw new InvalidOperationException(
+            $"Cephalon.Data.EntityFramework does not support topology role '{requestedRoleId}'. Supported roles: Write, Read, Outbox, History.");
     }
 
     private static DatabaseRuntimeSelection MergeRuntime(
@@ -105,6 +206,14 @@ internal static class EntityFrameworkDatabaseRoleResolver
             maxRetryDelaySeconds: roleRuntime.MaxRetryDelaySeconds ?? sharedRuntime.MaxRetryDelaySeconds,
             commandTimeoutSeconds: roleRuntime.CommandTimeoutSeconds ?? sharedRuntime.CommandTimeoutSeconds,
             maxBatchSize: roleRuntime.MaxBatchSize ?? sharedRuntime.MaxBatchSize);
+    }
+
+    private static string NormalizeRoleKey(string value)
+    {
+        return new string(value
+            .Where(char.IsLetterOrDigit)
+            .Select(char.ToUpperInvariant)
+            .ToArray());
     }
 
     private static string ToSectionName(string role)

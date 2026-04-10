@@ -46,19 +46,24 @@ public sealed class ShowcaseSampleHostingTests
         Assert.NotNull(profile);
         Assert.Equal("modular-monolith", profile.BlueprintId);
         Assert.Equal("EntityFramework", profile.Data.Provider);
-        Assert.False(profile.Data.ReadWriteSplit);
+        Assert.True(profile.Data.ReadWriteSplit);
         Assert.True(profile.Data.OutboxEnabled);
         Assert.Equal("Sfid", profile.Data.IdGenerator);
         Assert.True(profile.Audit.Enabled);
+        Assert.True(profile.Audit.History.Enabled);
+        Assert.Equal("EntityFramework", profile.Audit.History.Provider);
+        Assert.Equal("history", profile.Audit.History.DatabaseRole);
         Assert.True(profile.Identity.Enabled);
         Assert.True(profile.Tenancy.Enabled);
         Assert.Equal("PostgreSql", profile.Databases.Write.Provider);
         Assert.Equal("WriteDb", profile.Databases.Write.ConnectionStringName);
-        Assert.False(profile.Databases.Read.HasValues);
+        Assert.Equal("PostgreSql", profile.Databases.Read.Provider);
+        Assert.Equal("ReadDb", profile.Databases.Read.ConnectionStringName);
         Assert.False(profile.Databases.Outbox.HasValues);
-        Assert.False(profile.Databases.History.HasValues);
+        Assert.Equal("PostgreSql", profile.Databases.History.Provider);
+        Assert.Equal("HistoryDb", profile.Databases.History.ConnectionStringName);
         Assert.False(profile.Databases.Migrations.ApplyOnStartup);
-        Assert.Equal(["write"], profile.Databases.Migrations.Targets);
+        Assert.Equal(["history", "read", "write"], profile.Databases.Migrations.Targets);
     }
 
     [Fact]
