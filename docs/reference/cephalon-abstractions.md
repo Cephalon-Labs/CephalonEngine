@@ -7240,12 +7240,12 @@ public sealed class EventDispatchRuntimeDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-data-eventdispatchruntimedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+<a id="member-m-cephalon-abstractions-data-eventdispatchruntimedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-data-eventdispatchruntimesummary"></a>
 
 ##### `EventDispatchRuntimeDescriptor`
 
 ```csharp
-EventDispatchRuntimeDescriptor(string id, string displayName, string description, IReadOnlyDictionary<string, string> metadata, IReadOnlyList<string> outboxIds)
+EventDispatchRuntimeDescriptor(string id, string displayName, string description, IReadOnlyDictionary<string, string> metadata, IReadOnlyList<string> outboxIds, EventDispatchRuntimeSummary summary)
 ```
 
 Creates a new event-dispatch runtime descriptor.
@@ -7256,6 +7256,7 @@ Parameters:
 - `description`: The human-readable dispatch-runtime description.
 - `metadata`: Optional operator-facing metadata for the dispatch runtime.
 - `outboxIds`: Optional outbox identifiers explicitly owned by the dispatch runtime when execution ownership is bounded to specific outboxes.
+- `summary`: Optional aggregate runtime summary describing the latest reported operator-facing state for the dispatch runtime.
 
 #### Properties
 
@@ -7308,6 +7309,16 @@ IReadOnlyList<string> OutboxIds { get; }
 ```
 
 Gets the outbox identifiers explicitly owned by the dispatch runtime.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-summary"></a>
+
+##### `Summary`
+
+```csharp
+EventDispatchRuntimeSummary Summary { get; }
+```
+
+Gets the latest aggregate runtime summary reported for the dispatch runtime.
 
 <a id="type-cephalon-abstractions-data-eventdispatchruntimestate"></a>
 
@@ -7498,6 +7509,227 @@ int TotalReports { get; }
 ```
 
 Gets the total number of observations reported for this dispatch path.
+
+<a id="type-cephalon-abstractions-data-eventdispatchruntimesummary"></a>
+
+### `EventDispatchRuntimeSummary`
+
+Describes the latest aggregate operator-facing state reported for one durable event-dispatch runtime.
+
+#### Declaration
+```csharp
+public sealed class EventDispatchRuntimeSummary
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-eventdispatchruntimesummary-ctor-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string"></a>
+
+##### `EventDispatchRuntimeSummary`
+
+```csharp
+EventDispatchRuntimeSummary(IReadOnlyList<string> reportedOutboxIds, string lastOutboxId, string lastChannelId, string lastOutcome, DateTimeOffset? lastObservedAtUtc, string lastMessageId, int lastAttempt, int startedCount, int succeededCount, int failedCount, int retryScheduledCount, int skippedCount, int retryPendingCount, string lastError)
+```
+
+Creates a new aggregate runtime summary.
+
+Parameters:
+- `reportedOutboxIds`: The outbox identifiers that have reported state for the runtime.
+- `lastOutboxId`: The outbox identifier that produced the latest observation.
+- `lastChannelId`: The latest reported channel identifier.
+- `lastOutcome`: The latest reported dispatch outcome identifier.
+- `lastObservedAtUtc`: The UTC timestamp when the latest observation was reported.
+- `lastMessageId`: The latest outbound message identifier when one was reported.
+- `lastAttempt`: The latest reported dispatch attempt number.
+- `startedCount`: The total number of `started` observations reported so far.
+- `succeededCount`: The total number of `succeeded` observations reported so far.
+- `failedCount`: The total number of `failed` observations reported so far.
+- `retryScheduledCount`: The total number of `retry-scheduled` observations reported so far.
+- `skippedCount`: The total number of `skipped` observations reported so far.
+- `retryPendingCount`: The number of owned outboxes whose latest report still says another retry is pending.
+- `lastError`: The latest operator-facing error summary when one was reported.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-empty"></a>
+
+##### `Empty`
+
+```csharp
+EventDispatchRuntimeSummary Empty { get; }
+```
+
+Gets an empty runtime summary when no dispatch observations have been reported yet.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-failedcount"></a>
+
+##### `FailedCount`
+
+```csharp
+int FailedCount { get; }
+```
+
+Gets the total number of `failed` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-hasreports"></a>
+
+##### `HasReports`
+
+```csharp
+bool HasReports { get; }
+```
+
+Gets a value indicating whether the dispatch runtime has reported any observations yet.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastattempt"></a>
+
+##### `LastAttempt`
+
+```csharp
+int LastAttempt { get; }
+```
+
+Gets the latest reported dispatch attempt number.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastchannelid"></a>
+
+##### `LastChannelId`
+
+```csharp
+string LastChannelId { get; }
+```
+
+Gets the latest reported channel identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lasterror"></a>
+
+##### `LastError`
+
+```csharp
+string LastError { get; }
+```
+
+Gets the latest operator-facing error summary when one was reported.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastmessageid"></a>
+
+##### `LastMessageId`
+
+```csharp
+string LastMessageId { get; }
+```
+
+Gets the latest outbound message identifier when one was reported.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastobservedatutc"></a>
+
+##### `LastObservedAtUtc`
+
+```csharp
+DateTimeOffset? LastObservedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the latest observation was reported.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastoutboxid"></a>
+
+##### `LastOutboxId`
+
+```csharp
+string LastOutboxId { get; }
+```
+
+Gets the outbox identifier that produced the latest observation when one exists.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastoutcome"></a>
+
+##### `LastOutcome`
+
+```csharp
+string LastOutcome { get; }
+```
+
+Gets the latest reported dispatch outcome identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-reportedoutboxcount"></a>
+
+##### `ReportedOutboxCount`
+
+```csharp
+int ReportedOutboxCount { get; }
+```
+
+Gets the number of outboxes that have reported runtime state for this dispatch runtime.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-reportedoutboxids"></a>
+
+##### `ReportedOutboxIds`
+
+```csharp
+IReadOnlyList<string> ReportedOutboxIds { get; }
+```
+
+Gets the outbox identifiers that have reported runtime state for the dispatch runtime.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-retrypendingcount"></a>
+
+##### `RetryPendingCount`
+
+```csharp
+int RetryPendingCount { get; }
+```
+
+Gets the number of owned outboxes whose latest report still says another retry is pending.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-retryscheduledcount"></a>
+
+##### `RetryScheduledCount`
+
+```csharp
+int RetryScheduledCount { get; }
+```
+
+Gets the total number of `retry-scheduled` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-skippedcount"></a>
+
+##### `SkippedCount`
+
+```csharp
+int SkippedCount { get; }
+```
+
+Gets the total number of `skipped` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-startedcount"></a>
+
+##### `StartedCount`
+
+```csharp
+int StartedCount { get; }
+```
+
+Gets the total number of `started` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-succeededcount"></a>
+
+##### `SucceededCount`
+
+```csharp
+int SucceededCount { get; }
+```
+
+Gets the total number of `succeeded` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchruntimesummary-totalreports"></a>
+
+##### `TotalReports`
+
+```csharp
+int TotalReports { get; }
+```
+
+Gets the total number of reported observations across all owned outboxes.
 
 <a id="type-cephalon-abstractions-data-icommand"></a>
 

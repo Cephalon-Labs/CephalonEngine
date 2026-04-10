@@ -15,12 +15,16 @@ public sealed class EventDispatchRuntimeDescriptor
     /// <param name="outboxIds">
     /// Optional outbox identifiers explicitly owned by the dispatch runtime when execution ownership is bounded to specific outboxes.
     /// </param>
+    /// <param name="summary">
+    /// Optional aggregate runtime summary describing the latest reported operator-facing state for the dispatch runtime.
+    /// </param>
     public EventDispatchRuntimeDescriptor(
         string id,
         string displayName,
         string description,
         IReadOnlyDictionary<string, string>? metadata = null,
-        IReadOnlyList<string>? outboxIds = null)
+        IReadOnlyList<string>? outboxIds = null,
+        EventDispatchRuntimeSummary? summary = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -44,6 +48,7 @@ public sealed class EventDispatchRuntimeDescriptor
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
         OutboxIds = Normalize(outboxIds);
+        Summary = summary ?? EventDispatchRuntimeSummary.Empty;
     }
 
     /// <summary>
@@ -70,6 +75,11 @@ public sealed class EventDispatchRuntimeDescriptor
     /// Gets the outbox identifiers explicitly owned by the dispatch runtime.
     /// </summary>
     public IReadOnlyList<string> OutboxIds { get; }
+
+    /// <summary>
+    /// Gets the latest aggregate runtime summary reported for the dispatch runtime.
+    /// </summary>
+    public EventDispatchRuntimeSummary Summary { get; }
 
     private static string[] Normalize(IReadOnlyList<string>? values)
     {

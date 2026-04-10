@@ -4,6 +4,8 @@ using Cephalon.Data.MongoDB.Configuration;
 using Cephalon.Data.MongoDB.Registration;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
+using Cephalon.Eventing.Registration;
+using Cephalon.Eventing.Services;
 using Cephalon.EventSourcing.MongoDB;
 using Cephalon.EventSourcing.MongoDB.Hosting;
 using Cephalon.Tests.Support;
@@ -204,6 +206,69 @@ public sealed class MongoDbDataPackTests : IAsyncLifetime
         // Enqueue twice — should not throw
         await outbox.EnqueueAsync(message);
         await outbox.EnqueueAsync(message);
+    }
+
+    [Fact]
+    public async Task MongoDbData_WithEventDrivenIntegration_RegistersConsumerManagedDispatchStore()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                data: new DataSettings(
+                    provider: "MongoDB",
+                    outboxEnabled: true)));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "test-events",
+                    displayName: "Test Events",
+                    description: "Dispatch-store test channel."));
+            });
+            engine.AddMongoDbData(ConnectionString, "cephalon-dispatch-store-test", configure: options =>
+            {
+                options.RegisterOutbox = true;
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var outboxCatalog = provider.GetRequiredService<IOutboxCatalog>();
+        var descriptor = Assert.Single(outboxCatalog.Outboxes);
+        Assert.Equal("consumer-managed", descriptor.DispatchPolicy.PolicyId);
+        Assert.Equal("consumer-managed", descriptor.DispatchPolicy.ExecutionMode);
+
+        using var scope = provider.CreateScope();
+        var outbox = scope.ServiceProvider.GetRequiredService<IOutbox>();
+        var dispatchStore = scope.ServiceProvider.GetRequiredService<IEventDispatchStore>();
+
+        var message = new OutboxMessage(
+            id: "msg-dispatch-001",
+            channelId: "test-events",
+            messageType: "test.event.dispatch",
+            payload: "{\"id\":\"dispatch-001\"}",
+            occurredAtUtc: DateTimeOffset.UtcNow,
+            correlationId: "corr-dispatch-001");
+
+        await outbox.EnqueueAsync(message);
+
+        var pending = await dispatchStore.ReadPendingAsync(10);
+        var item = Assert.Single(pending);
+        Assert.Equal("mongodb-outbox", item.OutboxId);
+        Assert.Equal(message.Id, item.MessageId);
+
+        await dispatchStore.ApplyReportAsync(new EventDispatchExecutionReport(
+            outboxId: "mongodb-outbox",
+            channelId: message.ChannelId,
+            outcome: EventDispatchExecutionOutcomes.Succeeded,
+            observedAtUtc: DateTimeOffset.UtcNow,
+            messageId: message.Id,
+            attempt: 1));
+
+        Assert.Empty(await dispatchStore.ReadPendingAsync(10));
     }
 
     [Fact]

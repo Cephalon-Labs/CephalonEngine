@@ -72,7 +72,14 @@ internal sealed class MongoDbOutbox : IOutbox
             Builders<MongoDbOutboxEntry>.IndexKeys.Ascending(entry => entry.DispatchedAtUtc),
             new CreateIndexOptions { Name = "ix_outbox_dispatched_at" });
 
-        await _collection.Indexes.CreateManyAsync([uniqueIndex, dispatchedIndex], cancellationToken).ConfigureAwait(false);
+        var eligibilityIndex = new CreateIndexModel<MongoDbOutboxEntry>(
+            Builders<MongoDbOutboxEntry>.IndexKeys
+                .Ascending(entry => entry.DispatchedAtUtc)
+                .Ascending(entry => entry.NextAttemptAtUtc)
+                .Ascending(entry => entry.CreatedAtUtc),
+            new CreateIndexOptions { Name = "ix_outbox_dispatch_eligibility" });
+
+        await _collection.Indexes.CreateManyAsync([uniqueIndex, dispatchedIndex, eligibilityIndex], cancellationToken).ConfigureAwait(false);
         _indexesCreated = true;
     }
 }

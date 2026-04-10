@@ -5,6 +5,7 @@ using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.MongoDB.Configuration;
 using Cephalon.Data.MongoDB.Services;
 using Cephalon.Engine.Configuration;
+using Cephalon.Eventing.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -53,6 +54,12 @@ internal sealed class MongoDbDataModule(MongoDbDataOptions options) : ModuleBase
                 var database = serviceProvider.GetRequiredService<IMongoDatabase>();
                 var collection = database.GetCollection<MongoDbOutboxEntry>(collectionName);
                 return new MongoDbOutbox(collection);
+            });
+            services.TryAddScoped<IEventDispatchStore>(serviceProvider =>
+            {
+                var database = serviceProvider.GetRequiredService<IMongoDatabase>();
+                var collection = database.GetCollection<MongoDbOutboxEntry>(collectionName);
+                return new MongoDbEventDispatchStore(collection);
             });
         }
 

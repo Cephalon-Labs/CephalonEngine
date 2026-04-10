@@ -11,7 +11,7 @@ internal sealed class WolverineEventingRuntimeSurfaceContributor(
     WolverineEventingOptions options,
     IServiceProvider serviceProvider,
     IRuntime runtime,
-    IEventDispatchRuntimeCatalog dispatchRuntimeCatalog) : ITechnologyRuntimeContributor
+    IEventDispatchRuntimeDescriptorCatalog dispatchRuntimeDescriptorCatalog) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -27,47 +27,48 @@ internal sealed class WolverineEventingRuntimeSurfaceContributor(
         var executionGraph = runtime.OperationalStory.ExecutionGraphs
             .SingleOrDefault(static graph =>
                 string.Equals(graph.GraphId, WolverineEventingRuntimeIds.ExecutionGraphId, StringComparison.OrdinalIgnoreCase));
-        var dispatchStates = dispatchRuntimeCatalog.States.ToArray();
-        var latestDispatchState = dispatchStates
-            .OrderByDescending(static state => state.LastObservedAtUtc ?? DateTimeOffset.MinValue)
-            .ThenBy(static state => state.OutboxId, StringComparer.OrdinalIgnoreCase)
-            .FirstOrDefault();
+        var dispatchRuntime = dispatchRuntimeDescriptorCatalog.GetById(WolverineEventingRuntimeIds.DispatchRuntimeId);
+        var summary = dispatchRuntime?.Summary ?? EventDispatchRuntimeSummary.Empty;
         var aggregateMetadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
-            ["reportedOutboxCount"] = dispatchStates.Length.ToString(System.Globalization.CultureInfo.InvariantCulture),
-            ["reportedStartedCount"] = dispatchStates.Sum(static state => state.StartedCount).ToString(System.Globalization.CultureInfo.InvariantCulture),
-            ["reportedSucceededCount"] = dispatchStates.Sum(static state => state.SucceededCount).ToString(System.Globalization.CultureInfo.InvariantCulture),
-            ["reportedFailedCount"] = dispatchStates.Sum(static state => state.FailedCount).ToString(System.Globalization.CultureInfo.InvariantCulture),
-            ["reportedRetryScheduledCount"] = dispatchStates.Sum(static state => state.RetryScheduledCount).ToString(System.Globalization.CultureInfo.InvariantCulture),
-            ["reportedSkippedCount"] = dispatchStates.Sum(static state => state.SkippedCount).ToString(System.Globalization.CultureInfo.InvariantCulture),
-            ["reportedTotalCount"] = dispatchStates.Sum(static state => state.TotalReports).ToString(System.Globalization.CultureInfo.InvariantCulture),
-            ["reportedRetryPendingCount"] = dispatchStates.Count(static state => state.RetryPending).ToString(System.Globalization.CultureInfo.InvariantCulture)
+            ["reportedOutboxCount"] = summary.ReportedOutboxCount.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["reportedStartedCount"] = summary.StartedCount.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["reportedSucceededCount"] = summary.SucceededCount.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["reportedFailedCount"] = summary.FailedCount.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["reportedRetryScheduledCount"] = summary.RetryScheduledCount.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["reportedSkippedCount"] = summary.SkippedCount.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["reportedTotalCount"] = summary.TotalReports.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["reportedRetryPendingCount"] = summary.RetryPendingCount.ToString(System.Globalization.CultureInfo.InvariantCulture)
         };
 
-        if (latestDispatchState is not null)
+        if (summary.HasReports)
         {
-            aggregateMetadata["lastOutboxId"] = latestDispatchState.OutboxId;
-            aggregateMetadata["lastOutcome"] = latestDispatchState.LastOutcome ?? "not-reported";
-            aggregateMetadata["lastAttempt"] = latestDispatchState.LastAttempt.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            if (!string.IsNullOrWhiteSpace(summary.LastOutboxId))
+            {
+                aggregateMetadata["lastOutboxId"] = summary.LastOutboxId;
+            }
 
-            if (latestDispatchState.LastObservedAtUtc is { } lastObservedAtUtc)
+            aggregateMetadata["lastOutcome"] = summary.LastOutcome ?? "not-reported";
+            aggregateMetadata["lastAttempt"] = summary.LastAttempt.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+            if (summary.LastObservedAtUtc is { } lastObservedAtUtc)
             {
                 aggregateMetadata["lastObservedAtUtc"] = lastObservedAtUtc.ToString("O", System.Globalization.CultureInfo.InvariantCulture);
             }
 
-            if (!string.IsNullOrWhiteSpace(latestDispatchState.LastMessageId))
+            if (!string.IsNullOrWhiteSpace(summary.LastMessageId))
             {
-                aggregateMetadata["lastMessageId"] = latestDispatchState.LastMessageId;
+                aggregateMetadata["lastMessageId"] = summary.LastMessageId;
             }
 
-            if (!string.IsNullOrWhiteSpace(latestDispatchState.LastChannelId))
+            if (!string.IsNullOrWhiteSpace(summary.LastChannelId))
             {
-                aggregateMetadata["lastChannelId"] = latestDispatchState.LastChannelId;
+                aggregateMetadata["lastChannelId"] = summary.LastChannelId;
             }
 
-            if (!string.IsNullOrWhiteSpace(latestDispatchState.LastError))
+            if (!string.IsNullOrWhiteSpace(summary.LastError))
             {
-                aggregateMetadata["lastError"] = latestDispatchState.LastError;
+                aggregateMetadata["lastError"] = summary.LastError;
             }
         }
         else

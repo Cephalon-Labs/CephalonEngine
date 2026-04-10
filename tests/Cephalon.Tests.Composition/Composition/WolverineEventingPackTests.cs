@@ -150,6 +150,8 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("Wolverine Dispatch Loop", dispatchRuntimeDescriptor.DisplayName);
         Assert.Equal("wolverine", dispatchRuntimeDescriptor.Metadata["adapter"]);
         Assert.Equal(["entity-framework-outbox"], dispatchRuntimeDescriptor.OutboxIds);
+        Assert.False(dispatchRuntimeDescriptor.Summary.HasReports);
+        Assert.Equal(0, dispatchRuntimeDescriptor.Summary.TotalReports);
         Assert.Equal("wolverine-managed", outboxDescriptor.DispatchPolicy.PolicyId);
         Assert.Equal("runtime-managed", outboxDescriptor.DispatchPolicy.ExecutionMode);
         Assert.Equal(WolverineEventingRuntimeIds.DispatchRuntimeId, outboxDescriptor.DispatchPolicy.RuntimeId);
@@ -197,6 +199,7 @@ public sealed class WolverineEventingPackTests
 
         await using var provider = services.BuildServiceProvider();
         var runtimeReporter = provider.GetRequiredService<IEventDispatchRuntimeReporter>();
+        var dispatchRuntimeDescriptors = provider.GetRequiredService<IEventDispatchRuntimeDescriptorCatalog>();
         var technologyCatalog = provider.GetRequiredService<global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeCatalog>();
 
         await runtimeReporter.ReportAsync(new EventDispatchExecutionReport(
@@ -232,6 +235,8 @@ public sealed class WolverineEventingPackTests
         var dispatchSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
         var adapterEntry = Assert.Single(adapterSurface.Entries, entry => entry.Id == "wolverine-eventing");
         var dispatchEntry = Assert.Single(dispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
+        var runtimeDescriptor = dispatchRuntimeDescriptors.GetById(WolverineEventingRuntimeIds.DispatchRuntimeId);
+        Assert.NotNull(runtimeDescriptor);
 
         Assert.Equal("2", adapterEntry.Metadata["reportedTotalCount"]);
         Assert.Equal("1", adapterEntry.Metadata["reportedStartedCount"]);
@@ -250,6 +255,15 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("2026-04-04T14:06:00.0000000+00:00", dispatchEntry.Metadata["reported.nextRetryAtUtc"]);
         Assert.Equal("fixed-delay", dispatchEntry.Metadata["reported.retryPolicy"]);
         Assert.Equal("wolverine-managed", dispatchEntry.Metadata[$"dispatchRuntime.{WolverineEventingRuntimeIds.DispatchRuntimeId}.dispatchBridge"]);
+        Assert.True(runtimeDescriptor!.Summary.HasReports);
+        Assert.Equal(["entity-framework-outbox"], runtimeDescriptor.Summary.ReportedOutboxIds);
+        Assert.Equal("entity-framework-outbox", runtimeDescriptor.Summary.LastOutboxId);
+        Assert.Equal("retry-scheduled", runtimeDescriptor.Summary.LastOutcome);
+        Assert.Equal("evt-500", runtimeDescriptor.Summary.LastMessageId);
+        Assert.Equal(2, runtimeDescriptor.Summary.LastAttempt);
+        Assert.Equal(2, runtimeDescriptor.Summary.TotalReports);
+        Assert.Equal(1, runtimeDescriptor.Summary.RetryPendingCount);
+        Assert.Equal("Retrying staged event publication.", runtimeDescriptor.Summary.LastError);
     }
 
     [Fact]

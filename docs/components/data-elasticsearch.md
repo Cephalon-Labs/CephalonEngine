@@ -7,6 +7,7 @@
 - registers a singleton `ElasticsearchClient` (from `Elastic.Clients.Elasticsearch` 8.17.0) using `TryAdd` semantics so a host-owned client is never displaced
 - optionally configures Basic authentication via `ElasticsearchClientSettings.Authentication(new BasicAuthentication(...))` when `Username` is set
 - registers a scoped `IOutbox` backed by an Elasticsearch index when `RegisterOutbox` is enabled; documents are staged with `op_type=create` for idempotency — HTTP 409 is swallowed silently
+- registers a scoped `IEventDispatchStore` over that same outbox index when `RegisterOutbox` is enabled, so staged Elasticsearch events can be read and durable dispatch outcomes can be written back through the runtime-neutral eventing contract
 - registers a scoped `IInbox` backed by a separate Elasticsearch index when `RegisterInbox` is enabled; existence is checked via `GetAsync` by document id; marking uses `op_type=create` with 409 swallow
 - exposes operator-facing outbox and inbox descriptors through the engine runtime surfaces
 - projects outbox and inbox descriptors through the `event-driven-integration` technology surface when that technology is active
@@ -18,13 +19,14 @@
 - `Modules/ElasticsearchDataModule.cs`
 - `Registration/ElasticsearchDataEngineBuilderExtensions.cs`
 - `Services/ElasticsearchOutbox.cs`
+- `Services/ElasticsearchEventDispatchStore.cs`
 - `Services/ElasticsearchOutboxRuntimeSurfaceContributor.cs`
 - `Services/ElasticsearchInbox.cs`
 - `Services/ElasticsearchInboxRuntimeSurfaceContributor.cs`
 
 ## How it fits
 
-This pack sits on top of `Cephalon.Data`, not in place of it. `Cephalon.Data` still owns the runtime-neutral `IReadStore` / `IWriteStore` dispatching surface. `Cephalon.Data.Elasticsearch` adds the Elasticsearch-backed outbox and inbox persistence paths that let event-driven workloads stage and track messages against a search index without switching to a relational or document-oriented provider.
+This pack sits on top of `Cephalon.Data`, not in place of it. `Cephalon.Data` still owns the runtime-neutral `IReadStore` / `IWriteStore` dispatching surface. `Cephalon.Data.Elasticsearch` adds the Elasticsearch-backed outbox and inbox persistence paths that let event-driven workloads stage and track messages against a search index without switching to a relational or document-oriented provider, and it now also exposes the same staged outbox through `IEventDispatchStore` so consumer-managed or adapter-owned dispatch loops can read pending items and persist durable dispatch outcomes without Elasticsearch-specific host glue.
 
 ## Registration
 
@@ -163,7 +165,7 @@ This pack intentionally does not claim:
 - full-text search, aggregations, or `IReadStore` / `IWriteStore` dispatch backed by Elasticsearch
 - index lifecycle management (ILM) or template provisioning
 - cross-cluster search or multi-index querying
-- adapter-owned dispatch loops or broker retry scheduling
+- pack-owned dispatch loops or broker-specific retry scheduling beyond the runtime-neutral `IEventDispatchStore` bridge
 - bulk indexing or pipeline ingestion
 
 ## Related docs

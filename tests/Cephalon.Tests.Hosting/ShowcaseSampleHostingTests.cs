@@ -211,8 +211,11 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("wolverine-dispatch-loop", descriptor.Id);
         Assert.Equal("wolverine", descriptor.Metadata["adapter"]);
         Assert.Equal(["entity-framework-outbox"], descriptor.OutboxIds);
+        Assert.False(descriptor.Summary.HasReports);
+        Assert.Equal(0, descriptor.Summary.TotalReports);
         Assert.NotNull(runtime);
         Assert.Equal("wolverine-dispatch-loop", runtime.Id);
+        Assert.False(runtime.Summary.HasReports);
         Assert.NotNull(outboxes);
         var outbox = Assert.Single(outboxes);
         Assert.Equal("wolverine-managed", outbox.DispatchPolicy.PolicyId);
@@ -220,6 +223,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.NotNull(snapshot);
         Assert.Single(snapshot.EventDispatchRuntimes);
         Assert.Equal("wolverine-dispatch-loop", snapshot.EventDispatchRuntimes[0].Id);
+        Assert.Equal(0, snapshot.EventDispatchRuntimes[0].Summary.TotalReports);
     }
 
     [Fact]

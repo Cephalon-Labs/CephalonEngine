@@ -4,6 +4,8 @@ using Cephalon.Data.Redis.Configuration;
 using Cephalon.Data.Redis.Registration;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
+using Cephalon.Eventing.Registration;
+using Cephalon.Eventing.Services;
 using Cephalon.EventSourcing.Redis;
 using Cephalon.EventSourcing.Redis.Hosting;
 using Cephalon.Tests.Support;
@@ -128,6 +130,43 @@ public sealed class RedisDataPackTests
         using var scope = provider.CreateScope();
         var outbox = scope.ServiceProvider.GetRequiredService<IOutbox>();
         Assert.NotNull(outbox);
+    }
+
+    [Fact]
+    public void AddRedisData_WithEventDrivenIntegration_RegistersConsumerManagedDispatchStore()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                data: new DataSettings(provider: "Redis", outboxEnabled: true)));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "test-events",
+                    displayName: "Test Events",
+                    description: "Dispatch-store test channel."));
+            });
+            engine.AddRedisData(OfflineConnectionString, configure: options =>
+            {
+                options.RegisterOutbox = true;
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var outboxCatalog = provider.GetRequiredService<IOutboxCatalog>();
+        var descriptor = Assert.Single(outboxCatalog.Outboxes);
+        Assert.Equal("consumer-managed", descriptor.DispatchPolicy.PolicyId);
+        Assert.Equal("consumer-managed", descriptor.DispatchPolicy.ExecutionMode);
+
+        using var scope = provider.CreateScope();
+        var dispatchStore = scope.ServiceProvider.GetRequiredService<IEventDispatchStore>();
+        Assert.NotNull(dispatchStore);
+        Assert.Equal("redis-outbox", Assert.Single(dispatchStore.OutboxIds));
     }
 
     [Fact]

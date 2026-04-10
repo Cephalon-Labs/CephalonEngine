@@ -5,6 +5,7 @@ using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.Elasticsearch.Configuration;
 using Cephalon.Data.Elasticsearch.Services;
 using Cephalon.Engine.Configuration;
+using Cephalon.Eventing.Services;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Transport;
 using Microsoft.Extensions.Configuration;
@@ -58,6 +59,8 @@ internal sealed class ElasticsearchDataModule(ElasticsearchDataOptions options)
             var indexName = $"{options.IndexPrefix}outbox-messages";
             services.TryAddScoped<IOutbox>(sp =>
                 new ElasticsearchOutbox(sp.GetRequiredService<ElasticsearchClient>(), indexName));
+            services.TryAddScoped<IEventDispatchStore>(sp =>
+                new ElasticsearchEventDispatchStore(sp.GetRequiredService<ElasticsearchClient>(), indexName));
         }
 
         if (options.RegisterInbox)

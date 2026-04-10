@@ -5,6 +5,8 @@ using Cephalon.Data.OpenSearch.Configuration;
 using Cephalon.Data.OpenSearch.Registration;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
+using Cephalon.Eventing.Registration;
+using Cephalon.Eventing.Services;
 using Cephalon.Tests.Support;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -72,6 +74,38 @@ public sealed class SearchDataPackTests
         Assert.Equal("elasticsearch-outbox", descriptor.Id);
         Assert.Equal(ElasticsearchDataOptions.ProviderId, descriptor.Provider);
         Assert.Equal("search-index", descriptor.Mode);
+    }
+
+    [Fact]
+    public void AddElasticsearchData_WithEventDrivenIntegration_RegistersConsumerManagedDispatchStore()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                data: new DataSettings(provider: "Elasticsearch", outboxEnabled: true)));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "test-events",
+                    displayName: "Test Events",
+                    description: "Dispatch-store test channel."));
+            });
+            engine.AddElasticsearchData("http://localhost:9200", o => { o.RegisterOutbox = true; });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var descriptor = Assert.Single(provider.GetRequiredService<IOutboxCatalog>().Outboxes);
+        Assert.Equal("consumer-managed", descriptor.DispatchPolicy.PolicyId);
+        Assert.Equal("consumer-managed", descriptor.DispatchPolicy.ExecutionMode);
+
+        using var scope = provider.CreateScope();
+        var dispatchStore = scope.ServiceProvider.GetRequiredService<IEventDispatchStore>();
+        Assert.Equal("elasticsearch-outbox", Assert.Single(dispatchStore.OutboxIds));
     }
 
     [Fact]
@@ -187,6 +221,38 @@ public sealed class SearchDataPackTests
         Assert.Equal("opensearch-outbox", descriptor.Id);
         Assert.Equal(OpenSearchDataOptions.ProviderId, descriptor.Provider);
         Assert.Equal("search-index", descriptor.Mode);
+    }
+
+    [Fact]
+    public void AddOpenSearchData_WithEventDrivenIntegration_RegistersConsumerManagedDispatchStore()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                data: new DataSettings(provider: "OpenSearch", outboxEnabled: true)));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "test-events",
+                    displayName: "Test Events",
+                    description: "Dispatch-store test channel."));
+            });
+            engine.AddOpenSearchData("http://localhost:9200", o => { o.RegisterOutbox = true; });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var descriptor = Assert.Single(provider.GetRequiredService<IOutboxCatalog>().Outboxes);
+        Assert.Equal("consumer-managed", descriptor.DispatchPolicy.PolicyId);
+        Assert.Equal("consumer-managed", descriptor.DispatchPolicy.ExecutionMode);
+
+        using var scope = provider.CreateScope();
+        var dispatchStore = scope.ServiceProvider.GetRequiredService<IEventDispatchStore>();
+        Assert.Equal("opensearch-outbox", Assert.Single(dispatchStore.OutboxIds));
     }
 
     [Fact]

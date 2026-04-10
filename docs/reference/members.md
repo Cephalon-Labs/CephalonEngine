@@ -2163,6 +2163,9 @@ Browse the published API surface by public member.
 - [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-engineoptions-empty): `Properties` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets an empty options instance with no explicit overrides.
   - `EngineOptions Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-empty): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets an empty runtime summary when no dispatch observations have been reported yet.
+  - `EventDispatchRuntimeSummary Empty { get; }`
 - [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-identityselection-empty): `Properties` on `IdentitySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets an empty identity-selection instance.
   - `IdentitySelection Empty { get; }`
@@ -2430,15 +2433,18 @@ Browse the published API surface by public member.
 - [EventDispatchItem](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchitem-ctor-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-datetimeoffset-system-int32-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventDispatchItem&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a new dispatch item.
   - `EventDispatchItem(string outboxId, string messageId, string channelId, string eventType, string payload, DateTimeOffset occurredAtUtc, DateTimeOffset createdAtUtc, int dispatchAttemptCount, string contentType, string correlationId, string tenantId, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> metadata)`
-- [EventDispatchRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventdispatchruntimedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `EventDispatchRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventDispatchRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+- [EventDispatchRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventdispatchruntimedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-data-eventdispatchruntimesummary): `Constructors` on `EventDispatchRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventDispatchRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new event-dispatch runtime descriptor.
-  - `EventDispatchRuntimeDescriptor(string id, string displayName, string description, IReadOnlyDictionary<string, string> metadata, IReadOnlyList<string> outboxIds)`
+  - `EventDispatchRuntimeDescriptor(string id, string displayName, string description, IReadOnlyDictionary<string, string> metadata, IReadOnlyList<string> outboxIds, EventDispatchRuntimeSummary summary)`
 - [EventDispatchRuntimes](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-eventdispatchruntimes): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EventDispatchRuntimes&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the configured event-dispatch runtimes visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<EventDispatchRuntimeDescriptor> EventDispatchRuntimes { get; set; }`
 - [EventDispatchRuntimeState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventdispatchruntimestate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventDispatchRuntimeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Describes the latest operator-facing runtime state reported for one durable event-dispatch path.
   - `EventDispatchRuntimeState(string OutboxId, string LastChannelId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastMessageId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int RetryScheduledCount, int SkippedCount, string LastError, IReadOnlyDictionary<string, string> Metadata)`
+- [EventDispatchRuntimeSummary](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventdispatchruntimesummary-ctor-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string): `Constructors` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventDispatchRuntimeSummary&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new aggregate runtime summary.
+  - `EventDispatchRuntimeSummary(IReadOnlyList<string> reportedOutboxIds, string lastOutboxId, string lastChannelId, string lastOutcome, DateTimeOffset? lastObservedAtUtc, string lastMessageId, int lastAttempt, int startedCount, int succeededCount, int failedCount, int retryScheduledCount, int skippedCount, int retryPendingCount, string lastError)`
 - [EventDispatchStates](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-eventdispatchstates): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EventDispatchStates&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the latest reported event-dispatch runtime state entries visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<EventDispatchRuntimeState> EventDispatchStates { get; set; }`
@@ -2622,6 +2628,9 @@ Browse the published API surface by public member.
 - [FailedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-failedcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of `failed` observations reported so far.
   - `int FailedCount { get; set; }`
+- [FailedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-failedcount): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the total number of `failed` observations reported so far.
+  - `int FailedCount { get; }`
 - [FailedCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-failedcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The number of `failed` observations reported so far.
   - `int FailedCount { get; set; }`
@@ -3111,6 +3120,9 @@ Browse the published API surface by public member.
 - [HasProcessedAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-iinbox-hasprocessedasync-system-string-system-threading-cancellationtoken): `Methods` on `IInbox` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasProcessedAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Determines whether the requested message identifier has already been recorded as processed.
   - `ValueTask<bool> HasProcessedAsync(string messageId, CancellationToken cancellationToken)`
+- [HasReports](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-hasreports): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the dispatch runtime has reported any observations yet.
+  - `bool HasReports { get; }`
 - [HasValue](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorresult-hasvalue): `Properties` on `IBehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValue&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets a value indicating whether the result carries a payload value.
   - `bool HasValue { get; }`
@@ -3870,18 +3882,27 @@ Browse the published API surface by public member.
 - [LastAttempt](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastattempt): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastAttempt&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The last reported dispatch attempt number.
   - `int LastAttempt { get; set; }`
+- [LastAttempt](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastattempt): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastAttempt&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the latest reported dispatch attempt number.
+  - `int LastAttempt { get; }`
 - [LastAttempt](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastattempt): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastAttempt&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The last reported application-managed attempt number.
   - `int LastAttempt { get; set; }`
 - [LastChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastchannelid): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The last stable channel identifier reported for this dispatch path.
   - `string LastChannelId { get; set; }`
+- [LastChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastchannelid): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the latest reported channel identifier when one exists.
+  - `string LastChannelId { get; }`
 - [LastError](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-lasterror): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastError&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest error observed for this target.
   - `string LastError { get; }`
 - [LastError](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lasterror): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastError&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The last operator-facing error summary when a failure was reported.
   - `string LastError { get; set; }`
+- [LastError](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lasterror): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastError&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the latest operator-facing error summary when one was reported.
+  - `string LastError { get; }`
 - [LastError](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lasterror): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastError&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The last operator-facing error summary when a failure was reported.
   - `string LastError { get; set; }`
@@ -3903,12 +3924,18 @@ Browse the published API surface by public member.
 - [LastMessageId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastmessageid): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastMessageId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The last stable outbound message identifier when one was reported.
   - `string LastMessageId { get; set; }`
+- [LastMessageId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastmessageid): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastMessageId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the latest outbound message identifier when one was reported.
+  - `string LastMessageId { get; }`
 - [LastMessageId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastmessageid): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastMessageId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The last stable inbound message identifier when one was reported.
   - `string LastMessageId { get; set; }`
 - [LastObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastobservedatutc): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The UTC timestamp when the last observation was reported.
   - `DateTimeOffset? LastObservedAtUtc { get; set; }`
+- [LastObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastobservedatutc): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the UTC timestamp when the latest observation was reported.
+  - `DateTimeOffset? LastObservedAtUtc { get; }`
 - [LastObservedAtUtc](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastobservedatutc): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The UTC timestamp when the last observation was reported.
   - `DateTimeOffset? LastObservedAtUtc { get; set; }`
@@ -3930,9 +3957,15 @@ Browse the published API surface by public member.
 - [LastObservedPhase](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-lastobservedphase): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastObservedPhase&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The last lifecycle phase recorded for the module.
   - `string LastObservedPhase { get; set; }`
+- [LastOutboxId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastoutboxid): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the outbox identifier that produced the latest observation when one exists.
+  - `string LastOutboxId { get; }`
 - [LastOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastoutcome): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The last reported outcome identifier when one exists.
   - `string LastOutcome { get; set; }`
+- [LastOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastoutcome): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the latest reported dispatch outcome identifier when one exists.
+  - `string LastOutcome { get; }`
 - [LastOutcome](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastoutcome): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The last reported outcome identifier when one exists.
   - `string LastOutcome { get; set; }`
@@ -5547,6 +5580,12 @@ Browse the published API surface by public member.
 - [ReportAsync](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventsubscriptionruntimereporter-reportasync-cephalon-eventing-services-eventsubscriptionexecutionreport-system-threading-cancellationtoken): `Methods` on `IEventSubscriptionRuntimeReporter` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ReportAsync&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Records one application-managed execution observation for a declared event subscription.
   - `ValueTask ReportAsync(EventSubscriptionExecutionReport report, CancellationToken cancellationToken)`
+- [ReportedOutboxCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-reportedoutboxcount): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReportedOutboxCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of outboxes that have reported runtime state for this dispatch runtime.
+  - `int ReportedOutboxCount { get; }`
+- [ReportedOutboxIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-reportedoutboxids): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReportedOutboxIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the outbox identifiers that have reported runtime state for the dispatch runtime.
+  - `IReadOnlyList<string> ReportedOutboxIds { get; }`
 - [Request](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-renderedreferencedocs-request): `Properties` on `RenderedReferenceDocs` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Request&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the original generation request.
   - `ReferenceDocsRequest Request { get; }`
@@ -5817,6 +5856,9 @@ Browse the published API surface by public member.
 - [RetryPending](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-retrypending): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryPending&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets a value indicating whether the latest report says another retry attempt is pending.
   - `bool RetryPending { get; }`
+- [RetryPendingCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-retrypendingcount): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryPendingCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of owned outboxes whose latest report still says another retry is pending.
+  - `int RetryPendingCount { get; }`
 - [RetryScheduled](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchexecutionoutcomes-retryscheduled): `Fields` on `EventDispatchExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryScheduled&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when dispatch schedules or expects another retry attempt.
   - `const string RetryScheduled`
@@ -5826,6 +5868,9 @@ Browse the published API surface by public member.
 - [RetryScheduledCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-retryscheduledcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryScheduledCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of `retry-scheduled` observations reported so far.
   - `int RetryScheduledCount { get; set; }`
+- [RetryScheduledCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-retryscheduledcount): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryScheduledCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the total number of `retry-scheduled` observations reported so far.
+  - `int RetryScheduledCount { get; }`
 - [RetryScheduledCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-retryscheduledcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryScheduledCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The number of `retry-scheduled` observations reported so far.
   - `int RetryScheduledCount { get; set; }`
@@ -6183,6 +6228,9 @@ Browse the published API surface by public member.
 - [SkippedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-skippedcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SkippedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of `skipped` observations reported so far.
   - `int SkippedCount { get; set; }`
+- [SkippedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-skippedcount): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SkippedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the total number of `skipped` observations reported so far.
+  - `int SkippedCount { get; }`
 - [SkippedCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-skippedcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SkippedCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The number of `skipped` observations reported so far.
   - `int SkippedCount { get; set; }`
@@ -6318,6 +6366,9 @@ Browse the published API surface by public member.
 - [StartedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-startedcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of `started` observations reported so far.
   - `int StartedCount { get; set; }`
+- [StartedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-startedcount): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the total number of `started` observations reported so far.
+  - `int StartedCount { get; }`
 - [StartedCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-startedcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=StartedCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The number of `started` observations reported so far.
   - `int StartedCount { get; set; }`
@@ -6546,6 +6597,9 @@ Browse the published API surface by public member.
 - [SucceededCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-succeededcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SucceededCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of `succeeded` observations reported so far.
   - `int SucceededCount { get; set; }`
+- [SucceededCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-succeededcount): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SucceededCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the total number of `succeeded` observations reported so far.
+  - `int SucceededCount { get; }`
 - [SucceededCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-succeededcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SucceededCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The number of `succeeded` observations reported so far.
   - `int SucceededCount { get; set; }`
@@ -6573,6 +6627,9 @@ Browse the published API surface by public member.
 - [Summary](cephalon-audit.md#member-p-cephalon-audit-services-auditrecordrequest-summary): `Properties` on `AuditRecordRequest` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=Summary&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
   - Gets the human-readable audit summary.
   - `string Summary { get; }`
+- [Summary](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-summary): `Properties` on `EventDispatchRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Summary&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the latest aggregate runtime summary reported for the dispatch runtime.
+  - `EventDispatchRuntimeSummary Summary { get; }`
 - [SummaryPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-summarypath): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=SummaryPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The aggregate health endpoint path.
   - `string SummaryPath { get; set; }`
@@ -6872,6 +6929,9 @@ Browse the published API surface by public member.
   - `int TotalCount { get; }`
 - [TotalReports](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-totalreports): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the total number of observations reported for this dispatch path.
+  - `int TotalReports { get; }`
+- [TotalReports](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-totalreports): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the total number of reported observations across all owned outboxes.
   - `int TotalReports { get; }`
 - [TotalReports](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-totalreports): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the total number of observations reported for this subscription.

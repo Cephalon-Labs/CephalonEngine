@@ -5,6 +5,7 @@ using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.OpenSearch.Configuration;
 using Cephalon.Data.OpenSearch.Services;
 using Cephalon.Engine.Configuration;
+using Cephalon.Eventing.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -57,6 +58,8 @@ internal sealed class OpenSearchDataModule(OpenSearchDataOptions options)
             var indexName = $"{options.IndexPrefix}outbox-messages";
             services.TryAddScoped<IOutbox>(sp =>
                 new OpenSearchOutbox(sp.GetRequiredService<OpenSearchClient>(), indexName));
+            services.TryAddScoped<IEventDispatchStore>(sp =>
+                new OpenSearchEventDispatchStore(sp.GetRequiredService<OpenSearchClient>(), indexName));
         }
 
         if (options.RegisterInbox)

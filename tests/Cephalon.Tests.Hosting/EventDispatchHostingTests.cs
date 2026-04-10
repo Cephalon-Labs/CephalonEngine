@@ -99,6 +99,7 @@ public sealed class EventDispatchHostingTests
 
         var states = await client.GetFromJsonAsync<EventDispatchRuntimeState[]>("/engine/event-dispatches");
         var state = await client.GetFromJsonAsync<EventDispatchRuntimeState>("/engine/event-dispatches/entity-framework-outbox");
+        var enrichedRuntimeDescriptor = await client.GetFromJsonAsync<EventDispatchRuntimeDescriptor>("/engine/event-dispatch-runtimes/wolverine-dispatch-loop");
         var snapshot = await client.GetFromJsonAsync<Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
         Assert.NotNull(states);
@@ -109,10 +110,20 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("evt-900", reportedState.LastMessageId);
         Assert.NotNull(state);
         Assert.Equal("entity-framework-outbox", state.OutboxId);
+        Assert.NotNull(enrichedRuntimeDescriptor);
+        Assert.True(enrichedRuntimeDescriptor.Summary.HasReports);
+        Assert.Equal(["entity-framework-outbox"], enrichedRuntimeDescriptor.Summary.ReportedOutboxIds);
+        Assert.Equal("entity-framework-outbox", enrichedRuntimeDescriptor.Summary.LastOutboxId);
+        Assert.Equal("retry-scheduled", enrichedRuntimeDescriptor.Summary.LastOutcome);
+        Assert.Equal("evt-900", enrichedRuntimeDescriptor.Summary.LastMessageId);
+        Assert.Equal(2, enrichedRuntimeDescriptor.Summary.LastAttempt);
+        Assert.Equal(1, enrichedRuntimeDescriptor.Summary.TotalReports);
+        Assert.Equal(1, enrichedRuntimeDescriptor.Summary.RetryPendingCount);
         Assert.NotNull(snapshot);
         Assert.Single(snapshot.EventDispatchRuntimes);
         Assert.Single(snapshot.EventDispatchStates);
         Assert.Equal("wolverine-dispatch-loop", snapshot.EventDispatchRuntimes[0].Id);
+        Assert.Equal(1, snapshot.EventDispatchRuntimes[0].Summary.TotalReports);
         Assert.Equal("entity-framework-outbox", snapshot.EventDispatchStates[0].OutboxId);
     }
 }

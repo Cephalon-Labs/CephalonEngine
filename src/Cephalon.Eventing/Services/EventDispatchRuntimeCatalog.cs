@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace Cephalon.Eventing.Services;
 
 internal sealed class EventDispatchRuntimeCatalog(
-    IOutboxCatalog outboxes,
+    IReadOnlyList<OutboxDescriptor> outboxes,
     IEventChannelCatalog channels,
     ILoggerFactory? loggerFactory = null) : IEventDispatchRuntimeCatalog, IEventDispatchRuntimeReporter
 {
@@ -14,6 +14,9 @@ internal sealed class EventDispatchRuntimeCatalog(
 
     private readonly Lock gate = new();
     private readonly Dictionary<string, EventDispatchRuntimeState> states = new(StringComparer.OrdinalIgnoreCase);
+    private readonly HashSet<string> outboxIds = outboxes
+        .Select(static outbox => outbox.Id)
+        .ToHashSet(StringComparer.OrdinalIgnoreCase);
     private readonly ILogger logger = (loggerFactory ?? NullLoggerFactory.Instance)
         .CreateLogger<EventDispatchRuntimeCatalog>();
 
@@ -57,7 +60,7 @@ internal sealed class EventDispatchRuntimeCatalog(
         ArgumentNullException.ThrowIfNull(report);
         cancellationToken.ThrowIfCancellationRequested();
 
-        if (outboxes.GetById(report.OutboxId) is null)
+        if (!outboxIds.Contains(report.OutboxId))
         {
             throw new InvalidOperationException(
                 $"Outbox '{report.OutboxId}' is not registered in the active eventing runtime.");

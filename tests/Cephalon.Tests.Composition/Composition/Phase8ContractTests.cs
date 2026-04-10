@@ -61,6 +61,21 @@ public sealed class Phase8ContractTests
     [Fact]
     public void EventDispatchRuntimeDescriptorNormalizesOwnedOutboxIdsAndMetadata()
     {
+        var summary = new EventDispatchRuntimeSummary(
+            reportedOutboxIds: [" entity-framework-outbox ", "ENTITY-FRAMEWORK-OUTBOX", "catalog-outbox"],
+            lastOutboxId: " entity-framework-outbox ",
+            lastChannelId: " catalog-events ",
+            lastOutcome: " retry-scheduled ",
+            lastObservedAtUtc: new DateTimeOffset(2026, 04, 11, 11, 15, 00, TimeSpan.Zero),
+            lastMessageId: " evt-700 ",
+            lastAttempt: 3,
+            startedCount: 2,
+            succeededCount: 1,
+            failedCount: 1,
+            retryScheduledCount: 1,
+            skippedCount: 0,
+            retryPendingCount: 1,
+            lastError: " Retrying staged dispatch. ");
         var descriptor = new EventDispatchRuntimeDescriptor(
             id: "wolverine-dispatch-loop",
             displayName: "Wolverine Dispatch Loop",
@@ -70,11 +85,20 @@ public sealed class Phase8ContractTests
                 ["Adapter"] = "wolverine",
                 ["DispatchBridge"] = "wolverine-managed"
             }!.ToDictionary(pair => pair.Key, pair => pair.Value ?? string.Empty, StringComparer.OrdinalIgnoreCase),
-            outboxIds: [" entity-framework-outbox ", "ENTITY-FRAMEWORK-OUTBOX", "catalog-outbox"]);
+            outboxIds: [" entity-framework-outbox ", "ENTITY-FRAMEWORK-OUTBOX", "catalog-outbox"],
+            summary: summary);
 
         Assert.Equal(["catalog-outbox", "entity-framework-outbox"], descriptor.OutboxIds);
         Assert.Equal("wolverine", descriptor.Metadata["adapter"]);
         Assert.Equal("wolverine-managed", descriptor.Metadata["dispatchbridge"]);
+        Assert.Equal(["catalog-outbox", "entity-framework-outbox"], descriptor.Summary.ReportedOutboxIds);
+        Assert.Equal("entity-framework-outbox", descriptor.Summary.LastOutboxId);
+        Assert.Equal("catalog-events", descriptor.Summary.LastChannelId);
+        Assert.Equal("retry-scheduled", descriptor.Summary.LastOutcome);
+        Assert.Equal("evt-700", descriptor.Summary.LastMessageId);
+        Assert.Equal(3, descriptor.Summary.LastAttempt);
+        Assert.Equal(5, descriptor.Summary.TotalReports);
+        Assert.Equal(1, descriptor.Summary.RetryPendingCount);
     }
 
     [Fact]

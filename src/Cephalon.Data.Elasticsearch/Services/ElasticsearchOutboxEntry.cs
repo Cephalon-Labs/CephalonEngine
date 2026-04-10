@@ -15,6 +15,7 @@ internal sealed class ElasticsearchOutboxEntry
     [JsonPropertyName("created_at_utc")] public DateTime CreatedAtUtc { get; set; }
     [JsonPropertyName("dispatched_at_utc")] public DateTime? DispatchedAtUtc { get; set; }
     [JsonPropertyName("dispatch_attempt_count")] public int DispatchAttemptCount { get; set; }
+    [JsonPropertyName("next_attempt_at_utc")] public DateTime? NextAttemptAtUtc { get; set; }
     [JsonPropertyName("headers_json")] public string HeadersJson { get; set; } = "{}";
     [JsonPropertyName("metadata_json")] public string MetadataJson { get; set; } = "{}";
 }

@@ -7,6 +7,7 @@
 - registers a singleton `OpenSearchClient` (from `OpenSearch.Client` 1.9.0) using `TryAdd` semantics so a host-owned client is never displaced
 - optionally configures Basic authentication via `ConnectionSettings.BasicAuthentication(...)` when `Username` is set
 - registers a scoped `IOutbox` backed by an OpenSearch index when `RegisterOutbox` is enabled; documents are staged with `OpType.Create` for idempotency — HTTP 409 (`ServerError.Status == 409`) is swallowed silently
+- registers a scoped `IEventDispatchStore` over that same outbox index when `RegisterOutbox` is enabled, so staged OpenSearch events can be read and durable dispatch outcomes can be written back through the runtime-neutral eventing contract
 - registers a scoped `IInbox` backed by a separate OpenSearch index when `RegisterInbox` is enabled; existence is checked via `GetAsync` by document id; marking uses `OpType.Create` with 409 swallow
 - exposes operator-facing outbox and inbox descriptors through the engine runtime surfaces
 - projects outbox and inbox descriptors through the `event-driven-integration` technology surface when that technology is active
@@ -18,13 +19,14 @@
 - `Modules/OpenSearchDataModule.cs`
 - `Registration/OpenSearchDataEngineBuilderExtensions.cs`
 - `Services/OpenSearchOutbox.cs`
+- `Services/OpenSearchEventDispatchStore.cs`
 - `Services/OpenSearchOutboxRuntimeSurfaceContributor.cs`
 - `Services/OpenSearchInbox.cs`
 - `Services/OpenSearchInboxRuntimeSurfaceContributor.cs`
 
 ## How it fits
 
-This pack sits on top of `Cephalon.Data`, not in place of it. `Cephalon.Data.OpenSearch` adds OpenSearch-backed outbox and inbox persistence paths that let event-driven workloads stage and track messages against a search index. It is a drop-in sibling to `Cephalon.Data.Elasticsearch` for teams running OpenSearch clusters.
+This pack sits on top of `Cephalon.Data`, not in place of it. `Cephalon.Data.OpenSearch` adds OpenSearch-backed outbox and inbox persistence paths that let event-driven workloads stage and track messages against a search index. It is a drop-in sibling to `Cephalon.Data.Elasticsearch` for teams running OpenSearch clusters, and it now also exposes the same staged outbox through `IEventDispatchStore` so consumer-managed or adapter-owned dispatch loops can read pending items and persist durable dispatch outcomes without OpenSearch-specific host glue.
 
 ## Registration
 
@@ -163,7 +165,7 @@ This pack intentionally does not claim:
 - full-text search, aggregations, or `IReadStore` / `IWriteStore` dispatch backed by OpenSearch
 - index lifecycle management or template provisioning
 - cross-cluster search or multi-index querying
-- adapter-owned dispatch loops or broker retry scheduling
+- pack-owned dispatch loops or broker-specific retry scheduling beyond the runtime-neutral `IEventDispatchStore` bridge
 - bulk indexing or pipeline ingestion
 
 ## Related docs

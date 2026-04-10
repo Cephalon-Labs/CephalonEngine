@@ -6,6 +6,7 @@
 
 - registers a singleton `IConnectionMultiplexer` from a StackExchange.Redis connection string, using `TryAdd` semantics so a host-owned multiplexer is never displaced
 - registers a scoped `IOutbox` backed by Redis Hash and Sorted Set structures when `RegisterOutbox` is enabled; key names honour the configurable `KeyPrefix`
+- registers a scoped `IEventDispatchStore` over those same Redis structures when `RegisterOutbox` is enabled, so staged Redis events can be read and durable dispatch outcomes can be written back through the runtime-neutral eventing contract
 - registers a scoped `IInbox` backed by a Redis Set when `RegisterInbox` is enabled; key names honour the configurable `KeyPrefix`
 - ensures that outbox staging is idempotent by using a Redis transaction conditioned on the Hash key not existing (`Condition.KeyNotExists`) — if the hash already exists, the transaction silently no-ops
 - exposes operator-facing outbox and inbox descriptors through `/engine/outboxes`, `/engine/inboxes`, and `/engine/snapshot` when the respective path is enabled
@@ -19,13 +20,14 @@
 - `Modules/RedisDataModule.cs`
 - `Registration/RedisDataEngineBuilderExtensions.cs`
 - `Services/RedisOutbox.cs`
+- `Services/RedisEventDispatchStore.cs`
 - `Services/RedisInbox.cs`
 - `Services/RedisOutboxRuntimeSurfaceContributor.cs`
 - `Services/RedisInboxRuntimeSurfaceContributor.cs`
 
 ## How it fits
 
-This pack sits on top of `Cephalon.Data`, not in place of it. `Cephalon.Data` still owns the runtime-neutral `IReadStore` / `IWriteStore` dispatching surface. `Cephalon.Data.Redis` adds the Redis-backed outbox and inbox persistence paths that let event-driven workloads stage and track messages without a relational store.
+This pack sits on top of `Cephalon.Data`, not in place of it. `Cephalon.Data` still owns the runtime-neutral `IReadStore` / `IWriteStore` dispatching surface. `Cephalon.Data.Redis` adds the Redis-backed outbox and inbox persistence paths that let event-driven workloads stage and track messages without a relational store, and it now also exposes the same staged outbox through `IEventDispatchStore` so consumer-managed or adapter-owned dispatch loops can read pending items and persist durable dispatch outcomes without Redis-specific host glue.
 
 The slice is intentionally narrow and honest: it proves the companion-pack pattern works for key-value stores, ships an idempotent outbox using Hash + Sorted Set structures, an idempotency-guarded inbox using a Redis Set, and exposes the same runtime introspection surfaces as the MongoDB and Entity Framework providers. `IReadStore` and `IWriteStore` are not backed directly by Redis in this slice — query and command handlers should depend on Redis directly through `IConnectionMultiplexer`. Full CQRS query/command dispatch on top of Redis remains a later slice.
 
@@ -151,7 +153,7 @@ This pack intentionally does not claim:
 
 - `IReadStore` / `IWriteStore` dispatch backed by Redis — query and command handlers should use `IConnectionMultiplexer` directly
 - transaction-scoped outbox staging with Lua script atomic test-and-set (the current implementation uses a Redis transaction with `KeyNotExists` condition, which is safe against the single-entry idempotency concern but is not a WATCH-based optimistic lock)
-- adapter-owned dispatch loops or broker retry scheduling
+- pack-owned dispatch loops or broker-specific retry scheduling beyond the runtime-neutral `IEventDispatchStore` bridge
 - TTL or key-expiry management for outbox or inbox entries
 - Pub/Sub integration
 - Redis Cluster sharding guidance

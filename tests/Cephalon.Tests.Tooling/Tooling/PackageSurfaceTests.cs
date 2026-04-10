@@ -123,6 +123,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.DatabaseMigrationDescriptor),
             typeof(global::Cephalon.Abstractions.Data.DatabaseMigrationStatus),
             typeof(global::Cephalon.Abstractions.Data.EventDispatchRuntimeDescriptor),
+            typeof(global::Cephalon.Abstractions.Data.EventDispatchRuntimeSummary),
             typeof(global::Cephalon.Abstractions.Data.EventDispatchRuntimeState),
             typeof(global::Cephalon.Abstractions.Data.IDatabaseMigrationCatalog),
             typeof(global::Cephalon.Abstractions.Data.IDatabaseMigrationContributor),

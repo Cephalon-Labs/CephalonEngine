@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-10T18:37:49.2100421+00:00",
+  "GeneratedAtUtc": "2026-04-10T19:39:41.4380447+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 17,
-      "TypeCount": 180
+      "TypeCount": 181
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -610,7 +610,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 40
+      "TypeCount": 41
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3843,7 +3843,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 5,
+        "Properties": 6,
         "Methods": 0
       }
     },
@@ -3859,6 +3859,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 15,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-eventdispatchruntimesummary",
+      "Declaration": "public sealed class EventDispatchRuntimeSummary",
+      "Summary": "Describes the latest aggregate operator-facing state reported for one durable event-dispatch runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 18,
         "Methods": 0
       }
     },
@@ -16667,6 +16682,17 @@
     {
       "DisplayName": "Empty",
       "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-empty",
+      "Signature": "EventDispatchRuntimeSummary Empty { get; }",
+      "Summary": "Gets an empty runtime summary when no dispatch observations have been reported yet."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
       "DeclaringTypeName": "IdentitySelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -17650,8 +17676,8 @@
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchruntimedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string",
-      "Signature": "EventDispatchRuntimeDescriptor(string id, string displayName, string description, IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyList\u003Cstring\u003E outboxIds)",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchruntimedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-data-eventdispatchruntimesummary",
+      "Signature": "EventDispatchRuntimeDescriptor(string id, string displayName, string description, IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyList\u003Cstring\u003E outboxIds, EventDispatchRuntimeSummary summary)",
       "Summary": "Creates a new event-dispatch runtime descriptor."
     },
     {
@@ -17675,6 +17701,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchruntimestate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "EventDispatchRuntimeState(string OutboxId, string LastChannelId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastMessageId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int RetryScheduledCount, int SkippedCount, string LastError, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
       "Summary": "Describes the latest operator-facing runtime state reported for one durable event-dispatch path."
+    },
+    {
+      "DisplayName": "EventDispatchRuntimeSummary",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchruntimesummary-ctor-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string",
+      "Signature": "EventDispatchRuntimeSummary(IReadOnlyList\u003Cstring\u003E reportedOutboxIds, string lastOutboxId, string lastChannelId, string lastOutcome, DateTimeOffset? lastObservedAtUtc, string lastMessageId, int lastAttempt, int startedCount, int succeededCount, int failedCount, int retryScheduledCount, int skippedCount, int retryPendingCount, string lastError)",
+      "Summary": "Creates a new aggregate runtime summary."
     },
     {
       "DisplayName": "EventDispatchStates",
@@ -18335,6 +18372,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimestate-failedcount",
       "Signature": "int FailedCount { get; set; }",
       "Summary": "The number of \u0060failed\u0060 observations reported so far."
+    },
+    {
+      "DisplayName": "FailedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-failedcount",
+      "Signature": "int FailedCount { get; }",
+      "Summary": "Gets the total number of \u0060failed\u0060 observations reported so far."
     },
     {
       "DisplayName": "FailedCount",
@@ -20106,6 +20154,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-iinbox-hasprocessedasync-system-string-system-threading-cancellationtoken",
       "Signature": "ValueTask\u003Cbool\u003E HasProcessedAsync(string messageId, CancellationToken cancellationToken)",
       "Summary": "Determines whether the requested message identifier has already been recorded as processed."
+    },
+    {
+      "DisplayName": "HasReports",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-hasreports",
+      "Signature": "bool HasReports { get; }",
+      "Summary": "Gets a value indicating whether the dispatch runtime has reported any observations yet."
     },
     {
       "DisplayName": "HasValue",
@@ -22849,6 +22908,17 @@
     {
       "DisplayName": "LastAttempt",
       "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastattempt",
+      "Signature": "int LastAttempt { get; }",
+      "Summary": "Gets the latest reported dispatch attempt number."
+    },
+    {
+      "DisplayName": "LastAttempt",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionRuntimeState",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -22867,6 +22937,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastchannelid",
       "Signature": "string LastChannelId { get; set; }",
       "Summary": "The last stable channel identifier reported for this dispatch path."
+    },
+    {
+      "DisplayName": "LastChannelId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastchannelid",
+      "Signature": "string LastChannelId { get; }",
+      "Summary": "Gets the latest reported channel identifier when one exists."
     },
     {
       "DisplayName": "LastError",
@@ -22889,6 +22970,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimestate-lasterror",
       "Signature": "string LastError { get; set; }",
       "Summary": "The last operator-facing error summary when a failure was reported."
+    },
+    {
+      "DisplayName": "LastError",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lasterror",
+      "Signature": "string LastError { get; }",
+      "Summary": "Gets the latest operator-facing error summary when one was reported."
     },
     {
       "DisplayName": "LastError",
@@ -22970,6 +23062,17 @@
     {
       "DisplayName": "LastMessageId",
       "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastmessageid",
+      "Signature": "string LastMessageId { get; }",
+      "Summary": "Gets the latest outbound message identifier when one was reported."
+    },
+    {
+      "DisplayName": "LastMessageId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionRuntimeState",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -22988,6 +23091,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastobservedatutc",
       "Signature": "DateTimeOffset? LastObservedAtUtc { get; set; }",
       "Summary": "The UTC timestamp when the last observation was reported."
+    },
+    {
+      "DisplayName": "LastObservedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastobservedatutc",
+      "Signature": "DateTimeOffset? LastObservedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when the latest observation was reported."
     },
     {
       "DisplayName": "LastObservedAtUtc",
@@ -23067,6 +23181,17 @@
       "Summary": "The last lifecycle phase recorded for the module."
     },
     {
+      "DisplayName": "LastOutboxId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastoutboxid",
+      "Signature": "string LastOutboxId { get; }",
+      "Summary": "Gets the outbox identifier that produced the latest observation when one exists."
+    },
+    {
       "DisplayName": "LastOutcome",
       "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRuntimeState",
@@ -23076,6 +23201,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastoutcome",
       "Signature": "string LastOutcome { get; set; }",
       "Summary": "The last reported outcome identifier when one exists."
+    },
+    {
+      "DisplayName": "LastOutcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastoutcome",
+      "Signature": "string LastOutcome { get; }",
+      "Summary": "Gets the latest reported dispatch outcome identifier when one exists."
     },
     {
       "DisplayName": "LastOutcome",
@@ -28930,6 +29066,28 @@
       "Summary": "Records one application-managed execution observation for a declared event subscription."
     },
     {
+      "DisplayName": "ReportedOutboxCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-reportedoutboxcount",
+      "Signature": "int ReportedOutboxCount { get; }",
+      "Summary": "Gets the number of outboxes that have reported runtime state for this dispatch runtime."
+    },
+    {
+      "DisplayName": "ReportedOutboxIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-reportedoutboxids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ReportedOutboxIds { get; }",
+      "Summary": "Gets the outbox identifiers that have reported runtime state for the dispatch runtime."
+    },
+    {
       "DisplayName": "Request",
       "Category": "Properties",
       "DeclaringTypeName": "RenderedReferenceDocs",
@@ -29920,6 +30078,17 @@
       "Summary": "Gets a value indicating whether the latest report says another retry attempt is pending."
     },
     {
+      "DisplayName": "RetryPendingCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-retrypendingcount",
+      "Signature": "int RetryPendingCount { get; }",
+      "Summary": "Gets the number of owned outboxes whose latest report still says another retry is pending."
+    },
+    {
       "DisplayName": "RetryScheduled",
       "Category": "Fields",
       "DeclaringTypeName": "EventDispatchExecutionOutcomes",
@@ -29951,6 +30120,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimestate-retryscheduledcount",
       "Signature": "int RetryScheduledCount { get; set; }",
       "Summary": "The number of \u0060retry-scheduled\u0060 observations reported so far."
+    },
+    {
+      "DisplayName": "RetryScheduledCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-retryscheduledcount",
+      "Signature": "int RetryScheduledCount { get; }",
+      "Summary": "Gets the total number of \u0060retry-scheduled\u0060 observations reported so far."
     },
     {
       "DisplayName": "RetryScheduledCount",
@@ -31253,6 +31433,17 @@
     {
       "DisplayName": "SkippedCount",
       "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-skippedcount",
+      "Signature": "int SkippedCount { get; }",
+      "Summary": "Gets the total number of \u0060skipped\u0060 observations reported so far."
+    },
+    {
+      "DisplayName": "SkippedCount",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionRuntimeState",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -31744,6 +31935,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimestate-startedcount",
       "Signature": "int StartedCount { get; set; }",
       "Summary": "The number of \u0060started\u0060 observations reported so far."
+    },
+    {
+      "DisplayName": "StartedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-startedcount",
+      "Signature": "int StartedCount { get; }",
+      "Summary": "Gets the total number of \u0060started\u0060 observations reported so far."
     },
     {
       "DisplayName": "StartedCount",
@@ -32584,6 +32786,17 @@
     {
       "DisplayName": "SucceededCount",
       "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-succeededcount",
+      "Signature": "int SucceededCount { get; }",
+      "Summary": "Gets the total number of \u0060succeeded\u0060 observations reported so far."
+    },
+    {
+      "DisplayName": "SucceededCount",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionRuntimeState",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -32679,6 +32892,17 @@
       "AnchorId": "member-p-cephalon-audit-services-auditrecordrequest-summary",
       "Signature": "string Summary { get; }",
       "Summary": "Gets the human-readable audit summary."
+    },
+    {
+      "DisplayName": "Summary",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-summary",
+      "Signature": "EventDispatchRuntimeSummary Summary { get; }",
+      "Summary": "Gets the latest aggregate runtime summary reported for the dispatch runtime."
     },
     {
       "DisplayName": "SummaryPath",
@@ -33768,6 +33992,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimestate-totalreports",
       "Signature": "int TotalReports { get; }",
       "Summary": "Gets the total number of observations reported for this dispatch path."
+    },
+    {
+      "DisplayName": "TotalReports",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-totalreports",
+      "Signature": "int TotalReports { get; }",
+      "Summary": "Gets the total number of reported observations across all owned outboxes."
     },
     {
       "DisplayName": "TotalReports",

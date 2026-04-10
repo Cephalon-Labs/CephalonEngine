@@ -5,6 +5,7 @@ using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.Redis.Configuration;
 using Cephalon.Data.Redis.Services;
 using Cephalon.Engine.Configuration;
+using Cephalon.Eventing.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -49,6 +50,11 @@ internal sealed class RedisDataModule(RedisDataOptions options) : ModuleBase, II
             {
                 var multiplexer = serviceProvider.GetRequiredService<IConnectionMultiplexer>();
                 return new RedisOutbox(multiplexer, options);
+            });
+            services.TryAddScoped<IEventDispatchStore>(serviceProvider =>
+            {
+                var multiplexer = serviceProvider.GetRequiredService<IConnectionMultiplexer>();
+                return new RedisEventDispatchStore(multiplexer, options);
             });
         }
 

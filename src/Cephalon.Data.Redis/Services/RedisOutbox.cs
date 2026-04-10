@@ -54,7 +54,9 @@ internal sealed class RedisOutbox : IOutbox
             new("TenantId", message.TenantId ?? string.Empty),
             new("OccurredAtUtc", message.OccurredAtUtc.UtcDateTime.ToString("O")),
             new("CreatedAtUtc", DateTime.UtcNow.ToString("O")),
+            new("DispatchedAtUtc", string.Empty),
             new("DispatchAttemptCount", 0),
+            new("NextAttemptAtUtc", string.Empty),
             new("HeadersJson", JsonSerializer.Serialize(message.Headers)),
             new("MetadataJson", JsonSerializer.Serialize(message.Metadata))
         };
