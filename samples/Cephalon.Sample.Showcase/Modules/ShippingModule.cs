@@ -130,7 +130,7 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
                             new AuditChange("trackingNumber", null, entity.TrackingNumber)
                         ],
                         tags: ["shipping", "initiate", "process-manager"],
-                        metadata: ShowcaseAuditHelper.CreateMetadata(Descriptor.Id, "/api/v1/showcase/shipping")));
+                        metadata: ShowcaseAuditHelper.CreateMetadata(ctx, Descriptor.Id)));
 
                 return Results.Created(
                     BuildCreatedLocation(ctx, shipmentId),
@@ -201,7 +201,7 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
                             new AuditChange("recipientName", null, input.RecipientName)
                         ],
                         tags: ["shipping", "deliver", "tracking"],
-                        metadata: ShowcaseAuditHelper.CreateMetadata(Descriptor.Id, $"/api/v1/showcase/shipping/{shipmentId}/deliver")));
+                        metadata: ShowcaseAuditHelper.CreateMetadata(ctx, Descriptor.Id)));
 
                 return Results.Ok(new ConfirmDeliveryOutput(
                     shipmentId,

@@ -135,7 +135,7 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
                             new AuditChange("isActive", null, entity.IsActive.ToString())
                         ],
                         tags: ["catalog", "product", "create"],
-                        metadata: ShowcaseAuditHelper.CreateMetadata(Descriptor.Id, "/api/v1/showcase/catalog/products")));
+                        metadata: ShowcaseAuditHelper.CreateMetadata(ctx, Descriptor.Id)));
 
                 return Results.Created(BuildCreatedLocation(ctx, productId), ToProduct(entity));
             }
@@ -216,7 +216,7 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
                         outcome: AuditOutcome.Succeeded,
                         changes: changes,
                         tags: ["catalog", "product", "update"],
-                        metadata: ShowcaseAuditHelper.CreateMetadata(Descriptor.Id, $"/api/v1/showcase/catalog/products/{productId}")));
+                        metadata: ShowcaseAuditHelper.CreateMetadata(ctx, Descriptor.Id)));
 
                 return Results.Ok(ToProduct(entity));
             }

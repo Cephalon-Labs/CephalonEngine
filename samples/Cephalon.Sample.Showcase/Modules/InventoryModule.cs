@@ -140,7 +140,7 @@ public sealed class InventoryModule : ModuleBase, IEndpointModule
                                 reservation.Quantity.ToString(CultureInfo.InvariantCulture)))
                             .ToArray(),
                         tags: ["inventory", "reserve", "saga-step"],
-                        metadata: ShowcaseAuditHelper.CreateMetadata(Descriptor.Id, "/api/v1/showcase/inventory/reserve")));
+                        metadata: ShowcaseAuditHelper.CreateMetadata(ctx, Descriptor.Id)));
 
                 return Results.Ok(new ReserveStockOutput(input.OrderId, allReserved, reservations));
             }
@@ -203,7 +203,7 @@ public sealed class InventoryModule : ModuleBase, IEndpointModule
                         subjectId: input.OrderId,
                         outcome: AuditOutcome.Succeeded,
                         tags: ["inventory", "release", "saga-step"],
-                        metadata: ShowcaseAuditHelper.CreateMetadata(Descriptor.Id, "/api/v1/showcase/inventory/release")));
+                        metadata: ShowcaseAuditHelper.CreateMetadata(ctx, Descriptor.Id)));
 
                 return Results.Ok(new ReleaseStockOutput(input.OrderId, true));
             }

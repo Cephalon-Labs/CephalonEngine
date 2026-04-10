@@ -58,6 +58,26 @@ internal static class ShowcaseAuditHelper
     }
 
     /// <summary>
+    /// Creates a consistent metadata dictionary for showcase audit entries using the active request path.
+    /// </summary>
+    /// <param name="httpContext">The active HTTP request context.</param>
+    /// <param name="moduleId">The module identifier associated with the operation.</param>
+    /// <returns>The normalized metadata dictionary.</returns>
+    public static IReadOnlyDictionary<string, string> CreateMetadata(
+        HttpContext httpContext,
+        string moduleId)
+    {
+        ArgumentNullException.ThrowIfNull(httpContext);
+        ArgumentException.ThrowIfNullOrWhiteSpace(moduleId);
+
+        var endpoint = httpContext.Request.Path.HasValue
+            ? httpContext.Request.Path.Value
+            : "/";
+
+        return CreateMetadata(moduleId, endpoint ?? "/");
+    }
+
+    /// <summary>
     /// Creates a consistent metadata dictionary for showcase audit entries.
     /// </summary>
     /// <param name="moduleId">The module identifier associated with the operation.</param>

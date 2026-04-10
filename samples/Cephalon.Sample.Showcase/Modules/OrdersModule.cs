@@ -138,7 +138,7 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
                             new AuditChange("itemCount", null, entity.Items.Count.ToString(CultureInfo.InvariantCulture))
                         ],
                         tags: ["orders", "place", "event-driven"],
-                        metadata: ShowcaseAuditHelper.CreateMetadata(Descriptor.Id, "/api/v1/showcase/orders")));
+                        metadata: ShowcaseAuditHelper.CreateMetadata(ctx, Descriptor.Id)));
 
                 return Results.Created(BuildCreatedLocation(ctx, orderId), new PlaceOrderOutput(orderId, "Pending"));
             }
@@ -203,7 +203,7 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
                             new AuditChange("cancellationReason", null, input.Reason)
                         ],
                         tags: ["orders", "cancel", "event-driven"],
-                        metadata: ShowcaseAuditHelper.CreateMetadata(Descriptor.Id, $"/api/v1/showcase/orders/{orderId}/cancel")));
+                        metadata: ShowcaseAuditHelper.CreateMetadata(ctx, Descriptor.Id)));
 
                 return Results.Ok(new CancelOrderOutput(orderId, "Cancelled"));
             }
