@@ -87,6 +87,7 @@ public static class AppProfileFactory
                     runIntervalMinutes: settings.Audit.History.Retention.RunIntervalMinutes))));
         builder.UseMessagingSelection(new Abstractions.AppModel.MessagingSelection(
             provider: settings.Messaging.Provider));
+        builder.UseResilienceSelection(ToResilienceSelection(settings.Resilience));
     }
 
     private static Abstractions.AppModel.DatabaseTopologySelection ToDatabaseSelection(DatabaseTopologySettings settings)
@@ -124,5 +125,38 @@ public static class AppProfileFactory
             maxRetryDelaySeconds: settings.MaxRetryDelaySeconds,
             commandTimeoutSeconds: settings.CommandTimeoutSeconds,
             maxBatchSize: settings.MaxBatchSize);
+    }
+
+    private static Abstractions.AppModel.ResilienceSelection ToResilienceSelection(ResilienceSettings settings)
+    {
+        return new Abstractions.AppModel.ResilienceSelection(
+            retry: new Abstractions.AppModel.RetrySelection(
+                enabled: settings.Retry.Enabled,
+                maxAttempts: settings.Retry.MaxAttempts,
+                backoff: settings.Retry.Backoff,
+                baseDelayMilliseconds: settings.Retry.BaseDelayMilliseconds,
+                maxDelayMilliseconds: settings.Retry.MaxDelayMilliseconds,
+                useJitter: settings.Retry.UseJitter),
+            timeout: new Abstractions.AppModel.TimeoutSelection(
+                enabled: settings.Timeout.Enabled,
+                totalTimeoutSeconds: settings.Timeout.TotalTimeoutSeconds,
+                attemptTimeoutSeconds: settings.Timeout.AttemptTimeoutSeconds),
+            circuitBreaker: new Abstractions.AppModel.CircuitBreakerSelection(
+                enabled: settings.CircuitBreaker.Enabled,
+                failureRatio: settings.CircuitBreaker.FailureRatio,
+                minimumThroughput: settings.CircuitBreaker.MinimumThroughput,
+                samplingDurationSeconds: settings.CircuitBreaker.SamplingDurationSeconds,
+                breakDurationSeconds: settings.CircuitBreaker.BreakDurationSeconds),
+            bulkhead: new Abstractions.AppModel.BulkheadSelection(
+                enabled: settings.Bulkhead.Enabled,
+                maxConcurrentExecutions: settings.Bulkhead.MaxConcurrentExecutions,
+                maxQueuedActions: settings.Bulkhead.MaxQueuedActions),
+            rateLimiting: new Abstractions.AppModel.RateLimitingSelection(
+                enabled: settings.RateLimiting.Enabled,
+                algorithm: settings.RateLimiting.Algorithm,
+                permitLimit: settings.RateLimiting.PermitLimit,
+                queueLimit: settings.RateLimiting.QueueLimit,
+                windowSeconds: settings.RateLimiting.WindowSeconds,
+                segmentsPerWindow: settings.RateLimiting.SegmentsPerWindow));
     }
 }

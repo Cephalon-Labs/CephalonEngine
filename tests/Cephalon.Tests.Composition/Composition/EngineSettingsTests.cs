@@ -31,6 +31,29 @@ public sealed class EngineSettingsTests
                 ["Engine:Audit:History:Retention:DeleteBatchSize"] = "250",
                 ["Engine:Audit:History:Retention:ApplyOnStartup"] = "true",
                 ["Engine:Messaging:Provider"] = "Wolverine",
+                ["Engine:Resilience:Retry:Enabled"] = "true",
+                ["Engine:Resilience:Retry:MaxAttempts"] = "3",
+                ["Engine:Resilience:Retry:BaseDelayMilliseconds"] = "200",
+                ["Engine:Resilience:Retry:MaxDelayMilliseconds"] = "5000",
+                ["Engine:Resilience:Retry:Backoff"] = "Exponential",
+                ["Engine:Resilience:Retry:UseJitter"] = "true",
+                ["Engine:Resilience:CircuitBreaker:Enabled"] = "true",
+                ["Engine:Resilience:CircuitBreaker:FailureRatio"] = "0.5",
+                ["Engine:Resilience:CircuitBreaker:MinimumThroughput"] = "20",
+                ["Engine:Resilience:CircuitBreaker:SamplingDurationSeconds"] = "30",
+                ["Engine:Resilience:CircuitBreaker:BreakDurationSeconds"] = "15",
+                ["Engine:Resilience:Timeout:Enabled"] = "true",
+                ["Engine:Resilience:Timeout:TotalTimeoutSeconds"] = "10",
+                ["Engine:Resilience:Timeout:AttemptTimeoutSeconds"] = "3",
+                ["Engine:Resilience:Bulkhead:Enabled"] = "true",
+                ["Engine:Resilience:Bulkhead:MaxConcurrentExecutions"] = "64",
+                ["Engine:Resilience:Bulkhead:MaxQueuedActions"] = "32",
+                ["Engine:Resilience:RateLimiting:Enabled"] = "true",
+                ["Engine:Resilience:RateLimiting:Algorithm"] = "SlidingWindow",
+                ["Engine:Resilience:RateLimiting:PermitLimit"] = "100",
+                ["Engine:Resilience:RateLimiting:QueueLimit"] = "10",
+                ["Engine:Resilience:RateLimiting:WindowSeconds"] = "60",
+                ["Engine:Resilience:RateLimiting:SegmentsPerWindow"] = "4",
                 ["Engine:Databases:Runtime:EnableDetailedErrors"] = "true",
                 ["Engine:Databases:Runtime:EnableRetryOnFailure"] = "true",
                 ["Engine:Databases:Runtime:MaxRetryCount"] = "5",
@@ -74,6 +97,29 @@ public sealed class EngineSettingsTests
         Assert.True(settings.Audit.History.Retention.ApplyOnStartup);
         Assert.Null(settings.Audit.History.Retention.RunIntervalMinutes);
         Assert.Equal("Wolverine", settings.Messaging.Provider);
+        Assert.True(settings.Resilience.Retry.Enabled);
+        Assert.Equal(3, settings.Resilience.Retry.MaxAttempts);
+        Assert.Equal("Exponential", settings.Resilience.Retry.Backoff);
+        Assert.Equal(200, settings.Resilience.Retry.BaseDelayMilliseconds);
+        Assert.Equal(5000, settings.Resilience.Retry.MaxDelayMilliseconds);
+        Assert.True(settings.Resilience.Retry.UseJitter);
+        Assert.True(settings.Resilience.CircuitBreaker.Enabled);
+        Assert.Equal(0.5m, settings.Resilience.CircuitBreaker.FailureRatio);
+        Assert.Equal(20, settings.Resilience.CircuitBreaker.MinimumThroughput);
+        Assert.Equal(30, settings.Resilience.CircuitBreaker.SamplingDurationSeconds);
+        Assert.Equal(15, settings.Resilience.CircuitBreaker.BreakDurationSeconds);
+        Assert.True(settings.Resilience.Timeout.Enabled);
+        Assert.Equal(10, settings.Resilience.Timeout.TotalTimeoutSeconds);
+        Assert.Equal(3, settings.Resilience.Timeout.AttemptTimeoutSeconds);
+        Assert.True(settings.Resilience.Bulkhead.Enabled);
+        Assert.Equal(64, settings.Resilience.Bulkhead.MaxConcurrentExecutions);
+        Assert.Equal(32, settings.Resilience.Bulkhead.MaxQueuedActions);
+        Assert.True(settings.Resilience.RateLimiting.Enabled);
+        Assert.Equal("SlidingWindow", settings.Resilience.RateLimiting.Algorithm);
+        Assert.Equal(100, settings.Resilience.RateLimiting.PermitLimit);
+        Assert.Equal(10, settings.Resilience.RateLimiting.QueueLimit);
+        Assert.Equal(60, settings.Resilience.RateLimiting.WindowSeconds);
+        Assert.Equal(4, settings.Resilience.RateLimiting.SegmentsPerWindow);
         Assert.True(settings.Databases.Runtime.EnableDetailedErrors);
         Assert.True(settings.Databases.Runtime.EnableRetryOnFailure);
         Assert.Equal(5, settings.Databases.Runtime.MaxRetryCount);

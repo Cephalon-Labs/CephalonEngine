@@ -1357,6 +1357,188 @@ Parameters:
 - `configuration`: The configuration source that contains the engine section.
 - `sectionPath`: The root configuration section path to read from.
 
+<a id="type-cephalon-engine-configuration-bulkheadsettings"></a>
+
+### `BulkheadSettings`
+
+Describes configuration-driven bulkhead settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class BulkheadSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-bulkheadsettings-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32"></a>
+
+##### `BulkheadSettings`
+
+```csharp
+BulkheadSettings(bool? enabled, int? maxConcurrentExecutions, int? maxQueuedActions)
+```
+
+Initializes a new instance of the `BulkheadSettings` class.
+
+Parameters:
+- `enabled`: Whether bulkhead isolation was explicitly enabled.
+- `maxConcurrentExecutions`: The maximum concurrent executions allowed inside the bulkhead.
+- `maxQueuedActions`: The maximum queued actions allowed before rejection.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-bulkheadsettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+BulkheadSettings Empty { get; }
+```
+
+Gets an empty bulkhead-settings instance.
+
+<a id="member-p-cephalon-engine-configuration-bulkheadsettings-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether bulkhead isolation was explicitly enabled.
+
+<a id="member-p-cephalon-engine-configuration-bulkheadsettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any bulkhead settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-bulkheadsettings-maxconcurrentexecutions"></a>
+
+##### `MaxConcurrentExecutions`
+
+```csharp
+int? MaxConcurrentExecutions { get; }
+```
+
+Gets the maximum concurrent executions allowed inside the bulkhead.
+
+<a id="member-p-cephalon-engine-configuration-bulkheadsettings-maxqueuedactions"></a>
+
+##### `MaxQueuedActions`
+
+```csharp
+int? MaxQueuedActions { get; }
+```
+
+Gets the maximum queued actions allowed before rejection.
+
+<a id="type-cephalon-engine-configuration-circuitbreakersettings"></a>
+
+### `CircuitBreakerSettings`
+
+Describes configuration-driven circuit-breaker settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class CircuitBreakerSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-circuitbreakersettings-ctor-system-nullable-system-boolean-system-nullable-system-decimal-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32"></a>
+
+##### `CircuitBreakerSettings`
+
+```csharp
+CircuitBreakerSettings(bool? enabled, decimal? failureRatio, int? minimumThroughput, int? samplingDurationSeconds, int? breakDurationSeconds)
+```
+
+Initializes a new instance of the `CircuitBreakerSettings` class.
+
+Parameters:
+- `enabled`: Whether circuit-breaker support was explicitly enabled.
+- `failureRatio`: The failure ratio threshold requested for opening the breaker.
+- `minimumThroughput`: The minimum throughput required before the breaker evaluates failures.
+- `samplingDurationSeconds`: The sampling duration in seconds used by the breaker.
+- `breakDurationSeconds`: The break duration in seconds requested for the open state.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-circuitbreakersettings-breakdurationseconds"></a>
+
+##### `BreakDurationSeconds`
+
+```csharp
+int? BreakDurationSeconds { get; }
+```
+
+Gets the break duration in seconds requested for the open state.
+
+<a id="member-p-cephalon-engine-configuration-circuitbreakersettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+CircuitBreakerSettings Empty { get; }
+```
+
+Gets an empty circuit-breaker-settings instance.
+
+<a id="member-p-cephalon-engine-configuration-circuitbreakersettings-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether circuit-breaker support was explicitly enabled.
+
+<a id="member-p-cephalon-engine-configuration-circuitbreakersettings-failureratio"></a>
+
+##### `FailureRatio`
+
+```csharp
+decimal? FailureRatio { get; }
+```
+
+Gets the failure ratio threshold requested for opening the breaker.
+
+<a id="member-p-cephalon-engine-configuration-circuitbreakersettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any circuit-breaker settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-circuitbreakersettings-minimumthroughput"></a>
+
+##### `MinimumThroughput`
+
+```csharp
+int? MinimumThroughput { get; }
+```
+
+Gets the minimum throughput required before the breaker evaluates failures.
+
+<a id="member-p-cephalon-engine-configuration-circuitbreakersettings-samplingdurationseconds"></a>
+
+##### `SamplingDurationSeconds`
+
+```csharp
+int? SamplingDurationSeconds { get; }
+```
+
+Gets the sampling duration in seconds used by the breaker.
+
 <a id="type-cephalon-engine-configuration-connectionstringresolution"></a>
 
 ### `ConnectionStringResolution`
@@ -2092,12 +2274,12 @@ public sealed class EngineSettings
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings"></a>
+<a id="member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings-cephalon-engine-configuration-resiliencesettings"></a>
 
 ##### `EngineSettings`
 
 ```csharp
-EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging)
+EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging, ResilienceSettings resilience)
 ```
 
 Initializes a new instance of the `EngineSettings` class.
@@ -2119,6 +2301,7 @@ Parameters:
 - `tenancy`: Configuration-driven multi-tenancy settings.
 - `audit`: Configuration-driven audit settings.
 - `messaging`: Configuration-driven messaging settings.
+- `resilience`: Configuration-driven resilience settings.
 
 #### Fields
 
@@ -2263,6 +2446,16 @@ IReadOnlyList<string> Patterns { get; }
 ```
 
 Gets the selected pattern identifiers.
+
+<a id="member-p-cephalon-engine-configuration-enginesettings-resilience"></a>
+
+##### `Resilience`
+
+```csharp
+ResilienceSettings Resilience { get; }
+```
+
+Gets configuration-driven resilience settings.
 
 <a id="member-p-cephalon-engine-configuration-enginesettings-technologies"></a>
 
@@ -3279,6 +3472,352 @@ Parameters:
 - `environmentName`: The current host environment name, such as `Development` or `Local`.
 - `rootFolderName`: The split-configuration root folder name. The default value is `DefaultRootFolderName`.
 
+<a id="type-cephalon-engine-configuration-ratelimitingsettings"></a>
+
+### `RateLimitingSettings`
+
+Describes configuration-driven rate-limiting settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class RateLimitingSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-ratelimitingsettings-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32"></a>
+
+##### `RateLimitingSettings`
+
+```csharp
+RateLimitingSettings(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow)
+```
+
+Initializes a new instance of the `RateLimitingSettings` class.
+
+Parameters:
+- `enabled`: Whether rate limiting was explicitly enabled.
+- `algorithm`: The requested rate-limiting algorithm, such as `FixedWindow` or `TokenBucket`.
+- `permitLimit`: The maximum permits available per limiter window or bucket.
+- `queueLimit`: The maximum queued requests allowed before rejection.
+- `windowSeconds`: The limiter window duration in seconds when the selected algorithm uses windows.
+- `segmentsPerWindow`: The number of segments per window when sliding windows are used.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-ratelimitingsettings-algorithm"></a>
+
+##### `Algorithm`
+
+```csharp
+string Algorithm { get; }
+```
+
+Gets the requested rate-limiting algorithm, such as `FixedWindow` or `TokenBucket`.
+
+<a id="member-p-cephalon-engine-configuration-ratelimitingsettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+RateLimitingSettings Empty { get; }
+```
+
+Gets an empty rate-limiting-settings instance.
+
+<a id="member-p-cephalon-engine-configuration-ratelimitingsettings-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether rate limiting was explicitly enabled.
+
+<a id="member-p-cephalon-engine-configuration-ratelimitingsettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any rate-limiting settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-ratelimitingsettings-permitlimit"></a>
+
+##### `PermitLimit`
+
+```csharp
+int? PermitLimit { get; }
+```
+
+Gets the maximum permits available per limiter window or bucket.
+
+<a id="member-p-cephalon-engine-configuration-ratelimitingsettings-queuelimit"></a>
+
+##### `QueueLimit`
+
+```csharp
+int? QueueLimit { get; }
+```
+
+Gets the maximum queued requests allowed before rejection.
+
+<a id="member-p-cephalon-engine-configuration-ratelimitingsettings-segmentsperwindow"></a>
+
+##### `SegmentsPerWindow`
+
+```csharp
+int? SegmentsPerWindow { get; }
+```
+
+Gets the number of segments per window when sliding windows are used.
+
+<a id="member-p-cephalon-engine-configuration-ratelimitingsettings-windowseconds"></a>
+
+##### `WindowSeconds`
+
+```csharp
+int? WindowSeconds { get; }
+```
+
+Gets the limiter window duration in seconds when the selected algorithm uses windows.
+
+<a id="type-cephalon-engine-configuration-resiliencesettings"></a>
+
+### `ResilienceSettings`
+
+Describes configuration-driven resilience settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class ResilienceSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-resiliencesettings-ctor-cephalon-engine-configuration-retrysettings-cephalon-engine-configuration-timeoutsettings-cephalon-engine-configuration-circuitbreakersettings-cephalon-engine-configuration-bulkheadsettings-cephalon-engine-configuration-ratelimitingsettings"></a>
+
+##### `ResilienceSettings`
+
+```csharp
+ResilienceSettings(RetrySettings retry, TimeoutSettings timeout, CircuitBreakerSettings circuitBreaker, BulkheadSettings bulkhead, RateLimitingSettings rateLimiting)
+```
+
+Initializes a new instance of the `ResilienceSettings` class.
+
+Parameters:
+- `retry`: The retry settings resolved for the app.
+- `timeout`: The timeout settings resolved for the app.
+- `circuitBreaker`: The circuit-breaker settings resolved for the app.
+- `bulkhead`: The bulkhead settings resolved for the app.
+- `rateLimiting`: The rate-limiting settings resolved for the app.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-resiliencesettings-bulkhead"></a>
+
+##### `Bulkhead`
+
+```csharp
+BulkheadSettings Bulkhead { get; }
+```
+
+Gets the bulkhead settings resolved for the app.
+
+<a id="member-p-cephalon-engine-configuration-resiliencesettings-circuitbreaker"></a>
+
+##### `CircuitBreaker`
+
+```csharp
+CircuitBreakerSettings CircuitBreaker { get; }
+```
+
+Gets the circuit-breaker settings resolved for the app.
+
+<a id="member-p-cephalon-engine-configuration-resiliencesettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+ResilienceSettings Empty { get; }
+```
+
+Gets an empty resilience-settings instance.
+
+<a id="member-p-cephalon-engine-configuration-resiliencesettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any resilience settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-resiliencesettings-ratelimiting"></a>
+
+##### `RateLimiting`
+
+```csharp
+RateLimitingSettings RateLimiting { get; }
+```
+
+Gets the rate-limiting settings resolved for the app.
+
+<a id="member-p-cephalon-engine-configuration-resiliencesettings-retry"></a>
+
+##### `Retry`
+
+```csharp
+RetrySettings Retry { get; }
+```
+
+Gets the retry settings resolved for the app.
+
+<a id="member-p-cephalon-engine-configuration-resiliencesettings-timeout"></a>
+
+##### `Timeout`
+
+```csharp
+TimeoutSettings Timeout { get; }
+```
+
+Gets the timeout settings resolved for the app.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-resiliencesettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
+
+##### `FromConfiguration`
+
+```csharp
+ResilienceSettings FromConfiguration(IConfiguration configuration, string sectionPath)
+```
+
+Reads resilience settings from configuration.
+
+Returns: The parsed resilience settings.
+
+Parameters:
+- `configuration`: The configuration source that contains the engine section.
+- `sectionPath`: The root configuration section path to read from.
+
+<a id="type-cephalon-engine-configuration-retrysettings"></a>
+
+### `RetrySettings`
+
+Describes configuration-driven retry settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class RetrySettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-retrysettings-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-boolean"></a>
+
+##### `RetrySettings`
+
+```csharp
+RetrySettings(bool? enabled, int? maxAttempts, string backoff, int? baseDelayMilliseconds, int? maxDelayMilliseconds, bool? useJitter)
+```
+
+Initializes a new instance of the `RetrySettings` class.
+
+Parameters:
+- `enabled`: Whether retry support was explicitly enabled.
+- `maxAttempts`: The maximum retry attempts requested for the policy.
+- `backoff`: The requested backoff mode, such as `Exponential` or `Linear`.
+- `baseDelayMilliseconds`: The base delay in milliseconds used by the retry policy.
+- `maxDelayMilliseconds`: The maximum delay in milliseconds the retry policy may apply.
+- `useJitter`: Whether jitter was explicitly requested for retry delays.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-retrysettings-backoff"></a>
+
+##### `Backoff`
+
+```csharp
+string Backoff { get; }
+```
+
+Gets the requested backoff mode, such as `Exponential` or `Linear`.
+
+<a id="member-p-cephalon-engine-configuration-retrysettings-basedelaymilliseconds"></a>
+
+##### `BaseDelayMilliseconds`
+
+```csharp
+int? BaseDelayMilliseconds { get; }
+```
+
+Gets the base delay in milliseconds used by the retry policy.
+
+<a id="member-p-cephalon-engine-configuration-retrysettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+RetrySettings Empty { get; }
+```
+
+Gets an empty retry-settings instance.
+
+<a id="member-p-cephalon-engine-configuration-retrysettings-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether retry support was explicitly enabled.
+
+<a id="member-p-cephalon-engine-configuration-retrysettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any retry settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-retrysettings-maxattempts"></a>
+
+##### `MaxAttempts`
+
+```csharp
+int? MaxAttempts { get; }
+```
+
+Gets the maximum retry attempts requested for the policy.
+
+<a id="member-p-cephalon-engine-configuration-retrysettings-maxdelaymilliseconds"></a>
+
+##### `MaxDelayMilliseconds`
+
+```csharp
+int? MaxDelayMilliseconds { get; }
+```
+
+Gets the maximum delay in milliseconds the retry policy may apply.
+
+<a id="member-p-cephalon-engine-configuration-retrysettings-usejitter"></a>
+
+##### `UseJitter`
+
+```csharp
+bool? UseJitter { get; }
+```
+
+Gets a value indicating whether jitter was explicitly requested for retry delays.
+
 <a id="type-cephalon-engine-configuration-startupfailurebehavior"></a>
 
 ### `StartupFailureBehavior`
@@ -3431,6 +3970,86 @@ Returns: The parsed tenancy settings.
 Parameters:
 - `configuration`: The configuration source that contains the engine section.
 - `sectionPath`: The root configuration section path to read from.
+
+<a id="type-cephalon-engine-configuration-timeoutsettings"></a>
+
+### `TimeoutSettings`
+
+Describes configuration-driven timeout settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class TimeoutSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-timeoutsettings-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32"></a>
+
+##### `TimeoutSettings`
+
+```csharp
+TimeoutSettings(bool? enabled, int? totalTimeoutSeconds, int? attemptTimeoutSeconds)
+```
+
+Initializes a new instance of the `TimeoutSettings` class.
+
+Parameters:
+- `enabled`: Whether timeout support was explicitly enabled.
+- `totalTimeoutSeconds`: The overall timeout in seconds requested for an execution.
+- `attemptTimeoutSeconds`: The per-attempt timeout in seconds requested for an execution.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-timeoutsettings-attempttimeoutseconds"></a>
+
+##### `AttemptTimeoutSeconds`
+
+```csharp
+int? AttemptTimeoutSeconds { get; }
+```
+
+Gets the per-attempt timeout in seconds requested for an execution.
+
+<a id="member-p-cephalon-engine-configuration-timeoutsettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+TimeoutSettings Empty { get; }
+```
+
+Gets an empty timeout-settings instance.
+
+<a id="member-p-cephalon-engine-configuration-timeoutsettings-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether timeout support was explicitly enabled.
+
+<a id="member-p-cephalon-engine-configuration-timeoutsettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any timeout settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-timeoutsettings-totaltimeoutseconds"></a>
+
+##### `TotalTimeoutSeconds`
+
+```csharp
+int? TotalTimeoutSeconds { get; }
+```
+
+Gets the overall timeout in seconds requested for an execution.
 
 <a id="type-cephalon-engine-configuration-trustpolicy"></a>
 
@@ -5282,6 +5901,16 @@ IReadOnlyList<PatternDescriptor> All { get; }
 
 Gets all built-in pattern descriptors.
 
+<a id="member-p-cephalon-engine-patterns-builtinpatterns-anticorruptionlayer"></a>
+
+##### `AntiCorruptionLayer`
+
+```csharp
+PatternDescriptor AntiCorruptionLayer { get; }
+```
+
+Gets the anti-corruption-layer pattern.
+
 <a id="member-p-cephalon-engine-patterns-builtinpatterns-cleanarchitecture"></a>
 
 ##### `CleanArchitecture`
@@ -5381,6 +6010,16 @@ PatternDescriptor ModuleFirstOrganization { get; }
 ```
 
 Gets the module-first organization pattern.
+
+<a id="member-p-cephalon-engine-patterns-builtinpatterns-onionarchitecture"></a>
+
+##### `OnionArchitecture`
+
+```csharp
+PatternDescriptor OnionArchitecture { get; }
+```
+
+Gets the onion-architecture pattern.
 
 <a id="member-p-cephalon-engine-patterns-builtinpatterns-outboxpattern"></a>
 

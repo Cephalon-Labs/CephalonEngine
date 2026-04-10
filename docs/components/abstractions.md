@@ -7,7 +7,7 @@
 - module contracts such as `IModule`, `IModuleLifecycle`, `ModuleBase`, `ModuleDescriptor`, and `ModuleContext`
 - behavior contracts such as `IAppBehavior<TIn, TOut>`, `IBehaviorContext`, `IBehaviorTopologyBuilder`, `IBehaviorOwnerModule`, `IBehaviorModuleBuilder`, and `OwnedBehaviorRegistration`
 - capability contracts such as `Capability`, `CapabilityAccess`, and `ICapabilityRegistry`
-- app-model contracts such as `AppBlueprint`, `AppProfile`, and scaffold-plan types
+- app-model contracts such as `AppBlueprint`, `AppProfile`, resilience-selection types, and scaffold-plan types
 - phase-8 runtime-neutral contracts for data, authorization, tenancy, audit, and id generation
 - health contracts used across hosts and packages
 - localization contracts used by engine resources and package language packs
@@ -90,6 +90,12 @@ The phase-8 families stay runtime-neutral on purpose:
 - `Tenancy` defines tenant context and resolution contracts without assuming HTTP, DNS, or a single tenancy topology.
 - `Audit` defines audit actors, entries, write/query/export contracts, and audit-store descriptors without hard-coding storage or observability sinks.
 - `Ids` defines identifier-generation hints and the generator contract without choosing a concrete strategy such as `Sfid`.
+
+The app-model contract now also carries a contract-first resilience family through
+`ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,
+`BulkheadSelection`, and `RateLimitingSelection`. Those types stay transport- and host-agnostic on
+purpose: they capture requested resilience intent in the public model without forcing ASP.NET Core,
+Polly, or behavior-pipeline enforcement details into `Cephalon.Abstractions`.
 
 ## Related docs
 

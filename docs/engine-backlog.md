@@ -1927,6 +1927,10 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - guardrail catalog expanded from 10 to 23 entries, `GuardrailValidatorTests` updated
 - benchmark project now references `Cephalon.Behaviors` for behavior dispatch measurement — **Shipped** · 648/648 tests
 
+### Sprint 36
+
+- ENG-076 resilience contract and taxonomy baseline: `Cephalon.Abstractions` now exports `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`, `BulkheadSelection`, and `RateLimitingSelection`; `Cephalon.Engine` now binds `Engine:Resilience` through matching settings types, projects the requested contract into `AppProfile.Resilience`, validates baseline numeric and algorithm values, and completes the built-in pattern taxonomy with `onion-architecture` plus `anti-corruption-layer`; `Cephalon.AspNetCore` now exposes `/engine/resilience`; the showcase sample now demonstrates the config contract; runtime enforcement through behavior/transport pipelines remains a later follow-through — **Shipped** · targeted composition tests 6/6 + hosting tests 1/1 + package-surface tests 52/52
+
 ### Sprint 31 follow-through
 
 - ENG-069 event-dispatch runtime operator surfaces: host-agnostic event-dispatch runtime/state read contracts now live in `Cephalon.Abstractions`, `/engine/snapshot` now carries `EventDispatchRuntimes` plus `EventDispatchStates`, ASP.NET Core now exposes `/engine/event-dispatch-runtimes` and `/engine/event-dispatches`, `Cephalon.Eventing.Wolverine` now projects its managed loop through those routes truthfully, and the showcase sample now wires the official Wolverine path end to end — **Shipped**

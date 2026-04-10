@@ -121,6 +121,40 @@
         "GroupId": "showcase-behaviors"
       }
     },
+    "Resilience": {
+      "Retry": {
+        "Enabled": true,
+        "MaxAttempts": 3,
+        "Backoff": "Exponential",
+        "BaseDelayMilliseconds": 2000,
+        "UseJitter": true
+      },
+      "Timeout": {
+        "Enabled": true,
+        "TotalTimeoutSeconds": 30,
+        "AttemptTimeoutSeconds": 10
+      },
+      "CircuitBreaker": {
+        "Enabled": true,
+        "FailureRatio": 0.1,
+        "MinimumThroughput": 100,
+        "SamplingDurationSeconds": 30,
+        "BreakDurationSeconds": 5
+      },
+      "Bulkhead": {
+        "Enabled": true,
+        "MaxConcurrentExecutions": 64,
+        "MaxQueuedActions": 128
+      },
+      "RateLimiting": {
+        "Enabled": true,
+        "Algorithm": "SlidingWindow",
+        "PermitLimit": 200,
+        "QueueLimit": 20,
+        "WindowSeconds": 60,
+        "SegmentsPerWindow": 4
+      }
+    },
     "Observability": {
       "LogManifestSummary": true,
       "LogModuleSummary": true,

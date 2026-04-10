@@ -155,6 +155,17 @@ public static class BuiltInPatterns
         tags: ["architecture", "clean", "boundaries"]);
 
     /// <summary>
+    /// Gets the onion-architecture pattern.
+    /// </summary>
+    public static PatternDescriptor OnionArchitecture { get; } = new(
+        id: "onion-architecture",
+        displayName: "Onion Architecture",
+        description: "Organizes the app in concentric rings so dependencies point inward toward the core domain model.",
+        kind: PatternKind.Architecture,
+        aliases: ["OnionArchitecture", "Onion"],
+        tags: ["architecture", "onion", "concentric-layers"]);
+
+    /// <summary>
     /// Gets the domain-driven-design pattern.
     /// </summary>
     public static PatternDescriptor DomainDrivenDesign { get; } = new(
@@ -164,6 +175,17 @@ public static class BuiltInPatterns
         kind: PatternKind.Domain,
         aliases: ["DomainDrivenDesign", "DDD"],
         tags: ["domain", "ddd", "modeling"]);
+
+    /// <summary>
+    /// Gets the anti-corruption-layer pattern.
+    /// </summary>
+    public static PatternDescriptor AntiCorruptionLayer { get; } = new(
+        id: "anti-corruption-layer",
+        displayName: "Anti-Corruption Layer",
+        description: "Protects the core domain model by translating across external, legacy, or upstream integration boundaries.",
+        kind: PatternKind.Domain,
+        aliases: ["AntiCorruptionLayer", "ACL"],
+        tags: ["domain", "integration-boundary", "translation"]);
 
     /// <summary>
     /// Gets the CQRS pattern.
@@ -213,7 +235,9 @@ public static class BuiltInPatterns
         HexagonalArchitecture,
         LayeredArchitecture,
         CleanArchitecture,
+        OnionArchitecture,
         DomainDrivenDesign,
+        AntiCorruptionLayer,
         CqrsPattern,
         OutboxPattern,
         EventSourcingPattern

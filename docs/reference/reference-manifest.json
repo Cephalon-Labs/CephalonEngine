@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-10T19:39:41.4380447+00:00",
+  "GeneratedAtUtc": "2026-04-10T22:09:16.0778233+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 17,
-      "TypeCount": 181
+      "TypeCount": 187
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -96,7 +96,7 @@
       "Description": "Composition, runtime, policy, manifest, and introspection services.",
       "FileName": "cephalon-engine.md",
       "NamespaceCount": 12,
-      "TypeCount": 77
+      "TypeCount": 83
     },
     {
       "AssemblyName": "Cephalon.Eventing",
@@ -465,7 +465,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-appmodel",
-      "TypeCount": 15
+      "TypeCount": 21
     },
     {
       "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
@@ -829,7 +829,7 @@
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
       "AnchorId": "namespace-cephalon-engine-configuration",
-      "TypeCount": 26
+      "TypeCount": 32
     },
     {
       "NamespaceName": "Cephalon.Engine.Diagnostics",
@@ -1700,7 +1700,7 @@
       "MemberCounts": {
         "Constructors": 2,
         "Fields": 0,
-        "Properties": 13,
+        "Properties": 14,
         "Methods": 0
       }
     },
@@ -2450,7 +2450,7 @@
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
-        "Properties": 18,
+        "Properties": 20,
         "Methods": 2
       }
     },
@@ -2527,6 +2527,36 @@
         "Fields": 0,
         "Properties": 8,
         "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "BulkheadSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-appmodel-bulkheadselection",
+      "Declaration": "public sealed class BulkheadSelection",
+      "Summary": "Describes the bulkhead-isolation inputs resolved for a Cephalon app.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "BulkheadSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-bulkheadsettings",
+      "Declaration": "public sealed class BulkheadSettings",
+      "Summary": "Describes configuration-driven bulkhead settings for a Cephalon app.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 0
       }
     },
     {
@@ -2647,6 +2677,36 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "CircuitBreakerSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-appmodel-circuitbreakerselection",
+      "Declaration": "public sealed class CircuitBreakerSelection",
+      "Summary": "Describes the circuit-breaker inputs resolved for a Cephalon app.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CircuitBreakerSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-circuitbreakersettings",
+      "Declaration": "public sealed class CircuitBreakerSettings",
+      "Summary": "Describes configuration-driven circuit-breaker settings for a Cephalon app.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 0
       }
     },
     {
@@ -3440,7 +3500,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 1,
-        "Properties": 17,
+        "Properties": 18,
         "Methods": 1
       }
     },
@@ -7146,7 +7206,7 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 7,
-        "Methods": 1
+        "Methods": 2
       }
     },
     {
@@ -7495,6 +7555,36 @@
       }
     },
     {
+      "DisplayName": "RateLimitingSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-appmodel-ratelimitingselection",
+      "Declaration": "public sealed class RateLimitingSelection",
+      "Summary": "Describes the rate-limiting inputs resolved for a Cephalon app.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "RateLimitingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-ratelimitingsettings",
+      "Declaration": "public sealed class RateLimitingSettings",
+      "Summary": "Describes configuration-driven rate-limiting settings for a Cephalon app.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "RedisDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.RedisDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.RedisDependencies",
@@ -7735,6 +7825,36 @@
       }
     },
     {
+      "DisplayName": "ResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-appmodel-resilienceselection",
+      "Declaration": "public sealed class ResilienceSelection",
+      "Summary": "Describes the resilience-policy inputs resolved for a Cephalon app.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ResilienceSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-resiliencesettings",
+      "Declaration": "public sealed class ResilienceSettings",
+      "Summary": "Describes configuration-driven resilience settings for a Cephalon app.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "RestEndpointConventionBuilderExtensions",
       "NamespaceName": "Cephalon.AspNetCore.Transports.Rest",
       "AssemblyName": "Cephalon.AspNetCore",
@@ -7851,6 +7971,36 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 3,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "RetrySelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-appmodel-retryselection",
+      "Declaration": "public sealed class RetrySelection",
+      "Summary": "Describes the retry-policy inputs resolved for a Cephalon app.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "RetrySettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-retrysettings",
+      "Declaration": "public sealed class RetrySettings",
+      "Summary": "Describes configuration-driven retry settings for a Cephalon app.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
         "Methods": 0
       }
     },
@@ -8556,6 +8706,36 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TimeoutSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-appmodel-timeoutselection",
+      "Declaration": "public sealed class TimeoutSelection",
+      "Summary": "Describes the timeout-policy inputs resolved for a Cephalon app.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TimeoutSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-timeoutsettings",
+      "Declaration": "public sealed class TimeoutSettings",
+      "Summary": "Describes configuration-driven timeout settings for a Cephalon app.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
         "Methods": 0
       }
     },
@@ -10505,6 +10685,28 @@
       "Summary": "Gets the declared signature algorithm."
     },
     {
+      "DisplayName": "Algorithm",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingselection-algorithm",
+      "Signature": "string Algorithm { get; }",
+      "Summary": "Gets the requested rate-limiting algorithm, such as \u0060FixedWindow\u0060 or \u0060TokenBucket\u0060."
+    },
+    {
+      "DisplayName": "Algorithm",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingsettings-algorithm",
+      "Signature": "string Algorithm { get; }",
+      "Summary": "Gets the requested rate-limiting algorithm, such as \u0060FixedWindow\u0060 or \u0060TokenBucket\u0060."
+    },
+    {
       "DisplayName": "Aliases",
       "Category": "Properties",
       "DeclaringTypeName": "PatternDescriptor",
@@ -10725,6 +10927,17 @@
       "Summary": "Gets or sets the optional value that controls whether the server RSA public key may be requested automatically."
     },
     {
+      "DisplayName": "AntiCorruptionLayer",
+      "Category": "Properties",
+      "DeclaringTypeName": "BuiltInPatterns",
+      "NamespaceName": "Cephalon.Engine.Patterns",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-patterns-builtinpatterns-anticorruptionlayer",
+      "Signature": "PatternDescriptor AntiCorruptionLayer { get; }",
+      "Summary": "Gets the anti-corruption-layer pattern."
+    },
+    {
       "DisplayName": "ApiKey",
       "Category": "Properties",
       "DeclaringTypeName": "ElasticsearchDependencyDefinition",
@@ -10929,8 +11142,8 @@
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-databasetopologyselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection",
-      "Signature": "AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList\u003CPatternDescriptor\u003E patterns, IReadOnlyList\u003CTechnologyDescriptor\u003E technologies, IReadOnlyList\u003CTransportDescriptor\u003E transports, DataSelection data, DatabaseTopologySelection databases, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging)",
+      "AnchorId": "member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-databasetopologyselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection-cephalon-abstractions-appmodel-resilienceselection",
+      "Signature": "AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList\u003CPatternDescriptor\u003E patterns, IReadOnlyList\u003CTechnologyDescriptor\u003E technologies, IReadOnlyList\u003CTransportDescriptor\u003E transports, DataSelection data, DatabaseTopologySelection databases, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging, ResilienceSelection resilience)",
       "Summary": "Creates an app profile without scaffold metadata."
     },
     {
@@ -10940,8 +11153,8 @@
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-databasetopologyselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection",
-      "Signature": "AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList\u003CPatternDescriptor\u003E patterns, ScaffoldPlan scaffold, IReadOnlyList\u003CTechnologyDescriptor\u003E technologies, IReadOnlyList\u003CTransportDescriptor\u003E transports, DataSelection data, DatabaseTopologySelection databases, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging)",
+      "AnchorId": "member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-databasetopologyselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection-cephalon-abstractions-appmodel-resilienceselection",
+      "Signature": "AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList\u003CPatternDescriptor\u003E patterns, ScaffoldPlan scaffold, IReadOnlyList\u003CTechnologyDescriptor\u003E technologies, IReadOnlyList\u003CTransportDescriptor\u003E transports, DataSelection data, DatabaseTopologySelection databases, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging, ResilienceSelection resilience)",
       "Summary": "Creates an app profile with optional scaffold metadata."
     },
     {
@@ -11141,6 +11354,28 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-attempt",
       "Signature": "int Attempt { get; }",
       "Summary": "Gets the application-managed attempt number associated with this observation."
+    },
+    {
+      "DisplayName": "AttemptTimeoutSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "TimeoutSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-timeoutselection-attempttimeoutseconds",
+      "Signature": "int? AttemptTimeoutSeconds { get; }",
+      "Summary": "Gets the per-attempt timeout in seconds requested for an execution."
+    },
+    {
+      "DisplayName": "AttemptTimeoutSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "TimeoutSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-timeoutsettings-attempttimeoutseconds",
+      "Signature": "int? AttemptTimeoutSeconds { get; }",
+      "Summary": "Gets the per-attempt timeout in seconds requested for an execution."
     },
     {
       "DisplayName": "Attributes",
@@ -11627,6 +11862,50 @@
       "Summary": "Initializes a new instance of the \u0060AzureMonitorExportOptions\u0060 class."
     },
     {
+      "DisplayName": "Backoff",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrySelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-retryselection-backoff",
+      "Signature": "string Backoff { get; }",
+      "Summary": "Gets the requested backoff mode, such as \u0060Exponential\u0060 or \u0060Linear\u0060."
+    },
+    {
+      "DisplayName": "Backoff",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrySettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-retrysettings-backoff",
+      "Signature": "string Backoff { get; }",
+      "Summary": "Gets the requested backoff mode, such as \u0060Exponential\u0060 or \u0060Linear\u0060."
+    },
+    {
+      "DisplayName": "BaseDelayMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrySelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-retryselection-basedelaymilliseconds",
+      "Signature": "int? BaseDelayMilliseconds { get; }",
+      "Summary": "Gets the base delay in milliseconds used by the retry policy."
+    },
+    {
+      "DisplayName": "BaseDelayMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrySettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-retrysettings-basedelaymilliseconds",
+      "Signature": "int? BaseDelayMilliseconds { get; }",
+      "Summary": "Gets the base delay in milliseconds used by the retry policy."
+    },
+    {
       "DisplayName": "BearerToken",
       "Category": "Properties",
       "DeclaringTypeName": "ElasticsearchDependencyDefinition",
@@ -11979,6 +12258,28 @@
       "Summary": "Gets or sets the Kafka bootstrap server list, such as \u0060broker-1:9092,broker-2:9092\u0060."
     },
     {
+      "DisplayName": "BreakDurationSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CircuitBreakerSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-circuitbreakerselection-breakdurationseconds",
+      "Signature": "int? BreakDurationSeconds { get; }",
+      "Summary": "Gets the break duration in seconds requested for the open state."
+    },
+    {
+      "DisplayName": "BreakDurationSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CircuitBreakerSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-circuitbreakersettings-breakdurationseconds",
+      "Signature": "int? BreakDurationSeconds { get; }",
+      "Summary": "Gets the break duration in seconds requested for the open state."
+    },
+    {
       "DisplayName": "BrowserPath",
       "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocsSurface",
@@ -12032,6 +12333,50 @@
       "AnchorId": "member-p-cephalon-engine-manifest-packageprovenancemanifest-builduri",
       "Signature": "string BuildUri { get; }",
       "Summary": "Gets the declared build or pipeline URI, when available."
+    },
+    {
+      "DisplayName": "Bulkhead",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-resilienceselection-bulkhead",
+      "Signature": "BulkheadSelection Bulkhead { get; }",
+      "Summary": "Gets the bulkhead policy resolved for the app."
+    },
+    {
+      "DisplayName": "Bulkhead",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResilienceSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-resiliencesettings-bulkhead",
+      "Signature": "BulkheadSettings Bulkhead { get; }",
+      "Summary": "Gets the bulkhead settings resolved for the app."
+    },
+    {
+      "DisplayName": "BulkheadSelection",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BulkheadSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-appmodel-bulkheadselection-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32",
+      "Signature": "BulkheadSelection(bool? enabled, int? maxConcurrentExecutions, int? maxQueuedActions)",
+      "Summary": "Initializes a new instance of the \u0060BulkheadSelection\u0060 class."
+    },
+    {
+      "DisplayName": "BulkheadSettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BulkheadSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-bulkheadsettings-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32",
+      "Signature": "BulkheadSettings(bool? enabled, int? maxConcurrentExecutions, int? maxQueuedActions)",
+      "Summary": "Initializes a new instance of the \u0060BulkheadSettings\u0060 class."
     },
     {
       "DisplayName": "CanRestart",
@@ -12505,6 +12850,50 @@
       "AnchorId": "member-p-cephalon-engine-manifest-packagemanifest-checksumsha256",
       "Signature": "string ChecksumSha256 { get; }",
       "Summary": "Gets the computed SHA-256 checksum of the resolved package assembly."
+    },
+    {
+      "DisplayName": "CircuitBreaker",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-resilienceselection-circuitbreaker",
+      "Signature": "CircuitBreakerSelection CircuitBreaker { get; }",
+      "Summary": "Gets the circuit-breaker policy resolved for the app."
+    },
+    {
+      "DisplayName": "CircuitBreaker",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResilienceSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-resiliencesettings-circuitbreaker",
+      "Signature": "CircuitBreakerSettings CircuitBreaker { get; }",
+      "Summary": "Gets the circuit-breaker settings resolved for the app."
+    },
+    {
+      "DisplayName": "CircuitBreakerSelection",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CircuitBreakerSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-appmodel-circuitbreakerselection-ctor-system-nullable-system-boolean-system-nullable-system-decimal-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32",
+      "Signature": "CircuitBreakerSelection(bool? enabled, decimal? failureRatio, int? minimumThroughput, int? samplingDurationSeconds, int? breakDurationSeconds)",
+      "Summary": "Initializes a new instance of the \u0060CircuitBreakerSelection\u0060 class."
+    },
+    {
+      "DisplayName": "CircuitBreakerSettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CircuitBreakerSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-circuitbreakersettings-ctor-system-nullable-system-boolean-system-nullable-system-decimal-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32",
+      "Signature": "CircuitBreakerSettings(bool? enabled, decimal? failureRatio, int? minimumThroughput, int? samplingDurationSeconds, int? breakDurationSeconds)",
+      "Summary": "Initializes a new instance of the \u0060CircuitBreakerSettings\u0060 class."
     },
     {
       "DisplayName": "CleanArchitecture",
@@ -16458,6 +16847,50 @@
     {
       "DisplayName": "Empty",
       "Category": "Properties",
+      "DeclaringTypeName": "BulkheadSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-bulkheadselection-empty",
+      "Signature": "BulkheadSelection Empty { get; }",
+      "Summary": "Gets an empty bulkhead-selection instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "BulkheadSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-bulkheadsettings-empty",
+      "Signature": "BulkheadSettings Empty { get; }",
+      "Summary": "Gets an empty bulkhead-settings instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "CircuitBreakerSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-circuitbreakerselection-empty",
+      "Signature": "CircuitBreakerSelection Empty { get; }",
+      "Summary": "Gets an empty circuit-breaker-selection instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "CircuitBreakerSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-circuitbreakersettings-empty",
+      "Signature": "CircuitBreakerSettings Empty { get; }",
+      "Summary": "Gets an empty circuit-breaker-settings instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationsSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -16656,6 +17089,72 @@
     {
       "DisplayName": "Empty",
       "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingselection-empty",
+      "Signature": "RateLimitingSelection Empty { get; }",
+      "Summary": "Gets an empty rate-limiting-selection instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingsettings-empty",
+      "Signature": "RateLimitingSettings Empty { get; }",
+      "Summary": "Gets an empty rate-limiting-settings instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-resilienceselection-empty",
+      "Signature": "ResilienceSelection Empty { get; }",
+      "Summary": "Gets an empty resilience-selection instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResilienceSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-resiliencesettings-empty",
+      "Signature": "ResilienceSettings Empty { get; }",
+      "Summary": "Gets an empty resilience-settings instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrySelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-retryselection-empty",
+      "Signature": "RetrySelection Empty { get; }",
+      "Summary": "Gets an empty retry-selection instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrySettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-retrysettings-empty",
+      "Signature": "RetrySettings Empty { get; }",
+      "Summary": "Gets an empty retry-settings instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
       "DeclaringTypeName": "SfidIdOptions",
       "NamespaceName": "Cephalon.Ids.Sfid.Configuration",
       "AssemblyName": "Cephalon.Ids.Sfid",
@@ -16685,6 +17184,28 @@
       "AnchorId": "member-p-cephalon-engine-configuration-tenancysettings-empty",
       "Signature": "TenancySettings Empty { get; }",
       "Summary": "Gets an empty tenancy-settings instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "TimeoutSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-timeoutselection-empty",
+      "Signature": "TimeoutSelection Empty { get; }",
+      "Summary": "Gets an empty timeout-selection instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "TimeoutSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-timeoutsettings-empty",
+      "Signature": "TimeoutSettings Empty { get; }",
+      "Summary": "Gets an empty timeout-settings instance."
     },
     {
       "DisplayName": "EnableAwsSdkInstrumentation",
@@ -16788,6 +17309,50 @@
     {
       "DisplayName": "Enabled",
       "Category": "Properties",
+      "DeclaringTypeName": "BulkheadSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-bulkheadselection-enabled",
+      "Signature": "bool? Enabled { get; }",
+      "Summary": "Gets a value indicating whether bulkhead isolation was explicitly enabled."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "BulkheadSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-bulkheadsettings-enabled",
+      "Signature": "bool? Enabled { get; }",
+      "Summary": "Gets a value indicating whether bulkhead isolation was explicitly enabled."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "CircuitBreakerSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-circuitbreakerselection-enabled",
+      "Signature": "bool? Enabled { get; }",
+      "Summary": "Gets a value indicating whether circuit-breaker support was explicitly enabled."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "CircuitBreakerSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-circuitbreakersettings-enabled",
+      "Signature": "bool? Enabled { get; }",
+      "Summary": "Gets a value indicating whether circuit-breaker support was explicitly enabled."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
       "DeclaringTypeName": "HttpRequestResponseLoggingOptions",
       "NamespaceName": "Cephalon.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.AspNetCore",
@@ -16821,6 +17386,28 @@
     {
       "DisplayName": "Enabled",
       "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingselection-enabled",
+      "Signature": "bool? Enabled { get; }",
+      "Summary": "Gets a value indicating whether rate limiting was explicitly enabled."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingsettings-enabled",
+      "Signature": "bool? Enabled { get; }",
+      "Summary": "Gets a value indicating whether rate limiting was explicitly enabled."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocsHostingOptions",
       "NamespaceName": "Cephalon.AspNetCore.Documentation",
       "AssemblyName": "Cephalon.AspNetCore",
@@ -16843,6 +17430,28 @@
     {
       "DisplayName": "Enabled",
       "Category": "Properties",
+      "DeclaringTypeName": "RetrySelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-retryselection-enabled",
+      "Signature": "bool? Enabled { get; }",
+      "Summary": "Gets a value indicating whether retry support was explicitly enabled."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrySettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-retrysettings-enabled",
+      "Signature": "bool? Enabled { get; }",
+      "Summary": "Gets a value indicating whether retry support was explicitly enabled."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
       "DeclaringTypeName": "TenancySelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -16861,6 +17470,28 @@
       "AnchorId": "member-p-cephalon-engine-configuration-tenancysettings-enabled",
       "Signature": "bool? Enabled { get; }",
       "Summary": "Gets a value indicating whether multi-tenancy was explicitly enabled."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "TimeoutSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-timeoutselection-enabled",
+      "Signature": "bool? Enabled { get; }",
+      "Summary": "Gets a value indicating whether timeout support was explicitly enabled."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "TimeoutSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-timeoutsettings-enabled",
+      "Signature": "bool? Enabled { get; }",
+      "Summary": "Gets a value indicating whether timeout support was explicitly enabled."
     },
     {
       "DisplayName": "EnableDefaultEvaluator",
@@ -17265,8 +17896,8 @@
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings",
-      "Signature": "EngineSettings(string blueprint, IReadOnlyList\u003Cstring\u003E patterns, IReadOnlyList\u003Cstring\u003E transports, IReadOnlyList\u003Cstring\u003E technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging)",
+      "AnchorId": "member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings-cephalon-engine-configuration-resiliencesettings",
+      "Signature": "EngineSettings(string blueprint, IReadOnlyList\u003Cstring\u003E patterns, IReadOnlyList\u003Cstring\u003E transports, IReadOnlyList\u003Cstring\u003E technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging, ResilienceSettings resilience)",
       "Summary": "Initializes a new instance of the \u0060EngineSettings\u0060 class."
     },
     {
@@ -18359,6 +18990,28 @@
       "Summary": "Gets the failure policy that governs startup, stop, and restart behavior."
     },
     {
+      "DisplayName": "FailureRatio",
+      "Category": "Properties",
+      "DeclaringTypeName": "CircuitBreakerSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-circuitbreakerselection-failureratio",
+      "Signature": "decimal? FailureRatio { get; }",
+      "Summary": "Gets the failure ratio threshold requested for opening the breaker."
+    },
+    {
+      "DisplayName": "FailureRatio",
+      "Category": "Properties",
+      "DeclaringTypeName": "CircuitBreakerSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-circuitbreakersettings-failureratio",
+      "Signature": "decimal? FailureRatio { get; }",
+      "Summary": "Gets the failure ratio threshold requested for opening the breaker."
+    },
+    {
       "DisplayName": "Fault",
       "Category": "Properties",
       "DeclaringTypeName": "BehaviorResultDescriptor",
@@ -19138,6 +19791,17 @@
       "AnchorId": "member-m-cephalon-aspnetcore-documentation-referencedocshostingoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string-system-string",
       "Signature": "ReferenceDocsHostingOptions FromConfiguration(IConfiguration configuration, string sectionPath, string contentRootPath)",
       "Summary": "Binds reference-doc hosting options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
+      "DeclaringTypeName": "ResilienceSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-resiliencesettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "ResilienceSettings FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Reads resilience settings from configuration."
     },
     {
       "DisplayName": "FromConfiguration",
@@ -20176,6 +20840,50 @@
     {
       "DisplayName": "HasValues",
       "Category": "Properties",
+      "DeclaringTypeName": "BulkheadSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-bulkheadselection-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any bulkhead-selection inputs were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "BulkheadSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-bulkheadsettings-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any bulkhead settings were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "CircuitBreakerSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-circuitbreakerselection-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any circuit-breaker-selection inputs were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "CircuitBreakerSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-circuitbreakersettings-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any circuit-breaker settings were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationsSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -20407,6 +21115,72 @@
     {
       "DisplayName": "HasValues",
       "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingselection-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any rate-limiting-selection inputs were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingsettings-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any rate-limiting settings were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-resilienceselection-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any resilience-selection inputs were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResilienceSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-resiliencesettings-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any resilience settings were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrySelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-retryselection-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any retry-selection inputs were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrySettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-retrysettings-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any retry settings were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
       "DeclaringTypeName": "SfidIdOptions",
       "NamespaceName": "Cephalon.Ids.Sfid.Configuration",
       "AssemblyName": "Cephalon.Ids.Sfid",
@@ -20436,6 +21210,28 @@
       "AnchorId": "member-p-cephalon-engine-configuration-tenancysettings-hasvalues",
       "Signature": "bool HasValues { get; }",
       "Summary": "Gets a value indicating whether any tenancy settings were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "TimeoutSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-timeoutselection-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any timeout-selection inputs were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "TimeoutSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-timeoutsettings-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any timeout settings were explicitly supplied."
     },
     {
       "DisplayName": "HasValues",
@@ -23628,6 +24424,28 @@
       "Summary": "Gets the maximum age, in days, to retain durable audit rows."
     },
     {
+      "DisplayName": "MaxAttempts",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrySelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-retryselection-maxattempts",
+      "Signature": "int? MaxAttempts { get; }",
+      "Summary": "Gets the maximum retry attempts requested for the policy."
+    },
+    {
+      "DisplayName": "MaxAttempts",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrySettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-retrysettings-maxattempts",
+      "Signature": "int? MaxAttempts { get; }",
+      "Summary": "Gets the maximum retry attempts requested for the policy."
+    },
+    {
       "DisplayName": "MaxBatchSize",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseRuntimeSelection",
@@ -23648,6 +24466,50 @@
       "AnchorId": "member-p-cephalon-engine-configuration-databaseruntimesettings-maxbatchsize",
       "Signature": "int? MaxBatchSize { get; }",
       "Summary": "Gets the maximum provider batch size when one was configured."
+    },
+    {
+      "DisplayName": "MaxConcurrentExecutions",
+      "Category": "Properties",
+      "DeclaringTypeName": "BulkheadSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-bulkheadselection-maxconcurrentexecutions",
+      "Signature": "int? MaxConcurrentExecutions { get; }",
+      "Summary": "Gets the maximum concurrent executions allowed inside the bulkhead."
+    },
+    {
+      "DisplayName": "MaxConcurrentExecutions",
+      "Category": "Properties",
+      "DeclaringTypeName": "BulkheadSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-bulkheadsettings-maxconcurrentexecutions",
+      "Signature": "int? MaxConcurrentExecutions { get; }",
+      "Summary": "Gets the maximum concurrent executions allowed inside the bulkhead."
+    },
+    {
+      "DisplayName": "MaxDelayMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrySelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-retryselection-maxdelaymilliseconds",
+      "Signature": "int? MaxDelayMilliseconds { get; }",
+      "Summary": "Gets the maximum delay in milliseconds the retry policy may apply."
+    },
+    {
+      "DisplayName": "MaxDelayMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrySettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-retrysettings-maxdelaymilliseconds",
+      "Signature": "int? MaxDelayMilliseconds { get; }",
+      "Summary": "Gets the maximum delay in milliseconds the retry policy may apply."
     },
     {
       "DisplayName": "MaxEntries",
@@ -23725,6 +24587,28 @@
       "AnchorId": "member-f-cephalon-abstractions-audit-audithistoryquery-maxlimit",
       "Signature": "const int MaxLimit",
       "Summary": "Gets the maximum number of entries returned by one query."
+    },
+    {
+      "DisplayName": "MaxQueuedActions",
+      "Category": "Properties",
+      "DeclaringTypeName": "BulkheadSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-bulkheadselection-maxqueuedactions",
+      "Signature": "int? MaxQueuedActions { get; }",
+      "Summary": "Gets the maximum queued actions allowed before rejection."
+    },
+    {
+      "DisplayName": "MaxQueuedActions",
+      "Category": "Properties",
+      "DeclaringTypeName": "BulkheadSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-bulkheadsettings-maxqueuedactions",
+      "Signature": "int? MaxQueuedActions { get; }",
+      "Summary": "Gets the maximum queued actions allowed before rejection."
     },
     {
       "DisplayName": "MaxRestartAttempts",
@@ -24904,6 +25788,28 @@
       "Summary": "Gets the smallest event id published by this convention."
     },
     {
+      "DisplayName": "MinimumThroughput",
+      "Category": "Properties",
+      "DeclaringTypeName": "CircuitBreakerSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-circuitbreakerselection-minimumthroughput",
+      "Signature": "int? MinimumThroughput { get; }",
+      "Summary": "Gets the minimum throughput required before the breaker evaluates failures."
+    },
+    {
+      "DisplayName": "MinimumThroughput",
+      "Category": "Properties",
+      "DeclaringTypeName": "CircuitBreakerSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-circuitbreakersettings-minimumthroughput",
+      "Signature": "int? MinimumThroughput { get; }",
+      "Summary": "Gets the minimum throughput required before the breaker evaluates failures."
+    },
+    {
       "DisplayName": "MinimumVersion",
       "Category": "Properties",
       "DeclaringTypeName": "PackageDependencyManifest",
@@ -26079,6 +26985,17 @@
       "AnchorId": "member-p-cephalon-abstractions-audit-auditchange-oldvalue",
       "Signature": "string OldValue { get; }",
       "Summary": "Gets the previous serialized value when one is known."
+    },
+    {
+      "DisplayName": "OnionArchitecture",
+      "Category": "Properties",
+      "DeclaringTypeName": "BuiltInPatterns",
+      "NamespaceName": "Cephalon.Engine.Patterns",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-patterns-builtinpatterns-onionarchitecture",
+      "Signature": "PatternDescriptor OnionArchitecture { get; }",
+      "Summary": "Gets the onion-architecture pattern."
     },
     {
       "DisplayName": "OpenApiEndpointOptions",
@@ -27280,6 +28197,28 @@
       "Summary": "Gets the serialized payload that should be delivered later."
     },
     {
+      "DisplayName": "PermitLimit",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingselection-permitlimit",
+      "Signature": "int? PermitLimit { get; }",
+      "Summary": "Gets the maximum permits available per limiter window or bucket."
+    },
+    {
+      "DisplayName": "PermitLimit",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingsettings-permitlimit",
+      "Signature": "int? PermitLimit { get; }",
+      "Summary": "Gets the maximum permits available per limiter window or bucket."
+    },
+    {
       "DisplayName": "PersistedAtUtc",
       "Category": "Properties",
       "DeclaringTypeName": "AuditHistoryEntry",
@@ -28127,6 +29066,28 @@
       "Summary": "Queries audit-history entries using the supplied host-agnostic filter set."
     },
     {
+      "DisplayName": "QueueLimit",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingselection-queuelimit",
+      "Signature": "int? QueueLimit { get; }",
+      "Summary": "Gets the maximum queued requests allowed before rejection."
+    },
+    {
+      "DisplayName": "QueueLimit",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingsettings-queuelimit",
+      "Signature": "int? QueueLimit { get; }",
+      "Summary": "Gets the maximum queued requests allowed before rejection."
+    },
+    {
       "DisplayName": "QuotaProjectId",
       "Category": "Properties",
       "DeclaringTypeName": "GcpTelemetryExportOptions",
@@ -28158,6 +29119,50 @@
       "AnchorId": "member-m-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions-ctor",
       "Signature": "RabbitMqDependencyHealthOptions()",
       "Summary": "Initializes a new instance of the \u0060RabbitMqDependencyHealthOptions\u0060 class."
+    },
+    {
+      "DisplayName": "RateLimiting",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-resilienceselection-ratelimiting",
+      "Signature": "RateLimitingSelection RateLimiting { get; }",
+      "Summary": "Gets the rate-limiting policy resolved for the app."
+    },
+    {
+      "DisplayName": "RateLimiting",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResilienceSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-resiliencesettings-ratelimiting",
+      "Signature": "RateLimitingSettings RateLimiting { get; }",
+      "Summary": "Gets the rate-limiting settings resolved for the app."
+    },
+    {
+      "DisplayName": "RateLimitingSelection",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RateLimitingSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-appmodel-ratelimitingselection-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32",
+      "Signature": "RateLimitingSelection(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow)",
+      "Summary": "Initializes a new instance of the \u0060RateLimitingSelection\u0060 class."
+    },
+    {
+      "DisplayName": "RateLimitingSettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RateLimitingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-ratelimitingsettings-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32",
+      "Signature": "RateLimitingSettings(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow)",
+      "Summary": "Initializes a new instance of the \u0060RateLimitingSettings\u0060 class."
     },
     {
       "DisplayName": "Rbac",
@@ -29403,6 +30408,50 @@
       "Summary": "Gets a value indicating whether package manifests must declare a version."
     },
     {
+      "DisplayName": "Resilience",
+      "Category": "Properties",
+      "DeclaringTypeName": "AppProfile",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-appprofile-resilience",
+      "Signature": "ResilienceSelection Resilience { get; }",
+      "Summary": "Gets the selected resilience-policy inputs."
+    },
+    {
+      "DisplayName": "Resilience",
+      "Category": "Properties",
+      "DeclaringTypeName": "EngineSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-enginesettings-resilience",
+      "Signature": "ResilienceSettings Resilience { get; }",
+      "Summary": "Gets configuration-driven resilience settings."
+    },
+    {
+      "DisplayName": "ResilienceSelection",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-appmodel-resilienceselection-ctor-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection-cephalon-abstractions-appmodel-ratelimitingselection",
+      "Signature": "ResilienceSelection(RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead, RateLimitingSelection rateLimiting)",
+      "Summary": "Initializes a new instance of the \u0060ResilienceSelection\u0060 class."
+    },
+    {
+      "DisplayName": "ResilienceSettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ResilienceSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-resiliencesettings-ctor-cephalon-engine-configuration-retrysettings-cephalon-engine-configuration-timeoutsettings-cephalon-engine-configuration-circuitbreakersettings-cephalon-engine-configuration-bulkheadsettings-cephalon-engine-configuration-ratelimitingsettings",
+      "Signature": "ResilienceSettings(RetrySettings retry, TimeoutSettings timeout, CircuitBreakerSettings circuitBreaker, BulkheadSettings bulkhead, RateLimitingSettings rateLimiting)",
+      "Summary": "Initializes a new instance of the \u0060ResilienceSettings\u0060 class."
+    },
+    {
       "DisplayName": "ResolutionMode",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseRoleDescriptor",
@@ -29942,6 +30991,28 @@
       "Summary": "Creates retrieval options with the default host-owned features enabled."
     },
     {
+      "DisplayName": "Retry",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-resilienceselection-retry",
+      "Signature": "RetrySelection Retry { get; }",
+      "Summary": "Gets the retry policy resolved for the app."
+    },
+    {
+      "DisplayName": "Retry",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResilienceSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-resiliencesettings-retry",
+      "Signature": "RetrySettings Retry { get; }",
+      "Summary": "Gets the retry settings resolved for the app."
+    },
+    {
       "DisplayName": "RetryDelaySeconds",
       "Category": "Properties",
       "DeclaringTypeName": "WolverineEventingOptions",
@@ -30039,6 +31110,28 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionruntimestate-retryscheduledcount",
       "Signature": "int RetryScheduledCount { get; set; }",
       "Summary": "The number of \u0060retry-scheduled\u0060 observations reported so far."
+    },
+    {
+      "DisplayName": "RetrySelection",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RetrySelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-appmodel-retryselection-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-boolean",
+      "Signature": "RetrySelection(bool? enabled, int? maxAttempts, string backoff, int? baseDelayMilliseconds, int? maxDelayMilliseconds, bool? useJitter)",
+      "Summary": "Initializes a new instance of the \u0060RetrySelection\u0060 class."
+    },
+    {
+      "DisplayName": "RetrySettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RetrySettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-retrysettings-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-boolean",
+      "Signature": "RetrySettings(bool? enabled, int? maxAttempts, string backoff, int? baseDelayMilliseconds, int? maxDelayMilliseconds, bool? useJitter)",
+      "Summary": "Initializes a new instance of the \u0060RetrySettings\u0060 class."
     },
     {
       "DisplayName": "Role",
@@ -30514,6 +31607,28 @@
       "Summary": "Gets the counter name for runtime lifecycle transitions."
     },
     {
+      "DisplayName": "SamplingDurationSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CircuitBreakerSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-circuitbreakerselection-samplingdurationseconds",
+      "Signature": "int? SamplingDurationSeconds { get; }",
+      "Summary": "Gets the sampling duration in seconds used by the breaker."
+    },
+    {
+      "DisplayName": "SamplingDurationSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CircuitBreakerSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-circuitbreakersettings-samplingdurationseconds",
+      "Signature": "int? SamplingDurationSeconds { get; }",
+      "Summary": "Gets the sampling duration in seconds used by the breaker."
+    },
+    {
       "DisplayName": "SaslMechanism",
       "Category": "Properties",
       "DeclaringTypeName": "KafkaDependencyDefinition",
@@ -30875,6 +31990,28 @@
       "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-securityprotocol",
       "Signature": "string SecurityProtocol { get; set; }",
       "Summary": "Gets or sets the optional Kafka security protocol, such as \u0060Plaintext\u0060, \u0060Ssl\u0060, \u0060SaslPlaintext\u0060, or \u0060SaslSsl\u0060."
+    },
+    {
+      "DisplayName": "SegmentsPerWindow",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingselection-segmentsperwindow",
+      "Signature": "int? SegmentsPerWindow { get; }",
+      "Summary": "Gets the number of segments per window when sliding windows are used."
+    },
+    {
+      "DisplayName": "SegmentsPerWindow",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingsettings-segmentsperwindow",
+      "Signature": "int? SegmentsPerWindow { get; }",
+      "Summary": "Gets the number of segments per window when sliding windows are used."
     },
     {
       "DisplayName": "Selected",
@@ -33781,6 +34918,50 @@
       "Summary": "The ordered lifecycle narrative for package load, execution-graph transitions, hosted-execution transitions, module transitions, runtime transitions, and failures."
     },
     {
+      "DisplayName": "Timeout",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-resilienceselection-timeout",
+      "Signature": "TimeoutSelection Timeout { get; }",
+      "Summary": "Gets the timeout policy resolved for the app."
+    },
+    {
+      "DisplayName": "Timeout",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResilienceSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-resiliencesettings-timeout",
+      "Signature": "TimeoutSettings Timeout { get; }",
+      "Summary": "Gets the timeout settings resolved for the app."
+    },
+    {
+      "DisplayName": "TimeoutSelection",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TimeoutSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-appmodel-timeoutselection-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32",
+      "Signature": "TimeoutSelection(bool? enabled, int? totalTimeoutSeconds, int? attemptTimeoutSeconds)",
+      "Summary": "Initializes a new instance of the \u0060TimeoutSelection\u0060 class."
+    },
+    {
+      "DisplayName": "TimeoutSettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TimeoutSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-timeoutsettings-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32",
+      "Signature": "TimeoutSettings(bool? enabled, int? totalTimeoutSeconds, int? attemptTimeoutSeconds)",
+      "Summary": "Initializes a new instance of the \u0060TimeoutSettings\u0060 class."
+    },
+    {
       "DisplayName": "Title",
       "Category": "Properties",
       "DeclaringTypeName": "ResultModel\u003CTModel\u003E",
@@ -33911,6 +35092,28 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionruntimestate-totalreports",
       "Signature": "int TotalReports { get; }",
       "Summary": "Gets the total number of observations reported for this subscription."
+    },
+    {
+      "DisplayName": "TotalTimeoutSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "TimeoutSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-timeoutselection-totaltimeoutseconds",
+      "Signature": "int? TotalTimeoutSeconds { get; }",
+      "Summary": "Gets the overall timeout in seconds requested for an execution."
+    },
+    {
+      "DisplayName": "TotalTimeoutSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "TimeoutSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-timeoutsettings-totaltimeoutseconds",
+      "Signature": "int? TotalTimeoutSeconds { get; }",
+      "Summary": "Gets the overall timeout in seconds requested for an execution."
     },
     {
       "DisplayName": "Trace",
@@ -34540,6 +35743,17 @@
       "Summary": "The runtime cannot execute the configured migration target with the active provider-pack registrations."
     },
     {
+      "DisplayName": "Unsupported",
+      "Category": "Methods",
+      "DeclaringTypeName": "OutboxDispatchPolicyDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-outboxdispatchpolicydescriptor-unsupported-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "OutboxDispatchPolicyDescriptor Unsupported(string outboxId, string description, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates an explicit unsupported dispatch policy for an outbox that can stage messages but does not currently support Cephalon-managed mutable dispatch-state ownership."
+    },
+    {
       "DisplayName": "Uri",
       "Category": "Properties",
       "DeclaringTypeName": "Neo4jDependencyDefinition",
@@ -34692,6 +35906,28 @@
       "AnchorId": "member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-useinclusterproxyservice",
       "Signature": "bool UseInClusterProxyService { get; set; }",
       "Summary": "Gets or sets a value indicating whether the package should target an in-cluster Tanzu proxy service for trace handoff when no shared endpoint is configured."
+    },
+    {
+      "DisplayName": "UseJitter",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrySelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-retryselection-usejitter",
+      "Signature": "bool? UseJitter { get; }",
+      "Summary": "Gets a value indicating whether jitter was explicitly requested for retry delays."
+    },
+    {
+      "DisplayName": "UseJitter",
+      "Category": "Properties",
+      "DeclaringTypeName": "RetrySettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-retrysettings-usejitter",
+      "Signature": "bool? UseJitter { get; }",
+      "Summary": "Gets a value indicating whether jitter was explicitly requested for retry delays."
     },
     {
       "DisplayName": "UseLocalization",
@@ -35440,6 +36676,28 @@
       "AnchorId": "member-p-cephalon-engine-transports-builtintransports-websocket",
       "Signature": "TransportDescriptor WebSocket { get; }",
       "Summary": "Gets the built-in WebSocket transport descriptor."
+    },
+    {
+      "DisplayName": "WindowSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-ratelimitingselection-windowseconds",
+      "Signature": "int? WindowSeconds { get; }",
+      "Summary": "Gets the limiter window duration in seconds when the selected algorithm uses windows."
+    },
+    {
+      "DisplayName": "WindowSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingsettings-windowseconds",
+      "Signature": "int? WindowSeconds { get; }",
+      "Summary": "Gets the limiter window duration in seconds when the selected algorithm uses windows."
     },
     {
       "DisplayName": "WithApiSurface",

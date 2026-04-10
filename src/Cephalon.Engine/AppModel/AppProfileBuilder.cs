@@ -24,6 +24,7 @@ internal sealed class AppProfileBuilder
     private TenancySelection tenancySelection = TenancySelection.Empty;
     private AuditSelection auditSelection = AuditSelection.Empty;
     private MessagingSelection messagingSelection = MessagingSelection.Empty;
+    private ResilienceSelection resilienceSelection = ResilienceSelection.Empty;
 
     private AppBlueprint blueprint = BuiltInBlueprints.ModularMonolith;
 
@@ -132,6 +133,11 @@ internal sealed class AppProfileBuilder
         messagingSelection = selection ?? throw new ArgumentNullException(nameof(selection));
     }
 
+    public void UseResilienceSelection(ResilienceSelection selection)
+    {
+        resilienceSelection = selection ?? throw new ArgumentNullException(nameof(selection));
+    }
+
     public IReadOnlyList<TechnologyDescriptor> GetTechnologyCatalog()
     {
         return technologyCatalog.Values
@@ -168,6 +174,7 @@ internal sealed class AppProfileBuilder
             tenancySelection,
             auditSelection,
             messagingSelection,
+            resilienceSelection,
             selected,
             resolvedTechnologies);
 
@@ -196,7 +203,8 @@ internal sealed class AppProfileBuilder
             identity: identitySelection,
             tenancy: tenancySelection,
             audit: auditSelection,
-            messaging: messagingSelection);
+            messaging: messagingSelection,
+            resilience: resilienceSelection);
     }
 
     private static void Validate(

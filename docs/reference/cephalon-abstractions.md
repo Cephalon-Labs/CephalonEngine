@@ -150,12 +150,12 @@ public sealed class AppProfile
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-databasetopologyselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection"></a>
+<a id="member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-databasetopologyselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection-cephalon-abstractions-appmodel-resilienceselection"></a>
 
 ##### `AppProfile`
 
 ```csharp
-AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, DatabaseTopologySelection databases, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging)
+AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, DatabaseTopologySelection databases, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging, ResilienceSelection resilience)
 ```
 
 Creates an app profile without scaffold metadata.
@@ -173,13 +173,14 @@ Parameters:
 - `tenancy`: The selected multi-tenancy inputs.
 - `audit`: The selected audit inputs.
 - `messaging`: The selected messaging inputs.
+- `resilience`: The selected resilience-policy inputs.
 
-<a id="member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-databasetopologyselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection"></a>
+<a id="member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-databasetopologyselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection-cephalon-abstractions-appmodel-resilienceselection"></a>
 
 ##### `AppProfile`
 
 ```csharp
-AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, ScaffoldPlan scaffold, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, DatabaseTopologySelection databases, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging)
+AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, ScaffoldPlan scaffold, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, DatabaseTopologySelection databases, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging, ResilienceSelection resilience)
 ```
 
 Creates an app profile with optional scaffold metadata.
@@ -198,6 +199,7 @@ Parameters:
 - `tenancy`: The selected multi-tenancy inputs.
 - `audit`: The selected audit inputs.
 - `messaging`: The selected messaging inputs.
+- `resilience`: The selected resilience-policy inputs.
 
 #### Properties
 
@@ -290,6 +292,16 @@ IReadOnlyList<PatternDescriptor> Patterns { get; }
 ```
 
 Gets the active patterns for the app.
+
+<a id="member-p-cephalon-abstractions-appmodel-appprofile-resilience"></a>
+
+##### `Resilience`
+
+```csharp
+ResilienceSelection Resilience { get; }
+```
+
+Gets the selected resilience-policy inputs.
 
 <a id="member-p-cephalon-abstractions-appmodel-appprofile-scaffold"></a>
 
@@ -672,6 +684,188 @@ AuditHistorySelection History { get; }
 ```
 
 Gets the durable audit-history inputs resolved for the app.
+
+<a id="type-cephalon-abstractions-appmodel-bulkheadselection"></a>
+
+### `BulkheadSelection`
+
+Describes the bulkhead-isolation inputs resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class BulkheadSelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-bulkheadselection-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32"></a>
+
+##### `BulkheadSelection`
+
+```csharp
+BulkheadSelection(bool? enabled, int? maxConcurrentExecutions, int? maxQueuedActions)
+```
+
+Initializes a new instance of the `BulkheadSelection` class.
+
+Parameters:
+- `enabled`: Whether bulkhead isolation was explicitly enabled.
+- `maxConcurrentExecutions`: The maximum concurrent executions allowed inside the bulkhead.
+- `maxQueuedActions`: The maximum queued actions allowed before rejection.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-bulkheadselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+BulkheadSelection Empty { get; }
+```
+
+Gets an empty bulkhead-selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-bulkheadselection-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether bulkhead isolation was explicitly enabled.
+
+<a id="member-p-cephalon-abstractions-appmodel-bulkheadselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any bulkhead-selection inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-bulkheadselection-maxconcurrentexecutions"></a>
+
+##### `MaxConcurrentExecutions`
+
+```csharp
+int? MaxConcurrentExecutions { get; }
+```
+
+Gets the maximum concurrent executions allowed inside the bulkhead.
+
+<a id="member-p-cephalon-abstractions-appmodel-bulkheadselection-maxqueuedactions"></a>
+
+##### `MaxQueuedActions`
+
+```csharp
+int? MaxQueuedActions { get; }
+```
+
+Gets the maximum queued actions allowed before rejection.
+
+<a id="type-cephalon-abstractions-appmodel-circuitbreakerselection"></a>
+
+### `CircuitBreakerSelection`
+
+Describes the circuit-breaker inputs resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class CircuitBreakerSelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-circuitbreakerselection-ctor-system-nullable-system-boolean-system-nullable-system-decimal-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32"></a>
+
+##### `CircuitBreakerSelection`
+
+```csharp
+CircuitBreakerSelection(bool? enabled, decimal? failureRatio, int? minimumThroughput, int? samplingDurationSeconds, int? breakDurationSeconds)
+```
+
+Initializes a new instance of the `CircuitBreakerSelection` class.
+
+Parameters:
+- `enabled`: Whether circuit-breaker support was explicitly enabled.
+- `failureRatio`: The failure ratio threshold requested for opening the breaker.
+- `minimumThroughput`: The minimum throughput required before the breaker evaluates failures.
+- `samplingDurationSeconds`: The sampling duration in seconds used by the breaker.
+- `breakDurationSeconds`: The break duration in seconds requested for the open state.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-circuitbreakerselection-breakdurationseconds"></a>
+
+##### `BreakDurationSeconds`
+
+```csharp
+int? BreakDurationSeconds { get; }
+```
+
+Gets the break duration in seconds requested for the open state.
+
+<a id="member-p-cephalon-abstractions-appmodel-circuitbreakerselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+CircuitBreakerSelection Empty { get; }
+```
+
+Gets an empty circuit-breaker-selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-circuitbreakerselection-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether circuit-breaker support was explicitly enabled.
+
+<a id="member-p-cephalon-abstractions-appmodel-circuitbreakerselection-failureratio"></a>
+
+##### `FailureRatio`
+
+```csharp
+decimal? FailureRatio { get; }
+```
+
+Gets the failure ratio threshold requested for opening the breaker.
+
+<a id="member-p-cephalon-abstractions-appmodel-circuitbreakerselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any circuit-breaker-selection inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-circuitbreakerselection-minimumthroughput"></a>
+
+##### `MinimumThroughput`
+
+```csharp
+int? MinimumThroughput { get; }
+```
+
+Gets the minimum throughput required before the breaker evaluates failures.
+
+<a id="member-p-cephalon-abstractions-appmodel-circuitbreakerselection-samplingdurationseconds"></a>
+
+##### `SamplingDurationSeconds`
+
+```csharp
+int? SamplingDurationSeconds { get; }
+```
+
+Gets the sampling duration in seconds used by the breaker.
 
 <a id="type-cephalon-abstractions-appmodel-databasemigrationsselection"></a>
 
@@ -1291,6 +1485,334 @@ string Provider { get; }
 
 Gets the selected messaging provider or runtime adapter.
 
+<a id="type-cephalon-abstractions-appmodel-ratelimitingselection"></a>
+
+### `RateLimitingSelection`
+
+Describes the rate-limiting inputs resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class RateLimitingSelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-ratelimitingselection-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32"></a>
+
+##### `RateLimitingSelection`
+
+```csharp
+RateLimitingSelection(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow)
+```
+
+Initializes a new instance of the `RateLimitingSelection` class.
+
+Parameters:
+- `enabled`: Whether rate limiting was explicitly enabled.
+- `algorithm`: The requested rate-limiting algorithm, such as `FixedWindow` or `TokenBucket`.
+- `permitLimit`: The maximum permits available per limiter window or bucket.
+- `queueLimit`: The maximum queued requests allowed before rejection.
+- `windowSeconds`: The limiter window duration in seconds when the selected algorithm uses windows.
+- `segmentsPerWindow`: The number of segments per window when sliding windows are used.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingselection-algorithm"></a>
+
+##### `Algorithm`
+
+```csharp
+string Algorithm { get; }
+```
+
+Gets the requested rate-limiting algorithm, such as `FixedWindow` or `TokenBucket`.
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+RateLimitingSelection Empty { get; }
+```
+
+Gets an empty rate-limiting-selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingselection-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether rate limiting was explicitly enabled.
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any rate-limiting-selection inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingselection-permitlimit"></a>
+
+##### `PermitLimit`
+
+```csharp
+int? PermitLimit { get; }
+```
+
+Gets the maximum permits available per limiter window or bucket.
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingselection-queuelimit"></a>
+
+##### `QueueLimit`
+
+```csharp
+int? QueueLimit { get; }
+```
+
+Gets the maximum queued requests allowed before rejection.
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingselection-segmentsperwindow"></a>
+
+##### `SegmentsPerWindow`
+
+```csharp
+int? SegmentsPerWindow { get; }
+```
+
+Gets the number of segments per window when sliding windows are used.
+
+<a id="member-p-cephalon-abstractions-appmodel-ratelimitingselection-windowseconds"></a>
+
+##### `WindowSeconds`
+
+```csharp
+int? WindowSeconds { get; }
+```
+
+Gets the limiter window duration in seconds when the selected algorithm uses windows.
+
+<a id="type-cephalon-abstractions-appmodel-resilienceselection"></a>
+
+### `ResilienceSelection`
+
+Describes the resilience-policy inputs resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class ResilienceSelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-resilienceselection-ctor-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection-cephalon-abstractions-appmodel-ratelimitingselection"></a>
+
+##### `ResilienceSelection`
+
+```csharp
+ResilienceSelection(RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead, RateLimitingSelection rateLimiting)
+```
+
+Initializes a new instance of the `ResilienceSelection` class.
+
+Parameters:
+- `retry`: The retry policy resolved for the app.
+- `timeout`: The timeout policy resolved for the app.
+- `circuitBreaker`: The circuit-breaker policy resolved for the app.
+- `bulkhead`: The bulkhead policy resolved for the app.
+- `rateLimiting`: The rate-limiting policy resolved for the app.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-resilienceselection-bulkhead"></a>
+
+##### `Bulkhead`
+
+```csharp
+BulkheadSelection Bulkhead { get; }
+```
+
+Gets the bulkhead policy resolved for the app.
+
+<a id="member-p-cephalon-abstractions-appmodel-resilienceselection-circuitbreaker"></a>
+
+##### `CircuitBreaker`
+
+```csharp
+CircuitBreakerSelection CircuitBreaker { get; }
+```
+
+Gets the circuit-breaker policy resolved for the app.
+
+<a id="member-p-cephalon-abstractions-appmodel-resilienceselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+ResilienceSelection Empty { get; }
+```
+
+Gets an empty resilience-selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-resilienceselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any resilience-selection inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-resilienceselection-ratelimiting"></a>
+
+##### `RateLimiting`
+
+```csharp
+RateLimitingSelection RateLimiting { get; }
+```
+
+Gets the rate-limiting policy resolved for the app.
+
+<a id="member-p-cephalon-abstractions-appmodel-resilienceselection-retry"></a>
+
+##### `Retry`
+
+```csharp
+RetrySelection Retry { get; }
+```
+
+Gets the retry policy resolved for the app.
+
+<a id="member-p-cephalon-abstractions-appmodel-resilienceselection-timeout"></a>
+
+##### `Timeout`
+
+```csharp
+TimeoutSelection Timeout { get; }
+```
+
+Gets the timeout policy resolved for the app.
+
+<a id="type-cephalon-abstractions-appmodel-retryselection"></a>
+
+### `RetrySelection`
+
+Describes the retry-policy inputs resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class RetrySelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-retryselection-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-boolean"></a>
+
+##### `RetrySelection`
+
+```csharp
+RetrySelection(bool? enabled, int? maxAttempts, string backoff, int? baseDelayMilliseconds, int? maxDelayMilliseconds, bool? useJitter)
+```
+
+Initializes a new instance of the `RetrySelection` class.
+
+Parameters:
+- `enabled`: Whether retry support was explicitly enabled.
+- `maxAttempts`: The maximum retry attempts requested for the policy.
+- `backoff`: The requested backoff mode, such as `Exponential` or `Linear`.
+- `baseDelayMilliseconds`: The base delay in milliseconds used by the retry policy.
+- `maxDelayMilliseconds`: The maximum delay in milliseconds the retry policy may apply.
+- `useJitter`: Whether jitter was explicitly requested for retry delays.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-retryselection-backoff"></a>
+
+##### `Backoff`
+
+```csharp
+string Backoff { get; }
+```
+
+Gets the requested backoff mode, such as `Exponential` or `Linear`.
+
+<a id="member-p-cephalon-abstractions-appmodel-retryselection-basedelaymilliseconds"></a>
+
+##### `BaseDelayMilliseconds`
+
+```csharp
+int? BaseDelayMilliseconds { get; }
+```
+
+Gets the base delay in milliseconds used by the retry policy.
+
+<a id="member-p-cephalon-abstractions-appmodel-retryselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+RetrySelection Empty { get; }
+```
+
+Gets an empty retry-selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-retryselection-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether retry support was explicitly enabled.
+
+<a id="member-p-cephalon-abstractions-appmodel-retryselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any retry-selection inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-retryselection-maxattempts"></a>
+
+##### `MaxAttempts`
+
+```csharp
+int? MaxAttempts { get; }
+```
+
+Gets the maximum retry attempts requested for the policy.
+
+<a id="member-p-cephalon-abstractions-appmodel-retryselection-maxdelaymilliseconds"></a>
+
+##### `MaxDelayMilliseconds`
+
+```csharp
+int? MaxDelayMilliseconds { get; }
+```
+
+Gets the maximum delay in milliseconds the retry policy may apply.
+
+<a id="member-p-cephalon-abstractions-appmodel-retryselection-usejitter"></a>
+
+##### `UseJitter`
+
+```csharp
+bool? UseJitter { get; }
+```
+
+Gets a value indicating whether jitter was explicitly requested for retry delays.
+
 <a id="type-cephalon-abstractions-appmodel-suiteblueprint"></a>
 
 ### `SuiteBlueprint`
@@ -1441,6 +1963,86 @@ string Mode { get; }
 ```
 
 Gets the selected tenancy mode.
+
+<a id="type-cephalon-abstractions-appmodel-timeoutselection"></a>
+
+### `TimeoutSelection`
+
+Describes the timeout-policy inputs resolved for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class TimeoutSelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-timeoutselection-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32"></a>
+
+##### `TimeoutSelection`
+
+```csharp
+TimeoutSelection(bool? enabled, int? totalTimeoutSeconds, int? attemptTimeoutSeconds)
+```
+
+Initializes a new instance of the `TimeoutSelection` class.
+
+Parameters:
+- `enabled`: Whether timeout support was explicitly enabled.
+- `totalTimeoutSeconds`: The overall timeout in seconds requested for an execution.
+- `attemptTimeoutSeconds`: The per-attempt timeout in seconds requested for an execution.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-timeoutselection-attempttimeoutseconds"></a>
+
+##### `AttemptTimeoutSeconds`
+
+```csharp
+int? AttemptTimeoutSeconds { get; }
+```
+
+Gets the per-attempt timeout in seconds requested for an execution.
+
+<a id="member-p-cephalon-abstractions-appmodel-timeoutselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+TimeoutSelection Empty { get; }
+```
+
+Gets an empty timeout-selection instance.
+
+<a id="member-p-cephalon-abstractions-appmodel-timeoutselection-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool? Enabled { get; }
+```
+
+Gets a value indicating whether timeout support was explicitly enabled.
+
+<a id="member-p-cephalon-abstractions-appmodel-timeoutselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any timeout-selection inputs were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-timeoutselection-totaltimeoutseconds"></a>
+
+##### `TotalTimeoutSeconds`
+
+```csharp
+int? TotalTimeoutSeconds { get; }
+```
+
+Gets the overall timeout in seconds requested for an execution.
 
 <a id="namespace-cephalon-abstractions-appmodel-scaffolding"></a>
 
@@ -9263,6 +9865,23 @@ Returns: The default disabled dispatch policy descriptor.
 
 Parameters:
 - `outboxId`: The stable outbox identifier.
+- `metadata`: Optional operator-facing metadata associated with the policy.
+
+<a id="member-m-cephalon-abstractions-data-outboxdispatchpolicydescriptor-unsupported-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `Unsupported`
+
+```csharp
+OutboxDispatchPolicyDescriptor Unsupported(string outboxId, string description, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates an explicit unsupported dispatch policy for an outbox that can stage messages but does not currently support Cephalon-managed mutable dispatch-state ownership.
+
+Returns: The explicit unsupported dispatch policy descriptor.
+
+Parameters:
+- `outboxId`: The stable outbox identifier.
+- `description`: An optional operator-facing description explaining why the current provider intentionally remains outside the managed-dispatch contract.
 - `metadata`: Optional operator-facing metadata associated with the policy.
 
 <a id="type-cephalon-abstractions-data-outboxmessage"></a>

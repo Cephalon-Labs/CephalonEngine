@@ -8,6 +8,7 @@
 - project-level split-configuration loading through `AddCephalonProjectConfigurations()` and `AddCephalon(...)`
 - runtime startup and shutdown integration through hosted services
 - `/engine/*` metadata, status, diagnostics, and policy endpoints
+- `/engine/resilience` when the engine-owned resilience contract is active
 - `/engine/database-roles` when the engine-owned database-role catalog is active
 - `/engine/database-migrations` when the engine-owned database-migration catalog is active
 - `/engine/audit-history` and `/engine/audit-history/export` when durable audit-history services are active
@@ -110,6 +111,13 @@ operator-facing answers such as requested-versus-resolved role ids, `UseRole` re
 consumers, co-location, audit-history metadata, live provider-contributed role health,
 migration status, and provider-added deploy-time command templates such as Entity Framework
 bundle/script/update guidance.
+
+The host now also exposes the engine-owned resilience contract directly through `/engine/resilience`.
+That route returns the same requested resilience-policy selection projected into `AppProfile.Resilience`,
+covering `Retry`, `Timeout`, `CircuitBreaker`, `Bulkhead`, and `RateLimiting`. This is intentionally
+the contract-first phase-11 baseline: the operator surface can already answer what a host asked for,
+while later runtime slices will add effective enforcement, behavior-level overrides, and transport-aware
+execution details on top of the same public shape.
 
 The host now also exposes additive event-dispatch operator answers directly. When eventing packs
 register the corresponding catalogs, `/engine/event-dispatch-runtimes` and

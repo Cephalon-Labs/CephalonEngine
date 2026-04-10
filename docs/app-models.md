@@ -214,11 +214,12 @@ public sealed class AppProfile
     public TenancySelection Tenancy { get; }
     public AuditSelection Audit { get; }
     public MessagingSelection Messaging { get; }
+    public ResilienceSelection Resilience { get; }
 }
 ```
 
 The current runtime still resolves app-level `AppProfile` objects only. The suite layer is now modeled separately through `SuiteBlueprint`, with the built-in `MicroserviceSuite` blueprint composing repeatable service slots from the shipped `Microservice` scaffold contract instead of redefining service internals at the suite layer.
-The resolved app profile now also carries structured configuration selections for `Data`, `Databases`, `Identity`, `Tenancy`, `Audit`, and `Messaging`. The new `Databases` block is the engine-owned physical-topology baseline for shared runtime tuning plus the first named roles (`Write`, `Read`, `Outbox`, `History`) and nested migration policy. `Audit.History` now also carries nested `Export` plus `Retention` inputs so the durable audit-history read and export surfaces stay visible in the same app-model contract. `AppProfile.Databases` remains the requested topology selection, while the resolved operator-facing role truth now also lives beside it through `IDatabaseRoleCatalog`, `/engine/database-roles`, and `RuntimeIntrospectionSnapshot.DatabaseRoles`. The resolved operator-facing migration truth now lives beside it through `IDatabaseMigrationCatalog`, `/engine/database-migrations`, and `RuntimeIntrospectionSnapshot.DatabaseMigrations`. Legacy display-name aliases still resolve for compatibility, but the shipped starter and template surfaces now emit canonical kebab-case ids plus those structured sections by default.
+The resolved app profile now also carries structured configuration selections for `Data`, `Databases`, `Identity`, `Tenancy`, `Audit`, `Messaging`, and `Resilience`. The new `Databases` block is the engine-owned physical-topology baseline for shared runtime tuning plus the first named roles (`Write`, `Read`, `Outbox`, `History`) and nested migration policy. `Audit.History` now also carries nested `Export` plus `Retention` inputs so the durable audit-history read and export surfaces stay visible in the same app-model contract. `Resilience` is now the contract-first phase-11 baseline for `Retry`, `Timeout`, `CircuitBreaker`, `Bulkhead`, and `RateLimiting` policy intent, and it stays visible through both `/engine/app-model` and `/engine/resilience` even before behavior-pipeline enforcement lands. `AppProfile.Databases` remains the requested topology selection, while the resolved operator-facing role truth now also lives beside it through `IDatabaseRoleCatalog`, `/engine/database-roles`, and `RuntimeIntrospectionSnapshot.DatabaseRoles`. The resolved operator-facing migration truth now lives beside it through `IDatabaseMigrationCatalog`, `/engine/database-migrations`, and `RuntimeIntrospectionSnapshot.DatabaseMigrations`. Legacy display-name aliases still resolve for compatibility, but the shipped starter and template surfaces now emit canonical kebab-case ids plus those structured sections by default.
 
 The runtime should support configuration-driven blueprint, pattern, technology, and transport selection, for example:
 
@@ -262,6 +263,40 @@ The runtime should support configuration-driven blueprint, pattern, technology, 
     },
     "Messaging": {
       "Provider": "Wolverine"
+    },
+    "Resilience": {
+      "Retry": {
+        "Enabled": true,
+        "MaxAttempts": 3,
+        "Backoff": "Exponential",
+        "BaseDelayMilliseconds": 2000,
+        "UseJitter": true
+      },
+      "Timeout": {
+        "Enabled": true,
+        "TotalTimeoutSeconds": 30,
+        "AttemptTimeoutSeconds": 10
+      },
+      "CircuitBreaker": {
+        "Enabled": true,
+        "FailureRatio": 0.1,
+        "MinimumThroughput": 100,
+        "SamplingDurationSeconds": 30,
+        "BreakDurationSeconds": 5
+      },
+      "Bulkhead": {
+        "Enabled": true,
+        "MaxConcurrentExecutions": 64,
+        "MaxQueuedActions": 128
+      },
+      "RateLimiting": {
+        "Enabled": true,
+        "Algorithm": "SlidingWindow",
+        "PermitLimit": 200,
+        "QueueLimit": 20,
+        "WindowSeconds": 60,
+        "SegmentsPerWindow": 4
+      }
     }
   }
 }
@@ -435,7 +470,12 @@ Use the `Engine` section as the primary source of truth for blueprint, pattern, 
         }
       }
     },
-    "Messaging": {}
+    "Messaging": {},
+    "Resilience": {
+      "Retry": {
+        "Enabled": true
+      }
+    }
   }
 }
 ```

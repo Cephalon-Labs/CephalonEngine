@@ -1,6 +1,6 @@
 # Cephalon Engine Architecture Recommendations
 
-Recommendations in this document reflect the repository state as of `April 7, 2026`.
+Recommendations in this document reflect the repository state as of `April 11, 2026`.
 
 Cross-references: `docs/architecture-inventory.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`
 
@@ -14,15 +14,15 @@ These patterns address gaps that production microservice deployments encounter i
 
 ### Onion Architecture (pattern descriptor)
 
-Current state: Clean Architecture and Hexagonal Architecture are registered, but Onion Architecture is missing. These three form the canonical dependency-inversion pattern family. Many teams specifically identify as Onion Architecture users.
+Current state: shipped. `BuiltInPatterns.cs` now includes `onion-architecture`, so the dependency-inversion taxonomy is complete across Clean, Hexagonal, and Onion. Remaining follow-through is guidance, not descriptor registration.
 
-Recommendation: add `PatternDescriptor` "onion-architecture" with aliases `["OnionArchitecture", "Onion"]`, kind `Architecture`, to `BuiltInPatterns.cs`.
+Recommendation: keep the descriptor stable and add adoption guidance only when a concrete sample or blueprint needs Onion-specific conventions beyond the shared architecture taxonomy.
 
 Effort: trivial — taxonomy-only, no new runtime code.
 
 ### Circuit Breaker (resilience infrastructure)
 
-Current state: dependency health probes exist across 18 backends, but no circuit breaker state machine prevents cascading failures. Health checks tell you something is down; circuit breakers stop calling it.
+Current state: the contract-first baseline is now shipped through `Engine:Resilience:CircuitBreaker`, `AppProfile.Resilience`, and `/engine/resilience`, but no runtime circuit-breaker state machine or behavior-pipeline enforcement exists yet. Health checks still tell you something is down; the engine does not yet stop calling it.
 
 Recommendation: integrate `Microsoft.Extensions.Resilience` (Polly v8) or build a lightweight `ICircuitBreakerPolicy` abstraction.
 
@@ -38,7 +38,7 @@ Effort: medium.
 
 ### Retry with Backoff, Timeout, and Bulkhead (resilience suite)
 
-Current state: circuit breaker alone is insufficient. Modern resilience requires retry policies (exponential backoff + jitter), timeout enforcement, and bulkhead isolation.
+Current state: the contract-first baseline is now shipped through `Engine:Resilience` with `Retry`, `Timeout`, and `Bulkhead` selections plus operator-facing introspection, but no runtime enforcement or behavior-level override path exists yet.
 
 Recommendation: create `Cephalon.Resilience` companion package or add resilience middleware to `Cephalon.Behaviors`.
 
@@ -52,7 +52,7 @@ Effort: medium.
 
 ### Rate Limiting (API protection)
 
-Current state: no rate limiting infrastructure exists. Essential for public-facing APIs.
+Current state: the contract-first baseline is now shipped through `Engine:Resilience:RateLimiting`, `AppProfile.Resilience`, and `/engine/resilience`, but ASP.NET Core enforcement through `Microsoft.AspNetCore.RateLimiting` is still pending.
 
 Recommendation: wire `Microsoft.AspNetCore.RateLimiting` into the behavior pipeline through the ASP.NET Core host adapter.
 
@@ -85,9 +85,9 @@ Effort: medium.
 
 ### Anti-Corruption Layer (DDD integration boundary)
 
-Current state: module boundaries create implicit ACLs, but there is no explicit ACL pattern for translating between external/legacy models and internal domain models.
+Current state: shipped as a taxonomy descriptor. `BuiltInPatterns.cs` now includes `anti-corruption-layer`, so the remaining work is guidance and interface conventions rather than descriptor registration.
 
-Recommendation: add pattern descriptor and interface convention.
+Recommendation: keep the descriptor stable and add translator conventions only when a concrete integration slice needs them.
 
 Implementation outline:
 - `PatternDescriptor` "anti-corruption-layer" in `BuiltInPatterns.cs`

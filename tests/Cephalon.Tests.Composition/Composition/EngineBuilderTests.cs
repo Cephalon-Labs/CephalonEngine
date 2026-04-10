@@ -7,6 +7,7 @@ using Cephalon.Engine.Runtime;
 using Cephalon.Engine.Technologies;
 using Cephalon.Engine.Trust;
 using Cephalon.Engine.Transports;
+using Cephalon.Abstractions.Patterns;
 using Cephalon.Agentics.Registration;
 using Cephalon.Agentics.Services;
 using Cephalon.Abstractions.Audit;
@@ -1378,6 +1379,87 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void BuildIncludesPhase11ResilienceSelectionsAndPatternTaxonomy()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "Microservice",
+            patterns: ["Onion", "DDD", "AntiCorruptionLayer"],
+            resilience: new ResilienceSettings(
+                retry: new RetrySettings(
+                    enabled: true,
+                    maxAttempts: 5,
+                    baseDelayMilliseconds: 200,
+                    maxDelayMilliseconds: 2000,
+                    backoff: "Exponential",
+                    useJitter: true),
+                timeout: new TimeoutSettings(
+                    enabled: true,
+                    totalTimeoutSeconds: 30,
+                    attemptTimeoutSeconds: 10),
+                circuitBreaker: new CircuitBreakerSettings(
+                    enabled: true,
+                    failureRatio: 0.2m,
+                    minimumThroughput: 20,
+                    samplingDurationSeconds: 15,
+                    breakDurationSeconds: 30),
+                bulkhead: new BulkheadSettings(
+                    enabled: true,
+                    maxConcurrentExecutions: 64,
+                    maxQueuedActions: 128),
+                rateLimiting: new RateLimitingSettings(
+                    enabled: true,
+                    algorithm: "SlidingWindow",
+                    permitLimit: 500,
+                    queueLimit: 50,
+                    windowSeconds: 60,
+                    segmentsPerWindow: 1))));
+        builder.AddModule(new PlatformTestModule());
+        builder.AddModule(new DiscoveryTestModule());
+
+        var appProfile = builder.Build().Manifest.AppProfile;
+
+        Assert.Contains(appProfile.Patterns, pattern => pattern.Id == "onion-architecture");
+        Assert.Contains(appProfile.Patterns, pattern => pattern.Id == "domain-driven-design");
+        Assert.Contains(appProfile.Patterns, pattern => pattern.Id == "anti-corruption-layer");
+        Assert.True(appProfile.Resilience.Retry.Enabled);
+        Assert.Equal(5, appProfile.Resilience.Retry.MaxAttempts);
+        Assert.Equal("Exponential", appProfile.Resilience.Retry.Backoff);
+        Assert.Equal(200, appProfile.Resilience.Retry.BaseDelayMilliseconds);
+        Assert.Equal(2000, appProfile.Resilience.Retry.MaxDelayMilliseconds);
+        Assert.True(appProfile.Resilience.Retry.UseJitter);
+        Assert.True(appProfile.Resilience.Timeout.Enabled);
+        Assert.Equal(30, appProfile.Resilience.Timeout.TotalTimeoutSeconds);
+        Assert.Equal(10, appProfile.Resilience.Timeout.AttemptTimeoutSeconds);
+        Assert.True(appProfile.Resilience.CircuitBreaker.Enabled);
+        Assert.Equal(0.2m, appProfile.Resilience.CircuitBreaker.FailureRatio);
+        Assert.Equal(20, appProfile.Resilience.CircuitBreaker.MinimumThroughput);
+        Assert.Equal(15, appProfile.Resilience.CircuitBreaker.SamplingDurationSeconds);
+        Assert.Equal(30, appProfile.Resilience.CircuitBreaker.BreakDurationSeconds);
+        Assert.True(appProfile.Resilience.Bulkhead.Enabled);
+        Assert.Equal(64, appProfile.Resilience.Bulkhead.MaxConcurrentExecutions);
+        Assert.Equal(128, appProfile.Resilience.Bulkhead.MaxQueuedActions);
+        Assert.True(appProfile.Resilience.RateLimiting.Enabled);
+        Assert.Equal("SlidingWindow", appProfile.Resilience.RateLimiting.Algorithm);
+        Assert.Equal(500, appProfile.Resilience.RateLimiting.PermitLimit);
+        Assert.Equal(50, appProfile.Resilience.RateLimiting.QueueLimit);
+        Assert.Equal(60, appProfile.Resilience.RateLimiting.WindowSeconds);
+        Assert.Equal(1, appProfile.Resilience.RateLimiting.SegmentsPerWindow);
+    }
+
+    [Fact]
+    public void BuiltInPatternsIncludePhase11TaxonomyEntries()
+    {
+        var onionArchitecture = BuiltInPatterns.Resolve("Onion");
+        var antiCorruptionLayer = BuiltInPatterns.Resolve("ACL");
+
+        Assert.Equal("onion-architecture", onionArchitecture.Id);
+        Assert.Equal(PatternKind.Architecture, onionArchitecture.Kind);
+        Assert.Equal("anti-corruption-layer", antiCorruptionLayer.Id);
+        Assert.Equal(PatternKind.Domain, antiCorruptionLayer.Kind);
+    }
+
+    [Fact]
     public void BuildThrowsWhenReadWriteSplitIsConfiguredWithoutCqrsPattern()
     {
         var builder = new EngineBuilder(new ServiceCollection());
@@ -1513,6 +1595,26 @@ public sealed class EngineBuilderTests
         var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
 
         Assert.Contains("event-driven-integration", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildThrowsWhenResilienceRetryBackoffIsUnsupported()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularMonolith",
+            resilience: new ResilienceSettings(
+                retry: new RetrySettings(
+                    enabled: true,
+                    maxAttempts: 3,
+                    backoff: "Quadratic"))));
+        builder.AddModule(new PlatformTestModule());
+        builder.AddModule(new DiscoveryTestModule());
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("backoff", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Quadratic", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]

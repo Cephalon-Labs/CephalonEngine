@@ -26,6 +26,7 @@ public sealed class AppProfile
     /// <param name="tenancy">The selected multi-tenancy inputs.</param>
     /// <param name="audit">The selected audit inputs.</param>
     /// <param name="messaging">The selected messaging inputs.</param>
+    /// <param name="resilience">The selected resilience-policy inputs.</param>
     public AppProfile(
         string blueprintId,
         string blueprintDisplayName,
@@ -38,7 +39,8 @@ public sealed class AppProfile
         IdentitySelection? identity = null,
         TenancySelection? tenancy = null,
         AuditSelection? audit = null,
-        MessagingSelection? messaging = null)
+        MessagingSelection? messaging = null,
+        ResilienceSelection? resilience = null)
         : this(
             blueprintId,
             blueprintDisplayName,
@@ -52,7 +54,8 @@ public sealed class AppProfile
             identity: identity,
             tenancy: tenancy,
             audit: audit,
-            messaging: messaging)
+            messaging: messaging,
+            resilience: resilience)
     {
     }
 
@@ -72,6 +75,7 @@ public sealed class AppProfile
     /// <param name="tenancy">The selected multi-tenancy inputs.</param>
     /// <param name="audit">The selected audit inputs.</param>
     /// <param name="messaging">The selected messaging inputs.</param>
+    /// <param name="resilience">The selected resilience-policy inputs.</param>
     [JsonConstructor]
     public AppProfile(
         string blueprintId,
@@ -86,7 +90,8 @@ public sealed class AppProfile
         IdentitySelection? identity = null,
         TenancySelection? tenancy = null,
         AuditSelection? audit = null,
-        MessagingSelection? messaging = null)
+        MessagingSelection? messaging = null,
+        ResilienceSelection? resilience = null)
     {
         if (string.IsNullOrWhiteSpace(blueprintId))
         {
@@ -116,6 +121,7 @@ public sealed class AppProfile
         Tenancy = tenancy ?? TenancySelection.Empty;
         Audit = audit ?? AuditSelection.Empty;
         Messaging = messaging ?? MessagingSelection.Empty;
+        Resilience = resilience ?? ResilienceSelection.Empty;
     }
 
     /// <summary>
@@ -182,4 +188,9 @@ public sealed class AppProfile
     /// Gets the selected messaging inputs.
     /// </summary>
     public MessagingSelection Messaging { get; }
+
+    /// <summary>
+    /// Gets the selected resilience-policy inputs.
+    /// </summary>
+    public ResilienceSelection Resilience { get; }
 }

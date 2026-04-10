@@ -7,6 +7,29 @@ namespace Cephalon.Engine.AppModel;
 
 internal static class AppProfileSelectionValidator
 {
+    private static readonly string[] SupportedRetryBackoffModes =
+    [
+        "Constant",
+        "Linear",
+        "Exponential"
+    ];
+
+    private static readonly HashSet<string> SupportedRetryBackoffModeIndex = new(
+        SupportedRetryBackoffModes.Select(NormalizeKey),
+        StringComparer.Ordinal);
+
+    private static readonly string[] SupportedRateLimitingAlgorithms =
+    [
+        "FixedWindow",
+        "SlidingWindow",
+        "TokenBucket",
+        "ConcurrencyLimiter"
+    ];
+
+    private static readonly HashSet<string> SupportedRateLimitingAlgorithmIndex = new(
+        SupportedRateLimitingAlgorithms.Select(NormalizeKey),
+        StringComparer.Ordinal);
+
     private static readonly string[] SupportedAuthorizationModes =
     [
         "RBAC",
@@ -25,6 +48,7 @@ internal static class AppProfileSelectionValidator
         TenancySelection tenancy,
         AuditSelection audit,
         MessagingSelection messaging,
+        ResilienceSelection resilience,
         IReadOnlyDictionary<string, PatternDescriptor> selectedPatterns,
         IReadOnlyDictionary<string, TechnologyDescriptor> selectedTechnologies)
     {
@@ -34,6 +58,7 @@ internal static class AppProfileSelectionValidator
         ArgumentNullException.ThrowIfNull(tenancy);
         ArgumentNullException.ThrowIfNull(audit);
         ArgumentNullException.ThrowIfNull(messaging);
+        ArgumentNullException.ThrowIfNull(resilience);
         ArgumentNullException.ThrowIfNull(selectedPatterns);
         ArgumentNullException.ThrowIfNull(selectedTechnologies);
 
@@ -75,6 +100,7 @@ internal static class AppProfileSelectionValidator
 
         ValidateDatabaseRoleReferences(databases);
         ValidateAuditHistorySelection(audit, databases);
+        ValidateResilienceSelection(resilience);
 
         if (databases.Migrations.ExitAfterApply == true && databases.Migrations.ApplyOnStartup != true)
         {
@@ -131,6 +157,163 @@ internal static class AppProfileSelectionValidator
                 "Tenancy settings require the 'multi-tenancy' technology.");
         }
 
+    }
+
+    private static void ValidateResilienceSelection(ResilienceSelection resilience)
+    {
+        ArgumentNullException.ThrowIfNull(resilience);
+
+        ValidateRetrySelection(resilience.Retry);
+        ValidateTimeoutSelection(resilience.Timeout);
+        ValidateCircuitBreakerSelection(resilience.CircuitBreaker);
+        ValidateBulkheadSelection(resilience.Bulkhead);
+        ValidateRateLimitingSelection(resilience.RateLimiting);
+    }
+
+    private static void ValidateRetrySelection(RetrySelection retry)
+    {
+        ArgumentNullException.ThrowIfNull(retry);
+
+        if (retry.MaxAttempts is not null && retry.MaxAttempts <= 0)
+        {
+            throw new InvalidOperationException(
+                "Retry MaxAttempts must be greater than zero when supplied.");
+        }
+
+        if (retry.BaseDelayMilliseconds is not null && retry.BaseDelayMilliseconds <= 0)
+        {
+            throw new InvalidOperationException(
+                "Retry BaseDelayMilliseconds must be greater than zero when supplied.");
+        }
+
+        if (retry.MaxDelayMilliseconds is not null && retry.MaxDelayMilliseconds <= 0)
+        {
+            throw new InvalidOperationException(
+                "Retry MaxDelayMilliseconds must be greater than zero when supplied.");
+        }
+
+        if (retry.BaseDelayMilliseconds is not null &&
+            retry.MaxDelayMilliseconds is not null &&
+            retry.MaxDelayMilliseconds < retry.BaseDelayMilliseconds)
+        {
+            throw new InvalidOperationException(
+                "Retry MaxDelayMilliseconds cannot be less than BaseDelayMilliseconds.");
+        }
+
+        if (retry.Backoff is not null &&
+            !SupportedRetryBackoffModeIndex.Contains(NormalizeKey(retry.Backoff)))
+        {
+            throw new InvalidOperationException(
+                $"Retry backoff mode '{retry.Backoff}' is not supported. Supported modes: {string.Join(", ", SupportedRetryBackoffModes)}.");
+        }
+    }
+
+    private static void ValidateTimeoutSelection(TimeoutSelection timeout)
+    {
+        ArgumentNullException.ThrowIfNull(timeout);
+
+        if (timeout.TotalTimeoutSeconds is not null && timeout.TotalTimeoutSeconds <= 0)
+        {
+            throw new InvalidOperationException(
+                "Timeout TotalTimeoutSeconds must be greater than zero when supplied.");
+        }
+
+        if (timeout.AttemptTimeoutSeconds is not null && timeout.AttemptTimeoutSeconds <= 0)
+        {
+            throw new InvalidOperationException(
+                "Timeout AttemptTimeoutSeconds must be greater than zero when supplied.");
+        }
+
+        if (timeout.TotalTimeoutSeconds is not null &&
+            timeout.AttemptTimeoutSeconds is not null &&
+            timeout.AttemptTimeoutSeconds > timeout.TotalTimeoutSeconds)
+        {
+            throw new InvalidOperationException(
+                "Timeout AttemptTimeoutSeconds cannot exceed TotalTimeoutSeconds.");
+        }
+    }
+
+    private static void ValidateCircuitBreakerSelection(CircuitBreakerSelection circuitBreaker)
+    {
+        ArgumentNullException.ThrowIfNull(circuitBreaker);
+
+        if (circuitBreaker.FailureRatio is not null &&
+            (circuitBreaker.FailureRatio <= 0m || circuitBreaker.FailureRatio > 1m))
+        {
+            throw new InvalidOperationException(
+                "Circuit breaker FailureRatio must be greater than zero and less than or equal to one when supplied.");
+        }
+
+        if (circuitBreaker.MinimumThroughput is not null && circuitBreaker.MinimumThroughput <= 0)
+        {
+            throw new InvalidOperationException(
+                "Circuit breaker MinimumThroughput must be greater than zero when supplied.");
+        }
+
+        if (circuitBreaker.SamplingDurationSeconds is not null && circuitBreaker.SamplingDurationSeconds <= 0)
+        {
+            throw new InvalidOperationException(
+                "Circuit breaker SamplingDurationSeconds must be greater than zero when supplied.");
+        }
+
+        if (circuitBreaker.BreakDurationSeconds is not null && circuitBreaker.BreakDurationSeconds <= 0)
+        {
+            throw new InvalidOperationException(
+                "Circuit breaker BreakDurationSeconds must be greater than zero when supplied.");
+        }
+    }
+
+    private static void ValidateBulkheadSelection(BulkheadSelection bulkhead)
+    {
+        ArgumentNullException.ThrowIfNull(bulkhead);
+
+        if (bulkhead.MaxConcurrentExecutions is not null && bulkhead.MaxConcurrentExecutions <= 0)
+        {
+            throw new InvalidOperationException(
+                "Bulkhead MaxConcurrentExecutions must be greater than zero when supplied.");
+        }
+
+        if (bulkhead.MaxQueuedActions is not null && bulkhead.MaxQueuedActions < 0)
+        {
+            throw new InvalidOperationException(
+                "Bulkhead MaxQueuedActions cannot be negative when supplied.");
+        }
+    }
+
+    private static void ValidateRateLimitingSelection(RateLimitingSelection rateLimiting)
+    {
+        ArgumentNullException.ThrowIfNull(rateLimiting);
+
+        if (rateLimiting.Algorithm is not null &&
+            !SupportedRateLimitingAlgorithmIndex.Contains(NormalizeKey(rateLimiting.Algorithm)))
+        {
+            throw new InvalidOperationException(
+                $"Rate limiting algorithm '{rateLimiting.Algorithm}' is not supported. Supported algorithms: {string.Join(", ", SupportedRateLimitingAlgorithms)}.");
+        }
+
+        if (rateLimiting.PermitLimit is not null && rateLimiting.PermitLimit <= 0)
+        {
+            throw new InvalidOperationException(
+                "Rate limiting PermitLimit must be greater than zero when supplied.");
+        }
+
+        if (rateLimiting.QueueLimit is not null && rateLimiting.QueueLimit < 0)
+        {
+            throw new InvalidOperationException(
+                "Rate limiting QueueLimit cannot be negative when supplied.");
+        }
+
+        if (rateLimiting.WindowSeconds is not null && rateLimiting.WindowSeconds <= 0)
+        {
+            throw new InvalidOperationException(
+                "Rate limiting WindowSeconds must be greater than zero when supplied.");
+        }
+
+        if (rateLimiting.SegmentsPerWindow is not null && rateLimiting.SegmentsPerWindow <= 0)
+        {
+            throw new InvalidOperationException(
+                "Rate limiting SegmentsPerWindow must be greater than zero when supplied.");
+        }
     }
 
     private static void ValidateDatabaseRoleReferences(

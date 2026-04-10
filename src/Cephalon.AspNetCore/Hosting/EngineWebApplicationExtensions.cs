@@ -102,6 +102,8 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonSnapshot");
         engineGroup.MapGet("/app-model", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile))
             .WithName("GetCephalonAppModel");
+        engineGroup.MapGet("/resilience", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Resilience))
+            .WithName("GetCephalonResilience");
         engineGroup.MapGet("/databases", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Databases))
             .WithName("GetCephalonDatabases");
         engineGroup.MapGet("/database-roles", (IDatabaseRoleCatalog catalog) => TypedResults.Ok(catalog.DatabaseRoles))

@@ -495,6 +495,12 @@ Browse the published API surface by public member.
 - [Algorithm](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-algorithm): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Algorithm&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared signature algorithm.
   - `string Algorithm { get; }`
+- [Algorithm](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingselection-algorithm): `Properties` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Algorithm&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the requested rate-limiting algorithm, such as `FixedWindow` or `TokenBucket`.
+  - `string Algorithm { get; }`
+- [Algorithm](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingsettings-algorithm): `Properties` on `RateLimitingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Algorithm&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the requested rate-limiting algorithm, such as `FixedWindow` or `TokenBucket`.
+  - `string Algorithm { get; }`
 - [Aliases](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-aliases): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Aliases&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets optional aliases that can resolve to the same pattern.
   - `IReadOnlyList<string> Aliases { get; }`
@@ -555,6 +561,9 @@ Browse the published API surface by public member.
 - [AllowPublicKeyRetrieval](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-allowpublickeyretrieval): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=AllowPublicKeyRetrieval&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
   - Gets or sets the optional value that controls whether the server RSA public key may be requested automatically.
   - `bool? AllowPublicKeyRetrieval { get; set; }`
+- [AntiCorruptionLayer](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-anticorruptionlayer): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=AntiCorruptionLayer&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
+  - Gets the anti-corruption-layer pattern.
+  - `PatternDescriptor AntiCorruptionLayer { get; }`
 - [ApiKey](cephalon-observability-elasticsearchdependencies.md#member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-apikey): `Properties` on `ElasticsearchDependencyDefinition` in `Cephalon.Observability.ElasticsearchDependencies.Configuration` (`Cephalon.Observability.ElasticsearchDependencies`) [Browse](browse.html?q=ApiKey&assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Configuration&scope=members)
   - Gets or sets the optional API key used for Elasticsearch API-key authentication.
   - `string ApiKey { get; set; }`
@@ -609,12 +618,12 @@ Browse the published API surface by public member.
 - [AppName](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-scaffoldrequest-appname): `Properties` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=AppName&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the application name to scaffold.
   - `string AppName { get; }`
-- [AppProfile](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-databasetopologyselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection): `Constructors` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppProfile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+- [AppProfile](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-databasetopologyselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection-cephalon-abstractions-appmodel-resilienceselection): `Constructors` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppProfile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Creates an app profile without scaffold metadata.
-  - `AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, DatabaseTopologySelection databases, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging)`
-- [AppProfile](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-databasetopologyselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection): `Constructors` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppProfile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - `AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, DatabaseTopologySelection databases, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging, ResilienceSelection resilience)`
+- [AppProfile](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-appprofile-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-patterns-patterndescriptor-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-cephalon-abstractions-appmodel-dataselection-cephalon-abstractions-appmodel-databasetopologyselection-cephalon-abstractions-appmodel-identityselection-cephalon-abstractions-appmodel-tenancyselection-cephalon-abstractions-appmodel-auditselection-cephalon-abstractions-appmodel-messagingselection-cephalon-abstractions-appmodel-resilienceselection): `Constructors` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppProfile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Creates an app profile with optional scaffold metadata.
-  - `AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, ScaffoldPlan scaffold, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, DatabaseTopologySelection databases, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging)`
+  - `AppProfile(string blueprintId, string blueprintDisplayName, string blueprintDescription, IReadOnlyList<PatternDescriptor> patterns, ScaffoldPlan scaffold, IReadOnlyList<TechnologyDescriptor> technologies, IReadOnlyList<TransportDescriptor> transports, DataSelection data, DatabaseTopologySelection databases, IdentitySelection identity, TenancySelection tenancy, AuditSelection audit, MessagingSelection messaging, ResilienceSelection resilience)`
 - [AppProfile](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedscaffold-appprofile): `Properties` on `RenderedScaffold` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=AppProfile&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the application profile used to drive generation.
   - `AppProfile AppProfile { get; }`
@@ -669,6 +678,12 @@ Browse the published API surface by public member.
 - [Attempt](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-attempt): `Properties` on `EventSubscriptionExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Attempt&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the application-managed attempt number associated with this observation.
   - `int Attempt { get; }`
+- [AttemptTimeoutSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-timeoutselection-attempttimeoutseconds): `Properties` on `TimeoutSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AttemptTimeoutSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the per-attempt timeout in seconds requested for an execution.
+  - `int? AttemptTimeoutSeconds { get; }`
+- [AttemptTimeoutSeconds](cephalon-engine.md#member-p-cephalon-engine-configuration-timeoutsettings-attempttimeoutseconds): `Properties` on `TimeoutSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=AttemptTimeoutSeconds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the per-attempt timeout in seconds requested for an execution.
+  - `int? AttemptTimeoutSeconds { get; }`
 - [Attributes](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditactor-attributes): `Properties` on `AuditActor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Attributes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the actor attributes.
   - `IReadOnlyDictionary<string, string> Attributes { get; }`
@@ -804,6 +819,18 @@ Browse the published API surface by public member.
 
 ## B
 
+- [Backoff](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-retryselection-backoff): `Properties` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Backoff&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the requested backoff mode, such as `Exponential` or `Linear`.
+  - `string Backoff { get; }`
+- [Backoff](cephalon-engine.md#member-p-cephalon-engine-configuration-retrysettings-backoff): `Properties` on `RetrySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Backoff&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the requested backoff mode, such as `Exponential` or `Linear`.
+  - `string Backoff { get; }`
+- [BaseDelayMilliseconds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-retryselection-basedelaymilliseconds): `Properties` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=BaseDelayMilliseconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the base delay in milliseconds used by the retry policy.
+  - `int? BaseDelayMilliseconds { get; }`
+- [BaseDelayMilliseconds](cephalon-engine.md#member-p-cephalon-engine-configuration-retrysettings-basedelaymilliseconds): `Properties` on `RetrySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BaseDelayMilliseconds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the base delay in milliseconds used by the retry policy.
+  - `int? BaseDelayMilliseconds { get; }`
 - [BearerToken](cephalon-observability-elasticsearchdependencies.md#member-p-cephalon-observability-elasticsearchdependencies-configuration-elasticsearchdependencydefinition-bearertoken): `Properties` on `ElasticsearchDependencyDefinition` in `Cephalon.Observability.ElasticsearchDependencies.Configuration` (`Cephalon.Observability.ElasticsearchDependencies`) [Browse](browse.html?q=BearerToken&assembly=Cephalon.Observability.ElasticsearchDependencies&namespace=Cephalon.Observability.ElasticsearchDependencies.Configuration&scope=members)
   - Gets or sets the optional bearer token used for Elasticsearch bearer-token authentication.
   - `string BearerToken { get; set; }`
@@ -900,6 +927,12 @@ Browse the published API surface by public member.
 - [BootstrapServers](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-bootstrapservers): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=BootstrapServers&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
   - Gets or sets the Kafka bootstrap server list, such as `broker-1:9092,broker-2:9092`.
   - `string BootstrapServers { get; set; }`
+- [BreakDurationSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-circuitbreakerselection-breakdurationseconds): `Properties` on `CircuitBreakerSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=BreakDurationSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the break duration in seconds requested for the open state.
+  - `int? BreakDurationSeconds { get; }`
+- [BreakDurationSeconds](cephalon-engine.md#member-p-cephalon-engine-configuration-circuitbreakersettings-breakdurationseconds): `Properties` on `CircuitBreakerSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BreakDurationSeconds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the break duration in seconds requested for the open state.
+  - `int? BreakDurationSeconds { get; }`
 - [BrowserPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-browserpath): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=BrowserPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The hosted path to the interactive browser UI.
   - `string BrowserPath { get; set; }`
@@ -915,6 +948,18 @@ Browse the published API surface by public member.
 - [BuildUri](cephalon-engine.md#member-p-cephalon-engine-manifest-packageprovenancemanifest-builduri): `Properties` on `PackageProvenanceManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=BuildUri&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared build or pipeline URI, when available.
   - `string BuildUri { get; }`
+- [Bulkhead](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-resilienceselection-bulkhead): `Properties` on `ResilienceSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Bulkhead&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the bulkhead policy resolved for the app.
+  - `BulkheadSelection Bulkhead { get; }`
+- [Bulkhead](cephalon-engine.md#member-p-cephalon-engine-configuration-resiliencesettings-bulkhead): `Properties` on `ResilienceSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Bulkhead&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the bulkhead settings resolved for the app.
+  - `BulkheadSettings Bulkhead { get; }`
+- [BulkheadSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-bulkheadselection-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `BulkheadSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=BulkheadSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Initializes a new instance of the `BulkheadSelection` class.
+  - `BulkheadSelection(bool? enabled, int? maxConcurrentExecutions, int? maxQueuedActions)`
+- [BulkheadSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-bulkheadsettings-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `BulkheadSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BulkheadSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `BulkheadSettings` class.
+  - `BulkheadSettings(bool? enabled, int? maxConcurrentExecutions, int? maxQueuedActions)`
 
 ## C
 
@@ -1047,6 +1092,18 @@ Browse the published API surface by public member.
 - [ChecksumSha256](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-checksumsha256): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=ChecksumSha256&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the computed SHA-256 checksum of the resolved package assembly.
   - `string ChecksumSha256 { get; }`
+- [CircuitBreaker](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-resilienceselection-circuitbreaker): `Properties` on `ResilienceSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=CircuitBreaker&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the circuit-breaker policy resolved for the app.
+  - `CircuitBreakerSelection CircuitBreaker { get; }`
+- [CircuitBreaker](cephalon-engine.md#member-p-cephalon-engine-configuration-resiliencesettings-circuitbreaker): `Properties` on `ResilienceSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=CircuitBreaker&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the circuit-breaker settings resolved for the app.
+  - `CircuitBreakerSettings CircuitBreaker { get; }`
+- [CircuitBreakerSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-circuitbreakerselection-ctor-system-nullable-system-boolean-system-nullable-system-decimal-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `CircuitBreakerSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=CircuitBreakerSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Initializes a new instance of the `CircuitBreakerSelection` class.
+  - `CircuitBreakerSelection(bool? enabled, decimal? failureRatio, int? minimumThroughput, int? samplingDurationSeconds, int? breakDurationSeconds)`
+- [CircuitBreakerSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-circuitbreakersettings-ctor-system-nullable-system-boolean-system-nullable-system-decimal-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `CircuitBreakerSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=CircuitBreakerSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `CircuitBreakerSettings` class.
+  - `CircuitBreakerSettings(bool? enabled, decimal? failureRatio, int? minimumThroughput, int? samplingDurationSeconds, int? breakDurationSeconds)`
 - [CleanArchitecture](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-cleanarchitecture): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=CleanArchitecture&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the clean-architecture pattern.
   - `PatternDescriptor CleanArchitecture { get; }`
@@ -2130,6 +2187,18 @@ Browse the published API surface by public member.
 - [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-auditsettings-empty): `Properties` on `AuditSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets an empty audit-settings instance.
   - `AuditSettings Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-bulkheadselection-empty): `Properties` on `BulkheadSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets an empty bulkhead-selection instance.
+  - `BulkheadSelection Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-bulkheadsettings-empty): `Properties` on `BulkheadSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty bulkhead-settings instance.
+  - `BulkheadSettings Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-circuitbreakerselection-empty): `Properties` on `CircuitBreakerSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets an empty circuit-breaker-selection instance.
+  - `CircuitBreakerSelection Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-circuitbreakersettings-empty): `Properties` on `CircuitBreakerSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty circuit-breaker-settings instance.
+  - `CircuitBreakerSettings Empty { get; }`
 - [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasemigrationsselection-empty): `Properties` on `DatabaseMigrationsSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets an empty database-migrations selection instance.
   - `DatabaseMigrationsSelection Empty { get; }`
@@ -2184,6 +2253,24 @@ Browse the published API surface by public member.
 - [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-modulediscoverysettings-empty): `Properties` on `ModuleDiscoverySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets an empty module discovery settings instance.
   - `ModuleDiscoverySettings Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingselection-empty): `Properties` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets an empty rate-limiting-selection instance.
+  - `RateLimitingSelection Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingsettings-empty): `Properties` on `RateLimitingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty rate-limiting-settings instance.
+  - `RateLimitingSettings Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-resilienceselection-empty): `Properties` on `ResilienceSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets an empty resilience-selection instance.
+  - `ResilienceSelection Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-resiliencesettings-empty): `Properties` on `ResilienceSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty resilience-settings instance.
+  - `ResilienceSettings Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-retryselection-empty): `Properties` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets an empty retry-selection instance.
+  - `RetrySelection Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-retrysettings-empty): `Properties` on `RetrySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty retry-settings instance.
+  - `RetrySettings Empty { get; }`
 - [Empty](cephalon-ids-sfid.md#member-p-cephalon-ids-sfid-configuration-sfididoptions-empty): `Properties` on `SfidIdOptions` in `Cephalon.Ids.Sfid.Configuration` (`Cephalon.Ids.Sfid`) [Browse](browse.html?q=Empty&assembly=Cephalon.Ids.Sfid&namespace=Cephalon.Ids.Sfid.Configuration&scope=members)
   - Gets an empty options instance.
   - `SfidIdOptions Empty { get; }`
@@ -2193,6 +2280,12 @@ Browse the published API surface by public member.
 - [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-tenancysettings-empty): `Properties` on `TenancySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets an empty tenancy-settings instance.
   - `TenancySettings Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-timeoutselection-empty): `Properties` on `TimeoutSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets an empty timeout-selection instance.
+  - `TimeoutSelection Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-timeoutsettings-empty): `Properties` on `TimeoutSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty timeout-settings instance.
+  - `TimeoutSettings Empty { get; }`
 - [EnableAwsSdkInstrumentation](cephalon-observability-aws.md#member-p-cephalon-observability-aws-configuration-awstelemetryexportoptions-enableawssdkinstrumentation): `Properties` on `AwsTelemetryExportOptions` in `Cephalon.Observability.Aws.Configuration` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=EnableAwsSdkInstrumentation&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Configuration&scope=members)
   - Gets or sets a value indicating whether AWS SDK client instrumentation should be enabled for traces.
   - `bool EnableAwsSdkInstrumentation { get; set; }`
@@ -2220,6 +2313,18 @@ Browse the published API surface by public member.
 - [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-auditsettings-enabled): `Properties` on `AuditSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether audit support was explicitly enabled.
   - `bool? Enabled { get; }`
+- [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-bulkheadselection-enabled): `Properties` on `BulkheadSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether bulkhead isolation was explicitly enabled.
+  - `bool? Enabled { get; }`
+- [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-bulkheadsettings-enabled): `Properties` on `BulkheadSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether bulkhead isolation was explicitly enabled.
+  - `bool? Enabled { get; }`
+- [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-circuitbreakerselection-enabled): `Properties` on `CircuitBreakerSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether circuit-breaker support was explicitly enabled.
+  - `bool? Enabled { get; }`
+- [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-circuitbreakersettings-enabled): `Properties` on `CircuitBreakerSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether circuit-breaker support was explicitly enabled.
+  - `bool? Enabled { get; }`
 - [Enabled](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-enabled): `Properties` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Enabled&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets or sets a value indicating whether the ASP.NET Core host should log request and response summaries.
   - `bool Enabled { get; set; }`
@@ -2229,17 +2334,35 @@ Browse the published API surface by public member.
 - [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-identitysettings-enabled): `Properties` on `IdentitySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether identity and authorization support was explicitly enabled.
   - `bool? Enabled { get; }`
+- [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingselection-enabled): `Properties` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether rate limiting was explicitly enabled.
+  - `bool? Enabled { get; }`
+- [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingsettings-enabled): `Properties` on `RateLimitingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether rate limiting was explicitly enabled.
+  - `bool? Enabled { get; }`
 - [Enabled](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocshostingoptions-enabled): `Properties` on `ReferenceDocsHostingOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Enabled&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Gets or sets a value indicating whether hosted reference docs should be exposed.
   - `bool Enabled { get; set; }`
 - [Enabled](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-enabled): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Enabled&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Whether reference-doc hosting is enabled for the current host.
   - `bool Enabled { get; set; }`
+- [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-retryselection-enabled): `Properties` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether retry support was explicitly enabled.
+  - `bool? Enabled { get; }`
+- [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-retrysettings-enabled): `Properties` on `RetrySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether retry support was explicitly enabled.
+  - `bool? Enabled { get; }`
 - [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-tenancyselection-enabled): `Properties` on `TenancySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether multi-tenancy was explicitly enabled.
   - `bool? Enabled { get; }`
 - [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-tenancysettings-enabled): `Properties` on `TenancySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether multi-tenancy was explicitly enabled.
+  - `bool? Enabled { get; }`
+- [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-timeoutselection-enabled): `Properties` on `TimeoutSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether timeout support was explicitly enabled.
+  - `bool? Enabled { get; }`
+- [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-timeoutsettings-enabled): `Properties` on `TimeoutSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether timeout support was explicitly enabled.
   - `bool? Enabled { get; }`
 - [EnableDefaultEvaluator](cephalon-identity.md#member-p-cephalon-identity-configuration-identityruntimeoptions-enabledefaultevaluator): `Properties` on `IdentityRuntimeOptions` in `Cephalon.Identity.Configuration` (`Cephalon.Identity`) [Browse](browse.html?q=EnableDefaultEvaluator&assembly=Cephalon.Identity&namespace=Cephalon.Identity.Configuration&scope=members)
   - Gets or sets a value indicating whether the built-in metadata-driven authorization evaluator is active.
@@ -2349,9 +2472,9 @@ Browse the published API surface by public member.
 - [EngineRuntime](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphdescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-hostedexecutiondescriptor): `Constructors` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EngineRuntime&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Initializes a new instance of the `EngineRuntime` class.
   - `EngineRuntime(IReadOnlyList<IModule> modules, RuntimeManifest manifest, FailurePolicy failurePolicy, IReadOnlyList<ExecutionGraphDescriptor> executionGraphs, IReadOnlyList<HostedExecutionDescriptor> hostedExecutions)`
-- [EngineSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings): `Constructors` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EngineSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+- [EngineSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings-cephalon-engine-configuration-resiliencesettings): `Constructors` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EngineSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `EngineSettings` class.
-  - `EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging)`
+  - `EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging, ResilienceSettings resilience)`
 - [EngineVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-runtimemanifest-engineversion): `Properties` on `RuntimeManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=EngineVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the engine version that produced the manifest.
   - `string EngineVersion { get; }`
@@ -2652,6 +2775,12 @@ Browse the published API surface by public member.
 - [FailurePolicy](cephalon-engine.md#member-p-cephalon-engine-runtime-iruntime-failurepolicy): `Properties` on `IRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=FailurePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the failure policy that governs startup, stop, and restart behavior.
   - `FailurePolicy FailurePolicy { get; }`
+- [FailureRatio](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-circuitbreakerselection-failureratio): `Properties` on `CircuitBreakerSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailureRatio&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the failure ratio threshold requested for opening the breaker.
+  - `decimal? FailureRatio { get; }`
+- [FailureRatio](cephalon-engine.md#member-p-cephalon-engine-configuration-circuitbreakersettings-failureratio): `Properties` on `CircuitBreakerSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FailureRatio&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the failure ratio threshold requested for opening the breaker.
+  - `decimal? FailureRatio { get; }`
 - [Fault](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorresultdescriptor-fault): `Properties` on `BehaviorResultDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Fault&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the structured fault details when the outcome is not successful.
   - `BehaviorFault Fault { get; }`
@@ -2865,6 +2994,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-documentation-referencedocshostingoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string-system-string): `Methods` on `ReferenceDocsHostingOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Binds reference-doc hosting options from configuration.
   - `ReferenceDocsHostingOptions FromConfiguration(IConfiguration configuration, string sectionPath, string contentRootPath)`
+- [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-resiliencesettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `ResilienceSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads resilience settings from configuration.
+  - `ResilienceSettings FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-ids-sfid.md#member-m-cephalon-ids-sfid-configuration-sfididoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `SfidIdOptions` in `Cephalon.Ids.Sfid.Configuration` (`Cephalon.Ids.Sfid`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Ids.Sfid&namespace=Cephalon.Ids.Sfid.Configuration&scope=members)
   - Reads Sfid id-strategy options from configuration.
   - `SfidIdOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -3153,6 +3285,18 @@ Browse the published API surface by public member.
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-auditsettings-hasvalues): `Properties` on `AuditSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether any audit settings were explicitly supplied.
   - `bool HasValues { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-bulkheadselection-hasvalues): `Properties` on `BulkheadSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether any bulkhead-selection inputs were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-bulkheadsettings-hasvalues): `Properties` on `BulkheadSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any bulkhead settings were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-circuitbreakerselection-hasvalues): `Properties` on `CircuitBreakerSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether any circuit-breaker-selection inputs were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-circuitbreakersettings-hasvalues): `Properties` on `CircuitBreakerSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any circuit-breaker settings were explicitly supplied.
+  - `bool HasValues { get; }`
 - [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasemigrationsselection-hasvalues): `Properties` on `DatabaseMigrationsSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether any migration-selection inputs were explicitly supplied.
   - `bool HasValues { get; }`
@@ -3216,6 +3360,24 @@ Browse the published API surface by public member.
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-packagepolicy-hasvalues): `Properties` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether the policy differs from the default baseline.
   - `bool HasValues { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingselection-hasvalues): `Properties` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether any rate-limiting-selection inputs were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingsettings-hasvalues): `Properties` on `RateLimitingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any rate-limiting settings were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-resilienceselection-hasvalues): `Properties` on `ResilienceSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether any resilience-selection inputs were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-resiliencesettings-hasvalues): `Properties` on `ResilienceSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any resilience settings were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-retryselection-hasvalues): `Properties` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether any retry-selection inputs were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-retrysettings-hasvalues): `Properties` on `RetrySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any retry settings were explicitly supplied.
+  - `bool HasValues { get; }`
 - [HasValues](cephalon-ids-sfid.md#member-p-cephalon-ids-sfid-configuration-sfididoptions-hasvalues): `Properties` on `SfidIdOptions` in `Cephalon.Ids.Sfid.Configuration` (`Cephalon.Ids.Sfid`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Ids.Sfid&namespace=Cephalon.Ids.Sfid.Configuration&scope=members)
   - Gets a value indicating whether any explicit Sfid-generator inputs were supplied.
   - `bool HasValues { get; }`
@@ -3224,6 +3386,12 @@ Browse the published API surface by public member.
   - `bool HasValues { get; }`
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-tenancysettings-hasvalues): `Properties` on `TenancySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether any tenancy settings were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-timeoutselection-hasvalues): `Properties` on `TimeoutSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether any timeout-selection inputs were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-timeoutsettings-hasvalues): `Properties` on `TimeoutSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any timeout settings were explicitly supplied.
   - `bool HasValues { get; }`
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-trustpolicy-hasvalues): `Properties` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether the policy differs from the default baseline.
@@ -4110,12 +4278,30 @@ Browse the published API surface by public member.
 - [MaxAgeDays](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistoryretentionsettings-maxagedays): `Properties` on `AuditHistoryRetentionSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxAgeDays&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the maximum age, in days, to retain durable audit rows.
   - `int? MaxAgeDays { get; }`
+- [MaxAttempts](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-retryselection-maxattempts): `Properties` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxAttempts&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the maximum retry attempts requested for the policy.
+  - `int? MaxAttempts { get; }`
+- [MaxAttempts](cephalon-engine.md#member-p-cephalon-engine-configuration-retrysettings-maxattempts): `Properties` on `RetrySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxAttempts&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the maximum retry attempts requested for the policy.
+  - `int? MaxAttempts { get; }`
 - [MaxBatchSize](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databaseruntimeselection-maxbatchsize): `Properties` on `DatabaseRuntimeSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxBatchSize&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the maximum provider batch size when one was configured.
   - `int? MaxBatchSize { get; }`
 - [MaxBatchSize](cephalon-engine.md#member-p-cephalon-engine-configuration-databaseruntimesettings-maxbatchsize): `Properties` on `DatabaseRuntimeSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxBatchSize&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the maximum provider batch size when one was configured.
   - `int? MaxBatchSize { get; }`
+- [MaxConcurrentExecutions](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-bulkheadselection-maxconcurrentexecutions): `Properties` on `BulkheadSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxConcurrentExecutions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the maximum concurrent executions allowed inside the bulkhead.
+  - `int? MaxConcurrentExecutions { get; }`
+- [MaxConcurrentExecutions](cephalon-engine.md#member-p-cephalon-engine-configuration-bulkheadsettings-maxconcurrentexecutions): `Properties` on `BulkheadSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxConcurrentExecutions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the maximum concurrent executions allowed inside the bulkhead.
+  - `int? MaxConcurrentExecutions { get; }`
+- [MaxDelayMilliseconds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-retryselection-maxdelaymilliseconds): `Properties` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxDelayMilliseconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the maximum delay in milliseconds the retry policy may apply.
+  - `int? MaxDelayMilliseconds { get; }`
+- [MaxDelayMilliseconds](cephalon-engine.md#member-p-cephalon-engine-configuration-retrysettings-maxdelaymilliseconds): `Properties` on `RetrySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxDelayMilliseconds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the maximum delay in milliseconds the retry policy may apply.
+  - `int? MaxDelayMilliseconds { get; }`
 - [MaxEntries](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryexportrequest-maxentries): `Properties` on `AuditHistoryExportRequest` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxEntries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the maximum number of entries to export.
   - `int MaxEntries { get; }`
@@ -4137,6 +4323,12 @@ Browse the published API surface by public member.
 - [MaxLimit](cephalon-abstractions.md#member-f-cephalon-abstractions-audit-audithistoryquery-maxlimit): `Fields` on `AuditHistoryQuery` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxLimit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the maximum number of entries returned by one query.
   - `const int MaxLimit`
+- [MaxQueuedActions](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-bulkheadselection-maxqueuedactions): `Properties` on `BulkheadSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxQueuedActions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the maximum queued actions allowed before rejection.
+  - `int? MaxQueuedActions { get; }`
+- [MaxQueuedActions](cephalon-engine.md#member-p-cephalon-engine-configuration-bulkheadsettings-maxqueuedactions): `Properties` on `BulkheadSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxQueuedActions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the maximum queued actions allowed before rejection.
+  - `int? MaxQueuedActions { get; }`
 - [MaxRestartAttempts](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-maxrestartattempts): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxRestartAttempts&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the maximum number of manual restarts.
   - `int MaxRestartAttempts { get; }`
@@ -4458,6 +4650,12 @@ Browse the published API surface by public member.
 - [MinimumEventId](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticsconvention-minimumeventid): `Properties` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=MinimumEventId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Gets the smallest event id published by this convention.
   - `int? MinimumEventId { get; }`
+- [MinimumThroughput](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-circuitbreakerselection-minimumthroughput): `Properties` on `CircuitBreakerSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MinimumThroughput&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the minimum throughput required before the breaker evaluates failures.
+  - `int? MinimumThroughput { get; }`
+- [MinimumThroughput](cephalon-engine.md#member-p-cephalon-engine-configuration-circuitbreakersettings-minimumthroughput): `Properties` on `CircuitBreakerSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MinimumThroughput&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the minimum throughput required before the breaker evaluates failures.
+  - `int? MinimumThroughput { get; }`
 - [MinimumVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-packagedependencymanifest-minimumversion): `Properties` on `PackageDependencyManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=MinimumVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the minimum acceptable version of the required package, when declared.
   - `string MinimumVersion { get; }`
@@ -4785,6 +4983,9 @@ Browse the published API surface by public member.
 - [OldValue](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditchange-oldvalue): `Properties` on `AuditChange` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=OldValue&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the previous serialized value when one is known.
   - `string OldValue { get; }`
+- [OnionArchitecture](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-onionarchitecture): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=OnionArchitecture&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
+  - Gets the onion-architecture pattern.
+  - `PatternDescriptor OnionArchitecture { get; }`
 - [OpenApiEndpointOptions](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-documentation-openapiendpointoptions-ctor): `Constructors` on `OpenApiEndpointOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=OpenApiEndpointOptions&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Initializes a new `OpenApiEndpointOptions` with the canonical Cephalon OpenAPI and Scalar routes.
   - `OpenApiEndpointOptions()`
@@ -5115,6 +5316,12 @@ Browse the published API surface by public member.
 - [Payload](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-payload): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Payload&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the serialized payload that should be delivered later.
   - `string Payload { get; }`
+- [PermitLimit](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingselection-permitlimit): `Properties` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=PermitLimit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the maximum permits available per limiter window or bucket.
+  - `int? PermitLimit { get; }`
+- [PermitLimit](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingsettings-permitlimit): `Properties` on `RateLimitingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=PermitLimit&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the maximum permits available per limiter window or bucket.
+  - `int? PermitLimit { get; }`
 - [PersistedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryentry-persistedatutc): `Properties` on `AuditHistoryEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=PersistedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the time at which the audit entry was durably persisted.
   - `DateTimeOffset PersistedAtUtc { get; }`
@@ -5349,6 +5556,12 @@ Browse the published API surface by public member.
 - [QueryAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iaudithistoryreader-queryasync-cephalon-abstractions-audit-audithistoryquery-system-threading-cancellationtoken): `Methods` on `IAuditHistoryReader` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueryAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Queries audit-history entries using the supplied host-agnostic filter set.
   - `ValueTask<AuditHistoryQueryResult> QueryAsync(AuditHistoryQuery query, CancellationToken cancellationToken)`
+- [QueueLimit](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingselection-queuelimit): `Properties` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueueLimit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the maximum queued requests allowed before rejection.
+  - `int? QueueLimit { get; }`
+- [QueueLimit](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingsettings-queuelimit): `Properties` on `RateLimitingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=QueueLimit&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the maximum queued requests allowed before rejection.
+  - `int? QueueLimit { get; }`
 - [QuotaProjectId](cephalon-observability-gcp.md#member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-quotaprojectid): `Properties` on `GcpTelemetryExportOptions` in `Cephalon.Observability.Gcp.Configuration` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=QuotaProjectId&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Configuration&scope=members)
   - Gets or sets the optional quota project header used for Google-managed ingestion requests.
   - `string QuotaProjectId { get; set; }`
@@ -5361,6 +5574,18 @@ Browse the published API surface by public member.
 - [RabbitMqDependencyHealthOptions](cephalon-observability-rabbitmqdependencies.md#member-m-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions-ctor): `Constructors` on `RabbitMqDependencyHealthOptions` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=RabbitMqDependencyHealthOptions&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
   - Initializes a new instance of the `RabbitMqDependencyHealthOptions` class.
   - `RabbitMqDependencyHealthOptions()`
+- [RateLimiting](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-resilienceselection-ratelimiting): `Properties` on `ResilienceSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=RateLimiting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the rate-limiting policy resolved for the app.
+  - `RateLimitingSelection RateLimiting { get; }`
+- [RateLimiting](cephalon-engine.md#member-p-cephalon-engine-configuration-resiliencesettings-ratelimiting): `Properties` on `ResilienceSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RateLimiting&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the rate-limiting settings resolved for the app.
+  - `RateLimitingSettings RateLimiting { get; }`
+- [RateLimitingSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-ratelimitingselection-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=RateLimitingSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Initializes a new instance of the `RateLimitingSelection` class.
+  - `RateLimitingSelection(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow)`
+- [RateLimitingSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-ratelimitingsettings-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `RateLimitingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RateLimitingSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `RateLimitingSettings` class.
+  - `RateLimitingSettings(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow)`
 - [Rbac](cephalon-abstractions.md#member-f-cephalon-abstractions-authorization-authorizationmode-rbac): `Fields` on `AuthorizationMode` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Rbac&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Indicates a role-based access-control evaluation.
   - `const AuthorizationMode Rbac`
@@ -5700,6 +5925,18 @@ Browse the published API surface by public member.
 - [RequireVersion](cephalon-engine.md#member-p-cephalon-engine-configuration-packagepolicy-requireversion): `Properties` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RequireVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether package manifests must declare a version.
   - `bool RequireVersion { get; }`
+- [Resilience](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-resilience): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Resilience&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the selected resilience-policy inputs.
+  - `ResilienceSelection Resilience { get; }`
+- [Resilience](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-resilience): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Resilience&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets configuration-driven resilience settings.
+  - `ResilienceSettings Resilience { get; }`
+- [ResilienceSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-resilienceselection-ctor-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection-cephalon-abstractions-appmodel-ratelimitingselection): `Constructors` on `ResilienceSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResilienceSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Initializes a new instance of the `ResilienceSelection` class.
+  - `ResilienceSelection(RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead, RateLimitingSelection rateLimiting)`
+- [ResilienceSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-resiliencesettings-ctor-cephalon-engine-configuration-retrysettings-cephalon-engine-configuration-timeoutsettings-cephalon-engine-configuration-circuitbreakersettings-cephalon-engine-configuration-bulkheadsettings-cephalon-engine-configuration-ratelimitingsettings): `Constructors` on `ResilienceSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ResilienceSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `ResilienceSettings` class.
+  - `ResilienceSettings(RetrySettings retry, TimeoutSettings timeout, CircuitBreakerSettings circuitBreaker, BulkheadSettings bulkhead, RateLimitingSettings rateLimiting)`
 - [ResolutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-resolutionmode): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResolutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the runtime resolution mode.
   - `string ResolutionMode { get; }`
@@ -5847,6 +6084,12 @@ Browse the published API surface by public member.
 - [RetrievalOptions](cephalon-retrieval.md#member-m-cephalon-retrieval-configuration-retrievaloptions-ctor): `Constructors` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=RetrievalOptions&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
   - Creates retrieval options with the default host-owned features enabled.
   - `RetrievalOptions()`
+- [Retry](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-resilienceselection-retry): `Properties` on `ResilienceSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Retry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the retry policy resolved for the app.
+  - `RetrySelection Retry { get; }`
+- [Retry](cephalon-engine.md#member-p-cephalon-engine-configuration-resiliencesettings-retry): `Properties` on `ResilienceSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Retry&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the retry settings resolved for the app.
+  - `RetrySettings Retry { get; }`
 - [RetryDelaySeconds](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-retrydelayseconds): `Properties` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=RetryDelaySeconds&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
   - Gets or sets the number of seconds the Wolverine-owned dispatch loop should wait before retrying a failed dispatch attempt.
   - `int RetryDelaySeconds { get; set; }`
@@ -5874,6 +6117,12 @@ Browse the published API surface by public member.
 - [RetryScheduledCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-retryscheduledcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryScheduledCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The number of `retry-scheduled` observations reported so far.
   - `int RetryScheduledCount { get; set; }`
+- [RetrySelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-retryselection-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-boolean): `Constructors` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetrySelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Initializes a new instance of the `RetrySelection` class.
+  - `RetrySelection(bool? enabled, int? maxAttempts, string backoff, int? baseDelayMilliseconds, int? maxDelayMilliseconds, bool? useJitter)`
+- [RetrySettings](cephalon-engine.md#member-m-cephalon-engine-configuration-retrysettings-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-boolean): `Constructors` on `RetrySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RetrySettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `RetrySettings` class.
+  - `RetrySettings(bool? enabled, int? maxAttempts, string backoff, int? baseDelayMilliseconds, int? maxDelayMilliseconds, bool? useJitter)`
 - [Role](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-role): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=Role&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets the convenience role identifier used by most host callbacks.
   - `string Role { get; }`
@@ -6006,6 +6255,12 @@ Browse the published API surface by public member.
 
 ## S
 
+- [SamplingDurationSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-circuitbreakerselection-samplingdurationseconds): `Properties` on `CircuitBreakerSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=SamplingDurationSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the sampling duration in seconds used by the breaker.
+  - `int? SamplingDurationSeconds { get; }`
+- [SamplingDurationSeconds](cephalon-engine.md#member-p-cephalon-engine-configuration-circuitbreakersettings-samplingdurationseconds): `Properties` on `CircuitBreakerSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=SamplingDurationSeconds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the sampling duration in seconds used by the breaker.
+  - `int? SamplingDurationSeconds { get; }`
 - [SaslMechanism](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-saslmechanism): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=SaslMechanism&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
   - Gets or sets the optional SASL mechanism, such as `Plain`, `ScramSha256`, or `ScramSha512`.
   - `string SaslMechanism { get; set; }`
@@ -6105,6 +6360,12 @@ Browse the published API surface by public member.
 - [SecurityProtocol](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-securityprotocol): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=SecurityProtocol&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
   - Gets or sets the optional Kafka security protocol, such as `Plaintext`, `Ssl`, `SaslPlaintext`, or `SaslSsl`.
   - `string SecurityProtocol { get; set; }`
+- [SegmentsPerWindow](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingselection-segmentsperwindow): `Properties` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=SegmentsPerWindow&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the number of segments per window when sliding windows are used.
+  - `int? SegmentsPerWindow { get; }`
+- [SegmentsPerWindow](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingsettings-segmentsperwindow): `Properties` on `RateLimitingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=SegmentsPerWindow&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the number of segments per window when sliding windows are used.
+  - `int? SegmentsPerWindow { get; }`
 - [Selected](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologyselection-selected): `Properties` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Selected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the technology profiles currently selected for the app.
   - `IReadOnlyList<TechnologyDescriptor> Selected { get; }`
@@ -6900,6 +7161,18 @@ Browse the published API surface by public member.
 - [Timeline](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperationalstory-timeline): `Properties` on `RuntimeOperationalStory` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Timeline&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The ordered lifecycle narrative for package load, execution-graph transitions, hosted-execution transitions, module transitions, runtime transitions, and failures.
   - `IReadOnlyList<RuntimeLifecycleEvent> Timeline { get; set; }`
+- [Timeout](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-resilienceselection-timeout): `Properties` on `ResilienceSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Timeout&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the timeout policy resolved for the app.
+  - `TimeoutSelection Timeout { get; }`
+- [Timeout](cephalon-engine.md#member-p-cephalon-engine-configuration-resiliencesettings-timeout): `Properties` on `ResilienceSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Timeout&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the timeout settings resolved for the app.
+  - `TimeoutSettings Timeout { get; }`
+- [TimeoutSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-timeoutselection-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `TimeoutSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=TimeoutSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Initializes a new instance of the `TimeoutSelection` class.
+  - `TimeoutSelection(bool? enabled, int? totalTimeoutSeconds, int? attemptTimeoutSeconds)`
+- [TimeoutSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-timeoutsettings-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `TimeoutSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TimeoutSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `TimeoutSettings` class.
+  - `TimeoutSettings(bool? enabled, int? totalTimeoutSeconds, int? attemptTimeoutSeconds)`
 - [Title](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-title): `Properties` on `ResultModel<TModel>` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Title&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
   - Gets or sets the short response title.
   - `string Title { get; set; }`
@@ -6936,6 +7209,12 @@ Browse the published API surface by public member.
 - [TotalReports](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-totalreports): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the total number of observations reported for this subscription.
   - `int TotalReports { get; }`
+- [TotalTimeoutSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-timeoutselection-totaltimeoutseconds): `Properties` on `TimeoutSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalTimeoutSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the overall timeout in seconds requested for an execution.
+  - `int? TotalTimeoutSeconds { get; }`
+- [TotalTimeoutSeconds](cephalon-engine.md#member-p-cephalon-engine-configuration-timeoutsettings-totaltimeoutseconds): `Properties` on `TimeoutSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TotalTimeoutSeconds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the overall timeout in seconds requested for an execution.
+  - `int? TotalTimeoutSeconds { get; }`
 - [Trace](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-trace): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Trace&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The event is useful only for highly detailed trace output.
   - `const DiagnosticSeverity Trace`
@@ -7110,6 +7389,9 @@ Browse the published API surface by public member.
 - [Unsupported](cephalon-abstractions.md#member-f-cephalon-abstractions-data-databasemigrationstatus-unsupported): `Fields` on `DatabaseMigrationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unsupported&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime cannot execute the configured migration target with the active provider-pack registrations.
   - `const DatabaseMigrationStatus Unsupported`
+- [Unsupported](cephalon-abstractions.md#member-m-cephalon-abstractions-data-outboxdispatchpolicydescriptor-unsupported-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `OutboxDispatchPolicyDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unsupported&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates an explicit unsupported dispatch policy for an outbox that can stage messages but does not currently support Cephalon-managed mutable dispatch-state ownership.
+  - `OutboxDispatchPolicyDescriptor Unsupported(string outboxId, string description, IReadOnlyDictionary<string, string> metadata)`
 - [Uri](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-uri): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Uri&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
   - Gets or sets the optional full Neo4j endpoint URI such as `neo4j://graph.internal.example:7687` or `neo4j+s://graph.internal.example:7687`.
   - `string Uri { get; set; }`
@@ -7152,6 +7434,12 @@ Browse the published API surface by public member.
 - [UseInClusterProxyService](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-useinclusterproxyservice): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=UseInClusterProxyService&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
   - Gets or sets a value indicating whether the package should target an in-cluster Tanzu proxy service for trace handoff when no shared endpoint is configured.
   - `bool UseInClusterProxyService { get; set; }`
+- [UseJitter](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-retryselection-usejitter): `Properties` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=UseJitter&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether jitter was explicitly requested for retry delays.
+  - `bool? UseJitter { get; }`
+- [UseJitter](cephalon-engine.md#member-p-cephalon-engine-configuration-retrysettings-usejitter): `Properties` on `RetrySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=UseJitter&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether jitter was explicitly requested for retry delays.
+  - `bool? UseJitter { get; }`
 - [UseLocalization](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-uselocalization-cephalon-engine-configuration-localizationsettings): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseLocalization&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Merges localization settings into the current builder state.
   - `EngineBuilder UseLocalization(LocalizationSettings settings)`
@@ -7362,6 +7650,12 @@ Browse the published API surface by public member.
 - [WebSocket](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-websocket): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=WebSocket&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
   - Gets the built-in WebSocket transport descriptor.
   - `TransportDescriptor WebSocket { get; }`
+- [WindowSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingselection-windowseconds): `Properties` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=WindowSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the limiter window duration in seconds when the selected algorithm uses windows.
+  - `int? WindowSeconds { get; }`
+- [WindowSeconds](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingsettings-windowseconds): `Properties` on `RateLimitingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=WindowSeconds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the limiter window duration in seconds when the selected algorithm uses windows.
+  - `int? WindowSeconds { get; }`
 - [WithApiSurface](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-withapisurface-system-string-system-string): `Methods` on `IBehaviorTopologyBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=WithApiSurface&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Overrides the logical API surface projected by route-shaped transport adapters.
   - `IBehaviorTopologyBuilder WithApiSurface(string groupPath, string operationPath)`

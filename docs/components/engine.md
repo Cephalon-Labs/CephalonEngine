@@ -10,7 +10,7 @@
 - package-governance policy for manifest metadata and raw assembly-path rules
 - package publisher and signature provenance metadata carried through trust and manifest surfaces
 - trusted public-key resolution for cryptographic package signature verification across declared signers
-- configuration binding for engine, trust, localization, failure policy, options, and the phase-8 `Data`, `Databases`, `Identity`, `Tenancy`, `Audit`, and `Messaging` sections, including `Engine:Audit:History:Export` and `Engine:Audit:History:Retention`
+- configuration binding for engine, trust, localization, failure policy, options, the phase-8 `Data`, `Databases`, `Identity`, `Tenancy`, `Audit`, and `Messaging` sections, and the phase-11 contract-first `Resilience` section, including `Engine:Audit:History:Export` and `Engine:Audit:History:Retention`
 - runtime lifecycle, failure capture, restart policy, and health evaluation
 - additive execution-graph contracts and runtime execution-graph catalogs
 - additive hosted-execution contracts and runtime hosted-execution catalogs
@@ -88,6 +88,14 @@ This package is the host-agnostic center of the framework. ASP.NET Core, worker 
 Just as importantly, this package exists to lower ceremony for consumer apps. The engine should absorb repetitive composition, configuration binding, runtime wiring, introspection, and companion-pack coordination so Cephalon-based apps spend less code on plumbing and declarations, emit less boilerplate, and stay focused on project-specific business logic.
 
 That same rule now applies to the shipped database-topology and durable audit-history baseline. `Engine:Databases` is the engine-owned physical-topology contract for shared runtime tuning, the first named roles (`Write`, `Read`, `Outbox`, `History`), narrow dependent role references through `UseRole`, nested migration policy, and the `/engine/databases` introspection surface. The engine now also publishes additive `IDatabaseRoleCatalog` and `IDatabaseMigrationCatalog` surfaces over that same contract, so `/engine/database-roles` plus `snapshot.DatabaseRoles` can answer requested versus resolved roles, `UseRole` truth, provider, schema, connection mode, merged runtime tuning, operator-facing consumers, and provider-contributed live runtime health, while `/engine/database-migrations` plus `snapshot.DatabaseMigrations` can answer logical migration targets, execution mode, provider ownership, current status, role-runtime decoration, and provider-added deploy-time command templates without leaking provider specifics back into host startup. `Engine:Audit:History` now lets additive provider packs such as `Cephalon.Audit.EntityFramework` target the logical `history` role by default, or another supported engine-owned role through `Engine:Audit:History:DatabaseRole`, while `Engine:Audit:History:Export` and `Engine:Audit:History:Retention` now drive the first engine-owned export plus retention baselines. `/engine/audit-history` exposes the first queryable operator surface when a durable reader is active, and `/engine/audit-history/export` exposes the first bounded NDJSON export surface when a durable exporter is active. Broader role graphs, non-relational history providers, replay UX, and fine-grained provider-native diagnostics remain later slices, but the engine now owns the contract instead of leaving it to sample-only host code. See [Database topology](../database-topology.md).
+
+The same contract-first approach now opens phase 11 resilience work. `Engine:Resilience` is now a
+first-class configuration section, `AppProfile.Resilience` is now part of the public app-model
+surface, `/engine/resilience` is now the direct operator route for that requested contract, and
+`BuiltInPatterns` now includes `onion-architecture` plus `anti-corruption-layer` so the taxonomy
+no longer lags the roadmap. Runtime enforcement through behavior pipelines and transport adapters
+is still a later follow-through, but the engine now owns the stable configuration and introspection
+shape instead of leaving resilience choices to future ad hoc host code.
 
 Package loading is also governed here. `cephalon.package.json` compatibility metadata, external distribution and provenance hints, publisher/signature provenance fields, optional integrity hashes, detached signature verification against trusted public keys or trusted signing certificate chains, publisher/signer/checksum-based trust allow-lists, and `/engine/packages` manifest output are all part of the engine contract rather than host-specific behavior.
 
