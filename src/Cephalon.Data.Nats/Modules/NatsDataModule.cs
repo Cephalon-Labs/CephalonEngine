@@ -5,6 +5,7 @@ using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.Nats.Configuration;
 using Cephalon.Data.Nats.Services;
 using Cephalon.Engine.Configuration;
+using Cephalon.Eventing.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -57,6 +58,11 @@ internal sealed class NatsDataModule(NatsDataOptions options) : ModuleBase, IInb
             {
                 var nats = serviceProvider.GetRequiredService<INatsConnection>();
                 return new NatsOutbox(nats, outboxBucket);
+            });
+            services.TryAddScoped<IEventDispatchStore>(serviceProvider =>
+            {
+                var nats = serviceProvider.GetRequiredService<INatsConnection>();
+                return new NatsEventDispatchStore(nats, outboxBucket);
             });
         }
 

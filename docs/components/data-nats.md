@@ -6,9 +6,11 @@
 
 - registers a singleton `INatsConnection` using `TryAdd` semantics so a host-owned connection is never displaced; `NatsConnection` does NOT connect on construction — the connection is deferred to the first operation, which allows DI resolution tests without a live NATS server
 - registers a scoped `IOutbox` backed by a NATS JetStream KV bucket when `RegisterOutbox` is enabled
+- registers a scoped `IEventDispatchStore` backed by the same NATS JetStream KV bucket when `RegisterOutbox` is enabled so staged entries can participate in consumer-managed or adapter-managed dispatch flows
 - registers a scoped `IInbox` backed by a NATS JetStream KV bucket when `RegisterInbox` is enabled
 - ensures idempotent staging for both outbox and inbox via `CreateAsync` — if the key already exists, `NatsKVCreateException` is caught and swallowed as a safe no-op
 - creates or updates the KV bucket on first use via `CreateOrUpdateStoreAsync`
+- keeps one mutable KV value per staged outbox message so dispatch attempts, `dispatchedAtUtc`, and `nextAttemptAtUtc` can be persisted without introducing a second store
 - exposes operator-facing outbox and inbox descriptors through the engine runtime surfaces
 - projects the outbox descriptor through the `event-driven-integration` technology surface as outbox producers when that technology is active
 - projects the inbox descriptor through the same technology surface as inbox stores when the technology is active
@@ -20,6 +22,8 @@
 - `Modules/NatsDataModule.cs`
 - `Registration/NatsDataEngineBuilderExtensions.cs`
 - `Services/NatsOutbox.cs`
+- `Services/NatsOutboxRecord.cs`
+- `Services/NatsEventDispatchStore.cs`
 - `Services/NatsOutboxRuntimeSurfaceContributor.cs`
 - `Services/NatsInbox.cs`
 - `Services/NatsInboxRuntimeSurfaceContributor.cs`
@@ -28,7 +32,7 @@
 
 This pack sits on top of `Cephalon.Data`, not in place of it. `Cephalon.Data` still owns the runtime-neutral `IReadStore` / `IWriteStore` dispatching surface. `Cephalon.Data.Nats` adds the NATS-backed outbox and inbox persistence paths that let event-driven workloads stage and track messages against a NATS JetStream KV store without switching to a relational or document-oriented provider.
 
-NATS JetStream KV is modeled as a ledger store: entries are durable, ordered, and replayed by key. This makes it a natural fit for the outbox pattern where message staging must survive process restarts.
+NATS JetStream KV is modeled as a ledger store: entries are durable, ordered, and replayed by key. This makes it a natural fit for the outbox pattern where message staging must survive process restarts. The current Cephalon slice now goes one step further and keeps the staged outbox payload as a mutable record, which lets `IEventDispatchStore` read pending items and write back durable dispatch outcomes without inventing a second sidecar store. That is still a consumer-managed baseline rather than a broker-owned execution model: Cephalon is using JetStream KV as a durable state bucket for staged publication, not claiming NATS-native retry or subscription ownership.
 
 ## Registration
 
@@ -119,6 +123,8 @@ When the `event-driven-integration` technology is active, the following entries 
 | `outbox-producers` | `nats-outbox` | `nats` |
 | `inbox-stores` | `nats-inbox` | `nats` |
 
+When an eventing runtime asks for `IEventDispatchStore`, the `nats-outbox` descriptor can now resolve to `consumer-managed` and the runtime can read/write durable dispatch state directly from the same KV bucket.
+
 ## Not shipped in this slice
 
 This pack intentionally does not claim:
@@ -127,7 +133,7 @@ This pack intentionally does not claim:
 - NATS Core (non-JetStream) messaging
 - `IReadStore` / `IWriteStore` dispatch backed by NATS — query handlers should use `INatsConnection` directly
 - transaction-scoped outbox staging spanning multiple NATS operations
-- adapter-owned dispatch loops or broker retry scheduling
+- broker-owned retry scheduling or NATS-native delivery ownership beyond the shared `IEventDispatchStore` baseline
 - NATS service API or micro-service primitives
 
 These remain explicit later slices to keep the initial provider claim honest.

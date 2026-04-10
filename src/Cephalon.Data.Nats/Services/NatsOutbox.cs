@@ -38,7 +38,7 @@ internal sealed class NatsOutbox : IOutbox
         var kvCtx = new NatsKVContext(js);
         var kv = await kvCtx.CreateOrUpdateStoreAsync(new NatsKVConfig(_bucketName), cancellationToken).ConfigureAwait(false);
 
-        var bytes = JsonSerializer.SerializeToUtf8Bytes(message);
+        var bytes = JsonSerializer.SerializeToUtf8Bytes(NatsOutboxRecord.Create(message));
 
         try
         {

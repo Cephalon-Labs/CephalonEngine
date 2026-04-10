@@ -220,4 +220,41 @@ public sealed class VectorLedgerDataPackTests
         Assert.NotNull(connection);
         Assert.Equal("Messaging", capability.Metadata["uriName"]);
     }
+
+    [Fact]
+    public async Task AddNatsData_WithEventDrivenIntegration_RegistersConsumerManagedDispatchStore()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                data: new DataSettings(provider: "Nats", outboxEnabled: true)));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "test-events",
+                    displayName: "Test Events",
+                    description: "Dispatch-store test channel."));
+            });
+            engine.AddNatsData("nats://localhost:4222", options =>
+            {
+                options.RegisterOutbox = true;
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var outboxCatalog = provider.GetRequiredService<IOutboxCatalog>();
+        var descriptor = Assert.Single(outboxCatalog.Outboxes);
+        Assert.Equal("consumer-managed", descriptor.DispatchPolicy.PolicyId);
+        Assert.Equal("consumer-managed", descriptor.DispatchPolicy.ExecutionMode);
+
+        await using var scope = provider.CreateAsyncScope();
+        var dispatchStore = scope.ServiceProvider.GetRequiredService<IEventDispatchStore>();
+        Assert.NotNull(dispatchStore);
+        Assert.Equal("nats-outbox", Assert.Single(dispatchStore.OutboxIds));
+    }
 }
