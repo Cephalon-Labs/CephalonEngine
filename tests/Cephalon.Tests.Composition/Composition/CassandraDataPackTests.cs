@@ -5,6 +5,8 @@ using Cephalon.Data.Cassandra.Configuration;
 using Cephalon.Data.Cassandra.Registration;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
+using Cephalon.Eventing.Registration;
+using Cephalon.Eventing.Services;
 using Cephalon.EventSourcing.Cassandra;
 using Cephalon.EventSourcing.Cassandra.Hosting;
 using Cephalon.Tests.Support;
@@ -139,6 +141,8 @@ public sealed class CassandraDataPackTests
         Assert.Equal("cassandra-outbox", descriptor.Id);
         Assert.Equal(CassandraDataOptions.ProviderId, descriptor.Provider);
         Assert.Equal("wide-column-lwt", descriptor.Mode);
+        Assert.Equal("message-sharded-eligibility", descriptor.Metadata["dispatchEligibilityIndex"]);
+        Assert.Equal("16", descriptor.Metadata["pendingDispatchShardCount"]);
     }
 
     [Fact]
@@ -201,5 +205,42 @@ public sealed class CassandraDataPackTests
         Assert.Contains(runtime.Manifest.Capabilities, c => c.Key == "data.wide-column-store");
         Assert.DoesNotContain(runtime.Manifest.Capabilities, c => c.Key == "data.outbox.cassandra");
         Assert.DoesNotContain(runtime.Manifest.Capabilities, c => c.Key == "data.inbox.cassandra");
+    }
+
+    [Fact]
+    public void AddCassandraData_WithEventDrivenIntegration_RegistersConsumerManagedDispatchStore()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                data: new DataSettings(provider: "Cassandra", outboxEnabled: true)));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "test-events",
+                    displayName: "Test Events",
+                    description: "Dispatch-store test channel."));
+            });
+            engine.AddCassandraData(OfflineContactPoints, OfflineKeyspace, configure: options =>
+            {
+                options.RegisterOutbox = true;
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var outboxCatalog = provider.GetRequiredService<IOutboxCatalog>();
+        var descriptor = Assert.Single(outboxCatalog.Outboxes);
+        Assert.Equal("consumer-managed", descriptor.DispatchPolicy.PolicyId);
+        Assert.Equal("consumer-managed", descriptor.DispatchPolicy.ExecutionMode);
+
+        using var scope = provider.CreateScope();
+        var dispatchStore = scope.ServiceProvider.GetRequiredService<IEventDispatchStore>();
+        Assert.NotNull(dispatchStore);
+        Assert.Equal("cassandra-outbox", Assert.Single(dispatchStore.OutboxIds));
     }
 }

@@ -6,8 +6,10 @@
 
 - registers a singleton `ICluster` built from one or more contact-point hosts and a port via `Cluster.Builder()...Build()`, using `TryAdd` semantics so a host-owned cluster is never displaced
 - registers a scoped `IOutbox` backed by the `{TablePrefix}outbox_messages` Cassandra table when `RegisterOutbox` is enabled; the session is opened lazily on first use
+- registers a scoped `IEventDispatchStore` backed by the same durable outbox row plus a sharded `{TablePrefix}outbox_pending_dispatch` eligibility table when `RegisterOutbox` is enabled
 - registers a scoped `IInbox` backed by the `{TablePrefix}inbox_receipts` Cassandra table when `RegisterInbox` is enabled; the session is opened lazily on first use
 - ensures outbox and inbox staging are idempotent through Cassandra Lightweight Transaction (LWT) `INSERT IF NOT EXISTS`; an `[applied]=false` result means the row already exists and is silently treated as success
+- keeps dispatch ownership truthful through a consumer-managed/provider-native pending-dispatch index instead of claiming broker-owned retries or a globally ordered queue
 - exposes operator-facing outbox and inbox descriptors when the respective path is enabled
 - projects the outbox descriptor through the `event-driven-integration` technology surface as `outbox-producers` with `provider: "cassandra"` and `mode: "wide-column-lwt"` when that technology is active
 - projects the inbox descriptor through the same technology surface as `inbox-stores` when the technology is active
@@ -19,6 +21,9 @@
 - `Modules/CassandraDataModule.cs`
 - `Registration/CassandraDataEngineBuilderExtensions.cs`
 - `Services/CassandraOutbox.cs`
+- `Services/CassandraEventDispatchStore.cs`
+- `Services/CassandraOutboxRecord.cs`
+- `Services/CassandraOutboxStorageSchema.cs`
 - `Services/CassandraOutboxRuntimeSurfaceContributor.cs`
 - `Services/CassandraInbox.cs`
 - `Services/CassandraInboxRuntimeSurfaceContributor.cs`
@@ -27,7 +32,7 @@
 
 This pack sits on top of `Cephalon.Data`, not in place of it. `Cephalon.Data` still owns the runtime-neutral `IReadStore` / `IWriteStore` dispatching surface. `Cephalon.Data.Cassandra` adds the Cassandra-backed outbox and inbox persistence paths that let event-driven workloads stage and track messages using a wide-column store.
 
-The slice is intentionally narrow: it proves the companion-pack pattern extends cleanly to Cassandra, ships an idempotent outbox and inbox, and exposes the same runtime introspection surfaces as the other provider packs. `IReadStore` and `IWriteStore` are not backed directly by Cassandra in this slice.
+The slice is intentionally narrow but no longer staged-only: it proves the companion-pack pattern extends cleanly to Cassandra, ships an idempotent outbox and inbox, adds a provider-native `IEventDispatchStore` path for staged-event dispatch, and exposes the same runtime introspection surfaces as the other provider packs. `IReadStore` and `IWriteStore` are not backed directly by Cassandra in this slice.
 
 ## Registration
 
@@ -67,6 +72,7 @@ engine.AddCassandraData(
 | `Port` | `int` | `9042` | Cassandra native transport port |
 | `Keyspace` | `string` | `"cephalon"` | Target Cassandra keyspace |
 | `TablePrefix` | `string` | `"cephalon_"` | Optional prefix for all Cephalon-managed table names |
+| `PendingDispatchShardCount` | `int` | `16` | Deterministic shard count used by the pending-dispatch eligibility table when `RegisterOutbox` is enabled |
 | `RegisterOutbox` | `bool` | `false` | Register `IOutbox` backed by the `{TablePrefix}outbox_messages` table |
 | `RegisterInbox` | `bool` | `false` | Register `IInbox` backed by the `{TablePrefix}inbox_receipts` table |
 
@@ -85,11 +91,52 @@ The table name is `{TablePrefix}outbox_messages` (default: `cephalon_outbox_mess
 | `tenant_id` | `text` | Optional multi-tenancy discriminator |
 | `occurred_at_utc` | `timestamp` | UTC time at which the domain event or message occurred |
 | `created_at_utc` | `timestamp` | UTC wall-clock time when the row was staged |
+| `dispatched_at_utc` | `timestamp` | UTC time when the message was durably marked as dispatched; null means still pending |
 | `dispatch_attempt_count` | `int` | Incremented on each dispatch attempt; starts at 0 |
+| `next_attempt_at_utc` | `timestamp` | UTC time when the message next becomes eligible for dispatch; defaults to `created_at_utc` on first stage |
 | `headers_json` | `text` | `System.Text.Json`-serialized headers dictionary |
 | `metadata_json` | `text` | `System.Text.Json`-serialized metadata dictionary |
 
 **Idempotency**: `EnqueueAsync` issues `INSERT ... IF NOT EXISTS`. If `[applied]=false` (row already exists for that `message_id`), the duplicate is silently ignored — calling `EnqueueAsync` twice for the same message id is safe.
+
+## Pending-dispatch table schema (`{TablePrefix}outbox_pending_dispatch`)
+
+The table name is `{TablePrefix}outbox_pending_dispatch` (default: `cephalon_outbox_pending_dispatch`).
+
+| Column | CQL type | Notes |
+|--------|----------|-------|
+| `shard_id` | `int` | Partition key — deterministic shard derived from `message_id` and `PendingDispatchShardCount` |
+| `eligible_at_utc` | `timestamp` | Clustering key — next time the message becomes eligible for dispatch |
+| `message_id` | `text` | Clustering key — stable logical message identifier |
+| `channel_id` | `text` | Channel the message targets |
+| `message_type` | `text` | Fully qualified CLR message type name |
+| `payload` | `text` | `System.Text.Json`-serialized message body |
+| `content_type` | `text` | MIME type of the payload |
+| `correlation_id` | `text` | Optional causality tracking identifier |
+| `tenant_id` | `text` | Optional multi-tenancy discriminator |
+| `occurred_at_utc` | `timestamp` | UTC time at which the domain event or message occurred |
+| `created_at_utc` | `timestamp` | UTC wall-clock time when the row was staged |
+| `dispatch_attempt_count` | `int` | Latest durable dispatch-attempt count for this pending row |
+| `headers_json` | `text` | `System.Text.Json`-serialized headers dictionary |
+| `metadata_json` | `text` | `System.Text.Json`-serialized metadata dictionary |
+
+This table is the Cassandra-native pending-dispatch index used by `IEventDispatchStore`. Reads fan out across the configured shard set, merge eligible rows in memory, and then re-check the authoritative outbox row before returning a dispatch item. That design keeps the provider truthful:
+
+- it can answer pending-dispatch reads without `ALLOW FILTERING`
+- it does not claim a global total order
+- it stays consumer-managed until another runtime such as Wolverine deliberately owns the loop
+
+## Dispatch-store semantics
+
+When `RegisterOutbox` is enabled, `Cephalon.Data.Cassandra` now also registers `IEventDispatchStore` for the `cassandra-outbox` descriptor.
+
+The durable behavior is intentionally bounded:
+
+- `ReadPendingAsync` scans each pending shard for `eligible_at_utc <= now`, merges the earliest due rows, and re-validates each candidate against the authoritative `outbox_messages` row before returning it
+- `ApplyReportAsync` updates the authoritative outbox row and the sharded pending-dispatch index together through the Cassandra storage model already owned by this pack
+- success and skip outcomes remove the pending-dispatch row
+- failed and retry-scheduled outcomes keep the message pending and move its `eligible_at_utc` forward when `nextRetryAtUtc` metadata is supplied
+- started outcomes remain consumer-managed only; the pack does not claim leases, exclusive claims, or scheduler-grade queue ownership
 
 ## Inbox table schema (`{TablePrefix}inbox_receipts`)
 
@@ -151,6 +198,7 @@ When the `event-driven-integration` technology is active, the following entries 
 This pack intentionally does not claim:
 
 - batch dispatch or broker retry scheduling
+- global total ordering across all pending dispatches
 - TTL-based expiry of outbox or inbox rows
 - multi-datacenter topology configuration (replication factor, consistency level overrides)
 - token-aware load balancing policy configuration

@@ -230,7 +230,7 @@ Current standing examples from this collaboration:
 - the showcase sample now wires `Cephalon.Eventing.Wolverine` directly so the official `wolverine-managed` dispatch path stays visible through `/engine/event-dispatch-runtimes`, `/engine/event-dispatches`, and the runtime snapshot without custom sample-only operator code
 - treat `EventDispatchRuntimeDescriptor.Summary` as the canonical per-runtime aggregate operator answer; keep `/engine/event-dispatches` as the per-outbox detail surface, and prefer pack-specific runtime surfaces such as Wolverine to consume the canonical summary instead of re-aggregating dispatch state independently
 - when a provider pack truthfully stages durable outbox messages and can persist dispatch outcomes, register `IEventDispatchStore` alongside `IOutbox` so consumer-managed and adapter-managed dispatch can reuse the same provider contract without host-specific glue
-- current provider-native dispatch-store coverage now includes Entity Framework, MongoDB, Redis, Elasticsearch, OpenSearch, Neo4j, Qdrant, and NATS; keep Cassandra and ClickHouse as explicit storage-model follow-through work instead of forcing parity claims before their durable query/update semantics are truthful
+- current provider-native dispatch-store coverage now includes Entity Framework, MongoDB, Redis, Elasticsearch, OpenSearch, Neo4j, Qdrant, NATS, and Cassandra; Cassandra now uses a deterministic message-sharded pending-dispatch index so wide-column workloads can answer due-event queries truthfully without pretending to be a globally ordered queue, while ClickHouse remains the one deliberate storage-model follow-through gap
 
 ## Working assumptions for contributors
 

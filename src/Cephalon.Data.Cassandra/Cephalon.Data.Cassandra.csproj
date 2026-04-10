@@ -15,5 +15,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Cephalon.Data\Cephalon.Data.csproj" />
     <ProjectReference Include="..\Cephalon.Engine\Cephalon.Engine.csproj" />
+    <ProjectReference Include="..\Cephalon.Eventing\Cephalon.Eventing.csproj" />
   </ItemGroup>
 </Project>

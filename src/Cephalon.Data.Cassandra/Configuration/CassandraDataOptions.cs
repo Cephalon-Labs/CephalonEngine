@@ -23,6 +23,12 @@ public sealed class CassandraDataOptions
     /// <summary>Optional prefix applied to all managed table names (e.g. <c>"cephalon_"</c>).</summary>
     public string TablePrefix { get; set; } = "cephalon_";
 
+    /// <summary>
+    /// Gets or sets the number of deterministic shards used by the pending-dispatch eligibility table.
+    /// Defaults to <c>16</c> and applies only when <see cref="RegisterOutbox" /> is enabled.
+    /// </summary>
+    public int PendingDispatchShardCount { get; set; } = 16;
+
     /// <summary>When <see langword="true" />, registers <see cref="Cephalon.Abstractions.Data.IOutbox" /> backed by a Cassandra wide-column table.</summary>
     public bool RegisterOutbox { get; set; }
 

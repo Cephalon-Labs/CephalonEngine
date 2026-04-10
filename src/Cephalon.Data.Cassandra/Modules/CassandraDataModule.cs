@@ -5,6 +5,7 @@ using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.Cassandra.Configuration;
 using Cephalon.Data.Cassandra.Services;
+using Cephalon.Eventing.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -44,6 +45,11 @@ internal sealed class CassandraDataModule(CassandraDataOptions options) : Module
             {
                 var cluster = serviceProvider.GetRequiredService<ICluster>();
                 return new CassandraOutbox(cluster, options);
+            });
+            services.TryAddScoped<IEventDispatchStore>(serviceProvider =>
+            {
+                var cluster = serviceProvider.GetRequiredService<ICluster>();
+                return new CassandraEventDispatchStore(cluster, options);
             });
         }
 
@@ -155,7 +161,10 @@ internal sealed class CassandraDataModule(CassandraDataOptions options) : Module
                 ["pack"] = "Cephalon.Data.Cassandra",
                 ["keyspace"] = options.Keyspace,
                 ["table"] = $"{options.TablePrefix}outbox_messages",
+                ["pendingDispatchTable"] = $"{options.TablePrefix}outbox_pending_dispatch",
+                ["pendingDispatchShardCount"] = options.PendingDispatchShardCount.ToString(System.Globalization.CultureInfo.InvariantCulture),
                 ["idempotency"] = "lwt-if-not-exists",
+                ["dispatchEligibilityIndex"] = "message-sharded-eligibility",
                 ["dispatchRuntime"] = "not-configured",
                 ["channelMode"] = "dynamic"
             }));
