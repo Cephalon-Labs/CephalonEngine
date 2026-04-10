@@ -19,12 +19,14 @@ public sealed class DatabaseTargetSettings
         string? provider = null,
         string? connectionStringName = null,
         string? connectionString = null,
+        string? useRole = null,
         string? schema = null,
         DatabaseRuntimeSettings? runtime = null)
     {
         Provider = Normalize(provider);
         ConnectionStringName = Normalize(connectionStringName);
         ConnectionString = Normalize(connectionString);
+        UseRole = Normalize(useRole);
         Schema = Normalize(schema);
         Runtime = runtime ?? DatabaseRuntimeSettings.Empty;
 
@@ -32,6 +34,13 @@ public sealed class DatabaseTargetSettings
         {
             throw new InvalidOperationException(
                 "Database target settings must choose either ConnectionStringName or ConnectionString, but not both.");
+        }
+
+        if (UseRole is not null &&
+            (Provider is not null || ConnectionStringName is not null || ConnectionString is not null))
+        {
+            throw new InvalidOperationException(
+                "Database target settings must choose either UseRole or direct provider and connection settings, but not both.");
         }
     }
 
@@ -51,6 +60,11 @@ public sealed class DatabaseTargetSettings
     public string? ConnectionString { get; }
 
     /// <summary>
+    /// Gets the referenced concrete database role used to supply the physical connection target.
+    /// </summary>
+    public string? UseRole { get; }
+
+    /// <summary>
     /// Gets the selected schema override.
     /// </summary>
     public string? Schema { get; }
@@ -67,6 +81,7 @@ public sealed class DatabaseTargetSettings
         Provider is not null ||
         ConnectionStringName is not null ||
         ConnectionString is not null ||
+        UseRole is not null ||
         Schema is not null ||
         Runtime.HasValues;
 
@@ -84,6 +99,7 @@ public sealed class DatabaseTargetSettings
             provider: section["Provider"],
             connectionStringName: section["ConnectionStringName"],
             connectionString: section["ConnectionString"],
+            useRole: section["UseRole"],
             schema: section["Schema"],
             runtime: DatabaseRuntimeSettings.FromSection(section.GetSection("Runtime")));
     }

@@ -73,6 +73,7 @@ internal static class AppProfileSelectionValidator
                 "An outbox database target cannot be configured when outbox support is explicitly disabled.");
         }
 
+        ValidateDatabaseRoleReferences(databases);
         ValidateAuditHistorySelection(audit, databases);
 
         if (databases.Migrations.ExitAfterApply == true && databases.Migrations.ApplyOnStartup != true)
@@ -132,12 +133,70 @@ internal static class AppProfileSelectionValidator
 
     }
 
+    private static void ValidateDatabaseRoleReferences(
+        DatabaseTopologySelection databases)
+    {
+        ArgumentNullException.ThrowIfNull(databases);
+
+        ValidateDatabaseRoleReference("write", databases.Write, databases, allowUseRole: false);
+        ValidateDatabaseRoleReference("read", databases.Read, databases, allowUseRole: false);
+        ValidateDatabaseRoleReference("outbox", databases.Outbox, databases, allowUseRole: true);
+        ValidateDatabaseRoleReference("history", databases.History, databases, allowUseRole: true);
+    }
+
+    private static void ValidateDatabaseRoleReference(
+        string roleId,
+        DatabaseTargetSelection target,
+        DatabaseTopologySelection databases,
+        bool allowUseRole)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(roleId);
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(databases);
+
+        if (string.IsNullOrWhiteSpace(target.UseRole))
+        {
+            return;
+        }
+
+        var sectionPath = $"{EngineSettings.SectionName}:Databases:{ToSectionName(roleId)}";
+        if (!allowUseRole)
+        {
+            throw new InvalidOperationException(
+                $"{sectionPath}:UseRole is not supported. Only the Outbox and History database targets can reference another role in the current contract.");
+        }
+
+        var normalizedReference = NormalizeKey(target.UseRole);
+        if (normalizedReference != "WRITE")
+        {
+            throw new InvalidOperationException(
+                $"{sectionPath}:UseRole selected unsupported database role '{target.UseRole}'. Only 'write' is allowed in the current contract.");
+        }
+
+        if (!databases.Write.HasValues)
+        {
+            throw new InvalidOperationException(
+                $"{sectionPath}:UseRole selected the 'write' database role, but no write database target is configured.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(databases.Write.UseRole))
+        {
+            throw new InvalidOperationException(
+                $"{sectionPath}:UseRole cannot reference Engine:Databases:Write because the write database target must remain a concrete root role.");
+        }
+    }
+
     private static string NormalizeKey(string value)
     {
         return new string(value
             .Where(char.IsLetterOrDigit)
             .Select(char.ToUpperInvariant)
             .ToArray());
+    }
+
+    private static string ToSectionName(string role)
+    {
+        return char.ToUpperInvariant(role[0]) + role[1..];
     }
 
     private static void ValidateMigrationTarget(

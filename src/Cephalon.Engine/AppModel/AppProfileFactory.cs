@@ -109,6 +109,7 @@ public static class AppProfileFactory
             provider: settings.Provider,
             connectionStringName: settings.ConnectionStringName,
             connectionString: settings.ConnectionString,
+            useRole: settings.UseRole,
             schema: settings.Schema,
             runtime: ToDatabaseRuntimeSelection(settings.Runtime));
     }

@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.AppModel;
+using Cephalon.Engine.AppModel;
 using Cephalon.Engine.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -100,13 +101,13 @@ public static class EntityFrameworkDatabaseRoleResolver
 
         var normalizedRoleId = requestedRoleId.Trim();
         var appProfile = serviceProvider.GetRequiredService<AppProfile>();
-        var (resolvedRoleId, target) = ResolveTarget(appProfile.Databases, normalizedRoleId);
+        var resolution = DatabaseTopologyRoleResolver.Resolve(appProfile.Databases, normalizedRoleId);
 
         return ResolveRole(
             serviceProvider,
             requestedRoleId: normalizedRoleId,
-            resolvedRoleId: resolvedRoleId,
-            target: target,
+            resolvedRoleId: resolution.ResolvedRoleId,
+            target: resolution.EffectiveTarget,
             sharedRuntime: appProfile.Databases.Runtime);
     }
 
@@ -164,40 +165,6 @@ public static class EntityFrameworkDatabaseRoleResolver
             connectionString: connectionString);
     }
 
-    private static (string ResolvedRoleId, DatabaseTargetSelection Target) ResolveTarget(
-        DatabaseTopologySelection databases,
-        string requestedRoleId)
-    {
-        ArgumentNullException.ThrowIfNull(databases);
-
-        var normalizedRole = NormalizeRoleKey(requestedRoleId);
-
-        if (normalizedRole == "WRITE")
-        {
-            return ("write", databases.Write);
-        }
-
-        if (normalizedRole == "READ")
-        {
-            return ("read", databases.Read);
-        }
-
-        if (normalizedRole == "OUTBOX")
-        {
-            return databases.Outbox.HasValues
-                ? ("outbox", databases.Outbox)
-                : ("write", databases.Write);
-        }
-
-        if (normalizedRole == "HISTORY")
-        {
-            return ("history", databases.History);
-        }
-
-        throw new InvalidOperationException(
-            $"Cephalon.Data.EntityFramework does not support topology role '{requestedRoleId}'. Supported roles: Write, Read, Outbox, History.");
-    }
-
     private static DatabaseRuntimeSelection MergeRuntime(
         DatabaseRuntimeSelection sharedRuntime,
         DatabaseRuntimeSelection roleRuntime)
@@ -213,14 +180,6 @@ public static class EntityFrameworkDatabaseRoleResolver
             maxRetryDelaySeconds: roleRuntime.MaxRetryDelaySeconds ?? sharedRuntime.MaxRetryDelaySeconds,
             commandTimeoutSeconds: roleRuntime.CommandTimeoutSeconds ?? sharedRuntime.CommandTimeoutSeconds,
             maxBatchSize: roleRuntime.MaxBatchSize ?? sharedRuntime.MaxBatchSize);
-    }
-
-    private static string NormalizeRoleKey(string value)
-    {
-        return new string(value
-            .Where(char.IsLetterOrDigit)
-            .Select(char.ToUpperInvariant)
-            .ToArray());
     }
 
     private static string ToSectionName(string role)

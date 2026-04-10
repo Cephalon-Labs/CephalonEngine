@@ -1315,12 +1315,11 @@ public sealed class EngineBuilderTests
                     provider: "PostgreSql",
                     connectionStringName: "ReadDb"),
                 outbox: new DatabaseTargetSettings(
-                    provider: "PostgreSql",
-                    connectionStringName: "WriteDb",
+                    useRole: "write",
                     schema: "outbox01"),
                 history: new DatabaseTargetSettings(
-                    provider: "PostgreSql",
-                    connectionStringName: "HistoryDb"),
+                    useRole: "write",
+                    schema: "audit01"),
                 migrations: new DatabaseMigrationsSettings(
                     applyOnStartup: true,
                     targets: ["write", "outbox", "history"])),
@@ -1359,8 +1358,10 @@ public sealed class EngineBuilderTests
         Assert.Equal("WriteDb", appProfile.Databases.Write.ConnectionStringName);
         Assert.False(appProfile.Databases.Write.Runtime.EnableRetryOnFailure);
         Assert.Equal("ReadDb", appProfile.Databases.Read.ConnectionStringName);
+        Assert.Equal("write", appProfile.Databases.Outbox.UseRole);
         Assert.Equal("outbox01", appProfile.Databases.Outbox.Schema);
-        Assert.Equal("HistoryDb", appProfile.Databases.History.ConnectionStringName);
+        Assert.Equal("write", appProfile.Databases.History.UseRole);
+        Assert.Equal("audit01", appProfile.Databases.History.Schema);
         Assert.True(appProfile.Databases.Migrations.ApplyOnStartup);
         Assert.Equal(["history", "outbox", "write"], appProfile.Databases.Migrations.Targets);
         Assert.True(appProfile.Identity.Enabled);
@@ -1419,6 +1420,46 @@ public sealed class EngineBuilderTests
         var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
 
         Assert.Contains("outbox", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildThrowsWhenWriteDatabaseRoleUsesUseRole()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularMonolith",
+            databases: new DatabaseTopologySettings(
+                write: new DatabaseTargetSettings(useRole: "write"))));
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("Write", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("UseRole", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildThrowsWhenHistoryDatabaseRoleUsesUnsupportedRoleReference()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularMonolith",
+            patterns: ["Outbox"],
+            databases: new DatabaseTopologySettings(
+                write: new DatabaseTargetSettings(
+                    provider: "PostgreSql",
+                    connectionStringName: "WriteDb"),
+                history: new DatabaseTargetSettings(useRole: "read")),
+            audit: new AuditSettings(
+                enabled: true,
+                history: new AuditHistorySettings(
+                    enabled: true,
+                    provider: "entity-framework"))));
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("History", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("UseRole", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("write", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

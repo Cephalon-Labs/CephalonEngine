@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
 using Cephalon.Audit.EntityFramework.Configuration;
+using Cephalon.Engine.AppModel;
 using Cephalon.Engine.Configuration;
 using System.Globalization;
 
@@ -21,7 +22,8 @@ internal sealed class EntityFrameworkAuditHistoryStoreRuntimeContributor<TDbCont
         }
 
         var databaseRole = EntityFrameworkAuditHistorySelection.ResolveDatabaseRole(appProfile);
-        var target = ResolveTarget(appProfile.Databases, databaseRole);
+        var resolution = DatabaseTopologyRoleResolver.Resolve(appProfile.Databases, databaseRole);
+        var target = resolution.EffectiveTarget;
         if (!target.HasValues)
         {
             return [];
@@ -35,12 +37,20 @@ internal sealed class EntityFrameworkAuditHistoryStoreRuntimeContributor<TDbCont
                 ? "ndjson-stream"
                 : "disabled",
             ["durability"] = "durable",
-            ["databaseRole"] = databaseRole,
+            ["databaseRole"] = resolution.RequestedRoleId,
+            ["resolvedDatabaseRole"] = resolution.ResolvedRoleId,
+            ["resolutionMode"] = resolution.ResolutionMode,
+            ["usesRoleReference"] = resolution.UsesRoleReference ? "true" : "false",
             ["databaseProvider"] = target.Provider ?? "unknown",
             ["connectionMode"] = GetConnectionMode(target),
             ["dbContext"] = GetTypeName(options.DbContextType),
             ["topologySource"] = options.UsesEngineDatabaseTopology ? "engine-databases" : "registration-callbacks"
         };
+
+        if (resolution.UseRole is not null)
+        {
+            metadata["useRole"] = resolution.UseRole;
+        }
 
         if (appProfile.Audit.History.Export.Enabled == true &&
             appProfile.Audit.History.Export.MaxEntries is { } maxEntries)
@@ -74,22 +84,6 @@ internal sealed class EntityFrameworkAuditHistoryStoreRuntimeContributor<TDbCont
         ];
     }
 
-    private static DatabaseTargetSelection ResolveTarget(
-        DatabaseTopologySelection databases,
-        string databaseRole)
-    {
-        var normalizedRole = NormalizeRoleKey(databaseRole);
-
-        return normalizedRole switch
-        {
-            "WRITE" => databases.Write,
-            "READ" => databases.Read,
-            "OUTBOX" => databases.Outbox,
-            "HISTORY" => databases.History,
-            _ => DatabaseTargetSelection.Empty
-        };
-    }
-
     private static string GetConnectionMode(DatabaseTargetSelection target)
     {
         if (target.ConnectionStringName is not null)
@@ -108,14 +102,6 @@ internal sealed class EntityFrameworkAuditHistoryStoreRuntimeContributor<TDbCont
     private static string GetTypeName(Type type)
     {
         return type.FullName ?? type.Name;
-    }
-
-    private static string NormalizeRoleKey(string value)
-    {
-        return new string(value
-            .Where(char.IsLetterOrDigit)
-            .Select(char.ToUpperInvariant)
-            .ToArray());
     }
 
     private static void ApplyRetentionMetadata(

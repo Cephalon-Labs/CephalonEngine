@@ -59,6 +59,10 @@
         "Provider": "PostgreSql",
         "ConnectionStringName": "ReadDb"
       },
+      "Outbox": {
+        "UseRole": "write",
+        "Schema": "outbox01"
+      },
       "History": {
         "Provider": "PostgreSql",
         "ConnectionStringName": "HistoryDb"

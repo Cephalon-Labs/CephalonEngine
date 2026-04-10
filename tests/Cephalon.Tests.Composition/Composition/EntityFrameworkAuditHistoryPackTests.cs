@@ -66,6 +66,69 @@ public sealed class EntityFrameworkAuditHistoryPackTests
     }
 
     [Fact]
+    public async Task AddEntityFrameworkAuditHistoryCanResolveHistoryRoleReferencesThroughUseRole()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:WriteDb"] = "Host=localhost;Database=cephalon_write",
+                ["Engine:Audit:Enabled"] = "true",
+                ["Engine:Audit:History:Enabled"] = "true",
+                ["Engine:Audit:History:Provider"] = "entity-framework",
+                ["Engine:Audit:History:DatabaseRole"] = "history",
+                ["Engine:Audit:EnableInMemoryWriter"] = "false",
+                ["Engine:Databases:Write:Provider"] = "PostgreSql",
+                ["Engine:Databases:Write:ConnectionStringName"] = "WriteDb",
+                ["Engine:Databases:Write:Runtime:CommandTimeoutSeconds"] = "30",
+                ["Engine:Databases:History:UseRole"] = "write",
+                ["Engine:Databases:History:Schema"] = "audit01",
+                ["Engine:Databases:History:Runtime:CommandTimeoutSeconds"] = "120",
+                ["Engine:Databases:Migrations:ApplyOnStartup"] = "true",
+                ["Engine:Databases:Migrations:Targets:0"] = "history"
+            })
+            .Build();
+        var capturedRoles = new List<EntityFrameworkDatabaseRoleContext>();
+        var databaseName = $"cephalon-audit-history-userole-{Guid.NewGuid():N}";
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(EngineSettings.FromConfiguration(configuration));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddAudit();
+            engine.AddEntityFrameworkAuditHistory<TestAuditHistoryDbContext>((role, options) =>
+            {
+                capturedRoles.Add(role);
+                options.UseInMemoryDatabase(databaseName);
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var hostedService = Assert.Single(
+            provider.GetServices<IHostedService>(),
+            service => service is global::Cephalon.Data.EntityFramework.Services.EntityFrameworkDatabaseMigrationHostedService);
+
+        await hostedService.StartAsync(CancellationToken.None);
+
+        var role = Assert.Single(capturedRoles);
+        var auditStore = Assert.Single(provider.GetRequiredService<IAuditStoreCatalog>().AuditStores);
+
+        Assert.Equal("history", role.Role);
+        Assert.Equal("write", role.ResolvedRoleId);
+        Assert.Equal("WriteDb", role.ConnectionStringName);
+        Assert.Equal("audit01", role.Schema);
+        Assert.Equal(120, role.Runtime.CommandTimeoutSeconds);
+
+        Assert.Equal("history", auditStore.Metadata["databaseRole"]);
+        Assert.Equal("write", auditStore.Metadata["resolvedDatabaseRole"]);
+        Assert.Equal("role-reference", auditStore.Metadata["resolutionMode"]);
+        Assert.Equal("write", auditStore.Metadata["useRole"]);
+        Assert.Equal("true", auditStore.Metadata["usesRoleReference"]);
+        Assert.Equal("audit01", auditStore.Metadata["schema"]);
+        Assert.Equal("WriteDb", auditStore.Metadata["connectionStringName"]);
+    }
+
+    [Fact]
     public async Task AddEntityFrameworkAuditHistoryPersistsAuditEntriesAndPublishesDurableStoreMetadata()
     {
         var configuration = new ConfigurationBuilder()
@@ -126,6 +189,8 @@ public sealed class EntityFrameworkAuditHistoryPackTests
         Assert.Equal("entity-framework", auditStore.Provider);
         Assert.Equal("transactional-table", auditStore.Mode);
         Assert.Equal("history", auditStore.Metadata["databaseRole"]);
+        Assert.Equal("history", auditStore.Metadata["resolvedDatabaseRole"]);
+        Assert.Equal("direct", auditStore.Metadata["resolutionMode"]);
         Assert.Equal("filtered-page-reader", auditStore.Metadata["queryMode"]);
         Assert.Equal("ndjson-stream", auditStore.Metadata["exportMode"]);
         Assert.Equal("150", auditStore.Metadata["exportMaxEntries"]);

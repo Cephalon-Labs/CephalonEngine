@@ -39,11 +39,10 @@ public sealed class EngineSettingsTests
                 ["Engine:Databases:Write:Runtime:EnableRetryOnFailure"] = "false",
                 ["Engine:Databases:Read:Provider"] = "PostgreSql",
                 ["Engine:Databases:Read:ConnectionString"] = "Host=localhost;Database=cephalon_read",
-                ["Engine:Databases:Outbox:Provider"] = "PostgreSql",
-                ["Engine:Databases:Outbox:ConnectionStringName"] = "WriteDb",
+                ["Engine:Databases:Outbox:UseRole"] = "write",
                 ["Engine:Databases:Outbox:Schema"] = "outbox01",
-                ["Engine:Databases:History:Provider"] = "PostgreSql",
-                ["Engine:Databases:History:ConnectionStringName"] = "HistoryDb",
+                ["Engine:Databases:History:UseRole"] = "write",
+                ["Engine:Databases:History:Schema"] = "audit01",
                 ["Engine:Databases:Migrations:ApplyOnStartup"] = "true",
                 ["Engine:Databases:Migrations:ExitAfterApply"] = "false",
                 ["Engine:Databases:Migrations:Targets:0"] = "write",
@@ -82,8 +81,10 @@ public sealed class EngineSettingsTests
         Assert.Equal("WriteDb", settings.Databases.Write.ConnectionStringName);
         Assert.False(settings.Databases.Write.Runtime.EnableRetryOnFailure);
         Assert.Equal("Host=localhost;Database=cephalon_read", settings.Databases.Read.ConnectionString);
+        Assert.Equal("write", settings.Databases.Outbox.UseRole);
         Assert.Equal("outbox01", settings.Databases.Outbox.Schema);
-        Assert.Equal("HistoryDb", settings.Databases.History.ConnectionStringName);
+        Assert.Equal("write", settings.Databases.History.UseRole);
+        Assert.Equal("audit01", settings.Databases.History.Schema);
         Assert.True(settings.Databases.Migrations.ApplyOnStartup);
         Assert.False(settings.Databases.Migrations.ExitAfterApply);
         Assert.Equal(["history", "outbox", "write"], settings.Databases.Migrations.Targets);
@@ -105,5 +106,22 @@ public sealed class EngineSettingsTests
 
         Assert.Contains("ConnectionStringName", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("ConnectionString", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void FromConfigurationThrowsWhenDatabaseTargetUsesUseRoleAndDirectProviderSettings()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Engine:Databases:History:Provider"] = "PostgreSql",
+                ["Engine:Databases:History:UseRole"] = "write"
+            })
+            .Build();
+
+        var exception = Assert.Throws<InvalidOperationException>(() => EngineSettings.FromConfiguration(configuration));
+
+        Assert.Contains("UseRole", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("provider", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 }

@@ -20,12 +20,14 @@ public sealed class DatabaseTargetSelection
         string? provider = null,
         string? connectionStringName = null,
         string? connectionString = null,
+        string? useRole = null,
         string? schema = null,
         DatabaseRuntimeSelection? runtime = null)
     {
         Provider = string.IsNullOrWhiteSpace(provider) ? null : provider.Trim();
         ConnectionStringName = string.IsNullOrWhiteSpace(connectionStringName) ? null : connectionStringName.Trim();
         ConnectionString = string.IsNullOrWhiteSpace(connectionString) ? null : connectionString.Trim();
+        UseRole = string.IsNullOrWhiteSpace(useRole) ? null : useRole.Trim();
         Schema = string.IsNullOrWhiteSpace(schema) ? null : schema.Trim();
         Runtime = runtime ?? DatabaseRuntimeSelection.Empty;
 
@@ -33,6 +35,13 @@ public sealed class DatabaseTargetSelection
         {
             throw new InvalidOperationException(
                 "Database target selection must choose either ConnectionStringName or ConnectionString, but not both.");
+        }
+
+        if (UseRole is not null &&
+            (Provider is not null || ConnectionStringName is not null || ConnectionString is not null))
+        {
+            throw new InvalidOperationException(
+                "Database target selection must choose either UseRole or direct provider and connection settings, but not both.");
         }
     }
 
@@ -52,6 +61,11 @@ public sealed class DatabaseTargetSelection
     public string? ConnectionString { get; }
 
     /// <summary>
+    /// Gets the referenced concrete database role that supplies the physical connection target.
+    /// </summary>
+    public string? UseRole { get; }
+
+    /// <summary>
     /// Gets the schema override selected for this database role.
     /// </summary>
     public string? Schema { get; }
@@ -68,6 +82,7 @@ public sealed class DatabaseTargetSelection
         Provider is not null ||
         ConnectionStringName is not null ||
         ConnectionString is not null ||
+        UseRole is not null ||
         Schema is not null ||
         Runtime.HasValues;
 }

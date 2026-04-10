@@ -11,6 +11,7 @@ That baseline currently includes:
 - `Engine:Databases` as the physical-topology section under `Engine`
 - shared runtime tuning through `Engine:Databases:Runtime`
 - first-class role slots for `Write`, `Read`, `Outbox`, and `History`
+- explicit dependent role references through `UseRole` for `Outbox` and `History`
 - nested migration policy through `Engine:Databases:Migrations`
 - projection into `EngineSettings`
 - projection into `AppProfile.Databases`
@@ -36,7 +37,7 @@ The current shape is:
 - `History`
 - `Migrations`
 
-Each target currently carries its own provider plus either `ConnectionStringName` or `ConnectionString`, along with optional per-role runtime overrides.
+`Write` and `Read` currently stay concrete root targets. `Outbox` and `History` can either define their own provider plus `ConnectionStringName` / `ConnectionString`, or explicitly reuse the concrete `write` target through `UseRole` while still layering local `Schema` and `Runtime` overrides.
 
 That is not yet the final long-term shape, but it is now a truthful engine contract that also owns the first durable audit-history route set. The audit-history path defaults to the `History` role, but it can now target any supported engine-owned role through `Engine:Audit:History:DatabaseRole`, expose operator answers through `/engine/audit-history`, expose bounded NDJSON exports through `/engine/audit-history/export`, and drive retention through `Engine:Audit:History:Retention`.
 
@@ -48,6 +49,9 @@ The shipped baseline currently validates:
 - `Outbox` requires the `outbox` pattern
 - `Read` cannot be configured when `Engine:Data:ReadWriteSplit` is explicitly disabled
 - `Outbox` cannot be configured when `Engine:Data:Outbox:Enabled` is explicitly disabled
+- `Write` and `Read` cannot use `UseRole`
+- `Outbox` and `History` can use `UseRole`, but only to reference the concrete `write` role in the current contract
+- `UseRole` cannot be combined with `Provider`, `ConnectionStringName`, or `ConnectionString`
 - `ExitAfterApply` requires `ApplyOnStartup = true`
 - migration targets must be one of `Write`, `Read`, `Outbox`, or `History`
 - migration targets must reference a configured role
@@ -127,8 +131,7 @@ That keeps database-topology choices explicit and operator-visible even before d
         "ConnectionStringName": "ReadDb"
       },
       "Outbox": {
-        "Provider": "PostgreSql",
-        "ConnectionStringName": "WriteDb",
+        "UseRole": "write",
         "Schema": "outbox01"
       },
       "History": {
@@ -150,8 +153,8 @@ That keeps database-topology choices explicit and operator-visible even before d
 The engine now owns the topology contract, but several follow-through slices are still intentionally separate:
 
 - provider packs beyond `Cephalon.Data.EntityFramework` do not yet consume `Engine:Databases` automatically as their only runtime-registration source
-- `Outbox` and `History` still use full target blocks instead of role references such as `UseRole`
-- the shipped Entity Framework baseline does not yet expose role references such as `UseRole` for dependent targets that intentionally share one physical database target
+- the current `UseRole` contract is intentionally narrow: only `Outbox` and `History` can reference `write`, and the engine does not yet expose arbitrary role graphs or chained references
+- dedicated relational-role sharing still needs truthful migration/bootstrap guidance when multiple `DbContext` models point at the same physical database
 - there is not yet an engine-owned bundle/script orchestration path for deploy-time database changes
 - replay UX and richer export formats or delivery automation for durable audit history are not yet shipped
 - Cephalon does not yet expose a richer runtime catalog with role health, resolved provider metadata, or migration-execution state beyond the current topology snapshot and audit-store descriptor set
@@ -161,7 +164,7 @@ The engine now owns the topology contract, but several follow-through slices are
 The next follow-through should deepen this baseline instead of replacing it:
 
 1. expand provider-pack consumption beyond `Cephalon.Data.EntityFramework` and keep the role contract consistent across companion packs
-2. add role references so dependent stores do not duplicate provider and connection settings
+2. broaden role references beyond the current one-step dependent `UseRole -> write` contract only when the runtime and migration story stay explicit
 3. deepen migration orchestration beyond the shipped Entity Framework startup hosted service while keeping production guidance bundle- and script-first
 4. deepen durable audit history with replay flows, richer export formats, and additional provider packs on top of the shipped reader/exporter plus retention baseline
 

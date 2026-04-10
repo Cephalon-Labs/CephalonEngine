@@ -82,8 +82,11 @@ public sealed class EntityFrameworkDataPackTests
 
         var dataManagementSurfaces = technologyCatalog.GetByTechnology("data-management");
         var databaseRoles = Assert.Single(dataManagementSurfaces, surface => surface.SurfaceId == "database-roles");
-        Assert.Contains(databaseRoles.Entries, entry => entry.Id == "write");
+        var writeEntry = Assert.Single(databaseRoles.Entries, entry => entry.Id == "write");
         var migrations = Assert.Single(databaseRoles.Entries, entry => entry.Id == "migrations");
+        Assert.Equal("write", writeEntry.Metadata["requestedRole"]);
+        Assert.Equal("write", writeEntry.Metadata["resolvedRole"]);
+        Assert.Equal("direct", writeEntry.Metadata["resolutionMode"]);
         Assert.Equal("write", migrations.Metadata["configuredTargets"]);
         Assert.Equal("write", migrations.Metadata["supportedTargets"]);
     }
@@ -152,6 +155,64 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("WriteDb", writeRole.ConnectionStringName);
         Assert.True(readRole.Runtime.EnableDetailedErrors);
         Assert.True(writeRole.Runtime.EnableDetailedErrors);
+    }
+
+    [Fact]
+    public void TopologyBackedEntityFrameworkOutboxCanReferenceTheWriteRoleThroughUseRole()
+    {
+        var databaseName = $"cephalon-data-ef-outbox-userole-{Guid.NewGuid():N}";
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:WriteDb"] = "Host=localhost;Database=cephalon_write",
+                ["Engine:Patterns:0"] = "CQRS",
+                ["Engine:Patterns:1"] = "Outbox",
+                ["Engine:Data:Outbox:Enabled"] = "true",
+                ["Engine:Databases:Write:Provider"] = "PostgreSql",
+                ["Engine:Databases:Write:ConnectionStringName"] = "WriteDb",
+                ["Engine:Databases:Write:Runtime:CommandTimeoutSeconds"] = "30",
+                ["Engine:Databases:Outbox:UseRole"] = "write",
+                ["Engine:Databases:Outbox:Schema"] = "outbox01",
+                ["Engine:Databases:Outbox:Runtime:CommandTimeoutSeconds"] = "90"
+            })
+            .Build();
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(EngineSettings.FromConfiguration(configuration));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new EntityFrameworkOutboxTestModule());
+            engine.AddData();
+            engine.AddEntityFrameworkData<OutboxCatalogDbContext>(
+                configureDbContext: (_, options) => options.UseInMemoryDatabase(databaseName),
+                configure: options => options.RegisterOutbox = true);
+        });
+
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var outboxRole = EntityFrameworkDatabaseRoleResolver.ResolveOutbox(scope.ServiceProvider);
+        var technologyCatalog = provider.GetRequiredService<global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeCatalog>();
+        var databaseRoles = Assert.Single(
+            technologyCatalog.GetByTechnology("data-management"),
+            surface => surface.SurfaceId == "database-roles");
+        var outboxEntry = Assert.Single(databaseRoles.Entries, entry => entry.Id == "entity-framework-outbox");
+
+        Assert.Equal("outbox", outboxRole.Role);
+        Assert.Equal("write", outboxRole.ResolvedRoleId);
+        Assert.Equal("PostgreSql", outboxRole.Provider);
+        Assert.Equal("WriteDb", outboxRole.ConnectionStringName);
+        Assert.Equal("outbox01", outboxRole.Schema);
+        Assert.Equal(90, outboxRole.Runtime.CommandTimeoutSeconds);
+
+        Assert.Equal("outbox", outboxEntry.Metadata["requestedRole"]);
+        Assert.Equal("write", outboxEntry.Metadata["resolvedRole"]);
+        Assert.Equal("role-reference", outboxEntry.Metadata["resolutionMode"]);
+        Assert.Equal("role-reference", outboxEntry.Metadata["routingMode"]);
+        Assert.Equal("write", outboxEntry.Metadata["useRole"]);
+        Assert.Equal("true", outboxEntry.Metadata["usesRoleReference"]);
+        Assert.Equal("WriteDb", outboxEntry.Metadata["connectionStringName"]);
+        Assert.Equal("outbox01", outboxEntry.Metadata["schema"]);
     }
 
     [Fact]

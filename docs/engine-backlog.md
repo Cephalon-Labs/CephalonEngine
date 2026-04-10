@@ -1379,10 +1379,11 @@ Delivered so far:
 - `Engine:Databases` now exists as the engine-owned physical-topology contract with `Runtime`, `Write`, `Read`, `Outbox`, `History`, and nested `Migrations`
 - the contract now projects into `EngineSettings`, `AppProfile.Databases`, `/engine/databases`, `/engine/app-model`, and `/engine/snapshot`
 - the first validation baseline now covers role-pattern alignment, migration-target validity, and mutually exclusive named versus inline connection settings
+- the contract now also supports narrow dependent role references through `UseRole` so `Outbox` and `History` can explicitly reuse the concrete `write` role while layering local schema/runtime overrides
 
 Remaining follow-through inside `ENG-060`:
 
-- move from fixed dependent-role blocks toward explicit role references where that meaning is sharper than duplicating provider and connection settings
+- broaden the current one-step `UseRole -> write` contract only when provider packs and runtime surfaces can keep requested versus resolved roles truthful
 - deepen the runtime answer beyond the current topology snapshot when provider packs begin contributing richer per-role metadata
 - keep the contract aligned across docs, templates, and samples as the provider follow-through lands
 
@@ -1417,14 +1418,15 @@ Delivered so far:
 - the Entity Framework pack now publishes role and migration-policy metadata through the `data-management/database-roles` runtime surface
 - `Engine:Databases:Migrations:ApplyOnStartup` now activates a generic-host hosted service inside `Cephalon.Data.EntityFramework` that applies startup schema creation or migrations for the registered `write` and optional `read` `DbContext` roles
 - the same migration-registration primitives now also back truthful `history`-role execution when a companion pack registers a dedicated history `DbContext`, which is how `Cephalon.Audit.EntityFramework` plugs into the baseline
-- the showcase sample now demonstrates distinct `WriteDb`, `ReadDb`, and `HistoryDb` roles instead of a single relational database pretending to cover every concern
+- the same baseline now resolves explicit dependent role references for `outbox` and `history`, and the runtime surface reports requested versus resolved roles when those references are active
+- the showcase sample now demonstrates concrete `WriteDb`, `ReadDb`, and `HistoryDb` root roles while using an explicit `Outbox -> write` role reference instead of duplicating write connection settings
 
 Remaining follow-through inside `ENG-061`:
 
 - add dedicated outbox role execution only when a companion pack can back that role with truthful `DbContext` ownership
 - keep marker interfaces, model-builder extensions, and interceptors as the preferred reusable primitives
 - treat convenience `DbContext` base classes as optional later DX helpers rather than the primary contract
-- add CLI, docs, and sample guidance for separate migrations projects plus bundle/script-first production deployment
+- add CLI, docs, and sample guidance for separate migrations projects plus bundle/script-first production deployment when multiple relational `DbContext` models share one physical database
 
 ### ENG-062 Durable audit-history provider baseline
 
@@ -1450,7 +1452,8 @@ Delivered:
 - `Engine:Audit:History` now projects into `EngineSettings`, `AppProfile.Audit`, `/engine/app-model`, and `/engine/snapshot`
 - `IAuditStoreRuntimeContributor` now lets additive provider packs publish durable audit-store descriptors without widening `Cephalon.Audit` into a mandatory storage abstraction
 - durable audit history now targets a named database role, defaults to `history`, can be redirected through `Engine:Audit:History:DatabaseRole`, and publishes its runtime truth through `/engine/audit-stores` and `/engine/snapshot`
-- the showcase sample now uses distinct `WriteDb`, `ReadDb`, and `HistoryDb` roles and records durable audit history through the new provider pack
+- durable audit history now also consumes the engine-owned `UseRole` contract when the selected database role is a dependent alias, and audit-store runtime metadata now exposes requested versus resolved roles
+- the showcase sample now records durable audit history through the new provider pack while keeping a dedicated `HistoryDb` role so the relational bootstrap and runtime story stay truthful
 - the same baseline now includes `Engine:Audit:History:Retention`, the first engine-owned retention pass, `IAuditHistoryReader`, `/engine/audit-history`, and showcase-facing audit-history read endpoints
 
 Remaining follow-through inside `ENG-062`:

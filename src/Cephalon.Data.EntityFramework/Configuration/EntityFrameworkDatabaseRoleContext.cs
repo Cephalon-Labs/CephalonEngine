@@ -12,7 +12,7 @@ public sealed class EntityFrameworkDatabaseRoleContext
     /// </summary>
     /// <param name="requestedRoleId">The logical role the caller requested, such as <c>write</c> or <c>read</c>.</param>
     /// <param name="resolvedRoleId">The logical role that ultimately supplied the effective database target.</param>
-    /// <param name="target">The selected database target metadata.</param>
+    /// <param name="target">The effective database target metadata after applying any configured role reference.</param>
     /// <param name="runtime">The merged runtime settings for the role.</param>
     /// <param name="connectionString">The resolved connection string for the role.</param>
     public EntityFrameworkDatabaseRoleContext(
@@ -51,7 +51,7 @@ public sealed class EntityFrameworkDatabaseRoleContext
     public string ResolvedRoleId { get; }
 
     /// <summary>
-    /// Gets the selected database target metadata.
+    /// Gets the effective database target metadata after applying any configured role reference.
     /// </summary>
     public DatabaseTargetSelection Target { get; }
 
@@ -86,7 +86,7 @@ public sealed class EntityFrameworkDatabaseRoleContext
     public string? Schema => Target.Schema;
 
     /// <summary>
-    /// Gets a value indicating whether the requested role fell back to another configured role.
+    /// Gets a value indicating whether the requested role resolved through another configured role.
     /// </summary>
     public bool IsFallback =>
         !string.Equals(RequestedRoleId, ResolvedRoleId, StringComparison.OrdinalIgnoreCase);

@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.EntityFramework.Configuration;
+using Cephalon.Engine.AppModel;
 
 namespace Cephalon.Data.EntityFramework.Services;
 
@@ -14,11 +15,11 @@ internal sealed class EntityFrameworkDatabaseTopologyRuntimeSurfaceContributor(
 
         if (options.UsesEngineDatabaseTopology)
         {
-            AddRoleEntry(entries, "write", options.WriteDbContextType, appProfile.Databases.Write, appProfile.Databases.Runtime);
+            AddRoleEntry(entries, "write", options.WriteDbContextType, appProfile.Databases, appProfile.Databases.Runtime);
 
             if (options.UsesReadWriteSplit)
             {
-                AddRoleEntry(entries, "read", options.ReadDbContextType, appProfile.Databases.Read, appProfile.Databases.Runtime);
+                AddRoleEntry(entries, "read", options.ReadDbContextType, appProfile.Databases, appProfile.Databases.Runtime);
             }
 
             if (options.RegisterOutbox)
@@ -44,42 +45,67 @@ internal sealed class EntityFrameworkDatabaseTopologyRuntimeSurfaceContributor(
         List<TechnologyRuntimeEntry> entries,
         string role,
         Type dbContextType,
-        DatabaseTargetSelection target,
+        DatabaseTopologySelection databases,
         DatabaseRuntimeSelection sharedRuntime)
     {
+        var target = role switch
+        {
+            "write" => databases.Write,
+            "read" => databases.Read,
+            "outbox" => databases.Outbox,
+            "history" => databases.History,
+            _ => DatabaseTargetSelection.Empty
+        };
+
         if (!target.HasValues)
         {
             return;
         }
 
-        var runtime = MergeRuntime(sharedRuntime, target.Runtime);
+        var resolution = DatabaseTopologyRoleResolver.Resolve(databases, role);
+        var runtime = MergeRuntime(sharedRuntime, resolution.EffectiveTarget.Runtime);
 
         entries.Add(new TechnologyRuntimeEntry(
             id: role,
             displayName: $"{ToDisplayName(role)} Database Role",
             description: $"Entity Framework wiring for the '{role}' database role.",
-            metadata: CreateRoleMetadata(role, dbContextType, target, runtime)));
+            metadata: CreateRoleMetadata(role, dbContextType, resolution, runtime)));
     }
 
     private static TechnologyRuntimeEntry CreateOutboxEntry(
         AppProfile appProfile,
         EntityFrameworkDataOptions options)
     {
-        var configuredTarget = appProfile.Databases.Outbox.HasValues
-            ? appProfile.Databases.Outbox
-            : appProfile.Databases.Write;
+        var usesConfiguredOutboxRole = appProfile.Databases.Outbox.HasValues;
+        var resolution = usesConfiguredOutboxRole
+            ? DatabaseTopologyRoleResolver.Resolve(appProfile.Databases, "outbox")
+            : DatabaseTopologyRoleResolver.Resolve(appProfile.Databases, "write");
+        var configuredTarget = resolution.EffectiveTarget;
 
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["sourceModuleId"] = "entity-framework-data",
             ["storageRole"] = "write",
             ["storageDbContext"] = GetTypeName(options.WriteDbContextType),
-            ["configurationRole"] = appProfile.Databases.Outbox.HasValues ? "outbox" : "write",
-            ["routingMode"] = appProfile.Databases.Outbox.HasValues ? "application-managed" : "write-role",
+            ["requestedRole"] = "outbox",
+            ["resolvedRole"] = resolution.ResolvedRoleId,
+            ["configurationRole"] = usesConfiguredOutboxRole ? "outbox" : "write",
+            ["resolutionMode"] = usesConfiguredOutboxRole
+                ? resolution.ResolutionMode
+                : "implicit-fallback",
+            ["usesRoleReference"] = resolution.UsesRoleReference ? "true" : "false",
+            ["routingMode"] = usesConfiguredOutboxRole
+                ? resolution.UsesRoleReference ? "role-reference" : "application-managed"
+                : "write-role-fallback",
             ["provider"] = configuredTarget.Provider ?? "unknown",
             ["connectionMode"] = GetConnectionMode(configuredTarget),
             ["topologySource"] = "engine-databases"
         };
+
+        if (resolution.UseRole is not null)
+        {
+            metadata["useRole"] = resolution.UseRole;
+        }
 
         if (configuredTarget.ConnectionStringName is not null)
         {
@@ -130,17 +156,27 @@ internal sealed class EntityFrameworkDatabaseTopologyRuntimeSurfaceContributor(
     private static Dictionary<string, string> CreateRoleMetadata(
         string role,
         Type dbContextType,
-        DatabaseTargetSelection target,
+        DatabaseTopologyRoleResolution resolution,
         DatabaseRuntimeSelection runtime)
     {
+        var target = resolution.EffectiveTarget;
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["role"] = role,
+            ["requestedRole"] = resolution.RequestedRoleId,
+            ["resolvedRole"] = resolution.ResolvedRoleId,
+            ["resolutionMode"] = resolution.ResolutionMode,
+            ["usesRoleReference"] = resolution.UsesRoleReference ? "true" : "false",
             ["dbContext"] = GetTypeName(dbContextType),
             ["provider"] = target.Provider ?? "unknown",
             ["connectionMode"] = GetConnectionMode(target),
             ["topologySource"] = "engine-databases"
         };
+
+        if (resolution.UseRole is not null)
+        {
+            metadata["useRole"] = resolution.UseRole;
+        }
 
         if (target.ConnectionStringName is not null)
         {
