@@ -19,6 +19,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 - `Cephalon.Abstractions.Localization`
 - `Cephalon.Abstractions.Modules`
 - `Cephalon.Abstractions.Patterns`
+- `Cephalon.Abstractions.Resilience`
 - `Cephalon.Abstractions.Technologies`
 - `Cephalon.Abstractions.Tenancy`
 - `Cephalon.Abstractions.Transports`
@@ -12458,6 +12459,215 @@ const PatternKind Organization
 ```
 
 Identifies an organization pattern.
+
+<a id="namespace-cephalon-abstractions-resilience"></a>
+
+## Namespace Cephalon.Abstractions.Resilience
+
+<a id="type-cephalon-abstractions-resilience-iratelimitingruntimecatalog"></a>
+
+### `IRateLimitingRuntimeCatalog`
+
+Exposes the active HTTP rate-limiting policies visible to the current runtime.
+
+Remarks: Implementations describe the effective policy applied by the active host adapter, such as ASP.NET Core middleware-based request limiting. This surface is runtime-facing rather than app-model-facing because it reflects what the host actually enforces after defaults and host exclusions have been applied.
+
+#### Declaration
+```csharp
+public interface IRateLimitingRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-resilience-iratelimitingruntimecatalog-policies"></a>
+
+##### `Policies`
+
+```csharp
+IReadOnlyList<RateLimitingRuntimeDescriptor> Policies { get; }
+```
+
+Gets all rate-limiting policies visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-resilience-iratelimitingruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+RateLimitingRuntimeDescriptor GetById(string policyId)
+```
+
+Gets one rate-limiting policy by its stable identifier.
+
+Returns: The matching policy descriptor, or `null` when it is not active.
+
+Parameters:
+- `policyId`: The policy identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-resilience-iratelimitingruntimecatalog-getbytransportid-system-string"></a>
+
+##### `GetByTransportId`
+
+```csharp
+IReadOnlyList<RateLimitingRuntimeDescriptor> GetByTransportId(string transportId)
+```
+
+Gets all rate-limiting policies that apply to the requested transport identifier.
+
+Returns: The matching policies, or an empty list when none target the transport.
+
+Parameters:
+- `transportId`: The stable transport identifier to filter by.
+
+<a id="type-cephalon-abstractions-resilience-ratelimitingruntimedescriptor"></a>
+
+### `RateLimitingRuntimeDescriptor`
+
+Describes one effective HTTP rate-limiting policy exposed by the current runtime.
+
+#### Declaration
+```csharp
+public sealed class RateLimitingRuntimeDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-appmodel-ratelimitingselection-cephalon-abstractions-appmodel-ratelimitingselection-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `RateLimitingRuntimeDescriptor`
+
+```csharp
+RateLimitingRuntimeDescriptor(string Id, string DisplayName, string Description, string ExecutionMode, string Scope, int RejectionStatusCode, IReadOnlyList<string> TransportIds, IReadOnlyList<string> ExcludedPathPrefixes, RateLimitingSelection Requested, RateLimitingSelection Effective, IReadOnlyDictionary<string, string> Metadata)
+```
+
+Describes one effective HTTP rate-limiting policy exposed by the current runtime.
+
+Parameters:
+- `Id`: The stable runtime policy identifier.
+- `DisplayName`: The human-readable policy name.
+- `Description`: The human-readable policy description.
+- `ExecutionMode`: The enforcement mode used by the active host, such as `aspnetcore-global-middleware` or `disabled`.
+- `Scope`: The runtime scope covered by the policy, such as `public-http-endpoints`.
+- `RejectionStatusCode`: The HTTP status code returned when the limiter rejects a request.
+- `TransportIds`: The transport identifiers whose HTTP surfaces are covered by the policy.
+- `ExcludedPathPrefixes`: The rooted path prefixes intentionally excluded from enforcement, such as operator or documentation routes.
+- `Requested`: The requested app-model selection that asked for rate limiting.
+- `Effective`: The effective policy values after host defaults and adapter-specific normalization have been applied.
+- `Metadata`: Additional host-specific metadata describing the policy.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; set; }
+```
+
+The human-readable policy description.
+
+<a id="member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; set; }
+```
+
+The human-readable policy name.
+
+<a id="member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-effective"></a>
+
+##### `Effective`
+
+```csharp
+RateLimitingSelection Effective { get; set; }
+```
+
+The effective policy values after host defaults and adapter-specific normalization have been applied.
+
+<a id="member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-excludedpathprefixes"></a>
+
+##### `ExcludedPathPrefixes`
+
+```csharp
+IReadOnlyList<string> ExcludedPathPrefixes { get; set; }
+```
+
+The rooted path prefixes intentionally excluded from enforcement, such as operator or documentation routes.
+
+<a id="member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-executionmode"></a>
+
+##### `ExecutionMode`
+
+```csharp
+string ExecutionMode { get; set; }
+```
+
+The enforcement mode used by the active host, such as `aspnetcore-global-middleware` or `disabled`.
+
+<a id="member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; set; }
+```
+
+The stable runtime policy identifier.
+
+<a id="member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+Additional host-specific metadata describing the policy.
+
+<a id="member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-rejectionstatuscode"></a>
+
+##### `RejectionStatusCode`
+
+```csharp
+int RejectionStatusCode { get; set; }
+```
+
+The HTTP status code returned when the limiter rejects a request.
+
+<a id="member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-requested"></a>
+
+##### `Requested`
+
+```csharp
+RateLimitingSelection Requested { get; set; }
+```
+
+The requested app-model selection that asked for rate limiting.
+
+<a id="member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-scope"></a>
+
+##### `Scope`
+
+```csharp
+string Scope { get; set; }
+```
+
+The runtime scope covered by the policy, such as `public-http-endpoints`.
+
+<a id="member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-transportids"></a>
+
+##### `TransportIds`
+
+```csharp
+IReadOnlyList<string> TransportIds { get; set; }
+```
+
+The transport identifiers whose HTTP surfaces are covered by the policy.
 
 <a id="namespace-cephalon-abstractions-technologies"></a>
 

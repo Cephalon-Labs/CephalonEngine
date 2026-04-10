@@ -240,6 +240,44 @@ public sealed class BehaviorRestOpenApiTests
         Assert.False(responses.TryGetProperty("403", out _));
         Assert.False(responses.TryGetProperty("404", out _));
         Assert.False(responses.TryGetProperty("409", out _));
+        Assert.False(responses.TryGetProperty("429", out _));
+    }
+
+    [Fact]
+    public async Task BehaviorRestOpenApiAdds429WhenAspNetCoreRateLimitingIsEnabled()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["Engine:Resilience:RateLimiting:Enabled"] = "true";
+        builder.Configuration["Engine:Resilience:RateLimiting:Algorithm"] = "FixedWindow";
+        builder.Configuration["Engine:Resilience:RateLimiting:PermitLimit"] = "10";
+        builder.Configuration["Engine:Resilience:RateLimiting:QueueLimit"] = "0";
+        builder.Configuration["Engine:Resilience:RateLimiting:WindowSeconds"] = "60";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new EnvelopeResultModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        using var document = JsonDocument.Parse(await client.GetStringAsync("/openapi/v1.json"));
+        var responses = document.RootElement
+            .GetProperty("paths")
+            .GetProperty("/api/v1/tests/results/widgets/{widgetId}")
+            .GetProperty("get")
+            .GetProperty("responses");
+
+        Assert.True(responses.TryGetProperty("429", out _));
     }
 
     [Fact]

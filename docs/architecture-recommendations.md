@@ -52,17 +52,22 @@ Effort: medium.
 
 ### Rate Limiting (API protection)
 
-Current state: the contract-first baseline is now shipped through `Engine:Resilience:RateLimiting`, `AppProfile.Resilience`, and `/engine/resilience`, but ASP.NET Core enforcement through `Microsoft.AspNetCore.RateLimiting` is still pending.
+Current state: the contract-first baseline is now shipped through `Engine:Resilience:RateLimiting`,
+`AppProfile.Resilience`, and `/engine/resilience`, and the first transport-native follow-through is
+also shipped through ASP.NET Core middleware, `/engine/rate-limiting`, and
+`snapshot.RateLimitingPolicies`. The current limiter covers public HTTP endpoints and intentionally
+excludes operator/docs routes; per-behavior and finer per-transport override models are still pending.
 
-Recommendation: wire `Microsoft.AspNetCore.RateLimiting` into the behavior pipeline through the ASP.NET Core host adapter.
+Recommendation: keep ASP.NET Core middleware as the truthful baseline for public HTTP protection, and
+add finer per-behavior or transport-native override models on top of that surface instead of jumping
+straight to a generic resilience runtime catalog or a behavior pipeline that does not exist yet.
 
-Implementation outline:
+Remaining follow-through:
 - Rate limit policy per behavior or transport
-- Token bucket and sliding window algorithms
-- Configuration: `Engine:Resilience:RateLimiting` section
+- Behavior-aware override precedence across module-owned REST and generic HTTP transports
 - Capability: `resilience.rate-limiting`
 
-Effort: small — middleware integration in `Cephalon.AspNetCore`.
+Effort: small-medium for the next override/modeling slice.
 
 ## Priority 2 — Strategic value
 
@@ -205,14 +210,14 @@ Effort: large.
 
 ### Phase 11 — Resilience Foundation
 
-Target: Sprint 34–35
+Target: Sprint 36–37
 
 Deliverables:
-- Onion Architecture pattern descriptor
+- Onion Architecture pattern descriptor — shipped
 - Circuit Breaker abstraction and behavior middleware
 - Retry/Timeout/Bulkhead resilience policies
-- Rate Limiting middleware integration
-- Anti-Corruption Layer pattern descriptor
+- Rate Limiting middleware integration — shipped
+- Anti-Corruption Layer pattern descriptor — shipped
 - `Cephalon.Resilience` companion package or `Cephalon.Behaviors` resilience extension
 
 Exit criteria:

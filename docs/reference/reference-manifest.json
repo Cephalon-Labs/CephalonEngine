@@ -1,14 +1,14 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-10T22:09:16.0778233+00:00",
+  "GeneratedAtUtc": "2026-04-10T22:51:54.2431141+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
       "Category": "Core",
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
-      "NamespaceCount": 17,
-      "TypeCount": 187
+      "NamespaceCount": 18,
+      "TypeCount": 189
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -556,6 +556,13 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-patterns",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "namespace-cephalon-abstractions-resilience",
       "TypeCount": 2
     },
     {
@@ -6070,6 +6077,21 @@
       }
     },
     {
+      "DisplayName": "IRateLimitingRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-resilience-iratelimitingruntimecatalog",
+      "Declaration": "public interface IRateLimitingRuntimeCatalog",
+      "Summary": "Exposes the active HTTP rate-limiting policies visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 2
+      }
+    },
+    {
       "DisplayName": "IReadStore",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -7555,6 +7577,21 @@
       }
     },
     {
+      "DisplayName": "RateLimitingRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-resilience-ratelimitingruntimedescriptor",
+      "Declaration": "public sealed class RateLimitingRuntimeDescriptor",
+      "Summary": "Describes one effective HTTP rate-limiting policy exposed by the current runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 11,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "RateLimitingSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -8105,7 +8142,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 16,
+        "Properties": 17,
         "Methods": 0
       }
     },
@@ -15714,6 +15751,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-description",
+      "Signature": "string Description { get; set; }",
+      "Summary": "The human-readable policy description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeExecutionGraphState",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -16451,6 +16499,17 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "The human-readable policy name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeExecutionGraphState",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -16722,6 +16781,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphdescriptor-edges",
       "Signature": "IReadOnlyList\u003CExecutionGraphEdgeDescriptor\u003E Edges { get; }",
       "Summary": "Gets the directed edges that connect graph nodes."
+    },
+    {
+      "DisplayName": "Effective",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-effective",
+      "Signature": "RateLimitingSelection Effective { get; set; }",
+      "Summary": "The effective policy values after host defaults and adapter-specific normalization have been applied."
     },
     {
       "DisplayName": "EffectiveTarget",
@@ -18528,6 +18598,17 @@
       "Summary": "Exchanges greeting messages bidirectionally to validate duplex streaming support."
     },
     {
+      "DisplayName": "ExcludedPathPrefixes",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-excludedpathprefixes",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedPathPrefixes { get; set; }",
+      "Summary": "The rooted path prefixes intentionally excluded from enforcement, such as operator or documentation routes."
+    },
+    {
       "DisplayName": "ExecuteAsync",
       "Category": "Methods",
       "DeclaringTypeName": "IReadStore",
@@ -18691,6 +18772,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-executionmode",
       "Signature": "string ExecutionMode { get; }",
       "Summary": "Gets the execution ownership mode for the outbox."
+    },
+    {
+      "DisplayName": "ExecutionMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-executionmode",
+      "Signature": "string ExecutionMode { get; set; }",
+      "Summary": "The enforcement mode used by the active host, such as \u0060aspnetcore-global-middleware\u0060 or \u0060disabled\u0060."
     },
     {
       "DisplayName": "ExitAfterApply",
@@ -20211,6 +20303,17 @@
       "Summary": "Gets one projection by its stable identifier."
     },
     {
+      "DisplayName": "GetById",
+      "Category": "Methods",
+      "DeclaringTypeName": "IRateLimitingRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-resilience-iratelimitingruntimecatalog-getbyid-system-string",
+      "Signature": "RateLimitingRuntimeDescriptor GetById(string policyId)",
+      "Summary": "Gets one rate-limiting policy by its stable identifier."
+    },
+    {
       "DisplayName": "GetByIdAsync",
       "Category": "Methods",
       "DeclaringTypeName": "IAuditHistoryReader",
@@ -20473,6 +20576,17 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviorcatalog-getbytransport-system-string",
       "Signature": "IReadOnlyList\u003CBehaviorTopologyDescriptor\u003E GetByTransport(string transportId)",
       "Summary": "Gets all behaviors registered with the specified transport."
+    },
+    {
+      "DisplayName": "GetByTransportId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IRateLimitingRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-resilience-iratelimitingruntimecatalog-getbytransportid-system-string",
+      "Signature": "IReadOnlyList\u003CRateLimitingRuntimeDescriptor\u003E GetByTransportId(string transportId)",
+      "Summary": "Gets all rate-limiting policies that apply to the requested transport identifier."
     },
     {
       "DisplayName": "GetDependencyHealth",
@@ -22409,6 +22523,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-projectiondescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable projection identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "The stable runtime policy identifier."
     },
     {
       "DisplayName": "Id",
@@ -25449,6 +25574,17 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
+      "Summary": "Additional host-specific metadata describing the policy."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "RenderedFolder",
       "NamespaceName": "Cephalon.Scaffolding.Generation",
       "AssemblyName": "Cephalon.Scaffolding",
@@ -28329,6 +28465,17 @@
       "Summary": "Gets the effective dispatch policies visible to the current runtime."
     },
     {
+      "DisplayName": "Policies",
+      "Category": "Properties",
+      "DeclaringTypeName": "IRateLimitingRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-iratelimitingruntimecatalog-policies",
+      "Signature": "IReadOnlyList\u003CRateLimitingRuntimeDescriptor\u003E Policies { get; }",
+      "Summary": "Gets all rate-limiting policies visible to the current runtime."
+    },
+    {
       "DisplayName": "Policy",
       "Category": "Fields",
       "DeclaringTypeName": "AuthorizationMode",
@@ -29143,6 +29290,28 @@
       "Summary": "Gets the rate-limiting settings resolved for the app."
     },
     {
+      "DisplayName": "RateLimitingPolicies",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-ratelimitingpolicies",
+      "Signature": "IReadOnlyList\u003CRateLimitingRuntimeDescriptor\u003E RateLimitingPolicies { get; set; }",
+      "Summary": "Gets the effective rate-limiting policies visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "RateLimitingRuntimeDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-appmodel-ratelimitingselection-cephalon-abstractions-appmodel-ratelimitingselection-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "RateLimitingRuntimeDescriptor(string Id, string DisplayName, string Description, string ExecutionMode, string Scope, int RejectionStatusCode, IReadOnlyList\u003Cstring\u003E TransportIds, IReadOnlyList\u003Cstring\u003E ExcludedPathPrefixes, RateLimitingSelection Requested, RateLimitingSelection Effective, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
+      "Summary": "Describes one effective HTTP rate-limiting policy exposed by the current runtime."
+    },
+    {
       "DisplayName": "RateLimitingSelection",
       "Category": "Constructors",
       "DeclaringTypeName": "RateLimitingSelection",
@@ -29880,6 +30049,17 @@
       "Summary": "Gets the generated registration class type emitted by the source generator."
     },
     {
+      "DisplayName": "RejectionStatusCode",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-rejectionstatuscode",
+      "Signature": "int RejectionStatusCode { get; set; }",
+      "Summary": "The HTTP status code returned when the limiter rejects a request."
+    },
+    {
       "DisplayName": "RenderedFile",
       "Category": "Constructors",
       "DeclaringTypeName": "RenderedFile",
@@ -30021,6 +30201,17 @@
       "AnchorId": "member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-requestbodylimit",
       "Signature": "int RequestBodyLimit { get; set; }",
       "Summary": "Gets or sets the maximum number of request-body characters to log before the payload is truncated."
+    },
+    {
+      "DisplayName": "Requested",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-requested",
+      "Signature": "RateLimitingSelection Requested { get; set; }",
+      "Summary": "The requested app-model selection that asked for rate limiting."
     },
     {
       "DisplayName": "RequestedRoleId",
@@ -31858,6 +32049,17 @@
       "AnchorId": "member-p-cephalon-abstractions-ids-idgenerationrequest-scope",
       "Signature": "string Scope { get; }",
       "Summary": "Gets the logical generation scope when one is known."
+    },
+    {
+      "DisplayName": "Scope",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-scope",
+      "Signature": "string Scope { get; set; }",
+      "Summary": "The runtime scope covered by the policy, such as \u0060public-http-endpoints\u0060."
     },
     {
       "DisplayName": "Scope",
@@ -35202,6 +35404,17 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-transportids",
       "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; }",
       "Summary": "Gets the transport identifiers configured for this behavior."
+    },
+    {
+      "DisplayName": "TransportIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-transportids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; set; }",
+      "Summary": "The transport identifiers whose HTTP surfaces are covered by the policy."
     },
     {
       "DisplayName": "Transports",

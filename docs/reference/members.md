@@ -1875,6 +1875,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-projectiondescriptor-description): `Properties` on `ProjectionDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the human-readable projection description.
   - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-description): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The human-readable policy description.
+  - `string Description { get; set; }`
 - [Description](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-description): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The operator-facing execution-graph description when one was published.
   - `string Description { get; set; }`
@@ -2076,6 +2079,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-data-projectiondescriptor-displayname): `Properties` on `ProjectionDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing projection name.
   - `string DisplayName { get; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-displayname): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The human-readable policy name.
+  - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-displayname): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The operator-facing execution-graph display name.
   - `string DisplayName { get; set; }`
@@ -2154,6 +2160,9 @@ Browse the published API surface by public member.
 - [Edges](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphdescriptor-edges): `Properties` on `ExecutionGraphDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Edges&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the directed edges that connect graph nodes.
   - `IReadOnlyList<ExecutionGraphEdgeDescriptor> Edges { get; }`
+- [Effective](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-effective): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Effective&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The effective policy values after host defaults and adapter-specific normalization have been applied.
+  - `RateLimitingSelection Effective { get; set; }`
 - [EffectiveTarget](cephalon-engine.md#member-p-cephalon-engine-appmodel-databasetopologyroleresolution-effectivetarget): `Properties` on `DatabaseTopologyRoleResolution` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=EffectiveTarget&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
   - Gets the effective target after applying any role reference.
   - `DatabaseTargetSelection EffectiveTarget { get; }`
@@ -2646,6 +2655,9 @@ Browse the published API surface by public member.
 - [ExchangeGreetings](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-exchangegreetings-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken): `Methods` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=ExchangeGreetings&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Exchanges greeting messages bidirectionally to validate duplex streaming support.
   - `AsyncDuplexStreamingCall<HelloRequest, HelloReply> ExchangeGreetings(Metadata headers, DateTime? deadline, CancellationToken cancellationToken)`
+- [ExcludedPathPrefixes](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-excludedpathprefixes): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExcludedPathPrefixes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The rooted path prefixes intentionally excluded from enforcement, such as operator or documentation routes.
+  - `IReadOnlyList<string> ExcludedPathPrefixes { get; set; }`
 - [ExecuteAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ireadstore-executeasync-1-cephalon-abstractions-data-iquery-0-system-threading-cancellationtoken): `Methods` on `IReadStore` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecuteAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Executes the supplied query on the read side.
   - `ValueTask<TResult> ExecuteAsync<TResult>(IQuery<TResult> query, CancellationToken cancellationToken)`
@@ -2691,6 +2703,9 @@ Browse the published API surface by public member.
 - [ExecutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-executionmode): `Properties` on `OutboxDispatchPolicyDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the execution ownership mode for the outbox.
   - `string ExecutionMode { get; }`
+- [ExecutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-executionmode): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The enforcement mode used by the active host, such as `aspnetcore-global-middleware` or `disabled`.
+  - `string ExecutionMode { get; set; }`
 - [ExitAfterApply](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-exitafterapply): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExitAfterApply&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the host exits after startup execution completes.
   - `bool ExitAfterApply { get; }`
@@ -3111,6 +3126,9 @@ Browse the published API surface by public member.
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-data-iprojectioncatalog-getbyid-system-string): `Methods` on `IProjectionCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets one projection by its stable identifier.
   - `ProjectionDescriptor GetById(string projectionId)`
+- [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-resilience-iratelimitingruntimecatalog-getbyid-system-string): `Methods` on `IRateLimitingRuntimeCatalog` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets one rate-limiting policy by its stable identifier.
+  - `RateLimitingRuntimeDescriptor GetById(string policyId)`
 - [GetByIdAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iaudithistoryreader-getbyidasync-system-string-system-threading-cancellationtoken): `Methods` on `IAuditHistoryReader` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByIdAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Resolves one audit-history entry by its stable identifier.
   - `ValueTask<AuditHistoryEntry> GetByIdAsync(string auditEntryId, CancellationToken cancellationToken)`
@@ -3183,6 +3201,9 @@ Browse the published API surface by public member.
 - [GetByTransport](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviorcatalog-getbytransport-system-string): `Methods` on `IBehaviorCatalog` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTransport&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets all behaviors registered with the specified transport.
   - `IReadOnlyList<BehaviorTopologyDescriptor> GetByTransport(string transportId)`
+- [GetByTransportId](cephalon-abstractions.md#member-m-cephalon-abstractions-resilience-iratelimitingruntimecatalog-getbytransportid-system-string): `Methods` on `IRateLimitingRuntimeCatalog` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets all rate-limiting policies that apply to the requested transport identifier.
+  - `IReadOnlyList<RateLimitingRuntimeDescriptor> GetByTransportId(string transportId)`
 - [GetDependencyHealth](cephalon-abstractions.md#member-m-cephalon-abstractions-health-idependencyhealthcontributor-getdependencyhealth): `Methods` on `IDependencyHealthContributor` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetDependencyHealth&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - Returns the dependency-health reports currently known to the contributor.
   - `IReadOnlyList<DependencyHealthReport> GetDependencyHealth()`
@@ -3717,6 +3738,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-projectiondescriptor-id): `Properties` on `ProjectionDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable projection identifier.
   - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-id): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The stable runtime policy identifier.
+  - `string Id { get; set; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-id): `Properties` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the stable scaffold-plan identifier.
   - `string Id { get; }`
@@ -4557,6 +4581,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-projectiondescriptor-metadata): `Properties` on `ProjectionDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets operator-facing metadata associated with the projection.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-metadata): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Additional host-specific metadata describing the policy.
+  - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
 - [Metadata](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedfolder-metadata): `Properties` on `RenderedFolder` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets additional metadata associated with the folder.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -5352,6 +5379,9 @@ Browse the published API surface by public member.
 - [Policies](cephalon-abstractions.md#member-p-cephalon-abstractions-data-ioutboxdispatchpolicycatalog-policies): `Properties` on `IOutboxDispatchPolicyCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Policies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the effective dispatch policies visible to the current runtime.
   - `IReadOnlyList<OutboxDispatchPolicyDescriptor> Policies { get; }`
+- [Policies](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-iratelimitingruntimecatalog-policies): `Properties` on `IRateLimitingRuntimeCatalog` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Policies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets all rate-limiting policies visible to the current runtime.
+  - `IReadOnlyList<RateLimitingRuntimeDescriptor> Policies { get; }`
 - [Policy](cephalon-abstractions.md#member-f-cephalon-abstractions-authorization-authorizationmode-policy): `Fields` on `AuthorizationMode` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Policy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Indicates a policy-driven authorization evaluation.
   - `const AuthorizationMode Policy`
@@ -5580,6 +5610,12 @@ Browse the published API surface by public member.
 - [RateLimiting](cephalon-engine.md#member-p-cephalon-engine-configuration-resiliencesettings-ratelimiting): `Properties` on `ResilienceSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RateLimiting&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the rate-limiting settings resolved for the app.
   - `RateLimitingSettings RateLimiting { get; }`
+- [RateLimitingPolicies](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-ratelimitingpolicies): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RateLimitingPolicies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the effective rate-limiting policies visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<RateLimitingRuntimeDescriptor> RateLimitingPolicies { get; set; }`
+- [RateLimitingRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-appmodel-ratelimitingselection-cephalon-abstractions-appmodel-ratelimitingselection-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=RateLimitingRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Describes one effective HTTP rate-limiting policy exposed by the current runtime.
+  - `RateLimitingRuntimeDescriptor(string Id, string DisplayName, string Description, string ExecutionMode, string Scope, int RejectionStatusCode, IReadOnlyList<string> TransportIds, IReadOnlyList<string> ExcludedPathPrefixes, RateLimitingSelection Requested, RateLimitingSelection Effective, IReadOnlyDictionary<string, string> Metadata)`
 - [RateLimitingSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-ratelimitingselection-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=RateLimitingSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Initializes a new instance of the `RateLimitingSelection` class.
   - `RateLimitingSelection(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow)`
@@ -5781,6 +5817,9 @@ Browse the published API surface by public member.
 - [RegistrationType](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-containsbehaviorsattribute-registrationtype): `Properties` on `ContainsBehaviorsAttribute` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegistrationType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the generated registration class type emitted by the source generator.
   - `Type RegistrationType { get; }`
+- [RejectionStatusCode](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-rejectionstatuscode): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=RejectionStatusCode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The HTTP status code returned when the limiter rejects a request.
+  - `int RejectionStatusCode { get; set; }`
 - [RenderedFile](cephalon-scaffolding.md#member-m-cephalon-scaffolding-generation-renderedfile-ctor-system-string-system-string): `Constructors` on `RenderedFile` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=RenderedFile&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Creates a new rendered file.
   - `RenderedFile(string path, string contents)`
@@ -5820,6 +5859,9 @@ Browse the published API surface by public member.
 - [RequestBodyLimit](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-requestbodylimit): `Properties` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RequestBodyLimit&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets or sets the maximum number of request-body characters to log before the payload is truncated.
   - `int RequestBodyLimit { get; set; }`
+- [Requested](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-requested): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Requested&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The requested app-model selection that asked for rate limiting.
+  - `RateLimitingSelection Requested { get; set; }`
 - [RequestedRoleId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-requestedroleid): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequestedRoleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the logical database role requested by migration policy.
   - `string RequestedRoleId { get; }`
@@ -6324,6 +6366,9 @@ Browse the published API surface by public member.
 - [Scope](cephalon-abstractions.md#member-p-cephalon-abstractions-ids-idgenerationrequest-scope): `Properties` on `IdGenerationRequest` in `Cephalon.Abstractions.Ids` (`Cephalon.Abstractions`) [Browse](browse.html?q=Scope&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Ids&scope=members)
   - Gets the logical generation scope when one is known.
   - `string Scope { get; }`
+- [Scope](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-scope): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Scope&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The runtime scope covered by the policy, such as `public-http-endpoints`.
+  - `string Scope { get; set; }`
 - [Scope](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedfolder-scope): `Properties` on `RenderedFolder` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Scope&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the scaffold scope that produced the folder.
   - `string Scope { get; }`
@@ -7239,6 +7284,9 @@ Browse the published API surface by public member.
 - [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-transportids): `Properties` on `BehaviorTopologyDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the transport identifiers configured for this behavior.
   - `IReadOnlyList<string> TransportIds { get; }`
+- [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-transportids): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The transport identifiers whose HTTP surfaces are covered by the policy.
+  - `IReadOnlyList<string> TransportIds { get; set; }`
 - [Transports](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-transports): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Transports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the selected transports.
   - `IReadOnlyList<TransportDescriptor> Transports { get; }`

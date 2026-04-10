@@ -13,6 +13,7 @@ using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Health;
 using Cephalon.Abstractions.Localization;
 using Cephalon.Abstractions.Patterns;
+using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Abstractions.Transports;
 using Cephalon.Agentics.Registration;
@@ -27,9 +28,11 @@ using Cephalon.AspNetCore.Grpc.Hosting;
 using Cephalon.AspNetCore.JsonRpc.Hosting;
 using Cephalon.Edge.Registration;
 using Cephalon.Edge.Services;
+using Cephalon.Engine.AppModel;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Manifest;
 using Cephalon.Engine.Runtime;
+using Cephalon.Engine.Transports;
 using Cephalon.Engine.Trust;
 using Cephalon.Eventing.Registration;
 using Cephalon.Eventing.Services;
@@ -304,6 +307,7 @@ public sealed class AspNetCoreHostingTests
         var manifest = await client.GetFromJsonAsync<RuntimeManifest>("/engine");
         var appModel = await client.GetFromJsonAsync<AppProfile>("/engine/app-model");
         var resilience = await client.GetFromJsonAsync<ResilienceSelection>("/engine/resilience");
+        var rateLimitingPolicies = await client.GetFromJsonAsync<RateLimitingRuntimeDescriptor[]>("/engine/rate-limiting");
         var databases = await client.GetFromJsonAsync<DatabaseTopologySelection>("/engine/databases");
         var databaseRoles = await client.GetFromJsonAsync<DatabaseRoleDescriptor[]>("/engine/database-roles");
         var databaseMigrations = await client.GetFromJsonAsync<DatabaseMigrationDescriptor[]>("/engine/database-migrations");
@@ -444,6 +448,24 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal(10, resilience.RateLimiting.QueueLimit);
         Assert.Equal(60, resilience.RateLimiting.WindowSeconds);
         Assert.Equal(4, resilience.RateLimiting.SegmentsPerWindow);
+        Assert.NotNull(rateLimitingPolicies);
+        var rateLimitingPolicy = Assert.Single(rateLimitingPolicies);
+        Assert.Equal("cephalon-public-http", rateLimitingPolicy.Id);
+        Assert.Equal("aspnetcore-global-middleware", rateLimitingPolicy.ExecutionMode);
+        Assert.Equal("public-http-endpoints", rateLimitingPolicy.Scope);
+        Assert.Equal(429, rateLimitingPolicy.RejectionStatusCode);
+        Assert.Contains("graphql", rateLimitingPolicy.TransportIds);
+        Assert.Contains("grpc", rateLimitingPolicy.TransportIds);
+        Assert.Contains("json-rpc", rateLimitingPolicy.TransportIds);
+        Assert.Contains("rest-api", rateLimitingPolicy.TransportIds);
+        Assert.Contains("/engine", rateLimitingPolicy.ExcludedPathPrefixes);
+        Assert.Contains("/health", rateLimitingPolicy.ExcludedPathPrefixes);
+        Assert.Contains("/openapi", rateLimitingPolicy.ExcludedPathPrefixes);
+        Assert.Contains("/scalar", rateLimitingPolicy.ExcludedPathPrefixes);
+        Assert.True(rateLimitingPolicy.Requested.Enabled);
+        Assert.True(rateLimitingPolicy.Effective.Enabled);
+        Assert.Equal("SlidingWindow", rateLimitingPolicy.Effective.Algorithm);
+        Assert.Equal("subject-or-tenant-or-ip", rateLimitingPolicy.Metadata["partitionStrategy"]);
 
         Assert.NotNull(databases);
         Assert.Equal("PostgreSql", databases.Write.Provider);
@@ -666,6 +688,125 @@ public sealed class AspNetCoreHostingTests
 
         Assert.Equal(RuntimeStatus.Stopped, runtime.Status);
         Assert.NotNull(runtime.StatusSnapshot.StoppedAtUtc);
+    }
+
+    [Fact]
+    public async Task MapCephalonAppliesConfiguredRateLimitingOnlyToPublicHttpEndpoints()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:Algorithm"] = "FixedWindow";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:PermitLimit"] = "1";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:QueueLimit"] = "0";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:WindowSeconds"] = "60";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var firstPublicResponse = await client.GetAsync("/api/platform/time");
+        var secondPublicResponse = await client.GetAsync("/api/platform/time");
+        var firstManifestResponse = await client.GetAsync("/engine/manifest");
+        var secondManifestResponse = await client.GetAsync("/engine/manifest");
+        var firstOpenApiResponse = await client.GetAsync("/openapi/v1.json");
+        var secondOpenApiResponse = await client.GetAsync("/openapi/v1.json");
+        var rejectedPayload = await secondPublicResponse.Content.ReadAsStringAsync();
+        var policies = await client.GetFromJsonAsync<RateLimitingRuntimeDescriptor[]>("/engine/rate-limiting");
+
+        Assert.Equal(HttpStatusCode.OK, firstPublicResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.TooManyRequests, secondPublicResponse.StatusCode);
+        Assert.Contains("Too Many Requests", rejectedPayload, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(HttpStatusCode.OK, firstManifestResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, secondManifestResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, firstOpenApiResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, secondOpenApiResponse.StatusCode);
+        Assert.NotNull(policies);
+        var policy = Assert.Single(policies);
+        Assert.Equal("aspnetcore-global-middleware", policy.ExecutionMode);
+        Assert.Equal("FixedWindow", policy.Effective.Algorithm);
+        Assert.Equal(1, policy.Effective.PermitLimit);
+        Assert.Equal(0, policy.Effective.QueueLimit);
+        Assert.Equal(60, policy.Effective.WindowSeconds);
+        Assert.Contains("/engine", policy.ExcludedPathPrefixes);
+        Assert.Contains("/openapi", policy.ExcludedPathPrefixes);
+        Assert.Contains("/scalar", policy.ExcludedPathPrefixes);
+    }
+
+    [Fact]
+    public async Task MapCephalonAppliesRateLimitingWhenHttpTransportIsSelectedInCode()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:Algorithm"] = "fixedwindow";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:PermitLimit"] = "1";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:QueueLimit"] = "0";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:WindowSeconds"] = "60";
+        builder.AddCephalon(engine =>
+        {
+            engine.UseBlueprint(BuiltInBlueprints.ModularMonolith);
+            engine.AddTransport(BuiltInTransports.RestApi);
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var firstPublicResponse = await client.GetAsync("/api/platform/time");
+        var secondPublicResponse = await client.GetAsync("/api/platform/time");
+        var policies = await client.GetFromJsonAsync<RateLimitingRuntimeDescriptor[]>("/engine/rate-limiting");
+
+        Assert.Equal(HttpStatusCode.OK, firstPublicResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.TooManyRequests, secondPublicResponse.StatusCode);
+        Assert.NotNull(policies);
+        var policy = Assert.Single(policies);
+        Assert.Equal("FixedWindow", policy.Effective.Algorithm);
+        Assert.Contains("rest-api", policy.TransportIds);
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesNoActiveRateLimitingPolicyWhenLimiterIsNotEnabled()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var policies = await client.GetFromJsonAsync<RateLimitingRuntimeDescriptor[]>("/engine/rate-limiting");
+        var policyResponse = await client.GetAsync("/engine/rate-limiting/cephalon-public-http");
+        var firstPublicResponse = await client.GetAsync("/api/platform/time");
+        var secondPublicResponse = await client.GetAsync("/api/platform/time");
+
+        Assert.NotNull(policies);
+        Assert.Empty(policies);
+        Assert.Equal(HttpStatusCode.NotFound, policyResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, firstPublicResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, secondPublicResponse.StatusCode);
     }
 
     [Fact]

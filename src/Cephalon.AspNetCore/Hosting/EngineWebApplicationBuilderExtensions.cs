@@ -1,17 +1,26 @@
 using Cephalon.AspNetCore.Documentation;
-using Cephalon.AspNetCore.Health;
 using Cephalon.AspNetCore.Transports.Rest;
+using Cephalon.AspNetCore.Health;
 using Cephalon.AspNetCore.Transports.ServerSentEvents;
 using Cephalon.AspNetCore.Transports.WebSockets;
 using Cephalon.AspNetCore.Transformers;
+using Cephalon.Abstractions.Behaviors;
+using Cephalon.Abstractions.Resilience;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Diagnostics;
+using Cephalon.Engine.Manifest;
+using Cephalon.Engine.Runtime;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OpenApi;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using System.Security.Claims;
+using System.Threading.RateLimiting;
 
 namespace Cephalon.AspNetCore.Hosting;
 
@@ -84,6 +93,8 @@ public static class EngineWebApplicationBuilderExtensions
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, EngineHostedService>());
         builder.AddReferenceDocsHosting();
         builder.Services.AddCephalon(builder.Configuration, configure);
+        builder.Services.TryAddSingleton<IRateLimitingRuntimeCatalog, AspNetCoreRateLimitingRuntimeCatalog>();
+        AddAspNetCoreRateLimiting(builder);
 
         return builder;
     }
@@ -95,6 +106,249 @@ public static class EngineWebApplicationBuilderExtensions
         options.AddDocumentTransformer<SecuritySchemeTransformer>();
         options.AddDocumentTransformer(new XmlCommentsDocumentTransformer());
         options.AddDocumentTransformer<ResultModelDocumentTransformer>();
+    }
+
+    private static void AddAspNetCoreRateLimiting(WebApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        var runtimeManifest = TryResolveRuntimeManifest(builder.Services);
+        if (runtimeManifest is null)
+        {
+            return;
+        }
+
+        var referenceDocsOptions = ReferenceDocsHostingOptions.FromConfiguration(
+            builder.Configuration,
+            contentRootPath: builder.Environment.ContentRootPath);
+        var resolvedPolicy = AspNetCoreRateLimitingPolicyResolver.Resolve(
+            runtimeManifest,
+            builder.Configuration,
+            referenceDocsOptions);
+        if (!string.Equals(
+                resolvedPolicy.ExecutionMode,
+                AspNetCoreRateLimitingPolicyResolver.EnabledExecutionMode,
+                StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        var apiRoutesOptions = ApiRoutesOptions.FromConfiguration(builder.Configuration);
+
+        builder.Services.AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode = AspNetCoreRateLimitingPolicyResolver.RejectionStatusCode;
+            options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+            {
+                if (ShouldBypassRateLimiting(httpContext, resolvedPolicy))
+                {
+                    return RateLimitPartition.GetNoLimiter("cephalon-rate-limit-excluded");
+                }
+
+                var partitionKey = ResolveRateLimitingPartitionKey(httpContext);
+                return CreatePartition(resolvedPolicy, partitionKey);
+            });
+            options.OnRejected = (context, cancellationToken) =>
+                WriteRateLimitRejectedResponseAsync(context, apiRoutesOptions.UseResultModelEnvelope, cancellationToken);
+        });
+    }
+
+    private static RuntimeManifest? TryResolveRuntimeManifest(IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        var manifest = services.LastOrDefault(static descriptor => descriptor.ServiceType == typeof(RuntimeManifest))
+            ?.ImplementationInstance as RuntimeManifest;
+        if (manifest is not null)
+        {
+            return manifest;
+        }
+
+        return (services.LastOrDefault(static descriptor => descriptor.ServiceType == typeof(IRuntime))
+            ?.ImplementationInstance as IRuntime)?.Manifest;
+    }
+
+    private static RateLimitPartition<string> CreatePartition(
+        ResolvedAspNetCoreRateLimitingPolicy resolvedPolicy,
+        string partitionKey)
+    {
+        ArgumentNullException.ThrowIfNull(resolvedPolicy);
+        ArgumentException.ThrowIfNullOrWhiteSpace(partitionKey);
+
+        var effective = resolvedPolicy.Effective;
+        var queueLimit = effective.QueueLimit ?? AspNetCoreRateLimitingPolicyResolver.DefaultQueueLimit;
+        var permitLimit = effective.PermitLimit ?? AspNetCoreRateLimitingPolicyResolver.DefaultPermitLimit;
+        var algorithm = effective.Algorithm ?? AspNetCoreRateLimitingPolicyResolver.DefaultAlgorithm;
+
+        if (string.Equals(algorithm, "FixedWindow", StringComparison.OrdinalIgnoreCase))
+        {
+            var windowSeconds = effective.WindowSeconds ?? AspNetCoreRateLimitingPolicyResolver.DefaultWindowSeconds;
+            return RateLimitPartition.GetFixedWindowLimiter(
+                partitionKey,
+                _ => new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = permitLimit,
+                    QueueLimit = queueLimit,
+                    QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                    Window = TimeSpan.FromSeconds(windowSeconds),
+                    AutoReplenishment = true
+                });
+        }
+
+        if (string.Equals(algorithm, "TokenBucket", StringComparison.OrdinalIgnoreCase))
+        {
+            var windowSeconds = effective.WindowSeconds ?? AspNetCoreRateLimitingPolicyResolver.DefaultWindowSeconds;
+            return RateLimitPartition.GetTokenBucketLimiter(
+                partitionKey,
+                _ => new TokenBucketRateLimiterOptions
+                {
+                    TokenLimit = permitLimit,
+                    TokensPerPeriod = permitLimit,
+                    QueueLimit = queueLimit,
+                    QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                    ReplenishmentPeriod = TimeSpan.FromSeconds(windowSeconds),
+                    AutoReplenishment = true
+                });
+        }
+
+        if (string.Equals(algorithm, "ConcurrencyLimiter", StringComparison.OrdinalIgnoreCase))
+        {
+            return RateLimitPartition.GetConcurrencyLimiter(
+                partitionKey,
+                _ => new ConcurrencyLimiterOptions
+                {
+                    PermitLimit = permitLimit,
+                    QueueLimit = queueLimit,
+                    QueueProcessingOrder = QueueProcessingOrder.OldestFirst
+                });
+        }
+
+        var segmentsPerWindow = effective.SegmentsPerWindow ?? AspNetCoreRateLimitingPolicyResolver.DefaultSegmentsPerWindow;
+        var slidingWindowSeconds = effective.WindowSeconds ?? AspNetCoreRateLimitingPolicyResolver.DefaultWindowSeconds;
+        return RateLimitPartition.GetSlidingWindowLimiter(
+            partitionKey,
+            _ => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = permitLimit,
+                QueueLimit = queueLimit,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                Window = TimeSpan.FromSeconds(slidingWindowSeconds),
+                SegmentsPerWindow = segmentsPerWindow,
+                AutoReplenishment = true
+            });
+    }
+
+    private static string ResolveRateLimitingPartitionKey(HttpContext context)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+
+        var subjectId = context.User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? context.User.Identity?.Name;
+        if (!string.IsNullOrWhiteSpace(subjectId))
+        {
+            return "subject:" + subjectId.Trim();
+        }
+
+        if (context.Request.Headers.TryGetValue("X-Tenant-Id", out var tenantId) &&
+            !string.IsNullOrWhiteSpace(tenantId))
+        {
+            return "tenant:" + tenantId.ToString().Trim();
+        }
+
+        return context.Connection.RemoteIpAddress is not null
+            ? "ip:" + context.Connection.RemoteIpAddress
+            : "anonymous";
+    }
+
+    private static bool ShouldBypassRateLimiting(
+        HttpContext context,
+        ResolvedAspNetCoreRateLimitingPolicy resolvedPolicy)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(resolvedPolicy);
+
+        var path = context.Request.Path;
+        if (!path.HasValue)
+        {
+            return false;
+        }
+
+        return resolvedPolicy.ExcludedPathPrefixes.Any(prefix =>
+            !string.IsNullOrWhiteSpace(prefix) &&
+            path.StartsWithSegments(prefix, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static async ValueTask WriteRateLimitRejectedResponseAsync(
+        OnRejectedContext context,
+        bool useResultModelEnvelope,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+
+        var retryAfterSeconds = TryResolveRetryAfterSeconds(context);
+        if (retryAfterSeconds.HasValue)
+        {
+            context.HttpContext.Response.Headers.RetryAfter = retryAfterSeconds.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        if (useResultModelEnvelope)
+        {
+            var details = retryAfterSeconds.HasValue
+                ? $"Retry after {retryAfterSeconds.Value} seconds."
+                : null;
+            var envelope = new ResultModelError
+            {
+                Title = "Too Many Requests",
+                Message = "The request exceeded the configured Cephalon rate limit.",
+                Success = false,
+                StatusCode = AspNetCoreRateLimitingPolicyResolver.RejectionStatusCode,
+                Errors =
+                [
+                    new ResultModelErrorDetail
+                    {
+                        Key = "rate_limit_exceeded",
+                        Message = "The request exceeded the configured Cephalon rate limit.",
+                        Severity = BehaviorFaultSeverity.Error,
+                        Details = details
+                    }
+                ]
+            };
+
+            await Results.Json(
+                    envelope,
+                    statusCode: AspNetCoreRateLimitingPolicyResolver.RejectionStatusCode)
+                .ExecuteAsync(context.HttpContext)
+                .ConfigureAwait(false);
+            return;
+        }
+
+        var problem = new ProblemDetails
+        {
+            Status = AspNetCoreRateLimitingPolicyResolver.RejectionStatusCode,
+            Title = "Too Many Requests",
+            Detail = "The request exceeded the configured Cephalon rate limit."
+        };
+
+        if (retryAfterSeconds.HasValue)
+        {
+            problem.Extensions["retryAfterSeconds"] = retryAfterSeconds.Value;
+        }
+
+        await Results.Json(
+                problem,
+                statusCode: AspNetCoreRateLimitingPolicyResolver.RejectionStatusCode,
+                contentType: "application/problem+json")
+            .ExecuteAsync(context.HttpContext)
+            .ConfigureAwait(false);
+    }
+
+    private static int? TryResolveRetryAfterSeconds(OnRejectedContext context)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+
+        return context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter)
+            ? (int)Math.Ceiling(retryAfter.TotalSeconds)
+            : null;
     }
 
     /// <summary>

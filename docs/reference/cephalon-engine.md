@@ -7439,6 +7439,16 @@ IReadOnlyList<ProjectionDescriptor> Projections { get; set; }
 
 Gets the projections contributed by active modules and visible to the runtime at the time the snapshot was created.
 
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-ratelimitingpolicies"></a>
+
+##### `RateLimitingPolicies`
+
+```csharp
+IReadOnlyList<RateLimitingRuntimeDescriptor> RateLimitingPolicies { get; set; }
+```
+
+Gets the effective rate-limiting policies visible to the runtime at the time the snapshot was created.
+
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-status"></a>
 
 ##### `Status`

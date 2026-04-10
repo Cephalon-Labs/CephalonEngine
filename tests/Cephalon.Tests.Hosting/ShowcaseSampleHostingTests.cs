@@ -5,6 +5,7 @@ using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Health;
+using Cephalon.Abstractions.Resilience;
 using Cephalon.Sample.Showcase;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -81,6 +82,62 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Null(profile.Databases.History.ConnectionStringName);
         Assert.False(profile.Databases.Migrations.ApplyOnStartup);
         Assert.Equal(["history", "read", "write"], profile.Databases.Migrations.Targets);
+        Assert.True(profile.Resilience.RateLimiting.Enabled);
+        Assert.Equal("SlidingWindow", profile.Resilience.RateLimiting.Algorithm);
+        Assert.Equal(200, profile.Resilience.RateLimiting.PermitLimit);
+        Assert.Equal(20, profile.Resilience.RateLimiting.QueueLimit);
+        Assert.Equal(60, profile.Resilience.RateLimiting.WindowSeconds);
+        Assert.Equal(4, profile.Resilience.RateLimiting.SegmentsPerWindow);
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleExposesEffectiveRateLimitingRuntimeCatalog()
+    {
+        await using var app = ShowcaseSampleApp.Build(
+            configureBuilder: builder => builder.WebHost.UseTestServer());
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var policies = await client.GetFromJsonAsync<RateLimitingRuntimeDescriptor[]>("/engine/rate-limiting");
+        var snapshot = await client.GetFromJsonAsync<Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(policies);
+        var policy = Assert.Single(policies);
+        Assert.Equal("cephalon-public-http", policy.Id);
+        Assert.Equal("aspnetcore-global-middleware", policy.ExecutionMode);
+        Assert.Contains("behavior-http", policy.TransportIds);
+        Assert.Contains("rest-api", policy.TransportIds);
+        Assert.Contains("/engine", policy.ExcludedPathPrefixes);
+        Assert.Contains("/openapi", policy.ExcludedPathPrefixes);
+        Assert.Contains("/scalar", policy.ExcludedPathPrefixes);
+        Assert.True(policy.Effective.Enabled);
+        Assert.Equal("SlidingWindow", policy.Effective.Algorithm);
+        Assert.Equal(200, policy.Effective.PermitLimit);
+        Assert.NotNull(snapshot);
+        Assert.Single(snapshot.RateLimitingPolicies);
+        Assert.Equal("cephalon-public-http", snapshot.RateLimitingPolicies[0].Id);
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleRateLimitingRejectsPublicBurstsButLeavesOperatorRoutesAvailable()
+    {
+        await using var app = BuildShowcaseWithTightRateLimiting();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var firstPublicResponse = await client.GetAsync("/api/v1/showcase/catalog/products");
+        var secondPublicResponse = await client.GetAsync("/api/v1/showcase/catalog/products");
+        var manifestResponse = await client.GetAsync("/engine/manifest");
+        var openApiResponse = await client.GetAsync("/openapi/v1.json");
+        var rejectedPayload = await secondPublicResponse.Content.ReadAsStringAsync();
+
+        Assert.Equal(HttpStatusCode.OK, firstPublicResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.TooManyRequests, secondPublicResponse.StatusCode);
+        Assert.Contains("Too Many Requests", rejectedPayload, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(HttpStatusCode.OK, manifestResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, openApiResponse.StatusCode);
     }
 
     [Fact]
@@ -1228,6 +1285,19 @@ public sealed class ShowcaseSampleHostingTests
         {
             builder.WebHost.UseTestServer();
             builder.Configuration["ApiRoutes:ResultEnvelope:Enabled"] = "true";
+        });
+    }
+
+    private static WebApplication BuildShowcaseWithTightRateLimiting()
+    {
+        return ShowcaseSampleApp.Build(configureBuilder: builder =>
+        {
+            builder.WebHost.UseTestServer();
+            builder.Configuration["Engine:Resilience:RateLimiting:Enabled"] = "true";
+            builder.Configuration["Engine:Resilience:RateLimiting:Algorithm"] = "FixedWindow";
+            builder.Configuration["Engine:Resilience:RateLimiting:PermitLimit"] = "1";
+            builder.Configuration["Engine:Resilience:RateLimiting:QueueLimit"] = "0";
+            builder.Configuration["Engine:Resilience:RateLimiting:WindowSeconds"] = "60";
         });
     }
 

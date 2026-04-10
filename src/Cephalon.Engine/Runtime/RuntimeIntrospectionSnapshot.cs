@@ -2,6 +2,7 @@ using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Authorization;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
+using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.Engine.Manifest;
@@ -88,4 +89,9 @@ public sealed record RuntimeIntrospectionSnapshot(
     /// Gets the audit-store surfaces contributed by active modules and visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<AuditStoreDescriptor> AuditStores { get; init; } = [];
+
+    /// <summary>
+    /// Gets the effective rate-limiting policies visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<RateLimitingRuntimeDescriptor> RateLimitingPolicies { get; init; } = [];
 }

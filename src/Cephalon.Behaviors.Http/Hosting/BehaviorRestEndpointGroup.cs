@@ -2,9 +2,11 @@ using System.Reflection;
 using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Abstractions.Resilience;
 using Cephalon.AspNetCore.Documentation;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Transports.Rest;
+using Cephalon.Engine.Configuration;
 using Cephalon.Behaviors.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -515,6 +517,18 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 builder.ProducesProblem(StatusCodes.Status500InternalServerError);
             }
         }
+
+        if (contract.ShouldDocumentStatus(StatusCodes.Status429TooManyRequests))
+        {
+            if (contract.UseResultModelEnvelope)
+            {
+                builder.Produces(StatusCodes.Status429TooManyRequests, errorResponseType, "application/json");
+            }
+            else
+            {
+                builder.ProducesProblem(StatusCodes.Status429TooManyRequests);
+            }
+        }
     }
 
     private static async Task<IResult> InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(
@@ -653,9 +667,15 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         ArgumentNullException.ThrowIfNull(services);
 
         var configuration = services.GetService<IConfiguration>();
-        return configuration is null
+        var statusCodes = configuration is null
             ? new HashSet<int>(new OpenApiEndpointOptions().BehaviorRestDocumentedStatusCodes)
             : new HashSet<int>(OpenApiEndpointOptions.FromConfiguration(configuration).BehaviorRestDocumentedStatusCodes);
+        if (services.GetService<IRateLimitingRuntimeCatalog>()?.GetByTransportId("rest-api").Count > 0)
+        {
+            statusCodes.Add(StatusCodes.Status429TooManyRequests);
+        }
+
+        return statusCodes;
     }
 
     private static MethodInfo GetRequiredCoreMethod(string methodName)

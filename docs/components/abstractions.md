@@ -97,6 +97,11 @@ The app-model contract now also carries a contract-first resilience family throu
 purpose: they capture requested resilience intent in the public model without forcing ASP.NET Core,
 Polly, or behavior-pipeline enforcement details into `Cephalon.Abstractions`.
 
+When a host adapter does enforce HTTP rate limiting, the same package now also carries the narrow
+runtime-facing `IRateLimitingRuntimeCatalog` and `RateLimitingRuntimeDescriptor` contracts. That
+lets hosts publish effective policy truth into operator surfaces and snapshots without leaking
+ASP.NET Core middleware types back into engine-core or application behavior code.
+
 ## Related docs
 
 - [Architecture](../architecture.md)

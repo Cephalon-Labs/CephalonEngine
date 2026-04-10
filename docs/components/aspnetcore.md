@@ -9,6 +9,7 @@
 - runtime startup and shutdown integration through hosted services
 - `/engine/*` metadata, status, diagnostics, and policy endpoints
 - `/engine/resilience` when the engine-owned resilience contract is active
+- `/engine/rate-limiting` when ASP.NET Core rate-limiting enforcement is active
 - `/engine/database-roles` when the engine-owned database-role catalog is active
 - `/engine/database-migrations` when the engine-owned database-migration catalog is active
 - `/engine/audit-history` and `/engine/audit-history/export` when durable audit-history services are active
@@ -67,7 +68,7 @@ When teams use `Cephalon.Behaviors.Http` behavior-aware REST helpers, the result
 
 By default the host registers the `v1` OpenAPI document and treats `/scalar/v1` as the canonical docs link by redirecting `/scalar` to the configured default document. The slash-suffixed Scalar shell at `/scalar/` still remains available for multi-document flows, and Cephalon's Scalar JavaScript normalizes hash-based selections such as `/scalar/#v2/` back into canonical versioned links. Hosts can move those surfaces through `OpenApi:RoutePattern` and `OpenApi:Scalar:RoutePrefix`, while the built-in REST mapper can move off `/api` through `ApiRoutes:Prefixes:Rest` or all the way to the version root with `ApiRoutes:Prefixes:Rest = ""`. The long-term versioned config contract is `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion`, for example `EnabledVersions: [1, 2]` and `DefaultVersion: 2`, so Scalar can render a version selector while endpoints mapped with `BehaviorRestEndpointGroup.ApiVersion(2)` or defaulted from a module version `2.x` continue to appear in `/openapi/v2.json` and under version-aligned REST paths such as `/api/v2/...` or `/v2/...` when the REST prefix is empty. Legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` string settings still work for backward compatibility or custom non-version document names. `OpenApi:Version` remains available as a global `info.version` override for single-document hosts, but multi-document hosts now keep each document version truthful to its own resolved document name such as `v1` or `v2`.
 
-When a host needs to trim or expand the default response set published for behavior-owned REST endpoints, use `OpenApi:BehaviorRest:DocumentedStatusCodes`. The default list is `[200, 201, 202, 204, 400, 401, 403, 404, 409, 500]`, which keeps `500` visible in Scalar/OpenAPI by default. Hosts can override that list with a smaller or larger HTTP-status set without changing the runtime behavior of the endpoints themselves.
+When a host needs to trim or expand the default response set published for behavior-owned REST endpoints, use `OpenApi:BehaviorRest:DocumentedStatusCodes`. The default list is `[200, 201, 202, 204, 400, 401, 403, 404, 409, 500]`, which keeps `500` visible in Scalar/OpenAPI by default. Hosts can override that list with a smaller or larger HTTP-status set without changing the runtime behavior of the endpoints themselves. When `Engine:Resilience:RateLimiting:Enabled = true`, Cephalon also adds `429` automatically for behavior-owned REST endpoints unless the configured list already includes it, so the docs stay truthful to the active ASP.NET Core limiter.
 
 The same host layer also owns the prefix policy for the generic behavior HTTP bindings. Route-shaped
 generic behavior transports now project canonical versioned paths through `ApiRoutes:Prefixes:Rest`,
@@ -112,12 +113,19 @@ consumers, co-location, audit-history metadata, live provider-contributed role h
 migration status, and provider-added deploy-time command templates such as Entity Framework
 bundle/script/update guidance.
 
-The host now also exposes the engine-owned resilience contract directly through `/engine/resilience`.
-That route returns the same requested resilience-policy selection projected into `AppProfile.Resilience`,
-covering `Retry`, `Timeout`, `CircuitBreaker`, `Bulkhead`, and `RateLimiting`. This is intentionally
-the contract-first phase-11 baseline: the operator surface can already answer what a host asked for,
-while later runtime slices will add effective enforcement, behavior-level overrides, and transport-aware
-execution details on top of the same public shape.
+The host now exposes both requested and effective resilience answers. `/engine/resilience` returns
+the requested resilience-policy selection projected into `AppProfile.Resilience`, covering `Retry`,
+`Timeout`, `CircuitBreaker`, `Bulkhead`, and `RateLimiting`. When ASP.NET Core enforcement is active,
+`/engine/rate-limiting` plus `/engine/rate-limiting/{policyId}` publish the effective public-HTTP
+policy, covered transport ids, excluded route prefixes, rejection status, and host-specific metadata,
+and `/engine/snapshot` carries the same answer through `RateLimitingPolicies`.
+
+The first shipped runtime follow-through uses `Microsoft.AspNetCore.RateLimiting` as a global limiter
+for public Cephalon HTTP endpoints while intentionally excluding `/engine`, `/health`, `/openapi`, the
+configured Scalar route prefix, `/favicon.ico`, and hosted reference-doc routes so operator and
+documentation surfaces remain available under pressure. Per-behavior overrides and broader behavior
+pipeline resilience enforcement remain later phase-11 follow-through on top of this truthful host-level
+baseline.
 
 The host now also exposes additive event-dispatch operator answers directly. When eventing packs
 register the corresponding catalogs, `/engine/event-dispatch-runtimes` and

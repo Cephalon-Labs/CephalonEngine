@@ -7,6 +7,7 @@ using Cephalon.Abstractions.Authorization;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Localization;
+using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Diagnostics;
@@ -18,6 +19,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -93,6 +95,7 @@ public static class EngineWebApplicationExtensions
 
         var engineGroup = app.MapGroup("/engine");
         engineGroup.ExcludeFromDescription();
+        engineGroup.DisableRateLimiting();
         engineGroup.MapGet("/", (RuntimeManifest manifest) => TypedResults.Ok(manifest))
             .WithName("GetCephalonManifest");
         engineGroup.MapGet("/manifest", (RuntimeManifest manifest) => TypedResults.Ok(manifest))
@@ -104,6 +107,15 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonAppModel");
         engineGroup.MapGet("/resilience", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Resilience))
             .WithName("GetCephalonResilience");
+        engineGroup.MapGet("/rate-limiting", (IRateLimitingRuntimeCatalog catalog) => TypedResults.Ok(catalog.Policies))
+            .WithName("GetCephalonRateLimiting");
+        engineGroup.MapGet("/rate-limiting/{policyId}", (string policyId, IRateLimitingRuntimeCatalog catalog) =>
+            {
+                var policy = catalog.GetById(policyId);
+
+                return policy is null ? Results.NotFound() : Results.Ok(policy);
+            })
+            .WithName("GetCephalonRateLimitingPolicy");
         engineGroup.MapGet("/databases", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Databases))
             .WithName("GetCephalonDatabases");
         engineGroup.MapGet("/database-roles", (IDatabaseRoleCatalog catalog) => TypedResults.Ok(catalog.DatabaseRoles))
@@ -410,15 +422,24 @@ public static class EngineWebApplicationExtensions
 
         app.MapHealthChecks("/health", CreateHealthCheckOptions(static _ => true))
             .WithDisplayName("Cephalon Health")
+            .DisableRateLimiting()
             .ExcludeFromDescription();
         app.MapHealthChecks("/health/live", CreateHealthCheckOptions(static registration =>
                 registration.Tags.Any(tag => string.Equals(tag, "live", StringComparison.OrdinalIgnoreCase))))
             .WithDisplayName("Cephalon Liveness")
+            .DisableRateLimiting()
             .ExcludeFromDescription();
         app.MapHealthChecks("/health/ready", CreateHealthCheckOptions(static registration =>
                 registration.Tags.Any(tag => string.Equals(tag, "ready", StringComparison.OrdinalIgnoreCase))))
             .WithDisplayName("Cephalon Readiness")
+            .DisableRateLimiting()
             .ExcludeFromDescription();
+
+        if (app.Services.GetService<IRateLimitingRuntimeCatalog>()?.Policies.Any(static policy =>
+                string.Equals(policy.ExecutionMode, AspNetCoreRateLimitingPolicyResolver.EnabledExecutionMode, StringComparison.OrdinalIgnoreCase)) == true)
+        {
+            app.UseRateLimiter();
+        }
 
         var mappers = app.Services.GetServices<ITransportRouteMapper>()
             .GroupBy(mapper => mapper.TransportId, StringComparer.OrdinalIgnoreCase)
@@ -459,16 +480,20 @@ public static class EngineWebApplicationExtensions
                     await next();
                 }));
 
-            app.MapOpenApi(openApiEndpointOptions.RoutePattern);
+            app.MapOpenApi(openApiEndpointOptions.RoutePattern)
+                .DisableRateLimiting();
             app.MapGet(
                     openApiToggleScriptRoute,
                     () => Results.Text(
                         RenderOpenApiToggleScript(openApiEndpointOptions.ScalarRoutePrefix),
                         "application/javascript"))
+                .DisableRateLimiting()
                 .ExcludeFromDescription();
             app.MapGet(scalarFaviconRoute, () => Results.Text(ScalarFavicon.Value, "image/svg+xml"))
+                .DisableRateLimiting()
                 .ExcludeFromDescription();
             app.MapGet("/favicon.ico", () => Results.Redirect(scalarFaviconReference))
+                .DisableRateLimiting()
                 .ExcludeFromDescription();
             app.UseWhen(
                 context =>
@@ -505,7 +530,8 @@ public static class EngineWebApplicationExtensions
                             defaultOpenApiDocumentName,
                             StringComparison.OrdinalIgnoreCase));
                 }
-            });
+            })
+            .DisableRateLimiting();
         }
 
         MapReferenceDocs(app, referenceDocsOptions, referenceDocsSurface);
@@ -564,11 +590,14 @@ public static class EngineWebApplicationExtensions
         ValidateReferenceDocsOptions(options, surface);
 
         app.MapGet(surface.RoutePrefix, () => Results.Redirect(surface.DefaultDocumentPath))
+            .DisableRateLimiting()
             .ExcludeFromDescription();
         app.MapGet($"{surface.RoutePrefix}/", () => Results.Redirect(surface.DefaultDocumentPath))
+            .DisableRateLimiting()
             .ExcludeFromDescription();
         app.MapGet($"{surface.RoutePrefix}/{{**filePath}}", (string? filePath) =>
                 ServeReferenceDocsFile(options, filePath))
+            .DisableRateLimiting()
             .ExcludeFromDescription();
     }
 
