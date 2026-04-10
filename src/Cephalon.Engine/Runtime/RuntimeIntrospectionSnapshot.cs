@@ -64,6 +64,11 @@ public sealed record RuntimeIntrospectionSnapshot(
     public IReadOnlyList<DatabaseRoleDescriptor> DatabaseRoles { get; init; } = [];
 
     /// <summary>
+    /// Gets the database-migration catalog visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<DatabaseMigrationDescriptor> DatabaseMigrations { get; init; } = [];
+
+    /// <summary>
     /// Gets the authorization policies contributed by active modules and visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<AuthorizationPolicyDescriptor> AuthorizationPolicies { get; init; } = [];

@@ -52,8 +52,10 @@ namespace Cephalon.Sample.Showcase;
 ///   <item><description><b>Shipping</b> - Process-manager pattern via Kafka, RabbitMQ, in-memory, REST, gRPC</description></item>
 /// </list>
 /// <para>
-/// Infrastructure services are connected via Docker Compose (compose.yaml):
-/// PostgreSQL, MongoDB, Redis, RabbitMQ, Kafka, and OpenTelemetry Collector.
+/// Infrastructure services can run through Docker Compose (compose.yaml): PostgreSQL, MongoDB,
+/// Redis, RabbitMQ, Kafka, and OpenTelemetry Collector. When Docker mode is not enabled, the
+/// sample falls back to in-memory Entity Framework stores for write, read, and audit-history
+/// roles so the showcase stays fully bootable and introspectable without external dependencies.
 /// </para>
 /// </remarks>
 public static class ShowcaseSampleApp
@@ -88,6 +90,11 @@ public static class ShowcaseSampleApp
         var dockerMode = string.Equals(
             Environment.GetEnvironmentVariable("SHOWCASE_DOCKER"), "true",
             StringComparison.OrdinalIgnoreCase);
+        var fallbackDatabaseSuffix = Guid.NewGuid().ToString("N");
+        if (!dockerMode)
+        {
+            ApplyNonDockerDatabaseOverrides(builder.Configuration, fallbackDatabaseSuffix);
+        }
 
         builder.AddCephalon(engine =>
         {
@@ -97,66 +104,19 @@ public static class ShowcaseSampleApp
             // --- Data layer ---
             engine.AddData();
 
-            // --- PostgreSQL via Entity Framework (Docker mode only) ---
-            if (dockerMode)
-            {
-                engine.AddEntityFrameworkData<ShowcaseReadDbContext, ShowcaseWriteDbContext>(
-                    configureDbContext: (role, opts) => opts.UseNpgsql(
-                        role.ConnectionString,
-                        npgsql =>
-                        {
-                            if (role.Runtime.CommandTimeoutSeconds is { } commandTimeoutSeconds)
-                            {
-                                npgsql.CommandTimeout(commandTimeoutSeconds);
-                            }
+            // --- Entity Framework data and durable audit history ---
+            // Docker mode uses PostgreSQL. Local/test mode falls back to in-memory EF stores so
+            // the showcase still exercises database-role, migration, and audit-history surfaces.
+            engine.AddEntityFrameworkData<ShowcaseReadDbContext, ShowcaseWriteDbContext>(
+                configureDbContext: (role, opts) => ConfigureShowcaseDatabaseRole(role, opts, dockerMode),
+                configure: efOpts =>
+                {
+                    efOpts.RegisterOutbox = true;
+                    efOpts.RegisterInbox = true;
+                });
 
-                            if (role.Runtime.MaxBatchSize is { } maxBatchSize)
-                            {
-                                npgsql.MaxBatchSize(maxBatchSize);
-                            }
-
-                            if (role.Runtime.EnableRetryOnFailure == true)
-                            {
-                                npgsql.EnableRetryOnFailure(
-                                    maxRetryCount: role.Runtime.MaxRetryCount ?? 6,
-                                    maxRetryDelay: role.Runtime.MaxRetryDelaySeconds is { } seconds
-                                        ? TimeSpan.FromSeconds(seconds)
-                                        : TimeSpan.FromSeconds(30),
-                                    errorCodesToAdd: null);
-                            }
-                        }),
-                    configure: efOpts =>
-                    {
-                        efOpts.RegisterOutbox = true;
-                        efOpts.RegisterInbox = true;
-                    });
-
-                engine.AddEntityFrameworkAuditHistory<ShowcaseAuditHistoryDbContext>(
-                    configureDbContext: (role, opts) => opts.UseNpgsql(
-                        role.ConnectionString,
-                        npgsql =>
-                        {
-                            if (role.Runtime.CommandTimeoutSeconds is { } commandTimeoutSeconds)
-                            {
-                                npgsql.CommandTimeout(commandTimeoutSeconds);
-                            }
-
-                            if (role.Runtime.MaxBatchSize is { } maxBatchSize)
-                            {
-                                npgsql.MaxBatchSize(maxBatchSize);
-                            }
-
-                            if (role.Runtime.EnableRetryOnFailure == true)
-                            {
-                                npgsql.EnableRetryOnFailure(
-                                    maxRetryCount: role.Runtime.MaxRetryCount ?? 6,
-                                    maxRetryDelay: role.Runtime.MaxRetryDelaySeconds is { } seconds
-                                        ? TimeSpan.FromSeconds(seconds)
-                                        : TimeSpan.FromSeconds(30),
-                                    errorCodesToAdd: null);
-                            }
-                        }));
-            }
+            engine.AddEntityFrameworkAuditHistory<ShowcaseAuditHistoryDbContext>(
+                configureDbContext: (role, opts) => ConfigureShowcaseDatabaseRole(role, opts, dockerMode));
 
             // --- MongoDB document store (Docker mode only) ---
             if (dockerMode)
@@ -258,13 +218,77 @@ public static class ShowcaseSampleApp
         }).ExcludeFromDescription();
         app.MapCephalon();
 
-        // --- Database initialization (Docker mode) ---
-        if (dockerMode)
-        {
-            InitializeDatabase(app);
-        }
+        // --- Database initialization ---
+        InitializeDatabase(app);
 
         return app;
+    }
+
+    private static void ApplyNonDockerDatabaseOverrides(
+        ConfigurationManager configuration,
+        string databaseSuffix)
+    {
+        ArgumentNullException.ThrowIfNull(configuration);
+        ArgumentException.ThrowIfNullOrWhiteSpace(databaseSuffix);
+
+        var normalizedSuffix = databaseSuffix.Trim();
+        OverrideInMemoryRole(configuration, "Write", $"showcase-write-{normalizedSuffix}");
+        OverrideInMemoryRole(configuration, "Read", $"showcase-read-{normalizedSuffix}");
+        OverrideInMemoryRole(configuration, "History", $"showcase-history-{normalizedSuffix}");
+    }
+
+    private static void OverrideInMemoryRole(
+        ConfigurationManager configuration,
+        string roleSectionName,
+        string databaseName)
+    {
+        ArgumentNullException.ThrowIfNull(configuration);
+        ArgumentException.ThrowIfNullOrWhiteSpace(roleSectionName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(databaseName);
+
+        configuration[$"Engine:Databases:{roleSectionName}:Provider"] = "InMemory";
+        configuration[$"Engine:Databases:{roleSectionName}:ConnectionStringName"] = string.Empty;
+        configuration[$"Engine:Databases:{roleSectionName}:ConnectionString"] = databaseName.Trim();
+    }
+
+    private static void ConfigureShowcaseDatabaseRole(
+        EntityFrameworkDatabaseRoleContext role,
+        DbContextOptionsBuilder optionsBuilder,
+        bool dockerMode)
+    {
+        ArgumentNullException.ThrowIfNull(role);
+        ArgumentNullException.ThrowIfNull(optionsBuilder);
+
+        if (!dockerMode)
+        {
+            optionsBuilder.UseInMemoryDatabase(role.ConnectionString);
+            return;
+        }
+
+        optionsBuilder.UseNpgsql(
+            role.ConnectionString,
+            npgsql =>
+            {
+                if (role.Runtime.CommandTimeoutSeconds is { } commandTimeoutSeconds)
+                {
+                    npgsql.CommandTimeout(commandTimeoutSeconds);
+                }
+
+                if (role.Runtime.MaxBatchSize is { } maxBatchSize)
+                {
+                    npgsql.MaxBatchSize(maxBatchSize);
+                }
+
+                if (role.Runtime.EnableRetryOnFailure == true)
+                {
+                    npgsql.EnableRetryOnFailure(
+                        maxRetryCount: role.Runtime.MaxRetryCount ?? 6,
+                        maxRetryDelay: role.Runtime.MaxRetryDelaySeconds is { } seconds
+                            ? TimeSpan.FromSeconds(seconds)
+                            : TimeSpan.FromSeconds(30),
+                        errorCodesToAdd: null);
+                }
+            });
     }
 
     private static void InitializeDatabase(WebApplication app)

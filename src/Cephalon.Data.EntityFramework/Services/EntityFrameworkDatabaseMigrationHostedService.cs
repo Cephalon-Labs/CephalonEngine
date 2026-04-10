@@ -29,7 +29,13 @@ public sealed class EntityFrameworkDatabaseMigrationHostedService(
             return;
         }
 
-        var requestedTargets = ResolveRequestedTargets(migrationSelection, registrations);
+        var databaseRoleRuntimeContributor = serviceProvider.GetService<EntityFrameworkDatabaseRoleRuntimeContributor>();
+        var migrationReporter = serviceProvider.GetService<EntityFrameworkDatabaseMigrationCatalog>();
+        var timeProvider = serviceProvider.GetService<TimeProvider>() ?? TimeProvider.System;
+
+        var requestedTargets = EntityFrameworkDatabaseMigrationTargetResolver.ResolveRequestedTargets(
+            migrationSelection,
+            registrations.SelectMany(static registration => registration.TargetRoleIds));
         var supportedTargets = registrations
             .SelectMany(static registration => registration.TargetRoleIds)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -52,14 +58,27 @@ public sealed class EntityFrameworkDatabaseMigrationHostedService(
 
         foreach (var registration in selectedRegistrations)
         {
+            var selectedRoleIds = registration.TargetRoleIds
+                .Where(requestedTargets.Contains)
+                .ToArray();
+            var startedAtUtc = timeProvider.GetUtcNow();
+
             try
             {
+                migrationReporter?.MarkRunning(selectedRoleIds, startedAtUtc);
+                databaseRoleRuntimeContributor?.ReportRunning(selectedRoleIds, registration.DbContextType);
                 using var scope = serviceProvider.CreateScope();
                 var dbContext = (DbContext)scope.ServiceProvider.GetRequiredService(registration.DbContextType);
-                await ApplySchemaAsync(dbContext, cancellationToken).ConfigureAwait(false);
+                var appliedMode = await ApplySchemaAsync(dbContext, cancellationToken).ConfigureAwait(false);
+                var completedAtUtc = timeProvider.GetUtcNow();
+                migrationReporter?.MarkSucceeded(selectedRoleIds, appliedMode, startedAtUtc, completedAtUtc);
+                databaseRoleRuntimeContributor?.ReportSucceeded(selectedRoleIds, registration.DbContextType, appliedMode);
             }
             catch (Exception exception)
             {
+                var completedAtUtc = timeProvider.GetUtcNow();
+                migrationReporter?.MarkFailed(selectedRoleIds, exception.Message, startedAtUtc, completedAtUtc);
+                databaseRoleRuntimeContributor?.ReportFailed(selectedRoleIds, registration.DbContextType, exception);
                 throw new InvalidOperationException(
                     $"Entity Framework startup schema apply failed for DbContext '{registration.DbContextType.FullName}'.",
                     exception);
@@ -78,7 +97,7 @@ public sealed class EntityFrameworkDatabaseMigrationHostedService(
         return Task.CompletedTask;
     }
 
-    private static async Task ApplySchemaAsync(
+    private static async Task<string> ApplySchemaAsync(
         DbContext dbContext,
         CancellationToken cancellationToken)
     {
@@ -90,26 +109,11 @@ public sealed class EntityFrameworkDatabaseMigrationHostedService(
             if (migrationsAssembly.Migrations.Count > 0)
             {
                 await dbContext.Database.MigrateAsync(cancellationToken).ConfigureAwait(false);
-                return;
+                return "migrate";
             }
         }
 
         await dbContext.Database.EnsureCreatedAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    private static HashSet<string> ResolveRequestedTargets(
-        DatabaseMigrationsSelection migrationSelection,
-        IReadOnlyList<EntityFrameworkDatabaseMigrationRegistration> registrations)
-    {
-        if (migrationSelection.Targets.Count > 0)
-        {
-            return migrationSelection.Targets
-                .Select(static target => target.Trim().ToLowerInvariant())
-                .ToHashSet(StringComparer.OrdinalIgnoreCase);
-        }
-
-        return registrations
-            .SelectMany(static registration => registration.TargetRoleIds)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        return "ensure-created";
     }
 }

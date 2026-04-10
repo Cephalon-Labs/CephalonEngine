@@ -4,6 +4,7 @@ using Cephalon.Audit.EntityFramework.Modeling;
 using Cephalon.Audit.EntityFramework.Registration;
 using Cephalon.Audit.Registration;
 using Cephalon.Audit.Services;
+using Cephalon.Abstractions.Data;
 using Cephalon.Data.EntityFramework.Configuration;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
@@ -126,6 +127,64 @@ public sealed class EntityFrameworkAuditHistoryPackTests
         Assert.Equal("true", auditStore.Metadata["usesRoleReference"]);
         Assert.Equal("audit01", auditStore.Metadata["schema"]);
         Assert.Equal("WriteDb", auditStore.Metadata["connectionStringName"]);
+    }
+
+    [Fact]
+    public async Task AddEntityFrameworkAuditHistoryProjectsDatabaseMigrationCatalogForItsConfiguredRole()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:WriteDb"] = "Host=localhost;Database=cephalon_write",
+                ["Engine:Audit:Enabled"] = "true",
+                ["Engine:Audit:History:Enabled"] = "true",
+                ["Engine:Audit:History:Provider"] = "entity-framework",
+                ["Engine:Audit:History:DatabaseRole"] = "history",
+                ["Engine:Audit:EnableInMemoryWriter"] = "false",
+                ["Engine:Databases:Write:Provider"] = "PostgreSql",
+                ["Engine:Databases:Write:ConnectionStringName"] = "WriteDb",
+                ["Engine:Databases:History:UseRole"] = "write",
+                ["Engine:Databases:History:Schema"] = "audit01",
+                ["Engine:Databases:Migrations:ApplyOnStartup"] = "true",
+                ["Engine:Databases:Migrations:Targets:0"] = "history"
+            })
+            .Build();
+        var databaseName = $"cephalon-audit-history-migration-catalog-{Guid.NewGuid():N}";
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(EngineSettings.FromConfiguration(configuration));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddAudit();
+            engine.AddEntityFrameworkAuditHistory<TestAuditHistoryDbContext>((_, options) =>
+            {
+                options.UseInMemoryDatabase(databaseName);
+            });
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var migrationCatalog = provider.GetRequiredService<IDatabaseMigrationCatalog>();
+        var hostedService = Assert.Single(
+            provider.GetServices<IHostedService>(),
+            service => service is global::Cephalon.Data.EntityFramework.Services.EntityFrameworkDatabaseMigrationHostedService);
+
+        var plannedHistory = Assert.Single(migrationCatalog.DatabaseMigrations);
+        Assert.Equal("history", plannedHistory.Id);
+        Assert.Equal("history", plannedHistory.RequestedRoleId);
+        Assert.Equal("write", plannedHistory.ResolvedRoleId);
+        Assert.Equal(DatabaseMigrationStatus.Planned, plannedHistory.Status);
+        Assert.Equal(typeof(TestAuditHistoryDbContext).FullName, plannedHistory.DbContextType);
+        Assert.Equal("role-reference", plannedHistory.Metadata["resolutionMode"]);
+        Assert.Equal("write", plannedHistory.Metadata["useRole"]);
+        Assert.Equal("audit01", plannedHistory.Metadata["schema"]);
+
+        await hostedService.StartAsync(CancellationToken.None);
+
+        var appliedHistory = Assert.Single(migrationCatalog.DatabaseMigrations);
+        Assert.Equal(DatabaseMigrationStatus.Succeeded, appliedHistory.Status);
+        Assert.Equal("ensure-created", appliedHistory.Mechanism);
+        Assert.True(appliedHistory.CompletedAtUtc.HasValue);
     }
 
     [Fact]

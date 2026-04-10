@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.AppModel;
+using Cephalon.Abstractions.Health;
 
 namespace Cephalon.Abstractions.Data;
 
@@ -27,6 +28,12 @@ public sealed class DatabaseRoleDescriptor
     /// <param name="referencedByRoles">Other logical roles that explicitly reference this role through <c>UseRole</c>.</param>
     /// <param name="coLocatedRoles">Other logical roles that resolve to the same concrete role target.</param>
     /// <param name="metadata">Optional operator-facing metadata associated with the database role.</param>
+    /// <param name="healthState">The current runtime health state reported for the database role, when available.</param>
+    /// <param name="healthDescription">The operator-facing health description reported for the database role, when available.</param>
+    /// <param name="migrationState">The current migration execution state reported for the database role, when available.</param>
+    /// <param name="migrationDescription">The operator-facing migration description reported for the database role, when available.</param>
+    /// <param name="observedAtUtc">The UTC timestamp when runtime state was last observed for the database role, when available.</param>
+    /// <param name="runtimeMetadata">Optional runtime metadata associated with the database role.</param>
     public DatabaseRoleDescriptor(
         string id,
         string displayName,
@@ -44,7 +51,13 @@ public sealed class DatabaseRoleDescriptor
         IReadOnlyList<string>? consumers = null,
         IReadOnlyList<string>? referencedByRoles = null,
         IReadOnlyList<string>? coLocatedRoles = null,
-        IReadOnlyDictionary<string, string>? metadata = null)
+        IReadOnlyDictionary<string, string>? metadata = null,
+        HealthState? healthState = null,
+        string? healthDescription = null,
+        string? migrationState = null,
+        string? migrationDescription = null,
+        DateTimeOffset? observedAtUtc = null,
+        IReadOnlyDictionary<string, string>? runtimeMetadata = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -97,9 +110,17 @@ public sealed class DatabaseRoleDescriptor
         Consumers = Normalize(consumers);
         ReferencedByRoles = Normalize(referencedByRoles);
         CoLocatedRoles = Normalize(coLocatedRoles);
+        HealthState = healthState;
+        HealthDescription = string.IsNullOrWhiteSpace(healthDescription) ? null : healthDescription.Trim();
+        MigrationState = string.IsNullOrWhiteSpace(migrationState) ? null : migrationState.Trim();
+        MigrationDescription = string.IsNullOrWhiteSpace(migrationDescription) ? null : migrationDescription.Trim();
+        ObservedAtUtc = observedAtUtc;
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
+        RuntimeMetadata = runtimeMetadata is null
+            ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>(runtimeMetadata, StringComparer.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -183,9 +204,39 @@ public sealed class DatabaseRoleDescriptor
     public IReadOnlyList<string> CoLocatedRoles { get; }
 
     /// <summary>
+    /// Gets the current runtime health state reported for the database role, when available.
+    /// </summary>
+    public HealthState? HealthState { get; }
+
+    /// <summary>
+    /// Gets the operator-facing health description reported for the database role, when available.
+    /// </summary>
+    public string? HealthDescription { get; }
+
+    /// <summary>
+    /// Gets the current migration execution state reported for the database role, when available.
+    /// </summary>
+    public string? MigrationState { get; }
+
+    /// <summary>
+    /// Gets the operator-facing migration description reported for the database role, when available.
+    /// </summary>
+    public string? MigrationDescription { get; }
+
+    /// <summary>
+    /// Gets the UTC timestamp when runtime state was last observed for the database role, when available.
+    /// </summary>
+    public DateTimeOffset? ObservedAtUtc { get; }
+
+    /// <summary>
     /// Gets optional operator-facing metadata associated with the database role.
     /// </summary>
     public IReadOnlyDictionary<string, string> Metadata { get; }
+
+    /// <summary>
+    /// Gets optional runtime metadata associated with the database role.
+    /// </summary>
+    public IReadOnlyDictionary<string, string> RuntimeMetadata { get; }
 
     private static string[] Normalize(IReadOnlyList<string>? values)
     {

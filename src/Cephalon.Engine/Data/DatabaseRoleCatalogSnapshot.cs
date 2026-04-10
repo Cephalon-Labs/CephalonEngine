@@ -1,38 +1,19 @@
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Data;
+using Cephalon.Abstractions.Health;
 using Cephalon.Engine.AppModel;
 
 namespace Cephalon.Engine.Data;
 
-internal sealed class DatabaseRoleCatalogSnapshot : IDatabaseRoleCatalog
+internal sealed class DatabaseRoleCatalogSnapshot(
+    AppProfile appProfile,
+    IEnumerable<IDatabaseRoleRuntimeContributor>? runtimeContributors = null) : IDatabaseRoleCatalog
 {
     private static readonly string[] KnownRoleIds = ["write", "read", "outbox", "history"];
-    private readonly IReadOnlyList<DatabaseRoleDescriptor> databaseRoles;
-    private readonly Dictionary<string, DatabaseRoleDescriptor> databaseRolesById;
-    private readonly Dictionary<string, IReadOnlyList<DatabaseRoleDescriptor>> databaseRolesByResolvedRole;
-    private readonly Dictionary<string, IReadOnlyList<DatabaseRoleDescriptor>> databaseRolesByProvider;
+    private readonly AppProfile appProfile = appProfile ?? throw new ArgumentNullException(nameof(appProfile));
+    private readonly IDatabaseRoleRuntimeContributor[] runtimeContributors = runtimeContributors?.ToArray() ?? [];
 
-    public DatabaseRoleCatalogSnapshot(AppProfile appProfile)
-    {
-        ArgumentNullException.ThrowIfNull(appProfile);
-
-        databaseRoles = BuildDatabaseRoles(appProfile);
-        databaseRolesById = databaseRoles.ToDictionary(static role => role.Id, StringComparer.OrdinalIgnoreCase);
-        databaseRolesByResolvedRole = databaseRoles
-            .GroupBy(static role => role.ResolvedRoleId, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => (IReadOnlyList<DatabaseRoleDescriptor>)group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
-        databaseRolesByProvider = databaseRoles
-            .GroupBy(static role => role.Provider, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => (IReadOnlyList<DatabaseRoleDescriptor>)group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
-    }
-
-    public IReadOnlyList<DatabaseRoleDescriptor> DatabaseRoles => databaseRoles;
+    public IReadOnlyList<DatabaseRoleDescriptor> DatabaseRoles => CreateState().DatabaseRoles;
 
     public DatabaseRoleDescriptor? GetById(string databaseRoleId)
     {
@@ -41,7 +22,7 @@ internal sealed class DatabaseRoleCatalogSnapshot : IDatabaseRoleCatalog
             return null;
         }
 
-        return databaseRolesById.TryGetValue(databaseRoleId.Trim(), out var databaseRole)
+        return CreateState().DatabaseRolesById.TryGetValue(databaseRoleId.Trim(), out var databaseRole)
             ? databaseRole
             : null;
     }
@@ -53,7 +34,7 @@ internal sealed class DatabaseRoleCatalogSnapshot : IDatabaseRoleCatalog
             return [];
         }
 
-        return databaseRolesByResolvedRole.TryGetValue(resolvedRoleId.Trim(), out var matches)
+        return CreateState().DatabaseRolesByResolvedRole.TryGetValue(resolvedRoleId.Trim(), out var matches)
             ? matches
             : [];
     }
@@ -65,20 +46,57 @@ internal sealed class DatabaseRoleCatalogSnapshot : IDatabaseRoleCatalog
             return [];
         }
 
-        return databaseRolesByProvider.TryGetValue(provider.Trim(), out var matches)
+        return CreateState().DatabaseRolesByProvider.TryGetValue(provider.Trim(), out var matches)
             ? matches
             : [];
     }
 
-    private static DatabaseRoleDescriptor[] BuildDatabaseRoles(AppProfile appProfile)
+    private CatalogState CreateState()
+    {
+        var runtimeDescriptors = runtimeContributors
+            .SelectMany(static contributor => contributor.DescribeDatabaseRoleRuntime())
+            .ToArray();
+        var databaseRoles = BuildDatabaseRoles(appProfile, runtimeDescriptors);
+
+        return new CatalogState(
+            databaseRoles,
+            databaseRoles.ToDictionary(static role => role.Id, StringComparer.OrdinalIgnoreCase),
+            databaseRoles
+                .GroupBy(static role => role.ResolvedRoleId, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(
+                    static group => group.Key,
+                    static group => (IReadOnlyList<DatabaseRoleDescriptor>)group.ToArray(),
+                    StringComparer.OrdinalIgnoreCase),
+            databaseRoles
+                .GroupBy(static role => role.Provider, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(
+                    static group => group.Key,
+                    static group => (IReadOnlyList<DatabaseRoleDescriptor>)group.ToArray(),
+                    StringComparer.OrdinalIgnoreCase));
+    }
+
+    private static DatabaseRoleDescriptor[] BuildDatabaseRoles(
+        AppProfile appProfile,
+        IReadOnlyList<DatabaseRoleRuntimeDescriptor> runtimeDescriptors)
     {
         var configuredRoles = KnownRoleIds
             .Where(roleId => GetTarget(appProfile.Databases, roleId).HasValues)
             .Select(roleId => (RoleId: roleId, Resolution: DatabaseTopologyRoleResolver.Resolve(appProfile.Databases, roleId)))
             .ToArray();
+        var runtimeByRole = runtimeDescriptors
+            .Where(static descriptor => !string.IsNullOrWhiteSpace(descriptor.DatabaseRoleId))
+            .GroupBy(static descriptor => descriptor.DatabaseRoleId, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                static group => group.Key,
+                static group => (IReadOnlyList<DatabaseRoleRuntimeDescriptor>)group.ToArray(),
+                StringComparer.OrdinalIgnoreCase);
 
         return configuredRoles
-            .Select(role => CreateDescriptor(appProfile, role.RoleId, role.Resolution, configuredRoles))
+            .Select(role =>
+            {
+                runtimeByRole.TryGetValue(role.RoleId, out var roleRuntime);
+                return CreateDescriptor(appProfile, role.RoleId, role.Resolution, configuredRoles, roleRuntime ?? []);
+            })
             .ToArray();
     }
 
@@ -86,7 +104,8 @@ internal sealed class DatabaseRoleCatalogSnapshot : IDatabaseRoleCatalog
         AppProfile appProfile,
         string roleId,
         DatabaseTopologyRoleResolution resolution,
-        IReadOnlyList<(string RoleId, DatabaseTopologyRoleResolution Resolution)> configuredRoles)
+        IReadOnlyList<(string RoleId, DatabaseTopologyRoleResolution Resolution)> configuredRoles,
+        IReadOnlyList<DatabaseRoleRuntimeDescriptor> runtimeDescriptors)
     {
         var runtime = MergeRuntime(appProfile.Databases.Runtime, resolution.EffectiveTarget.Runtime);
         var consumers = GetConsumers(appProfile, roleId);
@@ -130,7 +149,17 @@ internal sealed class DatabaseRoleCatalogSnapshot : IDatabaseRoleCatalog
             consumers: consumers,
             referencedByRoles: referencedByRoles,
             coLocatedRoles: coLocatedRoles,
-            metadata: metadata);
+            metadata: metadata,
+            healthState: ResolveHealthState(runtimeDescriptors),
+            healthDescription: ResolveDescription(
+                runtimeDescriptors.Select(static descriptor => descriptor.HealthDescription)),
+            migrationState: runtimeDescriptors
+                .Select(static descriptor => descriptor.MigrationState)
+                .LastOrDefault(static state => !string.IsNullOrWhiteSpace(state)),
+            migrationDescription: ResolveDescription(
+                runtimeDescriptors.Select(static descriptor => descriptor.MigrationDescription)),
+            observedAtUtc: ResolveObservedAtUtc(runtimeDescriptors),
+            runtimeMetadata: MergeRuntimeMetadata(runtimeDescriptors));
     }
 
     private static string[] GetConsumers(AppProfile appProfile, string roleId)
@@ -213,4 +242,80 @@ internal sealed class DatabaseRoleCatalogSnapshot : IDatabaseRoleCatalog
     {
         return char.ToUpperInvariant(role[0]) + role[1..];
     }
+
+    private static HealthState? ResolveHealthState(IReadOnlyList<DatabaseRoleRuntimeDescriptor> runtimeDescriptors)
+    {
+        var states = runtimeDescriptors
+            .Where(static descriptor => descriptor.HealthState.HasValue)
+            .Select(static descriptor => descriptor.HealthState!.Value)
+            .ToArray();
+
+        if (states.Length == 0)
+        {
+            return null;
+        }
+
+        if (states.Contains(HealthState.Unhealthy))
+        {
+            return HealthState.Unhealthy;
+        }
+
+        if (states.Contains(HealthState.Degraded))
+        {
+            return HealthState.Degraded;
+        }
+
+        return HealthState.Healthy;
+    }
+
+    private static string? ResolveDescription(IEnumerable<string?> descriptions)
+    {
+        var resolved = descriptions
+            .Where(static description => !string.IsNullOrWhiteSpace(description))
+            .Select(static description => description!.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        return resolved.Length switch
+        {
+            0 => null,
+            1 => resolved[0],
+            _ => string.Join(" | ", resolved)
+        };
+    }
+
+    private static Dictionary<string, string> MergeRuntimeMetadata(
+        IReadOnlyList<DatabaseRoleRuntimeDescriptor> runtimeDescriptors)
+    {
+        var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var descriptor in runtimeDescriptors)
+        {
+            foreach (var pair in descriptor.Metadata)
+            {
+                metadata[pair.Key] = pair.Value;
+            }
+        }
+
+        return metadata;
+    }
+
+    private static DateTimeOffset? ResolveObservedAtUtc(IReadOnlyList<DatabaseRoleRuntimeDescriptor> runtimeDescriptors)
+    {
+        var timestamps = runtimeDescriptors
+            .Where(static descriptor => descriptor.ObservedAtUtc.HasValue)
+            .Select(static descriptor => descriptor.ObservedAtUtc!.Value)
+            .OrderByDescending(static timestamp => timestamp)
+            .ToArray();
+
+        return timestamps.Length > 0
+            ? timestamps[0]
+            : null;
+    }
+
+    private sealed record CatalogState(
+        IReadOnlyList<DatabaseRoleDescriptor> DatabaseRoles,
+        Dictionary<string, DatabaseRoleDescriptor> DatabaseRolesById,
+        Dictionary<string, IReadOnlyList<DatabaseRoleDescriptor>> DatabaseRolesByResolvedRole,
+        Dictionary<string, IReadOnlyList<DatabaseRoleDescriptor>> DatabaseRolesByProvider);
 }

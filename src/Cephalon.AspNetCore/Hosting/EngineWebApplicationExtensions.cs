@@ -113,6 +113,15 @@ public static class EngineWebApplicationExtensions
                 return databaseRole is null ? Results.NotFound() : Results.Ok(databaseRole);
             })
             .WithName("GetCephalonDatabaseRole");
+        engineGroup.MapGet("/database-migrations", (IDatabaseMigrationCatalog catalog) => TypedResults.Ok(catalog.DatabaseMigrations))
+            .WithName("GetCephalonDatabaseMigrations");
+        engineGroup.MapGet("/database-migrations/{databaseMigrationId}", (string databaseMigrationId, IDatabaseMigrationCatalog catalog) =>
+            {
+                var databaseMigration = catalog.GetById(databaseMigrationId);
+
+                return databaseMigration is null ? Results.NotFound() : Results.Ok(databaseMigration);
+            })
+            .WithName("GetCephalonDatabaseMigration");
         engineGroup.MapGet("/scaffold", (RuntimeManifest manifest) =>
                 manifest.AppProfile.Scaffold is null
                     ? Results.NotFound()

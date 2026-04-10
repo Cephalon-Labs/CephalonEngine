@@ -1420,7 +1420,7 @@ Delivered so far:
 - `Engine:Databases:Migrations:ApplyOnStartup` now activates a generic-host hosted service inside `Cephalon.Data.EntityFramework` that applies startup schema creation or migrations for the registered `write` and optional `read` `DbContext` roles
 - the same migration-registration primitives now also back truthful `history`-role execution when a companion pack registers a dedicated history `DbContext`, which is how `Cephalon.Audit.EntityFramework` plugs into the baseline
 - the same baseline now resolves explicit dependent role references for `outbox` and `history`, and the runtime surface reports requested versus resolved roles when those references are active
-- the showcase sample now demonstrates concrete `WriteDb`, `ReadDb`, and `HistoryDb` root roles while using an explicit `Outbox -> write` role reference instead of duplicating write connection settings
+- the showcase sample now demonstrates configured `WriteDb`, `ReadDb`, and `HistoryDb` root roles for Docker-backed runs while using an explicit `Outbox -> write` role reference instead of duplicating write connection settings
 
 Remaining follow-through inside `ENG-061`:
 
@@ -1454,7 +1454,7 @@ Delivered:
 - `IAuditStoreRuntimeContributor` now lets additive provider packs publish durable audit-store descriptors without widening `Cephalon.Audit` into a mandatory storage abstraction
 - durable audit history now targets a named database role, defaults to `history`, can be redirected through `Engine:Audit:History:DatabaseRole`, and publishes its runtime truth through `/engine/audit-stores` and `/engine/snapshot`
 - durable audit history now also consumes the engine-owned `UseRole` contract when the selected database role is a dependent alias, and audit-store runtime metadata now exposes requested versus resolved roles
-- the showcase sample now records durable audit history through the new provider pack while keeping a dedicated `HistoryDb` role so the relational bootstrap and runtime story stay truthful
+- the showcase sample now records durable audit history through the new provider pack while keeping a dedicated configured `HistoryDb` role for Docker-backed runs and a truthful zero-setup fallback outside Docker
 - the same baseline now includes `Engine:Audit:History:Retention`, the first engine-owned retention pass, `IAuditHistoryReader`, `/engine/audit-history`, and showcase-facing audit-history read endpoints
 
 Remaining follow-through inside `ENG-062`:
@@ -1509,7 +1509,7 @@ Acceptance:
 
 - durable provider packs can expose a bounded export stream through a host-agnostic exporter contract
 - ASP.NET Core hosts expose operator-facing audit-history export routes only when export is explicitly enabled
-- the showcase sample documents a public audit-history export endpoint and fails truthfully when no export-capable durable provider is active
+- the showcase sample documents and exercises a public audit-history export endpoint over a real durable provider path
 - runtime metadata and app-model projection expose whether export is enabled and how many entries one export may stream
 
 Delivered:
@@ -1542,14 +1542,14 @@ Acceptance:
 
 - dependent `Outbox` and `History` roles can explicitly reuse `write` through `UseRole`
 - runtime metadata reports requested versus resolved roles truthfully for the first dependent-role baseline
-- the showcase sample demonstrates explicit `Outbox -> write` routing while keeping a dedicated `HistoryDb` root role
+- the showcase sample demonstrates explicit `Outbox -> write` routing while keeping a dedicated configured `HistoryDb` root role for Docker-backed runs
 
 Delivered:
 
 - `Engine:Databases` now supports the narrow `UseRole -> write` baseline for dependent `Outbox` and `History` targets
 - `Cephalon.Data.EntityFramework` and `Cephalon.Audit.EntityFramework` now surface requested versus resolved role truth when those references are active
 - runtime metadata now reports dependent-role co-location instead of pretending every configured role is always a separate physical target
-- the showcase sample now keeps `WriteDb`, `ReadDb`, and `HistoryDb` as explicit roots while proving `Outbox -> write` routing end to end
+- the showcase sample now keeps `WriteDb`, `ReadDb`, and `HistoryDb` as explicit configured roots for Docker-backed runs while proving `Outbox -> write` routing end to end
 
 Remaining follow-through inside `ENG-065`:
 
@@ -1580,12 +1580,42 @@ Delivered:
 - `Cephalon.Engine` now projects resolved database roles into `snapshot.DatabaseRoles` with requested versus resolved role truth, `UseRole` metadata, consumers, co-located roles, and merged runtime tuning
 - ASP.NET Core hosts now expose `/engine/database-roles` plus `/engine/database-roles/{databaseRoleId}` as the operator-facing role catalog
 - audit-history selection now enriches the selected role with provider, export, and retention metadata so operator answers stay cross-pack and truthful
-- the showcase sample and hosting tests now prove the catalog end to end, including `Outbox -> write`, dedicated `HistoryDb`, and snapshot alignment
+- the showcase sample and hosting tests now prove the catalog end to end, including `Outbox -> write`, a dedicated configured `HistoryDb` role for Docker-backed runs, zero-setup in-memory fallback outside Docker, and snapshot alignment
 
 Remaining follow-through inside `ENG-066`:
 
 - add live database-role health, migration-execution progress, and richer provider-specific diagnostics only when they can stay truthful and additive
 - broaden the catalog beyond the current named roles only when the engine can preserve deterministic ordering, validation, and operator clarity
+
+### ENG-067 Engine-owned database-migration catalog and zero-setup sample follow-through
+
+Status: done
+Estimate: 5
+
+Why:
+
+- `Engine:Databases:Migrations` projected requested policy, but operators and hosts still lacked one engine-owned answer for logical migration targets and their runtime state
+- provider packs needed a public additive migration catalog contract before more packs could report planned, running, succeeded, failed, or unsupported targets consistently
+- the showcase sample still hid those surfaces outside Docker because it skipped Entity Framework pack registration entirely in zero-setup runs
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes a public database-migration catalog contract for logical migration targets
+- `/engine/database-migrations`, `/engine/database-migrations/{databaseMigrationId}`, and `/engine/snapshot` expose the same operator-facing migration truth
+- `Cephalon.Data.EntityFramework` contributes migration targets and runtime status through the engine-owned catalog
+- the showcase sample keeps database-role, migration, and durable audit-history surfaces active in local/test runs without requiring Docker
+
+Delivered:
+
+- `IDatabaseMigrationCatalog`, `IDatabaseMigrationContributor`, and `DatabaseMigrationDescriptor` now ship in `Cephalon.Abstractions` as the engine-owned migration catalog contract
+- `Cephalon.Engine` now projects resolved migration targets into `snapshot.DatabaseMigrations` and ASP.NET Core hosts now expose `/engine/database-migrations` plus `/engine/database-migrations/{databaseMigrationId}`
+- `Cephalon.Data.EntityFramework` now contributes planned/running/succeeded/failed migration truth through the engine-owned catalog instead of keeping execution state inside hosted services only
+- the showcase sample now always wires Entity Framework data plus durable audit history, uses PostgreSQL in Docker mode, rewrites `Write` / `Read` / `History` to unique in-memory targets outside Docker, and proves `/engine/database-migrations` plus the public audit-history routes end to end in zero-setup runs
+
+Remaining follow-through inside `ENG-067`:
+
+- add bundle/script orchestration metadata and deploy-time execution truth when Cephalon grows beyond hosted-service or manual migration stories
+- add provider-native migration diagnostics only when they stay additive and do not overfit the public catalog to Entity Framework
 
 ## Sprint history and next 4 sprints
 

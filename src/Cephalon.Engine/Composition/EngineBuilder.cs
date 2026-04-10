@@ -603,9 +603,17 @@ public sealed class EngineBuilder
             Services.TryAddSingleton(technologySelection);
             Services.TryAddSingleton<IReadOnlyList<OwnedBehaviorRegistration>>(ownedBehaviorRegistrations);
             Services.TryAddSingleton<IReadOnlyList<AuditStoreDescriptor>>(_ => auditStores.ToArray());
-            Services.TryAddSingleton<DatabaseRoleCatalogSnapshot>(_ => new DatabaseRoleCatalogSnapshot(appProfile));
+            Services.TryAddSingleton<DatabaseRoleCatalogSnapshot>(serviceProvider =>
+                new DatabaseRoleCatalogSnapshot(
+                    appProfile,
+                    serviceProvider.GetServices<IDatabaseRoleRuntimeContributor>()));
             Services.TryAddSingleton<IDatabaseRoleCatalog>(serviceProvider =>
                 serviceProvider.GetRequiredService<DatabaseRoleCatalogSnapshot>());
+            Services.TryAddSingleton<DatabaseMigrationCatalogSnapshot>(serviceProvider =>
+                new DatabaseMigrationCatalogSnapshot(
+                    serviceProvider.GetServices<IDatabaseMigrationContributor>()));
+            Services.TryAddSingleton<IDatabaseMigrationCatalog>(serviceProvider =>
+                serviceProvider.GetRequiredService<DatabaseMigrationCatalogSnapshot>());
             Services.TryAddSingleton<IProjectionCatalog>(_ => new ProjectionCatalogSnapshot(projections));
             Services.TryAddSingleton<IOutboxCatalog>(_ => new OutboxCatalogSnapshot(outboxes));
             Services.TryAddSingleton<IInboxCatalog>(_ => new InboxCatalogSnapshot(inboxes));

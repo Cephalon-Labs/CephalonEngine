@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Data;
+using Cephalon.Abstractions.Health;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Runtime;
@@ -88,6 +89,7 @@ public sealed class DatabaseRoleCatalogTests
         Assert.Equal("entity-framework", history.Metadata["auditHistoryProvider"]);
         Assert.Equal("true", history.Metadata["auditHistoryExportEnabled"]);
         Assert.Equal("true", history.Metadata["auditHistoryRetentionEnabled"]);
+        Assert.Empty(history.RuntimeMetadata);
     }
 
     [Fact]
@@ -116,5 +118,78 @@ public sealed class DatabaseRoleCatalogTests
         Assert.Equal("write", write.Id);
         Assert.Equal("write", write.ResolvedRoleId);
         Assert.Equal("engine-databases", write.Metadata["topologySource"]);
+    }
+
+    [Fact]
+    public void DatabaseRoleCatalogMergesRuntimeContributorStateDynamically()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:WriteDb"] = "Host=localhost;Database=cephalon_write",
+                ["Engine:Databases:Write:Provider"] = "PostgreSql",
+                ["Engine:Databases:Write:ConnectionStringName"] = "WriteDb"
+            })
+            .Build();
+        var runtimeContributor = new MutableDatabaseRoleRuntimeContributor();
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddSingleton<IDatabaseRoleRuntimeContributor>(runtimeContributor);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(EngineSettings.FromConfiguration(configuration));
+            engine.AddModule(new PlatformTestModule());
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IDatabaseRoleCatalog>();
+        var initialWrite = Assert.Single(catalog.DatabaseRoles);
+
+        Assert.Null(initialWrite.HealthState);
+        Assert.Null(initialWrite.MigrationState);
+
+        runtimeContributor.Replace(new DatabaseRoleRuntimeDescriptor(
+            databaseRoleId: "write",
+            healthState: HealthState.Unhealthy,
+            healthDescription: "Connection probe failed.",
+            migrationState: "failed",
+            migrationDescription: "Startup schema apply failed.",
+            observedAtUtc: new DateTimeOffset(2026, 04, 10, 12, 0, 0, TimeSpan.Zero),
+            metadata: new Dictionary<string, string>
+            {
+                ["providerPack"] = "test-runtime",
+                ["lastError"] = "Boom"
+            }));
+
+        var updatedWrite = Assert.Single(catalog.DatabaseRoles);
+
+        Assert.Equal(HealthState.Unhealthy, updatedWrite.HealthState);
+        Assert.Equal("Connection probe failed.", updatedWrite.HealthDescription);
+        Assert.Equal("failed", updatedWrite.MigrationState);
+        Assert.Equal("Startup schema apply failed.", updatedWrite.MigrationDescription);
+        Assert.Equal("test-runtime", updatedWrite.RuntimeMetadata["providerPack"]);
+        Assert.Equal("Boom", updatedWrite.RuntimeMetadata["lastError"]);
+    }
+
+    private sealed class MutableDatabaseRoleRuntimeContributor : IDatabaseRoleRuntimeContributor
+    {
+        private readonly object syncRoot = new();
+        private DatabaseRoleRuntimeDescriptor[] descriptors = [];
+
+        public IReadOnlyList<DatabaseRoleRuntimeDescriptor> DescribeDatabaseRoleRuntime()
+        {
+            lock (syncRoot)
+            {
+                return descriptors.ToArray();
+            }
+        }
+
+        public void Replace(params DatabaseRoleRuntimeDescriptor[] next)
+        {
+            lock (syncRoot)
+            {
+                descriptors = next;
+            }
+        }
     }
 }

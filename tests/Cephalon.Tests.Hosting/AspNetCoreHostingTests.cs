@@ -280,6 +280,7 @@ public sealed class AspNetCoreHostingTests
         var appModel = await client.GetFromJsonAsync<AppProfile>("/engine/app-model");
         var databases = await client.GetFromJsonAsync<DatabaseTopologySelection>("/engine/databases");
         var databaseRoles = await client.GetFromJsonAsync<DatabaseRoleDescriptor[]>("/engine/database-roles");
+        var databaseMigrations = await client.GetFromJsonAsync<DatabaseMigrationDescriptor[]>("/engine/database-migrations");
         var scaffold = await client.GetFromJsonAsync<ScaffoldPlan>("/engine/scaffold");
         var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
         var packages = await client.GetFromJsonAsync<PackageManifest[]>("/engine/packages");
@@ -397,6 +398,8 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains(databaseRoles, role => role.Id == "read" && role.ResolvedRoleId == "read");
         Assert.Contains(databaseRoles, role => role.Id == "outbox" && role.ResolvedRoleId == "outbox");
         Assert.Contains(databaseRoles, role => role.Id == "history" && role.ResolvedRoleId == "history");
+        Assert.NotNull(databaseMigrations);
+        Assert.Empty(databaseMigrations);
 
         Assert.NotNull(scaffold);
         Assert.Contains(scaffold.Projects, project =>

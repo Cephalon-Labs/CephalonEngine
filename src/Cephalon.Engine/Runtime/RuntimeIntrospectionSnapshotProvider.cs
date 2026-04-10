@@ -15,6 +15,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
     IOutboxCatalog outboxCatalog,
     IInboxCatalog inboxCatalog,
     IDatabaseRoleCatalog databaseRoleCatalog,
+    IDatabaseMigrationCatalog databaseMigrationCatalog,
     IAuditStoreCatalog auditStoreCatalog,
     IAuthorizationPolicyCatalog authorizationPolicyCatalog,
     ITechnologyRuntimeCatalog technologyRuntimeCatalog,
@@ -35,6 +36,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             Outboxes = outboxCatalog.Outboxes,
             Inboxes = inboxCatalog.Inboxes,
             DatabaseRoles = databaseRoleCatalog.DatabaseRoles,
+            DatabaseMigrations = databaseMigrationCatalog.DatabaseMigrations,
             AuditStores = auditStoreCatalog.AuditStores,
             AuthorizationPolicies = authorizationPolicyCatalog.Policies
         };

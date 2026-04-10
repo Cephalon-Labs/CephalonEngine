@@ -121,6 +121,7 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
 
         if (options.UsesEngineDatabaseTopology)
         {
+            EntityFrameworkDatabaseRuntimeRegistration.AddEngineDatabaseTopologyServices(services);
             services.AddSingleton<ITechnologyRuntimeContributor>(serviceProvider =>
                 new EntityFrameworkDatabaseTopologyRuntimeSurfaceContributor(
                     serviceProvider.GetRequiredService<AppProfile>(),
@@ -136,8 +137,6 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
                     typeof(TReadDbContext),
                     ["read"]));
             }
-
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, EntityFrameworkDatabaseMigrationHostedService>());
         }
     }
 

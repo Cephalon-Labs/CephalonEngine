@@ -4,6 +4,7 @@ using System.Text.Json;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Data;
+using Cephalon.Abstractions.Health;
 using Cephalon.Sample.Showcase;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -63,15 +64,21 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Null(profile.Audit.History.Retention.RunIntervalMinutes);
         Assert.True(profile.Identity.Enabled);
         Assert.True(profile.Tenancy.Enabled);
-        Assert.Equal("PostgreSql", profile.Databases.Write.Provider);
-        Assert.Equal("WriteDb", profile.Databases.Write.ConnectionStringName);
-        Assert.Equal("PostgreSql", profile.Databases.Read.Provider);
-        Assert.Equal("ReadDb", profile.Databases.Read.ConnectionStringName);
+        Assert.Equal("InMemory", profile.Databases.Write.Provider);
+        Assert.NotNull(profile.Databases.Write.ConnectionString);
+        Assert.StartsWith("showcase-write-", profile.Databases.Write.ConnectionString!, StringComparison.Ordinal);
+        Assert.Null(profile.Databases.Write.ConnectionStringName);
+        Assert.Equal("InMemory", profile.Databases.Read.Provider);
+        Assert.NotNull(profile.Databases.Read.ConnectionString);
+        Assert.StartsWith("showcase-read-", profile.Databases.Read.ConnectionString!, StringComparison.Ordinal);
+        Assert.Null(profile.Databases.Read.ConnectionStringName);
         Assert.True(profile.Databases.Outbox.HasValues);
         Assert.Equal("write", profile.Databases.Outbox.UseRole);
         Assert.Equal("outbox01", profile.Databases.Outbox.Schema);
-        Assert.Equal("PostgreSql", profile.Databases.History.Provider);
-        Assert.Equal("HistoryDb", profile.Databases.History.ConnectionStringName);
+        Assert.Equal("InMemory", profile.Databases.History.Provider);
+        Assert.NotNull(profile.Databases.History.ConnectionString);
+        Assert.StartsWith("showcase-history-", profile.Databases.History.ConnectionString!, StringComparison.Ordinal);
+        Assert.Null(profile.Databases.History.ConnectionStringName);
         Assert.False(profile.Databases.Migrations.ApplyOnStartup);
         Assert.Equal(["history", "read", "write"], profile.Databases.Migrations.Targets);
     }
@@ -88,10 +95,14 @@ public sealed class ShowcaseSampleHostingTests
         var roles = await client.GetFromJsonAsync<DatabaseRoleDescriptor[]>("/engine/database-roles");
         var outbox = await client.GetFromJsonAsync<DatabaseRoleDescriptor>("/engine/database-roles/outbox");
         var history = await client.GetFromJsonAsync<DatabaseRoleDescriptor>("/engine/database-roles/history");
+        var migrations = await client.GetFromJsonAsync<DatabaseMigrationDescriptor[]>("/engine/database-migrations");
+        var historyMigration = await client.GetFromJsonAsync<DatabaseMigrationDescriptor>("/engine/database-migrations/history");
         var snapshot = await client.GetFromJsonAsync<Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
         Assert.NotNull(roles);
         Assert.Equal(4, roles.Length);
+        var write = Assert.Single(roles, role => role.Id == "write");
+        var read = Assert.Single(roles, role => role.Id == "read");
 
         Assert.NotNull(outbox);
         Assert.Equal("outbox", outbox.RequestedRoleId);
@@ -99,7 +110,9 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("role-reference", outbox.ResolutionMode);
         Assert.True(outbox.UsesRoleReference);
         Assert.Equal("write", outbox.UseRole);
-        Assert.Equal("WriteDb", outbox.ConnectionStringName);
+        Assert.Equal("InMemory", outbox.Provider);
+        Assert.Equal("inline", outbox.ConnectionMode);
+        Assert.Null(outbox.ConnectionStringName);
         Assert.Equal("outbox01", outbox.Schema);
         Assert.Contains("outbox", outbox.Consumers);
         Assert.Contains("write", outbox.CoLocatedRoles);
@@ -109,17 +122,44 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("history", history.ResolvedRoleId);
         Assert.Equal("direct", history.ResolutionMode);
         Assert.False(history.UsesRoleReference);
-        Assert.Equal("HistoryDb", history.ConnectionStringName);
+        Assert.Equal("InMemory", history.Provider);
+        Assert.Equal("inline", history.ConnectionMode);
+        Assert.Null(history.ConnectionStringName);
         Assert.Contains("audit-history", history.Consumers);
         Assert.Contains("migrations", history.Consumers);
         Assert.Equal("entity-framework", history.Metadata["auditHistoryProvider"]);
+        Assert.Equal(HealthState.Healthy, write.HealthState);
+        Assert.Equal(HealthState.Healthy, read.HealthState);
+        Assert.Equal(HealthState.Healthy, history.HealthState);
+        Assert.Equal("manual-or-deploy-time", write.MigrationState);
+        Assert.Equal("manual-or-deploy-time", read.MigrationState);
+        Assert.Equal("manual-or-deploy-time", history.MigrationState);
+        Assert.Equal("entity-framework", write.RuntimeMetadata["providerPack"]);
+        Assert.Equal("entity-framework", read.RuntimeMetadata["providerPack"]);
+        Assert.Equal("entity-framework", history.RuntimeMetadata["providerPack"]);
+        Assert.Equal("manual-or-deploy-time", write.RuntimeMetadata["executionMode"]);
+        Assert.Equal("manual-or-deploy-time", read.RuntimeMetadata["executionMode"]);
+        Assert.Equal("manual-or-deploy-time", history.RuntimeMetadata["executionMode"]);
+        Assert.NotNull(migrations);
+        Assert.Equal(3, migrations.Length);
+        Assert.Contains(migrations, migration => migration.Id == "write" && migration.Status == DatabaseMigrationStatus.Planned);
+        Assert.Contains(migrations, migration => migration.Id == "read" && migration.Status == DatabaseMigrationStatus.Planned);
+        Assert.NotNull(historyMigration);
+        Assert.Equal("history", historyMigration.Id);
+        Assert.Equal("history", historyMigration.RequestedRoleId);
+        Assert.Equal("history", historyMigration.ResolvedRoleId);
+        Assert.Equal(DatabaseMigrationStatus.Planned, historyMigration.Status);
+        Assert.Equal("manual-or-deploy-time", historyMigration.ExecutionMode);
+        Assert.Equal("InMemory", historyMigration.Provider);
+        Assert.Equal("entity-framework", historyMigration.Metadata["runtimeProvider"]);
 
         Assert.NotNull(snapshot);
         Assert.Equal(4, snapshot.DatabaseRoles.Count);
+        Assert.Equal(3, snapshot.DatabaseMigrations.Count);
     }
 
     [Fact]
-    public async Task ShowcaseSampleDocumentsAuditHistoryRoutesAndReturnsServiceUnavailableWithoutDurableReader()
+    public async Task ShowcaseSampleDocumentsAndServesAuditHistoryThroughDurableProvider()
     {
         await using var app = ShowcaseSampleApp.Build(
             configureBuilder: builder => builder.WebHost.UseTestServer());
@@ -128,17 +168,47 @@ public sealed class ShowcaseSampleHostingTests
         var client = app.GetTestClient();
 
         var openApiPayload = await client.GetStringAsync("/openapi/v1.json");
-        var queryResponse = await client.GetAsync("/api/v1/showcase/audit/history");
-        var queryBody = await queryResponse.Content.ReadAsStringAsync();
-        var exportResponse = await client.GetAsync("/api/v1/showcase/audit/history/export");
+        var payload = new
+        {
+            sku = "AUDIT-HISTORY-001",
+            name = "Audit History Test Product",
+            description = "Creates an audit-history entry in the showcase sample.",
+            category = "Testing",
+            priceInCents = 1234,
+            currency = "USD",
+            tags = new[] { "audit", "history" }
+        };
+
+        var createResponse = await client.PostAsJsonAsync("/api/v1/showcase/catalog/products", payload);
+        var queryResponse = await client.GetAsync("/api/v1/showcase/audit/history?category=catalog&limit=10");
+        var queryResult = await queryResponse.Content.ReadFromJsonAsync<AuditHistoryQueryResult>();
+        var auditEntry = Assert.Single(queryResult!.Entries);
+        var byIdResponse = await client.GetAsync($"/api/v1/showcase/audit/history/{auditEntry.Id}");
+        var byIdEntry = await byIdResponse.Content.ReadFromJsonAsync<AuditHistoryEntry>();
+        var exportResponse = await client.GetAsync("/api/v1/showcase/audit/history/export?category=catalog&maxEntries=10");
         var exportBody = await exportResponse.Content.ReadAsStringAsync();
+        var exportLines = exportBody
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
         Assert.Contains("/api/v1/showcase/audit/history", openApiPayload, StringComparison.Ordinal);
         Assert.Contains("/api/v1/showcase/audit/history/export", openApiPayload, StringComparison.Ordinal);
-        Assert.Equal(HttpStatusCode.ServiceUnavailable, queryResponse.StatusCode);
-        Assert.Contains("Audit history reader unavailable", queryBody, StringComparison.OrdinalIgnoreCase);
-        Assert.Equal(HttpStatusCode.ServiceUnavailable, exportResponse.StatusCode);
-        Assert.Contains("Audit history exporter unavailable", exportBody, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, queryResponse.StatusCode);
+        Assert.NotNull(queryResult);
+        Assert.Equal(1, queryResult.TotalCount);
+        Assert.Equal("catalog", auditEntry.Category);
+        Assert.Equal("product-created", auditEntry.Action);
+        Assert.Equal("product", auditEntry.SubjectType);
+        Assert.Equal(AuditOutcome.Succeeded, auditEntry.Outcome);
+        Assert.Equal(HttpStatusCode.OK, byIdResponse.StatusCode);
+        Assert.NotNull(byIdEntry);
+        Assert.Equal(auditEntry.Id, byIdEntry.Id);
+        Assert.Equal(HttpStatusCode.OK, exportResponse.StatusCode);
+        Assert.Equal("application/x-ndjson; charset=utf-8", exportResponse.Content.Headers.ContentType?.ToString());
+        Assert.Contains("showcase-audit-history.ndjson", exportResponse.Content.Headers.ContentDisposition?.FileName ?? string.Empty, StringComparison.OrdinalIgnoreCase);
+        Assert.Single(exportLines);
+        Assert.Contains(auditEntry.Id, exportLines[0], StringComparison.Ordinal);
+        Assert.Contains("\"category\":\"catalog\"", exportLines[0], StringComparison.Ordinal);
     }
 
     [Fact]

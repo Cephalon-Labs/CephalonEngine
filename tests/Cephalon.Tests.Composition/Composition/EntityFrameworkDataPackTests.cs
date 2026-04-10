@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Data;
+using Cephalon.Abstractions.Health;
 using Cephalon.Data.EntityFramework.Configuration;
 using Cephalon.Data.EntityFramework.Registration;
 using Cephalon.Data.Registration;
@@ -261,6 +262,120 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("startup-hosted-service", migrations.Metadata["executionMode"]);
         Assert.Equal("generic-host/ihostedservice", migrations.Metadata["startupMechanism"]);
         Assert.Equal("bundle-or-script", migrations.Metadata["productionRecommendation"]);
+    }
+
+    [Fact]
+    public async Task TopologyBackedEntityFrameworkProjectsLiveDatabaseRoleRuntimeDiagnostics()
+    {
+        var databaseName = $"cephalon-data-ef-role-runtime-{Guid.NewGuid():N}";
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:WriteDb"] = "Host=localhost;Database=cephalon_write",
+                ["Engine:Databases:Write:Provider"] = "PostgreSql",
+                ["Engine:Databases:Write:ConnectionStringName"] = "WriteDb",
+                ["Engine:Databases:Migrations:ApplyOnStartup"] = "true",
+                ["Engine:Databases:Migrations:Targets:0"] = "write"
+            })
+            .Build();
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(EngineSettings.FromConfiguration(configuration));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new EntityFrameworkSingleContextTestModule());
+            engine.AddData();
+            engine.AddEntityFrameworkData<SingleCatalogDbContext>(
+                configureDbContext: (_, options) => options.UseInMemoryDatabase(databaseName));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IDatabaseRoleCatalog>();
+        var hostedService = Assert.Single(
+            provider.GetServices<IHostedService>(),
+            service => string.Equals(
+                service.GetType().Name,
+                "EntityFrameworkDatabaseMigrationHostedService",
+                StringComparison.Ordinal));
+
+        var pendingWrite = Assert.Single(catalog.DatabaseRoles, role => role.Id == "write");
+        Assert.Equal(HealthState.Healthy, pendingWrite.HealthState);
+        Assert.Equal("pending-startup-apply", pendingWrite.MigrationState);
+        Assert.Equal("entity-framework", pendingWrite.RuntimeMetadata["providerPack"]);
+        Assert.Equal("true", pendingWrite.RuntimeMetadata["startupApplyEnabled"]);
+        Assert.Equal("true", pendingWrite.RuntimeMetadata["migrationTargeted"]);
+        Assert.Equal("startup-hosted-service", pendingWrite.RuntimeMetadata["executionMode"]);
+
+        await hostedService.StartAsync(CancellationToken.None);
+
+        var appliedWrite = Assert.Single(catalog.DatabaseRoles, role => role.Id == "write");
+        Assert.Equal(HealthState.Healthy, appliedWrite.HealthState);
+        Assert.Equal("succeeded", appliedWrite.MigrationState);
+        Assert.Equal("ensure-created", appliedWrite.RuntimeMetadata["lastExecutionMode"]);
+        Assert.Equal("succeeded", appliedWrite.RuntimeMetadata["lastOutcome"]);
+        Assert.True(appliedWrite.ObservedAtUtc.HasValue);
+        Assert.Contains("succeeded", appliedWrite.MigrationDescription ?? string.Empty, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task TopologyBackedEntityFrameworkProjectsDatabaseMigrationCatalogState()
+    {
+        var databaseName = $"cephalon-data-ef-migration-catalog-{Guid.NewGuid():N}";
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:WriteDb"] = "Host=localhost;Database=cephalon_write",
+                ["Engine:Databases:Write:Provider"] = "PostgreSql",
+                ["Engine:Databases:Write:ConnectionStringName"] = "WriteDb",
+                ["Engine:Databases:Migrations:ApplyOnStartup"] = "true",
+                ["Engine:Databases:Migrations:Targets:0"] = "write"
+            })
+            .Build();
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(EngineSettings.FromConfiguration(configuration));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new EntityFrameworkSingleContextTestModule());
+            engine.AddData();
+            engine.AddEntityFrameworkData<SingleCatalogDbContext>(
+                configureDbContext: (_, options) => options.UseInMemoryDatabase(databaseName));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var migrationCatalog = provider.GetRequiredService<IDatabaseMigrationCatalog>();
+        var hostedService = Assert.Single(
+            provider.GetServices<IHostedService>(),
+            service => string.Equals(
+                service.GetType().Name,
+                "EntityFrameworkDatabaseMigrationHostedService",
+                StringComparison.Ordinal));
+
+        var pendingWrite = Assert.Single(migrationCatalog.DatabaseMigrations);
+        Assert.Equal("write", pendingWrite.Id);
+        Assert.Equal(DatabaseMigrationStatus.Planned, pendingWrite.Status);
+        Assert.Equal("startup-hosted-service", pendingWrite.ExecutionMode);
+        Assert.True(pendingWrite.ApplyOnStartup);
+        Assert.False(pendingWrite.ExitAfterApply);
+        Assert.Equal("entity-framework", pendingWrite.Metadata["runtimeProvider"]);
+        Assert.Equal("engine-databases", pendingWrite.Metadata["topologySource"]);
+        Assert.Equal(typeof(SingleCatalogDbContext).FullName, pendingWrite.DbContextType);
+
+        await hostedService.StartAsync(CancellationToken.None);
+
+        var appliedWrite = Assert.Single(migrationCatalog.DatabaseMigrations);
+        Assert.Equal(DatabaseMigrationStatus.Succeeded, appliedWrite.Status);
+        Assert.Equal("ensure-created", appliedWrite.Mechanism);
+        Assert.True(appliedWrite.StartedAtUtc.HasValue);
+        Assert.True(appliedWrite.CompletedAtUtc.HasValue);
+        Assert.Null(appliedWrite.LastError);
+
+        var snapshot = provider.GetRequiredService<global::Cephalon.Engine.Runtime.IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+        var snapshotMigration = Assert.Single(snapshot.DatabaseMigrations);
+        Assert.Equal("write", snapshotMigration.Id);
+        Assert.Equal(DatabaseMigrationStatus.Succeeded, snapshotMigration.Status);
     }
 
     [Fact]
