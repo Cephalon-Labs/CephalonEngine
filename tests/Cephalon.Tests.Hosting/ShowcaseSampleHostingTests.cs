@@ -45,17 +45,20 @@ public sealed class ShowcaseSampleHostingTests
 
         Assert.NotNull(profile);
         Assert.Equal("modular-monolith", profile.BlueprintId);
+        Assert.Equal("EntityFramework", profile.Data.Provider);
+        Assert.False(profile.Data.ReadWriteSplit);
+        Assert.True(profile.Data.OutboxEnabled);
         Assert.Equal("Sfid", profile.Data.IdGenerator);
         Assert.True(profile.Audit.Enabled);
         Assert.True(profile.Identity.Enabled);
         Assert.True(profile.Tenancy.Enabled);
         Assert.Equal("PostgreSql", profile.Databases.Write.Provider);
         Assert.Equal("WriteDb", profile.Databases.Write.ConnectionStringName);
-        Assert.Equal("ReadDb", profile.Databases.Read.ConnectionStringName);
-        Assert.Equal("outbox01", profile.Databases.Outbox.Schema);
-        Assert.Equal("HistoryDb", profile.Databases.History.ConnectionStringName);
+        Assert.False(profile.Databases.Read.HasValues);
+        Assert.False(profile.Databases.Outbox.HasValues);
+        Assert.False(profile.Databases.History.HasValues);
         Assert.False(profile.Databases.Migrations.ApplyOnStartup);
-        Assert.Equal(["history", "outbox", "write"], profile.Databases.Migrations.Targets);
+        Assert.Equal(["write"], profile.Databases.Migrations.Targets);
     }
 
     [Fact]
@@ -674,7 +677,7 @@ public sealed class ShowcaseSampleHostingTests
 
         Assert.Equal(HttpStatusCode.OK, addResponse.StatusCode);
         var addBody = await addResponse.Content.ReadAsStringAsync();
-        var added = JsonSerializer.Deserialize<JsonElement>(addBody);
+        var added = JsonSerializer.Deserialize<JsonElement>(addBody).GetProperty("data");
         Assert.Equal(1, added.GetProperty("itemCount").GetInt32());
         Assert.Equal(149999, added.GetProperty("totalInCents").GetInt64());
 
@@ -796,7 +799,7 @@ public sealed class ShowcaseSampleHostingTests
 
         Assert.Equal(HttpStatusCode.OK, removeResponse.StatusCode);
         var body = await removeResponse.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<JsonElement>(body);
+        var result = JsonSerializer.Deserialize<JsonElement>(body).GetProperty("data");
         Assert.Equal(1, result.GetProperty("itemCount").GetInt32());
     }
 
@@ -823,7 +826,7 @@ public sealed class ShowcaseSampleHostingTests
 
         Assert.Equal(HttpStatusCode.OK, checkoutResponse.StatusCode);
         var body = await checkoutResponse.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<JsonElement>(body);
+        var result = JsonSerializer.Deserialize<JsonElement>(body).GetProperty("data");
         Assert.StartsWith("ord-", result.GetProperty("orderId").GetString()!);
         Assert.Equal(12999, result.GetProperty("totalInCents").GetInt64());
     }

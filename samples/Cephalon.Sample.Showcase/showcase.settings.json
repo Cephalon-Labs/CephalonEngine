@@ -1,9 +1,6 @@
 {
   "ConnectionStrings": {
-    "PostgreSQL": "Host=localhost;Port=5432;Database=showcase_db;Username=showcase;Password=showcase_secret",
     "WriteDb": "Host=localhost;Port=5432;Database=showcase_write;Username=showcase;Password=showcase_secret",
-    "ReadDb": "Host=localhost;Port=5432;Database=showcase_read;Username=showcase;Password=showcase_secret",
-    "HistoryDb": "Host=localhost;Port=5432;Database=showcase_history;Username=showcase;Password=showcase_secret",
     "MongoDB": "mongodb://showcase:showcase_secret@localhost:27017",
     "Redis": "localhost:6379"
   },
@@ -21,6 +18,11 @@
       "event-sourcing"
     ],
     "Data": {
+      "Provider": "EntityFramework",
+      "ReadWriteSplit": false,
+      "Outbox": {
+        "Enabled": true
+      },
       "Ids": {
         "Generator": "Sfid"
       },
@@ -51,26 +53,11 @@
           "EnableRetryOnFailure": false
         }
       },
-      "Read": {
-        "Provider": "PostgreSql",
-        "ConnectionStringName": "ReadDb"
-      },
-      "Outbox": {
-        "Provider": "PostgreSql",
-        "ConnectionStringName": "WriteDb",
-        "Schema": "outbox01"
-      },
-      "History": {
-        "Provider": "PostgreSql",
-        "ConnectionStringName": "HistoryDb"
-      },
       "Migrations": {
         "ApplyOnStartup": false,
         "ExitAfterApply": false,
         "Targets": [
-          "write",
-          "outbox",
-          "history"
+          "write"
         ]
       }
     },

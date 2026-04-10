@@ -66,6 +66,11 @@ public sealed class EntityFrameworkDataOptions
     public bool EnableSfidIdentifiers { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether the pack resolves read/write roles from <c>Engine:Databases</c>.
+    /// </summary>
+    public bool UsesEngineDatabaseTopology { get; set; }
+
+    /// <summary>
     /// Gets a value indicating whether distinct read and write <see cref="DbContext" /> types were selected.
     /// </summary>
     public bool UsesReadWriteSplit => ReadDbContextType != WriteDbContextType;

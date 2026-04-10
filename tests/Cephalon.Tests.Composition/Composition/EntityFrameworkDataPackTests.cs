@@ -9,14 +9,246 @@ using Cephalon.Eventing.Registration;
 using Cephalon.Eventing.Services;
 using Cephalon.Ids.Sfid.Registration;
 using Cephalon.Tests.Support;
+using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using SfidNet;
 
 namespace Cephalon.Tests.Composition;
 
 public sealed class EntityFrameworkDataPackTests
 {
+    [Fact]
+    public async Task AddEntityFrameworkDataCanConsumeSharedEngineDatabaseTopology()
+    {
+        var databaseName = $"cephalon-data-ef-topology-shared-{Guid.NewGuid():N}";
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:WriteDb"] = "Host=localhost;Database=cephalon_write",
+                ["Engine:Databases:Runtime:EnableDetailedErrors"] = "true",
+                ["Engine:Databases:Runtime:EnableSensitiveDataLogging"] = "false",
+                ["Engine:Databases:Runtime:EnableRetryOnFailure"] = "true",
+                ["Engine:Databases:Runtime:MaxRetryCount"] = "5",
+                ["Engine:Databases:Write:Provider"] = "PostgreSql",
+                ["Engine:Databases:Write:ConnectionStringName"] = "WriteDb",
+                ["Engine:Databases:Write:Runtime:EnableRetryOnFailure"] = "false",
+                ["Engine:Databases:Write:Runtime:CommandTimeoutSeconds"] = "30",
+                ["Engine:Databases:Migrations:ApplyOnStartup"] = "false",
+                ["Engine:Databases:Migrations:Targets:0"] = "write"
+            })
+            .Build();
+        var capturedRoles = new List<EntityFrameworkDatabaseRoleContext>();
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(EngineSettings.FromConfiguration(configuration));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new EntityFrameworkSingleContextTestModule());
+            engine.AddData();
+            engine.AddEntityFrameworkData<SingleCatalogDbContext>(
+                configureDbContext: (role, options) =>
+                {
+                    capturedRoles.Add(role);
+                    options.UseInMemoryDatabase(databaseName);
+                });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var writeStore = scope.ServiceProvider.GetRequiredService<IWriteStore>();
+        var readStore = scope.ServiceProvider.GetRequiredService<IReadStore>();
+        var technologyCatalog = provider.GetRequiredService<global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeCatalog>();
+        var runtime = provider.GetRequiredService<Cephalon.Engine.Runtime.IRuntime>();
+
+        await writeStore.ExecuteAsync(new CreateSingleCatalogItemCommand("item-topology-001", "Ada"));
+        var count = await readStore.ExecuteAsync(new CountSingleCatalogItemsQuery());
+
+        Assert.Equal(1, count);
+        var role = Assert.Single(capturedRoles);
+        Assert.Equal("write", role.Role);
+        Assert.Equal("PostgreSql", role.Provider);
+        Assert.Equal("WriteDb", role.ConnectionStringName);
+        Assert.Equal("Host=localhost;Database=cephalon_write", role.ConnectionString);
+        Assert.True(role.Runtime.EnableDetailedErrors);
+        Assert.False(role.Runtime.EnableRetryOnFailure);
+        Assert.Equal(5, role.Runtime.MaxRetryCount);
+        Assert.Equal(30, role.Runtime.CommandTimeoutSeconds);
+
+        var providerCapability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "data.entity-framework");
+        Assert.Equal("engine-databases", providerCapability.Metadata["topologySource"]);
+
+        var dataManagementSurfaces = technologyCatalog.GetByTechnology("data-management");
+        var databaseRoles = Assert.Single(dataManagementSurfaces, surface => surface.SurfaceId == "database-roles");
+        Assert.Contains(databaseRoles.Entries, entry => entry.Id == "write");
+        var migrations = Assert.Single(databaseRoles.Entries, entry => entry.Id == "migrations");
+        Assert.Equal("write", migrations.Metadata["configuredTargets"]);
+        Assert.Equal("write", migrations.Metadata["supportedTargets"]);
+    }
+
+    [Fact]
+    public async Task AddEntityFrameworkDataCanConsumeSplitEngineDatabaseTopology()
+    {
+        var readDatabaseName = $"cephalon-data-ef-topology-read-{Guid.NewGuid():N}";
+        var writeDatabaseName = $"cephalon-data-ef-topology-write-{Guid.NewGuid():N}";
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:WriteDb"] = "Host=localhost;Database=cephalon_write",
+                ["Engine:Data:ReadWriteSplit"] = "true",
+                ["Engine:Databases:Runtime:EnableDetailedErrors"] = "true",
+                ["Engine:Databases:Write:Provider"] = "PostgreSql",
+                ["Engine:Databases:Write:ConnectionStringName"] = "WriteDb",
+                ["Engine:Databases:Read:Provider"] = "PostgreSql",
+                ["Engine:Databases:Read:ConnectionString"] = "Host=localhost;Database=cephalon_read",
+                ["Engine:Databases:Migrations:ApplyOnStartup"] = "false",
+                ["Engine:Databases:Migrations:Targets:0"] = "write",
+                ["Engine:Databases:Migrations:Targets:1"] = "read"
+            })
+            .Build();
+        var capturedRoles = new List<EntityFrameworkDatabaseRoleContext>();
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                data: DataSettings.FromConfiguration(configuration),
+                databases: DatabaseTopologySettings.FromConfiguration(configuration)));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new EntityFrameworkSplitContextTestModule());
+            engine.AddData();
+            engine.AddEntityFrameworkData<SplitCatalogReadDbContext, SplitCatalogWriteDbContext>(
+                configureDbContext: (role, options) =>
+                {
+                    capturedRoles.Add(role);
+                    options.UseInMemoryDatabase(role.Role == "read" ? readDatabaseName : writeDatabaseName);
+                });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var writeStore = scope.ServiceProvider.GetRequiredService<IWriteStore>();
+        var readStore = scope.ServiceProvider.GetRequiredService<IReadStore>();
+
+        await writeStore.ExecuteAsync(new CreateSplitWriteCatalogItemCommand("write-topology-001", "Grace"));
+        scope.ServiceProvider.GetRequiredService<SplitCatalogReadDbContext>().CatalogItems.Add(new SplitCatalogReadItem
+        {
+            Id = "read-topology-001",
+            Name = "Grace"
+        });
+        await scope.ServiceProvider.GetRequiredService<SplitCatalogReadDbContext>().SaveChangesAsync();
+
+        var readCount = await readStore.ExecuteAsync(new CountSplitReadCatalogItemsQuery());
+
+        Assert.Equal(1, readCount);
+        Assert.Equal(2, capturedRoles.Count);
+        var readRole = Assert.Single(capturedRoles, role => role.Role == "read");
+        var writeRole = Assert.Single(capturedRoles, role => role.Role == "write");
+        Assert.Equal("Host=localhost;Database=cephalon_read", readRole.ConnectionString);
+        Assert.Equal("WriteDb", writeRole.ConnectionStringName);
+        Assert.True(readRole.Runtime.EnableDetailedErrors);
+        Assert.True(writeRole.Runtime.EnableDetailedErrors);
+    }
+
+    [Fact]
+    public async Task TopologyBackedEntityFrameworkSurfacesMigrationPolicyWhenApplyOnStartupIsRequested()
+    {
+        var databaseName = $"cephalon-data-ef-migrations-policy-{Guid.NewGuid():N}";
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:WriteDb"] = "Host=localhost;Database=cephalon_write",
+                ["Engine:Databases:Write:Provider"] = "PostgreSql",
+                ["Engine:Databases:Write:ConnectionStringName"] = "WriteDb",
+                ["Engine:Databases:Migrations:ApplyOnStartup"] = "true",
+                ["Engine:Databases:Migrations:Targets:0"] = "write"
+            })
+            .Build();
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(EngineSettings.FromConfiguration(configuration));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new EntityFrameworkSingleContextTestModule());
+            engine.AddData();
+            engine.AddEntityFrameworkData<SingleCatalogDbContext>(
+                configureDbContext: (_, options) => options.UseInMemoryDatabase(databaseName));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var hostedService = Assert.Single(
+            provider.GetServices<IHostedService>(),
+            service => string.Equals(
+                service.GetType().Name,
+                "EntityFrameworkDatabaseMigrationHostedService",
+                StringComparison.Ordinal));
+        await hostedService.StartAsync(CancellationToken.None);
+
+        var technologyCatalog = provider.GetRequiredService<global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeCatalog>();
+        var dataManagementSurfaces = technologyCatalog.GetByTechnology("data-management");
+        var databaseRoles = Assert.Single(dataManagementSurfaces, surface => surface.SurfaceId == "database-roles");
+        var migrations = Assert.Single(databaseRoles.Entries, entry => entry.Id == "migrations");
+
+        Assert.Equal("true", migrations.Metadata["applyOnStartup"]);
+        Assert.Equal("write", migrations.Metadata["configuredTargets"]);
+        Assert.Equal("write", migrations.Metadata["supportedTargets"]);
+        Assert.Equal("startup-hosted-service", migrations.Metadata["executionMode"]);
+        Assert.Equal("generic-host/ihostedservice", migrations.Metadata["startupMechanism"]);
+        Assert.Equal("bundle-or-script", migrations.Metadata["productionRecommendation"]);
+    }
+
+    [Fact]
+    public async Task TopologyBackedEntityFrameworkStartupMigrationsRejectUnsupportedOutboxTargets()
+    {
+        var databaseName = $"cephalon-data-ef-migrations-outbox-{Guid.NewGuid():N}";
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:WriteDb"] = "Host=localhost;Database=cephalon_write",
+                ["Engine:Patterns:0"] = "CQRS",
+                ["Engine:Patterns:1"] = "Outbox",
+                ["Engine:Data:Outbox:Enabled"] = "true",
+                ["Engine:Databases:Write:Provider"] = "PostgreSql",
+                ["Engine:Databases:Write:ConnectionStringName"] = "WriteDb",
+                ["Engine:Databases:Outbox:Provider"] = "PostgreSql",
+                ["Engine:Databases:Outbox:ConnectionStringName"] = "WriteDb",
+                ["Engine:Databases:Migrations:ApplyOnStartup"] = "true",
+                ["Engine:Databases:Migrations:Targets:0"] = "outbox"
+            })
+            .Build();
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(EngineSettings.FromConfiguration(configuration));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new EntityFrameworkOutboxTestModule());
+            engine.AddData();
+            engine.AddEntityFrameworkData<OutboxCatalogDbContext>(
+                configureDbContext: (_, options) => options.UseInMemoryDatabase(databaseName),
+                configure: options => options.RegisterOutbox = true);
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var hostedService = Assert.Single(
+            provider.GetServices<IHostedService>(),
+            service => string.Equals(
+                service.GetType().Name,
+                "EntityFrameworkDatabaseMigrationHostedService",
+                StringComparison.Ordinal));
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            hostedService.StartAsync(CancellationToken.None));
+
+        Assert.Contains("outbox", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("write", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
     [Fact]
     public async Task AddEntityFrameworkDataRegistersSharedDbContextForReadAndWriteHandlers()
     {

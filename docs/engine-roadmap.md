@@ -96,8 +96,8 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 34`: comprehensive engine audit — WebSocket `[LoggerMessage]` logging fix, flaky test fix, architecture inventory/recommendations docs, ENG-049/050/052/053/055 closeout (all phase-8 baseline acceptance met), ENG-059 benchmark expansion planned — 648/648 tests
 - `Sprint 35`: **shipped** ENG-059 runtime hot-path benchmark expansion — data layer dispatch, behavior dispatch, authorization evaluation, tenant resolution, event sourcing, outbox staging — 13 new benchmarks across 6 classes, guardrails 10→23, 648/648 tests
 - `Sprint 31`: **shipped** ENG-054 provider configuration follow-through — connection-string-native packs now share `ConnectionStringName` plus `ConnectionString` (`Cephalon.Data.MongoDB`, `Cephalon.Data.Redis`), URI-first packs now share `UriName` plus `Uri` (`Cephalon.Data.Elasticsearch`, `Cephalon.Data.OpenSearch`, `Cephalon.Data.Neo4j`, `Cephalon.Data.Nats`), named values resolve from the root `ConnectionStrings` or `Uris` sections as appropriate, packs fail fast when both settings are supplied, and the docs now call out the provider-family contract explicitly while Cassandra/Qdrant remain topology-first
-- `Sprint 36`: planned `ENG-060` engine-owned database topology and runtime catalog baseline so physical database roles, migration targets, outbox routing, and history stores stop drifting across provider packs
-- `Sprint 37`: planned `ENG-061` role-aware relational runtime and migration orchestration baseline on top of that topology contract, with startup apply kept explicit and deploy-time bundles/scripts treated as the production path
+- `Sprint 36`: `ENG-060` established the engine-owned database topology baseline so physical database roles, migration targets, outbox routing, and history stores stop drifting across provider packs
+- `Sprint 37`: `ENG-061` is now in progress on top of that topology contract: `Cephalon.Data.EntityFramework` consumes `Engine:Databases` write/read roles directly, publishes role and migration metadata through the runtime surface, and can apply startup schema creation or migrations for the registered write/read `DbContext` roles through a generic-host hosted service while bundle/script deployment remains the recommended production path
 - `Sprint 38`: planned `ENG-062` durable audit-history provider baseline so `Cephalon.Audit` can move beyond the narrow in-memory recorder without collapsing storage concerns back into hosts or modules
 - `Sprint 36–37 (Phase 11)`: planned resilience foundation — circuit breaker, retry/timeout/bulkhead, rate limiting, `onion-architecture` and `anti-corruption-layer` pattern descriptors
 - `Sprint 38–39 (Phase 12)`: planned migration and advanced coordination — strangler fig, saga choreography, BFF pattern, feature flags, durable execution foundations
@@ -545,7 +545,7 @@ Exit criteria:
 
 ## Cross-cutting follow-through: Database topology and durable audit history
 
-Status: planned
+Status: in progress
 
 Goal: separate physical database role topology, migration targeting, and durable audit-history routing from the logical `Engine:Data` app-model slice so one Cephalon codebase can move between single-database, split read/write, dedicated outbox, and dedicated history layouts through configuration and additive companion packs.
 
@@ -562,7 +562,8 @@ Planned deliverables:
 Current truth:
 
 - the initial `ENG-060` baseline is now shipped: `Engine:Databases` projects into `EngineSettings`, `AppProfile.Databases`, `/engine/databases`, `/engine/app-model`, and `/engine/snapshot`
-- the remaining phase-10 work is now deeper provider consumption, role references, richer topology/runtime metadata, migration execution follow-through, and durable history storage
+- `ENG-061` is now underway: `Cephalon.Data.EntityFramework` consumes the engine-owned `write` and optional `read` roles directly, exposes role and migration metadata through the runtime surface, and can execute startup schema apply for those registered `DbContext` roles through a generic-host hosted service
+- the remaining phase-10 work is now broader provider consumption, role references, richer topology/runtime metadata, dedicated outbox/history execution, bundle/script orchestration guidance, and durable history storage
 
 Exit criteria:
 

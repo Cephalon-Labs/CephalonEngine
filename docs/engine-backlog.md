@@ -1395,7 +1395,7 @@ Planned follow-through:
 
 ### ENG-061 Role-aware relational runtime and migration orchestration baseline
 
-Status: planned
+Status: in progress
 Estimate: 13
 
 Why:
@@ -1411,9 +1411,16 @@ Acceptance:
 - migration configuration can target named roles, startup apply remains explicit, and deploy-time bundles or scripts become the documented production path
 - runtime answers expose active relational role wiring, outbox routing, and migration targeting truthfully
 
-Planned follow-through:
+Delivered so far:
 
-- add role-aware registration helpers and per-role EF runtime overrides on top of `Engine:Databases`
+- `Cephalon.Data.EntityFramework` now ships topology-aware `AddEntityFrameworkData(...)` overloads that resolve the engine-owned `write` and optional `read` roles directly from `Engine:Databases`
+- the Entity Framework pack now publishes role and migration-policy metadata through the `data-management/database-roles` runtime surface
+- `Engine:Databases:Migrations:ApplyOnStartup` now activates a generic-host hosted service inside `Cephalon.Data.EntityFramework` that applies startup schema creation or migrations for the registered `write` and optional `read` `DbContext` roles
+- dedicated `outbox` and `history` migration targets remain intentionally unsupported by the current Entity Framework startup-apply path so the pack does not pretend those roles have dedicated `DbContext` execution yet
+
+Remaining follow-through inside `ENG-061`:
+
+- add dedicated outbox/history role execution only when the pack can back those roles with truthful `DbContext` ownership
 - keep marker interfaces, model-builder extensions, and interceptors as the preferred reusable primitives
 - treat convenience `DbContext` base classes as optional later DX helpers rather than the primary contract
 - add CLI, docs, and sample guidance for separate migrations projects plus bundle/script-first production deployment

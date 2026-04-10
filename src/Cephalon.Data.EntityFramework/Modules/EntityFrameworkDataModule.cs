@@ -9,6 +9,7 @@ using Cephalon.Data.EntityFramework.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Cephalon.Eventing.Services;
 using SfidNet.Abstractions;
 using SfidNet.EntityFramework;
@@ -17,8 +18,8 @@ namespace Cephalon.Data.EntityFramework.Modules;
 
 internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>(
     EntityFrameworkDataOptions options,
-    Action<DbContextOptionsBuilder> configureReadDbContext,
-    Action<DbContextOptionsBuilder> configureWriteDbContext) : ModuleBase, IInboxContributor, IOutboxContributor, IProjectionContributor, ITechnologyServiceContributor
+    Action<IServiceProvider, DbContextOptionsBuilder> configureReadDbContext,
+    Action<IServiceProvider, DbContextOptionsBuilder> configureWriteDbContext) : ModuleBase, IInboxContributor, IOutboxContributor, IProjectionContributor, ITechnologyServiceContributor
     where TReadDbContext : DbContext
     where TWriteDbContext : DbContext
 {
@@ -117,6 +118,27 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
                     (IEntityFrameworkInboxContext)dbContext);
             });
         }
+
+        if (options.UsesEngineDatabaseTopology)
+        {
+            services.AddSingleton<ITechnologyRuntimeContributor>(serviceProvider =>
+                new EntityFrameworkDatabaseTopologyRuntimeSurfaceContributor(
+                    serviceProvider.GetRequiredService<AppProfile>(),
+                    options));
+
+            services.AddSingleton(new EntityFrameworkDatabaseMigrationRegistration(
+                typeof(TWriteDbContext),
+                ["write"]));
+
+            if (options.UsesReadWriteSplit)
+            {
+                services.AddSingleton(new EntityFrameworkDatabaseMigrationRegistration(
+                    typeof(TReadDbContext),
+                    ["read"]));
+            }
+
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, EntityFrameworkDatabaseMigrationHostedService>());
+        }
     }
 
     public void ConfigureTechnologyServices(IServiceCollection services, TechnologySelection technologies)
@@ -183,7 +205,8 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
                 {
                     ["pack"] = "Cephalon.Data.EntityFramework",
                     ["provider"] = EntityFrameworkDataOptions.ProviderId,
-                    ["writeDbContext"] = GetTypeName(options.WriteDbContextType)
+                    ["writeDbContext"] = GetTypeName(options.WriteDbContextType),
+                    ["topologySource"] = options.UsesEngineDatabaseTopology ? "engine-databases" : "registration-callbacks"
                 }));
         }
 
@@ -198,7 +221,8 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
                     ["pack"] = "Cephalon.Data.EntityFramework",
                     ["provider"] = EntityFrameworkDataOptions.ProviderId,
                     ["writeDbContext"] = GetTypeName(options.WriteDbContextType),
-                    ["idempotency"] = "message-id"
+                    ["idempotency"] = "message-id",
+                    ["topologySource"] = options.UsesEngineDatabaseTopology ? "engine-databases" : "registration-callbacks"
                 }));
         }
 
@@ -243,7 +267,8 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
                 ["dispatchRuntime"] = "not-configured",
                 ["channelMode"] = "dynamic",
                 ["idempotency"] = "message-id",
-                ["subscriptionRuntime"] = "not-configured"
+                ["subscriptionRuntime"] = "not-configured",
+                ["topologySource"] = options.UsesEngineDatabaseTopology ? "engine-databases" : "registration-callbacks"
             }));
     }
 
@@ -274,7 +299,8 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
                 ["dispatchStore"] = "available",
                 ["eventingLinked"] = "false",
                 ["channelMode"] = "dynamic",
-                ["idStrategy"] = options.EnableSfidIdentifiers ? "sfid" : "none"
+                ["idStrategy"] = options.EnableSfidIdentifiers ? "sfid" : "none",
+                ["topologySource"] = options.UsesEngineDatabaseTopology ? "engine-databases" : "registration-callbacks"
             }));
     }
 
@@ -304,7 +330,8 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
                 ["writeDbContext"] = GetTypeName(options.WriteDbContextType),
                 ["readWriteSplit"] = options.UsesReadWriteSplit ? "true" : "false",
                 ["projectionRuntime"] = "application-managed",
-                ["idStrategy"] = options.EnableSfidIdentifiers ? "sfid" : "none"
+                ["idStrategy"] = options.EnableSfidIdentifiers ? "sfid" : "none",
+                ["topologySource"] = options.UsesEngineDatabaseTopology ? "engine-databases" : "registration-callbacks"
             }));
     }
 
@@ -317,11 +344,12 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
             ["readDbContext"] = GetTypeName(options.ReadDbContextType),
             ["writeDbContext"] = GetTypeName(options.WriteDbContextType),
             ["readWriteSplit"] = options.UsesReadWriteSplit ? "true" : "false",
-            ["idStrategy"] = options.EnableSfidIdentifiers ? "sfid" : "none"
+            ["idStrategy"] = options.EnableSfidIdentifiers ? "sfid" : "none",
+            ["topologySource"] = options.UsesEngineDatabaseTopology ? "engine-databases" : "registration-callbacks"
         };
     }
 
-    private static Dictionary<string, string> CreateDbContextMetadata(
+    private Dictionary<string, string> CreateDbContextMetadata(
         string role,
         Type dbContextType)
     {
@@ -330,7 +358,8 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
             ["pack"] = "Cephalon.Data.EntityFramework",
             ["provider"] = EntityFrameworkDataOptions.ProviderId,
             ["role"] = role,
-            ["dbContext"] = GetTypeName(dbContextType)
+            ["dbContext"] = GetTypeName(dbContextType),
+            ["topologySource"] = options.UsesEngineDatabaseTopology ? "engine-databases" : "registration-callbacks"
         };
     }
 
@@ -363,10 +392,10 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
     private void ConfigureDbContext(
         IServiceProvider serviceProvider,
         DbContextOptionsBuilder dbContextOptions,
-        Action<DbContextOptionsBuilder> configureDbContext,
+        Action<IServiceProvider, DbContextOptionsBuilder> configureDbContext,
         bool enableWriteFeatures)
     {
-        configureDbContext(dbContextOptions);
+        configureDbContext(serviceProvider, dbContextOptions);
 
         if (options.EnableSfidIdentifiers)
         {

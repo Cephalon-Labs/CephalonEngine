@@ -9,6 +9,7 @@ using Cephalon.Behaviors.Hosting;
 using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Messaging.Hosting;
 using Cephalon.Behaviors.Patterns.Hosting;
+using Cephalon.Data.EntityFramework.Configuration;
 using Cephalon.Data.EntityFramework.Registration;
 using Cephalon.Data.MongoDB.Configuration;
 using Cephalon.Data.MongoDB.Registration;
@@ -98,10 +99,31 @@ public static class ShowcaseSampleApp
             // --- PostgreSQL via Entity Framework (Docker mode only) ---
             if (dockerMode)
             {
-                var pgConn = config.GetConnectionString("PostgreSQL")
-                    ?? "Host=localhost;Port=5432;Database=showcase_db;Username=showcase;Password=showcase_secret";
                 engine.AddEntityFrameworkData<ShowcaseDbContext>(
-                    configureDbContext: opts => opts.UseNpgsql(pgConn),
+                    configureDbContext: (role, opts) => opts.UseNpgsql(
+                        role.ConnectionString,
+                        npgsql =>
+                        {
+                            if (role.Runtime.CommandTimeoutSeconds is { } commandTimeoutSeconds)
+                            {
+                                npgsql.CommandTimeout(commandTimeoutSeconds);
+                            }
+
+                            if (role.Runtime.MaxBatchSize is { } maxBatchSize)
+                            {
+                                npgsql.MaxBatchSize(maxBatchSize);
+                            }
+
+                            if (role.Runtime.EnableRetryOnFailure == true)
+                            {
+                                npgsql.EnableRetryOnFailure(
+                                    maxRetryCount: role.Runtime.MaxRetryCount ?? 6,
+                                    maxRetryDelay: role.Runtime.MaxRetryDelaySeconds is { } seconds
+                                        ? TimeSpan.FromSeconds(seconds)
+                                        : TimeSpan.FromSeconds(30),
+                                    errorCodesToAdd: null);
+                            }
+                        }),
                     configure: efOpts =>
                     {
                         efOpts.RegisterOutbox = true;

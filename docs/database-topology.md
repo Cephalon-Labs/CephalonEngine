@@ -19,6 +19,8 @@ That baseline currently includes:
 
 This means Cephalon now has one engine-owned answer for database topology instead of leaving every host or provider pack to invent its own shape.
 
+The first provider follow-through is also now in place: `Cephalon.Data.EntityFramework` consumes the engine-owned `Write` and optional `Read` roles directly, projects those choices into the `data-management/database-roles` runtime surface, and can apply startup schema creation or migrations for the registered relational `DbContext` roles through a generic-host hosted service when `Engine:Databases:Migrations:ApplyOnStartup` is enabled.
+
 ## Current shipped shape
 
 The shipped baseline is intentionally narrow and relational-first.
@@ -120,9 +122,10 @@ That keeps database-topology choices explicit and operator-visible even before d
 
 The engine now owns the topology contract, but several follow-through slices are still intentionally separate:
 
-- provider packs do not yet consume `Engine:Databases` automatically as their only runtime-registration source
+- provider packs beyond `Cephalon.Data.EntityFramework` do not yet consume `Engine:Databases` automatically as their only runtime-registration source
 - `Outbox` and `History` still use full target blocks instead of role references such as `UseRole`
-- there is not yet a dedicated migration executor or bundle/script orchestration path owned by the engine
+- the shipped Entity Framework baseline only executes startup apply for the registered `write` and optional `read` `DbContext` roles; dedicated `outbox` and `history` migration execution are not shipped yet
+- there is not yet an engine-owned bundle/script orchestration path for deploy-time database changes
 - durable audit history is not yet shipped as a provider-backed storage path
 - Cephalon does not yet expose a richer runtime catalog with role health, resolved provider metadata, or migration-execution state beyond the current topology snapshot
 
@@ -130,9 +133,9 @@ The engine now owns the topology contract, but several follow-through slices are
 
 The next follow-through should deepen this baseline instead of replacing it:
 
-1. make provider packs such as `Cephalon.Data.EntityFramework` consume `Engine:Databases`
+1. expand provider-pack consumption beyond `Cephalon.Data.EntityFramework` and keep the role contract consistent across companion packs
 2. add role references so dependent stores do not duplicate provider and connection settings
-3. add role-aware migration orchestration while keeping production guidance bundle- and script-first
+3. deepen migration orchestration beyond the shipped Entity Framework startup hosted service while keeping production guidance bundle- and script-first
 4. add durable audit history as an additive provider-backed follow-through
 
 ## What not to do

@@ -602,6 +602,7 @@ public sealed class PackageSurfaceTests
         AssertExportedTypes(
             typeof(global::Cephalon.Data.EntityFramework.Registration.EntityFrameworkDataEngineBuilderExtensions).Assembly,
             typeof(global::Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions),
+            typeof(global::Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext),
             typeof(global::Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry),
             typeof(global::Cephalon.Data.EntityFramework.Modeling.EntityFrameworkModelBuilderExtensions),
             typeof(global::Cephalon.Data.EntityFramework.Modeling.IEntityFrameworkInboxContext),
