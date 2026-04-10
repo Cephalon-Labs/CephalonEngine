@@ -36,9 +36,14 @@ This pack sits on top of `Cephalon.Data`, not in place of it. `Cephalon.Data` st
 
 The current slice is intentionally honest and narrow: it proves optional `DbContext` registration, CQRS-style read/write role separation, runtime capability metadata, an opt-in inbox persistence path where the write-side `DbContext` explicitly implements `IEntityFrameworkInboxContext` and maps the shared processed-message entity with `ConfigureCephalonInbox()`, an opt-in outbox persistence path where the same write-side `DbContext` can implement `IEntityFrameworkOutboxContext` and map the shared outbox entity with `ConfigureCephalonOutbox()`, operator-facing inbox and outbox descriptors that make staged-only idempotency and delivery truth visible through the runtime introspection surface, an `inbox-stores` technology surface entry that describes application-managed idempotency stores when `EventDrivenIntegration` is active, an `outbox-producers` technology surface entry under the same technology selection, subscription metadata that can now say an application-managed inbox store is available without pretending the eventing pack dispatches through it, a staged-only outbox-backed `IEventPublisher` handoff path, an adapter-neutral Entity Framework-backed `IEventDispatchStore` that can read pending staged rows and persist `dispatch_attempt_count`, `dispatched_at_utc`, and `next_attempt_at_utc` follow-through for later adapter-owned dispatch loops, and optional `Sfid.EntityFramework` conventions plus save-time key assignment when `Cephalon.Ids.Sfid` is active. Full subscription execution, broker-owned retries, and richer projection pipelines are still later slices.
 
+The current recommendation is not to turn `DbContext` inheritance into the primary engine contract. The next follow-through should make database roles and migration policy engine-visible first, then add any optional Entity Framework convenience base classes only as thin developer-experience helpers. See [Database topology direction](../database-topology.md).
+
+The next recommended follow-through is an engine-owned database-topology contract, not a mandatory `ReadDbContextBase` / `WriteDbContextBase` inheritance model. `Cephalon.Data.EntityFramework` should stay usable with plain EF Core `DbContext` types while future engine work adds role-aware `Engine:Databases` configuration, migration targeting, and optional durable audit-history follow-through on top. See [Database topology direction](../database-topology.md).
+
 ## Related docs
 
 - [Cephalon.Data](data.md)
 - [Cephalon.Ids.Sfid](ids-sfid.md)
 - [Cephalon.Engine](engine.md)
+- [Database topology direction](../database-topology.md)
 - [Architecture](../architecture.md)

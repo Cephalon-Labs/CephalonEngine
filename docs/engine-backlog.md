@@ -1356,6 +1356,81 @@ Follow-up later:
 
 - transport handler benchmarks — requires HTTP test infrastructure per transport (partially covered by existing AspNetCoreRequestLoggingBenchmarks)
 
+### ENG-060 Engine-owned database topology and runtime catalog baseline
+
+Status: planned
+Estimate: 8
+
+Why:
+
+- the current `Engine:Data` section is intentionally logical and too shallow to own physical database roles, migration targeting, or durable history routing
+- the shipped provider-pack baseline is strong enough that topology drift is now the next real risk: read/write, outbox, and history layouts can become sample- or pack-specific instead of a stable engine contract
+- Cephalon differentiates most when runtime topology is introspectable and configuration-driven across companion packs, not when every provider invents its own host section
+
+Acceptance:
+
+- `Engine:Databases` exists as the engine-owned physical-topology contract separate from the existing logical `Engine:Data` section
+- named database roles such as `Write`, `Read`, and `History` can be validated and surfaced through runtime introspection without leaking EF Core or ASP.NET Core specifics into `Cephalon.Abstractions`
+- outbox and audit-history follow-through can target a named role instead of duplicating provider/connection settings ad hoc
+- `/engine/snapshot` and a dedicated database catalog answer the active role, provider-family, and topology truthfully
+
+Planned follow-through:
+
+- add engine-owned configuration types and validation for role-based database topology
+- keep provider-family standards intact inside the topology model instead of flattening every store into one fake universal connection shape
+- add a runtime catalog and introspection surface for active database roles and their operator-facing metadata
+- keep `Engine:Data` focused on logical selection (`Provider`, `ReadWriteSplit`, `Outbox`, `Ids`) while `Engine:Databases` owns physical deployment detail
+
+### ENG-061 Role-aware relational runtime and migration orchestration baseline
+
+Status: planned
+Estimate: 13
+
+Why:
+
+- `Cephalon.Data.EntityFramework` currently proves one honest relational path, but it still relies on host-owned `DbContext` registration instead of an engine-owned role topology
+- migration policy is still mostly a host concern, which keeps production deployment guidance, startup apply behavior, and operator truth spread across samples instead of the engine product surface
+- mandatory `ReadDbContextBase` / `WriteDbContextBase` inheritance would be a weaker engine contract than role-aware registration helpers plus optional shared schema slices and interceptors
+
+Acceptance:
+
+- `Cephalon.Data.EntityFramework` consumes engine-owned database roles instead of inventing a second physical-topology config model
+- relational hosts can keep one shared `DbContext` or split read/write/history contexts while still aligning with the same role contract
+- migration configuration can target named roles, startup apply remains explicit, and deploy-time bundles or scripts become the documented production path
+- runtime answers expose active relational role wiring, outbox routing, and migration targeting truthfully
+
+Planned follow-through:
+
+- add role-aware registration helpers and per-role EF runtime overrides on top of `Engine:Databases`
+- keep marker interfaces, model-builder extensions, and interceptors as the preferred reusable primitives
+- treat convenience `DbContext` base classes as optional later DX helpers rather than the primary contract
+- add CLI, docs, and sample guidance for separate migrations projects plus bundle/script-first production deployment
+
+### ENG-062 Durable audit-history provider baseline
+
+Status: planned
+Estimate: 8
+
+Why:
+
+- the current `Cephalon.Audit` baseline is intentionally truthful, but it only solves low-ceremony recording and in-memory storage
+- audit history, retention, and role-aware persistence need a durable baseline before Cephalon can claim a real operational story around tenant-aware change history
+- durable history should not pull storage assumptions back into `Cephalon.Audit`; it should stay additive and configurable through the same engine-owned topology contract used by data and outbox follow-through
+
+Acceptance:
+
+- durable audit history can be turned on or off through `Engine:Audit` without changing module code
+- the first durable history path targets a named database role instead of hardcoding its own connection model
+- runtime audit-store answers expose whether history is in-memory only, durable, or disabled
+- the baseline keeps query/replay and retention follow-through explicit without pretending those surfaces already exist
+
+Planned follow-through:
+
+- add a first durable provider pack on the relational golden path, starting with `Cephalon.Audit.EntityFramework`
+- align history targeting with `Engine:Databases:Roles` plus `Engine:Audit:History`
+- keep retention, replay, and export as later additive slices after the first durable write path is truthful
+- keep ASP.NET Core actor bridging and tenant context additive without turning the audit pack into a host-specific storage abstraction
+
 ## Sprint history and next 4 sprints
 
 Historical sprint buckets below are retrospective planning groups used to backfill iteration and estimate metadata for delivered work.

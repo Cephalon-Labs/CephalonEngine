@@ -96,6 +96,9 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 34`: comprehensive engine audit — WebSocket `[LoggerMessage]` logging fix, flaky test fix, architecture inventory/recommendations docs, ENG-049/050/052/053/055 closeout (all phase-8 baseline acceptance met), ENG-059 benchmark expansion planned — 648/648 tests
 - `Sprint 35`: **shipped** ENG-059 runtime hot-path benchmark expansion — data layer dispatch, behavior dispatch, authorization evaluation, tenant resolution, event sourcing, outbox staging — 13 new benchmarks across 6 classes, guardrails 10→23, 648/648 tests
 - `Sprint 31`: **shipped** ENG-054 provider configuration follow-through — connection-string-native packs now share `ConnectionStringName` plus `ConnectionString` (`Cephalon.Data.MongoDB`, `Cephalon.Data.Redis`), URI-first packs now share `UriName` plus `Uri` (`Cephalon.Data.Elasticsearch`, `Cephalon.Data.OpenSearch`, `Cephalon.Data.Neo4j`, `Cephalon.Data.Nats`), named values resolve from the root `ConnectionStrings` or `Uris` sections as appropriate, packs fail fast when both settings are supplied, and the docs now call out the provider-family contract explicitly while Cassandra/Qdrant remain topology-first
+- `Sprint 36`: planned `ENG-060` engine-owned database topology and runtime catalog baseline so physical database roles, migration targets, outbox routing, and history stores stop drifting across provider packs
+- `Sprint 37`: planned `ENG-061` role-aware relational runtime and migration orchestration baseline on top of that topology contract, with startup apply kept explicit and deploy-time bundles/scripts treated as the production path
+- `Sprint 38`: planned `ENG-062` durable audit-history provider baseline so `Cephalon.Audit` can move beyond the narrow in-memory recorder without collapsing storage concerns back into hosts or modules
 - `Sprint 36–37 (Phase 11)`: planned resilience foundation — circuit breaker, retry/timeout/bulkhead, rate limiting, `onion-architecture` and `anti-corruption-layer` pattern descriptors
 - `Sprint 38–39 (Phase 12)`: planned migration and advanced coordination — strangler fig, saga choreography, BFF pattern, feature flags, durable execution foundations
 - `Sprint 40–41 (Phase 13)`: planned next-generation patterns — cell-based architecture, data mesh, CDC
@@ -105,6 +108,7 @@ The project board now tracks both delivered work and upcoming work through expli
 
 - prefer stabilizing the shipped surface over inventing new layers too early
 - keep the engine configuration-driven and host-agnostic by default
+- keep logical data selection separate from physical database topology so one codebase can move between layouts without rewriting hosts
 - keep future-facing technology choices additive through explicit technology profiles instead of blueprint explosion
 - treat scaffolding, CLI, and benchmark coverage as part of the engine product, not side tools
 - make every new runtime feature observable, testable, and benchmarkable
@@ -538,6 +542,29 @@ Exit criteria:
 - every major store category (document, key-value, graph, wide-column, analytics, search, vector, ledger) has a Cephalon-supported `IOutbox`/`IInbox`/`IEventStore` implementation
 - no changes to `Cephalon.Engine` or `Cephalon.Abstractions` were required
 - all companion packs follow the same module/registration/capability pattern established by `Cephalon.Data.EntityFramework`
+
+## Cross-cutting follow-through: Database topology and durable audit history
+
+Status: planned
+
+Goal: separate physical database role topology, migration targeting, and durable audit-history routing from the logical `Engine:Data` app-model slice so one Cephalon codebase can move between single-database, split read/write, dedicated outbox, and dedicated history layouts through configuration and additive companion packs.
+
+Target: Sprint 36–38
+
+Planned deliverables:
+
+- `ENG-060` engine-owned `Engine:Databases` topology contract with named roles such as `Write`, `Read`, and `History`
+- runtime introspection for active database roles and topology answers through a dedicated catalog plus `/engine/snapshot`
+- `ENG-061` role-aware relational follow-through so `Cephalon.Data.EntityFramework` consumes database-role topology instead of inventing a separate physical-layout model
+- migration targeting that references named roles, keeps startup apply explicit, and treats bundle/script-based deployment as the production path
+- `ENG-062` durable audit-history follow-through that keeps `Cephalon.Audit` narrow while letting a first provider-backed store target a named database role
+
+Exit criteria:
+
+- a consumer app can keep one Cephalon codebase and move between shared-db and split-db layouts through config and additive pack wiring
+- database topology, migration targeting, and durable audit-history state are all introspectable instead of hidden in host startup code
+- provider packs stay additive because the engine owns the role and migration contract instead of one pack becoming the de facto source of truth
+- optional convenience `DbContext` base classes, if they appear later, remain thin DX helpers rather than the primary engine contract
 
 ## Recommended implementation order
 

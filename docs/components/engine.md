@@ -81,6 +81,8 @@ This package is the host-agnostic center of the framework. ASP.NET Core, worker 
 
 Just as importantly, this package exists to lower ceremony for consumer apps. The engine should absorb repetitive composition, configuration binding, runtime wiring, introspection, and companion-pack coordination so Cephalon-based apps spend less code on plumbing and declarations, emit less boilerplate, and stay focused on project-specific business logic.
 
+The same rule should drive the next data follow-through. Physical database roles, migration targeting, and durable audit-history routing should become engine-owned runtime answers instead of drifting into provider-pack-specific host config. The current direction for that follow-through is documented in [Database topology direction](../database-topology-direction.md).
+
 Package loading is also governed here. `cephalon.package.json` compatibility metadata, external distribution and provenance hints, publisher/signature provenance fields, optional integrity hashes, detached signature verification against trusted public keys or trusted signing certificate chains, publisher/signer/checksum-based trust allow-lists, and `/engine/packages` manifest output are all part of the engine contract rather than host-specific behavior.
 
 This package also carries the public contracts that should be explained well through XML comments. Those XML comments are written so external tooling can generate API/reference docs later, while the hand-authored `.md` guides describe how teams should actually adopt the engine.
