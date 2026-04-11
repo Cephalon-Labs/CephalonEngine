@@ -10,6 +10,7 @@ using Cephalon.Engine.Configuration;
 using Cephalon.Tests.Support;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Hosting;
 
@@ -31,6 +32,7 @@ public sealed class GraphQLTransportHostingTests
         builder.Configuration["ApiRoutes:Prefixes:GraphQLSse"] = "/graph-stream";
         builder.Configuration["ApiRoutes:Prefixes:GraphQLWs"] = "/graph-socket";
         builder.AddGraphQLTransport();
+        builder.ConfigureGraphQLTransport(graphql => graphql.AddInMemorySubscriptions());
         builder.AddCephalon(engine =>
         {
             engine.AddModule(new PlatformTestModule());
@@ -79,6 +81,7 @@ public sealed class GraphQLTransportHostingTests
         builder.Configuration["ApiRoutes:Prefixes:GraphQL"] = "/graph-http";
         builder.Configuration["ApiRoutes:Prefixes:GraphQLSse"] = "/graph-stream";
         builder.AddGraphQLTransport();
+        builder.ConfigureGraphQLTransport(graphql => graphql.AddInMemorySubscriptions());
         builder.AddCephalon(engine =>
         {
             engine.AddModule(new PlatformTestModule());
@@ -99,10 +102,9 @@ public sealed class GraphQLTransportHostingTests
             request,
             HttpCompletionOption.ResponseHeadersRead,
             cts.Token);
-        await Task.Delay(100, cts.Token);
         var publishResponse = await client.PostAsJsonAsync(
             "/graph-http",
-            CreatePublishGreetingRequest("Stream"),
+            CreatePublishGreetingRequest("Stream", delayMilliseconds: 250),
             cts.Token);
         var payload = await response.Content.ReadAsStringAsync(cts.Token);
 
@@ -122,6 +124,7 @@ public sealed class GraphQLTransportHostingTests
         builder.Configuration["ApiRoutes:Prefixes:GraphQL"] = "/graph-http";
         builder.Configuration["ApiRoutes:Prefixes:GraphQLWs"] = "/graph-socket";
         builder.AddGraphQLTransport();
+        builder.ConfigureGraphQLTransport(graphql => graphql.AddInMemorySubscriptions());
         builder.AddCephalon(engine =>
         {
             engine.AddModule(new PlatformTestModule());
@@ -155,10 +158,9 @@ public sealed class GraphQLTransportHostingTests
                 payload = CreateGreetingSubscriptionRequest("Socket")
             },
             cts.Token);
-        await Task.Delay(100, cts.Token);
         var publishResponse = await client.PostAsJsonAsync(
             "/graph-http",
-            CreatePublishGreetingRequest("Socket"),
+            CreatePublishGreetingRequest("Socket", delayMilliseconds: 250),
             cts.Token);
         var nextMessage = await ReceiveWebSocketMessageMatchingAsync(
             socket,
@@ -178,6 +180,41 @@ public sealed class GraphQLTransportHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonMergesGraphQlContributionsFromMultipleModulesIntoSharedRoots()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "GraphQL";
+        builder.Configuration["ApiRoutes:Prefixes:GraphQL"] = "/graph-http";
+        builder.AddGraphQLTransport();
+        builder.ConfigureGraphQLTransport(graphql => graphql.AddInMemorySubscriptions());
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new DiscoveryTestModule());
+            engine.AddModule(new AdditionalGraphQLContributionModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var schemaResponse = await client.GetAsync("/graph-http/schema");
+        var schemaPayload = await schemaResponse.Content.ReadAsStringAsync();
+
+        Assert.True(schemaResponse.IsSuccessStatusCode);
+        Assert.Contains("hello(", schemaPayload, StringComparison.Ordinal);
+        Assert.Contains("farewell(", schemaPayload, StringComparison.Ordinal);
+        Assert.Contains("publishGreeting(", schemaPayload, StringComparison.Ordinal);
+        Assert.Contains("publishFarewell(", schemaPayload, StringComparison.Ordinal);
+        Assert.Contains("greetingPublished(", schemaPayload, StringComparison.Ordinal);
+        Assert.Contains("farewellPublished(", schemaPayload, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesGraphQlWebSocketConcurrencyLimitAsActiveConnectionConcurrency()
     {
         var builder = WebApplication.CreateSlimBuilder();
@@ -191,6 +228,7 @@ public sealed class GraphQLTransportHostingTests
         builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:Overrides:graphql-ws-only:PermitLimit"] = "1";
         builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:Overrides:graphql-ws-only:QueueLimit"] = "0";
         builder.AddGraphQLTransport();
+        builder.ConfigureGraphQLTransport(graphql => graphql.AddInMemorySubscriptions());
         builder.AddCephalon(engine =>
         {
             engine.AddModule(new PlatformTestModule());
@@ -249,14 +287,15 @@ public sealed class GraphQLTransportHostingTests
         };
     }
 
-    private static object CreatePublishGreetingRequest(string name)
+    private static object CreatePublishGreetingRequest(string name, int? delayMilliseconds = null)
     {
         return new
         {
-            query = "mutation ($name: String!) { publishGreeting(name: $name) { message generatedAtUtc traits } }",
+            query = "mutation ($name: String!, $delayMilliseconds: Int) { publishGreeting(name: $name, delayMilliseconds: $delayMilliseconds) { message generatedAtUtc traits } }",
             variables = new
             {
-                name
+                name,
+                delayMilliseconds
             }
         };
     }

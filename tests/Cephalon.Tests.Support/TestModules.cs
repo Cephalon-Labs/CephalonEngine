@@ -84,7 +84,6 @@ internal sealed class DiscoveryTestModule : ModuleBase, IEndpointModule, IGraphQ
     {
         services.AddSingleton<TestGreetingComposer>();
         services.AddTransient<DiscoveryGrpcService>();
-        services.ConfigureGraphQLTransport(builder => builder.AddInMemorySubscriptions());
         services.ConfigureGraphQLQuery(DiscoveryGraphQLQueries.Configure);
         services.ConfigureGraphQLMutation(DiscoveryGraphQLMutations.Configure);
         services.ConfigureGraphQLSubscription(DiscoveryGraphQLSubscriptions.Configure);
@@ -268,14 +267,21 @@ internal sealed class DiscoveryGraphQLMutations
     {
         descriptor.Field("publishGreeting")
             .Argument("name", argument => argument.Type<NonNullType<StringType>>())
+            .Argument("delayMilliseconds", argument => argument.Type<IntType>())
             .Type<NonNullType<GreetingEnvelopeGraphQLType>>()
             .Resolve(async context =>
             {
                 var composer = context.Service<TestGreetingComposer>();
                 var sender = context.Service<ITopicEventSender>();
                 var name = context.ArgumentValue<string>("name");
+                var delayMilliseconds = context.ArgumentValue<int?>("delayMilliseconds");
                 var greeting = composer.Compose(name);
                 var topic = DiscoveryGraphQLTopics.Greeting(name);
+
+                if (delayMilliseconds is > 0)
+                {
+                    await Task.Delay(delayMilliseconds.Value, context.RequestAborted).ConfigureAwait(false);
+                }
 
                 await sender.SendAsync(topic, greeting, context.RequestAborted).ConfigureAwait(false);
                 await sender.CompleteAsync(topic).ConfigureAwait(false);
@@ -305,6 +311,12 @@ internal static class DiscoveryGraphQLTopics
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         return $"discovery.greetings:{name.Trim()}";
     }
+
+    public static string Farewell(string name)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        return $"discovery.farewells:{name.Trim()}";
+    }
 }
 
 internal sealed class GreetingEnvelopeGraphQLType : ObjectType<GreetingEnvelope>
@@ -315,6 +327,84 @@ internal sealed class GreetingEnvelopeGraphQLType : ObjectType<GreetingEnvelope>
         descriptor.Field(model => model.Message);
         descriptor.Field(model => model.GeneratedAtUtc);
         descriptor.Field(model => model.Traits);
+    }
+}
+
+internal sealed class AdditionalGraphQLContributionModule : ModuleBase, IGraphQLModule
+{
+    private static readonly ModuleDescriptor DescriptorInstance = new(
+        id: "additional-graphql",
+        displayName: "Additional GraphQL",
+        description: "Adds a second set of GraphQL contributions for shared-root coverage.",
+        dependsOn: [typeof(PlatformTestModule)],
+        tags: ["experience", "graphql"],
+        version: "1.0.0");
+
+    public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+    public override void ConfigureServices(IServiceCollection services)
+    {
+        services.ConfigureGraphQLQuery(AdditionalGraphQLQueries.Configure);
+        services.ConfigureGraphQLMutation(AdditionalGraphQLMutations.Configure);
+        services.ConfigureGraphQLSubscription(AdditionalGraphQLSubscriptions.Configure);
+    }
+}
+
+internal sealed class AdditionalGraphQLQueries
+{
+    public static void Configure(IObjectTypeDescriptor descriptor)
+    {
+        descriptor.Field("farewell")
+            .Argument("name", argument => argument.Type<StringType>())
+            .Type<StringType>()
+            .Resolve(context =>
+            {
+                var name = context.ArgumentValue<string?>("name");
+                var visitor = string.IsNullOrWhiteSpace(name) ? "builder" : name.Trim();
+                return $"Goodbye, {visitor} from the Cephalon future stack.";
+            });
+    }
+}
+
+internal sealed class AdditionalGraphQLMutations
+{
+    public static void Configure(IObjectTypeDescriptor descriptor)
+    {
+        descriptor.Field("publishFarewell")
+            .Argument("name", argument => argument.Type<NonNullType<StringType>>())
+            .Argument("delayMilliseconds", argument => argument.Type<IntType>())
+            .Type<NonNullType<StringType>>()
+            .Resolve(async context =>
+            {
+                var sender = context.Service<ITopicEventSender>();
+                var name = context.ArgumentValue<string>("name");
+                var delayMilliseconds = context.ArgumentValue<int?>("delayMilliseconds");
+                var payload = $"Goodbye, {name.Trim()} from the Cephalon future stack.";
+                var topic = DiscoveryGraphQLTopics.Farewell(name);
+
+                if (delayMilliseconds is > 0)
+                {
+                    await Task.Delay(delayMilliseconds.Value, context.RequestAborted).ConfigureAwait(false);
+                }
+
+                await sender.SendAsync(topic, payload, context.RequestAborted).ConfigureAwait(false);
+                await sender.CompleteAsync(topic).ConfigureAwait(false);
+
+                return payload;
+            });
+    }
+}
+
+internal sealed class AdditionalGraphQLSubscriptions
+{
+    public static void Configure(IObjectTypeDescriptor descriptor)
+    {
+        descriptor.Field("farewellPublished")
+            .Argument("name", argument => argument.Type<NonNullType<StringType>>())
+            .Type<NonNullType<StringType>>()
+            .SubscribeToTopic<string>(context =>
+                DiscoveryGraphQLTopics.Farewell(context.ArgumentValue<string>("name")))
+            .Resolve(context => context.GetEventMessage<string>());
     }
 }
 
