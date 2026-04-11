@@ -1,3 +1,5 @@
+using Cephalon.Abstractions.Behaviors;
+
 namespace Cephalon.Abstractions.Resilience;
 
 /// <summary>
@@ -14,13 +16,15 @@ public sealed class BehaviorResilienceExceptionContext
     /// <param name="targetedBehaviorIds">The behavior identifiers targeted by the active policy.</param>
     /// <param name="targetedTransportIds">The transport identifiers targeted by the active policy.</param>
     /// <param name="exception">The exception being classified.</param>
+    /// <param name="behaviorIdempotency">The declared behavior idempotency mode when one is known.</param>
     public BehaviorResilienceExceptionContext(
         string policyId,
         string behaviorId,
         string? transportId,
         IReadOnlyList<string>? targetedBehaviorIds,
         IReadOnlyList<string>? targetedTransportIds,
-        Exception exception)
+        Exception exception,
+        BehaviorIdempotencyMode behaviorIdempotency = BehaviorIdempotencyMode.Unknown)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(policyId);
         ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
@@ -40,6 +44,7 @@ public sealed class BehaviorResilienceExceptionContext
             .Select(static value => value.Trim())
             .ToArray() ?? [];
         Exception = exception;
+        BehaviorIdempotency = behaviorIdempotency;
     }
 
     /// <summary>
@@ -71,4 +76,9 @@ public sealed class BehaviorResilienceExceptionContext
     /// Gets the exception being classified.
     /// </summary>
     public Exception Exception { get; }
+
+    /// <summary>
+    /// Gets the declared behavior idempotency mode when one is known.
+    /// </summary>
+    public BehaviorIdempotencyMode BehaviorIdempotency { get; }
 }

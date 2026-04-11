@@ -1,4 +1,5 @@
 using Cephalon.Behaviors.Services;
+using Cephalon.Abstractions.Behaviors;
 using Polly;
 using Polly.Registry;
 
@@ -7,16 +8,20 @@ namespace Cephalon.Behaviors.Resilience;
 internal sealed class BehaviorResilienceExecutionMiddleware : IBehaviorExecutionMiddleware
 {
     private readonly BehaviorResiliencePolicyCatalog _catalog;
+    private readonly BehaviorIdempotencyResolver _idempotencyResolver;
     private readonly ResiliencePipelineProvider<string> _pipelineProvider;
 
     public BehaviorResilienceExecutionMiddleware(
         BehaviorResiliencePolicyCatalog catalog,
+        BehaviorIdempotencyResolver idempotencyResolver,
         ResiliencePipelineProvider<string> pipelineProvider)
     {
         ArgumentNullException.ThrowIfNull(catalog);
+        ArgumentNullException.ThrowIfNull(idempotencyResolver);
         ArgumentNullException.ThrowIfNull(pipelineProvider);
 
         _catalog = catalog;
+        _idempotencyResolver = idempotencyResolver;
         _pipelineProvider = pipelineProvider;
     }
 
@@ -42,6 +47,9 @@ internal sealed class BehaviorResilienceExecutionMiddleware : IBehaviorExecution
         var pipeline = _pipelineProvider.GetPipeline(resolution.Policy.Id);
         var resilienceContext = ResilienceContextPool.Shared.Get(invocation.BehaviorId, cancellationToken);
         resilienceContext.Properties.Set(BehaviorResilienceExecutionContextKeys.BehaviorId, invocation.BehaviorId);
+        resilienceContext.Properties.Set(
+            BehaviorResilienceExecutionContextKeys.IdempotencyMode,
+            _idempotencyResolver.Resolve(invocation.BehaviorType));
         if (!string.IsNullOrWhiteSpace(transportId))
         {
             resilienceContext.Properties.Set(BehaviorResilienceExecutionContextKeys.TransportId, transportId);

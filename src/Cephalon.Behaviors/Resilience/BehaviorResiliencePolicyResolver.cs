@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Engine.Configuration;
@@ -417,6 +418,7 @@ internal static class BehaviorResiliencePolicyResolver
         {
             ["isOverride"] = isOverride ? "true" : "false",
             ["retryMode"] = IsRequested(requested.Retry) ? "contract-only" : "disabled",
+            ["retryEligibilityMode"] = IsRequested(requested.Retry) ? "behavior-dependent" : "disabled",
             ["timeoutMode"] = effective.Timeout.HasValues ? "enforced" : "disabled",
             ["circuitBreakerMode"] = effective.CircuitBreaker.HasValues ? "enforced" : IsRequested(requested.CircuitBreaker) ? "contract-only" : "disabled",
             ["bulkheadMode"] = effective.Bulkhead.HasValues ? "enforced" : "disabled"
@@ -846,13 +848,17 @@ internal sealed record ResolvedBehaviorResiliencePolicy(
                         !string.IsNullOrWhiteSpace(activeTransportId)
                             ? activeTransportId
                             : null;
+                    var behaviorIdempotency = args.Context.Properties.TryGetValue(BehaviorResilienceExecutionContextKeys.IdempotencyMode, out var activeBehaviorIdempotency)
+                        ? activeBehaviorIdempotency
+                        : BehaviorIdempotencyMode.Unknown;
                     var handling = exceptionClassifier.Classify(new Cephalon.Abstractions.Resilience.BehaviorResilienceExceptionContext(
                         policyId: Id,
                         behaviorId: behaviorId,
                         transportId: transportId,
                         targetedBehaviorIds: BehaviorIds,
                         targetedTransportIds: TransportIds,
-                        exception: exception));
+                        exception: exception,
+                        behaviorIdempotency: behaviorIdempotency));
                     return handling == Cephalon.Abstractions.Resilience.BehaviorResilienceExceptionHandling.Ignore
                         ? PredicateResult.False()
                         : PredicateResult.True();
@@ -889,7 +895,9 @@ internal sealed record ResolvedBehaviorResiliencePolicy(
         }
     }
 
-    public BehaviorResilienceRuntimeDescriptor ToDescriptor(BehaviorCircuitBreakerRuntimeState? circuitBreakerRuntimeState = null)
+    public BehaviorResilienceRuntimeDescriptor ToDescriptor(
+        BehaviorCircuitBreakerRuntimeState? circuitBreakerRuntimeState = null,
+        BehaviorIdempotencyMode? behaviorIdempotency = null)
     {
         var metadata = new Dictionary<string, string>(Metadata, StringComparer.OrdinalIgnoreCase);
         if (circuitBreakerRuntimeState is not null && Effective.CircuitBreaker.HasValues && Effective.CircuitBreaker.Enabled == true)
@@ -921,6 +929,12 @@ internal sealed record ResolvedBehaviorResiliencePolicy(
             }
         }
 
+        if (behaviorIdempotency.HasValue)
+        {
+            metadata["behaviorIdempotency"] = ToMetadataValue(behaviorIdempotency.Value);
+            metadata["retryEligibilityMode"] = ResolveRetryEligibilityMode(behaviorIdempotency.Value);
+        }
+
         return new BehaviorResilienceRuntimeDescriptor(
             Id,
             DisplayName,
@@ -932,5 +946,31 @@ internal sealed record ResolvedBehaviorResiliencePolicy(
             Requested,
             Effective,
             metadata);
+    }
+
+    private string ResolveRetryEligibilityMode(BehaviorIdempotencyMode behaviorIdempotency)
+    {
+        var retryRequested = Requested.Retry.HasValues && Requested.Retry.Enabled != false;
+        if (!retryRequested)
+        {
+            return "not-requested";
+        }
+
+        return behaviorIdempotency switch
+        {
+            BehaviorIdempotencyMode.Idempotent => "eligible",
+            BehaviorIdempotencyMode.NonIdempotent => "ineligible",
+            _ => "unknown"
+        };
+    }
+
+    private static string ToMetadataValue(BehaviorIdempotencyMode behaviorIdempotency)
+    {
+        return behaviorIdempotency switch
+        {
+            BehaviorIdempotencyMode.Idempotent => "idempotent",
+            BehaviorIdempotencyMode.NonIdempotent => "non-idempotent",
+            _ => "unknown"
+        };
     }
 }

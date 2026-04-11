@@ -134,11 +134,15 @@ internal sealed class BehaviorModule(
 
         var policyCatalog = ResolveBehaviorResiliencePolicyCatalog(services, configuration);
         var circuitBreakerStates = new BehaviorCircuitBreakerStateRegistry();
+        services.TryAddSingleton<BehaviorIdempotencyResolver>();
         services.TryAddSingleton(policyCatalog);
         services.TryAddSingleton(circuitBreakerStates);
         services.TryAddSingleton<IBehaviorResilienceExceptionClassifier, DefaultBehaviorResilienceExceptionClassifier>();
-        services.TryAddSingleton<Cephalon.Abstractions.Resilience.IBehaviorResilienceRuntimeCatalog>(_ =>
-            new BehaviorResilienceRuntimeCatalog(policyCatalog, circuitBreakerStates));
+        services.TryAddSingleton<Cephalon.Abstractions.Resilience.IBehaviorResilienceRuntimeCatalog>(serviceProvider =>
+            new BehaviorResilienceRuntimeCatalog(
+                policyCatalog,
+                circuitBreakerStates,
+                serviceProvider.GetRequiredService<BehaviorIdempotencyResolver>()));
 
         if (!policyCatalog.HasEnforcedPolicies)
         {

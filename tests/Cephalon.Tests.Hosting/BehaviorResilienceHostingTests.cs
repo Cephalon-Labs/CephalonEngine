@@ -70,6 +70,7 @@ public sealed class BehaviorResilienceHostingTests
         Assert.Equal(4, policy.Effective.Bulkhead.MaxConcurrentExecutions);
         Assert.Equal(2, policy.Effective.Bulkhead.MaxQueuedActions);
         Assert.Equal("contract-only", policy.Metadata["retryMode"]);
+        Assert.Equal("behavior-dependent", policy.Metadata["retryEligibilityMode"]);
         Assert.Equal("enforced", policy.Metadata["circuitBreakerMode"]);
         Assert.Equal("timeout,circuit-breaker,bulkhead", policy.Metadata["effectiveStrategies"]);
 
@@ -78,6 +79,7 @@ public sealed class BehaviorResilienceHostingTests
         Assert.Equal(policy.Id, snapshotPolicy.Id);
         Assert.Equal(policy.ExecutionMode, snapshotPolicy.ExecutionMode);
         Assert.Equal(policy.Effective.Timeout.TotalTimeoutSeconds, snapshotPolicy.Effective.Timeout.TotalTimeoutSeconds);
+        Assert.Equal("behavior-dependent", snapshotPolicy.Metadata["retryEligibilityMode"]);
     }
 
     [AppBehavior("tests.resilience.probe")]

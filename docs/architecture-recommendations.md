@@ -37,13 +37,14 @@ Effort: medium.
 
 ### Retry with Backoff, Timeout, and Bulkhead (resilience suite)
 
-Current state: the contract-first baseline is now shipped through `Engine:Resilience` with `Retry`, `Timeout`, `CircuitBreaker`, and `Bulkhead` selections plus operator-facing introspection, and the current behavior-pipeline follow-through now enforces shared execution timeout, circuit-breaker, and bulkhead policies through `Cephalon.Behaviors`, `/engine/behavior-resilience`, and `snapshot.BehaviorResiliencePolicies`. `Engine:Resilience:BehaviorExecution:Overrides` now adds behavior- and transport-scoped override resolution with precedence `behavior+transport > behavior > transport > default`, including explicit disable answers that suppress inherited timeout, circuit-breaker, or bulkhead behavior for a narrower surface. Retry remains contract-only until idempotency and failure-classification rules exist.
+Current state: the contract-first baseline is now shipped through `Engine:Resilience` with `Retry`, `Timeout`, `CircuitBreaker`, and `Bulkhead` selections plus operator-facing introspection, and the current behavior-pipeline follow-through now enforces shared execution timeout, circuit-breaker, and bulkhead policies through `Cephalon.Behaviors`, `/engine/behavior-resilience`, and `snapshot.BehaviorResiliencePolicies`. `Engine:Resilience:BehaviorExecution:Overrides` now adds behavior- and transport-scoped override resolution with precedence `behavior+transport > behavior > transport > default`, including explicit disable answers that suppress inherited timeout, circuit-breaker, or bulkhead behavior for a narrower surface. The behavior contract layer now also exposes `BehaviorIdempotencyAttribute` plus `BehaviorIdempotencyMode`, the default classifier now distinguishes retry-eligible transient failures only for explicitly idempotent behaviors, and `IBehaviorResilienceRuntimeCatalog.Resolve(...)` now surfaces behavior-specific retry-eligibility metadata. Automatic retry execution still remains contract-only until the shared pipeline enforces backoff/jitter.
 
-Recommendation: create `Cephalon.Resilience` companion package or add resilience middleware to `Cephalon.Behaviors`.
+Recommendation: keep the shared `Microsoft.Extensions.Resilience` baseline in `Cephalon.Behaviors`, treat behavior-authored idempotency as the retry gate, and add automatic retry execution only on top of that explicit contract instead of inferring replay safety from transports or CQRS naming.
 
 Implementation outline:
-- `IResiliencePolicy` abstraction covering retry, timeout, circuit breaker, and bulkhead
-- Integration with `Microsoft.Extensions.Resilience` (Polly v8) as the default implementation
+- Keep `BehaviorIdempotencyAttribute` / `BehaviorIdempotencyMode` as the explicit replay-safety contract for behavior authors
+- Keep `IBehaviorResilienceExceptionClassifier` as the host-agnostic retry/circuit-breaker decision seam
+- Integrate automatic retry execution with `Microsoft.Extensions.Resilience` (Polly v8) only when the effective behavior policy requests retry and the classifier reports a retryable transient fault
 - Per-behavior and per-transport resilience configuration through `Engine:Resilience:BehaviorExecution:Overrides`
 - Capabilities: `resilience.retry`, `resilience.timeout`, `resilience.circuit-breaker`, `resilience.bulkhead`
 
@@ -216,10 +217,10 @@ Target: Sprint 36–37
 Deliverables:
 - Onion Architecture pattern descriptor — shipped
 - Circuit Breaker behavior middleware and runtime catalog — shipped
-- Retry/Timeout/Bulkhead resilience policies — timeout + circuit breaker + bulkhead shipped, retry pending
+- Retry/Timeout/Bulkhead resilience policies — timeout + circuit breaker + bulkhead shipped, behavior idempotency contract plus retry-eligibility metadata shipped, retry execution pending
 - Rate Limiting middleware integration — shipped
 - Anti-Corruption Layer pattern descriptor — shipped
-- `Cephalon.Resilience` companion package or `Cephalon.Behaviors` resilience extension
+- shared `Cephalon.Behaviors` resilience extension baseline
 
 Exit criteria:
 - a consumer app can configure per-behavior circuit breaker, retry, timeout, and rate-limit policies through `Engine:Resilience` without writing custom middleware

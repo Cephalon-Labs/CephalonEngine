@@ -73,6 +73,7 @@ public sealed class BehaviorResilienceTests
         Assert.Equal(2, policy.Effective.Bulkhead.MaxConcurrentExecutions);
         Assert.Equal(1, policy.Effective.Bulkhead.MaxQueuedActions);
         Assert.Equal("contract-only", policy.Metadata["retryMode"]);
+        Assert.Equal("behavior-dependent", policy.Metadata["retryEligibilityMode"]);
         Assert.Equal("enforced", policy.Metadata["circuitBreakerMode"]);
         Assert.Equal("enforced", policy.Metadata["timeoutMode"]);
         Assert.Equal("enforced", policy.Metadata["bulkheadMode"]);
@@ -84,6 +85,7 @@ public sealed class BehaviorResilienceTests
         Assert.Equal(policy.ExecutionMode, snapshotPolicy.ExecutionMode);
         Assert.Equal(policy.Effective.Timeout.TotalTimeoutSeconds, snapshotPolicy.Effective.Timeout.TotalTimeoutSeconds);
         Assert.Equal(policy.Effective.Bulkhead.MaxConcurrentExecutions, snapshotPolicy.Effective.Bulkhead.MaxConcurrentExecutions);
+        Assert.Equal("behavior-dependent", snapshotPolicy.Metadata["retryEligibilityMode"]);
     }
 
     [Fact]
@@ -172,6 +174,103 @@ public sealed class BehaviorResilienceTests
         Assert.True(policy.Metadata.ContainsKey("circuitStateChangedAtUtc"));
         Assert.True(policy.Metadata.ContainsKey("circuitRetryAfterSeconds"));
         Assert.True(policy.Metadata.ContainsKey("circuitLastOpenedExceptionType"));
+    }
+
+    [Fact]
+    public void BehaviorResilienceResolveIncludesBehaviorIdempotencyAndRetryEligibilityMetadata()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                resilience: new ResilienceSettings(
+                    retry: new RetrySettings(
+                        enabled: true,
+                        maxAttempts: 3,
+                        backoff: "Exponential",
+                        baseDelayMilliseconds: 100,
+                        maxDelayMilliseconds: 300,
+                        useJitter: true))));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors =>
+                {
+                    behaviors.Register<IdempotentRetryBehavior>(topology => topology
+                        .AsDirect()
+                        .ViaInMemory());
+                    behaviors.Register<NonIdempotentRetryBehavior>(topology => topology
+                        .AsDirect()
+                        .ViaInMemory());
+                    behaviors.Register<UnknownRetryBehavior>(topology => topology
+                        .AsDirect()
+                        .ViaInMemory());
+                });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IBehaviorResilienceRuntimeCatalog>();
+
+        var idempotentPolicy = catalog.Resolve("tests.resilience.retry.idempotent", "in-memory");
+        var nonIdempotentPolicy = catalog.Resolve("tests.resilience.retry.non-idempotent", "in-memory");
+        var unknownPolicy = catalog.Resolve("tests.resilience.retry.unknown", "in-memory");
+
+        Assert.NotNull(idempotentPolicy);
+        Assert.NotNull(nonIdempotentPolicy);
+        Assert.NotNull(unknownPolicy);
+        Assert.Equal("idempotent", idempotentPolicy!.Metadata["behaviorIdempotency"]);
+        Assert.Equal("eligible", idempotentPolicy.Metadata["retryEligibilityMode"]);
+        Assert.Equal("non-idempotent", nonIdempotentPolicy!.Metadata["behaviorIdempotency"]);
+        Assert.Equal("ineligible", nonIdempotentPolicy.Metadata["retryEligibilityMode"]);
+        Assert.Equal("unknown", unknownPolicy!.Metadata["behaviorIdempotency"]);
+        Assert.Equal("unknown", unknownPolicy.Metadata["retryEligibilityMode"]);
+    }
+
+    [Fact]
+    public void BehaviorResilienceClassifierMarksOnlyIdempotentTransientFailuresAsRetryEligible()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors => behaviors.Register<FastGreetingBehavior>(topology => topology
+                    .AsDirect()
+                    .ViaInMemory()));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var classifier = provider.GetRequiredService<IBehaviorResilienceExceptionClassifier>();
+
+        var retryAndTrip = classifier.Classify(new BehaviorResilienceExceptionContext(
+            policyId: "cephalon-behavior-execution",
+            behaviorId: "tests.resilience.retry.idempotent",
+            transportId: "in-memory",
+            targetedBehaviorIds: [],
+            targetedTransportIds: [],
+            exception: new TimeoutException("transient timeout"),
+            behaviorIdempotency: BehaviorIdempotencyMode.Idempotent));
+        var tripOnly = classifier.Classify(new BehaviorResilienceExceptionContext(
+            policyId: "cephalon-behavior-execution",
+            behaviorId: "tests.resilience.retry.non-idempotent",
+            transportId: "in-memory",
+            targetedBehaviorIds: [],
+            targetedTransportIds: [],
+            exception: new TimeoutException("transient timeout"),
+            behaviorIdempotency: BehaviorIdempotencyMode.NonIdempotent));
+        var unknownTripOnly = classifier.Classify(new BehaviorResilienceExceptionContext(
+            policyId: "cephalon-behavior-execution",
+            behaviorId: "tests.resilience.retry.unknown",
+            transportId: "in-memory",
+            targetedBehaviorIds: [],
+            targetedTransportIds: [],
+            exception: new TimeoutException("transient timeout"),
+            behaviorIdempotency: BehaviorIdempotencyMode.Unknown));
+
+        Assert.Equal(BehaviorResilienceExceptionHandling.RetryAndTrip, retryAndTrip);
+        Assert.Equal(BehaviorResilienceExceptionHandling.TripOnly, tripOnly);
+        Assert.Equal(BehaviorResilienceExceptionHandling.TripOnly, unknownTripOnly);
     }
 
     [Fact]
@@ -439,6 +538,38 @@ public sealed class BehaviorResilienceTests
             await Task.Delay(input.DelayMilliseconds, cancellationToken);
             return "completed";
         }
+    }
+
+    [AppBehavior("tests.resilience.retry.idempotent")]
+    [BehaviorIdempotency]
+    private sealed class IdempotentRetryBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(
+            string input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult(input);
+    }
+
+    [AppBehavior("tests.resilience.retry.non-idempotent")]
+    [BehaviorIdempotency(BehaviorIdempotencyMode.NonIdempotent)]
+    private sealed class NonIdempotentRetryBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(
+            string input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult(input);
+    }
+
+    [AppBehavior("tests.resilience.retry.unknown")]
+    private sealed class UnknownRetryBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(
+            string input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult(input);
     }
 
     private sealed record BlockingInput(

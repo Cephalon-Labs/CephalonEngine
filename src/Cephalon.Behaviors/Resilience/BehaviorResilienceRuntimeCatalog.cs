@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Resilience;
 
 namespace Cephalon.Behaviors.Resilience;
@@ -6,15 +7,20 @@ internal sealed class BehaviorResilienceRuntimeCatalog : IBehaviorResilienceRunt
 {
     private readonly BehaviorResiliencePolicyCatalog _catalog;
     private readonly BehaviorCircuitBreakerStateRegistry _circuitBreakerStates;
+    private readonly BehaviorIdempotencyResolver _idempotencyResolver;
 
     public BehaviorResilienceRuntimeCatalog(
         BehaviorResiliencePolicyCatalog catalog,
-        BehaviorCircuitBreakerStateRegistry? circuitBreakerStates = null)
+        BehaviorCircuitBreakerStateRegistry circuitBreakerStates,
+        BehaviorIdempotencyResolver idempotencyResolver)
     {
         ArgumentNullException.ThrowIfNull(catalog);
+        ArgumentNullException.ThrowIfNull(circuitBreakerStates);
+        ArgumentNullException.ThrowIfNull(idempotencyResolver);
 
         _catalog = catalog;
-        _circuitBreakerStates = circuitBreakerStates ?? new BehaviorCircuitBreakerStateRegistry();
+        _circuitBreakerStates = circuitBreakerStates;
+        _idempotencyResolver = idempotencyResolver;
     }
 
     public IReadOnlyList<BehaviorResilienceRuntimeDescriptor> Policies => _catalog.Policies
@@ -44,7 +50,9 @@ internal sealed class BehaviorResilienceRuntimeCatalog : IBehaviorResilienceRunt
         var resolution = _catalog.Resolve(behaviorId, transportId);
         return resolution.Policy is null
             ? null
-            : ToDescriptor(resolution.Policy);
+            : ToDescriptor(
+                resolution.Policy,
+                _idempotencyResolver.Resolve(behaviorId.Trim()));
     }
 
     private BehaviorResilienceRuntimeDescriptor ToDescriptor(ResolvedBehaviorResiliencePolicy policy)
@@ -52,5 +60,16 @@ internal sealed class BehaviorResilienceRuntimeCatalog : IBehaviorResilienceRunt
         ArgumentNullException.ThrowIfNull(policy);
 
         return policy.ToDescriptor(_circuitBreakerStates.Get(policy.Id));
+    }
+
+    private BehaviorResilienceRuntimeDescriptor ToDescriptor(
+        ResolvedBehaviorResiliencePolicy policy,
+        BehaviorIdempotencyMode behaviorIdempotency)
+    {
+        ArgumentNullException.ThrowIfNull(policy);
+
+        return policy.ToDescriptor(
+            _circuitBreakerStates.Get(policy.Id),
+            behaviorIdempotency);
     }
 }

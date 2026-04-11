@@ -26,13 +26,23 @@ internal sealed class DefaultBehaviorResilienceExceptionClassifier : IBehaviorRe
             BehaviorSecurityException => BehaviorResilienceExceptionHandling.Ignore,
             NotSupportedException => BehaviorResilienceExceptionHandling.Ignore,
             NotImplementedException => BehaviorResilienceExceptionHandling.Ignore,
-            TimeoutRejectedException => BehaviorResilienceExceptionHandling.TripOnly,
-            TimeoutException => BehaviorResilienceExceptionHandling.TripOnly,
-            HttpRequestException => BehaviorResilienceExceptionHandling.TripOnly,
-            IOException => BehaviorResilienceExceptionHandling.TripOnly,
-            SocketException => BehaviorResilienceExceptionHandling.TripOnly,
-            DbException => BehaviorResilienceExceptionHandling.TripOnly,
+            TimeoutRejectedException => ResolveTransientHandling(context),
+            TimeoutException => ResolveTransientHandling(context),
+            HttpRequestException => ResolveTransientHandling(context),
+            IOException => ResolveTransientHandling(context),
+            SocketException => ResolveTransientHandling(context),
+            DbException => ResolveTransientHandling(context),
             _ => BehaviorResilienceExceptionHandling.Ignore
         };
+    }
+
+    private static BehaviorResilienceExceptionHandling ResolveTransientHandling(
+        BehaviorResilienceExceptionContext context)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+
+        return context.BehaviorIdempotency == BehaviorIdempotencyMode.Idempotent
+            ? BehaviorResilienceExceptionHandling.RetryAndTrip
+            : BehaviorResilienceExceptionHandling.TripOnly;
     }
 }

@@ -109,12 +109,17 @@ now also carries `IBehaviorResilienceRuntimeCatalog`, `BehaviorResilienceRuntime
 `BehaviorExecutionResilienceSelection`, and `BehaviorExecutionResilienceOverrideSelection` so the
 engine can publish both requested override intent and effective behavior-execution timeout,
 circuit-breaker, and bulkhead answers without leaking Polly types or host-specific middleware
-contracts into consumer code. The same resilience namespace now also exposes
+contracts into consumer code. The `Behaviors` namespace now also exposes
+`BehaviorIdempotencyAttribute` plus `BehaviorIdempotencyMode` so behavior authors can declare
+whether automatic replay is safe without coupling that contract to HTTP verbs, transport adapters,
+or host-specific policies. The same resilience namespace now also exposes
 `BehaviorResilienceExceptionContext`, `BehaviorResilienceExceptionHandling`, and
 `IBehaviorResilienceExceptionClassifier` so runtime packs can classify failures without hard-coding
 Polly-specific exception decisions into consumer modules. The runtime descriptor now also carries
 targeted behavior ids plus transport ids so operator tooling can see whether an answer came from the
-default policy or from a narrower override.
+default policy or from a narrower override, and `Resolve(behaviorId, transportId)` metadata can now
+surface behavior-specific retry eligibility as `eligible`, `ineligible`, or `unknown` without
+pretending that automatic retry is already enforced.
 
 ## Related docs
 

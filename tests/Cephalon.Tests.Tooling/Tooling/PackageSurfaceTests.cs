@@ -104,6 +104,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorCompatibilityViolation),
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorFault),
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorFaultSeverity),
+            typeof(global::Cephalon.Abstractions.Behaviors.BehaviorIdempotencyAttribute),
+            typeof(global::Cephalon.Abstractions.Behaviors.BehaviorIdempotencyMode),
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorNotFoundException),
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorResult),
             typeof(global::Cephalon.Abstractions.Behaviors.BehaviorResultDescriptor),
