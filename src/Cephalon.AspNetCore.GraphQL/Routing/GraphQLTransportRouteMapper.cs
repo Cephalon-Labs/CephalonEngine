@@ -3,6 +3,7 @@ using Cephalon.AspNetCore.Hosting;
 using Cephalon.Engine.Runtime;
 using HotChocolate.AspNetCore;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.AspNetCore.GraphQL.Routing;
@@ -29,8 +30,71 @@ internal sealed class GraphQLTransportRouteMapper : ITransportRouteMapper
         }
 
         app.UseWebSockets();
-        app.MapGraphQL(options.GraphQLPrefix)
-            .WithDisplayName("Cephalon GraphQL")
-            .ApplyCephalonRateLimiting(app.Services, TransportId);
+
+        MapGraphQlHttpEndpoint(
+            app,
+            options.GraphQLPrefix,
+            TransportId,
+            "Cephalon GraphQL");
+        MapGraphQlSchemaEndpoint(
+            app,
+            ResolveSchemaRoute(options.GraphQLPrefix),
+            TransportId,
+            "Cephalon GraphQL Schema");
+
+        if (!string.Equals(options.GraphQLSsePrefix, options.GraphQLPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            MapGraphQlHttpEndpoint(
+                app,
+                options.GraphQLSsePrefix,
+                "graphql-sse",
+                "Cephalon GraphQL SSE");
+        }
+
+        MapGraphQlWebSocketEndpoint(
+            app,
+            options.GraphQLWsPrefix,
+            "graphql-ws",
+            "Cephalon GraphQL WebSocket");
+    }
+
+    private static void MapGraphQlHttpEndpoint(
+        IEndpointRouteBuilder endpoints,
+        string routePattern,
+        string transportId,
+        string displayName)
+    {
+        endpoints.MapGraphQLHttp(routePattern)
+            .WithDisplayName(displayName)
+            .ApplyCephalonRateLimiting(endpoints.ServiceProvider, transportId);
+    }
+
+    private static void MapGraphQlWebSocketEndpoint(
+        IEndpointRouteBuilder endpoints,
+        string routePattern,
+        string transportId,
+        string displayName)
+    {
+        endpoints.MapGraphQLWebSocket(routePattern)
+            .WithDisplayName(displayName)
+            .ApplyCephalonRateLimiting(endpoints.ServiceProvider, transportId);
+    }
+
+    private static void MapGraphQlSchemaEndpoint(
+        IEndpointRouteBuilder endpoints,
+        string routePattern,
+        string transportId,
+        string displayName)
+    {
+        endpoints.MapGraphQLSchema(routePattern)
+            .WithDisplayName(displayName)
+            .ApplyCephalonRateLimiting(endpoints.ServiceProvider, transportId);
+    }
+
+    private static string ResolveSchemaRoute(string routePattern)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(routePattern);
+
+        return $"{routePattern.TrimEnd('/')}/schema";
     }
 }

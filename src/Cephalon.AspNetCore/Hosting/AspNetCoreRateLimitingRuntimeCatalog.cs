@@ -52,7 +52,8 @@ internal sealed class AspNetCoreRateLimitingRuntimeCatalog : IRateLimitingRuntim
             return [];
         }
 
-        return policiesByTransportId.TryGetValue(transportId.Trim(), out var matches)
+        var lookupKey = AspNetCoreRateLimitingPolicyResolver.CanonicalizeTransportId(transportId) ?? transportId.Trim();
+        return policiesByTransportId.TryGetValue(lookupKey, out var matches)
             ? matches
             : [];
     }

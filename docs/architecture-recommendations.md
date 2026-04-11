@@ -58,14 +58,17 @@ also shipped through ASP.NET Core middleware, `/engine/rate-limiting`, and
 `snapshot.RateLimitingPolicies`. The current limiter covers public HTTP endpoints, intentionally
 excludes operator/docs routes, and now supports endpoint-scoped override modeling through
 `Engine:Resilience:RateLimiting:Overrides` with behavior-aware precedence across module-owned REST
-routes and generic behavior HTTP bindings.
+routes and generic behavior HTTP bindings. The runtime metadata now also distinguishes long-lived
+stream and connection surfaces through fields such as `transportKind`, `transportSemantics`, and
+`enforcementMoment`, so GraphQL-SSE, GraphQL-WS, SSE, and WebSocket policies no longer collapse
+into one generic endpoint label.
 
 Recommendation: keep ASP.NET Core middleware as the truthful baseline for public HTTP protection, and
 add finer per-behavior or transport-native override models on top of that surface instead of jumping
 straight to a generic resilience runtime catalog or a behavior pipeline that does not exist yet.
 
 Remaining follow-through:
-- Transport-native semantics for long-lived connections and non-route HTTP surfaces beyond the initial request gate
+- Broader non-route or non-ASP.NET Core transport semantics beyond the current ASP.NET Core route-mapped HTTP, stream, and connection baseline
 - Coordination between ASP.NET Core rate limiting and the new behavior-execution timeout/bulkhead middleware
 - Capability: `resilience.rate-limiting`
 

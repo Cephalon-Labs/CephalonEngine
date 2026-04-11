@@ -109,8 +109,11 @@ narrower behavior/transport overrides with explicit disable answers, and now als
 behavior-authored `BehaviorIdempotencyAttribute` contract so runtime metadata and exception
 classification can answer whether retry is `eligible`, `ineligible`, or `unknown` for a
 specific behavior. Automatic retry execution now uses that same classifier plus the effective retry
-policy to enforce backoff/jitter only for explicitly idempotent transient failures, while broader
-transport-native rate-limiting semantics beyond HTTP route mapping remain later work.
+policy to enforce backoff/jitter only for explicitly idempotent transient failures, while the
+remaining rate-limiting follow-through is now narrower than before: ASP.NET Core already projects
+truthful request-response, long-lived stream, and long-lived connection metadata through the
+runtime catalog, so later work is broader non-route or non-ASP.NET Core transport semantics rather
+than basic long-lived HTTP truth.
 
 Package loading is also governed here. `cephalon.package.json` compatibility metadata, external distribution and provenance hints, publisher/signature provenance fields, optional integrity hashes, detached signature verification against trusted public keys or trusted signing certificate chains, publisher/signer/checksum-based trust allow-lists, and `/engine/packages` manifest output are all part of the engine contract rather than host-specific behavior.
 

@@ -350,7 +350,7 @@ public sealed class AspNetCoreHostingTests
             }
         });
         var graphQlPayload = await graphQlResponse.Content.ReadAsStringAsync();
-        var graphQlSdlResponse = await client.GetAsync("/graphql?sdl");
+        var graphQlSdlResponse = await client.GetAsync("/graphql/schema");
         var graphQlSdlPayload = await graphQlSdlResponse.Content.ReadAsStringAsync();
         var rpcResponse = await client.PostAsJsonAsync("/json-rpc/discovery", new
         {

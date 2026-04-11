@@ -86,6 +86,13 @@ routes and module-owned REST helpers both exist in one host, the generic routes 
 transport-adapter endpoints while the module-owned REST groups own the published REST OpenAPI tag,
 summary, and description surface.
 
+The built-in GraphQL host adapter now follows that same prefix contract while keeping protocol
+surfaces explicit. By default `/graphql` handles GraphQL over HTTP, `/graphql/schema` serves the
+schema document, `/graphql-sse` handles GraphQL-over-SSE, and `/graphql-ws` handles
+GraphQL-over-WebSocket. Hosts can move those roots through `ApiRoutes:Prefixes:GraphQL`,
+`ApiRoutes:Prefixes:GraphQLSse`, and `ApiRoutes:Prefixes:GraphQLWs` without falling back to a
+separate GraphQL-specific route model.
+
 The ASP.NET Core host also owns Cephalon's optional REST response envelope policy. When
 `ApiRoutes:ResultEnvelope:Enabled = true`, module-owned REST endpoints can project raw behavior
 payloads or transport-neutral `Result<T>` outcomes through `ResultModel<T>` /
@@ -118,7 +125,10 @@ the requested resilience-policy selection projected into `AppProfile.Resilience`
 `Timeout`, `CircuitBreaker`, `Bulkhead`, and `RateLimiting`. When ASP.NET Core enforcement is active,
 `/engine/rate-limiting` plus `/engine/rate-limiting/{policyId}` publish the effective public-HTTP
 policies, covered transport ids, excluded route prefixes, rejection status, and host-specific metadata
-such as override ids and targeted behavior ids. When behavior-execution resilience is active,
+such as override ids, targeted behavior ids, `transportKind`, `transportSemantics`,
+`enforcementMoment`, and `longLivedTransportIds`. That lets operator tooling distinguish
+request-response policies from long-lived stream or connection policies instead of flattening every
+limiter into the same generic endpoint label. When behavior-execution resilience is active,
 `/engine/behavior-resilience` plus `/engine/behavior-resilience/{policyId}` publish the effective
 shared timeout, circuit-breaker, and bulkhead answers enforced by `Cephalon.Behaviors`, including
 targeted behavior ids, targeted transport ids, explicit disable overrides, and live circuit metadata
@@ -128,7 +138,10 @@ answers through `RateLimitingPolicies` plus `BehaviorResiliencePolicies`.
 The first shipped runtime follow-through uses `Microsoft.AspNetCore.RateLimiting` as the ASP.NET Core
 enforcement primitive for public Cephalon HTTP endpoints while intentionally excluding `/engine`,
 `/health`, `/openapi`, the configured Scalar route prefix, `/favicon.ico`, and hosted reference-doc
-routes so operator and documentation surfaces remain available under pressure. The behavior-pipeline
+routes so operator and documentation surfaces remain available under pressure. The same ASP.NET Core
+runtime now also keeps long-lived HTTP transport truth visible for stream and connection surfaces in
+`/engine/rate-limiting` rather than treating GraphQL-SSE, GraphQL-WS, SSE, and WebSocket routes as
+undifferentiated request-response endpoints. The behavior-pipeline
 follow-through now adds a shared behavior-dispatch middleware in `Cephalon.Behaviors` so retry,
 timeout, circuit-breaker, and bulkhead enforcement apply consistently across transports, resolves narrower
 `Engine:Resilience:BehaviorExecution:Overrides` entries with

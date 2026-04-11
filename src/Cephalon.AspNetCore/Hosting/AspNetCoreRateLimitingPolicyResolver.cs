@@ -20,6 +20,15 @@ internal static class AspNetCoreRateLimitingPolicyResolver
     internal const int DefaultWindowSeconds = 60;
     internal const int DefaultSegmentsPerWindow = 4;
     internal const string PartitionStrategy = "subject-or-tenant-or-ip";
+    internal const string LongLivedTransportScope = "long-lived-transport-endpoints";
+    internal const string BehaviorLongLivedTransportScope = "behavior-long-lived-transport-endpoints";
+
+    private static readonly string[] BuiltInGraphQlTransportIds =
+    [
+        "graphql",
+        "graphql-sse",
+        "graphql-ws"
+    ];
 
     private static readonly string[] BehaviorHttpTransportIds =
     [
@@ -31,12 +40,46 @@ internal static class AspNetCoreRateLimitingPolicyResolver
         "http.ws"
     ];
 
+    private static readonly HashSet<string> LongLivedTransportKeys = new(
+        new[]
+        {
+            "graphql-sse",
+            "graphql-ws",
+            "server-sent-events",
+            "websocket",
+            "http.graphql-sse",
+            "http.graphql-ws",
+            "http.sse",
+            "http.ws"
+        }.Select(NormalizeTransportKey),
+        StringComparer.Ordinal);
+
+    private static readonly HashSet<string> StreamTransportKeys = new(
+        new[]
+        {
+            "graphql-sse",
+            "server-sent-events",
+            "http.graphql-sse",
+            "http.sse"
+        }.Select(NormalizeTransportKey),
+        StringComparer.Ordinal);
+
+    private static readonly HashSet<string> ConnectionTransportKeys = new(
+        new[]
+        {
+            "graphql-ws",
+            "websocket",
+            "http.graphql-ws",
+            "http.ws"
+        }.Select(NormalizeTransportKey),
+        StringComparer.Ordinal);
+
     private static readonly HashSet<string> SupportedHttpTransportKeys = new(
         [
             NormalizeTransportKey("rest-api"),
             NormalizeTransportKey("behavior-http"),
             NormalizeTransportKey("json-rpc"),
-            NormalizeTransportKey("graphql"),
+            .. BuiltInGraphQlTransportIds.Select(NormalizeTransportKey),
             NormalizeTransportKey("grpc"),
             NormalizeTransportKey("server-sent-events"),
             NormalizeTransportKey("web-socket"),
@@ -132,6 +175,7 @@ internal static class AspNetCoreRateLimitingPolicyResolver
             selection.QueueLimit,
             selection.WindowSeconds,
             selection.SegmentsPerWindow);
+        var scope = ResolveDefaultScope(publicTransportIds);
         var metadata = CreateMetadata(
             isOverride: false,
             overrideId: null,
@@ -141,14 +185,14 @@ internal static class AspNetCoreRateLimitingPolicyResolver
             effective.WindowSeconds,
             effective.SegmentsPerWindow);
         metadata["reason"] = "configured";
-        metadata["scope"] = Scope;
+        metadata["scope"] = scope;
 
         return new ResolvedAspNetCoreRateLimitingPolicy(
             Id: PolicyId,
             DisplayName: "Cephalon Public HTTP Rate Limiter",
-            Description: "Default ASP.NET Core rate limiting applied to public Cephalon HTTP endpoints.",
+            Description: BuildDefaultDescription(publicTransportIds),
             ExecutionMode: EnabledExecutionMode,
-            Scope: Scope,
+            Scope: scope,
             RejectionStatusCode: RejectionStatusCode,
             TransportIds: publicTransportIds,
             BehaviorIds: [],
@@ -278,6 +322,12 @@ internal static class AspNetCoreRateLimitingPolicyResolver
             }
 
             transportIds.Add(canonicalId);
+            if (string.Equals(canonicalId, "graphql", StringComparison.OrdinalIgnoreCase))
+            {
+                transportIds.Add("graphql-sse");
+                transportIds.Add("graphql-ws");
+            }
+
             if (string.Equals(canonicalId, "behavior-http", StringComparison.OrdinalIgnoreCase))
             {
                 foreach (var behaviorTransportId in BehaviorHttpTransportIds)
@@ -366,6 +416,29 @@ internal static class AspNetCoreRateLimitingPolicyResolver
             metadata["transportIds"] = string.Join(",", transportIds);
         }
 
+        if (TryResolveTransportKind(transportIds) is { } transportKind)
+        {
+            metadata["transportKind"] = transportKind;
+        }
+
+        if (TryResolveTransportSemantics(transportIds, algorithm) is { } transportSemantics)
+        {
+            metadata["transportSemantics"] = transportSemantics;
+        }
+
+        if (TryResolveEnforcementMoment(transportIds, algorithm) is { } enforcementMoment)
+        {
+            metadata["enforcementMoment"] = enforcementMoment;
+        }
+
+        var longLivedTransportIds = transportIds
+            .Where(IsCanonicalLongLivedTransportId)
+            .ToArray();
+        if (longLivedTransportIds.Length > 0)
+        {
+            metadata["longLivedTransportIds"] = string.Join(",", longLivedTransportIds);
+        }
+
         if (!string.IsNullOrWhiteSpace(algorithm))
         {
             metadata["algorithm"] = algorithm.Trim();
@@ -417,7 +490,7 @@ internal static class AspNetCoreRateLimitingPolicyResolver
 
         if (transportIds.Length > 0)
         {
-            targets.Add($"transports [{string.Join(", ", transportIds)}]");
+            targets.Add(BuildTransportTargetDescription(transportIds));
         }
 
         var targetDescription = targets.Count == 0
@@ -433,10 +506,15 @@ internal static class AspNetCoreRateLimitingPolicyResolver
         string[] behaviorIds,
         string[] transportIds)
     {
+        var targetsOnlyLongLived = transportIds.Length > 0 &&
+            transportIds.All(IsCanonicalLongLivedTransportId);
+
         return (behaviorIds.Length > 0, transportIds.Length > 0) switch
         {
+            (true, true) when targetsOnlyLongLived => BehaviorLongLivedTransportScope,
             (true, true) => "behavior-transport-endpoints",
             (true, false) => "behavior-endpoints",
+            (false, true) when targetsOnlyLongLived => LongLivedTransportScope,
             (false, true) => "transport-endpoints",
             _ => Scope
         };
@@ -496,6 +574,8 @@ internal static class AspNetCoreRateLimitingPolicyResolver
             "behavior-http" => "behavior-http",
             "json-rpc" => "json-rpc",
             "graphql" => "graphql",
+            "graphql-sse" => "graphql-sse",
+            "graphql-ws" => "graphql-ws",
             "grpc" => "grpc",
             "server-sent-events" or "sse" => "server-sent-events",
             "web-socket" or "websocket" or "ws" => "websocket",
@@ -514,6 +594,146 @@ internal static class AspNetCoreRateLimitingPolicyResolver
         return string.Equals(algorithm, "FixedWindow", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(algorithm, "SlidingWindow", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(algorithm, "TokenBucket", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string ResolveDefaultScope(string[] transportIds)
+    {
+        ArgumentNullException.ThrowIfNull(transportIds);
+
+        return transportIds.Length > 0 && transportIds.All(IsCanonicalLongLivedTransportId)
+            ? LongLivedTransportScope
+            : Scope;
+    }
+
+    private static string BuildDefaultDescription(string[] transportIds)
+    {
+        ArgumentNullException.ThrowIfNull(transportIds);
+
+        return transportIds.Length > 0 && transportIds.All(IsCanonicalLongLivedTransportId)
+            ? "Default ASP.NET Core rate limiting applied to public long-lived Cephalon HTTP transports."
+            : "Default ASP.NET Core rate limiting applied to public Cephalon HTTP endpoints.";
+    }
+
+    private static string BuildTransportTargetDescription(string[] transportIds)
+    {
+        ArgumentNullException.ThrowIfNull(transportIds);
+
+        var label = transportIds.Length > 0 && transportIds.All(IsCanonicalLongLivedTransportId)
+            ? "long-lived transports"
+            : "transports";
+        return $"{label} [{string.Join(", ", transportIds)}]";
+    }
+
+    private static string? TryResolveTransportKind(string[] transportIds)
+    {
+        ArgumentNullException.ThrowIfNull(transportIds);
+
+        if (transportIds.Length == 0)
+        {
+            return null;
+        }
+
+        var hasLongLived = transportIds.Any(IsCanonicalLongLivedTransportId);
+        var hasRequestResponse = transportIds.Any(static transportId => !IsCanonicalLongLivedTransportId(transportId));
+        if (hasLongLived && hasRequestResponse)
+        {
+            return "mixed-request-and-long-lived";
+        }
+
+        if (!hasLongLived)
+        {
+            return "request-response";
+        }
+
+        var hasStream = transportIds.Any(IsCanonicalStreamTransportId);
+        var hasConnection = transportIds.Any(IsCanonicalConnectionTransportId);
+
+        return (hasStream, hasConnection) switch
+        {
+            (true, true) => "long-lived-mixed",
+            (true, false) => "long-lived-stream",
+            (false, true) => "long-lived-connection",
+            _ => "long-lived"
+        };
+    }
+
+    private static string? TryResolveTransportSemantics(string[] transportIds, string? algorithm)
+    {
+        ArgumentNullException.ThrowIfNull(transportIds);
+
+        var transportKind = TryResolveTransportKind(transportIds);
+        if (transportKind is null)
+        {
+            return null;
+        }
+
+        var usesConcurrency = string.Equals(
+            NormalizeAlgorithm(algorithm),
+            "ConcurrencyLimiter",
+            StringComparison.OrdinalIgnoreCase);
+
+        return (usesConcurrency, transportKind) switch
+        {
+            (true, "request-response") => "in-flight-request-concurrency",
+            (true, "long-lived-stream") => "active-stream-concurrency",
+            (true, "long-lived-connection") => "active-connection-concurrency",
+            (true, "long-lived-mixed") => "active-stream-and-connection-concurrency",
+            (true, "mixed-request-and-long-lived") => "mixed-request-and-session-concurrency",
+            (false, "request-response") => "request-entry-rate",
+            (false, "long-lived-stream") => "stream-entry-rate",
+            (false, "long-lived-connection") => "connection-entry-rate",
+            (false, "long-lived-mixed") => "session-entry-rate",
+            (false, "mixed-request-and-long-lived") => "mixed-request-and-session-entry-rate",
+            _ => "request-entry-rate"
+        };
+    }
+
+    private static string? TryResolveEnforcementMoment(string[] transportIds, string? algorithm)
+    {
+        ArgumentNullException.ThrowIfNull(transportIds);
+
+        if (transportIds.Length == 0)
+        {
+            return null;
+        }
+
+        var usesConcurrency = string.Equals(
+            NormalizeAlgorithm(algorithm),
+            "ConcurrencyLimiter",
+            StringComparison.OrdinalIgnoreCase);
+        var hasLongLived = transportIds.Any(IsCanonicalLongLivedTransportId);
+        var hasRequestResponse = transportIds.Any(static transportId => !IsCanonicalLongLivedTransportId(transportId));
+
+        return (usesConcurrency, hasLongLived, hasRequestResponse) switch
+        {
+            (true, true, true) => "held-until-request-completes-or-session-closes",
+            (true, true, false) => "held-until-session-closes",
+            (true, false, true) => "held-until-request-completes",
+            (false, true, true) => "checked-on-request-or-session-entry",
+            (false, true, false) => "checked-on-session-establishment-only",
+            _ => "checked-on-request-entry"
+        };
+    }
+
+    private static bool IsCanonicalLongLivedTransportId(string transportId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(transportId);
+
+        return LongLivedTransportKeys.Contains(NormalizeTransportKey(transportId));
+    }
+
+    private static bool IsCanonicalStreamTransportId(string transportId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(transportId);
+
+        return StreamTransportKeys.Contains(NormalizeTransportKey(transportId));
+    }
+
+    private static bool IsCanonicalConnectionTransportId(string transportId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(transportId);
+
+        return ConnectionTransportKeys.Contains(NormalizeTransportKey(transportId));
     }
 
     private static string ResolveOpenApiRoutePrefix(string routePattern)
