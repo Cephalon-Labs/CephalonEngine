@@ -68,23 +68,37 @@ public sealed class BehaviorResilienceTests
         Assert.Equal(20, policy.Effective.CircuitBreaker.BreakDurationSeconds);
         Assert.True(policy.Effective.Timeout.Enabled);
         Assert.Equal(12, policy.Effective.Timeout.TotalTimeoutSeconds);
-        Assert.Null(policy.Effective.Timeout.AttemptTimeoutSeconds);
+        Assert.Equal(4, policy.Effective.Timeout.AttemptTimeoutSeconds);
         Assert.True(policy.Effective.Bulkhead.Enabled);
         Assert.Equal(2, policy.Effective.Bulkhead.MaxConcurrentExecutions);
         Assert.Equal(1, policy.Effective.Bulkhead.MaxQueuedActions);
-        Assert.Equal("contract-only", policy.Metadata["retryMode"]);
+        Assert.True(policy.Effective.Retry.Enabled);
+        Assert.Equal(3, policy.Effective.Retry.MaxAttempts);
+        Assert.Equal("Exponential", policy.Effective.Retry.Backoff);
+        Assert.Equal(100, policy.Effective.Retry.BaseDelayMilliseconds);
+        Assert.Equal(300, policy.Effective.Retry.MaxDelayMilliseconds);
+        Assert.True(policy.Effective.Retry.UseJitter);
+        Assert.Equal("enforced", policy.Metadata["retryMode"]);
         Assert.Equal("behavior-dependent", policy.Metadata["retryEligibilityMode"]);
+        Assert.Equal("3", policy.Metadata["retryMaxAttempts"]);
+        Assert.Equal("Exponential", policy.Metadata["retryBackoff"]);
+        Assert.Equal("100", policy.Metadata["retryBaseDelayMilliseconds"]);
+        Assert.Equal("300", policy.Metadata["retryMaxDelayMilliseconds"]);
+        Assert.Equal("true", policy.Metadata["retryUseJitter"]);
         Assert.Equal("enforced", policy.Metadata["circuitBreakerMode"]);
         Assert.Equal("enforced", policy.Metadata["timeoutMode"]);
         Assert.Equal("enforced", policy.Metadata["bulkheadMode"]);
         Assert.Equal("retry,timeout,circuit-breaker,bulkhead", policy.Metadata["requestedStrategies"]);
-        Assert.Equal("timeout,circuit-breaker,bulkhead", policy.Metadata["effectiveStrategies"]);
+        Assert.Equal("retry,timeout,circuit-breaker,bulkhead", policy.Metadata["effectiveStrategies"]);
 
         var snapshotPolicy = Assert.Single(snapshot.BehaviorResiliencePolicies);
         Assert.Equal(policy.Id, snapshotPolicy.Id);
         Assert.Equal(policy.ExecutionMode, snapshotPolicy.ExecutionMode);
+        Assert.Equal(policy.Effective.Retry.MaxAttempts, snapshotPolicy.Effective.Retry.MaxAttempts);
         Assert.Equal(policy.Effective.Timeout.TotalTimeoutSeconds, snapshotPolicy.Effective.Timeout.TotalTimeoutSeconds);
+        Assert.Equal(policy.Effective.Timeout.AttemptTimeoutSeconds, snapshotPolicy.Effective.Timeout.AttemptTimeoutSeconds);
         Assert.Equal(policy.Effective.Bulkhead.MaxConcurrentExecutions, snapshotPolicy.Effective.Bulkhead.MaxConcurrentExecutions);
+        Assert.Equal("enforced", snapshotPolicy.Metadata["retryMode"]);
         Assert.Equal("behavior-dependent", snapshotPolicy.Metadata["retryEligibilityMode"]);
     }
 
@@ -271,6 +285,164 @@ public sealed class BehaviorResilienceTests
         Assert.Equal(BehaviorResilienceExceptionHandling.RetryAndTrip, retryAndTrip);
         Assert.Equal(BehaviorResilienceExceptionHandling.TripOnly, tripOnly);
         Assert.Equal(BehaviorResilienceExceptionHandling.TripOnly, unknownTripOnly);
+    }
+
+    [Fact]
+    public async Task BehaviorDispatcherRetriesIdempotentTransientFailuresUntilSuccess()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton(new RetryProbeState(failuresBeforeSuccess: 2));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                resilience: new ResilienceSettings(
+                    retry: new RetrySettings(
+                        enabled: true,
+                        maxAttempts: 2,
+                        backoff: "Constant",
+                        baseDelayMilliseconds: 1,
+                        useJitter: false))));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors => behaviors.Register<IdempotentRetryProbeBehavior>(topology => topology
+                    .AsDirect()
+                    .ViaInMemory()));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<BehaviorDispatcher>();
+        var state = provider.GetRequiredService<RetryProbeState>();
+
+        var result = await dispatcher.DispatchAsync(
+            "tests.resilience.retry.probe.idempotent",
+            "probe",
+            new TestBehaviorContext("tests.resilience.retry.probe.idempotent", isDirect: true));
+
+        Assert.Equal("completed-3", result);
+        Assert.Equal(3, state.Attempts);
+    }
+
+    [Fact]
+    public async Task BehaviorDispatcherDoesNotRetryNonIdempotentTransientFailures()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton(new RetryProbeState(failuresBeforeSuccess: 2));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                resilience: new ResilienceSettings(
+                    retry: new RetrySettings(
+                        enabled: true,
+                        maxAttempts: 3,
+                        backoff: "Constant",
+                        baseDelayMilliseconds: 1,
+                        useJitter: false))));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors => behaviors.Register<NonIdempotentRetryProbeBehavior>(topology => topology
+                    .AsDirect()
+                    .ViaInMemory()));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<BehaviorDispatcher>();
+        var state = provider.GetRequiredService<RetryProbeState>();
+
+        await Assert.ThrowsAsync<TimeoutException>(() =>
+            dispatcher.DispatchAsync(
+                "tests.resilience.retry.probe.non-idempotent",
+                "probe",
+                new TestBehaviorContext("tests.resilience.retry.probe.non-idempotent", isDirect: true)));
+
+        Assert.Equal(1, state.Attempts);
+    }
+
+    [Fact]
+    public async Task BehaviorDispatcherDoesNotRetryUnknownTransientFailures()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton(new RetryProbeState(failuresBeforeSuccess: 2));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                resilience: new ResilienceSettings(
+                    retry: new RetrySettings(
+                        enabled: true,
+                        maxAttempts: 3,
+                        backoff: "Constant",
+                        baseDelayMilliseconds: 1,
+                        useJitter: false))));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors => behaviors.Register<UnknownRetryProbeBehavior>(topology => topology
+                    .AsDirect()
+                    .ViaInMemory()));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<BehaviorDispatcher>();
+        var state = provider.GetRequiredService<RetryProbeState>();
+
+        await Assert.ThrowsAsync<TimeoutException>(() =>
+            dispatcher.DispatchAsync(
+                "tests.resilience.retry.probe.unknown",
+                "probe",
+                new TestBehaviorContext("tests.resilience.retry.probe.unknown", isDirect: true)));
+
+        Assert.Equal(1, state.Attempts);
+    }
+
+    [Fact]
+    public async Task BehaviorDispatcherSkipsRetryWhenBehaviorSpecificOverrideDisablesDefaultRetry()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton(new RetryProbeState(failuresBeforeSuccess: 2));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                resilience: new ResilienceSettings(
+                    retry: new RetrySettings(
+                        enabled: true,
+                        maxAttempts: 3,
+                        backoff: "Constant",
+                        baseDelayMilliseconds: 1,
+                        useJitter: false),
+                    behaviorExecutionOverrides:
+                    [
+                        new BehaviorExecutionResilienceOverrideSettings(
+                            id: "idempotent-probe-retry-disabled",
+                            behaviorIds: ["tests.resilience.retry.probe.idempotent"],
+                            retry: new RetrySettings(enabled: false))
+                    ])));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors => behaviors.Register<IdempotentRetryProbeBehavior>(topology => topology
+                    .AsDirect()
+                    .ViaInMemory()));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<BehaviorDispatcher>();
+        var catalog = provider.GetRequiredService<IBehaviorResilienceRuntimeCatalog>();
+        var state = provider.GetRequiredService<RetryProbeState>();
+
+        await Assert.ThrowsAsync<TimeoutException>(() =>
+            dispatcher.DispatchAsync(
+                "tests.resilience.retry.probe.idempotent",
+                "probe",
+                new TestBehaviorContext("tests.resilience.retry.probe.idempotent", isDirect: true)));
+
+        var policy = catalog.Resolve("tests.resilience.retry.probe.idempotent", "in-memory");
+
+        Assert.Equal(1, state.Attempts);
+        Assert.NotNull(policy);
+        Assert.Equal("disabled", policy!.ExecutionMode);
+        Assert.Equal("idempotent-probe-retry-disabled", policy.Metadata["overrideId"]);
+        Assert.Equal("disabled-by-override", policy.Metadata["reason"]);
     }
 
     [Fact]
@@ -570,6 +742,69 @@ public sealed class BehaviorResilienceTests
             IBehaviorContext context,
             CancellationToken cancellationToken = default)
             => Task.FromResult(input);
+    }
+
+    private sealed class RetryProbeState(int failuresBeforeSuccess)
+    {
+        public int FailuresBeforeSuccess { get; } = failuresBeforeSuccess;
+
+        public int Attempts => _attempts;
+
+        private int _attempts;
+
+        public int NextAttempt() => Interlocked.Increment(ref _attempts);
+    }
+
+    [AppBehavior("tests.resilience.retry.probe.idempotent")]
+    [BehaviorIdempotency]
+    private sealed class IdempotentRetryProbeBehavior(RetryProbeState state) : IAppBehavior<string, string>
+    {
+        private readonly RetryProbeState _state = state;
+
+        public Task<string> HandleAsync(
+            string input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+        {
+            var attempt = _state.NextAttempt();
+            if (attempt <= _state.FailuresBeforeSuccess)
+            {
+                throw new TimeoutException($"transient timeout on attempt {attempt}");
+            }
+
+            return Task.FromResult($"completed-{attempt}");
+        }
+    }
+
+    [AppBehavior("tests.resilience.retry.probe.non-idempotent")]
+    [BehaviorIdempotency(BehaviorIdempotencyMode.NonIdempotent)]
+    private sealed class NonIdempotentRetryProbeBehavior(RetryProbeState state) : IAppBehavior<string, string>
+    {
+        private readonly RetryProbeState _state = state;
+
+        public Task<string> HandleAsync(
+            string input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+        {
+            var attempt = _state.NextAttempt();
+            throw new TimeoutException($"transient timeout on attempt {attempt}");
+        }
+    }
+
+    [AppBehavior("tests.resilience.retry.probe.unknown")]
+    private sealed class UnknownRetryProbeBehavior(RetryProbeState state) : IAppBehavior<string, string>
+    {
+        private readonly RetryProbeState _state = state;
+
+        public Task<string> HandleAsync(
+            string input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+        {
+            var attempt = _state.NextAttempt();
+            throw new TimeoutException($"transient timeout on attempt {attempt}");
+        }
     }
 
     private sealed record BlockingInput(

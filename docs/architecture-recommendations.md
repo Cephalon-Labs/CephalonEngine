@@ -37,14 +37,14 @@ Effort: medium.
 
 ### Retry with Backoff, Timeout, and Bulkhead (resilience suite)
 
-Current state: the contract-first baseline is now shipped through `Engine:Resilience` with `Retry`, `Timeout`, `CircuitBreaker`, and `Bulkhead` selections plus operator-facing introspection, and the current behavior-pipeline follow-through now enforces shared execution timeout, circuit-breaker, and bulkhead policies through `Cephalon.Behaviors`, `/engine/behavior-resilience`, and `snapshot.BehaviorResiliencePolicies`. `Engine:Resilience:BehaviorExecution:Overrides` now adds behavior- and transport-scoped override resolution with precedence `behavior+transport > behavior > transport > default`, including explicit disable answers that suppress inherited timeout, circuit-breaker, or bulkhead behavior for a narrower surface. The behavior contract layer now also exposes `BehaviorIdempotencyAttribute` plus `BehaviorIdempotencyMode`, the default classifier now distinguishes retry-eligible transient failures only for explicitly idempotent behaviors, and `IBehaviorResilienceRuntimeCatalog.Resolve(...)` now surfaces behavior-specific retry-eligibility metadata. Automatic retry execution still remains contract-only until the shared pipeline enforces backoff/jitter.
+Current state: the contract-first baseline is now shipped through `Engine:Resilience` with `Retry`, `Timeout`, `CircuitBreaker`, and `Bulkhead` selections plus operator-facing introspection, and the current behavior-pipeline follow-through now enforces shared execution retry, timeout, circuit-breaker, and bulkhead policies through `Cephalon.Behaviors`, `/engine/behavior-resilience`, and `snapshot.BehaviorResiliencePolicies`. `Engine:Resilience:BehaviorExecution:Overrides` now adds behavior- and transport-scoped override resolution with precedence `behavior+transport > behavior > transport > default`, including explicit disable answers that suppress inherited retry, timeout, circuit-breaker, or bulkhead behavior for a narrower surface. The behavior contract layer now also exposes `BehaviorIdempotencyAttribute` plus `BehaviorIdempotencyMode`, the default classifier distinguishes retry-eligible transient failures only for explicitly idempotent behaviors, and `IBehaviorResilienceRuntimeCatalog.Resolve(...)` now surfaces behavior-specific retry-eligibility metadata plus effective retry settings. Automatic replay remains intentionally gated by that explicit idempotency contract instead of being inferred from transports or CQRS naming.
 
 Recommendation: keep the shared `Microsoft.Extensions.Resilience` baseline in `Cephalon.Behaviors`, treat behavior-authored idempotency as the retry gate, and add automatic retry execution only on top of that explicit contract instead of inferring replay safety from transports or CQRS naming.
 
 Implementation outline:
 - Keep `BehaviorIdempotencyAttribute` / `BehaviorIdempotencyMode` as the explicit replay-safety contract for behavior authors
 - Keep `IBehaviorResilienceExceptionClassifier` as the host-agnostic retry/circuit-breaker decision seam
-- Integrate automatic retry execution with `Microsoft.Extensions.Resilience` (Polly v8) only when the effective behavior policy requests retry and the classifier reports a retryable transient fault
+- Keep automatic retry execution in the shared `Cephalon.Behaviors` pipeline only when the effective behavior policy requests retry and the classifier reports a retryable transient fault for an explicitly idempotent behavior
 - Per-behavior and per-transport resilience configuration through `Engine:Resilience:BehaviorExecution:Overrides`
 - Capabilities: `resilience.retry`, `resilience.timeout`, `resilience.circuit-breaker`, `resilience.bulkhead`
 
@@ -217,7 +217,7 @@ Target: Sprint 36–37
 Deliverables:
 - Onion Architecture pattern descriptor — shipped
 - Circuit Breaker behavior middleware and runtime catalog — shipped
-- Retry/Timeout/Bulkhead resilience policies — timeout + circuit breaker + bulkhead shipped, behavior idempotency contract plus retry-eligibility metadata shipped, retry execution pending
+- Retry/Timeout/Bulkhead resilience policies — shipped through the shared behavior pipeline, including idempotency-gated retry execution
 - Rate Limiting middleware integration — shipped
 - Anti-Corruption Layer pattern descriptor — shipped
 - shared `Cephalon.Behaviors` resilience extension baseline

@@ -129,15 +129,16 @@ The first shipped runtime follow-through uses `Microsoft.AspNetCore.RateLimiting
 enforcement primitive for public Cephalon HTTP endpoints while intentionally excluding `/engine`,
 `/health`, `/openapi`, the configured Scalar route prefix, `/favicon.ico`, and hosted reference-doc
 routes so operator and documentation surfaces remain available under pressure. The behavior-pipeline
-follow-through now adds a shared behavior-dispatch middleware in `Cephalon.Behaviors` so timeout,
-circuit-breaker, and bulkhead enforcement apply consistently across transports, resolves narrower
+follow-through now adds a shared behavior-dispatch middleware in `Cephalon.Behaviors` so retry,
+timeout, circuit-breaker, and bulkhead enforcement apply consistently across transports, resolves narrower
 `Engine:Resilience:BehaviorExecution:Overrides` entries with
 `behavior+transport > behavior > transport > default` precedence, and lets explicit disable overrides
 suppress inherited enforcement cleanly. The REST helper layer translates those behavior-execution
 rejections into truthful HTTP responses (`503` for timeout or an open circuit breaker, `429` for
 bulkhead saturation) while keeping OpenAPI in sync per route and surfacing retry-after details for
-open circuits. Retry remains contract-only until later phase-11 work adds safe idempotency-aware
-enforcement.
+open circuits. Retry now runs in that same shared pipeline only for explicitly idempotent behaviors
+when the effective retry policy is active and the classifier marks the failure as transient, while
+non-idempotent or unknown behaviors still fail without automatic replay.
 
 The host now also exposes additive event-dispatch operator answers directly. When eventing packs
 register the corresponding catalogs, `/engine/event-dispatch-runtimes` and

@@ -104,12 +104,13 @@ ASP.NET Core-specific types into the engine core. The current shipped follow-thr
 both ASP.NET Core public-HTTP rate limiting plus an endpoint-scoped effective runtime catalog and the
 first behavior-execution runtime catalog through `IBehaviorResilienceRuntimeCatalog`,
 `/engine/behavior-resilience`, and `snapshot.BehaviorResiliencePolicies`. The current behavior
-pipeline truthfully enforces timeout, circuit breaker, and bulkhead across dispatch, resolves
+pipeline truthfully enforces retry, timeout, circuit breaker, and bulkhead across dispatch, resolves
 narrower behavior/transport overrides with explicit disable answers, and now also consumes the
 behavior-authored `BehaviorIdempotencyAttribute` contract so runtime metadata and exception
-classification can answer whether retry would be `eligible`, `ineligible`, or `unknown` for a
-specific behavior. Automatic retry execution plus broader transport-native rate-limiting semantics
-beyond HTTP route mapping remain later work.
+classification can answer whether retry is `eligible`, `ineligible`, or `unknown` for a
+specific behavior. Automatic retry execution now uses that same classifier plus the effective retry
+policy to enforce backoff/jitter only for explicitly idempotent transient failures, while broader
+transport-native rate-limiting semantics beyond HTTP route mapping remain later work.
 
 Package loading is also governed here. `cephalon.package.json` compatibility metadata, external distribution and provenance hints, publisher/signature provenance fields, optional integrity hashes, detached signature verification against trusted public keys or trusted signing certificate chains, publisher/signer/checksum-based trust allow-lists, and `/engine/packages` manifest output are all part of the engine contract rather than host-specific behavior.
 

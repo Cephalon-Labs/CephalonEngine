@@ -21,6 +21,10 @@ public sealed class BehaviorResilienceHostingTests
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
         builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Retry:Enabled"] = "true";
         builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Retry:MaxAttempts"] = "3";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Retry:Backoff"] = "Constant";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Retry:BaseDelayMilliseconds"] = "25";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Retry:MaxDelayMilliseconds"] = "50";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Retry:UseJitter"] = "false";
         builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Timeout:Enabled"] = "true";
         builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Timeout:TotalTimeoutSeconds"] = "9";
         builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Timeout:AttemptTimeoutSeconds"] = "3";
@@ -63,22 +67,36 @@ public sealed class BehaviorResilienceHostingTests
         Assert.Equal(5, policy.Effective.CircuitBreaker.MinimumThroughput);
         Assert.Equal(15, policy.Effective.CircuitBreaker.SamplingDurationSeconds);
         Assert.Equal(20, policy.Effective.CircuitBreaker.BreakDurationSeconds);
+        Assert.True(policy.Effective.Retry.Enabled);
+        Assert.Equal(3, policy.Effective.Retry.MaxAttempts);
+        Assert.Equal("Constant", policy.Effective.Retry.Backoff);
+        Assert.Equal(25, policy.Effective.Retry.BaseDelayMilliseconds);
+        Assert.Equal(50, policy.Effective.Retry.MaxDelayMilliseconds);
+        Assert.False(policy.Effective.Retry.UseJitter);
         Assert.True(policy.Effective.Timeout.Enabled);
         Assert.Equal(9, policy.Effective.Timeout.TotalTimeoutSeconds);
-        Assert.Null(policy.Effective.Timeout.AttemptTimeoutSeconds);
+        Assert.Equal(3, policy.Effective.Timeout.AttemptTimeoutSeconds);
         Assert.True(policy.Effective.Bulkhead.Enabled);
         Assert.Equal(4, policy.Effective.Bulkhead.MaxConcurrentExecutions);
         Assert.Equal(2, policy.Effective.Bulkhead.MaxQueuedActions);
-        Assert.Equal("contract-only", policy.Metadata["retryMode"]);
+        Assert.Equal("enforced", policy.Metadata["retryMode"]);
         Assert.Equal("behavior-dependent", policy.Metadata["retryEligibilityMode"]);
+        Assert.Equal("3", policy.Metadata["retryMaxAttempts"]);
+        Assert.Equal("Constant", policy.Metadata["retryBackoff"]);
+        Assert.Equal("25", policy.Metadata["retryBaseDelayMilliseconds"]);
+        Assert.Equal("50", policy.Metadata["retryMaxDelayMilliseconds"]);
+        Assert.Equal("false", policy.Metadata["retryUseJitter"]);
         Assert.Equal("enforced", policy.Metadata["circuitBreakerMode"]);
-        Assert.Equal("timeout,circuit-breaker,bulkhead", policy.Metadata["effectiveStrategies"]);
+        Assert.Equal("retry,timeout,circuit-breaker,bulkhead", policy.Metadata["effectiveStrategies"]);
 
         Assert.NotNull(snapshot);
         var snapshotPolicy = Assert.Single(snapshot!.BehaviorResiliencePolicies);
         Assert.Equal(policy.Id, snapshotPolicy.Id);
         Assert.Equal(policy.ExecutionMode, snapshotPolicy.ExecutionMode);
+        Assert.Equal(policy.Effective.Retry.MaxAttempts, snapshotPolicy.Effective.Retry.MaxAttempts);
         Assert.Equal(policy.Effective.Timeout.TotalTimeoutSeconds, snapshotPolicy.Effective.Timeout.TotalTimeoutSeconds);
+        Assert.Equal(policy.Effective.Timeout.AttemptTimeoutSeconds, snapshotPolicy.Effective.Timeout.AttemptTimeoutSeconds);
+        Assert.Equal("enforced", snapshotPolicy.Metadata["retryMode"]);
         Assert.Equal("behavior-dependent", snapshotPolicy.Metadata["retryEligibilityMode"]);
     }
 

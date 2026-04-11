@@ -5,6 +5,7 @@ using Cephalon.Engine.Configuration;
 using Polly;
 using Polly.CircuitBreaker;
 using Polly.RateLimiting;
+using Polly.Retry;
 using Polly.Timeout;
 
 namespace Cephalon.Behaviors.Resilience;
@@ -16,6 +17,11 @@ internal static class BehaviorResiliencePolicyResolver
     internal const string EnforcedExecutionMode = "behavior-dispatch-middleware";
     internal const string ContractOnlyExecutionMode = "contract-only";
     internal const string Scope = "all-behavior-executions";
+    internal const int DefaultMaxRetryAttempts = 3;
+    internal const string DefaultRetryBackoff = "Exponential";
+    internal const int DefaultRetryBaseDelayMilliseconds = 200;
+    internal const int DefaultRetryMaxDelayMilliseconds = 2000;
+    internal const bool DefaultRetryUseJitter = true;
     internal const int DefaultTotalTimeoutSeconds = 30;
     internal const int DefaultAttemptTimeoutSeconds = 10;
     internal const int DefaultMaxConcurrentExecutions = 64;
@@ -219,10 +225,48 @@ internal static class BehaviorResiliencePolicyResolver
     {
         ArgumentNullException.ThrowIfNull(requested);
 
+        var retry = ResolveRetry(requested.Retry);
+
         return new BehaviorExecutionResilienceSelection(
+            retry: retry,
             circuitBreaker: ResolveCircuitBreaker(requested.CircuitBreaker),
-            timeout: ResolveTimeout(requested),
+            timeout: ResolveTimeout(requested, retry),
             bulkhead: ResolveBulkhead(requested.Bulkhead));
+    }
+
+    private static RetrySelection ResolveRetry(RetrySelection settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+
+        if (settings.Enabled == false)
+        {
+            return RetrySelection.Empty;
+        }
+
+        if (settings.Enabled != true &&
+            !settings.MaxAttempts.HasValue &&
+            settings.Backoff is null &&
+            !settings.BaseDelayMilliseconds.HasValue &&
+            !settings.MaxDelayMilliseconds.HasValue &&
+            !settings.UseJitter.HasValue)
+        {
+            return RetrySelection.Empty;
+        }
+
+        var baseDelayMilliseconds = settings.BaseDelayMilliseconds ?? DefaultRetryBaseDelayMilliseconds;
+        var maxDelayMilliseconds = settings.MaxDelayMilliseconds ?? DefaultRetryMaxDelayMilliseconds;
+        if (maxDelayMilliseconds < baseDelayMilliseconds)
+        {
+            maxDelayMilliseconds = baseDelayMilliseconds;
+        }
+
+        return new RetrySelection(
+            enabled: true,
+            maxAttempts: settings.MaxAttempts ?? DefaultMaxRetryAttempts,
+            backoff: NormalizeRetryBackoff(settings.Backoff),
+            baseDelayMilliseconds: baseDelayMilliseconds,
+            maxDelayMilliseconds: maxDelayMilliseconds,
+            useJitter: settings.UseJitter ?? DefaultRetryUseJitter);
     }
 
     private static CircuitBreakerSelection ResolveCircuitBreaker(CircuitBreakerSelection settings)
@@ -265,11 +309,15 @@ internal static class BehaviorResiliencePolicyResolver
             bulkhead: MergeBulkhead(baseline.Bulkhead, overrideSelection.Bulkhead));
     }
 
-    private static TimeoutSelection ResolveTimeout(BehaviorExecutionResilienceSelection requested)
+    private static TimeoutSelection ResolveTimeout(
+        BehaviorExecutionResilienceSelection requested,
+        RetrySelection effectiveRetry)
     {
         ArgumentNullException.ThrowIfNull(requested);
+        ArgumentNullException.ThrowIfNull(effectiveRetry);
 
         var settings = requested.Timeout;
+        var retryEnabled = effectiveRetry.HasValues && effectiveRetry.Enabled == true;
 
         if (settings.Enabled == false)
         {
@@ -288,11 +336,28 @@ internal static class BehaviorResiliencePolicyResolver
         if (!totalTimeoutSeconds.HasValue && !attemptTimeoutSeconds.HasValue)
         {
             totalTimeoutSeconds = DefaultTotalTimeoutSeconds;
-            attemptTimeoutSeconds = DefaultAttemptTimeoutSeconds;
+            attemptTimeoutSeconds = retryEnabled
+                ? DefaultAttemptTimeoutSeconds
+                : null;
         }
 
         totalTimeoutSeconds ??= attemptTimeoutSeconds;
-        attemptTimeoutSeconds = null;
+        if (retryEnabled)
+        {
+            attemptTimeoutSeconds ??= Math.Min(
+                totalTimeoutSeconds ?? DefaultAttemptTimeoutSeconds,
+                DefaultAttemptTimeoutSeconds);
+            if (attemptTimeoutSeconds.HasValue &&
+                totalTimeoutSeconds.HasValue &&
+                attemptTimeoutSeconds.Value > totalTimeoutSeconds.Value)
+            {
+                attemptTimeoutSeconds = totalTimeoutSeconds;
+            }
+        }
+        else
+        {
+            attemptTimeoutSeconds = null;
+        }
 
         return new TimeoutSelection(
             enabled: true,
@@ -417,7 +482,7 @@ internal static class BehaviorResiliencePolicyResolver
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["isOverride"] = isOverride ? "true" : "false",
-            ["retryMode"] = IsRequested(requested.Retry) ? "contract-only" : "disabled",
+            ["retryMode"] = effective.Retry.HasValues ? "enforced" : IsRequested(requested.Retry) ? "contract-only" : "disabled",
             ["retryEligibilityMode"] = IsRequested(requested.Retry) ? "behavior-dependent" : "disabled",
             ["timeoutMode"] = effective.Timeout.HasValues ? "enforced" : "disabled",
             ["circuitBreakerMode"] = effective.CircuitBreaker.HasValues ? "enforced" : IsRequested(requested.CircuitBreaker) ? "contract-only" : "disabled",
@@ -462,6 +527,31 @@ internal static class BehaviorResiliencePolicyResolver
         if (effective.Timeout.TotalTimeoutSeconds.HasValue)
         {
             metadata["totalTimeoutSeconds"] = effective.Timeout.TotalTimeoutSeconds.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        if (effective.Retry.MaxAttempts.HasValue)
+        {
+            metadata["retryMaxAttempts"] = effective.Retry.MaxAttempts.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        if (!string.IsNullOrWhiteSpace(effective.Retry.Backoff))
+        {
+            metadata["retryBackoff"] = effective.Retry.Backoff;
+        }
+
+        if (effective.Retry.BaseDelayMilliseconds.HasValue)
+        {
+            metadata["retryBaseDelayMilliseconds"] = effective.Retry.BaseDelayMilliseconds.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        if (effective.Retry.MaxDelayMilliseconds.HasValue)
+        {
+            metadata["retryMaxDelayMilliseconds"] = effective.Retry.MaxDelayMilliseconds.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        if (effective.Retry.UseJitter.HasValue)
+        {
+            metadata["retryUseJitter"] = effective.Retry.UseJitter.Value ? "true" : "false";
         }
 
         if (effective.Timeout.AttemptTimeoutSeconds.HasValue)
@@ -563,6 +653,11 @@ internal static class BehaviorResiliencePolicyResolver
         ArgumentNullException.ThrowIfNull(selection);
 
         var strategies = new List<string>();
+        if (selection.Retry.HasValues && selection.Retry.Enabled == true)
+        {
+            strategies.Add("retry");
+        }
+
         if (selection.Timeout.HasValues && selection.Timeout.Enabled == true)
         {
             strategies.Add("timeout");
@@ -680,6 +775,31 @@ internal static class BehaviorResiliencePolicyResolver
         ArgumentNullException.ThrowIfNull(selection);
         return selection.HasValues && selection.Enabled != false;
     }
+
+    private static string NormalizeRetryBackoff(string? backoff)
+    {
+        return NormalizeRetryBackoffKey(backoff) switch
+        {
+            "constant" => "Constant",
+            "linear" => "Linear",
+            _ => DefaultRetryBackoff
+        };
+    }
+
+    internal static DelayBackoffType ResolveRetryBackoffType(string? backoff)
+    {
+        return NormalizeRetryBackoffKey(backoff) switch
+        {
+            "constant" => DelayBackoffType.Constant,
+            "linear" => DelayBackoffType.Linear,
+            _ => DelayBackoffType.Exponential
+        };
+    }
+
+    private static string NormalizeRetryBackoffKey(string? backoff)
+        => string.IsNullOrWhiteSpace(backoff)
+            ? string.Empty
+            : string.Concat(backoff.Trim().Where(static ch => !char.IsWhiteSpace(ch) && ch != '-' && ch != '_')).ToLowerInvariant();
 
 }
 
@@ -825,6 +945,37 @@ internal sealed record ResolvedBehaviorResiliencePolicy(
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(exceptionClassifier);
 
+        if (Effective.Timeout.TotalTimeoutSeconds.HasValue &&
+            Effective.Retry.HasValues &&
+            Effective.Retry.Enabled == true)
+        {
+            builder.AddTimeout(TimeSpan.FromSeconds(Effective.Timeout.TotalTimeoutSeconds.Value));
+        }
+
+        if (Effective.Retry.HasValues && Effective.Retry.Enabled == true)
+        {
+            builder.AddRetry(new RetryStrategyOptions
+            {
+                MaxRetryAttempts = Effective.Retry.MaxAttempts ?? BehaviorResiliencePolicyResolver.DefaultMaxRetryAttempts,
+                BackoffType = BehaviorResiliencePolicyResolver.ResolveRetryBackoffType(Effective.Retry.Backoff),
+                UseJitter = Effective.Retry.UseJitter ?? BehaviorResiliencePolicyResolver.DefaultRetryUseJitter,
+                Delay = TimeSpan.FromMilliseconds(Effective.Retry.BaseDelayMilliseconds ?? BehaviorResiliencePolicyResolver.DefaultRetryBaseDelayMilliseconds),
+                MaxDelay = TimeSpan.FromMilliseconds(Effective.Retry.MaxDelayMilliseconds ?? BehaviorResiliencePolicyResolver.DefaultRetryMaxDelayMilliseconds),
+                ShouldHandle = args =>
+                {
+                    if (args.Outcome.Exception is not Exception exception)
+                    {
+                        return PredicateResult.False();
+                    }
+
+                    var handling = ClassifyException(args.Context, exception, exceptionClassifier);
+                    return handling == Cephalon.Abstractions.Resilience.BehaviorResilienceExceptionHandling.RetryAndTrip
+                        ? PredicateResult.True()
+                        : PredicateResult.False();
+                }
+            });
+        }
+
         if (Effective.CircuitBreaker.HasValues && Effective.CircuitBreaker.Enabled == true)
         {
             builder.AddCircuitBreaker(new CircuitBreakerStrategyOptions
@@ -840,25 +991,7 @@ internal sealed record ResolvedBehaviorResiliencePolicy(
                         return PredicateResult.False();
                     }
 
-                    var behaviorId = args.Context.Properties.TryGetValue(BehaviorResilienceExecutionContextKeys.BehaviorId, out var activeBehaviorId) &&
-                        !string.IsNullOrWhiteSpace(activeBehaviorId)
-                            ? activeBehaviorId
-                            : BehaviorIds.Count > 0 ? BehaviorIds[0] : Id;
-                    var transportId = args.Context.Properties.TryGetValue(BehaviorResilienceExecutionContextKeys.TransportId, out var activeTransportId) &&
-                        !string.IsNullOrWhiteSpace(activeTransportId)
-                            ? activeTransportId
-                            : null;
-                    var behaviorIdempotency = args.Context.Properties.TryGetValue(BehaviorResilienceExecutionContextKeys.IdempotencyMode, out var activeBehaviorIdempotency)
-                        ? activeBehaviorIdempotency
-                        : BehaviorIdempotencyMode.Unknown;
-                    var handling = exceptionClassifier.Classify(new Cephalon.Abstractions.Resilience.BehaviorResilienceExceptionContext(
-                        policyId: Id,
-                        behaviorId: behaviorId,
-                        transportId: transportId,
-                        targetedBehaviorIds: BehaviorIds,
-                        targetedTransportIds: TransportIds,
-                        exception: exception,
-                        behaviorIdempotency: behaviorIdempotency));
+                    var handling = ClassifyException(args.Context, exception, exceptionClassifier);
                     return handling == Cephalon.Abstractions.Resilience.BehaviorResilienceExceptionHandling.Ignore
                         ? PredicateResult.False()
                         : PredicateResult.True();
@@ -882,7 +1015,11 @@ internal sealed record ResolvedBehaviorResiliencePolicy(
             });
         }
 
-        if (Effective.Timeout.TotalTimeoutSeconds.HasValue)
+        if (Effective.Timeout.AttemptTimeoutSeconds.HasValue)
+        {
+            builder.AddTimeout(TimeSpan.FromSeconds(Effective.Timeout.AttemptTimeoutSeconds.Value));
+        }
+        else if (Effective.Timeout.TotalTimeoutSeconds.HasValue)
         {
             builder.AddTimeout(TimeSpan.FromSeconds(Effective.Timeout.TotalTimeoutSeconds.Value));
         }
@@ -893,6 +1030,37 @@ internal sealed record ResolvedBehaviorResiliencePolicy(
                 permitLimit: Effective.Bulkhead.MaxConcurrentExecutions ?? BehaviorResiliencePolicyResolver.DefaultMaxConcurrentExecutions,
                 queueLimit: Effective.Bulkhead.MaxQueuedActions ?? BehaviorResiliencePolicyResolver.DefaultMaxQueuedActions);
         }
+    }
+
+    private Cephalon.Abstractions.Resilience.BehaviorResilienceExceptionHandling ClassifyException(
+        ResilienceContext context,
+        Exception exception,
+        Cephalon.Abstractions.Resilience.IBehaviorResilienceExceptionClassifier exceptionClassifier)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(exception);
+        ArgumentNullException.ThrowIfNull(exceptionClassifier);
+
+        var behaviorId = context.Properties.TryGetValue(BehaviorResilienceExecutionContextKeys.BehaviorId, out var activeBehaviorId) &&
+            !string.IsNullOrWhiteSpace(activeBehaviorId)
+                ? activeBehaviorId
+                : BehaviorIds.Count > 0 ? BehaviorIds[0] : Id;
+        var transportId = context.Properties.TryGetValue(BehaviorResilienceExecutionContextKeys.TransportId, out var activeTransportId) &&
+            !string.IsNullOrWhiteSpace(activeTransportId)
+                ? activeTransportId
+                : null;
+        var behaviorIdempotency = context.Properties.TryGetValue(BehaviorResilienceExecutionContextKeys.IdempotencyMode, out var activeBehaviorIdempotency)
+            ? activeBehaviorIdempotency
+            : BehaviorIdempotencyMode.Unknown;
+
+        return exceptionClassifier.Classify(new Cephalon.Abstractions.Resilience.BehaviorResilienceExceptionContext(
+            policyId: Id,
+            behaviorId: behaviorId,
+            transportId: transportId,
+            targetedBehaviorIds: BehaviorIds,
+            targetedTransportIds: TransportIds,
+            exception: exception,
+            behaviorIdempotency: behaviorIdempotency));
     }
 
     public BehaviorResilienceRuntimeDescriptor ToDescriptor(
@@ -973,4 +1141,5 @@ internal sealed record ResolvedBehaviorResiliencePolicy(
             _ => "unknown"
         };
     }
+
 }
