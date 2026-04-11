@@ -94,4 +94,9 @@ public sealed record RuntimeIntrospectionSnapshot(
     /// Gets the effective rate-limiting policies visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<RateLimitingRuntimeDescriptor> RateLimitingPolicies { get; init; } = [];
+
+    /// <summary>
+    /// Gets the effective behavior-execution resilience policies visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<BehaviorResilienceRuntimeDescriptor> BehaviorResiliencePolicies { get; init; } = [];
 }

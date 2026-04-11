@@ -103,7 +103,11 @@ behavior-pipeline enforcement details into `Cephalon.Abstractions`.
 When a host adapter does enforce HTTP rate limiting, the same package now also carries the narrow
 runtime-facing `IRateLimitingRuntimeCatalog` and `RateLimitingRuntimeDescriptor` contracts. That
 lets hosts publish effective policy truth into operator surfaces and snapshots without leaking
-ASP.NET Core middleware types back into engine-core or application behavior code.
+ASP.NET Core middleware types back into engine-core or application behavior code. The same package
+now also carries `IBehaviorResilienceRuntimeCatalog`, `BehaviorResilienceRuntimeDescriptor`, and
+`BehaviorExecutionResilienceSelection` so the engine can publish effective behavior-execution
+timeout-plus-bulkhead answers without leaking Polly types or host-specific middleware contracts into
+consumer code.
 
 ## Related docs
 

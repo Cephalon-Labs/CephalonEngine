@@ -1,0 +1,233 @@
+using Cephalon.Abstractions.Behaviors;
+using Cephalon.Abstractions.Resilience;
+using Cephalon.Behaviors.Hosting;
+using Cephalon.Behaviors.Services;
+using Cephalon.Engine.Composition;
+using Cephalon.Engine.Configuration;
+using Cephalon.Engine.Runtime;
+using Microsoft.Extensions.DependencyInjection;
+using Polly.RateLimiting;
+using Polly.Timeout;
+
+namespace Cephalon.Tests.Behaviors;
+
+public sealed class BehaviorResilienceTests
+{
+    [Fact]
+    public void AddBehaviorsUsesCodeFirstResilienceSettingsForCatalogAndSnapshot()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                resilience: new ResilienceSettings(
+                    retry: new RetrySettings(
+                        enabled: true,
+                        maxAttempts: 3,
+                        backoff: "Exponential",
+                        baseDelayMilliseconds: 100,
+                        maxDelayMilliseconds: 300,
+                        useJitter: true),
+                    timeout: new TimeoutSettings(
+                        enabled: true,
+                        totalTimeoutSeconds: 12,
+                        attemptTimeoutSeconds: 4),
+                    circuitBreaker: new CircuitBreakerSettings(
+                        enabled: true,
+                        failureRatio: 0.5m,
+                        minimumThroughput: 8,
+                        samplingDurationSeconds: 30,
+                        breakDurationSeconds: 20),
+                    bulkhead: new BulkheadSettings(
+                        enabled: true,
+                        maxConcurrentExecutions: 2,
+                        maxQueuedActions: 1))));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors => behaviors.Register<FastGreetingBehavior>(topology => topology
+                    .AsDirect()
+                    .ViaInMemory()));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IBehaviorResilienceRuntimeCatalog>();
+        var snapshot = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+
+        var policy = Assert.Single(catalog.Policies);
+
+        Assert.Equal("cephalon-behavior-execution", policy.Id);
+        Assert.Equal("behavior-dispatch-middleware", policy.ExecutionMode);
+        Assert.True(policy.Requested.Retry.Enabled);
+        Assert.True(policy.Requested.CircuitBreaker.Enabled);
+        Assert.True(policy.Effective.Timeout.Enabled);
+        Assert.Equal(12, policy.Effective.Timeout.TotalTimeoutSeconds);
+        Assert.Null(policy.Effective.Timeout.AttemptTimeoutSeconds);
+        Assert.True(policy.Effective.Bulkhead.Enabled);
+        Assert.Equal(2, policy.Effective.Bulkhead.MaxConcurrentExecutions);
+        Assert.Equal(1, policy.Effective.Bulkhead.MaxQueuedActions);
+        Assert.Equal("contract-only", policy.Metadata["retryMode"]);
+        Assert.Equal("contract-only", policy.Metadata["circuitBreakerMode"]);
+        Assert.Equal("enforced", policy.Metadata["timeoutMode"]);
+        Assert.Equal("enforced", policy.Metadata["bulkheadMode"]);
+        Assert.Equal("retry,timeout,circuit-breaker,bulkhead", policy.Metadata["requestedStrategies"]);
+        Assert.Equal("timeout,bulkhead", policy.Metadata["effectiveStrategies"]);
+
+        var snapshotPolicy = Assert.Single(snapshot.BehaviorResiliencePolicies);
+        Assert.Equal(policy.Id, snapshotPolicy.Id);
+        Assert.Equal(policy.ExecutionMode, snapshotPolicy.ExecutionMode);
+        Assert.Equal(policy.Effective.Timeout.TotalTimeoutSeconds, snapshotPolicy.Effective.Timeout.TotalTimeoutSeconds);
+        Assert.Equal(policy.Effective.Bulkhead.MaxConcurrentExecutions, snapshotPolicy.Effective.Bulkhead.MaxConcurrentExecutions);
+    }
+
+    [Fact]
+    public async Task BehaviorDispatcherAppliesConfiguredTimeout()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                resilience: new ResilienceSettings(
+                    timeout: new TimeoutSettings(
+                        enabled: true,
+                        totalTimeoutSeconds: 1))));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors => behaviors.Register<SlowBehavior>(topology => topology
+                    .AsDirect()
+                    .ViaInMemory()));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<BehaviorDispatcher>();
+
+        var exception = await Assert.ThrowsAsync<TimeoutRejectedException>(() =>
+            dispatcher.DispatchAsync(
+                "tests.resilience.slow",
+                new SlowInput(1500),
+                new TestBehaviorContext("tests.resilience.slow", isDirect: true)));
+
+        Assert.Contains("timeout", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task BehaviorDispatcherAppliesConfiguredBulkhead()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                resilience: new ResilienceSettings(
+                    bulkhead: new BulkheadSettings(
+                        enabled: true,
+                        maxConcurrentExecutions: 1,
+                        maxQueuedActions: 0))));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors => behaviors.Register<BlockingBehavior>(topology => topology
+                    .AsDirect()
+                    .ViaInMemory()));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<BehaviorDispatcher>();
+        var release = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var firstInput = new BlockingInput(
+            new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously),
+            release);
+
+        var firstDispatch = dispatcher.DispatchAsync(
+            "tests.resilience.bulkhead",
+            firstInput,
+            new TestBehaviorContext("tests.resilience.bulkhead", isDirect: true));
+
+        await firstInput.Started.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        var secondException = await Assert.ThrowsAsync<RateLimiterRejectedException>(() =>
+            dispatcher.DispatchAsync(
+                "tests.resilience.bulkhead",
+                new BlockingInput(
+                    new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously),
+                    release),
+                new TestBehaviorContext("tests.resilience.bulkhead", isDirect: true)));
+
+        release.TrySetResult(true);
+        var firstResult = await firstDispatch;
+
+        Assert.NotNull(secondException);
+        Assert.Equal("released", firstResult);
+    }
+
+    [Fact]
+    public void AddBehaviorsDoesNotPublishBehaviorResiliencePolicyWhenStrategiesAreExplicitlyDisabled()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                resilience: new ResilienceSettings(
+                    retry: new RetrySettings(enabled: false),
+                    timeout: new TimeoutSettings(enabled: false),
+                    circuitBreaker: new CircuitBreakerSettings(enabled: false),
+                    bulkhead: new BulkheadSettings(enabled: false))));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors => behaviors.Register<FastGreetingBehavior>(topology => topology
+                    .AsDirect()
+                    .ViaInMemory()));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IBehaviorResilienceRuntimeCatalog>();
+        var snapshot = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+
+        Assert.Empty(catalog.Policies);
+        Assert.Empty(snapshot.BehaviorResiliencePolicies);
+    }
+
+    [AppBehavior("tests.resilience.fast")]
+    private sealed class FastGreetingBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(
+            string input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult($"Hello, {input}!");
+    }
+
+    private sealed record SlowInput(int DelayMilliseconds);
+
+    [AppBehavior("tests.resilience.slow")]
+    private sealed class SlowBehavior : IAppBehavior<SlowInput, string>
+    {
+        public async Task<string> HandleAsync(
+            SlowInput input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+        {
+            await Task.Delay(input.DelayMilliseconds, cancellationToken);
+            return "completed";
+        }
+    }
+
+    private sealed record BlockingInput(
+        TaskCompletionSource<bool> Started,
+        TaskCompletionSource<bool> Release);
+
+    [AppBehavior("tests.resilience.bulkhead")]
+    private sealed class BlockingBehavior : IAppBehavior<BlockingInput, string>
+    {
+        public async Task<string> HandleAsync(
+            BlockingInput input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+        {
+            input.Started.TrySetResult(true);
+            await input.Release.Task.WaitAsync(cancellationToken);
+            return "released";
+        }
+    }
+}

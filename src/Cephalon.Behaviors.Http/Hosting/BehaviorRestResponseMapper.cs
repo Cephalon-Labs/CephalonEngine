@@ -76,6 +76,75 @@ internal static class BehaviorRestResponseMapper
             severity: BehaviorFaultSeverity.Error);
     }
 
+    public static IResult MapTooManyRequests(
+        string message,
+        IServiceProvider services,
+        string? code = null,
+        int? retryAfterSeconds = null)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(message);
+        ArgumentNullException.ThrowIfNull(services);
+
+        if (!UseResultModelEnvelope(services))
+        {
+            var problem = new ProblemDetails
+            {
+                Status = StatusCodes.Status429TooManyRequests,
+                Title = "Too Many Requests",
+                Detail = message
+            };
+
+            if (retryAfterSeconds.HasValue)
+            {
+                problem.Extensions["retryAfterSeconds"] = retryAfterSeconds.Value;
+            }
+
+            return Results.Json(
+                problem,
+                statusCode: StatusCodes.Status429TooManyRequests,
+                contentType: "application/problem+json");
+        }
+
+        var details = retryAfterSeconds.HasValue
+            ? $"Retry after {retryAfterSeconds.Value} seconds."
+            : null;
+        return CreateErrorEnvelope(
+            statusCode: StatusCodes.Status429TooManyRequests,
+            title: "Too Many Requests",
+            message: message,
+            code: code ?? "too_many_requests",
+            severity: BehaviorFaultSeverity.Error,
+            details: details);
+    }
+
+    public static IResult MapServiceUnavailable(string message, IServiceProvider services, string? code = null)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(message);
+        ArgumentNullException.ThrowIfNull(services);
+
+        if (!UseResultModelEnvelope(services))
+        {
+            var problem = new ProblemDetails
+            {
+                Status = StatusCodes.Status503ServiceUnavailable,
+                Title = "Service Unavailable",
+                Detail = message
+            };
+
+            return Results.Json(
+                problem,
+                statusCode: StatusCodes.Status503ServiceUnavailable,
+                contentType: "application/problem+json");
+        }
+
+        return CreateErrorEnvelope(
+            statusCode: StatusCodes.Status503ServiceUnavailable,
+            title: "Service Unavailable",
+            message: message,
+            code: code ?? "service_unavailable",
+            severity: BehaviorFaultSeverity.Error);
+    }
+
     public static IResult MapBehaviorResult(IBehaviorResult result, IServiceProvider services)
     {
         ArgumentNullException.ThrowIfNull(result);

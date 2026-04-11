@@ -22,7 +22,7 @@ Effort: trivial — taxonomy-only, no new runtime code.
 
 ### Circuit Breaker (resilience infrastructure)
 
-Current state: the contract-first baseline is now shipped through `Engine:Resilience:CircuitBreaker`, `AppProfile.Resilience`, and `/engine/resilience`, but no runtime circuit-breaker state machine or behavior-pipeline enforcement exists yet. Health checks still tell you something is down; the engine does not yet stop calling it.
+Current state: the contract-first baseline is now shipped through `Engine:Resilience:CircuitBreaker`, `AppProfile.Resilience`, and `/engine/resilience`, and the new `/engine/behavior-resilience` surface now makes it explicit that circuit breaker is still contract-only at the behavior pipeline layer. Health checks still tell you something is down; the engine does not yet stop calling it.
 
 Recommendation: integrate `Microsoft.Extensions.Resilience` (Polly v8) or build a lightweight `ICircuitBreakerPolicy` abstraction.
 
@@ -38,7 +38,7 @@ Effort: medium.
 
 ### Retry with Backoff, Timeout, and Bulkhead (resilience suite)
 
-Current state: the contract-first baseline is now shipped through `Engine:Resilience` with `Retry`, `Timeout`, and `Bulkhead` selections plus operator-facing introspection, but no runtime enforcement or behavior-level override path exists yet.
+Current state: the contract-first baseline is now shipped through `Engine:Resilience` with `Retry`, `Timeout`, and `Bulkhead` selections plus operator-facing introspection, and the first behavior-pipeline follow-through now enforces a shared execution timeout plus bulkhead through `Cephalon.Behaviors`, `/engine/behavior-resilience`, and `snapshot.BehaviorResiliencePolicies`. Retry remains contract-only until idempotency and failure-classification rules exist, and there is still no behavior-level override path yet.
 
 Recommendation: create `Cephalon.Resilience` companion package or add resilience middleware to `Cephalon.Behaviors`.
 
@@ -66,7 +66,7 @@ straight to a generic resilience runtime catalog or a behavior pipeline that doe
 
 Remaining follow-through:
 - Transport-native semantics for long-lived connections and non-route HTTP surfaces beyond the initial request gate
-- Behavior-pipeline resilience coordination when retry/timeout/bulkhead middleware exists
+- Coordination between ASP.NET Core rate limiting and the new behavior-execution timeout/bulkhead middleware
 - Capability: `resilience.rate-limiting`
 
 Effort: medium for the remaining non-baseline work.

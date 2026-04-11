@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Polly.RateLimiting;
+using Polly.Timeout;
 
 namespace Cephalon.Behaviors.Http.Hosting;
 
@@ -523,6 +525,18 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             }
         }
 
+        if (contract.ShouldDocumentStatus(StatusCodes.Status503ServiceUnavailable))
+        {
+            if (contract.UseResultModelEnvelope)
+            {
+                builder.Produces(StatusCodes.Status503ServiceUnavailable, errorResponseType, "application/json");
+            }
+            else
+            {
+                builder.ProducesProblem(StatusCodes.Status503ServiceUnavailable);
+            }
+        }
+
         if (contract.ShouldDocumentStatus(StatusCodes.Status429TooManyRequests))
         {
             if (contract.UseResultModelEnvelope)
@@ -598,6 +612,20 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         catch (JsonException ex)
         {
             return BehaviorRestResponseMapper.MapBadRequest(ex.Message, context.RequestServices, code: "invalid_json");
+        }
+        catch (TimeoutRejectedException)
+        {
+            return BehaviorRestResponseMapper.MapServiceUnavailable(
+                "The request exceeded the configured Cephalon behavior execution timeout.",
+                context.RequestServices,
+                code: "behavior_execution_timeout");
+        }
+        catch (RateLimiterRejectedException)
+        {
+            return BehaviorRestResponseMapper.MapTooManyRequests(
+                "The request exceeded the configured Cephalon behavior concurrency limit.",
+                context.RequestServices,
+                code: "behavior_execution_rejected");
         }
         catch (InvalidOperationException ex)
         {
@@ -679,6 +707,21 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         var statusCodes = configuration is null
             ? new HashSet<int>(new OpenApiEndpointOptions().BehaviorRestDocumentedStatusCodes)
             : new HashSet<int>(OpenApiEndpointOptions.FromConfiguration(configuration).BehaviorRestDocumentedStatusCodes);
+        var behaviorResilienceCatalog = services.GetService<IBehaviorResilienceRuntimeCatalog>();
+        if (behaviorResilienceCatalog?.Policies.Any(static policy =>
+                policy.Effective.Timeout.Enabled == true &&
+                policy.Effective.Timeout.HasValues) == true)
+        {
+            statusCodes.Add(StatusCodes.Status503ServiceUnavailable);
+        }
+
+        if (behaviorResilienceCatalog?.Policies.Any(static policy =>
+                policy.Effective.Bulkhead.Enabled == true &&
+                policy.Effective.Bulkhead.HasValues) == true)
+        {
+            statusCodes.Add(StatusCodes.Status429TooManyRequests);
+        }
+
         if (services.HasCephalonRateLimiting(transportId, behaviorId))
         {
             statusCodes.Add(StatusCodes.Status429TooManyRequests);

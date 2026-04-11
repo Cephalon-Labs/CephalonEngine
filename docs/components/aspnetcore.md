@@ -68,7 +68,7 @@ When teams use `Cephalon.Behaviors.Http` behavior-aware REST helpers, the result
 
 By default the host registers the `v1` OpenAPI document and treats `/scalar/v1` as the canonical docs link by redirecting `/scalar` to the configured default document. The slash-suffixed Scalar shell at `/scalar/` still remains available for multi-document flows, and Cephalon's Scalar JavaScript normalizes hash-based selections such as `/scalar/#v2/` back into canonical versioned links. Hosts can move those surfaces through `OpenApi:RoutePattern` and `OpenApi:Scalar:RoutePrefix`, while the built-in REST mapper can move off `/api` through `ApiRoutes:Prefixes:Rest` or all the way to the version root with `ApiRoutes:Prefixes:Rest = ""`. The long-term versioned config contract is `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion`, for example `EnabledVersions: [1, 2]` and `DefaultVersion: 2`, so Scalar can render a version selector while endpoints mapped with `BehaviorRestEndpointGroup.ApiVersion(2)` or defaulted from a module version `2.x` continue to appear in `/openapi/v2.json` and under version-aligned REST paths such as `/api/v2/...` or `/v2/...` when the REST prefix is empty. Legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` string settings still work for backward compatibility or custom non-version document names. `OpenApi:Version` remains available as a global `info.version` override for single-document hosts, but multi-document hosts now keep each document version truthful to its own resolved document name such as `v1` or `v2`.
 
-When a host needs to trim or expand the default response set published for behavior-owned REST endpoints, use `OpenApi:BehaviorRest:DocumentedStatusCodes`. The default list is `[200, 201, 202, 204, 400, 401, 403, 404, 409, 500]`, which keeps `500` visible in Scalar/OpenAPI by default. Hosts can override that list with a smaller or larger HTTP-status set without changing the runtime behavior of the endpoints themselves. When `Engine:Resilience:RateLimiting:Enabled = true`, Cephalon also adds `429` automatically for behavior-owned REST endpoints whose effective ASP.NET Core policy requires a limiter. Behavior- or transport-scoped overrides under `Engine:Resilience:RateLimiting:Overrides` can disable that limiter for a subset of endpoints, and those endpoints omit `429` again so the docs stay truthful per route instead of only per transport.
+When a host needs to trim or expand the default response set published for behavior-owned REST endpoints, use `OpenApi:BehaviorRest:DocumentedStatusCodes`. The default list is `[200, 201, 202, 204, 400, 401, 403, 404, 409, 500]`, which keeps `500` visible in Scalar/OpenAPI by default. Hosts can override that list with a smaller or larger HTTP-status set without changing the runtime behavior of the endpoints themselves. Cephalon still adds runtime-required answers back per route so the docs stay truthful: when `Engine:Resilience:RateLimiting:Enabled = true`, behavior-owned REST endpoints whose effective ASP.NET Core policy requires a limiter automatically publish `429`; when the shared behavior-execution bulkhead is active, those same REST helpers also publish `429`; and when the shared behavior-execution timeout is active, they also publish `503`. Behavior- or transport-scoped rate-limiting overrides under `Engine:Resilience:RateLimiting:Overrides` can disable the ASP.NET Core limiter for a subset of endpoints, and those endpoints omit that host-level `429` again instead of documenting a status they can no longer emit.
 
 The same host layer also owns the prefix policy for the generic behavior HTTP bindings. Route-shaped
 generic behavior transports now project canonical versioned paths through `ApiRoutes:Prefixes:Rest`,
@@ -118,8 +118,10 @@ the requested resilience-policy selection projected into `AppProfile.Resilience`
 `Timeout`, `CircuitBreaker`, `Bulkhead`, and `RateLimiting`. When ASP.NET Core enforcement is active,
 `/engine/rate-limiting` plus `/engine/rate-limiting/{policyId}` publish the effective public-HTTP
 policies, covered transport ids, excluded route prefixes, rejection status, and host-specific metadata
-such as override ids and targeted behavior ids, and `/engine/snapshot` carries the same answer through
-`RateLimitingPolicies`.
+such as override ids and targeted behavior ids. When behavior-execution resilience is active,
+`/engine/behavior-resilience` plus `/engine/behavior-resilience/{policyId}` publish the effective
+shared timeout-plus-bulkhead answers enforced by `Cephalon.Behaviors`, and `/engine/snapshot` carries
+the same answers through `RateLimitingPolicies` plus `BehaviorResiliencePolicies`.
 
 The first shipped runtime follow-through uses `Microsoft.AspNetCore.RateLimiting` as the ASP.NET Core
 enforcement primitive for public Cephalon HTTP endpoints while intentionally excluding `/engine`,
@@ -127,8 +129,12 @@ enforcement primitive for public Cephalon HTTP endpoints while intentionally exc
 routes so operator and documentation surfaces remain available under pressure. The baseline now resolves
 named endpoint policies from `Engine:Resilience:RateLimiting` plus `Engine:Resilience:RateLimiting:Overrides`,
 applies them with behavior-aware precedence across module-owned REST routes and generic behavior HTTP
-bindings, and keeps Scalar/OpenAPI truthful per endpoint. Broader behavior-pipeline resilience
-enforcement remains later phase-11 follow-through on top of this truthful host-level baseline.
+bindings, and keeps Scalar/OpenAPI truthful per endpoint. The next shipped follow-through now adds a
+shared behavior-dispatch middleware in `Cephalon.Behaviors` so timeout and bulkhead enforcement apply
+consistently across transports, and the REST helper layer translates those behavior-execution rejections
+into truthful HTTP responses (`503` for timeout, `429` for bulkhead saturation) while keeping OpenAPI in
+sync per route. Retry and circuit breaker remain contract-only until later phase-11 work adds safe
+idempotency-aware enforcement.
 
 The host now also exposes additive event-dispatch operator answers directly. When eventing packs
 register the corresponding catalogs, `/engine/event-dispatch-runtimes` and

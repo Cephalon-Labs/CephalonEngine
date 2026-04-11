@@ -12,7 +12,7 @@ namespace Cephalon.Behaviors.Services;
 /// </summary>
 public sealed class BehaviorDispatcher
 {
-    private readonly FrozenDictionary<string, (BehaviorExecutionSlot Slot, Type BehaviorType, BehaviorTopologyDescriptor Descriptor)> _table;
+    private readonly FrozenDictionary<string, (BehaviorExecutionDelegate Pipeline, Type BehaviorType, BehaviorTopologyDescriptor Descriptor)> _table;
     private readonly IServiceProvider _services;
 
     /// <summary>
@@ -26,14 +26,28 @@ public sealed class BehaviorDispatcher
         IBehaviorCatalog catalog,
         IBehaviorTypeRegistry typeRegistry,
         IServiceProvider services)
+        : this(
+            catalog,
+            typeRegistry,
+            services,
+            services.GetServices<IBehaviorExecutionMiddleware>())
+    {
+    }
+
+    private BehaviorDispatcher(
+        IBehaviorCatalog catalog,
+        IBehaviorTypeRegistry typeRegistry,
+        IServiceProvider services,
+        IEnumerable<IBehaviorExecutionMiddleware>? middlewares)
     {
         ArgumentNullException.ThrowIfNull(catalog);
         ArgumentNullException.ThrowIfNull(typeRegistry);
         ArgumentNullException.ThrowIfNull(services);
 
         _services = services;
+        var executionMiddlewares = middlewares?.ToArray() ?? [];
 
-        var dict = new Dictionary<string, (BehaviorExecutionSlot, Type, BehaviorTopologyDescriptor)>(
+        var dict = new Dictionary<string, (BehaviorExecutionDelegate, Type, BehaviorTopologyDescriptor)>(
             StringComparer.OrdinalIgnoreCase);
 
         foreach (var descriptor in catalog.All)
@@ -41,7 +55,13 @@ public sealed class BehaviorDispatcher
             if (typeRegistry.TryGetType(descriptor.Id, out var behaviorType) && behaviorType is not null)
             {
                 var slot = BehaviorExecutionSlot.ForType(behaviorType);
-                dict[descriptor.Id] = (slot, behaviorType, descriptor);
+                var pipeline = BuildExecutionPipeline(
+                    descriptor.Id,
+                    behaviorType,
+                    descriptor,
+                    slot,
+                    executionMiddlewares);
+                dict[descriptor.Id] = (pipeline, behaviorType, descriptor);
             }
         }
 
@@ -75,7 +95,50 @@ public sealed class BehaviorDispatcher
             throw new BehaviorNotFoundException(behaviorId);
         }
 
-        var behavior = _services.GetRequiredService(entry.BehaviorType);
-        return await entry.Slot.InvokeAsync(behavior, input, context, ct).ConfigureAwait(false);
+        var invocation = new BehaviorExecutionInvocation(
+            entry.Descriptor.Id,
+            entry.BehaviorType,
+            entry.Descriptor,
+            input,
+            context);
+        return await entry.Pipeline(invocation, ct).ConfigureAwait(false);
+    }
+
+    private BehaviorExecutionDelegate BuildExecutionPipeline(
+        string behaviorId,
+        Type behaviorType,
+        BehaviorTopologyDescriptor descriptor,
+        BehaviorExecutionSlot slot,
+        IBehaviorExecutionMiddleware[] middlewares)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentNullException.ThrowIfNull(behaviorType);
+        ArgumentNullException.ThrowIfNull(descriptor);
+        ArgumentNullException.ThrowIfNull(slot);
+        ArgumentNullException.ThrowIfNull(middlewares);
+
+        var terminal = CreateTerminalDelegate(behaviorType, slot);
+        return middlewares.Length == 0
+            ? terminal
+            : BehaviorExecutionMiddlewarePipeline.Compose(middlewares, terminal);
+    }
+
+    private BehaviorExecutionDelegate CreateTerminalDelegate(
+        Type behaviorType,
+        BehaviorExecutionSlot slot)
+    {
+        ArgumentNullException.ThrowIfNull(behaviorType);
+        ArgumentNullException.ThrowIfNull(slot);
+
+        return async (invocation, cancellationToken) =>
+        {
+            var behavior = _services.GetRequiredService(behaviorType);
+            return await slot.InvokeAsync(
+                    behavior,
+                    invocation.Input,
+                    invocation.Context,
+                    cancellationToken)
+                .ConfigureAwait(false);
+        };
     }
 }

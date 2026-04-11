@@ -221,6 +221,10 @@ separate concerns:
 - when ASP.NET Core rate limiting is enabled, `429` is documented per endpoint when the effective
   rate-limiting policy actually applies to that REST route, and behavior/transport overrides can
   suppress it again for specific endpoints through `Engine:Resilience:RateLimiting:Overrides`
+- when shared behavior-execution bulkhead enforcement is active, behavior-owned REST helpers also
+  document and return `429` for bulkhead saturation
+- when shared behavior-execution timeout enforcement is active, behavior-owned REST helpers also
+  document and return `503` for timed-out dispatches
 - GraphQL and JSON-RPC keep their protocol-native response shapes and are intentionally not wrapped
   in `ResultModel`
 

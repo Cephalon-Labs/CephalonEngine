@@ -28,6 +28,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
         var eventDispatchRuntimeDescriptorCatalog = serviceProvider.GetService(typeof(IEventDispatchRuntimeDescriptorCatalog)) as IEventDispatchRuntimeDescriptorCatalog;
         var eventDispatchRuntimeCatalog = serviceProvider.GetService(typeof(IEventDispatchRuntimeCatalog)) as IEventDispatchRuntimeCatalog;
         var rateLimitingRuntimeCatalog = serviceProvider.GetService(typeof(IRateLimitingRuntimeCatalog)) as IRateLimitingRuntimeCatalog;
+        var behaviorResilienceRuntimeCatalog = serviceProvider.GetService(typeof(IBehaviorResilienceRuntimeCatalog)) as IBehaviorResilienceRuntimeCatalog;
 
         return new RuntimeIntrospectionSnapshot(
             runtime.Manifest,
@@ -47,7 +48,8 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             EventDispatchStates = eventDispatchRuntimeCatalog?.States ?? [],
             AuditStores = auditStoreCatalog.AuditStores,
             AuthorizationPolicies = authorizationPolicyCatalog.Policies,
-            RateLimitingPolicies = rateLimitingRuntimeCatalog?.Policies ?? []
+            RateLimitingPolicies = rateLimitingRuntimeCatalog?.Policies ?? [],
+            BehaviorResiliencePolicies = behaviorResilienceRuntimeCatalog?.Policies ?? []
         };
     }
 }

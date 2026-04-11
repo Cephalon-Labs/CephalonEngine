@@ -107,6 +107,20 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonAppModel");
         engineGroup.MapGet("/resilience", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Resilience))
             .WithName("GetCephalonResilience");
+        engineGroup.MapGet("/behavior-resilience", (HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<Cephalon.Abstractions.Resilience.IBehaviorResilienceRuntimeCatalog>();
+                return TypedResults.Ok(catalog?.Policies ?? []);
+            })
+            .WithName("GetCephalonBehaviorResilience");
+        engineGroup.MapGet("/behavior-resilience/{policyId}", (string policyId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<Cephalon.Abstractions.Resilience.IBehaviorResilienceRuntimeCatalog>();
+                var policy = catalog?.GetById(policyId);
+
+                return policy is null ? Results.NotFound() : Results.Ok(policy);
+            })
+            .WithName("GetCephalonBehaviorResiliencePolicy");
         engineGroup.MapGet("/rate-limiting", (IRateLimitingRuntimeCatalog catalog) => TypedResults.Ok(catalog.Policies))
             .WithName("GetCephalonRateLimiting");
         engineGroup.MapGet("/rate-limiting/{policyId}", (string policyId, IRateLimitingRuntimeCatalog catalog) =>

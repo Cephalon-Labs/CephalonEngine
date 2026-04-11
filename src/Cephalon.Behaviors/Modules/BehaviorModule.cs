@@ -1,4 +1,5 @@
 using System.Reflection;
+using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
@@ -6,12 +7,15 @@ using Cephalon.Abstractions.Technologies;
 using Cephalon.Behaviors.Builders;
 using Cephalon.Behaviors.Compatibility;
 using Cephalon.Behaviors.Configuration;
+using Cephalon.Behaviors.Resilience;
 using Cephalon.Behaviors.Runtime;
 using Cephalon.Behaviors.Services;
 using Cephalon.Behaviors.Validation;
+using Cephalon.Engine.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Polly;
 
 namespace Cephalon.Behaviors.Modules;
 
@@ -90,6 +94,10 @@ internal sealed class BehaviorModule(
             AutoRegisterBehaviors(services, typeRegistry, options, ownedBehaviorIds);
         }
 
+        RegisterBehaviorResilienceServices(
+            services,
+            configuration);
+
         services.TryAddSingleton(options);
 
         // Catalog — collected from all IBehaviorContributor enumerations
@@ -117,6 +125,52 @@ internal sealed class BehaviorModule(
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, BehaviorRuntimeContributor>());
     }
 
+    private static void RegisterBehaviorResilienceServices(
+        IServiceCollection services,
+        IConfiguration? configuration)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        var policy = ResolveBehaviorResiliencePolicy(services, configuration);
+        services.TryAddSingleton<Cephalon.Abstractions.Resilience.IBehaviorResilienceRuntimeCatalog>(_ =>
+            new BehaviorResilienceRuntimeCatalog(
+                policy is null
+                    ? []
+                    : [policy.ToDescriptor()]));
+
+        if (policy is null || !policy.HasEnforcedStrategies)
+        {
+            return;
+        }
+
+        services.TryAddSingleton(policy);
+        services.AddResiliencePipeline<string>(
+            policy.Id,
+            static (builder, context) =>
+            {
+                var resolvedPolicy = context.ServiceProvider.GetRequiredService<ResolvedBehaviorResiliencePolicy>();
+                resolvedPolicy.Configure(builder);
+            });
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionMiddleware, BehaviorResilienceExecutionMiddleware>());
+    }
+
+    private static ResolvedBehaviorResiliencePolicy? ResolveBehaviorResiliencePolicy(
+        IServiceCollection services,
+        IConfiguration? configuration)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        var appProfile = ResolveRegisteredSingleton<AppProfile>(services);
+        if (appProfile is not null)
+        {
+            return BehaviorResiliencePolicyResolver.Resolve(appProfile.Resilience);
+        }
+
+        return configuration is null
+            ? null
+            : BehaviorResiliencePolicyResolver.Resolve(ResilienceSettings.FromConfiguration(configuration));
+    }
+
     private static IReadOnlyList<OwnedBehaviorRegistration> ResolveOwnedBehaviorRegistrations(
         IServiceCollection services)
     {
@@ -133,6 +187,24 @@ internal sealed class BehaviorModule(
         }
 
         return [];
+    }
+
+    private static TService? ResolveRegisteredSingleton<TService>(IServiceCollection services)
+        where TService : class
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        for (var index = services.Count - 1; index >= 0; index--)
+        {
+            var descriptor = services[index];
+            if (descriptor.ServiceType == typeof(TService) &&
+                descriptor.ImplementationInstance is TService instance)
+            {
+                return instance;
+            }
+        }
+
+        return null;
     }
 
     private static readonly Type AppBehaviorOpenGeneric = typeof(IAppBehavior<,>);
