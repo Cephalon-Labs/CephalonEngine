@@ -858,6 +858,21 @@ Browse the published API surface by public member.
 - [BehaviorCompatibilityViolation](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorcompatibilityviolation-ctor-system-string-system-string-cephalon-abstractions-behaviors-compatibilityseverity-system-string): `Constructors` on `BehaviorCompatibilityViolation` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorCompatibilityViolation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes a new instance of `BehaviorCompatibilityViolation`.
   - `BehaviorCompatibilityViolation(string ruleId, string behaviorId, CompatibilitySeverity severity, string message)`
+- [BehaviorExecutionOverrides](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-resilienceselection-behaviorexecutionoverrides): `Properties` on `ResilienceSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorExecutionOverrides&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the named behavior-execution override policies targeted at specific behaviors or transports.
+  - `IReadOnlyList<BehaviorExecutionResilienceOverrideSelection> BehaviorExecutionOverrides { get; }`
+- [BehaviorExecutionOverrides](cephalon-engine.md#member-p-cephalon-engine-configuration-resiliencesettings-behaviorexecutionoverrides): `Properties` on `ResilienceSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BehaviorExecutionOverrides&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the named behavior-execution override policies targeted at specific behaviors or transports.
+  - `IReadOnlyList<BehaviorExecutionResilienceOverrideSettings> BehaviorExecutionOverrides { get; }`
+- [BehaviorExecutionResilienceOverrideSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection): `Constructors` on `BehaviorExecutionResilienceOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorExecutionResilienceOverrideSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Initializes a new instance of the `BehaviorExecutionResilienceOverrideSelection` class.
+  - `BehaviorExecutionResilienceOverrideSelection(string id, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> transportIds, RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead)`
+- [BehaviorExecutionResilienceOverrideSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-retrysettings-cephalon-engine-configuration-timeoutsettings-cephalon-engine-configuration-circuitbreakersettings-cephalon-engine-configuration-bulkheadsettings): `Constructors` on `BehaviorExecutionResilienceOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BehaviorExecutionResilienceOverrideSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Initializes a new instance of the `BehaviorExecutionResilienceOverrideSettings` class.
+  - `BehaviorExecutionResilienceOverrideSettings(string id, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> transportIds, RetrySettings retry, TimeoutSettings timeout, CircuitBreakerSettings circuitBreaker, BulkheadSettings bulkhead)`
+- [BehaviorExecutionResilienceSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-ctor-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection): `Constructors` on `BehaviorExecutionResilienceSelection` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorExecutionResilienceSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Initializes a new instance of the `BehaviorExecutionResilienceSelection` class.
+  - `BehaviorExecutionResilienceSelection(RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead)`
 - [BehaviorFault](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorfault-ctor): `Constructors` on `BehaviorFault` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorFault&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes a new instance of `BehaviorFault`.
   - `BehaviorFault()`
@@ -873,6 +888,9 @@ Browse the published API surface by public member.
 - [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviornotfoundexception-behaviorid): `Properties` on `BehaviorNotFoundException` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the behavior identifier that could not be resolved.
   - `string BehaviorId { get; }`
+- [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-behaviorid): `Properties` on `BehaviorResilienceExceptionContext` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets the stable behavior identifier being executed.
+  - `string BehaviorId { get; }`
 - [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorsecurityexception-behaviorid): `Properties` on `BehaviorSecurityException` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the behavior identifier that triggered the security violation.
   - `string BehaviorId { get; }`
@@ -885,6 +903,24 @@ Browse the published API surface by public member.
 - [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-behaviorid): `Properties` on `OwnedBehaviorRegistration` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the stable behavior identifier.
   - `string BehaviorId { get; }`
+- [BehaviorIdempotency](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-behavioridempotency): `Properties` on `BehaviorResilienceExceptionContext` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorIdempotency&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets the declared behavior idempotency mode when one is known.
+  - `BehaviorIdempotencyMode BehaviorIdempotency { get; }`
+- [BehaviorIdempotencyAttribute](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behavioridempotencyattribute-ctor): `Constructors` on `BehaviorIdempotencyAttribute` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorIdempotencyAttribute&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Initializes a new instance of the `BehaviorIdempotencyAttribute` class and marks the behavior as idempotent.
+  - `BehaviorIdempotencyAttribute()`
+- [BehaviorIdempotencyAttribute](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behavioridempotencyattribute-ctor-cephalon-abstractions-behaviors-behavioridempotencymode): `Constructors` on `BehaviorIdempotencyAttribute` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorIdempotencyAttribute&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Initializes a new instance of the `BehaviorIdempotencyAttribute` class.
+  - `BehaviorIdempotencyAttribute(BehaviorIdempotencyMode mode)`
+- [BehaviorIds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-behaviorids): `Properties` on `BehaviorExecutionResilienceOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the behavior identifiers targeted by this override.
+  - `IReadOnlyList<string> BehaviorIds { get; }`
+- [BehaviorIds](cephalon-engine.md#member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-behaviorids): `Properties` on `BehaviorExecutionResilienceOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BehaviorIds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the targeted behavior identifiers.
+  - `IReadOnlyList<string> BehaviorIds { get; }`
+- [BehaviorIds](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-behaviorids): `Properties` on `BehaviorResilienceRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The behavior identifiers covered by the policy when it is scoped to a behavior subset.
+  - `IReadOnlyList<string> BehaviorIds { get; set; }`
 - [BehaviorIds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-behaviorids): `Properties` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the behavior identifiers targeted by this override.
   - `IReadOnlyList<string> BehaviorIds { get; }`
@@ -897,6 +933,15 @@ Browse the published API surface by public member.
 - [BehaviorNotFoundException](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviornotfoundexception-ctor-system-string-system-exception): `Constructors` on `BehaviorNotFoundException` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorNotFoundException&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes the exception for the given behavior identifier with an inner exception.
   - `BehaviorNotFoundException(string behaviorId, Exception innerException)`
+- [BehaviorResilienceExceptionContext](cephalon-abstractions.md#member-m-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-exception-cephalon-abstractions-behaviors-behavioridempotencymode): `Constructors` on `BehaviorResilienceExceptionContext` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorResilienceExceptionContext&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Initializes a new instance of the `BehaviorResilienceExceptionContext` class.
+  - `BehaviorResilienceExceptionContext(string policyId, string behaviorId, string transportId, IReadOnlyList<string> targetedBehaviorIds, IReadOnlyList<string> targetedTransportIds, Exception exception, BehaviorIdempotencyMode behaviorIdempotency)`
+- [BehaviorResiliencePolicies](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-behaviorresiliencepolicies): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=BehaviorResiliencePolicies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the effective behavior-execution resilience policies visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<BehaviorResilienceRuntimeDescriptor> BehaviorResiliencePolicies { get; set; }`
+- [BehaviorResilienceRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `BehaviorResilienceRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorResilienceRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Describes one effective behavior-execution resilience policy exposed by the current runtime.
+  - `BehaviorResilienceRuntimeDescriptor(string Id, string DisplayName, string Description, string ExecutionMode, string Scope, IReadOnlyList<string> BehaviorIds, IReadOnlyList<string> TransportIds, BehaviorExecutionResilienceSelection Requested, BehaviorExecutionResilienceSelection Effective, IReadOnlyDictionary<string, string> Metadata)`
 - [BehaviorRestDocumentedStatusCodes](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-openapiendpointoptions-behaviorrestdocumentedstatuscodes): `Properties` on `OpenApiEndpointOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=BehaviorRestDocumentedStatusCodes&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Gets or sets the HTTP status codes that Cephalon's behavior-owned REST helpers publish in OpenAPI documents by default.
   - `IReadOnlyList<int> BehaviorRestDocumentedStatusCodes { get; set; }`
@@ -963,6 +1008,15 @@ Browse the published API surface by public member.
 - [BuildUri](cephalon-engine.md#member-p-cephalon-engine-manifest-packageprovenancemanifest-builduri): `Properties` on `PackageProvenanceManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=BuildUri&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared build or pipeline URI, when available.
   - `string BuildUri { get; }`
+- [Bulkhead](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-bulkhead): `Properties` on `BehaviorExecutionResilienceOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Bulkhead&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the bulkhead override requested for the targeted surface.
+  - `BulkheadSelection Bulkhead { get; }`
+- [Bulkhead](cephalon-engine.md#member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-bulkhead): `Properties` on `BehaviorExecutionResilienceOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Bulkhead&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the bulkhead override requested for the targeted surface.
+  - `BulkheadSettings Bulkhead { get; }`
+- [Bulkhead](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-bulkhead): `Properties` on `BehaviorExecutionResilienceSelection` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Bulkhead&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets the bulkhead selection that applies to behavior execution.
+  - `BulkheadSelection Bulkhead { get; }`
 - [Bulkhead](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-resilienceselection-bulkhead): `Properties` on `ResilienceSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Bulkhead&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the bulkhead policy resolved for the app.
   - `BulkheadSelection Bulkhead { get; }`
@@ -1107,6 +1161,15 @@ Browse the published API surface by public member.
 - [ChecksumSha256](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-checksumsha256): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=ChecksumSha256&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the computed SHA-256 checksum of the resolved package assembly.
   - `string ChecksumSha256 { get; }`
+- [CircuitBreaker](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-circuitbreaker): `Properties` on `BehaviorExecutionResilienceOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=CircuitBreaker&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the circuit-breaker override requested for the targeted surface.
+  - `CircuitBreakerSelection CircuitBreaker { get; }`
+- [CircuitBreaker](cephalon-engine.md#member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-circuitbreaker): `Properties` on `BehaviorExecutionResilienceOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=CircuitBreaker&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the circuit-breaker override requested for the targeted surface.
+  - `CircuitBreakerSettings CircuitBreaker { get; }`
+- [CircuitBreaker](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-circuitbreaker): `Properties` on `BehaviorExecutionResilienceSelection` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=CircuitBreaker&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets the circuit-breaker selection that applies to behavior execution.
+  - `CircuitBreakerSelection CircuitBreaker { get; }`
 - [CircuitBreaker](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-resilienceselection-circuitbreaker): `Properties` on `ResilienceSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=CircuitBreaker&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the circuit-breaker policy resolved for the app.
   - `CircuitBreakerSelection CircuitBreaker { get; }`
@@ -1119,6 +1182,9 @@ Browse the published API surface by public member.
 - [CircuitBreakerSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-circuitbreakersettings-ctor-system-nullable-system-boolean-system-nullable-system-decimal-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `CircuitBreakerSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=CircuitBreakerSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `CircuitBreakerSettings` class.
   - `CircuitBreakerSettings(bool? enabled, decimal? failureRatio, int? minimumThroughput, int? samplingDurationSeconds, int? breakDurationSeconds)`
+- [Classify](cephalon-abstractions.md#member-m-cephalon-abstractions-resilience-ibehaviorresilienceexceptionclassifier-classify-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext): `Methods` on `IBehaviorResilienceExceptionClassifier` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Classify&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Classifies one behavior-execution exception.
+  - `BehaviorResilienceExceptionHandling Classify(BehaviorResilienceExceptionContext context)`
 - [CleanArchitecture](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-cleanarchitecture): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=CleanArchitecture&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the clean-architecture pattern.
   - `PatternDescriptor CleanArchitecture { get; }`
@@ -1248,12 +1314,24 @@ Browse the published API surface by public member.
 - [ConfigureCephalonOutbox](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-modeling-entityframeworkmodelbuilderextensions-configurecephalonoutbox-microsoft-entityframeworkcore-modelbuilder-system-string): `Methods` on `EntityFrameworkModelBuilderExtensions` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ConfigureCephalonOutbox&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Adds the Cephalon outbox entity mapping to the supplied model.
   - `ModelBuilder ConfigureCephalonOutbox(this ModelBuilder modelBuilder, string tableName)`
+- [ConfigureGraphQLMutation](cephalon-aspnetcore-graphql.md#member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlmutation-microsoft-extensions-dependencyinjection-iservicecollection-system-action-hotchocolate-types-iobjecttypedescriptor): `Methods` on `GraphQLTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.GraphQL.Hosting` (`Cephalon.AspNetCore.GraphQL`) [Browse](browse.html?q=ConfigureGraphQLMutation&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting&scope=members)
+  - Adds fields to the shared GraphQL mutation root used by Cephalon modules.
+  - `IServiceCollection ConfigureGraphQLMutation(this IServiceCollection services, Action<IObjectTypeDescriptor> configure)`
+- [ConfigureGraphQLMutation](cephalon-aspnetcore-graphql.md#member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlmutation-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-hotchocolate-types-iobjecttypedescriptor): `Methods` on `GraphQLTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.GraphQL.Hosting` (`Cephalon.AspNetCore.GraphQL`) [Browse](browse.html?q=ConfigureGraphQLMutation&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting&scope=members)
+  - Adds fields to the shared GraphQL mutation root on a `WebApplicationBuilder`.
+  - `WebApplicationBuilder ConfigureGraphQLMutation(this WebApplicationBuilder builder, Action<IObjectTypeDescriptor> configure)`
 - [ConfigureGraphQLQuery](cephalon-aspnetcore-graphql.md#member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlquery-microsoft-extensions-dependencyinjection-iservicecollection-system-action-hotchocolate-types-iobjecttypedescriptor): `Methods` on `GraphQLTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.GraphQL.Hosting` (`Cephalon.AspNetCore.GraphQL`) [Browse](browse.html?q=ConfigureGraphQLQuery&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting&scope=members)
   - Adds fields to the shared GraphQL query root used by Cephalon modules.
   - `IServiceCollection ConfigureGraphQLQuery(this IServiceCollection services, Action<IObjectTypeDescriptor> configure)`
 - [ConfigureGraphQLQuery](cephalon-aspnetcore-graphql.md#member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlquery-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-hotchocolate-types-iobjecttypedescriptor): `Methods` on `GraphQLTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.GraphQL.Hosting` (`Cephalon.AspNetCore.GraphQL`) [Browse](browse.html?q=ConfigureGraphQLQuery&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting&scope=members)
   - Adds fields to the shared GraphQL query root on a `WebApplicationBuilder`.
   - `WebApplicationBuilder ConfigureGraphQLQuery(this WebApplicationBuilder builder, Action<IObjectTypeDescriptor> configure)`
+- [ConfigureGraphQLSubscription](cephalon-aspnetcore-graphql.md#member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlsubscription-microsoft-extensions-dependencyinjection-iservicecollection-system-action-hotchocolate-types-iobjecttypedescriptor): `Methods` on `GraphQLTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.GraphQL.Hosting` (`Cephalon.AspNetCore.GraphQL`) [Browse](browse.html?q=ConfigureGraphQLSubscription&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting&scope=members)
+  - Adds fields to the shared GraphQL subscription root used by Cephalon modules.
+  - `IServiceCollection ConfigureGraphQLSubscription(this IServiceCollection services, Action<IObjectTypeDescriptor> configure)`
+- [ConfigureGraphQLSubscription](cephalon-aspnetcore-graphql.md#member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlsubscription-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-hotchocolate-types-iobjecttypedescriptor): `Methods` on `GraphQLTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.GraphQL.Hosting` (`Cephalon.AspNetCore.GraphQL`) [Browse](browse.html?q=ConfigureGraphQLSubscription&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting&scope=members)
+  - Adds fields to the shared GraphQL subscription root on a `WebApplicationBuilder`.
+  - `WebApplicationBuilder ConfigureGraphQLSubscription(this WebApplicationBuilder builder, Action<IObjectTypeDescriptor> configure)`
 - [ConfigureGraphQLTransport](cephalon-aspnetcore-graphql.md#member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqltransport-microsoft-extensions-dependencyinjection-iservicecollection-system-action-hotchocolate-execution-configuration-irequestexecutorbuilder): `Methods` on `GraphQLTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.GraphQL.Hosting` (`Cephalon.AspNetCore.GraphQL`) [Browse](browse.html?q=ConfigureGraphQLTransport&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting&scope=members)
   - Applies GraphQL schema configuration for Cephalon modules and hosts.
   - `IServiceCollection ConfigureGraphQLTransport(this IServiceCollection services, Action<IRequestExecutorBuilder> configure)`
@@ -1806,6 +1884,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationpolicydescriptor-description): `Properties` on `AuthorizationPolicyDescriptor` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the human-readable authorization-policy description.
   - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-description): `Properties` on `BehaviorResilienceRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The human-readable policy description.
+  - `string Description { get; set; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-description): `Properties` on `BehaviorTopologyDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the optional description.
   - `string Description { get; }`
@@ -2019,6 +2100,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationsubject-displayname): `Properties` on `AuthorizationSubject` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the human-readable subject name when one is known.
   - `string DisplayName { get; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-displayname): `Properties` on `BehaviorResilienceRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The human-readable policy name.
+  - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-displayname): `Properties` on `BehaviorTopologyDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the optional display name.
   - `string DisplayName { get; }`
@@ -2175,6 +2259,9 @@ Browse the published API surface by public member.
 - [Edges](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphdescriptor-edges): `Properties` on `ExecutionGraphDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Edges&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the directed edges that connect graph nodes.
   - `IReadOnlyList<ExecutionGraphEdgeDescriptor> Edges { get; }`
+- [Effective](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-effective): `Properties` on `BehaviorResilienceRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Effective&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The effective behavior-execution resilience contract after runtime normalization.
+  - `BehaviorExecutionResilienceSelection Effective { get; set; }`
 - [Effective](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-effective): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Effective&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The effective policy values after host defaults and adapter-specific normalization have been applied.
   - `RateLimitingSelection Effective { get; set; }`
@@ -2211,6 +2298,9 @@ Browse the published API surface by public member.
 - [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-auditsettings-empty): `Properties` on `AuditSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets an empty audit-settings instance.
   - `AuditSettings Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-empty): `Properties` on `BehaviorExecutionResilienceSelection` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets an empty behavior-execution resilience selection.
+  - `BehaviorExecutionResilienceSelection Empty { get; }`
 - [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-bulkheadselection-empty): `Properties` on `BulkheadSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets an empty bulkhead-selection instance.
   - `BulkheadSelection Empty { get; }`
@@ -2661,6 +2751,9 @@ Browse the published API surface by public member.
 - [EventType](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-eventtype): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventType&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the logical event type identifier.
   - `string EventType { get; }`
+- [Exception](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-exception): `Properties` on `BehaviorResilienceExceptionContext` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Exception&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets the exception being classified.
+  - `Exception Exception { get; }`
 - [ExceptionType](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-exceptiontype): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ExceptionType&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The fully qualified exception type that caused the failure.
   - `string ExceptionType { get; set; }`
@@ -2718,6 +2811,9 @@ Browse the published API surface by public member.
 - [ExecutionGraphTransitionCounterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-executiongraphtransitioncountername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=ExecutionGraphTransitionCounterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Gets the counter name for execution-graph lifecycle transitions.
   - `const string ExecutionGraphTransitionCounterName`
+- [ExecutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-executionmode): `Properties` on `BehaviorResilienceRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The enforcement mode used by the active runtime, such as `behavior-dispatch-middleware` or `contract-only`.
+  - `string ExecutionMode { get; set; }`
 - [ExecutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-executionmode): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the runtime execution mode for this target.
   - `string ExecutionMode { get; }`
@@ -3120,6 +3216,9 @@ Browse the published API surface by public member.
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-iauthorizationpolicycatalog-getbyid-system-string): `Methods` on `IAuthorizationPolicyCatalog` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets one authorization policy by its stable identifier.
   - `AuthorizationPolicyDescriptor GetById(string policyId)`
+- [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-resilience-ibehaviorresilienceruntimecatalog-getbyid-system-string): `Methods` on `IBehaviorResilienceRuntimeCatalog` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets one behavior-execution resilience policy by its stable identifier.
+  - `BehaviorResilienceRuntimeDescriptor GetById(string policyId)`
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabasemigrationcatalog-getbyid-system-string): `Methods` on `IDatabaseMigrationCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets one migration target by its logical identifier.
   - `DatabaseMigrationDescriptor GetById(string databaseMigrationId)`
@@ -3300,6 +3399,12 @@ Browse the published API surface by public member.
 - [HasReports](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-hasreports): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the dispatch runtime has reported any observations yet.
   - `bool HasReports { get; }`
+- [HasStrategyValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-hasstrategyvalues): `Properties` on `BehaviorExecutionResilienceOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasStrategyValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether any strategy-level override values were explicitly supplied.
+  - `bool HasStrategyValues { get; }`
+- [HasStrategyValues](cephalon-engine.md#member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-hasstrategyvalues): `Properties` on `BehaviorExecutionResilienceOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasStrategyValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any strategy-level override settings were explicitly supplied.
+  - `bool HasStrategyValues { get; }`
 - [HasValue](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorresult-hasvalue): `Properties` on `IBehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValue&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets a value indicating whether the result carries a payload value.
   - `bool HasValue { get; }`
@@ -3329,6 +3434,15 @@ Browse the published API surface by public member.
   - `bool HasValues { get; }`
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-auditsettings-hasvalues): `Properties` on `AuditSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether any audit settings were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-hasvalues): `Properties` on `BehaviorExecutionResilienceOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets a value indicating whether any override values were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-hasvalues): `Properties` on `BehaviorExecutionResilienceOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any override settings were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-hasvalues): `Properties` on `BehaviorExecutionResilienceSelection` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets a value indicating whether any behavior-execution resilience inputs were supplied.
   - `bool HasValues { get; }`
 - [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-bulkheadselection-hasvalues): `Properties` on `BulkheadSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether any bulkhead-selection inputs were explicitly supplied.
@@ -3675,6 +3789,15 @@ Browse the published API surface by public member.
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationpolicydescriptor-id): `Properties` on `AuthorizationPolicyDescriptor` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the stable authorization-policy identifier.
   - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-id): `Properties` on `BehaviorExecutionResilienceOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the stable override identifier.
+  - `string Id { get; }`
+- [Id](cephalon-engine.md#member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-id): `Properties` on `BehaviorExecutionResilienceOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the stable override identifier.
+  - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-id): `Properties` on `BehaviorResilienceRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The stable runtime policy identifier.
+  - `string Id { get; set; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-id): `Properties` on `BehaviorTopologyDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the behavior identifier.
   - `string Id { get; }`
@@ -3801,6 +3924,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-transportdescriptor-id): `Properties` on `TransportDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the stable transport identifier.
   - `string Id { get; }`
+- [Idempotent](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behavioridempotencymode-idempotent): `Fields` on `BehaviorIdempotencyMode` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Idempotent&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Replaying the same logical behavior execution is expected to be safe.
+  - `const BehaviorIdempotencyMode Idempotent`
 - [Identity](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-identity): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Identity&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the selected identity and authorization inputs.
   - `IdentitySelection Identity { get; }`
@@ -3831,6 +3957,9 @@ Browse the published API surface by public member.
 - [IdGenerator](cephalon-engine.md#member-p-cephalon-engine-configuration-datasettings-idgenerator): `Properties` on `DataSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IdGenerator&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the selected identifier-generation strategy.
   - `string IdGenerator { get; }`
+- [Ignore](cephalon-abstractions.md#member-f-cephalon-abstractions-resilience-behaviorresilienceexceptionhandling-ignore): `Fields` on `BehaviorResilienceExceptionHandling` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Ignore&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Ignore the exception for resilience accounting.
+  - `const BehaviorResilienceExceptionHandling Ignore`
 - [InboxDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-inboxdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `InboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=InboxDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new inbox descriptor.
   - `InboxDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string mode, IReadOnlyList<string> channelIds, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
@@ -4527,6 +4656,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationpolicydescriptor-metadata): `Properties` on `AuthorizationPolicyDescriptor` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets operator-facing metadata associated with the policy.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-metadata): `Properties` on `BehaviorResilienceRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Additional runtime-specific metadata describing the policy.
+  - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-metadata): `Properties` on `BehaviorTopologyDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets additional metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -4725,6 +4857,9 @@ Browse the published API surface by public member.
 - [Mode](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditstoredescriptor-mode): `Properties` on `AuditStoreDescriptor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the audit-store mode.
   - `string Mode { get; }`
+- [Mode](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behavioridempotencyattribute-mode): `Properties` on `BehaviorIdempotencyAttribute` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the declared idempotency mode.
+  - `BehaviorIdempotencyMode Mode { get; }`
 - [Mode](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-mode): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the normalized stream persistence mode.
   - `string Mode { get; }`
@@ -4947,6 +5082,9 @@ Browse the published API surface by public member.
 - [None](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-transportfeatures-none): `Fields` on `TransportFeatures` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=None&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Indicates no transport features.
   - `const TransportFeatures None`
+- [NonIdempotent](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behavioridempotencymode-nonidempotent): `Fields` on `BehaviorIdempotencyMode` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=NonIdempotent&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Replaying the same logical behavior execution is not expected to be safe.
+  - `const BehaviorIdempotencyMode NonIdempotent`
 - [NotFound](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-notfound-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotFound&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates a not-found result.
   - `BehaviorResultDescriptor NotFound(string code, string message, BehaviorFault fault)`
@@ -5424,6 +5562,9 @@ Browse the published API surface by public member.
 - [Policies](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-iauthorizationpolicycatalog-policies): `Properties` on `IAuthorizationPolicyCatalog` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Policies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets all authorization policies visible to the current runtime.
   - `IReadOnlyList<AuthorizationPolicyDescriptor> Policies { get; }`
+- [Policies](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ibehaviorresilienceruntimecatalog-policies): `Properties` on `IBehaviorResilienceRuntimeCatalog` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Policies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets all behavior-execution resilience policies visible to the current runtime.
+  - `IReadOnlyList<BehaviorResilienceRuntimeDescriptor> Policies { get; }`
 - [Policies](cephalon-abstractions.md#member-p-cephalon-abstractions-data-ioutboxdispatchpolicycatalog-policies): `Properties` on `IOutboxDispatchPolicyCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Policies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the effective dispatch policies visible to the current runtime.
   - `IReadOnlyList<OutboxDispatchPolicyDescriptor> Policies { get; }`
@@ -5441,6 +5582,9 @@ Browse the published API surface by public member.
   - `string PolicyId { get; }`
 - [PolicyId](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationdecision-policyid): `Properties` on `AuthorizationDecision` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=PolicyId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the policy identifier that produced the decision when one is known.
+  - `string PolicyId { get; }`
+- [PolicyId](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-policyid): `Properties` on `BehaviorResilienceExceptionContext` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=PolicyId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets the stable resilience-policy identifier handling the exception.
   - `string PolicyId { get; }`
 - [PolicyId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-policyid): `Properties` on `OutboxDispatchPolicyDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PolicyId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable dispatch-policy identifier.
@@ -5919,6 +6063,9 @@ Browse the published API surface by public member.
 - [RequestBodyLimit](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-requestbodylimit): `Properties` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RequestBodyLimit&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets or sets the maximum number of request-body characters to log before the payload is truncated.
   - `int RequestBodyLimit { get; set; }`
+- [Requested](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-requested): `Properties` on `BehaviorResilienceRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Requested&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The requested behavior-execution resilience contract.
+  - `BehaviorExecutionResilienceSelection Requested { get; set; }`
 - [Requested](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-requested): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Requested&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The requested app-model selection that asked for rate limiting.
   - `RateLimitingSelection Requested { get; set; }`
@@ -6033,12 +6180,12 @@ Browse the published API surface by public member.
 - [Resilience](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-resilience): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Resilience&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets configuration-driven resilience settings.
   - `ResilienceSettings Resilience { get; }`
-- [ResilienceSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-resilienceselection-ctor-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection-cephalon-abstractions-appmodel-ratelimitingselection): `Constructors` on `ResilienceSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResilienceSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+- [ResilienceSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-resilienceselection-ctor-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection-cephalon-abstractions-appmodel-ratelimitingselection-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection): `Constructors` on `ResilienceSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResilienceSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Initializes a new instance of the `ResilienceSelection` class.
-  - `ResilienceSelection(RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead, RateLimitingSelection rateLimiting)`
-- [ResilienceSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-resiliencesettings-ctor-cephalon-engine-configuration-retrysettings-cephalon-engine-configuration-timeoutsettings-cephalon-engine-configuration-circuitbreakersettings-cephalon-engine-configuration-bulkheadsettings-cephalon-engine-configuration-ratelimitingsettings): `Constructors` on `ResilienceSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ResilienceSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - `ResilienceSelection(RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead, RateLimitingSelection rateLimiting, IReadOnlyList<BehaviorExecutionResilienceOverrideSelection> behaviorExecutionOverrides)`
+- [ResilienceSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-resiliencesettings-ctor-cephalon-engine-configuration-retrysettings-cephalon-engine-configuration-timeoutsettings-cephalon-engine-configuration-circuitbreakersettings-cephalon-engine-configuration-bulkheadsettings-cephalon-engine-configuration-ratelimitingsettings-system-collections-generic-ireadonlylist-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings): `Constructors` on `ResilienceSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ResilienceSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `ResilienceSettings` class.
-  - `ResilienceSettings(RetrySettings retry, TimeoutSettings timeout, CircuitBreakerSettings circuitBreaker, BulkheadSettings bulkhead, RateLimitingSettings rateLimiting)`
+  - `ResilienceSettings(RetrySettings retry, TimeoutSettings timeout, CircuitBreakerSettings circuitBreaker, BulkheadSettings bulkhead, RateLimitingSettings rateLimiting, IReadOnlyList<BehaviorExecutionResilienceOverrideSettings> behaviorExecutionOverrides)`
 - [ResolutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-resolutionmode): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResolutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the runtime resolution mode.
   - `string ResolutionMode { get; }`
@@ -6066,6 +6213,9 @@ Browse the published API surface by public member.
 - [Resolve](cephalon-engine.md#member-m-cephalon-engine-appmodel-databasetopologyroleresolver-resolve-cephalon-abstractions-appmodel-databasetopologyselection-system-string): `Methods` on `DatabaseTopologyRoleResolver` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=Resolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
   - Resolves the effective target for the supplied logical database role.
   - `DatabaseTopologyRoleResolution Resolve(DatabaseTopologySelection databases, string requestedRoleId)`
+- [Resolve](cephalon-abstractions.md#member-m-cephalon-abstractions-resilience-ibehaviorresilienceruntimecatalog-resolve-system-string-system-string): `Methods` on `IBehaviorResilienceRuntimeCatalog` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Resolve&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Resolves the effective behavior-execution resilience policy for one behavior and optional transport.
+  - `BehaviorResilienceRuntimeDescriptor Resolve(string behaviorId, string transportId)`
 - [Resolve](cephalon-engine.md#member-m-cephalon-engine-configuration-uriresolution-resolve-microsoft-extensions-configuration-iconfiguration-system-string-system-string-system-string-system-string-system-string): `Methods` on `UriResolution` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Resolve&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Resolves the effective provider URI for a pack or provider.
   - `string Resolve(IConfiguration configuration, string uri, string uriName, string defaultUri, string sectionPath, string providerDisplayName)`
@@ -6186,12 +6336,24 @@ Browse the published API surface by public member.
 - [RetrievalOptions](cephalon-retrieval.md#member-m-cephalon-retrieval-configuration-retrievaloptions-ctor): `Constructors` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=RetrievalOptions&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
   - Creates retrieval options with the default host-owned features enabled.
   - `RetrievalOptions()`
+- [Retry](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-retry): `Properties` on `BehaviorExecutionResilienceOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Retry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the retry override requested for the targeted surface.
+  - `RetrySelection Retry { get; }`
+- [Retry](cephalon-engine.md#member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-retry): `Properties` on `BehaviorExecutionResilienceOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Retry&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the retry override requested for the targeted surface.
+  - `RetrySettings Retry { get; }`
+- [Retry](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-retry): `Properties` on `BehaviorExecutionResilienceSelection` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Retry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets the retry selection that applies to behavior execution.
+  - `RetrySelection Retry { get; }`
 - [Retry](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-resilienceselection-retry): `Properties` on `ResilienceSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Retry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the retry policy resolved for the app.
   - `RetrySelection Retry { get; }`
 - [Retry](cephalon-engine.md#member-p-cephalon-engine-configuration-resiliencesettings-retry): `Properties` on `ResilienceSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Retry&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the retry settings resolved for the app.
   - `RetrySettings Retry { get; }`
+- [RetryAndTrip](cephalon-abstractions.md#member-f-cephalon-abstractions-resilience-behaviorresilienceexceptionhandling-retryandtrip): `Fields` on `BehaviorResilienceExceptionHandling` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryAndTrip&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Count the exception for circuit-breaker accounting and treat it as eligible for future retry handling.
+  - `const BehaviorResilienceExceptionHandling RetryAndTrip`
 - [RetryDelaySeconds](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-retrydelayseconds): `Properties` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=RetryDelaySeconds&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
   - Gets or sets the number of seconds the Wolverine-owned dispatch loop should wait before retrying a failed dispatch attempt.
   - `int RetryDelaySeconds { get; set; }`
@@ -6423,6 +6585,9 @@ Browse the published API surface by public member.
 - [Scheme](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-scheme): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Scheme&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
   - Gets or sets the URI scheme used when building a discrete endpoint, such as `neo4j`, `neo4j+s`, `bolt`, or `bolt+s`.
   - `string Scheme { get; set; }`
+- [Scope](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-scope): `Properties` on `BehaviorResilienceRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Scope&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The runtime scope covered by the policy, such as `all-behavior-executions`.
+  - `string Scope { get; set; }`
 - [Scope](cephalon-abstractions.md#member-p-cephalon-abstractions-ids-idgenerationrequest-scope): `Properties` on `IdGenerationRequest` in `Cephalon.Abstractions.Ids` (`Cephalon.Abstractions`) [Browse](browse.html?q=Scope&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Ids&scope=members)
   - Gets the logical generation scope when one is known.
   - `string Scope { get; }`
@@ -7104,6 +7269,12 @@ Browse the published API surface by public member.
 - [Target](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-target): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=Target&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets the effective database target metadata after applying any configured role reference.
   - `DatabaseTargetSelection Target { get; }`
+- [TargetedBehaviorIds](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-targetedbehaviorids): `Properties` on `BehaviorResilienceExceptionContext` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=TargetedBehaviorIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets the behavior identifiers targeted by the active policy.
+  - `IReadOnlyList<string> TargetedBehaviorIds { get; }`
+- [TargetedTransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-targetedtransportids): `Properties` on `BehaviorResilienceExceptionContext` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=TargetedTransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets the transport identifiers targeted by the active policy.
+  - `IReadOnlyList<string> TargetedTransportIds { get; }`
 - [TargetFramework](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-targetframework): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=TargetFramework&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the target framework to read from.
   - `string TargetFramework { get; }`
@@ -7272,6 +7443,15 @@ Browse the published API surface by public member.
 - [Timeline](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperationalstory-timeline): `Properties` on `RuntimeOperationalStory` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Timeline&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The ordered lifecycle narrative for package load, execution-graph transitions, hosted-execution transitions, module transitions, runtime transitions, and failures.
   - `IReadOnlyList<RuntimeLifecycleEvent> Timeline { get; set; }`
+- [Timeout](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-timeout): `Properties` on `BehaviorExecutionResilienceOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Timeout&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the timeout override requested for the targeted surface.
+  - `TimeoutSelection Timeout { get; }`
+- [Timeout](cephalon-engine.md#member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-timeout): `Properties` on `BehaviorExecutionResilienceOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Timeout&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the timeout override requested for the targeted surface.
+  - `TimeoutSettings Timeout { get; }`
+- [Timeout](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-timeout): `Properties` on `BehaviorExecutionResilienceSelection` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Timeout&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets the timeout selection that applies to behavior execution.
+  - `TimeoutSelection Timeout { get; }`
 - [Timeout](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-resilienceselection-timeout): `Properties` on `ResilienceSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Timeout&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the timeout policy resolved for the app.
   - `TimeoutSelection Timeout { get; }`
@@ -7344,9 +7524,21 @@ Browse the published API surface by public member.
 - [TransportDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-transportdescriptor-ctor-system-string-system-string-system-string-cephalon-abstractions-transports-transportfeatures-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TransportDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Creates a transport descriptor.
   - `TransportDescriptor(string id, string displayName, string description, TransportFeatures features, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
+- [TransportId](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-transportid): `Properties` on `BehaviorResilienceExceptionContext` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets the active transport identifier when one is known.
+  - `string TransportId { get; }`
 - [TransportId](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-itransportroutemapper-transportid): `Properties` on `ITransportRouteMapper` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=TransportId&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets the transport identifier that this mapper handles.
   - `string TransportId { get; }`
+- [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-transportids): `Properties` on `BehaviorExecutionResilienceOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
+  - Gets the transport identifiers targeted by this override.
+  - `IReadOnlyList<string> TransportIds { get; }`
+- [TransportIds](cephalon-engine.md#member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-transportids): `Properties` on `BehaviorExecutionResilienceOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the targeted transport identifiers.
+  - `IReadOnlyList<string> TransportIds { get; }`
+- [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-transportids): `Properties` on `BehaviorResilienceRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - The transport identifiers covered by the policy when it is scoped to a transport subset.
+  - `IReadOnlyList<string> TransportIds { get; set; }`
 - [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-transportids): `Properties` on `BehaviorTopologyDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the transport identifiers configured for this behavior.
   - `IReadOnlyList<string> TransportIds { get; }`
@@ -7368,6 +7560,9 @@ Browse the published API surface by public member.
 - [Transports](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-transports): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Transports&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the selected transport identifiers.
   - `IReadOnlyList<string> Transports { get; }`
+- [TripOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-resilience-behaviorresilienceexceptionhandling-triponly): `Fields` on `BehaviorResilienceExceptionHandling` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=TripOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Count the exception for circuit-breaker style failure accounting, but do not automatically retry it.
+  - `const BehaviorResilienceExceptionHandling TripOnly`
 - [TrustedAssemblies](cephalon-engine.md#member-p-cephalon-engine-configuration-trustpolicy-trustedassemblies): `Properties` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TrustedAssemblies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the trusted assembly-name allow-list.
   - `IReadOnlyList<string> TrustedAssemblies { get; }`
@@ -7506,6 +7701,9 @@ Browse the published API surface by public member.
 - [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-audit-auditoutcome-unknown): `Fields` on `AuditOutcome` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Indicates the operation outcome was not explicitly classified.
   - `const AuditOutcome Unknown`
+- [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behavioridempotencymode-unknown): `Fields` on `BehaviorIdempotencyMode` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - No explicit idempotency contract was declared for the behavior.
+  - `const BehaviorIdempotencyMode Unknown`
 - [Unsupported](cephalon-abstractions.md#member-f-cephalon-abstractions-data-databasemigrationstatus-unsupported): `Fields` on `DatabaseMigrationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unsupported&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime cannot execute the configured migration target with the active provider-pack registrations.
   - `const DatabaseMigrationStatus Unsupported`

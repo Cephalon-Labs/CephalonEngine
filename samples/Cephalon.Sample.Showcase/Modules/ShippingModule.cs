@@ -1,8 +1,8 @@
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Audit;
-using Cephalon.AspNetCore.Modules;
 using Cephalon.Behaviors.Http.Hosting;
+using Cephalon.Sample.Showcase.Domain.Shipping.Behaviors;
 using Cephalon.Sample.Showcase.Domain.Shipping.Models;
 using Cephalon.Sample.Showcase.Infrastructure;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +17,7 @@ namespace Cephalon.Sample.Showcase.Modules;
 /// Implements the process-manager behavior pattern with a module-owned REST surface.
 /// Uses PostgreSQL (via EF) when available, otherwise falls back to in-memory store.
 /// </summary>
-public sealed class ShippingModule : ModuleBase, IEndpointModule
+public sealed class ShippingModule : RestBehaviorModuleBase
 {
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "showcase.shipping",
@@ -43,7 +43,15 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
     }
 
     /// <inheritdoc />
-    public void MapEndpoints(IEndpointRouteBuilder endpoints)
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+    {
+        behaviors.Internal<InitiateShippingBehavior>();
+        behaviors.Internal<TrackShipmentBehavior>();
+        behaviors.Internal<ConfirmDeliveryBehavior>();
+    }
+
+    /// <inheritdoc />
+    protected override void MapAdditionalEndpoints(IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapBehaviorRestGroup(this, "/showcase/shipping");
         var routes = group.Routes;
@@ -96,6 +104,21 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
             var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
             if (writeDb is not null)
             {
+                var existingShipment = await writeDb.Shipments
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(shipment => shipment.OrderId == input.OrderId, ctx.RequestAborted);
+                if (existingShipment is not null)
+                {
+                    return Results.Conflict($"Order '{input.OrderId}' already has shipment '{existingShipment.ShipmentId}'.");
+                }
+
+                var order = await writeDb.Orders.FindAsync([input.OrderId], ctx.RequestAborted);
+                if (order is not null)
+                {
+                    order.Status = "Processing";
+                    order.UpdatedAtUtc = DateTime.UtcNow;
+                }
+
                 var entity = new ShowcaseShipmentEntity
                 {
                     ShipmentId = shipmentId,
@@ -113,6 +136,10 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
                 if (readDb is not null)
                 {
                     await UpsertReadShipmentAsync(readDb, entity, ctx.RequestAborted);
+                    if (order is not null)
+                    {
+                        await UpsertReadOrderStatusAsync(readDb, order, ctx.RequestAborted);
+                    }
                 }
 
                 await ShowcaseAuditHelper.RecordAsync(
@@ -147,7 +174,18 @@ public sealed class ShippingModule : ModuleBase, IEndpointModule
                 EstimatedDeliveryUtc = estimatedDelivery,
                 CreatedAtUtc = DateTime.UtcNow
             };
+            if (ShowcaseDataStore.Shipments.Values.Any(existing => string.Equals(existing.OrderId, input.OrderId, StringComparison.OrdinalIgnoreCase)))
+            {
+                return Results.Conflict($"Order '{input.OrderId}' already has an active shipment.");
+            }
+
             ShowcaseDataStore.Shipments[shipmentId] = shipment;
+            if (ShowcaseDataStore.Orders.TryGetValue(input.OrderId, out var memOrder))
+            {
+                memOrder.Status = Domain.Orders.Models.OrderStatus.Processing;
+                memOrder.UpdatedAtUtc = DateTime.UtcNow;
+            }
+
             return Results.Created(
                 BuildCreatedLocation(ctx, shipmentId),
                 new InitiateShippingOutput(shipmentId, "LabelCreated", estimatedDelivery));

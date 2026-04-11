@@ -1,0 +1,8 @@
+{
+  "ReferenceDocs": {
+    "Enabled": false,
+    "RoutePrefix": "/reference",
+    "DirectoryPath": "docs\\reference",
+    "DefaultDocument": "browse.html"
+  }
+}

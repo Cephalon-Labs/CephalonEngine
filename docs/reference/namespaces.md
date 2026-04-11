@@ -6,7 +6,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.AppModel`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-appmodel): 22 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-appmodel): 23 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel)
 
 ## `Cephalon.Abstractions.AppModel.Scaffolding`
 
@@ -22,7 +22,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Behaviors`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-behaviors): 35 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-behaviors): 37 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors)
 
 ## `Cephalon.Abstractions.Capabilities`
 
@@ -62,7 +62,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Resilience`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-resilience): 2 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-resilience): 8 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience)
 
 ## `Cephalon.Abstractions.Technologies`
 
@@ -218,7 +218,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Engine.Configuration`
 
-- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-configuration): 33 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-configuration): 34 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
 
 ## `Cephalon.Engine.Diagnostics`
 

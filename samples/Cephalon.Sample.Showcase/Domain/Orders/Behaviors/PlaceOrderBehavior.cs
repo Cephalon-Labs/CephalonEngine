@@ -19,7 +19,14 @@ public sealed class PlaceOrderBehavior : IAppBehavior<PlaceOrderInput, PlaceOrde
         IBehaviorContext context,
         CancellationToken ct = default)
     {
-        var orderId = $"ord-{Guid.NewGuid():N}"[..16];
+        var orderId = string.IsNullOrWhiteSpace(input.OrderId)
+            ? $"ord-{Guid.NewGuid():N}"[..16]
+            : input.OrderId.Trim();
+
+        if (ShowcaseDataStore.Orders.ContainsKey(orderId))
+        {
+            throw new InvalidOperationException($"Order '{orderId}' already exists.");
+        }
 
         var order = new Order
         {

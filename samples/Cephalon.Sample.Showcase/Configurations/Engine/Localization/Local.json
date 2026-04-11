@@ -1,0 +1,12 @@
+{
+  "Engine": {
+    "Localization": {
+      "DefaultCulture": "en-US",
+      "SupportedCultures": [
+        "en-US",
+        "th-TH"
+      ],
+      "Resources": {}
+    }
+  }
+}

@@ -1357,6 +1357,130 @@ Parameters:
 - `configuration`: The configuration source that contains the engine section.
 - `sectionPath`: The root configuration section path to read from.
 
+<a id="type-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings"></a>
+
+### `BehaviorExecutionResilienceOverrideSettings`
+
+Describes one named behavior-execution resilience override configured for a subset of behaviors or transports.
+
+#### Declaration
+```csharp
+public sealed class BehaviorExecutionResilienceOverrideSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-retrysettings-cephalon-engine-configuration-timeoutsettings-cephalon-engine-configuration-circuitbreakersettings-cephalon-engine-configuration-bulkheadsettings"></a>
+
+##### `BehaviorExecutionResilienceOverrideSettings`
+
+```csharp
+BehaviorExecutionResilienceOverrideSettings(string id, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> transportIds, RetrySettings retry, TimeoutSettings timeout, CircuitBreakerSettings circuitBreaker, BulkheadSettings bulkhead)
+```
+
+Initializes a new instance of the `BehaviorExecutionResilienceOverrideSettings` class.
+
+Parameters:
+- `id`: The stable override identifier.
+- `behaviorIds`: The targeted behavior identifiers.
+- `transportIds`: The targeted transport identifiers.
+- `retry`: The retry override requested for the targeted surface.
+- `timeout`: The timeout override requested for the targeted surface.
+- `circuitBreaker`: The circuit-breaker override requested for the targeted surface.
+- `bulkhead`: The bulkhead override requested for the targeted surface.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-behaviorids"></a>
+
+##### `BehaviorIds`
+
+```csharp
+IReadOnlyList<string> BehaviorIds { get; }
+```
+
+Gets the targeted behavior identifiers.
+
+<a id="member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-bulkhead"></a>
+
+##### `Bulkhead`
+
+```csharp
+BulkheadSettings Bulkhead { get; }
+```
+
+Gets the bulkhead override requested for the targeted surface.
+
+<a id="member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-circuitbreaker"></a>
+
+##### `CircuitBreaker`
+
+```csharp
+CircuitBreakerSettings CircuitBreaker { get; }
+```
+
+Gets the circuit-breaker override requested for the targeted surface.
+
+<a id="member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-hasstrategyvalues"></a>
+
+##### `HasStrategyValues`
+
+```csharp
+bool HasStrategyValues { get; }
+```
+
+Gets a value indicating whether any strategy-level override settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any override settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable override identifier.
+
+<a id="member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-retry"></a>
+
+##### `Retry`
+
+```csharp
+RetrySettings Retry { get; }
+```
+
+Gets the retry override requested for the targeted surface.
+
+<a id="member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-timeout"></a>
+
+##### `Timeout`
+
+```csharp
+TimeoutSettings Timeout { get; }
+```
+
+Gets the timeout override requested for the targeted surface.
+
+<a id="member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-transportids"></a>
+
+##### `TransportIds`
+
+```csharp
+IReadOnlyList<string> TransportIds { get; }
+```
+
+Gets the targeted transport identifiers.
+
 <a id="type-cephalon-engine-configuration-bulkheadsettings"></a>
 
 ### `BulkheadSettings`
@@ -3431,7 +3555,7 @@ Adds Cephalon project-configuration conventions to a configuration builder.
 
 Remarks: Cephalon keeps configuration-driven features friendly to large projects by supporting a split-file convention under a project's `Configurations` folder.
 
-The current convention loads root-level `Add*.json` files first, then loads every `{Environment}.json` file found under the folder tree. This allows teams to keep concerns such as engine settings, OpenAPI settings, or CORS settings in separate folders without forcing everything into one large `appsettings.json` file.
+The current convention loads root-level `Add*.json` files first, then loads every `{Environment}.json` file found under the folder tree. These sources are inserted ahead of standard host overrides such as `appsettings.json`, `appsettings.{Environment}.json`, user secrets, environment variables, and command-line arguments so projects can keep Cephalon defaults grouped by concern without losing the normal ASP.NET Core and generic-host override path.
 
 #### Declaration
 ```csharp
@@ -3745,12 +3869,12 @@ public sealed class ResilienceSettings
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-resiliencesettings-ctor-cephalon-engine-configuration-retrysettings-cephalon-engine-configuration-timeoutsettings-cephalon-engine-configuration-circuitbreakersettings-cephalon-engine-configuration-bulkheadsettings-cephalon-engine-configuration-ratelimitingsettings"></a>
+<a id="member-m-cephalon-engine-configuration-resiliencesettings-ctor-cephalon-engine-configuration-retrysettings-cephalon-engine-configuration-timeoutsettings-cephalon-engine-configuration-circuitbreakersettings-cephalon-engine-configuration-bulkheadsettings-cephalon-engine-configuration-ratelimitingsettings-system-collections-generic-ireadonlylist-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings"></a>
 
 ##### `ResilienceSettings`
 
 ```csharp
-ResilienceSettings(RetrySettings retry, TimeoutSettings timeout, CircuitBreakerSettings circuitBreaker, BulkheadSettings bulkhead, RateLimitingSettings rateLimiting)
+ResilienceSettings(RetrySettings retry, TimeoutSettings timeout, CircuitBreakerSettings circuitBreaker, BulkheadSettings bulkhead, RateLimitingSettings rateLimiting, IReadOnlyList<BehaviorExecutionResilienceOverrideSettings> behaviorExecutionOverrides)
 ```
 
 Initializes a new instance of the `ResilienceSettings` class.
@@ -3761,8 +3885,19 @@ Parameters:
 - `circuitBreaker`: The circuit-breaker settings resolved for the app.
 - `bulkhead`: The bulkhead settings resolved for the app.
 - `rateLimiting`: The rate-limiting settings resolved for the app.
+- `behaviorExecutionOverrides`: The named behavior-execution override policies targeted at specific behaviors or transports.
 
 #### Properties
+
+<a id="member-p-cephalon-engine-configuration-resiliencesettings-behaviorexecutionoverrides"></a>
+
+##### `BehaviorExecutionOverrides`
+
+```csharp
+IReadOnlyList<BehaviorExecutionResilienceOverrideSettings> BehaviorExecutionOverrides { get; }
+```
+
+Gets the named behavior-execution override policies targeted at specific behaviors or transports.
 
 <a id="member-p-cephalon-engine-configuration-resiliencesettings-bulkhead"></a>
 
@@ -7465,6 +7600,16 @@ IReadOnlyList<AuthorizationPolicyDescriptor> AuthorizationPolicies { get; set; }
 ```
 
 Gets the authorization policies contributed by active modules and visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-behaviorresiliencepolicies"></a>
+
+##### `BehaviorResiliencePolicies`
+
+```csharp
+IReadOnlyList<BehaviorResilienceRuntimeDescriptor> BehaviorResiliencePolicies { get; set; }
+```
+
+Gets the effective behavior-execution resilience policies visible to the runtime at the time the snapshot was created.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-databasemigrations"></a>
 

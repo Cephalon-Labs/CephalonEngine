@@ -1,0 +1,20 @@
+{
+  "Engine": {
+    "Blueprint": "modular-monolith",
+    "Patterns": [
+      "strategy-pattern",
+      "cqrs",
+      "outbox",
+      "event-sourcing"
+    ],
+    "Technologies": [
+      "identity-access",
+      "multi-tenancy",
+      "event-driven-integration"
+    ],
+    "Transports": [
+      "rest-api",
+      "behavior-http"
+    ]
+  }
+}

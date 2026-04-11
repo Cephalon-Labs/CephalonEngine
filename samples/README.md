@@ -9,6 +9,7 @@ They now also serve as the narrow phase-8 starter baseline for the shipped bluep
 - `Cephalon.Sample.ModularVerticalSlice`: feature-slice organization inside a bounded module
 - `Cephalon.Sample.Microservice`: service-boundary example with explicit contracts
 - `Cephalon.Sample.MicroserviceSuite`: coordinated multi-service sample with a shared foundation project, shared governance package, and separate catalog and orders services
+- `Cephalon.Sample.Showcase`: the comprehensive engine prove-out host covering split configuration, transport/docs/operator surfaces, and migration-first runtime behavior
 
 These are intentionally different from `playground/`.
 
@@ -20,3 +21,4 @@ The blueprint-shape starters now each carry their own README so the shipped phas
 - `samples/Cephalon.Sample.ModularMonolith/README.md`
 - `samples/Cephalon.Sample.ModularVerticalSlice/README.md`
 - `samples/Cephalon.Sample.Microservice/README.md`
+- `samples/Cephalon.Sample.Showcase/README.md`

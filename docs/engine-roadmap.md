@@ -570,7 +570,7 @@ Current truth:
 
 - the initial `ENG-060` baseline is now shipped: `Engine:Databases` projects into `EngineSettings`, `AppProfile.Databases`, `/engine/databases`, `/engine/app-model`, and `/engine/snapshot`
 - `ENG-061` is now shipped: `Cephalon.Data.EntityFramework` consumes the engine-owned `write` and optional `read` roles directly, exposes role and migration metadata through the runtime surface, and can execute startup schema apply for those registered `DbContext` roles through a generic-host hosted service
-- `ENG-062` is now shipped: `Cephalon.Audit.EntityFramework` consumes `Engine:Audit:History` plus the selected engine-owned database role named by `Engine:Audit:History:DatabaseRole`, publishes durable audit-store metadata, and proves the topology in the showcase sample with distinct write/read/history databases
+- `ENG-062` is now shipped: `Cephalon.Audit.EntityFramework` consumes `Engine:Audit:History` plus the selected engine-owned database role named by `Engine:Audit:History:DatabaseRole`, publishes durable audit-store metadata, and proves the topology in the showcase sample with a dedicated `history` database plus a currently logical `read` role that still co-locates with `write` until projector-driven separation is ready
 - `ENG-063` is now shipped: durable audit history now also includes `Engine:Audit:History:Retention`, a host-agnostic `IAuditHistoryReader`, `/engine/audit-history`, and showcase-facing audit-history endpoints over the same durable store
 - `ENG-064` is now shipped: durable audit history now also includes `Engine:Audit:History:Export`, a host-agnostic `IAuditHistoryExporter`, `/engine/audit-history/export`, and showcase-facing NDJSON export endpoints over the same durable store
 - `ENG-065` is now shipped: dependent `Outbox` / `History` roles can explicitly reuse `write` through `UseRole`, and runtime metadata now reports requested versus resolved roles for the first truthful role-reference baseline
@@ -639,7 +639,7 @@ Shipped baseline:
 - additive `Engine:Resilience:RateLimiting:Overrides` modeling projected into `AppProfile.Resilience` so ASP.NET Core hosts can resolve endpoint-scoped behavior and transport overrides with truthful runtime/OpenAPI answers
 - built-in ASP.NET Core GraphQL route split across `/graphql`, `/graphql/schema`, `/graphql-sse`, and `/graphql-ws` under the same `ApiRoutes:Prefixes` contract, with `/engine/rate-limiting` now publishing `transportKind`, `transportSemantics`, `enforcementMoment`, and `longLivedTransportIds` for long-lived transport policies
 - additive `Engine:Resilience:BehaviorExecution:Overrides` modeling projected into `AppProfile.Resilience` so `Cephalon.Behaviors` can resolve behavior-scoped, transport-scoped, and behavior+transport timeout/bulkhead overrides with explicit disable answers and truthful `/engine/behavior-resilience` plus REST/OpenAPI status metadata
-- showcase sample configuration now demonstrates the same resilience contract in `showcase.settings.json`
+- showcase sample configuration now demonstrates the same resilience contract in grouped `Configurations/Engine/Resilience/*` files
 
 Remaining follow-through:
 

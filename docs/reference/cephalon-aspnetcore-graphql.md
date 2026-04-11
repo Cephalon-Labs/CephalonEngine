@@ -55,6 +55,38 @@ Returns: The same builder instance for fluent composition.
 Parameters:
 - `builder`: The ASP.NET Core application builder to extend.
 
+<a id="member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlmutation-microsoft-extensions-dependencyinjection-iservicecollection-system-action-hotchocolate-types-iobjecttypedescriptor"></a>
+
+##### `ConfigureGraphQLMutation`
+
+```csharp
+IServiceCollection ConfigureGraphQLMutation(this IServiceCollection services, Action<IObjectTypeDescriptor> configure)
+```
+
+Adds fields to the shared GraphQL mutation root used by Cephalon modules.
+
+Returns: The same service collection for fluent composition.
+
+Parameters:
+- `services`: The service collection that owns the transport registration.
+- `configure`: The callback that adds fields, arguments, and resolvers to `Mutation`.
+
+<a id="member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlmutation-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-hotchocolate-types-iobjecttypedescriptor"></a>
+
+##### `ConfigureGraphQLMutation`
+
+```csharp
+WebApplicationBuilder ConfigureGraphQLMutation(this WebApplicationBuilder builder, Action<IObjectTypeDescriptor> configure)
+```
+
+Adds fields to the shared GraphQL mutation root on a `WebApplicationBuilder`.
+
+Returns: The same builder instance for fluent composition.
+
+Parameters:
+- `builder`: The ASP.NET Core application builder to extend.
+- `configure`: The callback that adds fields, arguments, and resolvers to `Mutation`.
+
 <a id="member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlquery-microsoft-extensions-dependencyinjection-iservicecollection-system-action-hotchocolate-types-iobjecttypedescriptor"></a>
 
 ##### `ConfigureGraphQLQuery`
@@ -86,6 +118,40 @@ Returns: The same builder instance for fluent composition.
 Parameters:
 - `builder`: The ASP.NET Core application builder to extend.
 - `configure`: The callback that adds fields, arguments, and resolvers to `Query`.
+
+<a id="member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlsubscription-microsoft-extensions-dependencyinjection-iservicecollection-system-action-hotchocolate-types-iobjecttypedescriptor"></a>
+
+##### `ConfigureGraphQLSubscription`
+
+```csharp
+IServiceCollection ConfigureGraphQLSubscription(this IServiceCollection services, Action<IObjectTypeDescriptor> configure)
+```
+
+Adds fields to the shared GraphQL subscription root used by Cephalon modules.
+
+Remarks: Subscription field registration only shapes the GraphQL schema. Modules or hosts still need to register a concrete Hot Chocolate subscription provider, such as `AddInMemorySubscriptions()`, through `ConfigureGraphQLTransport` when they want GraphQL-over-SSE or GraphQL-over-WebSocket operations to execute.
+
+Returns: The same service collection for fluent composition.
+
+Parameters:
+- `services`: The service collection that owns the transport registration.
+- `configure`: The callback that adds fields, arguments, and resolvers to `Subscription`.
+
+<a id="member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlsubscription-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-hotchocolate-types-iobjecttypedescriptor"></a>
+
+##### `ConfigureGraphQLSubscription`
+
+```csharp
+WebApplicationBuilder ConfigureGraphQLSubscription(this WebApplicationBuilder builder, Action<IObjectTypeDescriptor> configure)
+```
+
+Adds fields to the shared GraphQL subscription root on a `WebApplicationBuilder`.
+
+Returns: The same builder instance for fluent composition.
+
+Parameters:
+- `builder`: The ASP.NET Core application builder to extend.
+- `configure`: The callback that adds fields, arguments, and resolvers to `Subscription`.
 
 <a id="member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqltransport-microsoft-extensions-dependencyinjection-iservicecollection-system-action-hotchocolate-execution-configuration-irequestexecutorbuilder"></a>
 
@@ -131,7 +197,7 @@ Parameters:
 
 Marks a Cephalon module as contributing GraphQL schema or resolver behavior on ASP.NET Core.
 
-Remarks: Implementing modules should also register their GraphQL query, mutation, subscription, or type-extension services from `ConfigureServices` by calling `ConfigureGraphQLTransport(...)` on the shared service collection.
+Remarks: Implementing modules should also register their GraphQL query, mutation, subscription, or type-extension services from `ConfigureServices` by calling `ConfigureGraphQLQuery(...)`, `ConfigureGraphQLMutation(...)`, `ConfigureGraphQLSubscription(...)`, or `ConfigureGraphQLTransport(...)` on the shared service collection. Subscription fields still require a concrete Hot Chocolate subscription provider, such as `AddInMemorySubscriptions()`, to execute over the built-in GraphQL-over-SSE or GraphQL-over-WebSocket routes.
 
 #### Declaration
 ```csharp

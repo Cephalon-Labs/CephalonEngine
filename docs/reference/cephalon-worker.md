@@ -65,7 +65,7 @@ HostApplicationBuilder AddCephalonProjectConfigurations(this HostApplicationBuil
 
 Adds Cephalon's project-configuration conventions to the generic host builder.
 
-Remarks: This loads split configuration files from the project's `Configurations` folder so engine and host-specific settings can be grouped by concern instead of one large JSON file.
+Remarks: This loads split configuration files from the project's `Configurations` folder so engine and host-specific settings can be grouped by concern while preserving the standard `appsettings.json` and `appsettings.{Environment}.json` override path.
 
 Returns: The same builder instance for fluent composition.
 

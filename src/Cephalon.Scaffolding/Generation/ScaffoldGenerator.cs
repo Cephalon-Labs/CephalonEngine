@@ -242,7 +242,7 @@ public static class ScaffoldGenerator
                 case "cephalon-web-host":
                 case "cephalon-service-host":
                     files.Add(new(Path.Combine(project.Path, "Program.cs"), BuildHostProgram(appProfile, request)));
-                    files.Add(new(Path.Combine(project.Path, "appsettings.json"), BuildHostSettings(appProfile, request)));
+                    files.AddRange(BuildHostConfigurationFiles(project.Path, appProfile, request));
                     files.Add(new(
                         Path.Combine(project.Path, "Properties", "PublishProfiles", "CephalonFolder.pubxml"),
                         BuildPublishProfile()));
@@ -401,7 +401,7 @@ Generated from the Cephalon `{appProfile.BlueprintDisplayName}` blueprint.
 5. Add feature handlers inside the generated folders for each module.
 6. Add project-specific languages or replace the localization catalog through `Engine:Localization` and DI.
 7. Generate and publish API reference docs before enabling the shipped `ReferenceDocs` host section.
-8. Split host settings into `Configurations/Add*.json` and `Configurations/[group]/[Environment].json` when appsettings starts getting too large.
+8. Keep Cephalon defaults in `Configurations/Add*.json`, use `appsettings.json` plus `appsettings.[Environment].json` for project-specific overrides, and add `Configurations/[group]/[Environment].json` when you want grouped environment overrides. `Configurations/Observability/Development.json` already seeds a Serilog console example, and `Program.cs` only switches to Serilog when that section exists.
 9. Use the shipped `Properties/PublishProfiles/CephalonFolder.pubxml` profile when you want a deterministic published-output path before deployment packaging.
 10. Use the shipped `deploy/container-image/README.md` plus the generated image-publish script when you want a provider-neutral build/tag/push baseline from the generated Dockerfile.
 11. Use the shipped `deploy/azure-app-service/README.md` plus the generated ZIP deployment script when you want an Azure App Service run-from-package baseline after publish.
@@ -713,6 +713,8 @@ docker compose up --build
             "using Cephalon.AspNetCore.Hosting;",
             "using Cephalon.Observability.Hosting;",
             "using Cephalon.Observability.OpenTelemetry.Hosting;",
+            "using Cephalon.Observability.Serilog.Hosting;",
+            "using Microsoft.Extensions.Configuration;",
             "using Microsoft.Extensions.Hosting.WindowsServices;"
         };
         var registrationLines = new List<string>();
@@ -805,9 +807,15 @@ var options = new WebApplicationOptions
 }};
 
 var builder = WebApplication.CreateBuilder(options);
+builder.AddCephalonProjectConfigurations();
 builder.Host.UseWindowsService();
 {registrations}{hostRegistrations}{cephalonRegistration}
 builder.Services.AddCephalonObservability(builder.Configuration);
+if (builder.Configuration.GetSection(""Serilog"").Exists())
+{{
+    builder.Logging.ClearProviders();
+}}
+builder.AddCephalonSerilog();
 builder.AddCephalonOpenTelemetry();
 
 var app = builder.Build();
@@ -824,68 +832,249 @@ app.Run();
 ";
     }
 
-    private static string BuildHostSettings(AppProfile appProfile, ScaffoldRequest request)
+    private static RenderedFile[] BuildHostConfigurationFiles(
+        string projectPath,
+        AppProfile appProfile,
+        ScaffoldRequest request)
     {
-        var engineSettings = new JsonObject
+        return
+        [
+            new(Path.Combine(projectPath, "Configurations", "README.md"), BuildHostConfigurationsReadme()),
+            new(Path.Combine(projectPath, "Configurations", "AddEngine.AppModel.json"), BuildHostAppModelSettings(appProfile, request)),
+            new(Path.Combine(projectPath, "Configurations", "AddEngine.Data.json"), BuildHostDataSettings(appProfile)),
+            new(Path.Combine(projectPath, "Configurations", "AddEngine.Identity.json"), BuildHostIdentitySettings(appProfile)),
+            new(Path.Combine(projectPath, "Configurations", "AddEngine.Tenancy.json"), BuildHostTenancySettings(appProfile)),
+            new(Path.Combine(projectPath, "Configurations", "AddEngine.Audit.json"), BuildHostAuditSettings(appProfile)),
+            new(Path.Combine(projectPath, "Configurations", "AddEngine.Messaging.json"), BuildHostMessagingSettings(appProfile)),
+            new(Path.Combine(projectPath, "Configurations", "AddEngine.Observability.json"), BuildHostObservabilitySettings()),
+            new(Path.Combine(projectPath, "Configurations", "AddEngine.Localization.json"), BuildHostLocalizationSettings(request)),
+            new(
+                Path.Combine(projectPath, "Configurations", "Observability", "Development.json"),
+                BuildDevelopmentSerilogSettings(ResolveHostProjectName(appProfile, request))),
+            new(Path.Combine(projectPath, "Configurations", "AddOpenApi.json"), BuildOpenApiSettings(request)),
+            new(Path.Combine(projectPath, "Configurations", "AddReferenceDocs.json"), BuildReferenceDocsSettings("..\\..\\docs\\reference")),
+            new(Path.Combine(projectPath, "appsettings.json"), BuildProjectAppSettings()),
+            new(Path.Combine(projectPath, "appsettings.Development.json"), BuildProjectAppSettings())
+        ];
+    }
+
+    private static string BuildHostConfigurationsReadme()
+    {
+        return """
+# Host Configuration
+
+Generated Cephalon hosts load configuration in three layers:
+
+- shared Cephalon defaults from `Configurations/Add*.json`
+- optional grouped environment overrides from `Configurations/{group}/{Environment}.json`
+- standard project overrides from `appsettings.json` and `appsettings.{Environment}.json`
+
+The generated `Configurations/Observability/Development.json` already includes a Serilog console
+sample. `Program.cs` switches cleanly to Serilog only when a top-level `Serilog` section exists, so
+the starter stays optional for other environments instead of forcing a provider decision globally.
+
+This starter keeps the shipped baseline in root `Add*.json` files so the host stays deterministic in
+`Development`, `Local`, `Production`, or any other environment name without requiring duplicate files.
+
+When you need per-environment differences later, add overrides such as:
+
+- `Configurations/OpenApi/Development.json`
+- `Configurations/Engine/Observability/Production.json`
+
+`Program.cs` already loads this convention through `AddCephalonProjectConfigurations()`. The engine inserts
+split-config defaults ahead of standard host overrides, so `appsettings.json`, user secrets, environment
+variables, and command-line arguments continue to win the same way developers expect in ASP.NET Core.
+""";
+    }
+
+    private static string BuildProjectAppSettings()
+    {
+        return BuildJsonContents(new JsonObject());
+    }
+
+    private static string BuildDevelopmentSerilogSettings(string applicationName)
+    {
+        return BuildJsonContents(new JsonObject
         {
-            ["Blueprint"] = appProfile.BlueprintId,
-            ["Discovery"] = new JsonObject
+            ["Serilog"] = new JsonObject
             {
-                ["Assemblies"] = CreateJsonArray(
-                    request.Modules.Select(moduleName => request.AppName + ".Modules." + moduleName))
-            },
-            ["Patterns"] = CreateJsonArray(appProfile.Patterns.Select(pattern => pattern.Id)),
-            ["Technologies"] = CreateJsonArray(appProfile.Technologies.Select(technology => technology.Id)),
-            ["Data"] = BuildGeneratedDataSettings(appProfile),
-            ["Identity"] = BuildGeneratedIdentitySettings(appProfile),
-            ["Tenancy"] = BuildGeneratedTenancySettings(appProfile),
-            ["Audit"] = new JsonObject
-            {
-                ["Enabled"] = ShouldGenerateAuditPack(appProfile)
-            },
-            ["Messaging"] = BuildGeneratedMessagingSettings(appProfile),
-            ["Observability"] = new JsonObject
-            {
-                ["LogManifestSummary"] = true,
-                ["LogModuleSummary"] = true,
-                ["LogCapabilitySummary"] = true,
-                ["Telemetry"] = new JsonObject
+                ["Using"] = CreateJsonArray(["Serilog.Sinks.Console"]),
+                ["MinimumLevel"] = new JsonObject
                 {
-                    ["Provider"] = "OpenTelemetry",
-                    ["Protocol"] = "otlp/http",
-                    ["ExportLogs"] = true,
-                    ["ExportMetrics"] = true,
-                    ["ExportTraces"] = true
-                }
-            },
-            ["Localization"] = new JsonObject
-            {
-                ["DefaultCulture"] = "en",
-                ["SupportedCultures"] = CreateJsonArray(["en", "th"]),
-                ["Resources"] = new JsonObject
-                {
-                    ["th"] = new JsonObject
+                    ["Default"] = "Information",
+                    ["Override"] = new JsonObject
                     {
-                        ["engine.docs.rest.title"] = request.AppName + " REST API ภาษาไทย",
-                        ["engine.docs.rest.description"] = "พื้นผิว REST ที่ " + request.AppName + " host เปิดให้ใช้งาน"
+                        ["Microsoft"] = "Warning",
+                        ["Microsoft.Hosting.Lifetime"] = "Information",
+                        ["System"] = "Warning"
+                    }
+                },
+                ["WriteTo"] = new JsonArray
+                {
+                    new JsonObject
+                    {
+                        ["Name"] = "Console"
+                    }
+                },
+                ["Properties"] = new JsonObject
+                {
+                    ["Application"] = applicationName
+                }
+            }
+        });
+    }
+
+    private static string BuildHostAppModelSettings(AppProfile appProfile, ScaffoldRequest request)
+    {
+        return BuildJsonContents(new JsonObject
+        {
+            ["Engine"] = new JsonObject
+            {
+                ["Blueprint"] = appProfile.BlueprintId,
+                ["Discovery"] = new JsonObject
+                {
+                    ["Assemblies"] = CreateJsonArray(
+                        request.Modules.Select(moduleName => request.AppName + ".Modules." + moduleName))
+                },
+                ["Patterns"] = CreateJsonArray(appProfile.Patterns.Select(pattern => pattern.Id)),
+                ["Technologies"] = CreateJsonArray(appProfile.Technologies.Select(technology => technology.Id)),
+                ["Transports"] = CreateJsonArray(appProfile.Transports.Select(transport => transport.Id))
+            },
+        });
+    }
+
+    private static string BuildHostDataSettings(AppProfile appProfile)
+    {
+        return BuildJsonContents(new JsonObject
+        {
+            ["Engine"] = new JsonObject
+            {
+                ["Data"] = BuildGeneratedDataSettings(appProfile)
+            }
+        });
+    }
+
+    private static string BuildHostIdentitySettings(AppProfile appProfile)
+    {
+        return BuildJsonContents(new JsonObject
+        {
+            ["Engine"] = new JsonObject
+            {
+                ["Identity"] = BuildGeneratedIdentitySettings(appProfile)
+            }
+        });
+    }
+
+    private static string BuildHostTenancySettings(AppProfile appProfile)
+    {
+        return BuildJsonContents(new JsonObject
+        {
+            ["Engine"] = new JsonObject
+            {
+                ["Tenancy"] = BuildGeneratedTenancySettings(appProfile)
+            }
+        });
+    }
+
+    private static string BuildHostAuditSettings(AppProfile appProfile)
+    {
+        return BuildJsonContents(new JsonObject
+        {
+            ["Engine"] = new JsonObject
+            {
+                ["Audit"] = new JsonObject
+                {
+                    ["Enabled"] = ShouldGenerateAuditPack(appProfile)
+                }
+            }
+        });
+    }
+
+    private static string BuildHostMessagingSettings(AppProfile appProfile)
+    {
+        return BuildJsonContents(new JsonObject
+        {
+            ["Engine"] = new JsonObject
+            {
+                ["Messaging"] = BuildGeneratedMessagingSettings(appProfile)
+            }
+        });
+    }
+
+    private static string BuildHostObservabilitySettings()
+    {
+        return BuildJsonContents(new JsonObject
+        {
+            ["Engine"] = new JsonObject
+            {
+                ["Observability"] = new JsonObject
+                {
+                    ["LogManifestSummary"] = true,
+                    ["LogModuleSummary"] = true,
+                    ["LogCapabilitySummary"] = true,
+                    ["Telemetry"] = new JsonObject
+                    {
+                        ["Provider"] = "OpenTelemetry",
+                        ["Protocol"] = "otlp/http",
+                        ["ExportLogs"] = true,
+                        ["ExportMetrics"] = true,
+                        ["ExportTraces"] = true
                     }
                 }
-            },
-            ["Transports"] = CreateJsonArray(appProfile.Transports.Select(transport => transport.Id))
-        };
+            }
+        });
+    }
 
-        var root = new JsonObject
+    private static string BuildHostLocalizationSettings(ScaffoldRequest request)
+    {
+        return BuildJsonContents(new JsonObject
         {
-            ["Engine"] = engineSettings,
+            ["Engine"] = new JsonObject
+            {
+                ["Localization"] = new JsonObject
+                {
+                    ["DefaultCulture"] = "en",
+                    ["SupportedCultures"] = CreateJsonArray(["en", "th"]),
+                    ["Resources"] = new JsonObject
+                    {
+                        ["th"] = new JsonObject
+                        {
+                            ["engine.docs.rest.title"] = request.AppName + " REST API ภาษาไทย",
+                            ["engine.docs.rest.description"] = "พื้นผิว REST ที่ " + request.AppName + " host เปิดให้ใช้งาน"
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private static string BuildOpenApiSettings(ScaffoldRequest request)
+    {
+        return BuildJsonContents(new JsonObject
+        {
+            ["OpenApi"] = new JsonObject
+            {
+                ["Title"] = request.AppName + " API"
+            }
+        });
+    }
+
+    private static string BuildReferenceDocsSettings(string directoryPath)
+    {
+        return BuildJsonContents(new JsonObject
+        {
             ["ReferenceDocs"] = new JsonObject
             {
                 ["Enabled"] = false,
                 ["RoutePrefix"] = "/reference",
-                ["DirectoryPath"] = "..\\..\\docs\\reference",
+                ["DirectoryPath"] = directoryPath,
                 ["DefaultDocument"] = "browse.html"
             }
-        };
+        });
+    }
 
+    private static string BuildJsonContents(JsonObject root)
+    {
         return root.ToJsonString(new JsonSerializerOptions
         {
             WriteIndented = true
@@ -3056,7 +3245,7 @@ service:
                 scope: Source.Scope,
                 role: Source.Role,
                 template: Source.Template,
-                packages: Source.Packages,
+                packages: GetEffectiveProjectPackages(Source.Template, Source.Packages),
                 projectReferences: projectReferences,
                 metadata: metadata);
         }
@@ -3068,5 +3257,25 @@ service:
             var relative = System.IO.Path.GetRelativePath(sourceDirectory, targetProjectFilePath);
             return NormalizePath(relative);
         }
+    }
+
+    private static string[] GetEffectiveProjectPackages(
+        string template,
+        IReadOnlyList<string> packages)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(template);
+        ArgumentNullException.ThrowIfNull(packages);
+
+        var effectivePackages = packages.ToList();
+
+        if (template is "cephalon-web-host" or "cephalon-service-host")
+        {
+            effectivePackages.Add("Cephalon.Observability.Serilog");
+            effectivePackages.Add("Serilog.Sinks.Console");
+        }
+
+        return effectivePackages
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
     }
 }

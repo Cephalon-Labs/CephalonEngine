@@ -3,8 +3,8 @@ using System.Globalization;
 using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
-using Cephalon.AspNetCore.Modules;
 using Cephalon.Behaviors.Http.Hosting;
+using Cephalon.Sample.Showcase.Domain.Catalog.Behaviors;
 using Cephalon.Sample.Showcase.Domain.Catalog.Models;
 using Cephalon.Sample.Showcase.Infrastructure;
 using Microsoft.AspNetCore.Http;
@@ -19,7 +19,7 @@ namespace Cephalon.Sample.Showcase.Modules;
 /// Exposes product CRUD operations through a module-owned REST surface.
 /// Uses PostgreSQL (via EF) when available, otherwise falls back to in-memory store.
 /// </summary>
-public sealed class CatalogModule : ModuleBase, IEndpointModule
+public sealed class CatalogModule : RestBehaviorModuleBase
 {
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "showcase.catalog",
@@ -45,7 +45,16 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
     }
 
     /// <inheritdoc />
-    public void MapEndpoints(IEndpointRouteBuilder endpoints)
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+    {
+        behaviors.Internal<ListProductsBehavior>();
+        behaviors.Internal<GetProductBehavior>();
+        behaviors.Internal<CreateProductBehavior>();
+        behaviors.Internal<UpdateProductBehavior>();
+    }
+
+    /// <inheritdoc />
+    protected override void MapAdditionalEndpoints(IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapBehaviorRestGroup(this, "/showcase/catalog");
         var routes = group.Routes;

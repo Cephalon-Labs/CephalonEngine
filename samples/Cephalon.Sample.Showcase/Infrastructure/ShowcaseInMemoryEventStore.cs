@@ -11,6 +11,25 @@ internal sealed class ShowcaseInMemoryEventStore : IEventStore
     private readonly Lock syncRoot = new();
     private readonly Dictionary<string, List<IDomainEvent>> streams = new(StringComparer.Ordinal);
 
+    public IReadOnlyList<ShowcaseEventStreamSnapshot> GetSnapshots()
+    {
+        lock (syncRoot)
+        {
+            return streams
+                .OrderBy(static pair => pair.Key, StringComparer.Ordinal)
+                .Select(static pair => new ShowcaseEventStreamSnapshot(pair.Key, [.. pair.Value]))
+                .ToArray();
+        }
+    }
+
+    public void Reset()
+    {
+        lock (syncRoot)
+        {
+            streams.Clear();
+        }
+    }
+
     /// <inheritdoc />
     public Task AppendAsync(
         string streamId,
@@ -91,4 +110,19 @@ internal sealed class ShowcaseInMemoryEventStore : IEventStore
 
         return stream;
     }
+}
+
+internal sealed record ShowcaseEventStreamSnapshot(
+    string StreamId,
+    IReadOnlyList<IDomainEvent> Events)
+{
+    public int EventCount => Events.Count;
+
+    public long Version => Events.Count == 0 ? -1 : Events[^1].StreamVersion;
+
+    public string? LastEventType => Events.Count == 0 ? null : Events[^1].GetType().Name;
+
+    public DateTimeOffset? LastOccurredAtUtc => Events.Count == 0
+        ? null
+        : new DateTimeOffset(DateTime.SpecifyKind(Events[^1].OccurredAtUtc, DateTimeKind.Utc));
 }

@@ -83,7 +83,8 @@ public sealed record OrderLineItem(
 public sealed record PlaceOrderInput(
     string CustomerId,
     string ShippingAddress,
-    List<PlaceOrderLineItem> Items);
+    List<PlaceOrderLineItem> Items,
+    string? OrderId = null);
 
 /// <summary>A line item in a place-order request.</summary>
 public sealed record PlaceOrderLineItem(

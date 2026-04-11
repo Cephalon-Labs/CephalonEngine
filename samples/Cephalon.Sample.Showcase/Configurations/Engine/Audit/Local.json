@@ -1,0 +1,24 @@
+{
+  "Engine": {
+    "Audit": {
+      "Enabled": true,
+      "EnableInMemoryWriter": false,
+      "InMemoryBufferCapacity": 1024,
+      "History": {
+        "Enabled": true,
+        "Provider": "entity-framework",
+        "DatabaseRole": "history",
+        "Export": {
+          "Enabled": true,
+          "MaxEntries": 1000
+        },
+        "Retention": {
+          "Enabled": true,
+          "MaxAgeDays": 90,
+          "DeleteBatchSize": 250,
+          "ApplyOnStartup": true
+        }
+      }
+    }
+  }
+}

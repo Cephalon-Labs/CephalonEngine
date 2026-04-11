@@ -63,14 +63,31 @@ public sealed class CliApplicationTests
             Assert.True(File.Exists(Path.Combine(outputPath, "deploy", "linux", "systemd", "Acme.Store.env")));
             Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Properties", "PublishProfiles", "CephalonFolder.pubxml")));
             Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Program.cs")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "appsettings.json")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "appsettings.Development.json")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "README.md")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "Observability", "Development.json")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "AddEngine.AppModel.json")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "AddEngine.Data.json")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "AddEngine.Identity.json")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "AddEngine.Tenancy.json")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "AddEngine.Audit.json")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "AddEngine.Messaging.json")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "AddEngine.Observability.json")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "AddEngine.Localization.json")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "AddOpenApi.json")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "AddReferenceDocs.json")));
             Assert.True(File.Exists(Path.Combine(outputPath, "tests", "Acme.Store.Service.Tests", "Architecture", "CompositionSmokeTests.cs")));
             Assert.True(File.Exists(Path.Combine(outputPath, "tests", "Acme.Store.Service.Tests", "Features", "CheckoutBehaviorSpecifications.cs")));
 
             var packageProps = await File.ReadAllTextAsync(Path.Combine(outputPath, "Directory.Packages.props"));
             Assert.Contains("Cephalon.AspNetCore.Grpc", packageProps, StringComparison.Ordinal);
             Assert.Contains("Cephalon.Observability.OpenTelemetry", packageProps, StringComparison.Ordinal);
+            Assert.Contains("Cephalon.Observability.Serilog", packageProps, StringComparison.Ordinal);
             Assert.Contains("Microsoft.Extensions.Hosting.WindowsServices", packageProps, StringComparison.Ordinal);
+            Assert.Contains("Serilog.Sinks.Console", packageProps, StringComparison.Ordinal);
             Assert.Contains("Version=\"3.2.0-preview\"", packageProps, StringComparison.Ordinal);
+            Assert.Contains("Version=\"6.1.1\"", packageProps, StringComparison.Ordinal);
 
             var nuGetConfig = await File.ReadAllTextAsync(Path.Combine(outputPath, "NuGet.config"));
             Assert.Contains("./.cephalon/packages", nuGetConfig, StringComparison.Ordinal);
@@ -122,19 +139,42 @@ public sealed class CliApplicationTests
             Assert.Contains("ExecStart=/usr/bin/env dotnet /opt/Acme.Store/current/Acme.Store.Service.dll", systemdService, StringComparison.Ordinal);
             Assert.Contains("DynamicUser=true", systemdService, StringComparison.Ordinal);
 
-            var settings = await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "appsettings.json"));
-            Assert.Contains("\"microservice\"", settings, StringComparison.Ordinal);
-            Assert.Contains("\"grpc\"", settings, StringComparison.Ordinal);
-            Assert.Contains("\"json-rpc\"", settings, StringComparison.Ordinal);
-            Assert.Contains("\"agentic-workloads\"", settings, StringComparison.Ordinal);
-            Assert.Contains("\"Data\"", settings, StringComparison.Ordinal);
-            Assert.Contains("\"Identity\"", settings, StringComparison.Ordinal);
-            Assert.Contains("\"Tenancy\"", settings, StringComparison.Ordinal);
-            Assert.Contains("\"Audit\"", settings, StringComparison.Ordinal);
-            Assert.DoesNotContain("http://localhost:4317", settings, StringComparison.Ordinal);
-            Assert.Contains("\"Protocol\": \"otlp/http\"", settings, StringComparison.Ordinal);
+            Assert.Equal("{}", (await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "appsettings.json"))).Trim(), ignoreCase: false, ignoreLineEndingDifferences: false, ignoreWhiteSpaceDifferences: false);
+            Assert.Equal("{}", (await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "appsettings.Development.json"))).Trim(), ignoreCase: false, ignoreLineEndingDifferences: false, ignoreWhiteSpaceDifferences: false);
+            var observabilityDevelopment = await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "Observability", "Development.json"));
+            Assert.Contains("\"Serilog\"", observabilityDevelopment, StringComparison.Ordinal);
+            Assert.Contains("\"Serilog.Sinks.Console\"", observabilityDevelopment, StringComparison.Ordinal);
+            Assert.Contains("\"Console\"", observabilityDevelopment, StringComparison.Ordinal);
+            Assert.Contains("\"Application\": \"Acme.Store.Service\"", observabilityDevelopment, StringComparison.Ordinal);
+
+            var appModelSettings = await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "AddEngine.AppModel.json"));
+            Assert.Contains("\"microservice\"", appModelSettings, StringComparison.Ordinal);
+            Assert.Contains("\"grpc\"", appModelSettings, StringComparison.Ordinal);
+            Assert.Contains("\"json-rpc\"", appModelSettings, StringComparison.Ordinal);
+            Assert.Contains("\"agentic-workloads\"", appModelSettings, StringComparison.Ordinal);
+
+            var dataSettings = await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "AddEngine.Data.json"));
+            Assert.Contains("\"Data\"", dataSettings, StringComparison.Ordinal);
+
+            var identitySettings = await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "AddEngine.Identity.json"));
+            Assert.Contains("\"Identity\"", identitySettings, StringComparison.Ordinal);
+
+            var tenancySettings = await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "AddEngine.Tenancy.json"));
+            Assert.Contains("\"Tenancy\"", tenancySettings, StringComparison.Ordinal);
+
+            var auditSettings = await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "AddEngine.Audit.json"));
+            Assert.Contains("\"Audit\"", auditSettings, StringComparison.Ordinal);
+
+            var observabilitySettings = await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "Configurations", "AddEngine.Observability.json"));
+            Assert.DoesNotContain("http://localhost:4317", observabilitySettings, StringComparison.Ordinal);
+            Assert.Contains("\"Protocol\": \"otlp/http\"", observabilitySettings, StringComparison.Ordinal);
 
             var program = await File.ReadAllTextAsync(Path.Combine(outputPath, "src", "Acme.Store.Service", "Program.cs"));
+            Assert.Contains("builder.AddCephalonProjectConfigurations();", program, StringComparison.Ordinal);
+            Assert.DoesNotContain("builder.Configuration.AddEnvironmentVariables();", program, StringComparison.Ordinal);
+            Assert.Contains("builder.Configuration.GetSection(\"Serilog\").Exists()", program, StringComparison.Ordinal);
+            Assert.Contains("builder.Logging.ClearProviders();", program, StringComparison.Ordinal);
+            Assert.Contains("builder.AddCephalonSerilog();", program, StringComparison.Ordinal);
             Assert.Contains("builder.AddCephalonOpenTelemetry();", program, StringComparison.Ordinal);
             Assert.Contains("WindowsServiceHelpers.IsWindowsService()", program, StringComparison.Ordinal);
             Assert.Contains("builder.Host.UseWindowsService();", program, StringComparison.Ordinal);

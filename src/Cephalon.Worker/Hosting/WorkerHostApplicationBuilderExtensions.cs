@@ -16,7 +16,8 @@ public static class WorkerHostApplicationBuilderExtensions
     /// <returns>The same builder instance for fluent composition.</returns>
     /// <remarks>
     /// This loads split configuration files from the project's <c>Configurations</c> folder so
-    /// engine and host-specific settings can be grouped by concern instead of one large JSON file.
+    /// engine and host-specific settings can be grouped by concern while preserving the standard
+    /// <c>appsettings.json</c> and <c>appsettings.{Environment}.json</c> override path.
     /// </remarks>
     public static HostApplicationBuilder AddCephalonProjectConfigurations(this HostApplicationBuilder builder)
     {

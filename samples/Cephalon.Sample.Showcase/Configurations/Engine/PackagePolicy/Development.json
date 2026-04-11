@@ -1,0 +1,17 @@
+{
+  "Engine": {
+    "PackagePolicy": {
+      "AllowAssemblyPathPackages": true,
+      "RequireVersion": false,
+      "RequireMinimumEngineVersion": false,
+      "RequireMaximumEngineVersion": false,
+      "RequireSupportedTargetFrameworks": false,
+      "RequirePublisherId": false,
+      "RequireSignatureFingerprint": false,
+      "RequireSignatureKeyId": false,
+      "RequireSignatureValue": false,
+      "RequireSignatureVerification": false,
+      "RequireIntegritySha256": false
+    }
+  }
+}

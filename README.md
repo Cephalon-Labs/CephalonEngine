@@ -142,12 +142,12 @@ When a host calls `AddCephalon(...)`, Cephalon now also loads split project conf
 
 Examples:
 
-- `Configurations/Cors/Local.json`
-- `Configurations/Cors/Development.json`
+- `Configurations/AddOpenApi.json`
 - `Configurations/OpenApi/Local.json`
 - `Configurations/OpenApi/Development.json`
 
 This keeps config-driven features such as engine settings, OpenAPI, hosted docs, or future CORS conventions out of one oversized `appsettings.json`. If host code needs those values before `AddCephalon(...)`, call `AddCephalonProjectConfigurations()` first.
+The split files load before the normal `appsettings.json` and `appsettings.{Environment}.json` layers, so teams can keep grouped defaults under `Configurations/` while still using standard host overrides when they need them.
 
 ## Quick start
 

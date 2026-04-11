@@ -686,6 +686,130 @@ AuditHistorySelection History { get; }
 
 Gets the durable audit-history inputs resolved for the app.
 
+<a id="type-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection"></a>
+
+### `BehaviorExecutionResilienceOverrideSelection`
+
+Describes one named behavior-execution resilience override requested for a subset of behaviors or transports.
+
+#### Declaration
+```csharp
+public sealed class BehaviorExecutionResilienceOverrideSelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection"></a>
+
+##### `BehaviorExecutionResilienceOverrideSelection`
+
+```csharp
+BehaviorExecutionResilienceOverrideSelection(string id, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> transportIds, RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead)
+```
+
+Initializes a new instance of the `BehaviorExecutionResilienceOverrideSelection` class.
+
+Parameters:
+- `id`: The stable override identifier.
+- `behaviorIds`: The targeted behavior identifiers.
+- `transportIds`: The targeted transport identifiers.
+- `retry`: The retry override requested for the targeted surface.
+- `timeout`: The timeout override requested for the targeted surface.
+- `circuitBreaker`: The circuit-breaker override requested for the targeted surface.
+- `bulkhead`: The bulkhead override requested for the targeted surface.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-behaviorids"></a>
+
+##### `BehaviorIds`
+
+```csharp
+IReadOnlyList<string> BehaviorIds { get; }
+```
+
+Gets the behavior identifiers targeted by this override.
+
+<a id="member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-bulkhead"></a>
+
+##### `Bulkhead`
+
+```csharp
+BulkheadSelection Bulkhead { get; }
+```
+
+Gets the bulkhead override requested for the targeted surface.
+
+<a id="member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-circuitbreaker"></a>
+
+##### `CircuitBreaker`
+
+```csharp
+CircuitBreakerSelection CircuitBreaker { get; }
+```
+
+Gets the circuit-breaker override requested for the targeted surface.
+
+<a id="member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-hasstrategyvalues"></a>
+
+##### `HasStrategyValues`
+
+```csharp
+bool HasStrategyValues { get; }
+```
+
+Gets a value indicating whether any strategy-level override values were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any override values were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable override identifier.
+
+<a id="member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-retry"></a>
+
+##### `Retry`
+
+```csharp
+RetrySelection Retry { get; }
+```
+
+Gets the retry override requested for the targeted surface.
+
+<a id="member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-timeout"></a>
+
+##### `Timeout`
+
+```csharp
+TimeoutSelection Timeout { get; }
+```
+
+Gets the timeout override requested for the targeted surface.
+
+<a id="member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-transportids"></a>
+
+##### `TransportIds`
+
+```csharp
+IReadOnlyList<string> TransportIds { get; }
+```
+
+Gets the transport identifiers targeted by this override.
+
 <a id="type-cephalon-abstractions-appmodel-bulkheadselection"></a>
 
 ### `BulkheadSelection`
@@ -1759,12 +1883,12 @@ public sealed class ResilienceSelection
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-appmodel-resilienceselection-ctor-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection-cephalon-abstractions-appmodel-ratelimitingselection"></a>
+<a id="member-m-cephalon-abstractions-appmodel-resilienceselection-ctor-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection-cephalon-abstractions-appmodel-ratelimitingselection-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection"></a>
 
 ##### `ResilienceSelection`
 
 ```csharp
-ResilienceSelection(RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead, RateLimitingSelection rateLimiting)
+ResilienceSelection(RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead, RateLimitingSelection rateLimiting, IReadOnlyList<BehaviorExecutionResilienceOverrideSelection> behaviorExecutionOverrides)
 ```
 
 Initializes a new instance of the `ResilienceSelection` class.
@@ -1775,8 +1899,19 @@ Parameters:
 - `circuitBreaker`: The circuit-breaker policy resolved for the app.
 - `bulkhead`: The bulkhead policy resolved for the app.
 - `rateLimiting`: The rate-limiting policy resolved for the app.
+- `behaviorExecutionOverrides`: The named behavior-execution override policies targeted at specific behaviors or transports.
 
 #### Properties
+
+<a id="member-p-cephalon-abstractions-appmodel-resilienceselection-behaviorexecutionoverrides"></a>
+
+##### `BehaviorExecutionOverrides`
+
+```csharp
+IReadOnlyList<BehaviorExecutionResilienceOverrideSelection> BehaviorExecutionOverrides { get; }
+```
+
+Gets the named behavior-execution override policies targeted at specific behaviors or transports.
 
 <a id="member-p-cephalon-abstractions-appmodel-resilienceselection-bulkhead"></a>
 
@@ -5280,6 +5415,99 @@ const BehaviorFaultSeverity Warning
 ```
 
 Warning-level fault details.
+
+<a id="type-cephalon-abstractions-behaviors-behavioridempotencyattribute"></a>
+
+### `BehaviorIdempotencyAttribute`
+
+Declares whether a behavior execution is safe to replay automatically.
+
+Remarks: Cephalon uses this behavior-authored contract when resilience features need to decide whether transient failures should stay fail-fast only or can later participate in automatic retry.
+
+#### Declaration
+```csharp
+public sealed class BehaviorIdempotencyAttribute
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-behaviors-behavioridempotencyattribute-ctor"></a>
+
+##### `BehaviorIdempotencyAttribute`
+
+```csharp
+BehaviorIdempotencyAttribute()
+```
+
+Initializes a new instance of the `BehaviorIdempotencyAttribute` class and marks the behavior as idempotent.
+
+<a id="member-m-cephalon-abstractions-behaviors-behavioridempotencyattribute-ctor-cephalon-abstractions-behaviors-behavioridempotencymode"></a>
+
+##### `BehaviorIdempotencyAttribute`
+
+```csharp
+BehaviorIdempotencyAttribute(BehaviorIdempotencyMode mode)
+```
+
+Initializes a new instance of the `BehaviorIdempotencyAttribute` class.
+
+Parameters:
+- `mode`: The declared idempotency mode.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-behavioridempotencyattribute-mode"></a>
+
+##### `Mode`
+
+```csharp
+BehaviorIdempotencyMode Mode { get; }
+```
+
+Gets the declared idempotency mode.
+
+<a id="type-cephalon-abstractions-behaviors-behavioridempotencymode"></a>
+
+### `BehaviorIdempotencyMode`
+
+Describes whether a behavior execution is safe to replay automatically.
+
+#### Declaration
+```csharp
+public enum BehaviorIdempotencyMode
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-behaviors-behavioridempotencymode-idempotent"></a>
+
+##### `Idempotent`
+
+```csharp
+const BehaviorIdempotencyMode Idempotent
+```
+
+Replaying the same logical behavior execution is expected to be safe.
+
+<a id="member-f-cephalon-abstractions-behaviors-behavioridempotencymode-nonidempotent"></a>
+
+##### `NonIdempotent`
+
+```csharp
+const BehaviorIdempotencyMode NonIdempotent
+```
+
+Replaying the same logical behavior execution is not expected to be safe.
+
+<a id="member-f-cephalon-abstractions-behaviors-behavioridempotencymode-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const BehaviorIdempotencyMode Unknown
+```
+
+No explicit idempotency contract was declared for the behavior.
 
 <a id="type-cephalon-abstractions-behaviors-behaviornotfoundexception"></a>
 
@@ -12610,6 +12838,469 @@ Identifies an organization pattern.
 <a id="namespace-cephalon-abstractions-resilience"></a>
 
 ## Namespace Cephalon.Abstractions.Resilience
+
+<a id="type-cephalon-abstractions-resilience-behaviorexecutionresilienceselection"></a>
+
+### `BehaviorExecutionResilienceSelection`
+
+Describes the subset of resilience policy selections that apply to behavior execution pipelines.
+
+#### Declaration
+```csharp
+public sealed class BehaviorExecutionResilienceSelection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-ctor-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection"></a>
+
+##### `BehaviorExecutionResilienceSelection`
+
+```csharp
+BehaviorExecutionResilienceSelection(RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead)
+```
+
+Initializes a new instance of the `BehaviorExecutionResilienceSelection` class.
+
+Parameters:
+- `retry`: The retry selection that applies to behavior execution.
+- `timeout`: The timeout selection that applies to behavior execution.
+- `circuitBreaker`: The circuit-breaker selection that applies to behavior execution.
+- `bulkhead`: The bulkhead selection that applies to behavior execution.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-bulkhead"></a>
+
+##### `Bulkhead`
+
+```csharp
+BulkheadSelection Bulkhead { get; }
+```
+
+Gets the bulkhead selection that applies to behavior execution.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-circuitbreaker"></a>
+
+##### `CircuitBreaker`
+
+```csharp
+CircuitBreakerSelection CircuitBreaker { get; }
+```
+
+Gets the circuit-breaker selection that applies to behavior execution.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-empty"></a>
+
+##### `Empty`
+
+```csharp
+BehaviorExecutionResilienceSelection Empty { get; }
+```
+
+Gets an empty behavior-execution resilience selection.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any behavior-execution resilience inputs were supplied.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-retry"></a>
+
+##### `Retry`
+
+```csharp
+RetrySelection Retry { get; }
+```
+
+Gets the retry selection that applies to behavior execution.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-timeout"></a>
+
+##### `Timeout`
+
+```csharp
+TimeoutSelection Timeout { get; }
+```
+
+Gets the timeout selection that applies to behavior execution.
+
+<a id="type-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext"></a>
+
+### `BehaviorResilienceExceptionContext`
+
+Describes one behavior-execution exception being evaluated by the resilience pipeline.
+
+#### Declaration
+```csharp
+public sealed class BehaviorResilienceExceptionContext
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-exception-cephalon-abstractions-behaviors-behavioridempotencymode"></a>
+
+##### `BehaviorResilienceExceptionContext`
+
+```csharp
+BehaviorResilienceExceptionContext(string policyId, string behaviorId, string transportId, IReadOnlyList<string> targetedBehaviorIds, IReadOnlyList<string> targetedTransportIds, Exception exception, BehaviorIdempotencyMode behaviorIdempotency)
+```
+
+Initializes a new instance of the `BehaviorResilienceExceptionContext` class.
+
+Parameters:
+- `policyId`: The stable resilience-policy identifier handling the exception.
+- `behaviorId`: The stable behavior identifier being executed.
+- `transportId`: The active transport identifier when one is known.
+- `targetedBehaviorIds`: The behavior identifiers targeted by the active policy.
+- `targetedTransportIds`: The transport identifiers targeted by the active policy.
+- `exception`: The exception being classified.
+- `behaviorIdempotency`: The declared behavior idempotency mode when one is known.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-behaviorid"></a>
+
+##### `BehaviorId`
+
+```csharp
+string BehaviorId { get; }
+```
+
+Gets the stable behavior identifier being executed.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-behavioridempotency"></a>
+
+##### `BehaviorIdempotency`
+
+```csharp
+BehaviorIdempotencyMode BehaviorIdempotency { get; }
+```
+
+Gets the declared behavior idempotency mode when one is known.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-exception"></a>
+
+##### `Exception`
+
+```csharp
+Exception Exception { get; }
+```
+
+Gets the exception being classified.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-policyid"></a>
+
+##### `PolicyId`
+
+```csharp
+string PolicyId { get; }
+```
+
+Gets the stable resilience-policy identifier handling the exception.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-targetedbehaviorids"></a>
+
+##### `TargetedBehaviorIds`
+
+```csharp
+IReadOnlyList<string> TargetedBehaviorIds { get; }
+```
+
+Gets the behavior identifiers targeted by the active policy.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-targetedtransportids"></a>
+
+##### `TargetedTransportIds`
+
+```csharp
+IReadOnlyList<string> TargetedTransportIds { get; }
+```
+
+Gets the transport identifiers targeted by the active policy.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-transportid"></a>
+
+##### `TransportId`
+
+```csharp
+string TransportId { get; }
+```
+
+Gets the active transport identifier when one is known.
+
+<a id="type-cephalon-abstractions-resilience-behaviorresilienceexceptionhandling"></a>
+
+### `BehaviorResilienceExceptionHandling`
+
+Describes how a behavior-execution exception should participate in resilience handling.
+
+#### Declaration
+```csharp
+public enum BehaviorResilienceExceptionHandling
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-resilience-behaviorresilienceexceptionhandling-ignore"></a>
+
+##### `Ignore`
+
+```csharp
+const BehaviorResilienceExceptionHandling Ignore
+```
+
+Ignore the exception for resilience accounting.
+
+<a id="member-f-cephalon-abstractions-resilience-behaviorresilienceexceptionhandling-retryandtrip"></a>
+
+##### `RetryAndTrip`
+
+```csharp
+const BehaviorResilienceExceptionHandling RetryAndTrip
+```
+
+Count the exception for circuit-breaker accounting and treat it as eligible for future retry handling.
+
+<a id="member-f-cephalon-abstractions-resilience-behaviorresilienceexceptionhandling-triponly"></a>
+
+##### `TripOnly`
+
+```csharp
+const BehaviorResilienceExceptionHandling TripOnly
+```
+
+Count the exception for circuit-breaker style failure accounting, but do not automatically retry it.
+
+<a id="type-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor"></a>
+
+### `BehaviorResilienceRuntimeDescriptor`
+
+Describes one effective behavior-execution resilience policy exposed by the current runtime.
+
+#### Declaration
+```csharp
+public sealed class BehaviorResilienceRuntimeDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `BehaviorResilienceRuntimeDescriptor`
+
+```csharp
+BehaviorResilienceRuntimeDescriptor(string Id, string DisplayName, string Description, string ExecutionMode, string Scope, IReadOnlyList<string> BehaviorIds, IReadOnlyList<string> TransportIds, BehaviorExecutionResilienceSelection Requested, BehaviorExecutionResilienceSelection Effective, IReadOnlyDictionary<string, string> Metadata)
+```
+
+Describes one effective behavior-execution resilience policy exposed by the current runtime.
+
+Parameters:
+- `Id`: The stable runtime policy identifier.
+- `DisplayName`: The human-readable policy name.
+- `Description`: The human-readable policy description.
+- `ExecutionMode`: The enforcement mode used by the active runtime, such as `behavior-dispatch-middleware` or `contract-only`.
+- `Scope`: The runtime scope covered by the policy, such as `all-behavior-executions`.
+- `BehaviorIds`: The behavior identifiers covered by the policy when it is scoped to a behavior subset.
+- `TransportIds`: The transport identifiers covered by the policy when it is scoped to a transport subset.
+- `Requested`: The requested behavior-execution resilience contract.
+- `Effective`: The effective behavior-execution resilience contract after runtime normalization.
+- `Metadata`: Additional runtime-specific metadata describing the policy.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-behaviorids"></a>
+
+##### `BehaviorIds`
+
+```csharp
+IReadOnlyList<string> BehaviorIds { get; set; }
+```
+
+The behavior identifiers covered by the policy when it is scoped to a behavior subset.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; set; }
+```
+
+The human-readable policy description.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; set; }
+```
+
+The human-readable policy name.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-effective"></a>
+
+##### `Effective`
+
+```csharp
+BehaviorExecutionResilienceSelection Effective { get; set; }
+```
+
+The effective behavior-execution resilience contract after runtime normalization.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-executionmode"></a>
+
+##### `ExecutionMode`
+
+```csharp
+string ExecutionMode { get; set; }
+```
+
+The enforcement mode used by the active runtime, such as `behavior-dispatch-middleware` or `contract-only`.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; set; }
+```
+
+The stable runtime policy identifier.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+Additional runtime-specific metadata describing the policy.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-requested"></a>
+
+##### `Requested`
+
+```csharp
+BehaviorExecutionResilienceSelection Requested { get; set; }
+```
+
+The requested behavior-execution resilience contract.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-scope"></a>
+
+##### `Scope`
+
+```csharp
+string Scope { get; set; }
+```
+
+The runtime scope covered by the policy, such as `all-behavior-executions`.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-transportids"></a>
+
+##### `TransportIds`
+
+```csharp
+IReadOnlyList<string> TransportIds { get; set; }
+```
+
+The transport identifiers covered by the policy when it is scoped to a transport subset.
+
+<a id="type-cephalon-abstractions-resilience-ibehaviorresilienceexceptionclassifier"></a>
+
+### `IBehaviorResilienceExceptionClassifier`
+
+Classifies behavior-execution exceptions for resilience handling.
+
+Remarks: This contract lets hosts or companion packs decide which failures should count toward circuit-breaker style failure accounting and which ones should stay outside resilience automation because they represent business or validation outcomes.
+
+#### Declaration
+```csharp
+public interface IBehaviorResilienceExceptionClassifier
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-resilience-ibehaviorresilienceexceptionclassifier-classify-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext"></a>
+
+##### `Classify`
+
+```csharp
+BehaviorResilienceExceptionHandling Classify(BehaviorResilienceExceptionContext context)
+```
+
+Classifies one behavior-execution exception.
+
+Returns: The resilience-handling mode that should apply.
+
+Parameters:
+- `context`: The exception context being evaluated.
+
+<a id="type-cephalon-abstractions-resilience-ibehaviorresilienceruntimecatalog"></a>
+
+### `IBehaviorResilienceRuntimeCatalog`
+
+Exposes the active behavior-execution resilience policies visible to the current runtime.
+
+Remarks: This runtime-facing surface reports what the behavior dispatch pipeline actually enforces after defaults and implementation limits have been applied. It complements the requested contract projected through `AppProfile.Resilience`.
+
+#### Declaration
+```csharp
+public interface IBehaviorResilienceRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-resilience-ibehaviorresilienceruntimecatalog-policies"></a>
+
+##### `Policies`
+
+```csharp
+IReadOnlyList<BehaviorResilienceRuntimeDescriptor> Policies { get; }
+```
+
+Gets all behavior-execution resilience policies visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-resilience-ibehaviorresilienceruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+BehaviorResilienceRuntimeDescriptor GetById(string policyId)
+```
+
+Gets one behavior-execution resilience policy by its stable identifier.
+
+Returns: The matching policy descriptor, or `null` when it is not active.
+
+Parameters:
+- `policyId`: The stable policy identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-resilience-ibehaviorresilienceruntimecatalog-resolve-system-string-system-string"></a>
+
+##### `Resolve`
+
+```csharp
+BehaviorResilienceRuntimeDescriptor Resolve(string behaviorId, string transportId)
+```
+
+Resolves the effective behavior-execution resilience policy for one behavior and optional transport.
+
+Returns: The matched policy descriptor, including explicit disable overrides when one suppresses the default policy; otherwise `null` when no behavior-execution policy applies.
+
+Parameters:
+- `behaviorId`: The stable behavior identifier to resolve.
+- `transportId`: The stable transport identifier when one is known.
 
 <a id="type-cephalon-abstractions-resilience-iratelimitingruntimecatalog"></a>
 

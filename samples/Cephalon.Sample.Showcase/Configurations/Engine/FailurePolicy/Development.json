@@ -1,0 +1,13 @@
+{
+  "Engine": {
+    "FailurePolicy": {
+      "StartupFailureBehavior": "FailFast",
+      "StopFailureBehavior": "BestEffortContinue",
+      "AllowManualRestart": true,
+      "MaxRestartAttempts": 3,
+      "StartupReadinessDelay": "00:00:00",
+      "ShutdownLivenessGracePeriod": "00:00:00",
+      "ManualRestartBackoff": "00:00:00"
+    }
+  }
+}

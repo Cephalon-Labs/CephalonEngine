@@ -1,0 +1,17 @@
+{
+  "Engine": {
+    "Localization": {
+      "DefaultCulture": "en",
+      "SupportedCultures": [
+        "en",
+        "th"
+      ],
+      "Resources": {
+        "th": {
+          "engine.docs.rest.title": "CephalonTemplateApp REST API ภาษาไทย",
+          "engine.docs.rest.description": "พื้นผิว REST ที่ CephalonTemplateApp host เปิดให้ใช้งาน"
+        }
+      }
+    }
+  }
+}

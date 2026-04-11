@@ -1,0 +1,13 @@
+{
+  "Engine": {
+    "Blueprint": "microservice",
+    "Discovery": {
+      "Assemblies": [
+        "CephalonTemplateApp"
+      ]
+    },
+    "Transports": [
+      "rest-api"
+    ]
+  }
+}

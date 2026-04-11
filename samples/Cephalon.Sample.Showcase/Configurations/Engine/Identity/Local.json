@@ -1,0 +1,13 @@
+{
+  "Engine": {
+    "Identity": {
+      "Enabled": true,
+      "AuthorizationModes": [
+        "rbac"
+      ],
+      "EnableDefaultEvaluator": true,
+      "EnableRuntimeSurface": true,
+      "RequireExplicitPolicy": true
+    }
+  }
+}

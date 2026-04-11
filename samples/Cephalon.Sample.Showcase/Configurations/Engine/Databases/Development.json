@@ -1,0 +1,42 @@
+{
+  "Engine": {
+    "Databases": {
+      "Runtime": {
+        "EnableDetailedErrors": true,
+        "EnableSensitiveDataLogging": false,
+        "EnableRetryOnFailure": true,
+        "MaxRetryCount": 5,
+        "MaxRetryDelaySeconds": 10,
+        "CommandTimeoutSeconds": 30,
+        "MaxBatchSize": 128
+      },
+      "Write": {
+        "Provider": "PostgreSql",
+        "ConnectionStringName": "WriteDb",
+        "Runtime": {
+          "EnableRetryOnFailure": false
+        }
+      },
+      "Read": {
+        "Provider": "PostgreSql",
+        "ConnectionStringName": "ReadDb"
+      },
+      "Outbox": {
+        "UseRole": "write",
+        "Schema": "outbox01"
+      },
+      "History": {
+        "Provider": "PostgreSql",
+        "ConnectionStringName": "HistoryDb"
+      },
+      "Migrations": {
+        "ApplyOnStartup": true,
+        "ExitAfterApply": false,
+        "Targets": [
+          "write",
+          "history"
+        ]
+      }
+    }
+  }
+}

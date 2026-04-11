@@ -1,0 +1,41 @@
+{
+  "Engine": {
+    "Observability": {
+      "LogManifestSummary": true,
+      "LogModuleSummary": true,
+      "LogCapabilitySummary": true,
+      "HttpLogging": {
+        "Enabled": false,
+        "LogRequestBody": false,
+        "LogResponseBody": false,
+        "RequestBodyLimit": 4096,
+        "ResponseBodyLimit": 4096,
+        "RedactSensitiveValues": true,
+        "RedactedFieldNames": [
+          "access_token",
+          "apiKey",
+          "api_key",
+          "authorization",
+          "client_secret",
+          "cookie",
+          "password",
+          "pin",
+          "refresh_token",
+          "secret",
+          "set-cookie",
+          "token"
+        ],
+        "RedactionValue": "[REDACTED]"
+      },
+      "Telemetry": {
+        "Provider": "OpenTelemetry",
+        "Protocol": "otlp/grpc",
+        "Endpoint": "http://localhost:4317",
+        "UseSelfHostedDefaults": true,
+        "ExportLogs": true,
+        "ExportMetrics": true,
+        "ExportTraces": true
+      }
+    }
+  }
+}

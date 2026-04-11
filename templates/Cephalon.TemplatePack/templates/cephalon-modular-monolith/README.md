@@ -16,8 +16,8 @@ Generated from the Cephalon modular monolith template.
 3. Update package versions to the Cephalon feed or release you want to target.
 4. Add more modules under `Modules/`.
 5. Keep the host thin and push behavior into modules.
-6. Extend `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` in `appsettings.json` when you want to widen the phase-8 baseline beyond the shipped `Sfid` plus `Audit` starter path.
-7. Publish reference docs, then flip `ReferenceDocs:Enabled` to `true` when you want the host to serve them.
+6. Keep Cephalon defaults in `Configurations/Add*.json`, use `appsettings.json` plus `appsettings.{Environment}.json` for project-specific overrides, and add `Configurations/{group}/{Environment}.json` only when you want grouped environment overrides. `Configurations/Observability/Development.json` already seeds a Serilog console example, and `Program.cs` only switches to Serilog when that section exists.
+7. Publish reference docs, then flip `ReferenceDocs:Enabled` in `Configurations/AddReferenceDocs.json` to `true` when you want the host to serve them.
 
 ## Optional published-output path
 

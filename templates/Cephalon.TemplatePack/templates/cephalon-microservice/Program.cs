@@ -3,6 +3,8 @@ using Cephalon.Audit.Registration;
 using Cephalon.Ids.Sfid.Registration;
 using Cephalon.Observability.Hosting;
 using Cephalon.Observability.OpenTelemetry.Hosting;
+using Cephalon.Observability.Serilog.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting.WindowsServices;
 
 var options = new WebApplicationOptions
@@ -14,6 +16,7 @@ var options = new WebApplicationOptions
 };
 
 var builder = WebApplication.CreateBuilder(options);
+builder.AddCephalonProjectConfigurations();
 builder.Host.UseWindowsService();
 
 builder.AddCephalon(engine =>
@@ -22,6 +25,11 @@ builder.AddCephalon(engine =>
     engine.AddAudit();
 });
 builder.Services.AddCephalonObservability(builder.Configuration);
+if (builder.Configuration.GetSection("Serilog").Exists())
+{
+    builder.Logging.ClearProviders();
+}
+builder.AddCephalonSerilog();
 builder.AddCephalonOpenTelemetry();
 
 var app = builder.Build();

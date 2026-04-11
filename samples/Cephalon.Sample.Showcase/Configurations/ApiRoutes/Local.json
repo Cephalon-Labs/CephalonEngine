@@ -1,0 +1,18 @@
+{
+  "ApiRoutes": {
+    "DefaultBehaviorDocumentName": "v1",
+    "ResultEnvelope": {
+      "Enabled": true
+    },
+    "Prefixes": {
+      "Rest": "/api",
+      "GraphQL": "/graphql",
+      "JsonRpc": "/json-rpc",
+      "Grpc": "/grpc",
+      "Ws": "/ws",
+      "Sse": "/sse",
+      "GraphQLWs": "/graphql-ws",
+      "GraphQLSse": "/graphql-sse"
+    }
+  }
+}

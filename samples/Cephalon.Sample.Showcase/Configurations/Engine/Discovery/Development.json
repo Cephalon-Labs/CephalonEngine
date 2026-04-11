@@ -1,0 +1,11 @@
+{
+  "Engine": {
+    "Discovery": {
+      "Assemblies": [
+        "Cephalon.Sample.Showcase"
+      ],
+      "Packages": [],
+      "PackageDirectories": []
+    }
+  }
+}

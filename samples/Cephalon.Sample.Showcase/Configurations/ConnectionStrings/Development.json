@@ -1,0 +1,9 @@
+{
+  "ConnectionStrings": {
+    "WriteDb": "Host=localhost;Port=5432;Database=showcase_write;Username=showcase;Password=showcase_secret",
+    "ReadDb": "Host=localhost;Port=5432;Database=showcase_write;Username=showcase;Password=showcase_secret",
+    "HistoryDb": "Host=localhost;Port=5432;Database=showcase_history;Username=showcase;Password=showcase_secret",
+    "MongoDB": "mongodb://showcase:showcase_secret@localhost:27017",
+    "Redis": "localhost:6379"
+  }
+}

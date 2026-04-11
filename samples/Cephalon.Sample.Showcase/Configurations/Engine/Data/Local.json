@@ -1,0 +1,33 @@
+{
+  "Engine": {
+    "Data": {
+      "Provider": "EntityFramework",
+      "ReadWriteSplit": true,
+      "Outbox": {
+        "Enabled": true
+      },
+      "Ids": {
+        "Generator": "Sfid",
+        "Sfid": {
+          "DatacenterId": 1,
+          "WorkerId": 1,
+          "WorkerCapacity": 32,
+          "ClockRegressionToleranceMilliseconds": 250
+        }
+      },
+      "MongoDB": {
+        "ConnectionStringName": "MongoDB",
+        "DatabaseName": "showcase_db",
+        "CollectionPrefix": "showcase_",
+        "RegisterOutbox": true,
+        "RegisterInbox": true
+      },
+      "Redis": {
+        "ConnectionStringName": "Redis",
+        "KeyPrefix": "showcase:",
+        "RegisterOutbox": false,
+        "RegisterInbox": false
+      }
+    }
+  }
+}

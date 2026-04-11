@@ -73,6 +73,16 @@ public sealed class TemplatePackTests
             Assert.Contains(package.Entries, entry =>
                 entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/NuGet.config", StringComparison.OrdinalIgnoreCase));
             Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/appsettings.json", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/appsettings.Development.json", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/Configurations/Observability/Development.json", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/Configurations/AddEngine.AppModel.json", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/Configurations/AddReferenceDocs.json", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
                 entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/.cephalon/packages/README.md", StringComparison.OrdinalIgnoreCase));
             Assert.Contains(package.Entries, entry =>
                 entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/Properties/PublishProfiles/CephalonFolder.pubxml", StringComparison.OrdinalIgnoreCase));
@@ -111,6 +121,16 @@ public sealed class TemplatePackTests
             Assert.Contains(package.Entries, entry =>
                 entry.FullName.EndsWith("content/templates/cephalon-microservice/Dockerfile", StringComparison.OrdinalIgnoreCase));
             Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/appsettings.json", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/appsettings.Development.json", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/Configurations/Observability/Development.json", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/Configurations/AddEngine.AppModel.json", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-microservice/Configurations/AddReferenceDocs.json", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
                 entry.FullName.EndsWith("content/templates/cephalon-microservice/Properties/PublishProfiles/CephalonFolder.pubxml", StringComparison.OrdinalIgnoreCase));
             Assert.Contains(package.Entries, entry =>
                 entry.FullName.EndsWith("content/templates/cephalon-microservice/deploy/windows-service/install-service.ps1", StringComparison.OrdinalIgnoreCase));
@@ -145,6 +165,16 @@ public sealed class TemplatePackTests
             Assert.Contains(package.Entries, entry =>
                 entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/Dockerfile", StringComparison.OrdinalIgnoreCase));
             Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/appsettings.json", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/appsettings.Development.json", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/Configurations/Observability/Development.json", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/Configurations/AddEngine.AppModel.json", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/Configurations/AddReferenceDocs.json", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
                 entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/Properties/PublishProfiles/CephalonFolder.pubxml", StringComparison.OrdinalIgnoreCase));
             Assert.Contains(package.Entries, entry =>
                 entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/deploy/windows-service/install-service.ps1", StringComparison.OrdinalIgnoreCase));
@@ -178,6 +208,10 @@ public sealed class TemplatePackTests
                 entry.FullName.EndsWith("content/templates/cephalon-modular-vertical-slice/deploy/linux/systemd/CephalonTemplateApp.service", StringComparison.OrdinalIgnoreCase));
             Assert.Contains(package.Entries, entry =>
                 entry.FullName.EndsWith("PACKAGE.md", StringComparison.OrdinalIgnoreCase));
+
+            AssertTemplatePackStarterUsesSplitSerilogConfig(package, "cephalon-modular-monolith");
+            AssertTemplatePackStarterUsesSplitSerilogConfig(package, "cephalon-microservice");
+            AssertTemplatePackStarterUsesSplitSerilogConfig(package, "cephalon-modular-vertical-slice");
         }
         finally
         {
@@ -258,6 +292,18 @@ public sealed class TemplatePackTests
             Assert.True(File.Exists(Path.Combine(appOutputPath, "Program.cs")));
             Assert.True(File.Exists(Path.Combine(appOutputPath, "README.md")));
             Assert.True(File.Exists(Path.Combine(appOutputPath, "appsettings.json")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "appsettings.Development.json")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "Configurations", "README.md")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "Configurations", "Observability", "Development.json")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "Configurations", "AddEngine.AppModel.json")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "Configurations", "AddEngine.Data.json")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "Configurations", "AddEngine.Identity.json")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "Configurations", "AddEngine.Tenancy.json")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "Configurations", "AddEngine.Audit.json")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "Configurations", "AddEngine.Messaging.json")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "Configurations", "AddEngine.Observability.json")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "Configurations", "AddOpenApi.json")));
+            Assert.True(File.Exists(Path.Combine(appOutputPath, "Configurations", "AddReferenceDocs.json")));
             Assert.True(Directory.Exists(Path.Combine(appOutputPath, "Modules", "Catalog")));
 
             var programPath = Path.Combine(appOutputPath, "Program.cs");
@@ -269,33 +315,62 @@ public sealed class TemplatePackTests
             Assert.Contains("Cephalon.Ids.Sfid", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("Cephalon.Observability.OpenTelemetry", appProjectContents, StringComparison.Ordinal);
+            Assert.Contains("Cephalon.Observability.Serilog", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("Microsoft.Extensions.Hosting.WindowsServices", appProjectContents, StringComparison.Ordinal);
-            Assert.Contains("builder.AddCephalon(engine =>", File.ReadAllText(programPath), StringComparison.Ordinal);
-            Assert.Contains("engine.AddSfidIds();", File.ReadAllText(programPath), StringComparison.Ordinal);
-            Assert.Contains("engine.AddAudit();", File.ReadAllText(programPath), StringComparison.Ordinal);
-            Assert.Contains("builder.AddCephalonOpenTelemetry();", File.ReadAllText(programPath), StringComparison.Ordinal);
-            Assert.Contains("WindowsServiceHelpers.IsWindowsService()", File.ReadAllText(programPath), StringComparison.Ordinal);
-            Assert.Contains("builder.Host.UseWindowsService();", File.ReadAllText(programPath), StringComparison.Ordinal);
-            var appSettingsPath = Path.Combine(appOutputPath, "appsettings.json");
-            var appSettingsContents = File.ReadAllText(appSettingsPath);
-            Assert.Contains("\"Blueprint\": \"modular-monolith\"", appSettingsContents, StringComparison.Ordinal);
-            Assert.Contains("\"strategy-pattern\"", appSettingsContents, StringComparison.Ordinal);
-            Assert.Contains("\"rest-api\"", appSettingsContents, StringComparison.Ordinal);
-            Assert.Contains("\"Data\"", appSettingsContents, StringComparison.Ordinal);
-            Assert.Contains("\"Generator\": \"Sfid\"", appSettingsContents, StringComparison.Ordinal);
-            Assert.Contains("\"Identity\"", appSettingsContents, StringComparison.Ordinal);
-            Assert.Contains("\"Tenancy\"", appSettingsContents, StringComparison.Ordinal);
-            Assert.Contains("\"Audit\"", appSettingsContents, StringComparison.Ordinal);
-            Assert.Contains("\"ReferenceDocs\"", appSettingsContents, StringComparison.Ordinal);
-            Assert.Contains("\"Enabled\": false", appSettingsContents, StringComparison.Ordinal);
-            Assert.Contains("\"Enabled\": true", appSettingsContents, StringComparison.Ordinal);
-            Assert.Contains("\"DirectoryPath\": \"..\\\\..\\\\docs\\\\reference\"", appSettingsContents, StringComparison.Ordinal);
-            Assert.DoesNotContain("http://localhost:4317", appSettingsContents, StringComparison.Ordinal);
-            Assert.Contains("\"Protocol\": \"otlp/http\"", appSettingsContents, StringComparison.Ordinal);
+            Assert.Contains("Serilog.Sinks.Console", appProjectContents, StringComparison.Ordinal);
+            var programContents = File.ReadAllText(programPath);
+            Assert.Contains("builder.AddCephalonProjectConfigurations();", programContents, StringComparison.Ordinal);
+            Assert.DoesNotContain("builder.Configuration.AddEnvironmentVariables();", programContents, StringComparison.Ordinal);
+            Assert.Contains("builder.AddCephalon(engine =>", programContents, StringComparison.Ordinal);
+            Assert.Contains("engine.AddSfidIds();", programContents, StringComparison.Ordinal);
+            Assert.Contains("engine.AddAudit();", programContents, StringComparison.Ordinal);
+            Assert.Contains("builder.Configuration.GetSection(\"Serilog\").Exists()", programContents, StringComparison.Ordinal);
+            Assert.Contains("builder.Logging.ClearProviders();", programContents, StringComparison.Ordinal);
+            Assert.Contains("builder.AddCephalonSerilog();", programContents, StringComparison.Ordinal);
+            Assert.Contains("builder.AddCephalonOpenTelemetry();", programContents, StringComparison.Ordinal);
+            Assert.Contains("WindowsServiceHelpers.IsWindowsService()", programContents, StringComparison.Ordinal);
+            Assert.Contains("builder.Host.UseWindowsService();", programContents, StringComparison.Ordinal);
+            Assert.Equal("{}", File.ReadAllText(Path.Combine(appOutputPath, "appsettings.json")).Trim(), ignoreCase: false, ignoreLineEndingDifferences: false, ignoreWhiteSpaceDifferences: false);
+            Assert.Equal("{}", File.ReadAllText(Path.Combine(appOutputPath, "appsettings.Development.json")).Trim(), ignoreCase: false, ignoreLineEndingDifferences: false, ignoreWhiteSpaceDifferences: false);
+            var observabilityDevelopment = File.ReadAllText(Path.Combine(appOutputPath, "Configurations", "Observability", "Development.json"));
+            Assert.Contains("\"Serilog\"", observabilityDevelopment, StringComparison.Ordinal);
+            Assert.Contains("\"Serilog.Sinks.Console\"", observabilityDevelopment, StringComparison.Ordinal);
+            Assert.Contains("\"Console\"", observabilityDevelopment, StringComparison.Ordinal);
+            Assert.Contains("\"Application\": \"Acme.Store\"", observabilityDevelopment, StringComparison.Ordinal);
+
+            var appModelSettings = File.ReadAllText(Path.Combine(appOutputPath, "Configurations", "AddEngine.AppModel.json"));
+            Assert.Contains("\"Blueprint\": \"modular-monolith\"", appModelSettings, StringComparison.Ordinal);
+            Assert.Contains("\"strategy-pattern\"", appModelSettings, StringComparison.Ordinal);
+            Assert.Contains("\"rest-api\"", appModelSettings, StringComparison.Ordinal);
+
+            var dataSettings = File.ReadAllText(Path.Combine(appOutputPath, "Configurations", "AddEngine.Data.json"));
+            Assert.Contains("\"Data\"", dataSettings, StringComparison.Ordinal);
+            Assert.Contains("\"Generator\": \"Sfid\"", dataSettings, StringComparison.Ordinal);
+
+            var identitySettings = File.ReadAllText(Path.Combine(appOutputPath, "Configurations", "AddEngine.Identity.json"));
+            Assert.Contains("\"Identity\"", identitySettings, StringComparison.Ordinal);
+
+            var tenancySettings = File.ReadAllText(Path.Combine(appOutputPath, "Configurations", "AddEngine.Tenancy.json"));
+            Assert.Contains("\"Tenancy\"", tenancySettings, StringComparison.Ordinal);
+
+            var auditSettings = File.ReadAllText(Path.Combine(appOutputPath, "Configurations", "AddEngine.Audit.json"));
+            Assert.Contains("\"Audit\"", auditSettings, StringComparison.Ordinal);
+            Assert.Contains("\"Enabled\": true", auditSettings, StringComparison.Ordinal);
+
+            var referenceDocsSettings = File.ReadAllText(Path.Combine(appOutputPath, "Configurations", "AddReferenceDocs.json"));
+            Assert.Contains("\"ReferenceDocs\"", referenceDocsSettings, StringComparison.Ordinal);
+            Assert.Contains("\"Enabled\": false", referenceDocsSettings, StringComparison.Ordinal);
+            Assert.Contains("\"DirectoryPath\": \"docs\\\\reference\"", referenceDocsSettings, StringComparison.Ordinal);
+
+            var observabilitySettings = File.ReadAllText(Path.Combine(appOutputPath, "Configurations", "AddEngine.Observability.json"));
+            Assert.DoesNotContain("http://localhost:4317", observabilitySettings, StringComparison.Ordinal);
+            Assert.Contains("\"Protocol\": \"otlp/http\"", observabilitySettings, StringComparison.Ordinal);
 
             var appReadmePath = Path.Combine(appOutputPath, "README.md");
             var appReadmeContents = File.ReadAllText(appReadmePath);
-            Assert.Contains("ReferenceDocs:Enabled", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("Configurations/Add*.json", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("Configurations/{group}/{Environment}.json", appReadmeContents, StringComparison.Ordinal);
+            Assert.Contains("appsettings.json", appReadmeContents, StringComparison.Ordinal);
             Assert.Contains("CephalonFolder.pubxml", appReadmeContents, StringComparison.Ordinal);
             Assert.Contains("dotnet publish Acme.Store.csproj -p:PublishProfile=CephalonFolder", appReadmeContents, StringComparison.Ordinal);
             Assert.Contains("./artifacts/publish/Acme.Store/", appReadmeContents, StringComparison.Ordinal);
@@ -429,6 +504,43 @@ public sealed class TemplatePackTests
     private static string FindRepositoryFile(string relativePath)
     {
         return RepositoryPaths.GetFile(relativePath);
+    }
+
+    private static void AssertTemplatePackStarterUsesSplitSerilogConfig(ZipArchive package, string templateFolder)
+    {
+        var appSettingsDevelopment = ReadPackageEntry(
+            package,
+            $"content/templates/{templateFolder}/appsettings.Development.json");
+        Assert.Equal("{}", appSettingsDevelopment.Trim(), ignoreCase: false, ignoreLineEndingDifferences: false, ignoreWhiteSpaceDifferences: false);
+
+        var observabilityDevelopment = ReadPackageEntry(
+            package,
+            $"content/templates/{templateFolder}/Configurations/Observability/Development.json");
+        Assert.Contains("\"Serilog\"", observabilityDevelopment, StringComparison.Ordinal);
+        Assert.Contains("\"Serilog.Sinks.Console\"", observabilityDevelopment, StringComparison.Ordinal);
+        Assert.Contains("\"Console\"", observabilityDevelopment, StringComparison.Ordinal);
+        Assert.Contains("\"Application\": \"CephalonTemplateApp\"", observabilityDevelopment, StringComparison.Ordinal);
+
+        var configurationsGuide = ReadPackageEntry(
+            package,
+            $"content/templates/{templateFolder}/Configurations/README.md");
+        Assert.Contains("Configurations/Observability/Development.json", configurationsGuide, StringComparison.Ordinal);
+
+        var readme = ReadPackageEntry(
+            package,
+            $"content/templates/{templateFolder}/README.md");
+        Assert.Contains("Configurations/Observability/Development.json", readme, StringComparison.Ordinal);
+        Assert.Contains("appsettings.{Environment}.json", readme, StringComparison.Ordinal);
+    }
+
+    private static string ReadPackageEntry(ZipArchive package, string entryPath)
+    {
+        var entry = package.GetEntry(entryPath)
+            ?? throw new InvalidOperationException($"Package entry '{entryPath}' was not found.");
+
+        using var stream = entry.Open();
+        using var reader = new StreamReader(stream);
+        return reader.ReadToEnd();
     }
 
     private static ProcessResult RunProcess(string fileName, string arguments, string workingDirectory)

@@ -15,7 +15,8 @@ Generated from the Cephalon modular vertical-slice template.
 3. Update package versions to the Cephalon feed or release you want to target.
 4. Add more slices under `Modules/*/Features/`.
 5. Keep endpoint, command, query, and policy code close to the feature.
-6. Publish reference docs, then flip `ReferenceDocs:Enabled` to `true` when you want the host to serve them.
+6. Keep Cephalon defaults in `Configurations/Add*.json`, use `appsettings.json` plus `appsettings.{Environment}.json` for project-specific overrides, and add `Configurations/{group}/{Environment}.json` only when you want grouped environment overrides. `Configurations/Observability/Development.json` already seeds a Serilog console example, and `Program.cs` only switches to Serilog when that section exists.
+7. Publish reference docs, then flip `ReferenceDocs:Enabled` in `Configurations/AddReferenceDocs.json` to `true` when you want the host to serve them.
 
 ## Optional published-output path
 

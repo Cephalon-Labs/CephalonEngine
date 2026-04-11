@@ -1,0 +1,7 @@
+{
+  "Engine": {
+    "Tenancy": {
+      "Enabled": false
+    }
+  }
+}

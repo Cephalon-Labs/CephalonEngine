@@ -2,9 +2,10 @@ using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Audit;
 using System.Globalization;
-using Cephalon.AspNetCore.Modules;
 using Cephalon.Behaviors.Http.Hosting;
+using Cephalon.Sample.Showcase.Domain.Inventory.Behaviors;
 using Cephalon.Sample.Showcase.Domain.Inventory.Models;
+using Cephalon.Sample.Showcase.Domain.Orders.Models;
 using Cephalon.Sample.Showcase.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -18,7 +19,7 @@ namespace Cephalon.Sample.Showcase.Modules;
 /// Implements the saga-step behavior pattern with a module-owned REST surface.
 /// Uses PostgreSQL (via EF) when available, otherwise falls back to in-memory store.
 /// </summary>
-public sealed class InventoryModule : ModuleBase, IEndpointModule
+public sealed class InventoryModule : RestBehaviorModuleBase
 {
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "showcase.inventory",
@@ -44,7 +45,14 @@ public sealed class InventoryModule : ModuleBase, IEndpointModule
     }
 
     /// <inheritdoc />
-    public void MapEndpoints(IEndpointRouteBuilder endpoints)
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+    {
+        behaviors.Internal<ReserveStockBehavior>();
+        behaviors.Internal<ReleaseStockBehavior>();
+    }
+
+    /// <inheritdoc />
+    protected override void MapAdditionalEndpoints(IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapBehaviorRestGroup(this, "/showcase/inventory");
         var routes = group.Routes;
@@ -92,6 +100,13 @@ public sealed class InventoryModule : ModuleBase, IEndpointModule
             var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
             if (writeDb is not null)
             {
+                var order = await writeDb.Orders.FindAsync([input.OrderId], ctx.RequestAborted);
+                if (order is not null &&
+                    !string.Equals(order.Status, "Pending", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Results.Conflict($"Order '{input.OrderId}' is already in status '{order.Status}'.");
+                }
+
                 var reservations = new List<StockReservation>();
                 var allReserved = true;
                 var changedProductIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -111,6 +126,12 @@ public sealed class InventoryModule : ModuleBase, IEndpointModule
                     reservations.Add(new StockReservation(entity.ProductId, lineItem.Quantity, entity.WarehouseCode));
                 }
 
+                if (allReserved && order is not null)
+                {
+                    order.Status = "Confirmed";
+                    order.UpdatedAtUtc = DateTime.UtcNow;
+                }
+
                 await writeDb.SaveChangesAsync(ctx.RequestAborted);
 
                 if (readDb is not null)
@@ -121,6 +142,11 @@ public sealed class InventoryModule : ModuleBase, IEndpointModule
                             .AsNoTracking()
                             .FirstAsync(item => item.ProductId == productId, ctx.RequestAborted);
                         await UpsertReadInventoryAsync(readDb, source, ctx.RequestAborted);
+                    }
+
+                    if (allReserved && order is not null)
+                    {
+                        await UpsertReadOrderStatusAsync(readDb, order, ctx.RequestAborted);
                     }
                 }
 
@@ -147,6 +173,11 @@ public sealed class InventoryModule : ModuleBase, IEndpointModule
 
             var memReservations = new List<StockReservation>();
             var memAllReserved = true;
+            if (ShowcaseDataStore.Orders.TryGetValue(input.OrderId, out var memoryOrder) &&
+                memoryOrder.Status != OrderStatus.Pending)
+            {
+                return Results.Conflict($"Order '{input.OrderId}' is already in status '{memoryOrder.Status}'.");
+            }
 
             foreach (var lineItem in input.Items)
             {
@@ -160,6 +191,12 @@ public sealed class InventoryModule : ModuleBase, IEndpointModule
                 item.QuantityReserved += lineItem.Quantity;
                 item.LastUpdatedAtUtc = DateTime.UtcNow;
                 memReservations.Add(new StockReservation(item.ProductId, lineItem.Quantity, item.WarehouseCode));
+            }
+
+            if (memAllReserved && memoryOrder is not null)
+            {
+                memoryOrder.Status = OrderStatus.Confirmed;
+                memoryOrder.UpdatedAtUtc = DateTime.UtcNow;
             }
 
             return Results.Ok(new ReserveStockOutput(input.OrderId, memAllReserved, memReservations));
@@ -244,6 +281,26 @@ public sealed class InventoryModule : ModuleBase, IEndpointModule
         projection.WarehouseCode = source.WarehouseCode;
         projection.LastUpdatedAtUtc = source.LastUpdatedAtUtc;
 
+        await readDb.SaveChangesAsync(cancellationToken);
+    }
+
+    private static async Task UpsertReadOrderStatusAsync(
+        ShowcaseReadDbContext readDb,
+        ShowcaseOrderEntity source,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(readDb);
+        ArgumentNullException.ThrowIfNull(source);
+
+        var projection = await readDb.Orders.FindAsync([source.OrderId], cancellationToken);
+        if (projection is null)
+        {
+            return;
+        }
+
+        projection.Status = source.Status;
+        projection.UpdatedAtUtc = source.UpdatedAtUtc;
+        projection.CancellationReason = source.CancellationReason;
         await readDb.SaveChangesAsync(cancellationToken);
     }
 

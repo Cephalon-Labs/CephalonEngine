@@ -3,460 +3,487 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CephalonEngine Showcase</title>
+<title>CephalonEngine Showcase Console</title>
 <link rel="stylesheet" href="/showcase.css">
 </head>
 <body>
+<div class="backdrop" aria-hidden="true"></div>
 
-<div class="header">
-  <div class="logo">CephalonEngine</div>
-  <div class="subtitle">Showcase &mdash; E-Commerce Domain Flow</div>
-</div>
+<header class="hero-shell">
+  <div class="hero-copy">
+    <p class="eyebrow">CephalonEngine Showcase Console</p>
+    <h1>Operator cockpit for runtime, transports, and reference workloads.</h1>
+    <p class="hero-text">
+      This sample is no longer just an e-commerce demo. It is the proving ground for how Cephalon composes modules,
+      surfaces runtime state, exposes transport topology, and exercises cross-module workflows end to end.
+    </p>
+    <div class="hero-pill-row">
+      <span class="hero-pill" id="runtimeStatusPill">Runtime: loading</span>
+      <span class="hero-pill" id="readinessPill">Readiness: loading</span>
+      <span class="hero-pill" id="livenessPill">Liveness: loading</span>
+    </div>
+  </div>
+  <div class="hero-actions">
+    <button class="btn btn-primary" data-action="refresh-all">Refresh Console</button>
+    <button class="btn btn-outline" data-action="reset-sample">Reset Sample</button>
+    <a class="btn btn-ghost" id="scalarLink" href="/scalar/v1">Scalar</a>
+    <a class="btn btn-ghost" id="openApiLink" href="/openapi/v1.json">OpenAPI</a>
+    <a class="btn btn-ghost" id="snapshotLink" href="/engine/snapshot">Snapshot</a>
+  </div>
+</header>
 
-<nav class="tabs">
-  <button class="tab active" data-tab="flow">E-Commerce Flow</button>
-  <button class="tab" data-tab="dashboard">Dashboard</button>
-  <button class="tab" data-tab="tracking">Live Tracking</button>
-  <button class="tab" data-tab="transports">Transport Lab</button>
+<nav class="section-nav" aria-label="Showcase sections">
+  <a href="#overview">Overview</a>
+  <a href="#workloads">Workloads</a>
+  <a href="#runtime">Runtime</a>
+  <a href="#governance">Governance</a>
+  <a href="#transports">Transports</a>
+  <a href="#activity">Activity</a>
 </nav>
 
-<!-- ═══════════════════════════════════════════════════════
-     TAB 1: E-COMMERCE FLOW
-     ═══════════════════════════════════════════════════════ -->
-<div id="tab-flow" class="tab-content active">
-<div class="container">
-  <!-- Flow Stepper -->
-  <div class="card fullwidth mb-8">
-    <div class="card-body" style="padding:16px 20px;">
-      <div class="flow" id="flowSteps">
-        <div class="flow-step active" data-step="catalog"><div class="step-num">1</div><div class="step-label">Browse Catalog</div></div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-step" data-step="cart"><div class="step-num">2</div><div class="step-label">Add to Cart</div></div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-step" data-step="checkout"><div class="step-num">3</div><div class="step-label">Checkout</div></div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-step" data-step="order"><div class="step-num">4</div><div class="step-label">Order</div></div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-step" data-step="inventory"><div class="step-num">5</div><div class="step-label">Reserve Stock</div></div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-step" data-step="shipping"><div class="step-num">6</div><div class="step-label">Ship</div></div>
-        <div class="flow-arrow">&rarr;</div>
-        <div class="flow-step" data-step="deliver"><div class="step-num">7</div><div class="step-label">Deliver</div></div>
+<main class="page-shell">
+  <section id="overview" class="section-block">
+    <div class="section-header">
+      <div>
+        <p class="section-kicker">System Overview</p>
+        <h2>What is loaded, healthy, and ready right now.</h2>
       </div>
+      <p class="section-caption" id="summaryTimestamp">Refreshing summary...</p>
     </div>
-  </div>
 
-  <div class="grid">
-    <!-- Catalog -->
-    <div class="card">
-      <div class="card-header">
-        <h2>Catalog</h2>
-        <span class="badge badge-direct">Direct</span>
-      </div>
-      <div class="card-body">
-        <div class="flex justify-between items-center mb-8">
-          <span class="text-sm text-muted">Products</span>
-          <button class="btn btn-sm btn-outline" onclick="loadProducts()">Refresh</button>
+    <div class="kpi-grid" id="overviewKpis">
+      <div class="empty-state">Loading system summary...</div>
+    </div>
+
+    <div class="overview-grid">
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Runtime Snapshot</h3>
+          <span class="panel-badge">Engine</span>
         </div>
-        <table>
-          <thead><tr><th>Product</th><th>SKU</th><th>Price</th><th></th></tr></thead>
-          <tbody id="productList"><tr><td colspan="4" class="empty">Loading...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
+        <dl class="metric-list" id="runtimeSummaryList">
+          <div class="empty-state">Loading runtime summary...</div>
+        </dl>
+      </article>
 
-    <!-- Cart -->
-    <div class="card">
-      <div class="card-header">
-        <h2>Shopping Cart</h2>
-        <span class="badge badge-cqrs">CQRS</span>
-      </div>
-      <div class="card-body">
-        <div class="flex justify-between items-center mb-8">
-          <span class="text-sm text-muted">Cart: <span id="cartIdDisplay">-</span></span>
-          <button class="btn btn-sm btn-outline" onclick="newCart()">New Cart</button>
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Dependency Health</h3>
+          <span class="panel-badge">Operations</span>
         </div>
-        <table>
-          <thead><tr><th>Item</th><th>Qty</th><th>Subtotal</th><th></th></tr></thead>
-          <tbody id="cartItems"><tr><td colspan="4" class="empty">Cart is empty</td></tr></tbody>
-        </table>
-        <div class="flex justify-between items-center mt-12">
-          <div><strong>Total:</strong> <span class="price" id="cartTotal">$0.00</span></div>
-          <button class="btn btn-primary" id="btnCheckout" disabled onclick="checkout()">Checkout</button>
+        <div class="dependency-stack" id="dependencyList">
+          <div class="empty-state">Loading dependency health...</div>
         </div>
-      </div>
-    </div>
+      </article>
 
-    <!-- Orders -->
-    <div class="card">
-      <div class="card-header">
-        <h2>Orders</h2>
-        <span class="badge badge-event">Event-Driven</span>
-      </div>
-      <div class="card-body">
-        <div class="flex justify-between items-center mb-8">
-          <span class="text-sm text-muted">Recent Orders</span>
-          <button class="btn btn-sm btn-outline" onclick="loadOrders()">Refresh</button>
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Suggested Journeys</h3>
+          <span class="panel-badge">Playbook</span>
         </div>
-        <table>
-          <thead><tr><th>Order ID</th><th>Status</th><th>Total</th><th></th></tr></thead>
-          <tbody id="orderList"><tr><td colspan="4" class="empty">No orders yet</td></tr></tbody>
-        </table>
+        <ul class="journey-list" id="journeyList">
+          <li class="empty-state">Preparing scenario suggestions...</li>
+        </ul>
+        <div class="link-grid" id="documentationLinks"></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="workloads" class="section-block">
+    <div class="section-header">
+      <div>
+        <p class="section-kicker">Reference Workloads</p>
+        <h2>Exercise domain behavior without losing sight of the engine.</h2>
+      </div>
+      <div class="section-actions">
+        <button class="btn btn-outline btn-sm" data-action="new-cart">New Cart</button>
+        <span class="cart-pill">Active cart <strong id="cartIdDisplay">loading</strong></span>
       </div>
     </div>
 
-    <!-- Inventory -->
-    <div class="card">
-      <div class="card-header">
-        <h2>Inventory</h2>
-        <span class="badge badge-saga">Saga</span>
-      </div>
-      <div class="card-body">
-        <div class="flex justify-between items-center mb-8">
-          <span class="text-sm text-muted">Stock Levels</span>
-          <button class="btn btn-sm btn-outline" onclick="loadInventory()">Refresh</button>
+    <div class="workspace-grid">
+      <article class="panel panel-span-2">
+        <div class="panel-header">
+          <h3>Catalog to Cart</h3>
+          <span class="panel-badge">Scenario Runner</span>
         </div>
-        <table>
-          <thead><tr><th>Product</th><th>On Hand</th><th>Reserved</th><th>Available</th></tr></thead>
-          <tbody id="inventoryList"><tr><td colspan="4" class="empty">Loading...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Shipping -->
-    <div class="card">
-      <div class="card-header">
-        <h2>Shipping</h2>
-        <span class="badge badge-pm">Process Manager</span>
-      </div>
-      <div class="card-body">
-        <div class="flex justify-between items-center mb-8">
-          <span class="text-sm text-muted">Shipments</span>
-          <button class="btn btn-sm btn-outline" onclick="loadShipments()">Refresh</button>
+        <div class="catalog-cart-grid">
+          <div>
+            <div class="subpanel-header">
+              <h4>Products</h4>
+              <p>Add items from the reference catalog into the current event-sourced cart.</p>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Product</th><th>Category</th><th>Price</th><th></th></tr>
+                </thead>
+                <tbody id="productTable">
+                  <tr><td colspan="4" class="empty-state">Loading products...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <div class="subpanel-header">
+              <h4>Cart Composer</h4>
+              <p>Use the cart workload to feed the rest of the sample pipeline.</p>
+            </div>
+            <div class="cart-card">
+              <div class="cart-summary">
+                <div>
+                  <span class="label">Items</span>
+                  <strong id="cartItemCount">0</strong>
+                </div>
+                <div>
+                  <span class="label">Total</span>
+                  <strong id="cartTotal">$0.00</strong>
+                </div>
+              </div>
+              <div class="cart-lines" id="cartItems">
+                <div class="empty-state">Cart is empty.</div>
+              </div>
+              <div class="cart-actions">
+                <button class="btn btn-primary" data-action="checkout-cart" id="checkoutButton" disabled>Checkout And Place Order</button>
+                <button class="btn btn-ghost" data-action="reload-cart">Reload Cart</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <table>
-          <thead><tr><th>Shipment</th><th>Order</th><th>Status</th><th></th></tr></thead>
-          <tbody id="shipmentList"><tr><td colspan="4" class="empty">No shipments</td></tr></tbody>
-        </table>
-      </div>
-    </div>
+      </article>
 
-    <!-- Activity Log -->
-    <div class="card">
-      <div class="card-header">
-        <h2>API Activity Log</h2>
-      </div>
-      <div class="card-body">
-        <div class="log" id="activityLog">
-          <div class="empty">API calls will appear here...</div>
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Orders</h3>
+          <span class="panel-badge">Event-Driven</span>
         </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Order</th><th>Status</th><th>Total</th><th></th></tr>
+            </thead>
+            <tbody id="orderTable">
+              <tr><td colspan="4" class="empty-state">Loading orders...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Inventory</h3>
+          <span class="panel-badge">Saga</span>
+        </div>
+        <div class="table-wrap compact-table">
+          <table>
+            <thead>
+              <tr><th>Product</th><th>Available</th><th>Reserved</th></tr>
+            </thead>
+            <tbody id="inventoryTable">
+              <tr><td colspan="3" class="empty-state">Loading inventory...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="panel panel-span-2">
+        <div class="panel-header">
+          <h3>Shipping</h3>
+          <span class="panel-badge">Process Manager</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Shipment</th><th>Order</th><th>Status</th><th>Carrier</th><th></th></tr>
+            </thead>
+            <tbody id="shipmentTable">
+              <tr><td colspan="5" class="empty-state">Loading shipments...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="runtime" class="section-block">
+    <div class="section-header">
+      <div>
+        <p class="section-kicker">Runtime Surface</p>
+        <h2>Inspect what the engine composed into this host.</h2>
       </div>
+      <p class="section-caption">Modules, capabilities, patterns, transports, diagnostics, and recent audit activity.</p>
     </div>
-  </div>
-</div>
-</div>
 
-<!-- ═══════════════════════════════════════════════════════
-     TAB 2: DASHBOARD
-     ═══════════════════════════════════════════════════════ -->
-<div id="tab-dashboard" class="tab-content">
-<div class="container">
-  <div class="flex justify-between items-center mb-16">
-    <div class="section-title" style="margin:0;">Real-Time Dashboard</div>
-    <div class="flex items-center gap-8">
-      <span class="conn-status"><span class="conn-dot connected" id="dashRefreshDot"></span> Auto-refresh</span>
-      <button class="btn btn-sm btn-outline" onclick="refreshDashboard()">Refresh Now</button>
+    <div class="runtime-grid">
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Facet Counts</h3>
+          <span class="panel-badge">Topology</span>
+        </div>
+        <div class="facet-grid" id="facetGrid">
+          <div class="empty-state">Loading runtime facets...</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Modules</h3>
+          <span class="panel-badge">Manifest</span>
+        </div>
+        <div class="table-wrap compact-table">
+          <table>
+            <thead>
+              <tr><th>Module</th><th>Version</th><th>Trusted</th><th>Depends</th></tr>
+            </thead>
+            <tbody id="moduleTable">
+              <tr><td colspan="4" class="empty-state">Loading modules...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Capabilities</h3>
+          <span class="panel-badge">Policy Surface</span>
+        </div>
+        <div class="capability-list" id="capabilityList">
+          <div class="empty-state">Loading capabilities...</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Patterns And Transports</h3>
+          <span class="panel-badge">Shape</span>
+        </div>
+        <div class="token-groups">
+          <div>
+            <h4>Patterns</h4>
+            <div class="token-list" id="patternTokens"></div>
+          </div>
+          <div>
+            <h4>Transports</h4>
+            <div class="token-list" id="transportTokens"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel panel-span-2">
+        <div class="panel-header">
+          <h3>Recent Audit History</h3>
+          <span class="panel-badge">Durable Trail</span>
+        </div>
+        <div class="audit-list" id="auditList">
+          <div class="empty-state">Loading recent audit entries...</div>
+        </div>
+      </article>
     </div>
-  </div>
+  </section>
 
-  <div class="kpi-grid" id="kpiGrid">
-    <div class="kpi-card kpi-blue"><div class="kpi-label">Products</div><div class="kpi-value" id="kpiProducts">-</div><div class="kpi-sub">Active catalog items</div></div>
-    <div class="kpi-card kpi-green"><div class="kpi-label">Orders</div><div class="kpi-value" id="kpiOrders">-</div><div class="kpi-sub" id="kpiOrdersSub">Total placed</div></div>
-    <div class="kpi-card kpi-yellow"><div class="kpi-label">Revenue</div><div class="kpi-value" id="kpiRevenue">-</div><div class="kpi-sub">Total sales</div></div>
-    <div class="kpi-card kpi-cyan"><div class="kpi-label">Shipments</div><div class="kpi-value" id="kpiShipments">-</div><div class="kpi-sub" id="kpiShipmentsSub">Active</div></div>
-    <div class="kpi-card kpi-orange"><div class="kpi-label">Reserved</div><div class="kpi-value" id="kpiReserved">-</div><div class="kpi-sub">Units reserved</div></div>
-    <div class="kpi-card kpi-purple"><div class="kpi-label">API Calls</div><div class="kpi-value" id="kpiApiCalls">0</div><div class="kpi-sub">This session</div></div>
-  </div>
-
-  <div class="grid">
-    <!-- Order Status Breakdown -->
-    <div class="card">
-      <div class="card-header"><h2>Order Status Breakdown</h2></div>
-      <div class="card-body" id="orderStatusBars">
-        <div class="empty">Loading...</div>
+  <section id="governance" class="section-block">
+    <div class="section-header">
+      <div>
+        <p class="section-kicker">Governance Surface</p>
+        <h2>See how trust, policy, authorization, and technology packs shape this runtime.</h2>
       </div>
+      <p class="section-caption">This blends engine policy snapshots with runtime catalogs so operators can compare enforced policy to published runtime surfaces.</p>
     </div>
 
-    <!-- Inventory Utilization -->
-    <div class="card">
-      <div class="card-header"><h2>Inventory Utilization</h2></div>
-      <div class="card-body" id="inventoryBars">
-        <div class="empty">Loading...</div>
+    <div class="governance-grid">
+      <article class="panel panel-span-2">
+        <div class="panel-header">
+          <h3>Governance Snapshot</h3>
+          <span class="panel-badge">Operator View</span>
+        </div>
+        <div class="facet-grid" id="governanceSummary">
+          <div class="empty-state">Loading governance summary...</div>
+        </div>
+        <div class="link-grid" id="governanceLinks"></div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Package Policy</h3>
+          <span class="panel-badge">Engine Rules</span>
+        </div>
+        <div class="policy-rule-list" id="packagePolicyList">
+          <div class="empty-state">Loading package policy...</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Trust Defaults</h3>
+          <span class="panel-badge">Trust</span>
+        </div>
+        <dl class="metric-list" id="trustSummaryList">
+          <div class="empty-state">Loading trust policy...</div>
+        </dl>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Capability Decisions</h3>
+          <span class="panel-badge">Access</span>
+        </div>
+        <div class="facet-grid" id="capabilityDecisionList">
+          <div class="empty-state">Loading capability decisions...</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Loaded Packages</h3>
+          <span class="panel-badge">Package Runtime</span>
+        </div>
+        <div class="package-list" id="loadedPackageList">
+          <div class="empty-state">Loading packages...</div>
+        </div>
+      </article>
+
+      <article class="panel panel-span-2">
+        <div class="panel-header">
+          <h3>Authorization Policies</h3>
+          <span class="panel-badge">Identity Access</span>
+        </div>
+        <div class="authorization-policy-list" id="authorizationPolicyList">
+          <div class="empty-state">Loading authorization policies...</div>
+        </div>
+      </article>
+
+      <article class="panel panel-span-2">
+        <div class="panel-header">
+          <h3>Technology Surfaces</h3>
+          <span class="panel-badge">Technology Packs</span>
+        </div>
+        <div class="surface-list" id="technologySurfaceList">
+          <div class="empty-state">Loading technology surfaces...</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Runtime Story</h3>
+          <span class="panel-badge">Lifecycle</span>
+        </div>
+        <dl class="metric-list" id="runtimeStoryList">
+          <div class="empty-state">Loading runtime story...</div>
+        </dl>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Recent Timeline</h3>
+          <span class="panel-badge">Narrative</span>
+        </div>
+        <div class="timeline-list" id="timelineList">
+          <div class="empty-state">Loading runtime timeline...</div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="transports" class="section-block">
+    <div class="section-header">
+      <div>
+        <p class="section-kicker">Transport Explorer</p>
+        <h2>Map behaviors to the routes and protocols the host actually provides.</h2>
       </div>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════
-     TAB 3: LIVE TRACKING
-     ═══════════════════════════════════════════════════════ -->
-<div id="tab-tracking" class="tab-content">
-<div class="container">
-  <div class="section-title" style="margin-top:0;">Live Event Tracking</div>
-
-  <div class="card mb-16">
-    <div class="card-header">
-      <h2>SSE Connections</h2>
-      <span class="badge badge-sse">Server-Sent Events</span>
-    </div>
-    <div class="card-body">
-      <div class="flex gap-8 items-center" style="flex-wrap:wrap;">
-        <select id="sseSelect" style="width:auto;min-width:200px;">
-          <option value="orders.get-status">orders.get-status</option>
-          <option value="orders.place">orders.place</option>
-          <option value="orders.cancel">orders.cancel</option>
-          <option value="cart.add-item">cart.add-item</option>
-          <option value="cart.remove-item">cart.remove-item</option>
-          <option value="cart.get">cart.get</option>
+      <div class="transport-toolbar">
+        <input id="transportSearch" type="search" placeholder="Search behavior or route">
+        <select id="patternFilter">
+          <option value="">All patterns</option>
         </select>
-        <button class="btn btn-sm btn-success" onclick="connectSse()">Connect</button>
-        <button class="btn btn-sm btn-danger" onclick="disconnectAllSse()">Disconnect All</button>
-        <span class="conn-status" id="sseStatus"><span class="conn-dot disconnected"></span> No connections</span>
-      </div>
-      <div class="mt-12 text-sm text-muted" id="sseConnList">No active SSE connections</div>
-    </div>
-  </div>
-
-  <div class="card mb-16">
-    <div class="card-header">
-      <h2>WebSocket Connections</h2>
-      <span class="badge badge-ws">WebSocket</span>
-    </div>
-    <div class="card-body">
-      <div class="flex gap-8 items-center" style="flex-wrap:wrap;">
-        <select id="wsSelect" style="width:auto;min-width:200px;">
-          <option value="cart.add-item">cart.add-item</option>
-          <option value="cart.remove-item">cart.remove-item</option>
-          <option value="cart.get">cart.get</option>
+        <select id="transportFilter">
+          <option value="">All transports</option>
         </select>
-        <button class="btn btn-sm btn-success" onclick="connectWs()">Connect</button>
-        <button class="btn btn-sm btn-danger" onclick="disconnectAllWs()">Disconnect All</button>
-        <span class="conn-status" id="wsStatus"><span class="conn-dot disconnected"></span> No connections</span>
       </div>
-      <div class="mt-12">
-        <label>Send Message (JSON):</label>
-        <div class="flex gap-8 mt-12">
-          <textarea id="wsSendPayload" rows="2" style="min-height:40px;">{"cartId":"ws-cart-1","customerId":"ws-test","productId":"prod-002","productName":"Mouse","quantity":1,"priceInCents":4999}</textarea>
-          <button class="btn btn-sm btn-primary" onclick="sendWsMessage()" style="white-space:nowrap;">Send</button>
+    </div>
+
+    <div class="transport-summary" id="transportSummary">
+      <div class="empty-state">Loading transport coverage...</div>
+    </div>
+
+    <div class="transport-grid">
+      <article class="panel panel-span-2">
+        <div class="panel-header">
+          <h3>Scenario Runner</h3>
+          <span class="panel-badge">Live Protocol Checks</span>
         </div>
+        <div class="transport-runner-intro">
+          <p>Run real browser-friendly transport calls against the same behaviors this host publishes. The runner prepares catalog and cart state on demand so we can validate request, stream, and socket routes from one console.</p>
+          <div class="runner-toolbar">
+            <button class="btn btn-sm btn-outline" data-action="prepare-transport-runner">Prepare Runner State</button>
+            <button class="btn btn-sm" data-action="run-all-transport-scenarios">Run All Browser Transports</button>
+          </div>
+        </div>
+        <div class="runner-context" id="transportRunnerContext">
+          <div class="empty-state">Loading transport runner context...</div>
+        </div>
+        <div class="runner-scenario-grid" id="transportRunnerGrid">
+          <div class="empty-state">Loading transport scenarios...</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Behavior Matrix</h3>
+          <span class="panel-badge">Canonical Routes</span>
+        </div>
+        <div class="behavior-matrix" id="behaviorMatrix">
+          <div class="empty-state">Loading transport matrix...</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <h3>REST Operations</h3>
+          <span class="panel-badge">Public Surface</span>
+        </div>
+        <div class="rest-operation-list" id="restOperationList">
+          <div class="empty-state">Loading REST operations...</div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="activity" class="section-block">
+    <div class="section-header">
+      <div>
+        <p class="section-kicker">Live Activity</p>
+        <h2>Watch server-backed request activity instead of browser-local logs.</h2>
       </div>
-      <div class="mt-12 text-sm text-muted" id="wsConnList">No active WebSocket connections</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      <h2>Event Timeline</h2>
-      <button class="btn btn-sm btn-outline" onclick="clearTimeline()">Clear</button>
-    </div>
-    <div class="card-body">
-      <div class="timeline" id="eventTimeline">
-        <div class="empty">Connect to SSE or WebSocket endpoints above to see live events...</div>
+      <div class="section-actions">
+        <span class="stream-status" id="streamStatus">Connecting stream...</span>
       </div>
     </div>
-  </div>
-</div>
-</div>
 
-<!-- ═══════════════════════════════════════════════════════
-     TAB 4: TRANSPORT LAB
-     ═══════════════════════════════════════════════════════ -->
-<div id="tab-transports" class="tab-content">
-<div class="container">
-  <div class="section-title" style="margin-top:0;">Transport Protocol Lab</div>
-  <p class="text-sm text-muted mb-16">Test each transport protocol supported by CephalonEngine behaviors.</p>
+    <div class="activity-grid">
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Recent Requests</h3>
+          <span class="panel-badge">Live Feed</span>
+        </div>
+        <div class="activity-feed" id="activityFeed">
+          <div class="empty-state">Loading recent activity...</div>
+        </div>
+      </article>
 
-  <div class="transport-tabs" id="transportTabs">
-    <button class="transport-tab active" data-transport="lab-rest">REST</button>
-    <button class="transport-tab" data-transport="lab-graphql">GraphQL</button>
-    <button class="transport-tab" data-transport="lab-graphql-ws">GraphQL-WS</button>
-    <button class="transport-tab" data-transport="lab-graphql-sse">GraphQL-SSE</button>
-    <button class="transport-tab" data-transport="lab-sse">SSE</button>
-    <button class="transport-tab" data-transport="lab-ws">WebSocket</button>
-    <button class="transport-tab" data-transport="lab-jsonrpc">JSON-RPC</button>
-    <button class="transport-tab" data-transport="lab-grpc">gRPC</button>
-  </div>
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Activity Breakdown</h3>
+          <span class="panel-badge">Summary</span>
+        </div>
+        <div class="activity-stats" id="activityStats">
+          <div class="empty-state">Waiting for activity metrics...</div>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
 
-  <!-- REST Panel -->
-  <div class="transport-panel active" id="lab-rest">
-    <div class="flex gap-8 items-center mb-16" style="flex-wrap:wrap;">
-      <select id="restMethod" style="width:auto;">
-        <option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option>
-      </select>
-      <input id="restUrl" value="/api/v1/showcase/catalog/products" style="flex:1;min-width:200px;">
-      <button class="btn btn-primary btn-sm" onclick="labRestSend()">Send</button>
-    </div>
-    <div class="form-group"><label>Request Body (for POST/PUT)</label>
-      <textarea id="restBody" rows="3">{}</textarea>
-    </div>
-    <div class="req-res">
-      <div class="req-res-panel"><div class="req-res-header">Request</div><div class="req-res-body"><pre id="restReqView">-</pre></div></div>
-      <div class="req-res-panel"><div class="req-res-header">Response <span id="restResStatus" class="text-muted"></span></div><div class="req-res-body"><pre id="restResView">-</pre></div></div>
-    </div>
-  </div>
-
-  <!-- GraphQL Panel -->
-  <div class="transport-panel" id="lab-graphql">
-    <div class="flex gap-8 items-center mb-16" style="flex-wrap:wrap;">
-      <select id="gqlBehavior" style="width:auto;min-width:220px;">
-        <option value="catalog.list-products">catalog.list-products</option>
-        <option value="catalog.get-product">catalog.get-product</option>
-        <option value="cart.add-item">cart.add-item</option>
-        <option value="cart.get">cart.get</option>
-        <option value="cart.checkout">cart.checkout</option>
-      </select>
-      <button class="btn btn-primary btn-sm" onclick="labGraphqlSend()">Execute</button>
-    </div>
-    <div class="form-group"><label>GraphQL Query</label>
-      <textarea id="gqlQuery" rows="4">{ behaviors { id } }</textarea>
-    </div>
-    <div class="form-group"><label>Variables (JSON)</label>
-      <textarea id="gqlVars" rows="2">{}</textarea>
-    </div>
-    <div class="req-res">
-      <div class="req-res-panel"><div class="req-res-header">Request</div><div class="req-res-body"><pre id="gqlReqView">-</pre></div></div>
-      <div class="req-res-panel"><div class="req-res-header">Response</div><div class="req-res-body"><pre id="gqlResView">-</pre></div></div>
-    </div>
-  </div>
-
-  <!-- GraphQL-WS Panel -->
-  <div class="transport-panel" id="lab-graphql-ws">
-    <div class="flex gap-8 items-center mb-16" style="flex-wrap:wrap;">
-      <select id="gqlWsBehavior" style="width:auto;min-width:220px;">
-        <option value="orders.place">orders.place</option>
-        <option value="orders.get-status">orders.get-status</option>
-      </select>
-      <button class="btn btn-sm btn-success" onclick="labGqlWsConnect()">Connect</button>
-      <button class="btn btn-sm btn-danger" onclick="labGqlWsDisconnect()">Disconnect</button>
-      <span class="conn-status" id="gqlWsStatus"><span class="conn-dot disconnected"></span> Disconnected</span>
-    </div>
-    <div class="form-group"><label>Subscription Query</label>
-      <textarea id="gqlWsQuery" rows="3">subscription { orderUpdated { orderId status } }</textarea>
-    </div>
-    <div class="req-res">
-      <div class="req-res-panel"><div class="req-res-header">Protocol Messages</div><div class="req-res-body"><pre id="gqlWsLog">-</pre></div></div>
-      <div class="req-res-panel"><div class="req-res-header">Received Data</div><div class="req-res-body"><pre id="gqlWsData">-</pre></div></div>
-    </div>
-  </div>
-
-  <!-- GraphQL-SSE Panel -->
-  <div class="transport-panel" id="lab-graphql-sse">
-    <div class="flex gap-8 items-center mb-16" style="flex-wrap:wrap;">
-      <select id="gqlSseBehavior" style="width:auto;min-width:220px;">
-        <option value="orders.place">orders.place</option>
-        <option value="orders.get-status">orders.get-status</option>
-      </select>
-      <button class="btn btn-primary btn-sm" onclick="labGqlSseSend()">Subscribe</button>
-    </div>
-    <div class="form-group"><label>Query</label>
-      <textarea id="gqlSseQuery" rows="3">{ orderStatus { orderId status } }</textarea>
-    </div>
-    <div class="req-res">
-      <div class="req-res-panel"><div class="req-res-header">Request</div><div class="req-res-body"><pre id="gqlSseReqView">-</pre></div></div>
-      <div class="req-res-panel"><div class="req-res-header">SSE Events</div><div class="req-res-body"><pre id="gqlSseResView">-</pre></div></div>
-    </div>
-  </div>
-
-  <!-- SSE Panel -->
-  <div class="transport-panel" id="lab-sse">
-    <div class="flex gap-8 items-center mb-16" style="flex-wrap:wrap;">
-      <select id="labSseBehavior" style="width:auto;min-width:220px;">
-        <option value="orders.get-status">orders.get-status</option>
-        <option value="orders.place">orders.place</option>
-        <option value="cart.add-item">cart.add-item</option>
-        <option value="cart.get">cart.get</option>
-      </select>
-      <button class="btn btn-sm btn-success" onclick="labSseConnect()">Connect</button>
-      <button class="btn btn-sm btn-danger" onclick="labSseDisconnect()">Disconnect</button>
-      <span class="conn-status" id="labSseStatus"><span class="conn-dot disconnected"></span> Disconnected</span>
-    </div>
-    <div class="req-res">
-      <div class="req-res-panel"><div class="req-res-header">Connection Info</div><div class="req-res-body"><pre id="labSseInfo">Endpoint: GET /sse/v1/{group}/{operation}
-Content-Type: text/event-stream
-Protocol: Server-Sent Events (EventSource API)</pre></div></div>
-      <div class="req-res-panel"><div class="req-res-header">Received Events</div><div class="req-res-body"><pre id="labSseEvents">-</pre></div></div>
-    </div>
-  </div>
-
-  <!-- WebSocket Panel -->
-  <div class="transport-panel" id="lab-ws">
-    <div class="flex gap-8 items-center mb-16" style="flex-wrap:wrap;">
-      <select id="labWsBehavior" style="width:auto;min-width:220px;">
-        <option value="cart.add-item">cart.add-item</option>
-        <option value="cart.remove-item">cart.remove-item</option>
-        <option value="cart.get">cart.get</option>
-      </select>
-      <button class="btn btn-sm btn-success" onclick="labWsConnect()">Connect</button>
-      <button class="btn btn-sm btn-danger" onclick="labWsDisconnect()">Disconnect</button>
-      <span class="conn-status" id="labWsStatus"><span class="conn-dot disconnected"></span> Disconnected</span>
-    </div>
-    <div class="form-group"><label>Message (JSON)</label>
-      <textarea id="labWsMessage" rows="4">{"cartId":"lab-cart","customerId":"lab-user","productId":"prod-002","productName":"ErgoGrip Mouse","quantity":1,"priceInCents":4999}</textarea>
-    </div>
-    <button class="btn btn-primary btn-sm mb-16" onclick="labWsSend()">Send Message</button>
-    <div class="req-res">
-      <div class="req-res-panel"><div class="req-res-header">Sent</div><div class="req-res-body"><pre id="labWsSent">-</pre></div></div>
-      <div class="req-res-panel"><div class="req-res-header">Received</div><div class="req-res-body"><pre id="labWsReceived">-</pre></div></div>
-    </div>
-  </div>
-
-  <!-- JSON-RPC Panel -->
-  <div class="transport-panel" id="lab-jsonrpc">
-    <div class="flex gap-8 items-center mb-16" style="flex-wrap:wrap;">
-      <select id="jsonrpcBehavior" style="width:auto;min-width:220px;">
-        <option value="catalog.get-product">catalog.get-product</option>
-        <option value="catalog.list-products">catalog.list-products</option>
-        <option value="catalog.create-product">catalog.create-product</option>
-        <option value="catalog.update-product">catalog.update-product</option>
-      </select>
-      <button class="btn btn-primary btn-sm" onclick="labJsonRpcSend()">Execute</button>
-    </div>
-    <div class="form-group"><label>JSON-RPC 2.0 Request</label>
-      <textarea id="jsonrpcBody" rows="5">{"jsonrpc":"2.0","method":"invoke","id":1,"params":{}}</textarea>
-    </div>
-    <div class="req-res">
-      <div class="req-res-panel"><div class="req-res-header">Request</div><div class="req-res-body"><pre id="jsonrpcReqView">-</pre></div></div>
-      <div class="req-res-panel"><div class="req-res-header">Response</div><div class="req-res-body"><pre id="jsonrpcResView">-</pre></div></div>
-    </div>
-  </div>
-
-  <!-- gRPC Panel -->
-  <div class="transport-panel" id="lab-grpc">
-    <div class="info-panel">
-      <h3>gRPC Transport</h3>
-      <p>gRPC uses HTTP/2 with binary Protocol Buffers and <strong>cannot be tested directly from the browser</strong> without gRPC-Web middleware.</p>
-      <p>Behaviors configured for gRPC transport:</p>
-      <table class="mt-12">
-        <thead><tr><th>Behavior</th><th>Pattern</th><th>Proto Service</th></tr></thead>
-        <tbody>
-          <tr><td><code>catalog.get-product</code></td><td>Direct</td><td>CatalogService</td></tr>
-          <tr><td><code>catalog.list-products</code></td><td>Direct</td><td>CatalogService</td></tr>
-          <tr><td><code>catalog.create-product</code></td><td>Direct</td><td>CatalogService</td></tr>
-          <tr><td><code>catalog.update-product</code></td><td>Direct</td><td>CatalogService</td></tr>
-          <tr><td><code>shipping.initiate</code></td><td>Process Manager</td><td>ShippingService</td></tr>
-          <tr><td><code>shipping.track</code></td><td>Process Manager</td><td>ShippingService</td></tr>
-          <tr><td><code>shipping.confirm-delivery</code></td><td>Process Manager</td><td>ShippingService</td></tr>
-        </tbody>
-      </table>
-      <p class="mt-16">Test with <code>grpcurl</code> or a native gRPC client:</p>
-      <pre>grpcurl -plaintext localhost:5199 list
-grpcurl -plaintext -d '{"name":"test"}' localhost:5199 discovery.DiscoveryService/SayHello</pre>
-      <p class="mt-12">To enable browser testing, add <code>Grpc.AspNetCore.Web</code> and configure gRPC-Web middleware.</p>
-    </div>
-  </div>
-</div>
-</div>
+<div id="toastTray" class="toast-tray" aria-live="polite"></div>
 
 <script src="/showcase/client-config.js"></script>
 <script src="/showcase.js"></script>

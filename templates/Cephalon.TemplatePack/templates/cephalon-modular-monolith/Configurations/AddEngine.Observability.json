@@ -1,0 +1,16 @@
+{
+  "Engine": {
+    "Observability": {
+      "LogManifestSummary": true,
+      "LogModuleSummary": true,
+      "LogCapabilitySummary": true,
+      "Telemetry": {
+        "Provider": "OpenTelemetry",
+        "Protocol": "otlp/http",
+        "ExportLogs": true,
+        "ExportMetrics": true,
+        "ExportTraces": true
+      }
+    }
+  }
+}

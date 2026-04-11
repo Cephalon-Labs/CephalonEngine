@@ -1,0 +1,17 @@
+{
+  "Engine": {
+    "Trust": {
+      "RequireTrustedPackages": false,
+      "DefaultCapabilityAccess": "Allowed",
+      "TrustedPackages": [],
+      "TrustedAssemblies": [],
+      "TrustedPublishers": [],
+      "TrustedSignerFingerprints": [],
+      "TrustedSignaturePublicKeys": {},
+      "TrustedSignatureCertificates": {},
+      "TrustedSignatureCertificateAuthorities": [],
+      "Capabilities": {},
+      "AllowedPackageChecksums": {}
+    }
+  }
+}

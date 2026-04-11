@@ -1,827 +1,1732 @@
-// ═══════════════════════════════════════════════════════════
-// CephalonEngine Showcase — JavaScript
-// ═══════════════════════════════════════════════════════════
-
 const SHOWCASE_CONFIG = window.CEPHALON_SHOWCASE || {};
-const ROUTE_PREFIXES = Object.freeze({
-  rest: SHOWCASE_CONFIG.behaviorRoutes?.rest || '/api',
-  graphql: SHOWCASE_CONFIG.behaviorRoutes?.graphql || '/graphql',
-  jsonRpc: SHOWCASE_CONFIG.behaviorRoutes?.jsonRpc || '/json-rpc',
-  grpc: SHOWCASE_CONFIG.behaviorRoutes?.grpc || '/grpc',
-  ws: SHOWCASE_CONFIG.behaviorRoutes?.ws || '/ws',
-  sse: SHOWCASE_CONFIG.behaviorRoutes?.sse || '/sse',
-  graphqlWs: SHOWCASE_CONFIG.behaviorRoutes?.graphQLWs || '/graphql-ws',
-  graphqlSse: SHOWCASE_CONFIG.behaviorRoutes?.graphQLSse || '/graphql-sse'
+const API_ROOT = SHOWCASE_CONFIG.restApiBase || "/api/v1/showcase";
+const SYSTEM_API = `${API_ROOT}/system`;
+const ENDPOINTS = Object.freeze({
+  systemSummary: `${SYSTEM_API}/summary`,
+  systemBusiness: `${SYSTEM_API}/business`,
+  systemRuntime: `${SYSTEM_API}/runtime`,
+  systemGovernance: `${SYSTEM_API}/governance`,
+  systemTransports: `${SYSTEM_API}/transports`,
+  systemActivity: `${SYSTEM_API}/activity`,
+  activityStream: `${SYSTEM_API}/activity/stream`,
+  reset: `${SYSTEM_API}/reset`,
+  catalog: `${API_ROOT}/catalog`,
+  cart: `${API_ROOT}/cart`,
+  orders: `${API_ROOT}/orders`,
+  inventory: `${API_ROOT}/inventory`,
+  shipping: `${API_ROOT}/shipping`
 });
-const API_VERSION = SHOWCASE_CONFIG.restApiVersion || 'v1';
-const API = SHOWCASE_CONFIG.restApiBase || `${ROUTE_PREFIXES.rest}/${API_VERSION}/showcase`;
-const BEHAVIOR_VERSION = SHOWCASE_CONFIG.behaviorVersion || 'v1';
 
-// ── State ──────────────────────────────────────────────────
-let cartId = 'cart-' + Math.random().toString(36).slice(2, 10);
-let cartItems = {};
-let currentStep = 0;
-let lastOrderId = null;
-let lastShipmentId = null;
-let apiCallCount = 0;
-let dashboardInterval = null;
+const TRANSPORT_LABELS = Object.freeze({
+  "http.rest": "REST",
+  "http.graphql": "GraphQL",
+  "http.jsonrpc": "JSON-RPC",
+  "http.sse": "SSE",
+  "http.ws": "WebSocket",
+  "http.graphql-sse": "GraphQL-SSE",
+  "http.graphql-ws": "GraphQL-WS"
+});
 
-// Connections
-const sseConnections = {};
-const wsConnections = {};
-let labWsConn = null;
-let labSseSource = null;
-let labGqlWsConn = null;
+const TRANSPORT_RUNNER_SCENARIOS = Object.freeze([
+  {
+    id: "catalog-read",
+    title: "Catalog Read",
+    behaviorId: "catalog.list-products",
+    description: "Compare the same catalog read behavior across request-response transports that work directly in the browser.",
+    detail: "No seed state required.",
+    transportIds: ["http.graphql", "http.jsonrpc"]
+  },
+  {
+    id: "cart-query",
+    title: "Cart Query",
+    behaviorId: "cart.get",
+    description: "Validate that the active cart can be read through request, stream, and socket transports without changing the business meaning.",
+    detail: "Seeds an active cart when needed.",
+    transportIds: ["http.rest", "http.graphql", "http.sse", "http.ws"]
+  }
+]);
 
-// ── Utility ────────────────────────────────────────────────
+const DEFAULT_ADDRESS = "123 Showcase Street, Demo City";
+const state = {
+  cartId: loadCartId(),
+  cartItems: new Map(),
+  summary: null,
+  business: null,
+  runtime: null,
+  governance: null,
+  transports: null,
+  activity: { entries: [], totalRecorded: 0 },
+  filters: loadFilterState(),
+  stream: null,
+  transportRunner: {
+    results: {},
+    busyKeys: new Set(),
+    lastPreparedCartId: null,
+    lastPreparedOrderId: null,
+    lastRunAtUtc: null
+  }
+};
 
-function fmt(cents) { return '$' + (cents / 100).toFixed(2); }
-function shortId(id) { return id?.length > 16 ? id.slice(0, 16) + '...' : id; }
-function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-function ts() { return new Date().toLocaleTimeString('en-US', { hour12: false }); }
-function prettyJson(obj) { try { return JSON.stringify(typeof obj === 'string' ? JSON.parse(obj) : obj, null, 2); } catch { return String(obj); } }
-function behaviorPath(prefix, behavior) { return `${prefix}/${BEHAVIOR_VERSION}/${behavior.split('.').join('/')}`; }
-function behaviorHttpUrl(prefix, behavior) { return behaviorPath(prefix, behavior); }
-function behaviorWsUrl(prefix, behavior) {
-  const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  return `${protocol}//${location.host}${behaviorPath(prefix, behavior)}`;
+function init() {
+  bindEvents();
+  applyLinks();
+  syncControlsFromState();
+  renderCartComposer();
+  updateNavState();
+  connectActivityStream();
+  refreshConsole().catch(handleConsoleRefreshError);
 }
 
-function statusClass(s) {
-  const m = {
-    Pending: 'pending', Confirmed: 'confirmed', Processing: 'processing',
-    Shipped: 'shipped', Delivered: 'delivered', Cancelled: 'cancelled',
-    LabelCreated: 'labelcreated', InTransit: 'intransit', OutForDelivery: 'intransit', Returned: 'returned'
+function bindEvents() {
+  document.addEventListener("click", onClick);
+  document.getElementById("transportSearch").addEventListener("input", (event) => {
+    state.filters.search = event.target.value.trim().toLowerCase();
+    syncUrlState();
+    renderTransports();
+  });
+  document.getElementById("patternFilter").addEventListener("change", (event) => {
+    state.filters.pattern = event.target.value;
+    syncUrlState();
+    renderTransports();
+  });
+  document.getElementById("transportFilter").addEventListener("change", (event) => {
+    state.filters.transport = event.target.value;
+    syncUrlState();
+    renderTransports();
+  });
+  window.addEventListener("hashchange", updateNavState);
+}
+
+async function onClick(event) {
+  const actionEl = event.target.closest("[data-action]");
+  if (!actionEl) return;
+
+  const action = actionEl.dataset.action;
+  try {
+    if (action === "refresh-all") {
+      await refreshConsole();
+    } else if (action === "reset-sample") {
+      await resetSample();
+    } else if (action === "new-cart") {
+      createNewCart();
+    } else if (action === "reload-cart") {
+      await hydrateCartFromServer({ silent404: true });
+    } else if (action === "checkout-cart") {
+      await checkoutCartAndPlaceOrder();
+    } else if (action === "add-product") {
+      await addProductToCart(actionEl.dataset.productId);
+    } else if (action === "remove-cart-line") {
+      await removeCartLine(actionEl.dataset.productId);
+    } else if (action === "reserve-order") {
+      await reserveOrder(actionEl.dataset.orderId);
+    } else if (action === "ship-order") {
+      await shipOrder(actionEl.dataset.orderId);
+    } else if (action === "deliver-shipment") {
+      await deliverShipment(actionEl.dataset.shipmentId);
+    } else if (action === "prepare-transport-runner") {
+      await prepareTransportRunner();
+    } else if (action === "run-all-transport-scenarios") {
+      await runAllTransportScenarios();
+    } else if (action === "run-transport-scenario") {
+      await runTransportScenario(actionEl.dataset.scenarioId);
+    } else if (action === "run-transport-probe") {
+      await runTransportProbe(actionEl.dataset.scenarioId, actionEl.dataset.transportId);
+    }
+  } catch (error) {
+    toast(error.message || "Operation failed.", "error");
+  }
+}
+
+async function refreshConsole() {
+  const [summary, business, runtime, transports] = await Promise.all([
+    requestJson(ENDPOINTS.systemSummary),
+    requestJson(ENDPOINTS.systemBusiness),
+    requestJson(ENDPOINTS.systemRuntime),
+    requestJson(ENDPOINTS.systemTransports)
+  ]);
+  let governance = state.governance;
+
+  try {
+    governance = await requestJson(ENDPOINTS.systemGovernance);
+  } catch (error) {
+    governance = { errorMessage: error.message || "Governance projection unavailable." };
+    toast("Governance projection is temporarily unavailable.", "warning");
+  }
+
+  state.summary = summary;
+  state.business = business;
+  state.runtime = runtime;
+  state.governance = governance;
+  state.transports = transports;
+  populateTransportFilters();
+  await reconcileCartState();
+  state.activity = normalizeActivityResponse(await requestJson(`${ENDPOINTS.systemActivity}?limit=40`));
+  renderAll();
+}
+
+async function hydrateCartFromServer(options = {}) {
+  try {
+    const payload = await requestJson(`${ENDPOINTS.cart}/${encodeURIComponent(state.cartId)}`);
+    const cart = unwrapPayload(payload)?.cart || unwrapPayload(payload);
+    const itemsSource = Array.isArray(cart?.items) ? cart.items : Object.values(cart?.items || {});
+    state.cartItems = new Map(itemsSource.map((item) => [item.productId, { ...item }]));
+  } catch (error) {
+    if (options.silent404 && error.status === 404) {
+      state.cartItems = new Map();
+      renderCartComposer();
+      return;
+    }
+    throw error;
+  }
+
+  renderCartComposer();
+}
+
+async function resetSample() {
+  const confirmed = window.confirm("Reset showcase state and reseed reference data?");
+  if (!confirmed) return;
+
+  await requestJson(ENDPOINTS.reset, { method: "POST" });
+  createNewCart({ toastOnCreate: false });
+  await refreshConsole();
+  toast("Showcase state reset.", "success");
+}
+
+function createNewCart(options = {}) {
+  state.cartId = `cart-${Math.random().toString(36).slice(2, 10)}`;
+  state.cartItems = new Map();
+  storeCartId(state.cartId);
+  syncUrlState();
+  renderCartComposer();
+  if (options.toastOnCreate !== false) {
+    toast(`Switched to ${state.cartId}.`, "success");
+  }
+}
+
+async function addProductToCart(productId, options = {}) {
+  const product = state.business?.products?.find((item) => item.id === productId);
+  if (!product) throw new Error("Product not found.");
+
+  await requestJson(`${ENDPOINTS.cart}/${encodeURIComponent(state.cartId)}/items`, {
+    method: "POST",
+    body: {
+      cartId: state.cartId,
+      customerId: "showcase-web-ui",
+      productId: product.id,
+      productName: product.name,
+      quantity: 1,
+      priceInCents: product.priceInCents
+    }
+  });
+
+  const existing = state.cartItems.get(product.id);
+  state.cartItems.set(product.id, {
+    productId: product.id,
+    productName: product.name,
+    quantity: (existing?.quantity || 0) + 1,
+    priceInCents: product.priceInCents
+  });
+
+  renderCartComposer();
+  await refreshWorkloadData();
+  if (options.toastOnSuccess !== false) {
+    toast(`${product.name} added to ${state.cartId}.`, "success");
+  }
+}
+
+async function removeCartLine(productId) {
+  await requestJson(`${ENDPOINTS.cart}/${encodeURIComponent(state.cartId)}/items/${encodeURIComponent(productId)}`, {
+    method: "DELETE"
+  });
+
+  state.cartItems.delete(productId);
+  renderCartComposer();
+  await refreshWorkloadData();
+  toast("Cart item removed.", "warning");
+}
+
+async function checkoutCartAndPlaceOrder(options = {}) {
+  const lines = [...state.cartItems.values()];
+  if (!lines.length) throw new Error("Add items before checking out.");
+
+  const checkoutResult = unwrapPayload(await requestJson(`${ENDPOINTS.cart}/${encodeURIComponent(state.cartId)}/checkout`, {
+    method: "POST",
+    body: { cartId: state.cartId, shippingAddress: DEFAULT_ADDRESS }
+  }));
+  const checkedOutOrderId = checkoutResult?.orderId;
+
+  const orderPayload = {
+    orderId: checkedOutOrderId,
+    customerId: "showcase-web-ui",
+    shippingAddress: DEFAULT_ADDRESS,
+    items: lines.map((item) => ({
+      productId: item.productId,
+      productName: item.productName,
+      quantity: item.quantity,
+      unitPriceInCents: item.priceInCents
+    }))
   };
-  return 'status-' + (m[s] || 'pending');
-}
 
-function toast(msg, type = 'success') {
-  const el = document.createElement('div');
-  el.className = 'toast toast-' + type;
-  el.textContent = msg;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 3000);
-}
-
-function setStep(n) {
-  currentStep = n;
-  document.querySelectorAll('.flow-step').forEach((el, i) => {
-    el.classList.remove('active', 'done');
-    if (i < n) el.classList.add('done');
-    if (i === n) el.classList.add('active');
+  const orderResult = await requestJson(ENDPOINTS.orders, {
+    method: "POST",
+    body: orderPayload
   });
-}
 
-// ── API Logger ─────────────────────────────────────────────
-
-function logApi(method, url, status) {
-  apiCallCount++;
-  const kpi = document.getElementById('kpiApiCalls');
-  if (kpi) kpi.textContent = apiCallCount;
-
-  const log = document.getElementById('activityLog');
-  if (!log) return;
-  if (log.querySelector('.empty')) log.innerHTML = '';
-  const ok = status >= 200 && status < 400;
-  const entry = document.createElement('div');
-  entry.className = 'log-entry';
-  entry.innerHTML =
-    `<span class="log-time">${ts()}</span>` +
-    `<span class="log-method ${method.toLowerCase()}">${method}</span>` +
-    `<span class="log-url">${url}</span>` +
-    `<span class="log-status ${ok ? 'ok' : 'err'}">${status}</span>`;
-  log.prepend(entry);
-}
-
-async function api(method, path, body) {
-  const url = API + path;
-  const opts = { method, headers: { 'Content-Type': 'application/json' } };
-  if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(url, opts);
-  logApi(method, url, res.status);
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || res.statusText);
+  const orderId = unwrapPayload(orderResult)?.orderId || orderResult.orderId || checkedOutOrderId || "new order";
+  if (options.createReplacementCart !== false) {
+    createNewCart({ toastOnCreate: false });
   }
-  const ct = res.headers.get('content-type') || '';
-  return ct.includes('json') ? res.json() : null;
-}
 
-// ── Tab Navigation ─────────────────────────────────────────
-
-document.querySelectorAll('.tabs .tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    tab.classList.add('active');
-    const target = document.getElementById('tab-' + tab.dataset.tab);
-    if (target) target.classList.add('active');
-
-    if (tab.dataset.tab === 'dashboard') startDashboard();
-    else stopDashboard();
-  });
-});
-
-// Transport sub-tabs
-document.querySelectorAll('.transport-tabs .transport-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.transport-tabs .transport-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.transport-panel').forEach(p => p.classList.remove('active'));
-    tab.classList.add('active');
-    const panel = document.getElementById(tab.dataset.transport);
-    if (panel) panel.classList.add('active');
-  });
-});
-
-// ═══════════════════════════════════════════════════════════
-// TAB 1: E-COMMERCE FLOW
-// ═══════════════════════════════════════════════════════════
-
-// ── Catalog ────────────────────────────────────────────────
-
-async function loadProducts() {
-  try {
-    const products = await api('GET', '/catalog/products');
-    const tbody = document.getElementById('productList');
-    if (!products.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty">No products</td></tr>'; return; }
-    tbody.innerHTML = products.map(p => `
-      <tr>
-        <td><strong>${esc(p.name)}</strong><br><span class="text-sm text-muted">${esc(p.category)}</span></td>
-        <td style="font-family:var(--mono);font-size:12px;">${esc(p.sku)}</td>
-        <td class="price">${fmt(p.priceInCents)}</td>
-        <td><button class="btn btn-sm btn-primary" onclick="addToCart('${esc(p.id)}','${esc(p.name)}',${p.priceInCents})">+ Cart</button></td>
-      </tr>`).join('');
-  } catch (e) { toast('Failed to load products: ' + e.message, 'error'); }
-}
-
-// ── Cart ───────────────────────────────────────────────────
-
-function newCart() {
-  cartId = 'cart-' + Math.random().toString(36).slice(2, 10);
-  cartItems = {};
-  renderCart();
-  document.getElementById('cartIdDisplay').textContent = cartId.slice(0, 12);
-  toast('New cart created');
-}
-
-async function addToCart(productId, productName, priceInCents) {
-  try {
-    await api('POST', '/cart/' + cartId + '/items', {
-      cartId, customerId: 'customer-web-ui', productId, productName, quantity: 1, priceInCents
-    });
-    cartItems[productId] = cartItems[productId] || { productId, productName, priceInCents, quantity: 0 };
-    cartItems[productId].quantity++;
-    renderCart();
-    if (currentStep < 1) setStep(1);
-    toast(productName + ' added to cart');
-  } catch (e) { toast('Add to cart failed: ' + e.message, 'error'); }
-}
-
-async function removeFromCart(productId) {
-  try {
-    await api('DELETE', '/cart/' + cartId + '/items/' + productId);
-    delete cartItems[productId];
-    renderCart();
-    toast('Item removed');
-  } catch (e) { toast('Remove failed: ' + e.message, 'error'); }
-}
-
-function renderCart() {
-  const items = Object.values(cartItems);
-  const tbody = document.getElementById('cartItems');
-  const btn = document.getElementById('btnCheckout');
-  if (!items.length) {
-    tbody.innerHTML = '<tr><td colspan="4" class="empty">Cart is empty</td></tr>';
-    document.getElementById('cartTotal').textContent = '$0.00';
-    btn.disabled = true;
-    return;
+  if (options.refreshConsole !== false) {
+    await refreshConsole();
   }
-  btn.disabled = false;
-  let total = 0;
-  tbody.innerHTML = items.map(it => {
-    const sub = it.priceInCents * it.quantity;
-    total += sub;
-    return `<tr>
-      <td>${esc(it.productName)}</td>
-      <td><span class="qty"><span>${it.quantity}</span></span></td>
-      <td class="price">${fmt(sub)}</td>
-      <td><button class="btn btn-sm btn-danger" onclick="removeFromCart('${esc(it.productId)}')" title="Remove">&times;</button></td>
-    </tr>`;
-  }).join('');
-  document.getElementById('cartTotal').textContent = fmt(total);
-  document.getElementById('cartIdDisplay').textContent = cartId.slice(0, 12);
+
+  if (options.toastOnSuccess !== false) {
+    toast(`Checkout complete. Placed ${orderId}.`, "success");
+  }
+
+  return { orderId, checkedOutOrderId, itemCount: lines.length };
 }
 
-// ── Checkout ───────────────────────────────────────────────
-
-async function checkout() {
-  try {
-    await api('POST', '/cart/' + cartId + '/checkout', {
-      cartId, shippingAddress: '123 Showcase Street, Demo City, DC 12345'
-    });
-    const items = Object.values(cartItems).map(it => ({
-      productId: it.productId, productName: it.productName,
-      quantity: it.quantity, unitPriceInCents: it.priceInCents
-    }));
-    const orderResult = await api('POST', '/orders', {
-      customerId: 'customer-web-ui',
-      shippingAddress: '123 Showcase Street, Demo City, DC 12345',
-      items
-    });
-    lastOrderId = orderResult.orderId;
-    if (currentStep < 3) setStep(3);
-    cartItems = {};
-    renderCart();
-    toast('Order placed: ' + lastOrderId);
-    loadOrders();
-  } catch (e) { toast('Checkout failed: ' + e.message, 'error'); }
-}
-
-// ── Orders ─────────────────────────────────────────────────
-
-async function loadOrders() {
-  try {
-    const orders = await api('GET', '/orders');
-    const tbody = document.getElementById('orderList');
-    if (!orders.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty">No orders yet</td></tr>'; return; }
-    tbody.innerHTML = orders.slice(0, 8).map(o => `
-      <tr>
-        <td style="font-family:var(--mono);font-size:12px;">${shortId(o.orderId)}</td>
-        <td><span class="status ${statusClass(o.status)}">${o.status}</span></td>
-        <td class="price">${fmt(o.totalInCents)}</td>
-        <td>
-          ${o.status === 'Pending' ? `<button class="btn btn-sm btn-success" onclick="reserveForOrder('${esc(o.orderId)}')">Reserve</button>` : ''}
-          ${o.status === 'Pending' || o.status === 'Confirmed' ? `<button class="btn btn-sm btn-outline" onclick="shipOrder('${esc(o.orderId)}')">Ship</button>` : ''}
-          ${o.status === 'Pending' ? `<button class="btn btn-sm btn-danger" onclick="cancelOrder('${esc(o.orderId)}')">&times;</button>` : ''}
-        </td>
-      </tr>`).join('');
-  } catch (e) { toast('Failed to load orders: ' + e.message, 'error'); }
-}
-
-async function cancelOrder(orderId) {
-  try {
-    await api('PUT', '/orders/' + orderId + '/cancel', { orderId, reason: 'Cancelled from showcase UI' });
-    toast('Order cancelled');
-    loadOrders();
-  } catch (e) { toast('Cancel failed: ' + e.message, 'error'); }
-}
-
-// ── Inventory ──────────────────────────────────────────────
-
-async function loadInventory() {
-  try {
-    const items = await api('GET', '/inventory');
-    const tbody = document.getElementById('inventoryList');
-    if (!items.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty">No inventory</td></tr>'; return; }
-    tbody.innerHTML = items.map(it => `
-      <tr>
-        <td style="font-family:var(--mono);font-size:12px;">${shortId(it.productId)}</td>
-        <td>${it.quantityOnHand}</td>
-        <td>${it.quantityReserved}</td>
-        <td><strong>${it.quantityAvailable}</strong></td>
-      </tr>`).join('');
-  } catch (e) { toast('Failed to load inventory: ' + e.message, 'error'); }
-}
-
-async function reserveForOrder(orderId) {
-  try {
-    const order = await api('GET', '/orders/' + orderId);
-    const reserveItems = order.items.map(it => ({ productId: it.productId, quantity: it.quantity }));
-    await api('POST', '/inventory/reserve', { orderId, items: reserveItems });
-    if (currentStep < 4) setStep(4);
-    toast('Stock reserved for ' + shortId(orderId));
-    lastOrderId = orderId;
-    loadInventory();
-    loadOrders();
-  } catch (e) { toast('Reserve failed: ' + e.message, 'error'); }
-}
-
-// ── Shipping ───────────────────────────────────────────────
-
-async function loadShipments() {
-  try {
-    const shipments = await api('GET', '/shipping');
-    const tbody = document.getElementById('shipmentList');
-    if (!shipments.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty">No shipments</td></tr>'; return; }
-    tbody.innerHTML = shipments.slice(0, 8).map(s => `
-      <tr>
-        <td style="font-family:var(--mono);font-size:12px;">${shortId(s.shipmentId)}</td>
-        <td style="font-family:var(--mono);font-size:12px;">${shortId(s.orderId)}</td>
-        <td><span class="status ${statusClass(s.status)}">${s.status}</span></td>
-        <td>${s.status !== 'Delivered' ? `<button class="btn btn-sm btn-success" onclick="deliverShipment('${esc(s.shipmentId)}')">Deliver</button>` : ''}</td>
-      </tr>`).join('');
-  } catch (e) { toast('Failed to load shipments: ' + e.message, 'error'); }
+async function reserveOrder(orderId) {
+  const order = unwrapPayload(await requestJson(`${ENDPOINTS.orders}/${encodeURIComponent(orderId)}`));
+  await requestJson(`${ENDPOINTS.inventory}/reserve`, {
+    method: "POST",
+    body: {
+      orderId,
+      items: order.items.map((item) => ({ productId: item.productId, quantity: item.quantity }))
+    }
+  });
+  await refreshWorkloadData();
+  toast(`Reserved stock for ${orderId}.`, "success");
 }
 
 async function shipOrder(orderId) {
-  try {
-    const order = await api('GET', '/orders/' + orderId);
-    const shipItems = order.items.map(it => ({ productId: it.productId, productName: it.productName, quantity: it.quantity }));
-    const result = await api('POST', '/shipping', {
-      orderId, destinationAddress: order.shippingAddress, items: shipItems
-    });
-    lastShipmentId = result.shipmentId;
-    if (currentStep < 5) setStep(5);
-    toast('Shipment created: ' + shortId(result.shipmentId));
-    loadShipments();
-    loadOrders();
-  } catch (e) { toast('Ship failed: ' + e.message, 'error'); }
+  const order = unwrapPayload(await requestJson(`${ENDPOINTS.orders}/${encodeURIComponent(orderId)}`));
+  await requestJson(ENDPOINTS.shipping, {
+    method: "POST",
+    body: {
+      orderId,
+      destinationAddress: order.shippingAddress,
+      items: order.items.map((item) => ({
+        productId: item.productId,
+        productName: item.productName,
+        quantity: item.quantity
+      }))
+    }
+  });
+  await refreshWorkloadData();
+  toast(`Created shipment for ${orderId}.`, "success");
 }
 
 async function deliverShipment(shipmentId) {
-  try {
-    await api('PUT', '/shipping/' + shipmentId + '/deliver', { shipmentId, recipientName: 'Showcase Customer' });
-    setStep(6);
-    toast('Delivery confirmed!');
-    loadShipments();
-    loadOrders();
-  } catch (e) { toast('Deliver failed: ' + e.message, 'error'); }
+  await requestJson(`${ENDPOINTS.shipping}/${encodeURIComponent(shipmentId)}/deliver`, {
+    method: "PUT",
+    body: { shipmentId, recipientName: "Showcase Operator" }
+  });
+  await refreshWorkloadData();
+  toast(`Delivered ${shipmentId}.`, "success");
 }
 
-// ═══════════════════════════════════════════════════════════
-// TAB 2: DASHBOARD
-// ═══════════════════════════════════════════════════════════
-
-function startDashboard() {
-  refreshDashboard();
-  if (!dashboardInterval) dashboardInterval = setInterval(refreshDashboard, 3000);
+async function refreshWorkloadData() {
+  const [summary, business] = await Promise.all([
+    requestJson(ENDPOINTS.systemSummary),
+    requestJson(ENDPOINTS.systemBusiness)
+  ]);
+  state.summary = summary;
+  state.business = business;
+  await reconcileCartState();
+  state.activity = normalizeActivityResponse(await requestJson(`${ENDPOINTS.systemActivity}?limit=40`));
+  renderAll();
 }
 
-function stopDashboard() {
-  if (dashboardInterval) { clearInterval(dashboardInterval); dashboardInterval = null; }
+async function reconcileCartState() {
+  const openCarts = (state.business?.carts || []).filter((cart) => !cart.isCheckedOut);
+  const matchingCart = openCarts.find((cart) => cart.cartId === state.cartId);
+  if (matchingCart) {
+    await hydrateCartFromServer();
+    return;
+  }
+
+  if (!state.cartItems.size && openCarts.length > 0) {
+    state.cartId = openCarts[0].cartId;
+    storeCartId(state.cartId);
+    syncUrlState();
+    await hydrateCartFromServer();
+    return;
+  }
+
+  state.cartItems = new Map();
+  renderCartComposer();
 }
 
-async function refreshDashboard() {
-  try {
-    const [products, orders, inventory, shipments] = await Promise.all([
-      fetch(API + '/catalog/products').then(r => r.json()),
-      fetch(API + '/orders').then(r => r.json()),
-      fetch(API + '/inventory').then(r => r.json()),
-      fetch(API + '/shipping').then(r => r.json())
-    ]);
+function connectActivityStream() {
+  if (state.stream) state.stream.close();
+  const source = new EventSource(ENDPOINTS.activityStream);
+  state.stream = source;
 
-    // KPI values
-    document.getElementById('kpiProducts').textContent = products.length;
-    document.getElementById('kpiOrders').textContent = orders.length;
-    document.getElementById('kpiOrdersSub').textContent = orders.length === 1 ? '1 order placed' : orders.length + ' orders placed';
+  source.addEventListener("ready", () => updateStreamStatus(true));
+  source.addEventListener("activity", (event) => {
+    const entry = normalizeActivityEntry(JSON.parse(event.data));
+    state.activity.entries = [entry, ...(state.activity.entries || [])].slice(0, 80);
+    state.activity.totalRecorded = Math.max(state.activity.totalRecorded || 0, entry.sequence || 0);
+    renderActivity();
+  });
+  source.onerror = () => updateStreamStatus(false);
+}
 
-    const totalRevenue = orders.reduce((s, o) => s + (o.totalInCents || 0), 0);
-    document.getElementById('kpiRevenue').textContent = fmt(totalRevenue);
+function renderAll() {
+  renderOverview();
+  renderWorkloads();
+  renderRuntime();
+  renderGovernance();
+  renderTransports();
+  renderActivity();
+}
 
-    document.getElementById('kpiShipments').textContent = shipments.length;
-    const delivered = shipments.filter(s => s.status === 'Delivered').length;
-    document.getElementById('kpiShipmentsSub').textContent = delivered + ' delivered';
+function renderOverview() {
+  if (!state.summary) return;
+  const { runtime, business, dependencies, suggestedJourneys, documentation } = state.summary;
+  setPill("runtimeStatusPill", `Runtime: ${runtime.status}`, tone(runtime.status));
+  setPill("readinessPill", `Readiness: ${runtime.readiness}`, tone(runtime.readiness));
+  setPill("livenessPill", `Liveness: ${runtime.liveness}`, tone(runtime.liveness));
+  document.getElementById("summaryTimestamp").textContent = `Updated ${formatDate(business.generatedAtUtc)}`;
 
-    const totalReserved = inventory.reduce((s, i) => s + (i.quantityReserved || 0), 0);
-    document.getElementById('kpiReserved').textContent = totalReserved;
+  document.getElementById("overviewKpis").innerHTML = [
+    kpiCard("Modules", runtime.moduleCount, runtime.blueprintDisplayName),
+    kpiCard("Capabilities", runtime.capabilityCount, `${runtime.behaviorCount} behaviors`),
+    kpiCard("Orders", business.orders, `${business.pendingOrders} pending`),
+    kpiCard("Revenue", money(business.revenueInCents), `${business.deliveredOrders} delivered`),
+    kpiCard("Shipments", business.shipments, `${business.deliveredShipments} delivered`),
+    kpiCard("Activity", state.activity.totalRecorded || 0, "server-backed feed")
+  ].join("");
 
-    document.getElementById('kpiApiCalls').textContent = apiCallCount;
+  document.getElementById("runtimeSummaryList").innerHTML = [
+    metricRow("Environment", runtime.environment),
+    metricRow("Blueprint", runtime.blueprintDisplayName),
+    metricRow("Database roles", `${runtime.writeProvider} / ${runtime.readProvider} / ${runtime.historyProvider}`),
+    metricRow("Transports", runtime.transportCount),
+    metricRow("Technologies", runtime.technologyCount),
+    metricRow("Diagnostics", runtime.diagnosticsConventionCount),
+    metricRow("Restart count", runtime.restartCount),
+    metricRow("Started", runtime.startedAtUtc ? formatDate(runtime.startedAtUtc) : "not started")
+  ].join("");
 
-    // Order status breakdown
-    const statusCounts = {};
-    orders.forEach(o => { statusCounts[o.status] = (statusCounts[o.status] || 0) + 1; });
-    const statusColors = { Pending: 'var(--yellow)', Confirmed: 'var(--accent)', Shipped: 'var(--cyan)', Delivered: 'var(--green)', Cancelled: 'var(--red)' };
-    const maxStatus = Math.max(1, ...Object.values(statusCounts));
-    const statusHtml = Object.entries(statusCounts).map(([status, count]) => `
-      <div class="status-bar-row">
-        <span class="status-bar-label">${status}</span>
-        <div class="status-bar-track"><div class="status-bar-fill" style="width:${(count / maxStatus) * 100}%;background:${statusColors[status] || 'var(--text2)'}"></div></div>
-        <span class="status-bar-count">${count}</span>
-      </div>`).join('');
-    document.getElementById('orderStatusBars').innerHTML = statusHtml || '<div class="empty">No orders yet</div>';
+  document.getElementById("dependencyList").innerHTML = dependencies.length
+    ? dependencies.map((item) => `
+      <div class="dependency-item">
+        <header><strong>${escapeHtml(item.displayName)}</strong><span class="status-badge ${tone(item.state)}">${escapeHtml(item.state)}</span></header>
+        <small>${escapeHtml(item.description)}</small>
+      </div>`).join("")
+    : `<div class="empty-state">No dependency health entries published.</div>`;
 
-    // Inventory utilization
-    const maxQty = Math.max(1, ...inventory.map(i => i.quantityOnHand));
-    const invHtml = inventory.map(it => `
-      <div class="status-bar-row">
-        <span class="status-bar-label">${it.productId.replace('prod-', 'P')}</span>
-        <div class="status-bar-track">
-          <div class="status-bar-fill" style="width:${((it.quantityOnHand - it.quantityReserved) / maxQty) * 100}%;background:var(--green);"></div>
+  document.getElementById("journeyList").innerHTML = suggestedJourneys.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+  document.getElementById("documentationLinks").innerHTML = [
+    linkButton("Scalar", documentation.scalarPath),
+    linkButton("OpenAPI JSON", documentation.openApiJsonPath),
+    linkButton("Runtime Snapshot", documentation.runtimeSnapshotPath),
+    linkButton("Runtime Story", documentation.runtimeStoryPath),
+    linkButton("Diagnostics", documentation.diagnosticsPath),
+    linkButton("Audit History", documentation.auditHistoryPath)
+  ].join("");
+}
+
+function renderWorkloads() {
+  if (!state.business) return;
+  document.getElementById("productTable").innerHTML = state.business.products.map((product) => `
+    <tr>
+      <td><strong>${escapeHtml(product.name)}</strong><div class="mono">${escapeHtml(product.id)}</div></td>
+      <td>${escapeHtml(product.category)}</td>
+      <td class="price">${money(product.priceInCents)}</td>
+      <td><button class="btn btn-sm btn-outline" data-action="add-product" data-product-id="${escapeHtml(product.id)}">Add</button></td>
+    </tr>`).join("");
+
+  document.getElementById("orderTable").innerHTML = state.business.orders.length
+    ? state.business.orders.map((order) => `
+      <tr>
+        <td><strong class="mono">${shortId(order.orderId)}</strong><div>${escapeHtml(order.customerId)}</div></td>
+        <td><span class="status-badge ${tone(order.status)}">${escapeHtml(order.status)}</span></td>
+        <td class="price">${money(order.totalInCents)}</td>
+        <td>${orderActions(order)}</td>
+      </tr>`).join("")
+    : `<tr><td colspan="4" class="empty-state">No orders yet.</td></tr>`;
+
+  document.getElementById("inventoryTable").innerHTML = state.business.inventory.map((item) => `
+    <tr>
+      <td><strong>${escapeHtml(item.productName)}</strong></td>
+      <td>${item.quantityAvailable}/${item.quantityOnHand}</td>
+      <td>${item.quantityReserved}</td>
+    </tr>`).join("");
+
+  document.getElementById("shipmentTable").innerHTML = state.business.shipments.length
+    ? state.business.shipments.map((shipment) => `
+      <tr>
+        <td><strong class="mono">${shortId(shipment.shipmentId)}</strong></td>
+        <td class="mono">${shortId(shipment.orderId)}</td>
+        <td><span class="status-badge ${tone(shipment.status)}">${escapeHtml(shipment.status)}</span></td>
+        <td>${escapeHtml(shipment.carrier)}</td>
+        <td>${shipment.status === "Delivered" ? "" : `<button class="btn btn-sm btn-outline" data-action="deliver-shipment" data-shipment-id="${escapeHtml(shipment.shipmentId)}">Deliver</button>`}</td>
+      </tr>`).join("")
+    : `<tr><td colspan="5" class="empty-state">No shipments yet.</td></tr>`;
+
+  renderCartComposer();
+}
+
+function renderCartComposer() {
+  const items = [...state.cartItems.values()];
+  const total = items.reduce((sum, item) => sum + item.quantity * item.priceInCents, 0);
+  const quantity = items.reduce((sum, item) => sum + item.quantity, 0);
+  document.getElementById("cartIdDisplay").textContent = state.cartId;
+  document.getElementById("cartItemCount").textContent = quantity;
+  document.getElementById("cartTotal").textContent = money(total);
+  document.getElementById("checkoutButton").disabled = items.length === 0;
+  document.getElementById("cartItems").innerHTML = items.length
+    ? items.map((item) => `
+      <div class="cart-line">
+        <div>
+          <strong>${escapeHtml(item.productName)}</strong>
+          <div class="mono">${escapeHtml(item.productId)}</div>
         </div>
-        <span class="status-bar-count" title="Available / On Hand">${it.quantityOnHand - it.quantityReserved}/${it.quantityOnHand}</span>
-      </div>`).join('');
-    document.getElementById('inventoryBars').innerHTML = invHtml || '<div class="empty">No inventory</div>';
-
-  } catch (e) { /* silent refresh failure */ }
+        <div>
+          <span>${item.quantity} x ${money(item.priceInCents)}</span>
+          <button class="btn btn-sm btn-ghost" data-action="remove-cart-line" data-product-id="${escapeHtml(item.productId)}">Remove</button>
+        </div>
+      </div>`).join("")
+    : `<div class="empty-state">Cart is empty.</div>`;
 }
 
-// ═══════════════════════════════════════════════════════════
-// TAB 3: LIVE TRACKING
-// ═══════════════════════════════════════════════════════════
+function renderRuntime() {
+  if (!state.runtime) return;
+  document.getElementById("facetGrid").innerHTML = state.runtime.facets.map((facet) => `
+    <div class="stat-card">
+      <span>${escapeHtml(facet.key)}</span>
+      <strong>${facet.count}</strong>
+      <small>${escapeHtml(facet.description)}</small>
+    </div>`).join("");
 
-function addTimelineEvent(type, behavior, payload) {
-  const timeline = document.getElementById('eventTimeline');
-  if (timeline.querySelector('.empty')) timeline.innerHTML = '';
-  const evt = document.createElement('div');
-  evt.className = 'timeline-event evt-' + type;
-  evt.innerHTML =
-    `<div class="timeline-header">
-      <span class="timeline-time">${ts()}</span>
-      <span class="badge badge-sm badge-${type}">${type.toUpperCase()}</span>
-      <span class="timeline-behavior">${behavior}</span>
-    </div>
-    <div class="timeline-payload">${esc(typeof payload === 'string' ? payload : JSON.stringify(payload))}</div>`;
-  timeline.prepend(evt);
-  // Keep max 100 events
-  while (timeline.children.length > 100) timeline.removeChild(timeline.lastChild);
+  document.getElementById("moduleTable").innerHTML = state.runtime.modules.map((module) => `
+    <tr>
+      <td><strong>${escapeHtml(module.displayName)}</strong><div class="mono">${escapeHtml(module.id)}</div></td>
+      <td>${escapeHtml(module.version)}</td>
+      <td>${module.isTrusted ? `<span class="status-badge status-success">trusted</span>` : `<span class="status-badge status-error">untrusted</span>`}</td>
+      <td>${module.dependencyCount}</td>
+    </tr>`).join("");
+
+  document.getElementById("capabilityList").innerHTML = state.runtime.capabilities.map((capability) => `
+    <div class="capability-item">
+      <strong>${escapeHtml(capability.displayName)}</strong>
+      <small>${escapeHtml(capability.sourceModuleId)}</small>
+      <div>${escapeHtml(capability.description)}</div>
+    </div>`).join("");
+
+  document.getElementById("patternTokens").innerHTML = state.runtime.patterns.map((item) => `<span class="token">${escapeHtml(item.displayName)}</span>`).join("");
+  document.getElementById("transportTokens").innerHTML = state.runtime.transports.map((item) => `<span class="token">${escapeHtml(item.displayName)}</span>`).join("");
+
+  const audits = state.summary?.recentAuditEntries || [];
+  document.getElementById("auditList").innerHTML = audits.length
+    ? audits.map((entry) => `
+      <div class="audit-item">
+        <header><strong>${escapeHtml(entry.action)}</strong><span class="status-badge ${tone(entry.outcome)}">${escapeHtml(entry.outcome)}</span></header>
+        <div>${escapeHtml(entry.summary)}</div>
+        <div class="meta-row"><span class="mono">${escapeHtml(entry.category)}</span><span>${formatDate(entry.occurredAtUtc)}</span></div>
+      </div>`).join("")
+    : `<div class="empty-state">No audit entries available yet.</div>`;
 }
 
-function clearTimeline() {
-  document.getElementById('eventTimeline').innerHTML = '<div class="empty">Connect to SSE or WebSocket endpoints above to see live events...</div>';
+function renderGovernance() {
+  if (!state.governance) return;
+  if (state.governance.errorMessage) {
+    document.getElementById("governanceSummary").innerHTML = `<div class="empty-state">${escapeHtml(state.governance.errorMessage)}</div>`;
+    document.getElementById("governanceLinks").innerHTML = "";
+    document.getElementById("packagePolicyList").innerHTML = `<div class="empty-state">Governance projection unavailable.</div>`;
+    document.getElementById("trustSummaryList").innerHTML = `<div class="empty-state">Governance projection unavailable.</div>`;
+    document.getElementById("capabilityDecisionList").innerHTML = `<div class="empty-state">Governance projection unavailable.</div>`;
+    document.getElementById("loadedPackageList").innerHTML = `<div class="empty-state">Governance projection unavailable.</div>`;
+    document.getElementById("authorizationPolicyList").innerHTML = `<div class="empty-state">Governance projection unavailable.</div>`;
+    document.getElementById("technologySurfaceList").innerHTML = `<div class="empty-state">Governance projection unavailable.</div>`;
+    document.getElementById("runtimeStoryList").innerHTML = `<div class="empty-state">Governance projection unavailable.</div>`;
+    document.getElementById("timelineList").innerHTML = `<div class="empty-state">Governance projection unavailable.</div>`;
+    return;
+  }
+
+  const { summary, packagePolicy, trust, capabilityDecisions, packages, authorizationPolicies, technologySurfaces, runtimeStory, recentTimeline } = state.governance;
+  const engine = SHOWCASE_CONFIG.engine || {};
+
+  document.getElementById("governanceSummary").innerHTML = [
+    statCard("Loaded packages", summary.loadedPackageCount, summary.loadedPackageCount ? `${summary.trustedPackageCount} trusted` : "assembly-first sample"),
+    statCard("Strict package rules", summary.packagePolicyRequirementCount, summary.allowAssemblyPathPackages ? "assembly path allowed" : "manifest-first"),
+    statCard("Capability access", summary.capabilityAllowedCount, `${summary.capabilityBlockedCount} blocked now`),
+    statCard("Authorization", summary.authorizationPolicyCount, "published policies"),
+    statCard("Tech surfaces", summary.technologySurfaceCount, `${summary.technologyEntryCount} entries`),
+    statCard("Runtime story", summary.timelineEventCount, "timeline events")
+  ].join("");
+
+  document.getElementById("governanceLinks").innerHTML = [
+    linkButton("Packages", engine.packages || "/engine/packages"),
+    linkButton("Package Policy", engine.packagePolicy || "/engine/package-policy"),
+    linkButton("Trust Policy", engine.trustPolicy || "/engine/trust-policy"),
+    linkButton("Authorization", engine.authorizationPolicies || "/engine/authorization-policies"),
+    linkButton("Technology", engine.technologySurfaces || "/engine/technology-surfaces"),
+    linkButton("Runtime Story", engine.runtimeStory || "/engine/runtime-story")
+  ].join("");
+
+  document.getElementById("packagePolicyList").innerHTML = packagePolicy.length
+    ? packagePolicy.map((rule) => `
+      <div class="capability-item policy-rule">
+        <header>
+          <strong>${escapeHtml(rule.displayName)}</strong>
+          <span class="status-badge ${rule.enabled ? "status-warning" : ""}">${rule.enabled ? "enabled" : "disabled"}</span>
+        </header>
+        <small class="mono">${escapeHtml(rule.key)}</small>
+        <div>${escapeHtml(rule.description)}</div>
+      </div>`).join("")
+    : `<div class="empty-state">No package policy rules found.</div>`;
+
+  document.getElementById("trustSummaryList").innerHTML = [
+    metricRow("Require trusted packages", trust.requireTrustedPackages ? "yes" : "no"),
+    metricRow("Default capability access", trust.defaultCapabilityAccess),
+    metricRow("Trusted assemblies", trust.trustedAssemblyCount),
+    metricRow("Trusted packages", trust.trustedPackageAllowListCount),
+    metricRow("Trusted publishers", trust.trustedPublisherCount),
+    metricRow("Trusted signers", trust.trustedSignerCount),
+    metricRow("Trusted public keys", trust.trustedPublicKeyCount),
+    metricRow("Trusted certificates", trust.trustedCertificateCount),
+    metricRow("Trusted certificate authorities", trust.trustedCertificateAuthorityCount),
+    metricRow("Allowed checksum rules", trust.allowedChecksumRuleCount),
+    metricRow("Capability overrides", trust.capabilityOverrideCount)
+  ].join("");
+
+  document.getElementById("capabilityDecisionList").innerHTML = capabilityDecisions.map((item) => `
+    <div class="stat-card">
+      <span>${escapeHtml(item.key)}</span>
+      <strong>${item.count}</strong>
+      <small>${escapeHtml(item.description)}</small>
+    </div>`).join("");
+
+  document.getElementById("loadedPackageList").innerHTML = packages.length
+    ? packages.map((pkg) => `
+      <article class="package-item">
+        <header>
+          <strong>${escapeHtml(pkg.packageId)}</strong>
+          <div class="meta-row">
+            <span class="status-badge ${pkg.isTrusted ? "status-success" : "status-error"}">${pkg.isTrusted ? "trusted" : "untrusted"}</span>
+            <span class="status-badge ${pkg.isSignatureVerified ? "status-success" : ""}">${pkg.isSignatureVerified ? "verified" : "not verified"}</span>
+          </div>
+        </header>
+        <div class="meta-row">
+          <span class="token">${escapeHtml(pkg.kind)}</span>
+          <span class="token">${escapeHtml(pkg.assemblyName)}</span>
+          ${pkg.version ? `<span class="token">v${escapeHtml(pkg.version)}</span>` : ""}
+          ${pkg.publisherId ? `<span class="token">${escapeHtml(pkg.publisherId)}</span>` : ""}
+          ${pkg.modules.map((moduleId) => `<span class="token">${escapeHtml(moduleId)}</span>`).join("")}
+        </div>
+        <small>${escapeHtml(pkg.trustReason)}</small>
+      </article>`).join("")
+    : `<div class="empty-state">This sample is currently running from in-repo assemblies, so there are no independently loaded packages yet.</div>`;
+
+  document.getElementById("authorizationPolicyList").innerHTML = authorizationPolicies.length
+    ? authorizationPolicies.map((policy) => `
+      <article class="capability-item authorization-policy-item">
+        <header>
+          <strong>${escapeHtml(policy.displayName)}</strong>
+          <span class="status-badge">${policy.modes.length} modes</span>
+        </header>
+        <small class="mono">${escapeHtml(policy.id)}</small>
+        <div>${escapeHtml(policy.description)}</div>
+        <div class="meta-row">
+          ${policy.modes.map((mode) => `<span class="token">${escapeHtml(mode)}</span>`).join("")}
+          ${policy.tags.map((tag) => `<span class="token">${escapeHtml(tag)}</span>`).join("")}
+          ${renderMetadataPreview(policy.metadataPreview)}
+        </div>
+      </article>`).join("")
+    : `<div class="empty-state">No authorization policies are currently published.</div>`;
+
+  document.getElementById("technologySurfaceList").innerHTML = technologySurfaces.length
+    ? technologySurfaces.map((surface) => `
+      <article class="surface-card">
+        <header>
+          <div>
+            <strong>${escapeHtml(surface.displayName)}</strong>
+            <div class="mono">${escapeHtml(surface.technologyId)} / ${escapeHtml(surface.surfaceId)}</div>
+          </div>
+          <span class="status-badge">${surface.entryCount} entries</span>
+        </header>
+        <p>${escapeHtml(surface.description)}</p>
+        <div class="surface-entry-list">
+          ${surface.entries.map((entry) => `
+            <div class="capability-item surface-entry">
+              <strong>${escapeHtml(entry.displayName)}</strong>
+              <small class="mono">${escapeHtml(entry.id)}</small>
+              <div>${escapeHtml(entry.description)}</div>
+              <div class="meta-row">${renderMetadataPreview(entry.metadataPreview)}</div>
+            </div>`).join("")}
+        </div>
+      </article>`).join("")
+    : `<div class="empty-state">No technology surfaces are active.</div>`;
+
+  document.getElementById("runtimeStoryList").innerHTML = [
+    metricRow("Generated", formatDate(runtimeStory.generatedAtUtc)),
+    metricRow("Status", runtimeStory.status),
+    metricRow("Started", runtimeStory.startedAtUtc ? formatDate(runtimeStory.startedAtUtc) : "not started"),
+    metricRow("Modules", `${runtimeStory.startedModuleCount}/${runtimeStory.moduleCount} started`),
+    metricRow("Execution graphs", `${runtimeStory.activeExecutionGraphCount}/${runtimeStory.executionGraphCount} active`),
+    metricRow("Hosted executions", `${runtimeStory.activeHostedExecutionCount}/${runtimeStory.hostedExecutionCount} active`),
+    metricRow("Loaded packages", runtimeStory.loadedPackageCount),
+    metricRow("Timeline events", runtimeStory.timelineEventCount)
+  ].join("");
+
+  document.getElementById("timelineList").innerHTML = recentTimeline.length
+    ? recentTimeline.map((entry) => `
+      <article class="timeline-item">
+        <header>
+          <strong>${escapeHtml(entry.phase)}</strong>
+          <span class="status-badge ${tone(entry.outcome)}">${escapeHtml(entry.outcome)}</span>
+        </header>
+        <div>${escapeHtml(entry.message)}</div>
+        <div class="meta-row">
+          <span class="token">${escapeHtml(entry.scope)}</span>
+          ${entry.subjectId ? `<span class="token mono">${escapeHtml(entry.subjectId)}</span>` : ""}
+          <span>${formatDate(entry.occurredAtUtc)}</span>
+        </div>
+      </article>`).join("")
+    : `<div class="empty-state">No lifecycle timeline entries available.</div>`;
 }
 
-// ── SSE Connections (Tracking) ─────────────────────────────
-
-function connectSse() {
-  const behavior = document.getElementById('sseSelect').value;
-  if (sseConnections[behavior]) { toast(behavior + ' already connected', 'error'); return; }
-
-  const url = behaviorHttpUrl(ROUTE_PREFIXES.sse, behavior);
-  const source = new EventSource(url);
-  sseConnections[behavior] = source;
-
-  source.onopen = () => {
-    addTimelineEvent('sse', behavior, 'Connected to ' + url);
-    updateSseStatus();
-  };
-  source.onmessage = (event) => {
-    addTimelineEvent('sse', behavior, event.data);
-  };
-  source.onerror = () => {
-    addTimelineEvent('sse', behavior, 'Connection error / closed');
-    delete sseConnections[behavior];
-    updateSseStatus();
-  };
-  updateSseStatus();
-  toast('SSE connected: ' + behavior);
-}
-
-function disconnectAllSse() {
-  Object.entries(sseConnections).forEach(([id, src]) => {
-    src.close();
-    addTimelineEvent('sse', id, 'Disconnected');
+function renderTransports() {
+  if (!state.transports) return;
+  renderTransportRunner();
+  const behaviorById = new Map(state.transports.behaviors.map((behavior) => [behavior.behaviorId, behavior]));
+  const filtered = state.transports.behaviors.filter((behavior) => {
+    const haystack = `${behavior.behaviorId} ${behavior.pattern} ${behavior.routes.map((route) => route.route).join(" ")}`.toLowerCase();
+    const matchesSearch = !state.filters.search || haystack.includes(state.filters.search);
+    const matchesPattern = !state.filters.pattern || behavior.pattern === state.filters.pattern;
+    const matchesTransport = !state.filters.transport || behavior.transportIds.includes(state.filters.transport);
+    return matchesSearch && matchesPattern && matchesTransport;
   });
-  Object.keys(sseConnections).forEach(k => delete sseConnections[k]);
-  updateSseStatus();
-  toast('All SSE disconnected');
+  const filteredBehaviorIds = new Set(filtered.map((behavior) => behavior.behaviorId));
+  const filteredOperations = state.transports.restOperations.filter((operation) => {
+    const behavior = operation.behaviorId ? behaviorById.get(operation.behaviorId) : null;
+    const haystack = `${operation.method} ${operation.route} ${operation.displayName || ""} ${operation.moduleId || ""} ${operation.behaviorId || ""}`.toLowerCase();
+    const matchesSearch = !state.filters.search || haystack.includes(state.filters.search);
+    const matchesPattern = !state.filters.pattern || (behavior && behavior.pattern === state.filters.pattern);
+    const matchesTransport = !state.filters.transport || state.filters.transport === "http.rest";
+    const matchesBehaviorScope = !operation.behaviorId || filteredBehaviorIds.has(operation.behaviorId);
+    return matchesSearch && matchesPattern && matchesTransport && matchesBehaviorScope;
+  });
+
+  document.getElementById("transportSummary").innerHTML = [
+    statCard("Behavior topology", state.transports.summary.behaviorCount, "owned behaviors"),
+    statCard("Filtered behaviors", filtered.length, "current view"),
+    statCard("REST operations", filteredOperations.length, "public routes"),
+    statCard("Active transports", state.transports.summary.transportCount, "runtime surface")
+  ].join("");
+
+  document.getElementById("behaviorMatrix").innerHTML = filtered.length
+    ? filtered.map((behavior) => `
+      <article class="behavior-card">
+        <header>
+          <div>
+            <strong>${escapeHtml(behavior.behaviorId)}</strong>
+            <div>${escapeHtml(behavior.pattern)}</div>
+          </div>
+          <span class="status-badge">${behavior.transportIds.length} transports</span>
+        </header>
+        <div class="meta-row">${behavior.transportIds.map((item) => `<span class="token">${escapeHtml(item)}</span>`).join("")}</div>
+        <div class="behavior-routes">
+          ${behavior.routes.map((route) => `<span class="token ${route.canonical ? "tag-success" : ""}"><strong>${escapeHtml(route.method)}</strong> ${escapeHtml(route.route)}</span>`).join("")}
+        </div>
+      </article>`).join("")
+    : `<div class="empty-state">No behaviors match the current filter.</div>`;
+
+  document.getElementById("restOperationList").innerHTML = filteredOperations.length
+    ? filteredOperations.map((operation) => `
+      <article class="rest-operation">
+        <header><strong>${escapeHtml(operation.method)}</strong><span class="mono">${escapeHtml(operation.route)}</span></header>
+        <div class="meta-row">
+          ${operation.moduleId ? `<span class="token">${escapeHtml(operation.moduleId)}</span>` : ""}
+          ${operation.behaviorId ? `<span class="token">${escapeHtml(operation.behaviorId)}</span>` : ""}
+        </div>
+      </article>`).join("")
+    : `<div class="empty-state">No REST operations match the current filter.</div>`;
 }
 
-function updateSseStatus() {
-  const keys = Object.keys(sseConnections);
-  const statusEl = document.getElementById('sseStatus');
-  const listEl = document.getElementById('sseConnList');
-  if (keys.length) {
-    statusEl.innerHTML = `<span class="conn-dot connected"></span> ${keys.length} active`;
-    listEl.innerHTML = keys.map(k => `<span class="badge badge-sm badge-sse" style="margin-right:4px;">${k}</span>`).join('');
-  } else {
-    statusEl.innerHTML = '<span class="conn-dot disconnected"></span> No connections';
-    listEl.textContent = 'No active SSE connections';
-  }
+function renderTransportRunner() {
+  const scenarios = getTransportRunnerScenarios();
+  const activeProbeCount = scenarios.reduce((sum, scenario) => sum + scenario.probes.filter((probe) => probe.route).length, 0);
+
+  document.getElementById("transportRunnerContext").innerHTML = [
+    statCard("Runner cart", state.transportRunner.lastPreparedCartId || state.cartId, "current transport seed"),
+    statCard("Catalog rows", state.business?.products?.length || 0, "read-only comparison seed"),
+    statCard("Browser probes", activeProbeCount, `${scenarios.length} behavior scenarios`),
+    statCard("Last validation", state.transportRunner.lastRunAtUtc ? formatDate(state.transportRunner.lastRunAtUtc) : "not run yet", "latest probe timestamp")
+  ].join("");
+
+  document.getElementById("transportRunnerGrid").innerHTML = scenarios.map((scenario) => {
+    const availableCount = scenario.probes.filter((probe) => probe.route).length;
+    const scenarioBusy = scenario.probes.some((probe) => probe.isBusy);
+
+    return `
+      <article class="runner-scenario">
+        <header>
+          <div>
+            <strong>${escapeHtml(scenario.title)}</strong>
+            <div class="mono">${escapeHtml(scenario.behaviorId)}</div>
+          </div>
+          <span class="status-badge ${availableCount ? "" : "status-error"}">${availableCount}/${scenario.probes.length} routes</span>
+        </header>
+        <p>${escapeHtml(scenario.description)}</p>
+        <div class="meta-row">
+          ${scenario.transportIds.map((transportId) => `<span class="token">${escapeHtml(TRANSPORT_LABELS[transportId] || transportId)}</span>`).join("")}
+          <span class="token">${escapeHtml(scenario.detail)}</span>
+        </div>
+        <div class="runner-actions">
+          <button
+            class="btn btn-sm btn-outline"
+            data-action="run-transport-scenario"
+            data-scenario-id="${escapeHtml(scenario.id)}"
+            ${availableCount === 0 || scenarioBusy ? "disabled" : ""}>
+            ${scenarioBusy ? "Running..." : "Run scenario"}
+          </button>
+          <small>${escapeHtml(availableCount ? "Executes each published browser-friendly route for this behavior." : "This runtime is not publishing the expected routes for this scenario.")}</small>
+        </div>
+        <div class="runner-probe-grid">
+          ${scenario.probes.map((probe) => renderTransportProbeCard(scenario, probe)).join("")}
+        </div>
+      </article>`;
+  }).join("");
 }
 
-// ── WebSocket Connections (Tracking) ───────────────────────
+function renderTransportProbeCard(scenario, probe) {
+  const statusLabel = probe.isBusy
+    ? "running"
+    : probe.result
+      ? (probe.result.succeeded ? "passed" : "failed")
+      : (probe.route ? "ready" : "unavailable");
+  const statusTone = probe.isBusy
+    ? "status-warning"
+    : probe.result
+      ? (probe.result.succeeded ? "status-success" : "status-error")
+      : "";
+  const routeLabel = probe.route
+    ? `${probe.route.method} ${probe.route.route}`
+    : "Route not published in this runtime.";
+  const summary = probe.result
+    ? `${formatDuration(probe.result.durationMs)} · ${probe.result.summary}`
+    : scenario.detail;
+  const preview = probe.result?.preview || `Select Run to execute ${TRANSPORT_LABELS[probe.transportId] || probe.transportId}.`;
 
-function connectWs() {
-  const behavior = document.getElementById('wsSelect').value;
-  if (wsConnections[behavior]) { toast(behavior + ' already connected', 'error'); return; }
-
-  const url = behaviorWsUrl(ROUTE_PREFIXES.ws, behavior);
-  const ws = new WebSocket(url);
-  wsConnections[behavior] = ws;
-
-  ws.onopen = () => {
-    addTimelineEvent('ws', behavior, 'Connected to ' + url);
-    updateWsStatus();
-  };
-  ws.onmessage = (event) => {
-    addTimelineEvent('ws', behavior, event.data);
-  };
-  ws.onerror = () => {
-    addTimelineEvent('ws', behavior, 'Connection error');
-  };
-  ws.onclose = () => {
-    addTimelineEvent('ws', behavior, 'Disconnected');
-    delete wsConnections[behavior];
-    updateWsStatus();
-  };
-  updateWsStatus();
-  toast('WebSocket connecting: ' + behavior);
+  return `
+    <article class="runner-probe">
+      <header>
+        <strong>${escapeHtml(probe.label)}</strong>
+        <span class="status-badge ${statusTone}">${escapeHtml(statusLabel)}</span>
+      </header>
+      <div class="mono runner-route">${escapeHtml(routeLabel)}</div>
+      <div class="runner-actions">
+        <button
+          class="btn btn-sm btn-ghost"
+          data-action="run-transport-probe"
+          data-scenario-id="${escapeHtml(scenario.id)}"
+          data-transport-id="${escapeHtml(probe.transportId)}"
+          ${!probe.route || probe.isBusy ? "disabled" : ""}>
+          ${probe.isBusy ? "Running..." : "Run"}
+        </button>
+        <small>${escapeHtml(summary)}</small>
+      </div>
+      <pre class="runner-output ${probe.result ? "" : "is-empty"}">${escapeHtml(preview)}</pre>
+    </article>`;
 }
 
-function disconnectAllWs() {
-  Object.entries(wsConnections).forEach(([id, ws]) => { ws.close(); });
-  Object.keys(wsConnections).forEach(k => delete wsConnections[k]);
-  updateWsStatus();
-  toast('All WebSocket disconnected');
-}
+function getTransportRunnerScenarios() {
+  const behaviorById = new Map((state.transports?.behaviors || []).map((behavior) => [behavior.behaviorId, behavior]));
 
-function sendWsMessage() {
-  const keys = Object.keys(wsConnections);
-  if (!keys.length) { toast('No WebSocket connected', 'error'); return; }
-  const payload = document.getElementById('wsSendPayload').value;
-  keys.forEach(k => {
-    const ws = wsConnections[k];
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.send(payload);
-      addTimelineEvent('ws', k, 'SENT: ' + payload);
-    }
+  return TRANSPORT_RUNNER_SCENARIOS.map((scenario) => {
+    const behavior = behaviorById.get(scenario.behaviorId);
+    const probes = scenario.transportIds.map((transportId) => {
+      const route = behavior?.routes?.find((candidate) => candidate.transportId === transportId) || null;
+      return {
+        transportId,
+        label: TRANSPORT_LABELS[transportId] || transportId,
+        route,
+        result: getTransportProbeResult(scenario.id, transportId),
+        isBusy: state.transportRunner.busyKeys.has(getTransportProbeKey(scenario.id, transportId))
+      };
+    });
+
+    return { ...scenario, probes };
   });
 }
 
-function updateWsStatus() {
-  const keys = Object.keys(wsConnections);
-  const statusEl = document.getElementById('wsStatus');
-  const listEl = document.getElementById('wsConnList');
-  if (keys.length) {
-    statusEl.innerHTML = `<span class="conn-dot connected"></span> ${keys.length} active`;
-    listEl.innerHTML = keys.map(k => `<span class="badge badge-sm badge-ws" style="margin-right:4px;">${k}</span>`).join('');
-  } else {
-    statusEl.innerHTML = '<span class="conn-dot disconnected"></span> No connections';
-    listEl.textContent = 'No active WebSocket connections';
-  }
+function getTransportProbeKey(scenarioId, transportId) {
+  return `${scenarioId}::${transportId}`;
 }
 
-// ═══════════════════════════════════════════════════════════
-// TAB 4: TRANSPORT LAB
-// ═══════════════════════════════════════════════════════════
-
-// ── REST Lab ───────────────────────────────────────────────
-
-async function labRestSend() {
-  const method = document.getElementById('restMethod').value;
-  const url = document.getElementById('restUrl').value;
-  const body = document.getElementById('restBody').value;
-
-  document.getElementById('restReqView').textContent = `${method} ${url}\nContent-Type: application/json\n\n${method !== 'GET' ? body : ''}`;
-  try {
-    const opts = { method, headers: { 'Content-Type': 'application/json' } };
-    if (method !== 'GET' && method !== 'DELETE') opts.body = body;
-    const res = await fetch(url, opts);
-    logApi(method, url, res.status);
-    const ct = res.headers.get('content-type') || '';
-    const data = ct.includes('json') ? await res.json() : await res.text();
-    document.getElementById('restResStatus').textContent = res.status + ' ' + res.statusText;
-    document.getElementById('restResView').textContent = prettyJson(data);
-  } catch (e) {
-    document.getElementById('restResView').textContent = 'Error: ' + e.message;
-  }
+function getTransportProbeResult(scenarioId, transportId) {
+  return state.transportRunner.results[getTransportProbeKey(scenarioId, transportId)] || null;
 }
 
-// ── GraphQL Lab ────────────────────────────────────────────
+async function prepareTransportRunner(options = {}) {
+  const cartId = await ensureRunnerCartId();
+  renderTransports();
 
-async function labGraphqlSend() {
-  const behavior = document.getElementById('gqlBehavior').value;
-  const query = document.getElementById('gqlQuery').value;
-  const variables = document.getElementById('gqlVars').value;
-  const url = behaviorHttpUrl(ROUTE_PREFIXES.graphql, behavior);
-
-  const reqBody = { query, variables: JSON.parse(variables || '{}') };
-  document.getElementById('gqlReqView').textContent = `POST ${url}\n\n${prettyJson(reqBody)}`;
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(reqBody)
-    });
-    logApi('POST', url, res.status);
-    const data = await res.json();
-    document.getElementById('gqlResView').textContent = prettyJson(data);
-  } catch (e) {
-    document.getElementById('gqlResView').textContent = 'Error: ' + e.message;
+  if (options.toastOnSuccess !== false) {
+    toast(`Transport runner ready on ${cartId}.`, "success");
   }
+
+  return { cartId };
 }
 
-// ── GraphQL-WS Lab ─────────────────────────────────────────
+async function runAllTransportScenarios() {
+  const scenarios = getTransportRunnerScenarios();
+  let passed = 0;
+  let failed = 0;
 
-function labGqlWsConnect() {
-  if (labGqlWsConn) { toast('Already connected', 'error'); return; }
-
-  const behavior = document.getElementById('gqlWsBehavior').value;
-  const url = behaviorWsUrl(ROUTE_PREFIXES.graphqlWs, behavior);
-
-  const ws = new WebSocket(url, 'graphql-transport-ws');
-  labGqlWsConn = ws;
-  const logEl = document.getElementById('gqlWsLog');
-  const dataEl = document.getElementById('gqlWsData');
-  logEl.textContent = '';
-  dataEl.textContent = '';
-
-  function gqlWsLog(dir, msg) {
-    logEl.textContent += `[${ts()}] ${dir} ${typeof msg === 'string' ? msg : JSON.stringify(msg)}\n`;
-    logEl.scrollTop = logEl.scrollHeight;
+  for (const scenario of scenarios) {
+    const result = await runTransportScenario(scenario.id, { silent: true });
+    passed += result.passed;
+    failed += result.failed;
   }
 
-  ws.onopen = () => {
-    updateGqlWsStatus('connected');
-    // Send connection_init
-    const init = { type: 'connection_init' };
-    ws.send(JSON.stringify(init));
-    gqlWsLog('>>>', init);
-  };
+  toast(
+    failed
+      ? `Browser transport validation finished with ${passed} passed and ${failed} failed probes.`
+      : `Browser transport validation passed across ${passed} probes.`,
+    failed ? "warning" : "success");
+}
 
-  ws.onmessage = (event) => {
-    const msg = JSON.parse(event.data);
-    gqlWsLog('<<<', msg);
+async function runTransportScenario(scenarioId, options = {}) {
+  const scenario = getTransportRunnerScenarios().find((item) => item.id === scenarioId);
+  if (!scenario) throw new Error("Transport scenario not found.");
 
-    if (msg.type === 'connection_ack') {
-      // Send subscription
-      const query = document.getElementById('gqlWsQuery').value;
-      const sub = { id: '1', type: 'subscribe', payload: { query } };
-      ws.send(JSON.stringify(sub));
-      gqlWsLog('>>>', sub);
-    } else if (msg.type === 'next') {
-      dataEl.textContent += prettyJson(msg.payload) + '\n---\n';
-      dataEl.scrollTop = dataEl.scrollHeight;
-      addTimelineEvent('graphql', behavior, msg.payload);
-    } else if (msg.type === 'complete') {
-      gqlWsLog('---', 'Subscription complete');
+  let passed = 0;
+  let failed = 0;
+  for (const probe of scenario.probes.filter((item) => item.route)) {
+    try {
+      await runTransportProbe(scenario.id, probe.transportId);
+      passed += 1;
+    } catch {
+      failed += 1;
     }
-  };
-
-  ws.onerror = () => { gqlWsLog('!!!', 'WebSocket error'); };
-  ws.onclose = () => {
-    gqlWsLog('---', 'Connection closed');
-    labGqlWsConn = null;
-    updateGqlWsStatus('disconnected');
-  };
-}
-
-function labGqlWsDisconnect() {
-  if (labGqlWsConn) {
-    labGqlWsConn.close();
-    labGqlWsConn = null;
   }
-  updateGqlWsStatus('disconnected');
+
+  if (!options.silent) {
+    toast(
+      failed
+        ? `${scenario.title} finished with ${passed} passed and ${failed} failed probes.`
+        : `${scenario.title} passed across ${passed} probes.`,
+      failed ? "warning" : "success");
+  }
+
+  return { passed, failed };
 }
 
-function updateGqlWsStatus(state) {
-  const el = document.getElementById('gqlWsStatus');
-  const cls = state === 'connected' ? 'connected' : 'disconnected';
-  const label = state === 'connected' ? 'Connected' : 'Disconnected';
-  el.innerHTML = `<span class="conn-dot ${cls}"></span> ${label}`;
-}
+async function runTransportProbe(scenarioId, transportId) {
+  const scenario = TRANSPORT_RUNNER_SCENARIOS.find((item) => item.id === scenarioId);
+  if (!scenario) throw new Error("Transport scenario not found.");
 
-// ── GraphQL-SSE Lab ────────────────────────────────────────
+  const route = findBehaviorTransportRoute(scenario.behaviorId, transportId);
+  if (!route) {
+    throw new Error(`${TRANSPORT_LABELS[transportId] || transportId} is not published for ${scenario.behaviorId}.`);
+  }
 
-async function labGqlSseSend() {
-  const behavior = document.getElementById('gqlSseBehavior').value;
-  const query = document.getElementById('gqlSseQuery').value;
-  const url = behaviorHttpUrl(ROUTE_PREFIXES.graphqlSse, behavior);
+  const probeKey = getTransportProbeKey(scenarioId, transportId);
+  state.transportRunner.busyKeys.add(probeKey);
+  renderTransports();
 
-  const reqBody = { query };
-  document.getElementById('gqlSseReqView').textContent = `POST ${url}\n\n${prettyJson(reqBody)}`;
-  const resEl = document.getElementById('gqlSseResView');
-  resEl.textContent = '';
+  const startedAt = performance.now();
+  const occurredAtUtc = new Date().toISOString();
 
   try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(reqBody)
-    });
-    logApi('POST', url, res.status);
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
+    const input = await buildTransportScenarioInput(scenarioId);
+    const payload = await executeTransportProbe(transportId, route, input);
+    const result = {
+      succeeded: true,
+      durationMs: performance.now() - startedAt,
+      occurredAtUtc,
+      summary: describeTransportPayload(payload),
+      preview: formatTransportPayload(payload)
+    };
+    state.transportRunner.results[probeKey] = result;
+    state.transportRunner.lastRunAtUtc = occurredAtUtc;
+    renderTransports();
+    return result;
+  } catch (error) {
+    const failure = {
+      succeeded: false,
+      durationMs: performance.now() - startedAt,
+      occurredAtUtc,
+      summary: error.message || "Probe failed.",
+      preview: error.message || "Probe failed."
+    };
+    state.transportRunner.results[probeKey] = failure;
+    state.transportRunner.lastRunAtUtc = occurredAtUtc;
+    renderTransports();
+    throw error;
+  } finally {
+    state.transportRunner.busyKeys.delete(probeKey);
+    renderTransports();
+  }
+}
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      const chunk = decoder.decode(value, { stream: true });
-      resEl.textContent += chunk;
-      resEl.scrollTop = resEl.scrollHeight;
+function findBehaviorTransportRoute(behaviorId, transportId) {
+  const behavior = state.transports?.behaviors?.find((item) => item.behaviorId === behaviorId);
+  return behavior?.routes?.find((route) => route.transportId === transportId) || null;
+}
+
+async function buildTransportScenarioInput(scenarioId) {
+  switch (scenarioId) {
+    case "catalog-read":
+      return {};
+    case "cart-query":
+      return { cartId: await ensureRunnerCartId() };
+    default:
+      throw new Error(`Unknown transport scenario '${scenarioId}'.`);
+  }
+}
+
+async function ensureRunnerCartId() {
+  if (!state.business) {
+    await refreshWorkloadData();
+  }
+
+  const openCarts = (state.business?.carts || []).filter((cart) => !cart.isCheckedOut);
+  const matchingCart = openCarts.find((cart) => cart.cartId === state.cartId);
+  if (matchingCart) {
+    state.transportRunner.lastPreparedCartId = matchingCart.cartId;
+    return matchingCart.cartId;
+  }
+
+  if (openCarts.length) {
+    state.cartId = openCarts[0].cartId;
+    state.transportRunner.lastPreparedCartId = state.cartId;
+    storeCartId(state.cartId);
+    syncUrlState();
+    await hydrateCartFromServer({ silent404: true });
+    return state.cartId;
+  }
+
+  const product = state.business?.products?.[0];
+  if (!product) {
+    throw new Error("No products are available to seed the transport runner.");
+  }
+
+  createNewCart({ toastOnCreate: false });
+  await addProductToCart(product.id, { toastOnSuccess: false });
+  state.transportRunner.lastPreparedCartId = state.cartId;
+  return state.cartId;
+}
+
+async function ensureRunnerOrderId() {
+  if (!state.business) {
+    await refreshWorkloadData();
+  }
+
+  const existingOrderId = state.business?.orders?.[0]?.orderId;
+  if (existingOrderId) {
+    state.transportRunner.lastPreparedOrderId = existingOrderId;
+    return existingOrderId;
+  }
+
+  await ensureRunnerCartId();
+  const createdOrder = await checkoutCartAndPlaceOrder({ toastOnSuccess: false });
+  const orderId = createdOrder?.orderId || state.business?.orders?.[0]?.orderId;
+  if (!orderId) {
+    throw new Error("The transport runner could not prepare an order.");
+  }
+
+  state.transportRunner.lastPreparedOrderId = orderId;
+  return orderId;
+}
+
+async function executeTransportProbe(transportId, route, input) {
+  switch (transportId) {
+    case "http.rest":
+      return executeRestTransportProbe(route, input);
+    case "http.graphql":
+      return executeGraphqlHttpProbe(route, input);
+    case "http.jsonrpc":
+      return executeJsonRpcProbe(route, input);
+    case "http.sse":
+      return executeSseProbe(route, input);
+    case "http.ws":
+      return executeWebSocketProbe(route, input);
+    case "http.graphql-sse":
+      return executeGraphqlSseProbe(route, input);
+    case "http.graphql-ws":
+      return executeGraphqlWsProbe(route, input);
+    default:
+      throw new Error(`Unsupported probe transport '${transportId}'.`);
+  }
+}
+
+async function executeRestTransportProbe(route, input) {
+  const materialized = materializeRoute(route.route, input);
+  const url = route.method === "GET"
+    ? appendQueryString(materialized.route, materialized.remaining)
+    : materialized.route;
+  const response = await fetch(url, { method: route.method || "GET" });
+  const payload = await readJsonOrTextResponse(response);
+  if (!response.ok) {
+    throw new Error(extractMessage(payload) || `${route.method} ${route.route} failed with ${response.status}.`);
+  }
+
+  return unwrapPayload(payload);
+}
+
+async function executeGraphqlHttpProbe(route, input) {
+  const response = await fetch(route.route, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify(buildGraphqlEnvelope(input, "query"))
+  });
+  const payload = await readJsonOrTextResponse(response);
+  if (!response.ok) {
+    throw new Error(extractMessage(payload) || `GraphQL probe failed with ${response.status}.`);
+  }
+
+  if (payload?.errors?.length) {
+    throw new Error(extractMessage(payload) || "GraphQL returned errors.");
+  }
+
+  return unwrapPayload(payload?.data ?? payload);
+}
+
+async function executeJsonRpcProbe(route, input) {
+  const response = await fetch(route.route, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: `probe-${Date.now()}`,
+      method: "handle",
+      params: input
+    })
+  });
+  const payload = await readJsonOrTextResponse(response);
+  if (!response.ok) {
+    throw new Error(extractMessage(payload) || `JSON-RPC probe failed with ${response.status}.`);
+  }
+
+  if (payload?.error) {
+    throw new Error(payload.error.data || payload.error.message || "JSON-RPC returned an error.");
+  }
+
+  return unwrapPayload(payload?.result ?? payload);
+}
+
+function executeSseProbe(route, input) {
+  return new Promise((resolve, reject) => {
+    const materialized = materializeRoute(route.route, input);
+    const source = new EventSource(appendQueryString(materialized.route, materialized.remaining));
+    let settled = false;
+    const timer = window.setTimeout(() => fail(new Error("Timed out waiting for the SSE probe result.")), 8000);
+
+    function cleanup() {
+      window.clearTimeout(timer);
+      source.close();
     }
-    resEl.textContent += '\n[Stream ended]';
-  } catch (e) {
-    resEl.textContent += '\nError: ' + e.message;
-  }
-}
 
-// ── SSE Lab ────────────────────────────────────────────────
+    function succeed(payload) {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resolve(unwrapPayload(payload));
+    }
 
-function labSseConnect() {
-  if (labSseSource) { toast('Already connected', 'error'); return; }
-  const behavior = document.getElementById('labSseBehavior').value;
-  const url = behaviorHttpUrl(ROUTE_PREFIXES.sse, behavior);
+    function fail(error) {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      reject(error);
+    }
 
-  document.getElementById('labSseInfo').textContent = `Endpoint: GET ${url}\nContent-Type: text/event-stream\nBehavior: ${behavior}\nStatus: Connecting...`;
-  const eventsEl = document.getElementById('labSseEvents');
-  eventsEl.textContent = '';
-
-  const source = new EventSource(url);
-  labSseSource = source;
-
-  source.onopen = () => {
-    document.getElementById('labSseInfo').textContent += '\nStatus: Connected';
-    updateLabSseStatus('connected');
-  };
-  source.onmessage = (event) => {
-    eventsEl.textContent += `[${ts()}] ${event.data}\n`;
-    eventsEl.scrollTop = eventsEl.scrollHeight;
-    addTimelineEvent('sse', behavior, event.data);
-  };
-  source.onerror = () => {
-    eventsEl.textContent += `[${ts()}] Connection error / closed\n`;
-    labSseSource = null;
-    updateLabSseStatus('disconnected');
-  };
-}
-
-function labSseDisconnect() {
-  if (labSseSource) { labSseSource.close(); labSseSource = null; }
-  updateLabSseStatus('disconnected');
-}
-
-function updateLabSseStatus(state) {
-  const el = document.getElementById('labSseStatus');
-  const cls = state === 'connected' ? 'connected' : 'disconnected';
-  const label = state === 'connected' ? 'Connected' : 'Disconnected';
-  el.innerHTML = `<span class="conn-dot ${cls}"></span> ${label}`;
-}
-
-// ── WebSocket Lab ──────────────────────────────────────────
-
-function labWsConnect() {
-  if (labWsConn) { toast('Already connected', 'error'); return; }
-  const behavior = document.getElementById('labWsBehavior').value;
-  const url = behaviorWsUrl(ROUTE_PREFIXES.ws, behavior);
-
-  const ws = new WebSocket(url);
-  labWsConn = ws;
-
-  ws.onopen = () => {
-    updateLabWsStatus('connected');
-    document.getElementById('labWsReceived').textContent = `[${ts()}] Connected to ${url}\n`;
-  };
-  ws.onmessage = (event) => {
-    const el = document.getElementById('labWsReceived');
-    el.textContent += `[${ts()}] ${prettyJson(event.data)}\n`;
-    el.scrollTop = el.scrollHeight;
-    addTimelineEvent('ws', behavior, event.data);
-  };
-  ws.onerror = () => {
-    document.getElementById('labWsReceived').textContent += `[${ts()}] Error\n`;
-  };
-  ws.onclose = () => {
-    document.getElementById('labWsReceived').textContent += `[${ts()}] Disconnected\n`;
-    labWsConn = null;
-    updateLabWsStatus('disconnected');
-  };
-}
-
-function labWsDisconnect() {
-  if (labWsConn) { labWsConn.close(); labWsConn = null; }
-  updateLabWsStatus('disconnected');
-}
-
-function labWsSend() {
-  if (!labWsConn || labWsConn.readyState !== WebSocket.OPEN) { toast('Not connected', 'error'); return; }
-  const msg = document.getElementById('labWsMessage').value;
-  labWsConn.send(msg);
-  const el = document.getElementById('labWsSent');
-  el.textContent = `[${ts()}]\n${prettyJson(msg)}`;
-}
-
-function updateLabWsStatus(state) {
-  const el = document.getElementById('labWsStatus');
-  const cls = state === 'connected' ? 'connected' : 'disconnected';
-  const label = state === 'connected' ? 'Connected' : 'Disconnected';
-  el.innerHTML = `<span class="conn-dot ${cls}"></span> ${label}`;
-}
-
-// ── JSON-RPC Lab ───────────────────────────────────────────
-
-async function labJsonRpcSend() {
-  const behavior = document.getElementById('jsonrpcBehavior').value;
-  const body = document.getElementById('jsonrpcBody').value;
-  const url = behaviorHttpUrl(ROUTE_PREFIXES.jsonRpc, behavior);
-
-  document.getElementById('jsonrpcReqView').textContent = `POST ${url}\nContent-Type: application/json\n\n${prettyJson(body)}`;
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: body
+    source.addEventListener("result", (event) => {
+      try {
+        succeed(JSON.parse(event.data));
+      } catch {
+        succeed(event.data);
+      }
     });
-    logApi('POST', url, res.status);
-    const data = await res.json();
-    document.getElementById('jsonrpcResView').textContent = prettyJson(data);
-  } catch (e) {
-    document.getElementById('jsonrpcResView').textContent = 'Error: ' + e.message;
+    source.addEventListener("error", (event) => {
+      if (typeof event.data === "string" && event.data.length) {
+        try {
+          const payload = JSON.parse(event.data);
+          fail(new Error(extractMessage(payload) || "The SSE probe returned an error event."));
+        } catch {
+          fail(new Error(event.data));
+        }
+        return;
+      }
+
+      if (source.readyState === EventSource.CLOSED) {
+        fail(new Error("SSE connection closed before a result event arrived."));
+      }
+    });
+  });
+}
+
+async function executeGraphqlSseProbe(route, input) {
+  const response = await fetch(route.route, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "text/event-stream"
+    },
+    body: JSON.stringify(buildGraphqlEnvelope(input, "query"))
+  });
+  const payloadText = await response.text();
+  if (!response.ok) {
+    throw new Error(payloadText || `GraphQL-SSE probe failed with ${response.status}.`);
+  }
+
+  const payload = parseSsePayload(payloadText, "next");
+  if (payload?.errors?.length) {
+    throw new Error(extractMessage(payload) || "GraphQL-SSE returned errors.");
+  }
+
+  return unwrapPayload(payload?.data ?? payload);
+}
+
+function executeWebSocketProbe(route, input) {
+  return new Promise((resolve, reject) => {
+    const ws = new WebSocket(toWebSocketUrl(route.route));
+    let settled = false;
+    const timer = window.setTimeout(() => fail(new Error("Timed out waiting for the WebSocket probe response.")), 8000);
+
+    function cleanup() {
+      window.clearTimeout(timer);
+      if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+        ws.close(1000, "probe complete");
+      }
+    }
+
+    function succeed(payload) {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resolve(unwrapPayload(payload));
+    }
+
+    function fail(error) {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      reject(error);
+    }
+
+    ws.addEventListener("open", () => {
+      ws.send(JSON.stringify(input));
+    });
+    ws.addEventListener("message", (event) => {
+      try {
+        const payload = JSON.parse(typeof event.data === "string" ? event.data : "");
+        if (payload?.error) {
+          fail(new Error(payload.error));
+          return;
+        }
+
+        succeed(payload);
+      } catch {
+        succeed(event.data);
+      }
+    });
+    ws.addEventListener("error", () => fail(new Error("The WebSocket probe failed.")));
+    ws.addEventListener("close", (event) => {
+      if (!settled && event.code !== 1000) {
+        fail(new Error(`The WebSocket probe closed with code ${event.code}.`));
+      }
+    });
+  });
+}
+
+function executeGraphqlWsProbe(route, input) {
+  return new Promise((resolve, reject) => {
+    const ws = new WebSocket(toWebSocketUrl(route.route), "graphql-transport-ws");
+    let settled = false;
+    const subscriptionId = `probe-${Date.now()}`;
+    const timer = window.setTimeout(() => fail(new Error("Timed out waiting for the GraphQL-WS probe result.")), 10000);
+
+    function cleanup() {
+      window.clearTimeout(timer);
+      if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+        ws.close(1000, "probe complete");
+      }
+    }
+
+    function succeed(payload) {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resolve(unwrapPayload(payload));
+    }
+
+    function fail(error) {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      reject(error);
+    }
+
+    ws.addEventListener("open", () => {
+      ws.send(JSON.stringify({ type: "connection_init" }));
+    });
+    ws.addEventListener("message", (event) => {
+      const raw = typeof event.data === "string" ? event.data : "";
+      let message;
+      try {
+        message = JSON.parse(raw);
+      } catch {
+        fail(new Error("GraphQL-WS returned malformed JSON."));
+        return;
+      }
+
+      if (message.type === "connection_ack") {
+        ws.send(JSON.stringify({
+          id: subscriptionId,
+          type: "subscribe",
+          payload: buildGraphqlEnvelope(input, "subscription")
+        }));
+        return;
+      }
+
+      if (message.type === "next") {
+        if (message.payload?.errors?.length) {
+          fail(new Error(extractMessage(message.payload) || "GraphQL-WS returned errors."));
+          return;
+        }
+
+        succeed(message.payload?.data ?? message.payload);
+        return;
+      }
+
+      if (message.type === "error") {
+        fail(new Error(extractMessage(message.payload) || "GraphQL-WS returned errors."));
+      }
+    });
+    ws.addEventListener("error", () => fail(new Error("The GraphQL-WS probe failed.")));
+    ws.addEventListener("close", (event) => {
+      if (!settled && event.code !== 1000) {
+        fail(new Error(`The GraphQL-WS probe closed with code ${event.code}.`));
+      }
+    });
+  });
+}
+
+function buildGraphqlEnvelope(input, operationKind) {
+  const kind = operationKind === "subscription" ? "subscription" : "query";
+  const queryName = kind === "subscription" ? "TransportProbeSubscription" : "TransportProbe";
+  return {
+    query: `${kind} ${queryName} { handle }`,
+    variables: input
+  };
+}
+
+async function readJsonOrTextResponse(response) {
+  const contentType = response.headers.get("content-type") || "";
+  return contentType.includes("json")
+    ? response.json()
+    : response.text();
+}
+
+function parseSsePayload(text, expectedEventName) {
+  const chunks = String(text || "")
+    .split(/\r?\n\r?\n/)
+    .map((chunk) => chunk.trim())
+    .filter(Boolean);
+
+  for (const chunk of chunks) {
+    let eventName = "message";
+    const dataLines = [];
+    for (const line of chunk.split(/\r?\n/)) {
+      if (line.startsWith("event:")) {
+        eventName = line.slice(6).trim();
+      } else if (line.startsWith("data:")) {
+        dataLines.push(line.slice(5).trimStart());
+      }
+    }
+
+    if (eventName !== expectedEventName || dataLines.length === 0) {
+      continue;
+    }
+
+    const payloadText = dataLines.join("\n");
+    try {
+      return JSON.parse(payloadText);
+    } catch {
+      return payloadText;
+    }
+  }
+
+  throw new Error(`No '${expectedEventName}' event was found in the SSE response.`);
+}
+
+function materializeRoute(routeTemplate, input) {
+  let route = routeTemplate;
+  const remaining = {};
+
+  for (const [key, value] of Object.entries(input || {})) {
+    const token = `{${key}}`;
+    if (route.includes(token)) {
+      route = route.replaceAll(token, encodeURIComponent(String(value)));
+      continue;
+    }
+
+    remaining[key] = value;
+  }
+
+  return { route, remaining };
+}
+
+function appendQueryString(path, values) {
+  const entries = Object.entries(values || {}).filter(([, value]) => value !== undefined && value !== null && value !== "");
+  if (!entries.length) {
+    return path;
+  }
+
+  const search = new URLSearchParams();
+  for (const [key, value] of entries) {
+    if (Array.isArray(value)) {
+      value.forEach((item) => search.append(key, String(item)));
+    } else {
+      search.append(key, String(value));
+    }
+  }
+
+  return `${path}${path.includes("?") ? "&" : "?"}${search.toString()}`;
+}
+
+function toWebSocketUrl(path) {
+  return `${window.location.origin.replace(/^http/, window.location.protocol === "https:" ? "wss" : "ws")}${path}`;
+}
+
+function describeTransportPayload(payload) {
+  const value = unwrapPayload(payload);
+  if (Array.isArray(value)) {
+    return `${value.length} records returned`;
+  }
+
+  if (value && typeof value === "object") {
+    if (Array.isArray(value.items)) {
+      return `${value.items.length} items returned`;
+    }
+
+    if (value.cartId) {
+      return `${value.cartId} loaded`;
+    }
+
+    if (value.orderId && value.status) {
+      return `${value.orderId} is ${value.status}`;
+    }
+
+    if (value.productCount) {
+      return `${value.productCount} products returned`;
+    }
+
+    return `${Object.keys(value).length} fields returned`;
+  }
+
+  return String(value ?? "No payload returned");
+}
+
+function formatTransportPayload(payload) {
+  const value = unwrapPayload(payload);
+  const json = typeof value === "string"
+    ? value
+    : (JSON.stringify(value, null, 2) ?? "null");
+  return json.length > 480
+    ? `${json.slice(0, 480)}\n...`
+    : json;
+}
+
+function renderActivity() {
+  const entries = state.activity.entries || [];
+  document.getElementById("activityFeed").innerHTML = entries.length
+    ? entries.map((entry) => `
+      <article class="activity-item">
+        <header><strong>${escapeHtml(entry.title || entry.path)}</strong><span class="status-badge ${tone(entry.outcome)}">${entry.statusCode}</span></header>
+        <div class="meta-row">
+          <span class="token">${escapeHtml(entry.area)}</span>
+          <span class="token">${escapeHtml(entry.transport)}</span>
+          <span class="token">${escapeHtml(entry.method)}</span>
+          <span class="mono">${escapeHtml(entry.path)}</span>
+          <span>${formatDate(entry.occurredAtUtc)}</span>
+          <span>${formatDuration(entry.durationMs)}</span>
+        </div>
+      </article>`).join("")
+    : `<div class="empty-state">No activity captured yet.</div>`;
+
+  const byArea = countBy(entries, (entry) => entry.area);
+  const byTransport = countBy(entries, (entry) => entry.transport);
+  document.getElementById("activityStats").innerHTML = [
+    statCard("Total recorded", state.activity.totalRecorded || 0, "all requests"),
+    ...Object.entries(byArea).slice(0, 4).map(([key, value]) => statCard(key, value, "area")),
+    ...Object.entries(byTransport).slice(0, 4).map(([key, value]) => statCard(key, value, "transport"))
+  ].join("");
+}
+
+function populateTransportFilters() {
+  if (!state.transports) return;
+  fillSelect("patternFilter", state.transports.behaviors.map((behavior) => behavior.pattern));
+  fillSelect("transportFilter", state.transports.behaviors.flatMap((behavior) => behavior.transportIds));
+  syncControlsFromState();
+}
+
+function fillSelect(id, values) {
+  const select = document.getElementById(id);
+  const current = select.value;
+  const options = [...new Set(values)].sort().map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
+  const first = select.querySelector("option").outerHTML;
+  select.innerHTML = `${first}${options}`;
+  select.value = current;
+}
+
+function applyLinks() {
+  const docs = SHOWCASE_CONFIG.docs || {};
+  const engine = SHOWCASE_CONFIG.engine || {};
+  document.getElementById("scalarLink").href = docs.scalar || "/scalar/v1";
+  document.getElementById("openApiLink").href = docs.openApiJson || "/openapi/v1.json";
+  document.getElementById("snapshotLink").href = engine.snapshot || "/engine/snapshot";
+}
+
+function setPill(id, text, toneClass) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = `hero-pill ${toneClass}`;
+}
+
+function updateStreamStatus(isConnected) {
+  const el = document.getElementById("streamStatus");
+  el.textContent = isConnected ? "Activity stream connected" : "Activity stream reconnecting";
+  el.className = `stream-status ${isConnected ? "connected" : "disconnected"}`;
+}
+
+function updateNavState() {
+  const current = window.location.hash || "#overview";
+  document.querySelectorAll(".section-nav a").forEach((link) => {
+    link.classList.toggle("active", link.getAttribute("href") === current);
+  });
+}
+
+function syncControlsFromState() {
+  document.getElementById("transportSearch").value = state.filters.search || "";
+  document.getElementById("patternFilter").value = state.filters.pattern || "";
+  document.getElementById("transportFilter").value = state.filters.transport || "";
+}
+
+function syncUrlState() {
+  const url = new URL(window.location.href);
+  setSearchParam(url.searchParams, "cart", state.cartId);
+  setSearchParam(url.searchParams, "q", state.filters.search);
+  setSearchParam(url.searchParams, "pattern", state.filters.pattern);
+  setSearchParam(url.searchParams, "transport", state.filters.transport);
+  window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+}
+
+async function requestJson(url, options = {}) {
+  const response = await fetch(url, {
+    method: options.method || "GET",
+    headers: options.body ? { "Content-Type": "application/json" } : undefined,
+    body: options.body ? JSON.stringify(options.body) : undefined
+  });
+
+  const contentType = response.headers.get("content-type") || "";
+  const payload = contentType.includes("json") ? await response.json() : await response.text();
+  if (!response.ok) {
+    const error = new Error(extractMessage(payload) || response.statusText);
+    error.status = response.status;
+    error.payload = payload;
+    throw error;
+  }
+
+  return payload;
+}
+
+function unwrapPayload(payload) {
+  return payload && typeof payload === "object" && "success" in payload && "data" in payload
+    ? payload.data
+    : payload;
+}
+
+function extractMessage(payload) {
+  if (!payload) return "";
+  if (typeof payload === "string") return payload;
+  if (payload.message) return payload.message;
+  if (payload.title) return payload.title;
+  if (Array.isArray(payload.error) && payload.error.length) return payload.error.map((item) => item.message || item.key).join(", ");
+  if (payload.error?.message) return payload.error.message;
+  return "";
+}
+
+function toast(message, type) {
+  const el = document.createElement("div");
+  el.className = `toast toast-${type}`;
+  el.textContent = message;
+  document.getElementById("toastTray").appendChild(el);
+  setTimeout(() => el.remove(), 3200);
+}
+
+function handleConsoleRefreshError(error) {
+  toast(error.message || "Showcase console refresh failed.", "error");
+}
+
+function kpiCard(label, value, caption) {
+  return `<div class="kpi-card"><span>${escapeHtml(label)}</span><strong>${escapeHtml(String(value))}</strong><small>${escapeHtml(caption)}</small></div>`;
+}
+
+function statCard(label, value, caption) {
+  return `<div class="stat-card"><span>${escapeHtml(label)}</span><strong>${escapeHtml(String(value))}</strong><small>${escapeHtml(caption)}</small></div>`;
+}
+
+function metricRow(label, value) {
+  return `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(String(value))}</dd></div>`;
+}
+
+function linkButton(label, href) {
+  return `<a class="btn btn-ghost btn-sm" href="${escapeHtml(href)}">${escapeHtml(label)}</a>`;
+}
+
+function renderMetadataPreview(metadata) {
+  const entries = Object.entries(metadata || {});
+  if (!entries.length) {
+    return "";
+  }
+
+  return entries.map(([key, value]) => `<span class="token"><strong>${escapeHtml(key)}</strong>: ${escapeHtml(String(value))}</span>`).join("");
+}
+
+function orderActions(order) {
+  if (order.status === "Pending") {
+    return `<button class="btn btn-sm btn-outline" data-action="reserve-order" data-order-id="${escapeHtml(order.orderId)}">Reserve</button>`;
+  }
+  if (order.status === "Confirmed") {
+    return `<button class="btn btn-sm btn-outline" data-action="ship-order" data-order-id="${escapeHtml(order.orderId)}">Ship</button>`;
+  }
+  return "";
+}
+
+function tone(value) {
+  const normalized = String(value || "").toLowerCase();
+  if (["healthy", "started", "success", "delivered", "trusted", "allowed", "succeeded", "completed"].includes(normalized)) return "status-success";
+  if (["degraded", "pending", "warning", "confirmed", "processing", "shipped", "labelcreated", "trustedonly", "partial"].includes(normalized)) return "status-warning";
+  if (["unhealthy", "failed", "error", "cancelled", "conflict", "denied"].includes(normalized)) return "status-error";
+  return "";
+}
+
+function countBy(items, selector) {
+  return items.reduce((map, item) => {
+    const key = selector(item);
+    if (!key) {
+      return map;
+    }
+
+    map[key] = (map[key] || 0) + 1;
+    return map;
+  }, {});
+}
+
+function money(cents) {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format((cents || 0) / 100);
+}
+
+function formatDate(value) {
+  return new Date(value).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
+}
+
+function shortId(value) {
+  return value && value.length > 16 ? `${value.slice(0, 16)}...` : value;
+}
+
+function formatDuration(value) {
+  return Number.isFinite(value) ? `${value.toFixed(1)} ms` : "n/a";
+}
+
+function normalizeActivityResponse(payload) {
+  return {
+    entries: (payload?.entries || []).map(normalizeActivityEntry),
+    totalRecorded: payload?.totalRecorded || 0
+  };
+}
+
+function normalizeActivityEntry(entry) {
+  if (!entry || typeof entry !== "object") {
+    return {};
+  }
+
+  return {
+    sequence: entry.sequence ?? entry.Sequence ?? 0,
+    occurredAtUtc: entry.occurredAtUtc ?? entry.OccurredAtUtc ?? null,
+    area: entry.area ?? entry.Area ?? "unknown",
+    transport: entry.transport ?? entry.Transport ?? "unknown",
+    method: entry.method ?? entry.Method ?? "",
+    path: entry.path ?? entry.Path ?? "",
+    statusCode: entry.statusCode ?? entry.StatusCode ?? 0,
+    durationMs: entry.durationMs ?? entry.DurationMs ?? null,
+    outcome: entry.outcome ?? entry.Outcome ?? "unknown",
+    title: entry.title ?? entry.Title ?? null
+  };
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function loadCartId() {
+  try {
+    const url = new URL(window.location.href);
+    const cartId = url.searchParams.get("cart");
+    if (cartId) {
+      return cartId;
+    }
+  } catch {
+    // Ignore URL parsing issues and fall back to persisted state.
+  }
+
+  try {
+    return window.localStorage.getItem("cephalon.showcase.cartId") || `cart-${Math.random().toString(36).slice(2, 10)}`;
+  } catch {
+    return `cart-${Math.random().toString(36).slice(2, 10)}`;
   }
 }
 
-// ═══════════════════════════════════════════════════════════
-// INITIALIZATION
-// ═══════════════════════════════════════════════════════════
+function storeCartId(cartId) {
+  try {
+    window.localStorage.setItem("cephalon.showcase.cartId", cartId);
+  } catch {
+    // Best effort only.
+  }
+}
 
-document.getElementById('cartIdDisplay').textContent = cartId.slice(0, 12);
-document.getElementById('restUrl').value = `${API}/catalog/products`;
-document.getElementById('labSseInfo').textContent =
-  `Endpoint: GET ${behaviorHttpUrl(ROUTE_PREFIXES.sse, 'orders.get-status')}\n` +
-  'Content-Type: text/event-stream\n' +
-  'Protocol: Server-Sent Events (EventSource API)';
-loadProducts();
-loadInventory();
-loadOrders();
-loadShipments();
+function loadFilterState() {
+  try {
+    const url = new URL(window.location.href);
+    return {
+      search: url.searchParams.get("q")?.trim().toLowerCase() || "",
+      pattern: url.searchParams.get("pattern") || "",
+      transport: url.searchParams.get("transport") || ""
+    };
+  } catch {
+    return { search: "", pattern: "", transport: "" };
+  }
+}
+
+function setSearchParam(searchParams, key, value) {
+  if (value) {
+    searchParams.set(key, value);
+    return;
+  }
+
+  searchParams.delete(key);
+}
+
+init();

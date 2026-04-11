@@ -363,7 +363,7 @@ The same scaffold plan now also drives `Cephalon.Scaffolding`, which can render:
 
 - a `.slnx` solution file
 - concrete `.csproj` files
-- starter `Program.cs` and `appsettings.json`
+- starter `Program.cs`, split `Configurations/Add*.json` host settings, and standard `appsettings*.json` override files
 - module stubs and contracts
 - placeholder feature folders for blueprint-specific slice structures
 

@@ -16,6 +16,7 @@ internal static class PackageVersionCatalog
             ["coverlet.collector"] = "8.0.1",
             ["Microsoft.Extensions.Hosting.WindowsServices"] = "10.0.5",
             ["Microsoft.NET.Test.Sdk"] = "18.3.0",
+            ["Serilog.Sinks.Console"] = "6.1.1",
             ["xunit"] = "2.9.3",
             ["xunit.runner.visualstudio"] = "3.1.5"
         };

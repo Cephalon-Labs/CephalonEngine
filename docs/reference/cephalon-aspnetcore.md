@@ -858,7 +858,7 @@ WebApplicationBuilder AddCephalonProjectConfigurations(this WebApplicationBuilde
 
 Adds Cephalon's project-configuration conventions to the ASP.NET Core builder.
 
-Remarks: This loads split configuration files from the project's `Configurations` folder so settings such as engine, OpenAPI, CORS, or hosted-doc options do not need to live in one large `appsettings.json` file.
+Remarks: This loads split configuration files from the project's `Configurations` folder so settings such as engine, OpenAPI, CORS, or hosted-doc options can be grouped by concern without taking away the standard `appsettings.json` and `appsettings.{Environment}.json` override flow.
 
 Returns: The same builder instance for fluent composition.
 

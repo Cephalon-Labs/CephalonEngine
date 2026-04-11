@@ -1,0 +1,34 @@
+{
+  "Engine": {
+    "Tenancy": {
+      "Enabled": true,
+      "Mode": "domain",
+      "EnableDefaultResolver": true,
+      "DefaultTenantId": "tenant-alpha",
+      "Tenants": [
+        {
+          "TenantId": "tenant-alpha",
+          "TenantKey": "alpha",
+          "DisplayName": "Alpha Store",
+          "Domains": [
+            "alpha.showcase.local"
+          ],
+          "Attributes": {
+            "segment": "alpha"
+          }
+        },
+        {
+          "TenantId": "tenant-beta",
+          "TenantKey": "beta",
+          "DisplayName": "Beta Store",
+          "Domains": [
+            "beta.showcase.local"
+          ],
+          "Attributes": {
+            "segment": "beta"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -92,7 +92,7 @@ That means a newly generated host can use the same local command from its own ro
 docker compose up --build
 ```
 
-Before the first build, either publish repo-local Cephalon packages into `./.cephalon/packages` or replace the `cephalon` source in `NuGet.config` with your shared package feed. The generated app baseline intentionally keeps `Engine:Observability:Telemetry` active but leaves the endpoint unset in `appsettings.json`, so local `dotnet run` stays quiet unless a host deliberately adds an endpoint or self-hosted default. The compose file supplies the OTLP endpoint through environment variables instead.
+Before the first build, either publish repo-local Cephalon packages into `./.cephalon/packages` or replace the `cephalon` source in `NuGet.config` with your shared package feed. The generated app baseline intentionally keeps `Engine:Observability:Telemetry` active in `Configurations/AddEngine.Observability.json` but leaves the endpoint unset, so local `dotnet run` stays quiet unless a host deliberately adds an endpoint or self-hosted default. If a team prefers the standard project path, they can still override those defaults in `appsettings.json` or `appsettings.{Environment}.json`. The compose file supplies the OTLP endpoint through environment variables instead.
 
 If you also want the non-container published-output baseline for that same generated host, continue with `docs/generated-app-publishing.md`.
 If you want the self-hosted Linux `systemd` baseline for that same generated host, continue with `docs/linux-systemd-deployment.md`.

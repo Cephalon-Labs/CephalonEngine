@@ -38,6 +38,22 @@ public sealed class ShowcaseSampleHostingTests
     }
 
     [Fact]
+    public async Task ShowcaseSampleResolvesCanonicalShowcaseRoute()
+    {
+        await using var app = ShowcaseSampleApp.Build(
+            configureBuilder: builder => builder.WebHost.UseTestServer());
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.GetAsync("/showcase");
+
+        Assert.True(
+            response.IsSuccessStatusCode || response.StatusCode is HttpStatusCode.Redirect or HttpStatusCode.Found,
+            $"Expected /showcase to resolve cleanly but received {(int)response.StatusCode}.");
+    }
+
+    [Fact]
     public async Task ShowcaseSampleExposesAppProfileWithAllCapabilities()
     {
         await using var app = ShowcaseSampleApp.Build(
@@ -80,8 +96,8 @@ public sealed class ShowcaseSampleHostingTests
         Assert.NotNull(profile.Databases.History.ConnectionString);
         Assert.StartsWith("showcase-history-", profile.Databases.History.ConnectionString!, StringComparison.Ordinal);
         Assert.Null(profile.Databases.History.ConnectionStringName);
-        Assert.False(profile.Databases.Migrations.ApplyOnStartup);
-        Assert.Equal(["history", "read", "write"], profile.Databases.Migrations.Targets);
+        Assert.True(profile.Databases.Migrations.ApplyOnStartup);
+        Assert.Equal(["history", "write"], profile.Databases.Migrations.Targets);
         Assert.True(profile.Resilience.RateLimiting.Enabled);
         Assert.Equal("SlidingWindow", profile.Resilience.RateLimiting.Algorithm);
         Assert.Equal(200, profile.Resilience.RateLimiting.PermitLimit);
@@ -206,36 +222,35 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(HealthState.Healthy, read.HealthState);
         Assert.Equal(HealthState.Healthy, outbox.HealthState);
         Assert.Equal(HealthState.Healthy, history.HealthState);
-        Assert.Equal("manual-or-deploy-time", write.MigrationState);
-        Assert.Equal("manual-or-deploy-time", read.MigrationState);
-        Assert.Equal("manual-or-deploy-time", outbox.MigrationState);
-        Assert.Equal("manual-or-deploy-time", history.MigrationState);
+        Assert.Equal("succeeded", write.MigrationState);
+        Assert.Equal("not-targeted", read.MigrationState);
+        Assert.Equal("succeeded", outbox.MigrationState);
+        Assert.Equal("succeeded", history.MigrationState);
         Assert.Equal("entity-framework", write.RuntimeMetadata["providerPack"]);
         Assert.Equal("entity-framework", read.RuntimeMetadata["providerPack"]);
         Assert.Equal("entity-framework", outbox.RuntimeMetadata["providerPack"]);
         Assert.Equal("entity-framework", history.RuntimeMetadata["providerPack"]);
-        Assert.Equal("manual-or-deploy-time", write.RuntimeMetadata["executionMode"]);
-        Assert.Equal("manual-or-deploy-time", read.RuntimeMetadata["executionMode"]);
-        Assert.Equal("manual-or-deploy-time", outbox.RuntimeMetadata["executionMode"]);
-        Assert.Equal("manual-or-deploy-time", history.RuntimeMetadata["executionMode"]);
+        Assert.Equal("startup-hosted-service", write.RuntimeMetadata["executionMode"]);
+        Assert.Equal("not-targeted", read.RuntimeMetadata["executionMode"]);
+        Assert.Equal("startup-hosted-service", outbox.RuntimeMetadata["executionMode"]);
+        Assert.Equal("startup-hosted-service", history.RuntimeMetadata["executionMode"]);
         Assert.Equal("succeeded", write.RuntimeMetadata["probeOutcome"]);
         Assert.Equal("succeeded", read.RuntimeMetadata["probeOutcome"]);
         Assert.Equal("succeeded", outbox.RuntimeMetadata["probeOutcome"]);
         Assert.Equal("succeeded", history.RuntimeMetadata["probeOutcome"]);
         Assert.NotNull(migrations);
-        Assert.Equal(3, migrations.Length);
-        Assert.Contains(migrations, migration => migration.Id == "write" && migration.Status == DatabaseMigrationStatus.Planned);
-        Assert.Contains(migrations, migration => migration.Id == "read" && migration.Status == DatabaseMigrationStatus.Planned);
+        Assert.Equal(2, migrations.Length);
+        Assert.Contains(migrations, migration => migration.Id == "write" && migration.Status == DatabaseMigrationStatus.Succeeded);
         Assert.NotNull(historyMigration);
         Assert.Equal("history", historyMigration.Id);
         Assert.Equal("history", historyMigration.RequestedRoleId);
         Assert.Equal("history", historyMigration.ResolvedRoleId);
-        Assert.Equal(DatabaseMigrationStatus.Planned, historyMigration.Status);
-        Assert.Equal("manual-or-deploy-time", historyMigration.ExecutionMode);
+        Assert.Equal(DatabaseMigrationStatus.Succeeded, historyMigration.Status);
+        Assert.Equal("startup-hosted-service", historyMigration.ExecutionMode);
         Assert.Equal("InMemory", historyMigration.Provider);
         Assert.Equal("entity-framework", historyMigration.Metadata["runtimeProvider"]);
         Assert.Equal("healthy", historyMigration.Metadata["roleHealthState"]);
-        Assert.Equal("manual-or-deploy-time", historyMigration.Metadata["roleMigrationState"]);
+        Assert.Equal("succeeded", historyMigration.Metadata["roleMigrationState"]);
         Assert.Equal("succeeded", historyMigration.Metadata["roleRuntime.probeOutcome"]);
         Assert.Equal("bundle-or-script", historyMigration.Metadata["recommendedExecutionMode"]);
         Assert.Collection(
@@ -261,7 +276,7 @@ public sealed class ShowcaseSampleHostingTests
 
         Assert.NotNull(snapshot);
         Assert.Equal(4, snapshot.DatabaseRoles.Count);
-        Assert.Equal(3, snapshot.DatabaseMigrations.Count);
+        Assert.Equal(2, snapshot.DatabaseMigrations.Count);
         Assert.All(snapshot.DatabaseMigrations, migration => Assert.Equal(3, migration.Commands.Count));
     }
 
@@ -860,6 +875,46 @@ public sealed class ShowcaseSampleHostingTests
     }
 
     [Fact]
+    public async Task ShowcaseSampleReserveStockPromotesOrderToConfirmed()
+    {
+        await using var app = ShowcaseSampleApp.Build(
+            configureBuilder: builder => builder.WebHost.UseTestServer());
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var orderPayload = new
+        {
+            customerId = "cust-reserve-status",
+            shippingAddress = "12 Reserve Way",
+            items = new[]
+            {
+                new { productId = "prod-001", productName = "ProBook Laptop 15\"", quantity = 1, unitPriceInCents = 149999L }
+            }
+        };
+        var orderResponse = await client.PostAsync("/api/v1/showcase/orders", JsonContent.Create(orderPayload));
+        var orderResult = JsonSerializer.Deserialize<JsonElement>(await orderResponse.Content.ReadAsStringAsync());
+        var orderId = orderResult.GetProperty("orderId").GetString()!;
+
+        var reservePayload = new
+        {
+            orderId,
+            items = new[]
+            {
+                new { productId = "prod-001", quantity = 1 }
+            }
+        };
+
+        var reserveResponse = await client.PostAsync("/api/v1/showcase/inventory/reserve", JsonContent.Create(reservePayload));
+        Assert.Equal(HttpStatusCode.OK, reserveResponse.StatusCode);
+
+        var getOrderResponse = await client.GetAsync($"/api/v1/showcase/orders/{orderId}");
+        Assert.Equal(HttpStatusCode.OK, getOrderResponse.StatusCode);
+        var orderBody = await getOrderResponse.Content.ReadAsStringAsync();
+        Assert.Contains("Confirmed", orderBody, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task ShowcaseSampleReturnsNotFoundForMissingInventoryItem()
     {
         await using var app = ShowcaseSampleApp.Build(
@@ -959,6 +1014,47 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(HttpStatusCode.OK, deliverResponse.StatusCode);
         var deliverBody = await deliverResponse.Content.ReadAsStringAsync();
         Assert.Contains("Delivered", deliverBody, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleShippingPromotesOrderToProcessingAndRejectsDuplicateShipment()
+    {
+        await using var app = ShowcaseSampleApp.Build(
+            configureBuilder: builder => builder.WebHost.UseTestServer());
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var orderPayload = new
+        {
+            customerId = "cust-ship-status",
+            shippingAddress = "45 Shipping Way",
+            items = new[]
+            {
+                new { productId = "prod-003", productName = "AdjustaPro Standing Desk", quantity = 1, unitPriceInCents = 59999L }
+            }
+        };
+        var orderResponse = await client.PostAsync("/api/v1/showcase/orders", JsonContent.Create(orderPayload));
+        var orderResult = JsonSerializer.Deserialize<JsonElement>(await orderResponse.Content.ReadAsStringAsync());
+        var orderId = orderResult.GetProperty("orderId").GetString()!;
+
+        var initiatePayload = new
+        {
+            orderId,
+            destinationAddress = "45 Shipping Way",
+            items = new[] { new { productId = "prod-003", productName = "AdjustaPro Standing Desk", quantity = 1 } }
+        };
+
+        var firstShipmentResponse = await client.PostAsync("/api/v1/showcase/shipping", JsonContent.Create(initiatePayload));
+        Assert.Equal(HttpStatusCode.Created, firstShipmentResponse.StatusCode);
+
+        var duplicateShipmentResponse = await client.PostAsync("/api/v1/showcase/shipping", JsonContent.Create(initiatePayload));
+        Assert.Equal(HttpStatusCode.Conflict, duplicateShipmentResponse.StatusCode);
+
+        var getOrderResponse = await client.GetAsync($"/api/v1/showcase/orders/{orderId}");
+        Assert.Equal(HttpStatusCode.OK, getOrderResponse.StatusCode);
+        var orderBody = await getOrderResponse.Content.ReadAsStringAsync();
+        Assert.Contains("Processing", orderBody, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1157,6 +1253,65 @@ public sealed class ShowcaseSampleHostingTests
     }
 
     [Fact]
+    public async Task ShowcaseSamplePlacesOrderUsingCheckoutGeneratedOrderId()
+    {
+        await using var app = ShowcaseSampleApp.Build(
+            configureBuilder: builder => builder.WebHost.UseTestServer());
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var addPayload = new
+        {
+            cartId = "cart-linked-001",
+            customerId = "cust-linked",
+            productId = "prod-006",
+            productName = "TypeMaster Mechanical Keyboard",
+            quantity = 1,
+            priceInCents = 12999L
+        };
+        await client.PostAsync("/api/v1/showcase/cart/cart-linked-001/items", JsonContent.Create(addPayload));
+
+        var checkoutPayload = new { cartId = "cart-linked-001", shippingAddress = "123 Checkout Blvd" };
+        var checkoutResponse = await client.PostAsync(
+            "/api/v1/showcase/cart/cart-linked-001/checkout",
+            JsonContent.Create(checkoutPayload));
+        Assert.Equal(HttpStatusCode.OK, checkoutResponse.StatusCode);
+
+        var checkoutBody = JsonSerializer.Deserialize<JsonElement>(await checkoutResponse.Content.ReadAsStringAsync());
+        var checkoutData = checkoutBody.GetProperty("data");
+        var linkedOrderId = checkoutData.GetProperty("orderId").GetString();
+        Assert.False(string.IsNullOrWhiteSpace(linkedOrderId));
+
+        var orderPayload = new
+        {
+            orderId = linkedOrderId,
+            customerId = "cust-linked",
+            shippingAddress = "123 Checkout Blvd",
+            items = new[]
+            {
+                new
+                {
+                    productId = "prod-006",
+                    productName = "TypeMaster Mechanical Keyboard",
+                    quantity = 1,
+                    unitPriceInCents = 12999L
+                }
+            }
+        };
+
+        var orderResponse = await client.PostAsync("/api/v1/showcase/orders", JsonContent.Create(orderPayload));
+
+        Assert.Equal(HttpStatusCode.Created, orderResponse.StatusCode);
+
+        var orderBody = JsonSerializer.Deserialize<JsonElement>(await orderResponse.Content.ReadAsStringAsync());
+        Assert.Equal(linkedOrderId, orderBody.GetProperty("orderId").GetString());
+
+        var getOrderResponse = await client.GetAsync($"/api/v1/showcase/orders/{linkedOrderId}");
+        Assert.Equal(HttpStatusCode.OK, getOrderResponse.StatusCode);
+    }
+
+    [Fact]
     public async Task ShowcaseSampleReturnsNotFoundForMissingCart()
     {
         await using var app = ShowcaseSampleApp.Build(
@@ -1201,6 +1356,316 @@ public sealed class ShowcaseSampleHostingTests
         Assert.DoesNotContain(summary!, description, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task ShowcaseSampleExposesSystemSummaryProjectionForOperatorConsole()
+    {
+        await using var app = ShowcaseSampleApp.Build(
+            configureBuilder: builder => builder.WebHost.UseTestServer());
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.GetAsync("/api/v1/showcase/system/summary");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var root = document.RootElement;
+
+        Assert.Equal("Started", root.GetProperty("runtime").GetProperty("status").GetString());
+        Assert.Equal("/scalar/v1", root.GetProperty("documentation").GetProperty("scalarPath").GetString());
+        Assert.Equal("/openapi/v1.json", root.GetProperty("documentation").GetProperty("openApiJsonPath").GetString());
+        Assert.True(root.GetProperty("business").GetProperty("activeProducts").GetInt32() >= 10);
+        Assert.True(root.GetProperty("suggestedJourneys").GetArrayLength() > 0);
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleTransportProjectionIncludesBehaviorOwnedRestRoutes()
+    {
+        await using var app = ShowcaseSampleApp.Build(
+            configureBuilder: builder => builder.WebHost.UseTestServer());
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.GetAsync("/api/v1/showcase/system/transports");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var root = document.RootElement;
+        var behaviors = root.GetProperty("behaviors").EnumerateArray().ToArray();
+        var cartGet = Assert.Single(behaviors, behavior =>
+            string.Equals(behavior.GetProperty("behaviorId").GetString(), "cart.get", StringComparison.Ordinal));
+
+        Assert.Contains(
+            cartGet.GetProperty("transportIds").EnumerateArray().Select(item => item.GetString()),
+            transportId => string.Equals(transportId, "http.rest", StringComparison.Ordinal));
+        Assert.Contains(
+            cartGet.GetProperty("transportIds").EnumerateArray().Select(item => item.GetString()),
+            transportId => string.Equals(transportId, "http.graphql", StringComparison.Ordinal));
+        Assert.Contains(
+            cartGet.GetProperty("transportIds").EnumerateArray().Select(item => item.GetString()),
+            transportId => string.Equals(transportId, "http.sse", StringComparison.Ordinal));
+        Assert.Contains(
+            cartGet.GetProperty("transportIds").EnumerateArray().Select(item => item.GetString()),
+            transportId => string.Equals(transportId, "http.ws", StringComparison.Ordinal));
+        Assert.Contains(
+            cartGet.GetProperty("routes").EnumerateArray(),
+            route =>
+                string.Equals(route.GetProperty("method").GetString(), "GET", StringComparison.Ordinal) &&
+                string.Equals(route.GetProperty("route").GetString(), "/api/v1/showcase/cart/{cartId}", StringComparison.Ordinal));
+
+        var catalogList = Assert.Single(behaviors, behavior =>
+            string.Equals(behavior.GetProperty("behaviorId").GetString(), "catalog.list-products", StringComparison.Ordinal));
+        Assert.Contains(
+            catalogList.GetProperty("transportIds").EnumerateArray().Select(item => item.GetString()),
+            transportId => string.Equals(transportId, "http.graphql", StringComparison.Ordinal));
+        Assert.Contains(
+            catalogList.GetProperty("transportIds").EnumerateArray().Select(item => item.GetString()),
+            transportId => string.Equals(transportId, "http.jsonrpc", StringComparison.Ordinal));
+
+        var orderStatus = Assert.Single(behaviors, behavior =>
+            string.Equals(behavior.GetProperty("behaviorId").GetString(), "orders.get-status", StringComparison.Ordinal));
+        Assert.Contains(
+            orderStatus.GetProperty("transportIds").EnumerateArray().Select(item => item.GetString()),
+            transportId => string.Equals(transportId, "http.sse", StringComparison.Ordinal));
+        Assert.Contains(
+            orderStatus.GetProperty("transportIds").EnumerateArray().Select(item => item.GetString()),
+            transportId => string.Equals(transportId, "http.graphql-sse", StringComparison.Ordinal));
+        Assert.Contains(
+            orderStatus.GetProperty("transportIds").EnumerateArray().Select(item => item.GetString()),
+            transportId => string.Equals(transportId, "http.graphql-ws", StringComparison.Ordinal));
+
+        var ordersPlace = Assert.Single(behaviors, behavior =>
+            string.Equals(behavior.GetProperty("behaviorId").GetString(), "orders.place", StringComparison.Ordinal));
+        Assert.Contains(
+            ordersPlace.GetProperty("transportIds").EnumerateArray().Select(item => item.GetString()),
+            transportId => string.Equals(transportId, "rabbitmq", StringComparison.Ordinal));
+
+        var inventoryReserve = Assert.Single(behaviors, behavior =>
+            string.Equals(behavior.GetProperty("behaviorId").GetString(), "inventory.reserve-stock", StringComparison.Ordinal));
+        Assert.Contains(
+            inventoryReserve.GetProperty("transportIds").EnumerateArray().Select(item => item.GetString()),
+            transportId => string.Equals(transportId, "in-memory", StringComparison.Ordinal));
+
+        var shippingInitiate = Assert.Single(behaviors, behavior =>
+            string.Equals(behavior.GetProperty("behaviorId").GetString(), "shipping.initiate", StringComparison.Ordinal));
+        Assert.Contains(
+            shippingInitiate.GetProperty("transportIds").EnumerateArray().Select(item => item.GetString()),
+            transportId => string.Equals(transportId, "grpc", StringComparison.Ordinal));
+
+        Assert.Contains(
+            root.GetProperty("restOperations").EnumerateArray(),
+            operation => string.Equals(operation.GetProperty("route").GetString(), "/api/v1/showcase/system/summary", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleClientConfigPublishesBrowserTransportPrefixes()
+    {
+        await using var app = ShowcaseSampleApp.Build(
+            configureBuilder: builder => builder.WebHost.UseTestServer());
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.GetAsync("/showcase/client-config.js");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        const string prefix = "window.CEPHALON_SHOWCASE = ";
+        var script = await response.Content.ReadAsStringAsync();
+        Assert.StartsWith(prefix, script, StringComparison.Ordinal);
+
+        var payload = script[prefix.Length..].Trim();
+        payload = payload.TrimEnd(';');
+
+        using var document = JsonDocument.Parse(payload);
+        var root = document.RootElement;
+        var behaviorRoutes = root.GetProperty("behaviorRoutes");
+
+        Assert.Equal("/api/v1/showcase", root.GetProperty("restApiBase").GetString());
+        Assert.Equal("v1", root.GetProperty("behaviorVersion").GetString());
+        Assert.Equal("/graphql", behaviorRoutes.GetProperty("graphql").GetString());
+        Assert.Equal("/json-rpc", behaviorRoutes.GetProperty("jsonRpc").GetString());
+        Assert.Equal("/ws", behaviorRoutes.GetProperty("ws").GetString());
+        Assert.Equal("/sse", behaviorRoutes.GetProperty("sse").GetString());
+        Assert.Equal("/graphql-ws", behaviorRoutes.GetProperty("graphQLWs").GetString());
+        Assert.Equal("/graphql-sse", behaviorRoutes.GetProperty("graphQLSse").GetString());
+        Assert.Equal("/scalar/v1", root.GetProperty("docs").GetProperty("scalar").GetString());
+        Assert.Equal("/openapi/v1.json", root.GetProperty("docs").GetProperty("openApiJson").GetString());
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleActivityProjectionCapturesRecentRequestsWithDurations()
+    {
+        await using var app = ShowcaseSampleApp.Build(
+            configureBuilder: builder => builder.WebHost.UseTestServer());
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        _ = await client.GetAsync("/api/v1/showcase/system/summary");
+        _ = await client.GetAsync("/api/v1/showcase/system/runtime");
+
+        var response = await client.GetAsync("/api/v1/showcase/system/activity?limit=10");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var root = document.RootElement;
+
+        Assert.True(root.GetProperty("totalRecorded").GetInt64() >= 2);
+        Assert.Contains(
+            root.GetProperty("entries").EnumerateArray(),
+            entry =>
+                string.Equals(entry.GetProperty("path").GetString(), "/api/v1/showcase/system/runtime", StringComparison.Ordinal) &&
+                entry.GetProperty("durationMs").GetDouble() >= 0d);
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleResetProjectionRestoresDeterministicBusinessState()
+    {
+        await using var app = ShowcaseSampleApp.Build(
+            configureBuilder: builder => builder.WebHost.UseTestServer());
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var addPayload = new
+        {
+            cartId = "cart-reset-001",
+            customerId = "cust-reset",
+            productId = "prod-001",
+            productName = "ProBook Laptop 15\"",
+            quantity = 1,
+            priceInCents = 149999L
+        };
+        await client.PostAsync("/api/v1/showcase/cart/cart-reset-001/items", JsonContent.Create(addPayload));
+
+        var orderPayload = new
+        {
+            customerId = "cust-reset",
+            shippingAddress = "1 Reset Way",
+            items = new[]
+            {
+                new
+                {
+                    productId = "prod-001",
+                    productName = "ProBook Laptop 15\"",
+                    quantity = 1,
+                    unitPriceInCents = 149999L
+                }
+            }
+        };
+        await client.PostAsync("/api/v1/showcase/orders", JsonContent.Create(orderPayload));
+
+        var resetResponse = await client.PostAsync("/api/v1/showcase/system/reset", JsonContent.Create(new { }));
+
+        Assert.Equal(HttpStatusCode.OK, resetResponse.StatusCode);
+
+        using (var resetDocument = JsonDocument.Parse(await resetResponse.Content.ReadAsStringAsync()))
+        {
+            var root = resetDocument.RootElement;
+            Assert.True(root.GetProperty("productCount").GetInt32() >= 10);
+            Assert.Equal(0, root.GetProperty("orderCount").GetInt32());
+            Assert.Equal(0, root.GetProperty("shipmentCount").GetInt32());
+            Assert.Equal(0, root.GetProperty("cartStreamCount").GetInt32());
+        }
+
+        var activityResponse = await client.GetAsync("/api/v1/showcase/system/activity?limit=10");
+        Assert.Equal(HttpStatusCode.OK, activityResponse.StatusCode);
+
+        using (var activityDocument = JsonDocument.Parse(await activityResponse.Content.ReadAsStringAsync()))
+        {
+            Assert.Equal(0, activityDocument.RootElement.GetProperty("totalRecorded").GetInt64());
+            Assert.Equal(0, activityDocument.RootElement.GetProperty("entries").GetArrayLength());
+        }
+
+        var businessResponse = await client.GetAsync("/api/v1/showcase/system/business");
+        Assert.Equal(HttpStatusCode.OK, businessResponse.StatusCode);
+
+        using var businessDocument = JsonDocument.Parse(await businessResponse.Content.ReadAsStringAsync());
+        var businessRoot = businessDocument.RootElement;
+        Assert.Equal(0, businessRoot.GetProperty("summary").GetProperty("orders").GetInt32());
+        Assert.Equal(0, businessRoot.GetProperty("summary").GetProperty("shipments").GetInt32());
+        Assert.Equal(0, businessRoot.GetProperty("summary").GetProperty("openCarts").GetInt32());
+        Assert.True(businessRoot.GetProperty("products").GetArrayLength() >= 10);
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleGovernanceProjectionSummarizesPolicyAndTechnologySurfaces()
+    {
+        await using var app = ShowcaseSampleApp.Build(
+            configureBuilder: builder => builder.WebHost.UseTestServer());
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.GetAsync("/api/v1/showcase/system/governance");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var root = document.RootElement;
+        var summary = root.GetProperty("summary");
+        var trust = root.GetProperty("trust");
+        var authorizationPolicies = root.GetProperty("authorizationPolicies");
+        var technologySurfaces = root.GetProperty("technologySurfaces");
+        var runtimeStory = root.GetProperty("runtimeStory");
+        var recentTimeline = root.GetProperty("recentTimeline");
+
+        Assert.Equal(0, summary.GetProperty("loadedPackageCount").GetInt32());
+        Assert.True(summary.GetProperty("allowAssemblyPathPackages").GetBoolean());
+        Assert.Equal("Allowed", summary.GetProperty("defaultCapabilityAccess").GetString());
+        Assert.True(summary.GetProperty("authorizationPolicyCount").GetInt32() >= 3);
+        Assert.True(summary.GetProperty("technologySurfaceCount").GetInt32() >= 1);
+        Assert.True(summary.GetProperty("timelineEventCount").GetInt32() >= 1);
+
+        Assert.False(trust.GetProperty("requireTrustedPackages").GetBoolean());
+        Assert.Equal("Allowed", trust.GetProperty("defaultCapabilityAccess").GetString());
+
+        Assert.Contains(
+            authorizationPolicies.EnumerateArray(),
+            policy => string.Equals(policy.GetProperty("id").GetString(), "showcase.admin", StringComparison.Ordinal));
+        Assert.Contains(
+            technologySurfaces.EnumerateArray(),
+            surface => string.Equals(surface.GetProperty("technologyId").GetString(), "identity-access", StringComparison.Ordinal) ||
+                string.Equals(surface.GetProperty("technologyId").GetString(), "behaviors", StringComparison.Ordinal));
+
+        Assert.True(runtimeStory.GetProperty("moduleCount").GetInt32() >= 1);
+        Assert.True(runtimeStory.GetProperty("startedModuleCount").GetInt32() >= 1);
+        Assert.True(recentTimeline.GetArrayLength() >= 1);
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleSystemEndpointsHonorCapabilityPolicy()
+    {
+        await using var app = ShowcaseSampleApp.Build(configureBuilder: builder =>
+        {
+            builder.WebHost.UseTestServer();
+            builder.Configuration["Engine:Trust:Capabilities:showcase.system.read"] = "Denied";
+            builder.Configuration["Engine:Trust:Capabilities:showcase.system.reset"] = "Denied";
+        });
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var governanceResponse = await client.GetAsync("/api/v1/showcase/system/governance");
+        var resetResponse = await client.PostAsync("/api/v1/showcase/system/reset", JsonContent.Create(new { }));
+
+        Assert.Equal(HttpStatusCode.Forbidden, governanceResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, resetResponse.StatusCode);
+
+        var governanceProblem = await governanceResponse.Content.ReadAsStringAsync();
+        var resetProblem = await resetResponse.Content.ReadAsStringAsync();
+
+        Assert.Contains("Capability access denied", governanceProblem, StringComparison.Ordinal);
+        Assert.Contains("showcase.system.read", governanceProblem, StringComparison.Ordinal);
+        Assert.Contains("Capability access denied", resetProblem, StringComparison.Ordinal);
+        Assert.Contains("showcase.system.reset", resetProblem, StringComparison.Ordinal);
+    }
+
     // ──────────────────────────────────────────────
     //  End-to-end flow test
     // ──────────────────────────────────────────────
@@ -1235,6 +1700,10 @@ public sealed class ShowcaseSampleHostingTests
         // 3. Place order
         var orderPayload = new
         {
+            orderId = JsonSerializer.Deserialize<JsonElement>(await checkoutResponse.Content.ReadAsStringAsync())
+                .GetProperty("data")
+                .GetProperty("orderId")
+                .GetString(),
             customerId = "cust-e2e",
             shippingAddress = "1 E2E Lane",
             items = new[]
@@ -1247,6 +1716,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(HttpStatusCode.Created, orderResponse.StatusCode);
         var orderResult = JsonSerializer.Deserialize<JsonElement>(await orderResponse.Content.ReadAsStringAsync());
         var orderId = orderResult.GetProperty("orderId").GetString()!;
+        Assert.Equal(orderPayload.orderId, orderId);
 
         // 4. Reserve inventory
         var reservePayload = new

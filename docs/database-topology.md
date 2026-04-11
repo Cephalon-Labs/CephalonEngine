@@ -156,7 +156,7 @@ The new baseline is visible through:
 }
 ```
 
-The showcase sample keeps PostgreSQL root-role settings in `showcase.settings.json` for Docker-backed runs, but `ShowcaseSampleApp` now rewrites the `Write`, `Read`, and `History` roles to unique in-memory targets when `SHOWCASE_DOCKER` is not enabled. That keeps the sample's database-role catalog, migration catalog, and durable audit-history routes truthfully active in local and test runs without requiring external infrastructure.
+The showcase sample keeps PostgreSQL root-role settings in grouped files under `Configurations/ConnectionStrings/*` plus `Configurations/Engine/Databases/*` for Docker-backed runs, applies startup migrations for `write` and `history`, currently keeps the logical `read` role co-located with `write`, and still rewrites the `Write`, `Read`, and `History` roles to unique in-memory targets when `SHOWCASE_DOCKER` is not enabled. That keeps the sample's database-role catalog, migration catalog, and durable audit-history routes truthfully active in local and test runs without requiring external infrastructure.
 
 For Entity Framework-backed roles, the migration catalog now also carries operator-facing command templates such as:
 

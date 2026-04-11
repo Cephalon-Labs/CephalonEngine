@@ -1,0 +1,69 @@
+{
+  "Engine": {
+    "Resilience": {
+      "Retry": {
+        "Enabled": true,
+        "MaxAttempts": 3,
+        "Backoff": "Exponential",
+        "BaseDelayMilliseconds": 2000,
+        "UseJitter": true
+      },
+      "Timeout": {
+        "Enabled": true,
+        "TotalTimeoutSeconds": 30,
+        "AttemptTimeoutSeconds": 10
+      },
+      "CircuitBreaker": {
+        "Enabled": true,
+        "FailureRatio": 0.1,
+        "MinimumThroughput": 100,
+        "SamplingDurationSeconds": 30,
+        "BreakDurationSeconds": 5
+      },
+      "Bulkhead": {
+        "Enabled": true,
+        "MaxConcurrentExecutions": 64,
+        "MaxQueuedActions": 128
+      },
+      "BehaviorExecution": {
+        "Overrides": {
+          "cart-rest-fast-path": {
+            "Behaviors": [
+              "cart.get"
+            ],
+            "Transports": [
+              "rest-api"
+            ],
+            "Timeout": {
+              "Enabled": false
+            },
+            "Bulkhead": {
+              "MaxConcurrentExecutions": 128,
+              "MaxQueuedActions": 256
+            }
+          }
+        }
+      },
+      "RateLimiting": {
+        "Enabled": true,
+        "Algorithm": "SlidingWindow",
+        "PermitLimit": 200,
+        "QueueLimit": 20,
+        "WindowSeconds": 60,
+        "SegmentsPerWindow": 4,
+        "Overrides": {
+          "cart-read-hot-path": {
+            "Behaviors": [
+              "cart.get"
+            ],
+            "Transports": [
+              "rest-api"
+            ],
+            "PermitLimit": 400,
+            "QueueLimit": 40
+          }
+        }
+      }
+    }
+  }
+}

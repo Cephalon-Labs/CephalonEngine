@@ -37,8 +37,9 @@ public static class EngineWebApplicationBuilderExtensions
     /// <returns>The same builder instance for fluent composition.</returns>
     /// <remarks>
     /// This loads split configuration files from the project's <c>Configurations</c> folder so
-    /// settings such as engine, OpenAPI, CORS, or hosted-doc options do not need to live in one
-    /// large <c>appsettings.json</c> file.
+    /// settings such as engine, OpenAPI, CORS, or hosted-doc options can be grouped by concern
+    /// without taking away the standard <c>appsettings.json</c> and <c>appsettings.{Environment}.json</c>
+    /// override flow.
     /// </remarks>
     public static WebApplicationBuilder AddCephalonProjectConfigurations(this WebApplicationBuilder builder)
     {

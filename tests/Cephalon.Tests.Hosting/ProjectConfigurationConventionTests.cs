@@ -88,6 +88,138 @@ public sealed class ProjectConfigurationConventionTests
     }
 
     [Fact]
+    public void AddCephalonLoadsRootAddFilesBeforeEnvironmentOverrides()
+    {
+        var rootPath = CreateProjectRoot();
+
+        try
+        {
+            WriteRootConfiguration(
+                rootPath,
+                "AddOpenApi.json",
+                """
+                {
+                  "OpenApi": {
+                    "RoutePattern": "/docs/{documentName}.json",
+                    "Title": "Grouped default title"
+                  }
+                }
+                """);
+            WriteEnvironmentConfiguration(
+                rootPath,
+                "OpenApi",
+                Environments.Development,
+                """
+                {
+                  "OpenApi": {
+                    "Title": "Environment override title"
+                  }
+                }
+                """);
+            WriteRootConfiguration(
+                rootPath,
+                "AddReferenceDocs.json",
+                """
+                {
+                  "ReferenceDocs": {
+                    "Enabled": true,
+                    "RoutePrefix": "/reference",
+                    "DirectoryPath": "docs\\reference"
+                  }
+                }
+                """);
+
+            var builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
+            {
+                ContentRootPath = rootPath,
+                EnvironmentName = Environments.Development
+            });
+
+            builder.AddCephalon(engine =>
+            {
+                engine.AddModule(new PlatformTestModule());
+                engine.AddModule(new DiscoveryTestModule());
+            });
+
+            Assert.Equal("/docs/{documentName}.json", builder.Configuration["OpenApi:RoutePattern"]);
+            Assert.Equal("Environment override title", builder.Configuration["OpenApi:Title"]);
+
+            using var app = builder.Build();
+            var referenceDocs = app.Services.GetRequiredService<ReferenceDocsHostingOptions>();
+
+            Assert.True(referenceDocs.Enabled);
+            Assert.Equal("/reference", referenceDocs.RoutePrefix);
+            Assert.Equal(
+                Path.GetFullPath(Path.Combine(rootPath, "docs", "reference")),
+                referenceDocs.DirectoryPath);
+        }
+        finally
+        {
+            DeleteDirectory(rootPath);
+        }
+    }
+
+    [Fact]
+    public void AddCephalonKeepsAppSettingsOverridesAuthoritativeOverSplitConfig()
+    {
+        var rootPath = CreateProjectRoot();
+
+        try
+        {
+            WriteRootConfiguration(
+                rootPath,
+                "AddOpenApi.json",
+                """
+                {
+                  "OpenApi": {
+                    "Title": "Cephalon split default",
+                    "RoutePattern": "/docs/{documentName}.json"
+                  }
+                }
+                """);
+            WriteAppSettings(
+                rootPath,
+                "appsettings.json",
+                """
+                {
+                  "OpenApi": {
+                    "Title": "Project root override"
+                  }
+                }
+                """);
+            WriteAppSettings(
+                rootPath,
+                "appsettings.Development.json",
+                """
+                {
+                  "OpenApi": {
+                    "Title": "Project environment override"
+                  }
+                }
+                """);
+
+            var builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
+            {
+                ContentRootPath = rootPath,
+                EnvironmentName = Environments.Development
+            });
+
+            builder.AddCephalon(engine =>
+            {
+                engine.AddModule(new PlatformTestModule());
+                engine.AddModule(new DiscoveryTestModule());
+            });
+
+            Assert.Equal("Project environment override", builder.Configuration["OpenApi:Title"]);
+            Assert.Equal("/docs/{documentName}.json", builder.Configuration["OpenApi:RoutePattern"]);
+        }
+        finally
+        {
+            DeleteDirectory(rootPath);
+        }
+    }
+
+    [Fact]
     public async Task AddCephalonLoadsSplitProjectConfigurationIntoWorkerHost()
     {
         var rootPath = CreateProjectRoot();
@@ -195,6 +327,14 @@ public sealed class ProjectConfigurationConventionTests
         var directoryPath = Path.Combine(rootPath, "Configurations");
         Directory.CreateDirectory(directoryPath);
         File.WriteAllText(Path.Combine(directoryPath, fileName), contents);
+    }
+
+    private static void WriteAppSettings(
+        string rootPath,
+        string fileName,
+        string contents)
+    {
+        File.WriteAllText(Path.Combine(rootPath, fileName), contents);
     }
 
     private static void DeleteDirectory(string path)

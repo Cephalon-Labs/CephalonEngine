@@ -1,7 +1,7 @@
 using Cephalon.Abstractions.EventSourcing;
-using Cephalon.Abstractions.Tenancy;
 using Cephalon.AspNetCore.GraphQL.Hosting;
 using Cephalon.AspNetCore.Grpc.Hosting;
+using Cephalon.AspNetCore.Documentation;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.JsonRpc.Hosting;
 using Cephalon.Audit.EntityFramework.Registration;
@@ -24,12 +24,14 @@ using Cephalon.Ids.Sfid.Registration;
 using Cephalon.MultiTenancy.Registration;
 using Cephalon.Observability.Hosting;
 using Cephalon.Observability.OpenTelemetry.Hosting;
+using Cephalon.Observability.Serilog.Hosting;
 using Cephalon.Sample.Showcase.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -78,12 +80,18 @@ public static class ShowcaseSampleApp
             Args = args ?? [],
             ApplicationName = typeof(ShowcaseSampleApp).Assembly.FullName,
             ContentRootPath = contentRoot,
-            EnvironmentName = Environments.Development
+            EnvironmentName = ResolveEnvironmentName()
         });
 
-        builder.Configuration.AddJsonFile("showcase.settings.json", optional: false, reloadOnChange: false);
+        builder.AddCephalonProjectConfigurations();
         builder.Configuration.AddEnvironmentVariables("SHOWCASE_");
         configureBuilder?.Invoke(builder);
+        if (builder.Configuration.GetSection("Serilog").Exists())
+        {
+            builder.Logging.ClearProviders();
+        }
+
+        builder.AddCephalonSerilog();
 
         var config = builder.Configuration;
 
@@ -125,9 +133,6 @@ public static class ShowcaseSampleApp
                 engine.AddMongoDbData(opts =>
                 {
                     config.GetSection(MongoDbDataOptions.SectionPath).Bind(opts);
-                    opts.ConnectionStringName ??= "MongoDB";
-                    opts.RegisterOutbox = true;
-                    opts.RegisterInbox = true;
                 });
             }
 
@@ -137,7 +142,6 @@ public static class ShowcaseSampleApp
                 engine.AddRedisData(opts =>
                 {
                     config.GetSection(RedisDataOptions.SectionPath).Bind(opts);
-                    opts.ConnectionStringName ??= "Redis";
                 });
             }
 
@@ -153,18 +157,7 @@ public static class ShowcaseSampleApp
 
             // --- Cross-cutting: identity, tenancy, audit ---
             engine.AddIdentityAccess();
-            engine.AddMultiTenancy(opts =>
-            {
-                opts.Tenants.Add(new TenantContext(
-                    tenantId: "tenant-alpha",
-                    displayName: "Alpha Store",
-                    domains: ["alpha.showcase.local"]));
-                opts.Tenants.Add(new TenantContext(
-                    tenantId: "tenant-beta",
-                    displayName: "Beta Store",
-                    domains: ["beta.showcase.local"]));
-                opts.DefaultTenantId = "tenant-alpha";
-            });
+            engine.AddMultiTenancy();
             engine.AddAudit();
 
             // --- Behaviors: all five patterns + generic non-REST transports ---
@@ -195,13 +188,45 @@ public static class ShowcaseSampleApp
         // --- Observability ---
         builder.Services.AddCephalonObservability(builder.Configuration);
         builder.AddCephalonOpenTelemetry();
-        builder.Services.AddSingleton<IEventStore, ShowcaseInMemoryEventStore>();
+        builder.Services.AddSingleton<ShowcaseInMemoryEventStore>();
+        builder.Services.AddSingleton<IEventStore>(serviceProvider =>
+            serviceProvider.GetRequiredService<ShowcaseInMemoryEventStore>());
+        builder.Services.AddSingleton<ShowcaseActivityFeed>();
+        builder.Services.AddScoped<ShowcaseSystemProjectionService>();
+        builder.Services.AddScoped<ShowcaseResetService>();
+        builder.Services.AddHostedService<ShowcaseDatabaseSeedHostedService>();
 
         var app = builder.Build();
         var apiRoutes = ApiRoutesOptions.FromConfiguration(app.Configuration);
+        var openApiOptions = OpenApiEndpointOptions.FromConfiguration(app.Configuration);
+        var defaultOpenApiDocumentName = ResolveDefaultOpenApiDocumentName(app.Configuration);
         app.UseExceptionHandler();
         app.UseStaticFiles();
+        app.Use(async (context, next) =>
+        {
+            if (!ShouldCaptureShowcaseActivity(context.Request.Path))
+            {
+                await next().ConfigureAwait(false);
+                return;
+            }
+
+            var stopwatch = Stopwatch.StartNew();
+            await next().ConfigureAwait(false);
+            stopwatch.Stop();
+
+            var activityFeed = context.RequestServices.GetRequiredService<ShowcaseActivityFeed>();
+            var classification = ClassifyShowcaseActivity(context.Request.Path, apiRoutes, openApiOptions);
+            activityFeed.Record(
+                classification.Area,
+                classification.Transport,
+                context.Request.Method,
+                context.Request.Path.Value ?? string.Empty,
+                context.Response.StatusCode,
+                stopwatch.Elapsed.TotalMilliseconds,
+                title: classification.Title);
+        });
         app.MapGet("/", () => TypedResults.Ok(ShowcaseSummary.Instance)).ExcludeFromDescription();
+        app.MapGet("/showcase", () => Results.Redirect("/showcase.html")).ExcludeFromDescription();
         app.MapGet("/showcase/client-config.js", () =>
         {
             var payload = JsonSerializer.Serialize(new
@@ -219,6 +244,24 @@ public static class ShowcaseSampleApp
                     sse = apiRoutes.SsePrefix,
                     graphQLWs = apiRoutes.GraphQLWsPrefix,
                     graphQLSse = apiRoutes.GraphQLSsePrefix
+                },
+                docs = new
+                {
+                    openApiJson = BuildOpenApiDocumentPath(openApiOptions.RoutePattern, defaultOpenApiDocumentName),
+                    scalar = $"{openApiOptions.ScalarRoutePrefix.TrimEnd('/')}/{defaultOpenApiDocumentName}"
+                },
+                engine = new
+                {
+                    snapshot = "/engine/snapshot",
+                    runtimeStory = "/engine/runtime-story",
+                    diagnostics = "/engine/diagnostics",
+                    modules = "/engine/modules",
+                    capabilities = "/engine/capabilities",
+                    packages = "/engine/packages",
+                    packagePolicy = "/engine/package-policy",
+                    trustPolicy = "/engine/trust-policy",
+                    authorizationPolicies = "/engine/authorization-policies",
+                    technologySurfaces = "/engine/technology-surfaces"
                 }
             });
 
@@ -226,10 +269,17 @@ public static class ShowcaseSampleApp
         }).ExcludeFromDescription();
         app.MapCephalon();
 
-        // --- Database initialization ---
-        InitializeDatabase(app);
-
         return app;
+    }
+
+    private static string ResolveEnvironmentName()
+    {
+        var environmentName = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT")
+            ?? Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+        return string.IsNullOrWhiteSpace(environmentName)
+            ? Environments.Development
+            : environmentName.Trim();
     }
 
     private static void ApplyNonDockerDatabaseOverrides(
@@ -299,71 +349,172 @@ public static class ShowcaseSampleApp
             });
     }
 
-    private static void InitializeDatabase(WebApplication app)
+    private static bool ShouldCaptureShowcaseActivity(PathString path)
     {
-        using var scope = app.Services.CreateScope();
-        var writeDb = scope.ServiceProvider.GetService<ShowcaseWriteDbContext>();
-        var readDb = scope.ServiceProvider.GetService<ShowcaseReadDbContext>();
-        var historyDb = scope.ServiceProvider.GetService<ShowcaseAuditHistoryDbContext>();
-
-        writeDb?.Database.EnsureCreated();
-        readDb?.Database.EnsureCreated();
-        historyDb?.Database.EnsureCreated();
-
-        if (writeDb is not null)
+        var value = path.Value;
+        if (string.IsNullOrWhiteSpace(value))
         {
-            SeedCommerceReferenceData(writeDb);
+            return false;
         }
 
-        if (readDb is not null)
+        if (value.Equals("/", StringComparison.OrdinalIgnoreCase) ||
+            value.Equals("/showcase", StringComparison.OrdinalIgnoreCase) ||
+            value.Equals("/showcase/", StringComparison.OrdinalIgnoreCase))
         {
-            SeedCommerceReferenceData(readDb);
+            return false;
         }
+
+        if (value.Contains("/showcase/system/activity", StringComparison.OrdinalIgnoreCase) ||
+            value.Contains("/showcase/system/reset", StringComparison.OrdinalIgnoreCase) ||
+            value.Equals("/showcase/client-config.js", StringComparison.OrdinalIgnoreCase) ||
+            value.EndsWith(".css", StringComparison.OrdinalIgnoreCase) ||
+            value.EndsWith(".js", StringComparison.OrdinalIgnoreCase) ||
+            value.EndsWith(".html", StringComparison.OrdinalIgnoreCase) ||
+            value.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        return value.StartsWith("/engine", StringComparison.OrdinalIgnoreCase) ||
+               value.Contains("/showcase/", StringComparison.OrdinalIgnoreCase) ||
+               value.StartsWith("/graphql", StringComparison.OrdinalIgnoreCase) ||
+               value.StartsWith("/graphql-ws", StringComparison.OrdinalIgnoreCase) ||
+               value.StartsWith("/graphql-sse", StringComparison.OrdinalIgnoreCase) ||
+               value.StartsWith("/json-rpc", StringComparison.OrdinalIgnoreCase) ||
+               value.StartsWith("/ws", StringComparison.OrdinalIgnoreCase) ||
+               value.StartsWith("/sse", StringComparison.OrdinalIgnoreCase) ||
+               value.StartsWith("/openapi", StringComparison.OrdinalIgnoreCase) ||
+               value.StartsWith("/scalar", StringComparison.OrdinalIgnoreCase) ||
+               value.StartsWith("/grpc", StringComparison.OrdinalIgnoreCase);
     }
 
-    private static void SeedCommerceReferenceData(ShowcaseCommerceDbContextBase db)
+    private static (string Area, string Transport, string Title) ClassifyShowcaseActivity(
+        PathString path,
+        ApiRoutesOptions apiRoutes,
+        OpenApiEndpointOptions openApiOptions)
     {
-        ArgumentNullException.ThrowIfNull(db);
-
-        if (!db.Products.Any())
+        var value = path.Value ?? string.Empty;
+        if (value.StartsWith("/engine", StringComparison.OrdinalIgnoreCase))
         {
-            foreach (var product in ShowcaseDataStore.Products.Values)
-            {
-                db.Products.Add(new ShowcaseProductEntity
-                {
-                    Id = product.Id,
-                    Sku = product.Sku,
-                    Name = product.Name,
-                    Description = product.Description,
-                    Category = product.Category,
-                    PriceInCents = product.PriceInCents,
-                    Currency = product.Currency,
-                    IsActive = product.IsActive,
-                    TagsJson = JsonSerializer.Serialize(product.Tags),
-                    CreatedAtUtc = product.CreatedAtUtc,
-                    UpdatedAtUtc = product.UpdatedAtUtc
-                });
-            }
-
-            db.SaveChanges();
+            return ("engine", "engine", "Engine introspection");
         }
 
-        if (!db.InventoryItems.Any())
+        if (value.StartsWith(openApiOptions.ScalarRoutePrefix, StringComparison.OrdinalIgnoreCase))
         {
-            foreach (var item in ShowcaseDataStore.Inventory.Values)
-            {
-                db.InventoryItems.Add(new ShowcaseInventoryEntity
-                {
-                    ProductId = item.ProductId,
-                    QuantityOnHand = item.QuantityOnHand,
-                    QuantityReserved = item.QuantityReserved,
-                    WarehouseCode = item.WarehouseCode,
-                    LastUpdatedAtUtc = item.LastUpdatedAtUtc
-                });
-            }
-
-            db.SaveChanges();
+            return ("docs", "scalar", "Scalar documentation");
         }
+
+        if (value.StartsWith(ExtractFixedRoutePrefix(openApiOptions.RoutePattern), StringComparison.OrdinalIgnoreCase))
+        {
+            return ("docs", "openapi", "OpenAPI document");
+        }
+
+        if (value.Contains("/showcase/system/", StringComparison.OrdinalIgnoreCase))
+        {
+            return ("system", "rest-api", "Showcase system projection");
+        }
+
+        if (value.Contains("/showcase/", StringComparison.OrdinalIgnoreCase))
+        {
+            return ("business", "rest-api", "Showcase business API");
+        }
+
+        if (value.StartsWith(apiRoutes.GraphQLWsPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return ("transport", "graphql-ws", "GraphQL WebSocket transport");
+        }
+
+        if (value.StartsWith(apiRoutes.GraphQLSsePrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return ("transport", "graphql-sse", "GraphQL SSE transport");
+        }
+
+        if (value.StartsWith(apiRoutes.GraphQLPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return ("transport", "graphql", "GraphQL transport");
+        }
+
+        if (value.StartsWith(apiRoutes.JsonRpcPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return ("transport", "json-rpc", "JSON-RPC transport");
+        }
+
+        if (value.StartsWith(apiRoutes.WsPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return ("transport", "ws", "WebSocket transport");
+        }
+
+        if (value.StartsWith(apiRoutes.SsePrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return ("transport", "sse", "Server-sent events transport");
+        }
+
+        if (value.StartsWith(apiRoutes.GrpcPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return ("transport", "grpc", "gRPC transport");
+        }
+
+        return ("host", "http", "Host request");
+    }
+
+    private static string ExtractFixedRoutePrefix(string routePattern)
+    {
+        var tokenIndex = routePattern.IndexOf("/{documentName}", StringComparison.OrdinalIgnoreCase);
+        if (tokenIndex >= 0)
+        {
+            return routePattern[..tokenIndex];
+        }
+
+        tokenIndex = routePattern.IndexOf("{documentName}", StringComparison.OrdinalIgnoreCase);
+        return tokenIndex >= 0
+            ? routePattern[..tokenIndex].TrimEnd('/')
+            : routePattern;
+    }
+
+    private static string BuildOpenApiDocumentPath(string routePattern, string documentName)
+    {
+        return routePattern.Replace("{documentName}", documentName, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string ResolveDefaultOpenApiDocumentName(IConfiguration configuration)
+    {
+        var defaultVersion = NormalizeVersionDocumentName(configuration["OpenApi:DefaultVersion"]);
+        if (defaultVersion is not null)
+        {
+            return defaultVersion;
+        }
+
+        var defaultDocument = configuration["OpenApi:DefaultDocument"]?.Trim();
+        if (!string.IsNullOrWhiteSpace(defaultDocument))
+        {
+            return defaultDocument;
+        }
+
+        var enabledVersions = configuration.GetSection("OpenApi:EnabledVersions").Get<string[]>()
+            ?? configuration.GetSection("OpenApi:EnableVersions").Get<string[]>();
+        var firstVersion = enabledVersions?
+            .Select(NormalizeVersionDocumentName)
+            .FirstOrDefault(static candidate => !string.IsNullOrWhiteSpace(candidate));
+
+        return firstVersion ?? "v1";
+    }
+
+    private static string? NormalizeVersionDocumentName(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        var normalized = value.Trim();
+        if (normalized.StartsWith("v", StringComparison.OrdinalIgnoreCase))
+        {
+            normalized = normalized[1..];
+        }
+
+        return int.TryParse(normalized, out var major) && major > 0
+            ? $"v{major}"
+            : null;
     }
 }
 

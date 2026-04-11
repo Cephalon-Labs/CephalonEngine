@@ -23,6 +23,7 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
     <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="10.0.5" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.5" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.5" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.5" />
@@ -61,6 +62,7 @@
     <PackageVersion Include="Qdrant.Client" Version="1.17.0" />
     <PackageVersion Include="RabbitMQ.Client" Version="7.2.1" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.13.18" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageVersion Include="Serilog.Extensions.Hosting" Version="10.0.0" />
     <PackageVersion Include="Serilog.Settings.Configuration" Version="10.0.0" />
     <PackageVersion Include="Sfid.Net" Version="1.0.1" />

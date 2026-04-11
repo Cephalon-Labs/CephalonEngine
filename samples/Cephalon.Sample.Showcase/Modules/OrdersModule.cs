@@ -2,8 +2,8 @@ using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Audit;
 using System.Globalization;
-using Cephalon.AspNetCore.Modules;
 using Cephalon.Behaviors.Http.Hosting;
+using Cephalon.Sample.Showcase.Domain.Orders.Behaviors;
 using Cephalon.Sample.Showcase.Domain.Orders.Models;
 using Cephalon.Sample.Showcase.Infrastructure;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +18,7 @@ namespace Cephalon.Sample.Showcase.Modules;
 /// Implements the event-driven behavior pattern with a module-owned REST surface.
 /// Uses PostgreSQL (via EF) when available, otherwise falls back to in-memory store.
 /// </summary>
-public sealed class OrdersModule : ModuleBase, IEndpointModule
+public sealed class OrdersModule : RestBehaviorModuleBase
 {
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "showcase.orders",
@@ -44,7 +44,15 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
     }
 
     /// <inheritdoc />
-    public void MapEndpoints(IEndpointRouteBuilder endpoints)
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+    {
+        behaviors.Internal<PlaceOrderBehavior>();
+        behaviors.Internal<GetOrderStatusBehavior>();
+        behaviors.Internal<CancelOrderBehavior>();
+    }
+
+    /// <inheritdoc />
+    protected override void MapAdditionalEndpoints(IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapBehaviorRestGroup(this, "/showcase/orders");
         var routes = group.Routes;
@@ -91,12 +99,23 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
 
         routes.MapPost(string.Empty, async (PlaceOrderInput input, HttpContext ctx) =>
         {
-            var orderId = $"ord-{Guid.NewGuid():N}"[..16];
+            var requestedOrderId = string.IsNullOrWhiteSpace(input.OrderId)
+                ? null
+                : input.OrderId.Trim();
+            var orderId = requestedOrderId ?? $"ord-{Guid.NewGuid():N}"[..16];
             var writeDb = ctx.RequestServices.GetService<ShowcaseWriteDbContext>();
             var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
 
             if (writeDb is not null)
             {
+                var existingEntity = await writeDb.Orders
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(order => order.OrderId == orderId, ctx.RequestAborted);
+                if (existingEntity is not null)
+                {
+                    return Results.Conflict($"Order '{orderId}' already exists.");
+                }
+
                 var entity = new ShowcaseOrderEntity
                 {
                     OrderId = orderId,
@@ -141,6 +160,11 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
                         metadata: ShowcaseAuditHelper.CreateMetadata(ctx, Descriptor.Id)));
 
                 return Results.Created(BuildCreatedLocation(ctx, orderId), new PlaceOrderOutput(orderId, "Pending"));
+            }
+
+            if (ShowcaseDataStore.Orders.ContainsKey(orderId))
+            {
+                return Results.Conflict($"Order '{orderId}' already exists.");
             }
 
             var order = new Order

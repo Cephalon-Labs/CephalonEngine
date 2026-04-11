@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-10T23:32:16.862763+00:00",
+  "GeneratedAtUtc": "2026-04-11T21:28:58.1521047+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 18,
-      "TypeCount": 190
+      "TypeCount": 199
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -199,7 +199,7 @@
       "Description": "Composition, runtime, policy, manifest, and introspection services.",
       "FileName": "cephalon-engine.md",
       "NamespaceCount": 12,
-      "TypeCount": 84
+      "TypeCount": 85
     },
     {
       "AssemblyName": "Cephalon.Eventing",
@@ -568,7 +568,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-appmodel",
-      "TypeCount": 22
+      "TypeCount": 23
     },
     {
       "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
@@ -596,7 +596,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-behaviors",
-      "TypeCount": 35
+      "TypeCount": 37
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Capabilities",
@@ -666,7 +666,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-resilience",
-      "TypeCount": 2
+      "TypeCount": 8
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Technologies",
@@ -939,7 +939,7 @@
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
       "AnchorId": "namespace-cephalon-engine-configuration",
-      "TypeCount": 33
+      "TypeCount": 34
     },
     {
       "NamespaceName": "Cephalon.Engine.Diagnostics",
@@ -2385,6 +2385,51 @@
       }
     },
     {
+      "DisplayName": "BehaviorExecutionResilienceOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection",
+      "Declaration": "public sealed class BehaviorExecutionResilienceOverrideSelection",
+      "Summary": "Describes one named behavior-execution resilience override requested for a subset of behaviors or transports.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 9,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "BehaviorExecutionResilienceOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings",
+      "Declaration": "public sealed class BehaviorExecutionResilienceOverrideSettings",
+      "Summary": "Describes one named behavior-execution resilience override configured for a subset of behaviors or transports.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 9,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "BehaviorExecutionResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-resilience-behaviorexecutionresilienceselection",
+      "Declaration": "public sealed class BehaviorExecutionResilienceSelection",
+      "Summary": "Describes the subset of resilience policy selections that apply to behavior execution pipelines.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 6,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "BehaviorFault",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -2415,6 +2460,36 @@
       }
     },
     {
+      "DisplayName": "BehaviorIdempotencyAttribute",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-behaviors-behavioridempotencyattribute",
+      "Declaration": "public sealed class BehaviorIdempotencyAttribute",
+      "Summary": "Declares whether a behavior execution is safe to replay automatically.",
+      "MemberCounts": {
+        "Constructors": 2,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "BehaviorIdempotencyMode",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-behaviors-behavioridempotencymode",
+      "Declaration": "public enum BehaviorIdempotencyMode",
+      "Summary": "Describes whether a behavior execution is safe to replay automatically.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 3,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "BehaviorNotFoundException",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -2426,6 +2501,51 @@
         "Constructors": 2,
         "Fields": 0,
         "Properties": 1,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "BehaviorResilienceExceptionContext",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext",
+      "Declaration": "public sealed class BehaviorResilienceExceptionContext",
+      "Summary": "Describes one behavior-execution exception being evaluated by the resilience pipeline.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "BehaviorResilienceExceptionHandling",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-resilience-behaviorresilienceexceptionhandling",
+      "Declaration": "public enum BehaviorResilienceExceptionHandling",
+      "Summary": "Describes how a behavior-execution exception should participate in resilience handling.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 3,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "BehaviorResilienceRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor",
+      "Declaration": "public sealed class BehaviorResilienceRuntimeDescriptor",
+      "Summary": "Describes one effective behavior-execution resilience policy exposed by the current runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 10,
         "Methods": 0
       }
     },
@@ -4316,7 +4436,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
-        "Methods": 6
+        "Methods": 10
       }
     },
     {
@@ -4902,6 +5022,36 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IBehaviorResilienceExceptionClassifier",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-resilience-ibehaviorresilienceexceptionclassifier",
+      "Declaration": "public interface IBehaviorResilienceExceptionClassifier",
+      "Summary": "Classifies behavior-execution exceptions for resilience handling.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IBehaviorResilienceRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-resilience-ibehaviorresilienceruntimecatalog",
+      "Declaration": "public interface IBehaviorResilienceRuntimeCatalog",
+      "Summary": "Exposes the active behavior-execution resilience policies visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 2
       }
     },
     {
@@ -8020,7 +8170,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 7,
+        "Properties": 8,
         "Methods": 0
       }
     },
@@ -8035,7 +8185,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 7,
+        "Properties": 8,
         "Methods": 1
       }
     },
@@ -8290,7 +8440,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 17,
+        "Properties": 18,
         "Methods": 0
       }
     },
@@ -12190,6 +12340,61 @@
       "Summary": "Initializes a new instance of \u0060BehaviorCompatibilityViolation\u0060."
     },
     {
+      "DisplayName": "BehaviorExecutionOverrides",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-resilienceselection-behaviorexecutionoverrides",
+      "Signature": "IReadOnlyList\u003CBehaviorExecutionResilienceOverrideSelection\u003E BehaviorExecutionOverrides { get; }",
+      "Summary": "Gets the named behavior-execution override policies targeted at specific behaviors or transports."
+    },
+    {
+      "DisplayName": "BehaviorExecutionOverrides",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResilienceSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-resiliencesettings-behaviorexecutionoverrides",
+      "Signature": "IReadOnlyList\u003CBehaviorExecutionResilienceOverrideSettings\u003E BehaviorExecutionOverrides { get; }",
+      "Summary": "Gets the named behavior-execution override policies targeted at specific behaviors or transports."
+    },
+    {
+      "DisplayName": "BehaviorExecutionResilienceOverrideSelection",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection",
+      "Signature": "BehaviorExecutionResilienceOverrideSelection(string id, IReadOnlyList\u003Cstring\u003E behaviorIds, IReadOnlyList\u003Cstring\u003E transportIds, RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead)",
+      "Summary": "Initializes a new instance of the \u0060BehaviorExecutionResilienceOverrideSelection\u0060 class."
+    },
+    {
+      "DisplayName": "BehaviorExecutionResilienceOverrideSettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-retrysettings-cephalon-engine-configuration-timeoutsettings-cephalon-engine-configuration-circuitbreakersettings-cephalon-engine-configuration-bulkheadsettings",
+      "Signature": "BehaviorExecutionResilienceOverrideSettings(string id, IReadOnlyList\u003Cstring\u003E behaviorIds, IReadOnlyList\u003Cstring\u003E transportIds, RetrySettings retry, TimeoutSettings timeout, CircuitBreakerSettings circuitBreaker, BulkheadSettings bulkhead)",
+      "Summary": "Initializes a new instance of the \u0060BehaviorExecutionResilienceOverrideSettings\u0060 class."
+    },
+    {
+      "DisplayName": "BehaviorExecutionResilienceSelection",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BehaviorExecutionResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-ctor-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection",
+      "Signature": "BehaviorExecutionResilienceSelection(RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead)",
+      "Summary": "Initializes a new instance of the \u0060BehaviorExecutionResilienceSelection\u0060 class."
+    },
+    {
       "DisplayName": "BehaviorFault",
       "Category": "Constructors",
       "DeclaringTypeName": "BehaviorFault",
@@ -12247,6 +12452,17 @@
     {
       "DisplayName": "BehaviorId",
       "Category": "Properties",
+      "DeclaringTypeName": "BehaviorResilienceExceptionContext",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-behaviorid",
+      "Signature": "string BehaviorId { get; }",
+      "Summary": "Gets the stable behavior identifier being executed."
+    },
+    {
+      "DisplayName": "BehaviorId",
+      "Category": "Properties",
       "DeclaringTypeName": "BehaviorSecurityException",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -12287,6 +12503,72 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-behaviorid",
       "Signature": "string BehaviorId { get; }",
       "Summary": "Gets the stable behavior identifier."
+    },
+    {
+      "DisplayName": "BehaviorIdempotency",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorResilienceExceptionContext",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-behavioridempotency",
+      "Signature": "BehaviorIdempotencyMode BehaviorIdempotency { get; }",
+      "Summary": "Gets the declared behavior idempotency mode when one is known."
+    },
+    {
+      "DisplayName": "BehaviorIdempotencyAttribute",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BehaviorIdempotencyAttribute",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-behavioridempotencyattribute-ctor",
+      "Signature": "BehaviorIdempotencyAttribute()",
+      "Summary": "Initializes a new instance of the \u0060BehaviorIdempotencyAttribute\u0060 class and marks the behavior as idempotent."
+    },
+    {
+      "DisplayName": "BehaviorIdempotencyAttribute",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BehaviorIdempotencyAttribute",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-behavioridempotencyattribute-ctor-cephalon-abstractions-behaviors-behavioridempotencymode",
+      "Signature": "BehaviorIdempotencyAttribute(BehaviorIdempotencyMode mode)",
+      "Summary": "Initializes a new instance of the \u0060BehaviorIdempotencyAttribute\u0060 class."
+    },
+    {
+      "DisplayName": "BehaviorIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-behaviorids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E BehaviorIds { get; }",
+      "Summary": "Gets the behavior identifiers targeted by this override."
+    },
+    {
+      "DisplayName": "BehaviorIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-behaviorids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E BehaviorIds { get; }",
+      "Summary": "Gets the targeted behavior identifiers."
+    },
+    {
+      "DisplayName": "BehaviorIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorResilienceRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-behaviorids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E BehaviorIds { get; set; }",
+      "Summary": "The behavior identifiers covered by the policy when it is scoped to a behavior subset."
     },
     {
       "DisplayName": "BehaviorIds",
@@ -12331,6 +12613,39 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-behaviornotfoundexception-ctor-system-string-system-exception",
       "Signature": "BehaviorNotFoundException(string behaviorId, Exception innerException)",
       "Summary": "Initializes the exception for the given behavior identifier with an inner exception."
+    },
+    {
+      "DisplayName": "BehaviorResilienceExceptionContext",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BehaviorResilienceExceptionContext",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-exception-cephalon-abstractions-behaviors-behavioridempotencymode",
+      "Signature": "BehaviorResilienceExceptionContext(string policyId, string behaviorId, string transportId, IReadOnlyList\u003Cstring\u003E targetedBehaviorIds, IReadOnlyList\u003Cstring\u003E targetedTransportIds, Exception exception, BehaviorIdempotencyMode behaviorIdempotency)",
+      "Summary": "Initializes a new instance of the \u0060BehaviorResilienceExceptionContext\u0060 class."
+    },
+    {
+      "DisplayName": "BehaviorResiliencePolicies",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-behaviorresiliencepolicies",
+      "Signature": "IReadOnlyList\u003CBehaviorResilienceRuntimeDescriptor\u003E BehaviorResiliencePolicies { get; set; }",
+      "Summary": "Gets the effective behavior-execution resilience policies visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "BehaviorResilienceRuntimeDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BehaviorResilienceRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "BehaviorResilienceRuntimeDescriptor(string Id, string DisplayName, string Description, string ExecutionMode, string Scope, IReadOnlyList\u003Cstring\u003E BehaviorIds, IReadOnlyList\u003Cstring\u003E TransportIds, BehaviorExecutionResilienceSelection Requested, BehaviorExecutionResilienceSelection Effective, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
+      "Summary": "Describes one effective behavior-execution resilience policy exposed by the current runtime."
     },
     {
       "DisplayName": "BehaviorRestDocumentedStatusCodes",
@@ -12573,6 +12888,39 @@
       "AnchorId": "member-p-cephalon-engine-manifest-packageprovenancemanifest-builduri",
       "Signature": "string BuildUri { get; }",
       "Summary": "Gets the declared build or pipeline URI, when available."
+    },
+    {
+      "DisplayName": "Bulkhead",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-bulkhead",
+      "Signature": "BulkheadSelection Bulkhead { get; }",
+      "Summary": "Gets the bulkhead override requested for the targeted surface."
+    },
+    {
+      "DisplayName": "Bulkhead",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-bulkhead",
+      "Signature": "BulkheadSettings Bulkhead { get; }",
+      "Summary": "Gets the bulkhead override requested for the targeted surface."
+    },
+    {
+      "DisplayName": "Bulkhead",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-bulkhead",
+      "Signature": "BulkheadSelection Bulkhead { get; }",
+      "Summary": "Gets the bulkhead selection that applies to behavior execution."
     },
     {
       "DisplayName": "Bulkhead",
@@ -13094,6 +13442,39 @@
     {
       "DisplayName": "CircuitBreaker",
       "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-circuitbreaker",
+      "Signature": "CircuitBreakerSelection CircuitBreaker { get; }",
+      "Summary": "Gets the circuit-breaker override requested for the targeted surface."
+    },
+    {
+      "DisplayName": "CircuitBreaker",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-circuitbreaker",
+      "Signature": "CircuitBreakerSettings CircuitBreaker { get; }",
+      "Summary": "Gets the circuit-breaker override requested for the targeted surface."
+    },
+    {
+      "DisplayName": "CircuitBreaker",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-circuitbreaker",
+      "Signature": "CircuitBreakerSelection CircuitBreaker { get; }",
+      "Summary": "Gets the circuit-breaker selection that applies to behavior execution."
+    },
+    {
+      "DisplayName": "CircuitBreaker",
+      "Category": "Properties",
       "DeclaringTypeName": "ResilienceSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -13134,6 +13515,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-circuitbreakersettings-ctor-system-nullable-system-boolean-system-nullable-system-decimal-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32",
       "Signature": "CircuitBreakerSettings(bool? enabled, decimal? failureRatio, int? minimumThroughput, int? samplingDurationSeconds, int? breakDurationSeconds)",
       "Summary": "Initializes a new instance of the \u0060CircuitBreakerSettings\u0060 class."
+    },
+    {
+      "DisplayName": "Classify",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorResilienceExceptionClassifier",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-resilience-ibehaviorresilienceexceptionclassifier-classify-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext",
+      "Signature": "BehaviorResilienceExceptionHandling Classify(BehaviorResilienceExceptionContext context)",
+      "Summary": "Classifies one behavior-execution exception."
     },
     {
       "DisplayName": "CleanArchitecture",
@@ -13609,6 +14001,28 @@
       "Summary": "Adds the Cephalon outbox entity mapping to the supplied model."
     },
     {
+      "DisplayName": "ConfigureGraphQLMutation",
+      "Category": "Methods",
+      "DeclaringTypeName": "GraphQLTransportServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.GraphQL.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore.GraphQL",
+      "FileName": "cephalon-aspnetcore-graphql.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlmutation-microsoft-extensions-dependencyinjection-iservicecollection-system-action-hotchocolate-types-iobjecttypedescriptor",
+      "Signature": "IServiceCollection ConfigureGraphQLMutation(this IServiceCollection services, Action\u003CIObjectTypeDescriptor\u003E configure)",
+      "Summary": "Adds fields to the shared GraphQL mutation root used by Cephalon modules."
+    },
+    {
+      "DisplayName": "ConfigureGraphQLMutation",
+      "Category": "Methods",
+      "DeclaringTypeName": "GraphQLTransportServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.GraphQL.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore.GraphQL",
+      "FileName": "cephalon-aspnetcore-graphql.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlmutation-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-hotchocolate-types-iobjecttypedescriptor",
+      "Signature": "WebApplicationBuilder ConfigureGraphQLMutation(this WebApplicationBuilder builder, Action\u003CIObjectTypeDescriptor\u003E configure)",
+      "Summary": "Adds fields to the shared GraphQL mutation root on a \u0060WebApplicationBuilder\u0060."
+    },
+    {
       "DisplayName": "ConfigureGraphQLQuery",
       "Category": "Methods",
       "DeclaringTypeName": "GraphQLTransportServiceCollectionExtensions",
@@ -13629,6 +14043,28 @@
       "AnchorId": "member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlquery-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-hotchocolate-types-iobjecttypedescriptor",
       "Signature": "WebApplicationBuilder ConfigureGraphQLQuery(this WebApplicationBuilder builder, Action\u003CIObjectTypeDescriptor\u003E configure)",
       "Summary": "Adds fields to the shared GraphQL query root on a \u0060WebApplicationBuilder\u0060."
+    },
+    {
+      "DisplayName": "ConfigureGraphQLSubscription",
+      "Category": "Methods",
+      "DeclaringTypeName": "GraphQLTransportServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.GraphQL.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore.GraphQL",
+      "FileName": "cephalon-aspnetcore-graphql.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlsubscription-microsoft-extensions-dependencyinjection-iservicecollection-system-action-hotchocolate-types-iobjecttypedescriptor",
+      "Signature": "IServiceCollection ConfigureGraphQLSubscription(this IServiceCollection services, Action\u003CIObjectTypeDescriptor\u003E configure)",
+      "Summary": "Adds fields to the shared GraphQL subscription root used by Cephalon modules."
+    },
+    {
+      "DisplayName": "ConfigureGraphQLSubscription",
+      "Category": "Methods",
+      "DeclaringTypeName": "GraphQLTransportServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.GraphQL.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore.GraphQL",
+      "FileName": "cephalon-aspnetcore-graphql.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlsubscription-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-hotchocolate-types-iobjecttypedescriptor",
+      "Signature": "WebApplicationBuilder ConfigureGraphQLSubscription(this WebApplicationBuilder builder, Action\u003CIObjectTypeDescriptor\u003E configure)",
+      "Summary": "Adds fields to the shared GraphQL subscription root on a \u0060WebApplicationBuilder\u0060."
     },
     {
       "DisplayName": "ConfigureGraphQLTransport",
@@ -15646,6 +16082,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "BehaviorResilienceRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-description",
+      "Signature": "string Description { get; set; }",
+      "Summary": "The human-readable policy description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "BehaviorTopologyDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -16427,6 +16874,17 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "BehaviorResilienceRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "The human-readable policy name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "BehaviorTopologyDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -16988,6 +17446,17 @@
     {
       "DisplayName": "Effective",
       "Category": "Properties",
+      "DeclaringTypeName": "BehaviorResilienceRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-effective",
+      "Signature": "BehaviorExecutionResilienceSelection Effective { get; set; }",
+      "Summary": "The effective behavior-execution resilience contract after runtime normalization."
+    },
+    {
+      "DisplayName": "Effective",
+      "Category": "Properties",
       "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Resilience",
       "AssemblyName": "Cephalon.Abstractions",
@@ -17116,6 +17585,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-auditsettings-empty",
       "Signature": "AuditSettings Empty { get; }",
       "Summary": "Gets an empty audit-settings instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-empty",
+      "Signature": "BehaviorExecutionResilienceSelection Empty { get; }",
+      "Summary": "Gets an empty behavior-execution resilience selection."
     },
     {
       "DisplayName": "Empty",
@@ -18768,6 +19248,17 @@
       "Summary": "Gets the logical event type identifier."
     },
     {
+      "DisplayName": "Exception",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorResilienceExceptionContext",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-exception",
+      "Signature": "Exception Exception { get; }",
+      "Summary": "Gets the exception being classified."
+    },
+    {
       "DisplayName": "ExceptionType",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeFailureInfo",
@@ -18975,6 +19466,17 @@
       "AnchorId": "member-f-cephalon-engine-diagnostics-enginediagnostics-executiongraphtransitioncountername",
       "Signature": "const string ExecutionGraphTransitionCounterName",
       "Summary": "Gets the counter name for execution-graph lifecycle transitions."
+    },
+    {
+      "DisplayName": "ExecutionMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorResilienceRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-executionmode",
+      "Signature": "string ExecutionMode { get; set; }",
+      "Summary": "The enforcement mode used by the active runtime, such as \u0060behavior-dispatch-middleware\u0060 or \u0060contract-only\u0060."
     },
     {
       "DisplayName": "ExecutionMode",
@@ -20431,6 +20933,17 @@
     {
       "DisplayName": "GetById",
       "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorResilienceRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-resilience-ibehaviorresilienceruntimecatalog-getbyid-system-string",
+      "Signature": "BehaviorResilienceRuntimeDescriptor GetById(string policyId)",
+      "Summary": "Gets one behavior-execution resilience policy by its stable identifier."
+    },
+    {
+      "DisplayName": "GetById",
+      "Category": "Methods",
       "DeclaringTypeName": "IDatabaseMigrationCatalog",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -21078,6 +21591,28 @@
       "Summary": "Gets a value indicating whether the dispatch runtime has reported any observations yet."
     },
     {
+      "DisplayName": "HasStrategyValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-hasstrategyvalues",
+      "Signature": "bool HasStrategyValues { get; }",
+      "Summary": "Gets a value indicating whether any strategy-level override values were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasStrategyValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-hasstrategyvalues",
+      "Signature": "bool HasStrategyValues { get; }",
+      "Summary": "Gets a value indicating whether any strategy-level override settings were explicitly supplied."
+    },
+    {
       "DisplayName": "HasValue",
       "Category": "Properties",
       "DeclaringTypeName": "IBehaviorResult",
@@ -21186,6 +21721,39 @@
       "AnchorId": "member-p-cephalon-engine-configuration-auditsettings-hasvalues",
       "Signature": "bool HasValues { get; }",
       "Summary": "Gets a value indicating whether any audit settings were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any override values were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any override settings were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any behavior-execution resilience inputs were supplied."
     },
     {
       "DisplayName": "HasValues",
@@ -22444,6 +23012,39 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable override identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable override identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorResilienceRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "The stable runtime policy identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "BehaviorTopologyDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -22904,6 +23505,17 @@
       "Summary": "Gets the stable transport identifier."
     },
     {
+      "DisplayName": "Idempotent",
+      "Category": "Fields",
+      "DeclaringTypeName": "BehaviorIdempotencyMode",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-behaviors-behavioridempotencymode-idempotent",
+      "Signature": "const BehaviorIdempotencyMode Idempotent",
+      "Summary": "Replaying the same logical behavior execution is expected to be safe."
+    },
+    {
       "DisplayName": "Identity",
       "Category": "Properties",
       "DeclaringTypeName": "AppProfile",
@@ -23012,6 +23624,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-datasettings-idgenerator",
       "Signature": "string IdGenerator { get; }",
       "Summary": "Gets the selected identifier-generation strategy."
+    },
+    {
+      "DisplayName": "Ignore",
+      "Category": "Fields",
+      "DeclaringTypeName": "BehaviorResilienceExceptionHandling",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-resilience-behaviorresilienceexceptionhandling-ignore",
+      "Signature": "const BehaviorResilienceExceptionHandling Ignore",
+      "Summary": "Ignore the exception for resilience accounting."
     },
     {
       "DisplayName": "InboxDescriptor",
@@ -25524,6 +26147,17 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "BehaviorResilienceRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
+      "Summary": "Additional runtime-specific metadata describing the policy."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "BehaviorTopologyDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -26246,6 +26880,17 @@
       "AnchorId": "member-p-cephalon-abstractions-audit-auditstoredescriptor-mode",
       "Signature": "string Mode { get; }",
       "Summary": "Gets the audit-store mode."
+    },
+    {
+      "DisplayName": "Mode",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorIdempotencyAttribute",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-behavioridempotencyattribute-mode",
+      "Signature": "BehaviorIdempotencyMode Mode { get; }",
+      "Summary": "Gets the declared idempotency mode."
     },
     {
       "DisplayName": "Mode",
@@ -27049,6 +27694,17 @@
       "AnchorId": "member-f-cephalon-abstractions-transports-transportfeatures-none",
       "Signature": "const TransportFeatures None",
       "Summary": "Indicates no transport features."
+    },
+    {
+      "DisplayName": "NonIdempotent",
+      "Category": "Fields",
+      "DeclaringTypeName": "BehaviorIdempotencyMode",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-behaviors-behavioridempotencymode-nonidempotent",
+      "Signature": "const BehaviorIdempotencyMode NonIdempotent",
+      "Summary": "Replaying the same logical behavior execution is not expected to be safe."
     },
     {
       "DisplayName": "NotFound",
@@ -28780,6 +29436,17 @@
     {
       "DisplayName": "Policies",
       "Category": "Properties",
+      "DeclaringTypeName": "IBehaviorResilienceRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-ibehaviorresilienceruntimecatalog-policies",
+      "Signature": "IReadOnlyList\u003CBehaviorResilienceRuntimeDescriptor\u003E Policies { get; }",
+      "Summary": "Gets all behavior-execution resilience policies visible to the current runtime."
+    },
+    {
+      "DisplayName": "Policies",
+      "Category": "Properties",
       "DeclaringTypeName": "IOutboxDispatchPolicyCatalog",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -28842,6 +29509,17 @@
       "AnchorId": "member-p-cephalon-abstractions-authorization-authorizationdecision-policyid",
       "Signature": "string PolicyId { get; }",
       "Summary": "Gets the policy identifier that produced the decision when one is known."
+    },
+    {
+      "DisplayName": "PolicyId",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorResilienceExceptionContext",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-policyid",
+      "Signature": "string PolicyId { get; }",
+      "Summary": "Gets the stable resilience-policy identifier handling the exception."
     },
     {
       "DisplayName": "PolicyId",
@@ -30573,6 +31251,17 @@
     {
       "DisplayName": "Requested",
       "Category": "Properties",
+      "DeclaringTypeName": "BehaviorResilienceRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-requested",
+      "Signature": "BehaviorExecutionResilienceSelection Requested { get; set; }",
+      "Summary": "The requested behavior-execution resilience contract."
+    },
+    {
+      "DisplayName": "Requested",
+      "Category": "Properties",
       "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Resilience",
       "AssemblyName": "Cephalon.Abstractions",
@@ -30995,8 +31684,8 @@
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-appmodel-resilienceselection-ctor-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection-cephalon-abstractions-appmodel-ratelimitingselection",
-      "Signature": "ResilienceSelection(RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead, RateLimitingSelection rateLimiting)",
+      "AnchorId": "member-m-cephalon-abstractions-appmodel-resilienceselection-ctor-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection-cephalon-abstractions-appmodel-ratelimitingselection-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection",
+      "Signature": "ResilienceSelection(RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead, RateLimitingSelection rateLimiting, IReadOnlyList\u003CBehaviorExecutionResilienceOverrideSelection\u003E behaviorExecutionOverrides)",
       "Summary": "Initializes a new instance of the \u0060ResilienceSelection\u0060 class."
     },
     {
@@ -31006,8 +31695,8 @@
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-configuration-resiliencesettings-ctor-cephalon-engine-configuration-retrysettings-cephalon-engine-configuration-timeoutsettings-cephalon-engine-configuration-circuitbreakersettings-cephalon-engine-configuration-bulkheadsettings-cephalon-engine-configuration-ratelimitingsettings",
-      "Signature": "ResilienceSettings(RetrySettings retry, TimeoutSettings timeout, CircuitBreakerSettings circuitBreaker, BulkheadSettings bulkhead, RateLimitingSettings rateLimiting)",
+      "AnchorId": "member-m-cephalon-engine-configuration-resiliencesettings-ctor-cephalon-engine-configuration-retrysettings-cephalon-engine-configuration-timeoutsettings-cephalon-engine-configuration-circuitbreakersettings-cephalon-engine-configuration-bulkheadsettings-cephalon-engine-configuration-ratelimitingsettings-system-collections-generic-ireadonlylist-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings",
+      "Signature": "ResilienceSettings(RetrySettings retry, TimeoutSettings timeout, CircuitBreakerSettings circuitBreaker, BulkheadSettings bulkhead, RateLimitingSettings rateLimiting, IReadOnlyList\u003CBehaviorExecutionResilienceOverrideSettings\u003E behaviorExecutionOverrides)",
       "Summary": "Initializes a new instance of the \u0060ResilienceSettings\u0060 class."
     },
     {
@@ -31108,6 +31797,17 @@
       "AnchorId": "member-m-cephalon-engine-appmodel-databasetopologyroleresolver-resolve-cephalon-abstractions-appmodel-databasetopologyselection-system-string",
       "Signature": "DatabaseTopologyRoleResolution Resolve(DatabaseTopologySelection databases, string requestedRoleId)",
       "Summary": "Resolves the effective target for the supplied logical database role."
+    },
+    {
+      "DisplayName": "Resolve",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorResilienceRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-resilience-ibehaviorresilienceruntimecatalog-resolve-system-string-system-string",
+      "Signature": "BehaviorResilienceRuntimeDescriptor Resolve(string behaviorId, string transportId)",
+      "Summary": "Resolves the effective behavior-execution resilience policy for one behavior and optional transport."
     },
     {
       "DisplayName": "Resolve",
@@ -31552,6 +32252,39 @@
     {
       "DisplayName": "Retry",
       "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-retry",
+      "Signature": "RetrySelection Retry { get; }",
+      "Summary": "Gets the retry override requested for the targeted surface."
+    },
+    {
+      "DisplayName": "Retry",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-retry",
+      "Signature": "RetrySettings Retry { get; }",
+      "Summary": "Gets the retry override requested for the targeted surface."
+    },
+    {
+      "DisplayName": "Retry",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-retry",
+      "Signature": "RetrySelection Retry { get; }",
+      "Summary": "Gets the retry selection that applies to behavior execution."
+    },
+    {
+      "DisplayName": "Retry",
+      "Category": "Properties",
       "DeclaringTypeName": "ResilienceSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -31570,6 +32303,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-resiliencesettings-retry",
       "Signature": "RetrySettings Retry { get; }",
       "Summary": "Gets the retry settings resolved for the app."
+    },
+    {
+      "DisplayName": "RetryAndTrip",
+      "Category": "Fields",
+      "DeclaringTypeName": "BehaviorResilienceExceptionHandling",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-resilience-behaviorresilienceexceptionhandling-retryandtrip",
+      "Signature": "const BehaviorResilienceExceptionHandling RetryAndTrip",
+      "Summary": "Count the exception for circuit-breaker accounting and treat it as eligible for future retry handling."
     },
     {
       "DisplayName": "RetryDelaySeconds",
@@ -32406,6 +33150,17 @@
       "AnchorId": "member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-scheme",
       "Signature": "string Scheme { get; set; }",
       "Summary": "Gets or sets the URI scheme used when building a discrete endpoint, such as \u0060neo4j\u0060, \u0060neo4j\u002Bs\u0060, \u0060bolt\u0060, or \u0060bolt\u002Bs\u0060."
+    },
+    {
+      "DisplayName": "Scope",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorResilienceRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-scope",
+      "Signature": "string Scope { get; set; }",
+      "Summary": "The runtime scope covered by the policy, such as \u0060all-behavior-executions\u0060."
     },
     {
       "DisplayName": "Scope",
@@ -34894,6 +35649,28 @@
       "Summary": "Gets the effective database target metadata after applying any configured role reference."
     },
     {
+      "DisplayName": "TargetedBehaviorIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorResilienceExceptionContext",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-targetedbehaviorids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E TargetedBehaviorIds { get; }",
+      "Summary": "Gets the behavior identifiers targeted by the active policy."
+    },
+    {
+      "DisplayName": "TargetedTransportIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorResilienceExceptionContext",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-targetedtransportids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E TargetedTransportIds { get; }",
+      "Summary": "Gets the transport identifiers targeted by the active policy."
+    },
+    {
       "DisplayName": "TargetFramework",
       "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocsRequest",
@@ -35512,6 +36289,39 @@
     {
       "DisplayName": "Timeout",
       "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-timeout",
+      "Signature": "TimeoutSelection Timeout { get; }",
+      "Summary": "Gets the timeout override requested for the targeted surface."
+    },
+    {
+      "DisplayName": "Timeout",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-timeout",
+      "Signature": "TimeoutSettings Timeout { get; }",
+      "Summary": "Gets the timeout override requested for the targeted surface."
+    },
+    {
+      "DisplayName": "Timeout",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceSelection",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-timeout",
+      "Signature": "TimeoutSelection Timeout { get; }",
+      "Summary": "Gets the timeout selection that applies to behavior execution."
+    },
+    {
+      "DisplayName": "Timeout",
+      "Category": "Properties",
       "DeclaringTypeName": "ResilienceSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -35776,6 +36586,17 @@
     {
       "DisplayName": "TransportId",
       "Category": "Properties",
+      "DeclaringTypeName": "BehaviorResilienceExceptionContext",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-transportid",
+      "Signature": "string TransportId { get; }",
+      "Summary": "Gets the active transport identifier when one is known."
+    },
+    {
+      "DisplayName": "TransportId",
+      "Category": "Properties",
       "DeclaringTypeName": "ITransportRouteMapper",
       "NamespaceName": "Cephalon.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.AspNetCore",
@@ -35783,6 +36604,39 @@
       "AnchorId": "member-p-cephalon-aspnetcore-hosting-itransportroutemapper-transportid",
       "Signature": "string TransportId { get; }",
       "Summary": "Gets the transport identifier that this mapper handles."
+    },
+    {
+      "DisplayName": "TransportIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSelection",
+      "NamespaceName": "Cephalon.Abstractions.AppModel",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-transportids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; }",
+      "Summary": "Gets the transport identifiers targeted by this override."
+    },
+    {
+      "DisplayName": "TransportIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-transportids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; }",
+      "Summary": "Gets the targeted transport identifiers."
+    },
+    {
+      "DisplayName": "TransportIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorResilienceRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-transportids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; set; }",
+      "Summary": "The transport identifiers covered by the policy when it is scoped to a transport subset."
     },
     {
       "DisplayName": "TransportIds",
@@ -35860,6 +36714,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-enginesettings-transports",
       "Signature": "IReadOnlyList\u003Cstring\u003E Transports { get; }",
       "Summary": "Gets the selected transport identifiers."
+    },
+    {
+      "DisplayName": "TripOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "BehaviorResilienceExceptionHandling",
+      "NamespaceName": "Cephalon.Abstractions.Resilience",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-resilience-behaviorresilienceexceptionhandling-triponly",
+      "Signature": "const BehaviorResilienceExceptionHandling TripOnly",
+      "Summary": "Count the exception for circuit-breaker style failure accounting, but do not automatically retry it."
     },
     {
       "DisplayName": "TrustedAssemblies",
@@ -36355,6 +37220,17 @@
       "AnchorId": "member-f-cephalon-abstractions-audit-auditoutcome-unknown",
       "Signature": "const AuditOutcome Unknown",
       "Summary": "Indicates the operation outcome was not explicitly classified."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
+      "DeclaringTypeName": "BehaviorIdempotencyMode",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-behaviors-behavioridempotencymode-unknown",
+      "Signature": "const BehaviorIdempotencyMode Unknown",
+      "Summary": "No explicit idempotency contract was declared for the behavior."
     },
     {
       "DisplayName": "Unsupported",
