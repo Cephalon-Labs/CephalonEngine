@@ -8,7 +8,11 @@ namespace Cephalon.AspNetCore.GraphQL.Modules;
 /// <remarks>
 /// Implementing modules should also register their GraphQL query, mutation, subscription, or
 /// type-extension services from <c>ConfigureServices</c> by calling
-/// <c>ConfigureGraphQLTransport(...)</c> on the shared service collection.
+/// <c>ConfigureGraphQLQuery(...)</c>, <c>ConfigureGraphQLMutation(...)</c>,
+/// <c>ConfigureGraphQLSubscription(...)</c>, or <c>ConfigureGraphQLTransport(...)</c> on the
+/// shared service collection. Subscription fields still require a concrete Hot Chocolate
+/// subscription provider, such as <c>AddInMemorySubscriptions()</c>, to execute over the built-in
+/// GraphQL-over-SSE or GraphQL-over-WebSocket routes.
 /// </remarks>
 public interface IGraphQLModule : IModule
 {

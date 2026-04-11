@@ -119,6 +119,78 @@ public static class GraphQLTransportServiceCollectionExtensions
         return builder;
     }
 
+    /// <summary>
+    /// Adds fields to the shared GraphQL mutation root used by Cephalon modules.
+    /// </summary>
+    /// <param name="services">The service collection that owns the transport registration.</param>
+    /// <param name="configure">The callback that adds fields, arguments, and resolvers to <c>Mutation</c>.</param>
+    /// <returns>The same service collection for fluent composition.</returns>
+    public static IServiceCollection ConfigureGraphQLMutation(
+        this IServiceCollection services,
+        Action<IObjectTypeDescriptor> configure)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configure);
+
+        GetOrAddRegistration(services).AddMutationConfiguration(configure);
+        return services;
+    }
+
+    /// <summary>
+    /// Adds fields to the shared GraphQL mutation root on a <see cref="WebApplicationBuilder" />.
+    /// </summary>
+    /// <param name="builder">The ASP.NET Core application builder to extend.</param>
+    /// <param name="configure">The callback that adds fields, arguments, and resolvers to <c>Mutation</c>.</param>
+    /// <returns>The same builder instance for fluent composition.</returns>
+    public static WebApplicationBuilder ConfigureGraphQLMutation(
+        this WebApplicationBuilder builder,
+        Action<IObjectTypeDescriptor> configure)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        builder.Services.ConfigureGraphQLMutation(configure);
+        return builder;
+    }
+
+    /// <summary>
+    /// Adds fields to the shared GraphQL subscription root used by Cephalon modules.
+    /// </summary>
+    /// <param name="services">The service collection that owns the transport registration.</param>
+    /// <param name="configure">The callback that adds fields, arguments, and resolvers to <c>Subscription</c>.</param>
+    /// <returns>The same service collection for fluent composition.</returns>
+    /// <remarks>
+    /// Subscription field registration only shapes the GraphQL schema. Modules or hosts still need
+    /// to register a concrete Hot Chocolate subscription provider, such as
+    /// <c>AddInMemorySubscriptions()</c>, through <see cref="ConfigureGraphQLTransport(IServiceCollection,Action{IRequestExecutorBuilder})" />
+    /// when they want GraphQL-over-SSE or GraphQL-over-WebSocket operations to execute.
+    /// </remarks>
+    public static IServiceCollection ConfigureGraphQLSubscription(
+        this IServiceCollection services,
+        Action<IObjectTypeDescriptor> configure)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configure);
+
+        GetOrAddRegistration(services).AddSubscriptionConfiguration(configure);
+        return services;
+    }
+
+    /// <summary>
+    /// Adds fields to the shared GraphQL subscription root on a <see cref="WebApplicationBuilder" />.
+    /// </summary>
+    /// <param name="builder">The ASP.NET Core application builder to extend.</param>
+    /// <param name="configure">The callback that adds fields, arguments, and resolvers to <c>Subscription</c>.</param>
+    /// <returns>The same builder instance for fluent composition.</returns>
+    public static WebApplicationBuilder ConfigureGraphQLSubscription(
+        this WebApplicationBuilder builder,
+        Action<IObjectTypeDescriptor> configure)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        builder.Services.ConfigureGraphQLSubscription(configure);
+        return builder;
+    }
+
     private static GraphQLTransportRegistration GetOrAddRegistration(IServiceCollection services)
     {
         var existing = services
@@ -139,7 +211,11 @@ internal sealed class GraphQLTransportRegistration
 {
     private readonly List<Action<IRequestExecutorBuilder>> pendingConfigurations = [];
     private readonly List<Action<IObjectTypeDescriptor>> queryConfigurations = [];
+    private readonly List<Action<IObjectTypeDescriptor>> mutationConfigurations = [];
+    private readonly List<Action<IObjectTypeDescriptor>> subscriptionConfigurations = [];
     private IRequestExecutorBuilder? builder;
+    private bool isMutationRootRegistered;
+    private bool isSubscriptionRootRegistered;
 
     public bool IsTransportRegistered { get; private set; }
 
@@ -164,6 +240,16 @@ internal sealed class GraphQLTransportRegistration
             }
         });
 
+        if (mutationConfigurations.Count > 0)
+        {
+            EnsureMutationRootRegistered();
+        }
+
+        if (subscriptionConfigurations.Count > 0)
+        {
+            EnsureSubscriptionRootRegistered();
+        }
+
         foreach (var configure in pendingConfigurations)
         {
             configure(builder);
@@ -186,5 +272,65 @@ internal sealed class GraphQLTransportRegistration
     public void AddQueryConfiguration(Action<IObjectTypeDescriptor> configure)
     {
         queryConfigurations.Add(configure);
+    }
+
+    public void AddMutationConfiguration(Action<IObjectTypeDescriptor> configure)
+    {
+        mutationConfigurations.Add(configure);
+        if (builder is not null)
+        {
+            EnsureMutationRootRegistered();
+        }
+    }
+
+    public void AddSubscriptionConfiguration(Action<IObjectTypeDescriptor> configure)
+    {
+        subscriptionConfigurations.Add(configure);
+        if (builder is not null)
+        {
+            EnsureSubscriptionRootRegistered();
+        }
+    }
+
+    private void EnsureMutationRootRegistered()
+    {
+        if (isMutationRootRegistered)
+        {
+            return;
+        }
+
+        ArgumentNullException.ThrowIfNull(builder);
+        builder.AddMutationType(descriptor =>
+        {
+            descriptor.Name("Mutation");
+
+            foreach (var configureMutation in mutationConfigurations)
+            {
+                configureMutation(descriptor);
+            }
+        });
+
+        isMutationRootRegistered = true;
+    }
+
+    private void EnsureSubscriptionRootRegistered()
+    {
+        if (isSubscriptionRootRegistered)
+        {
+            return;
+        }
+
+        ArgumentNullException.ThrowIfNull(builder);
+        builder.AddSubscriptionType(descriptor =>
+        {
+            descriptor.Name("Subscription");
+
+            foreach (var configureSubscription in subscriptionConfigurations)
+            {
+                configureSubscription(descriptor);
+            }
+        });
+
+        isSubscriptionRootRegistered = true;
     }
 }

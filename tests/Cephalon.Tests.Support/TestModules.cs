@@ -8,6 +8,7 @@ using Cephalon.AspNetCore.JsonRpc.Modules;
 using Cephalon.AspNetCore.Transports.ServerSentEvents;
 using Cephalon.AspNetCore.Transports.WebSockets;
 using HotChocolate;
+using HotChocolate.Subscriptions;
 using HotChocolate.Types;
 using HotChocolate.Types.Descriptors;
 using Microsoft.AspNetCore.Builder;
@@ -83,7 +84,10 @@ internal sealed class DiscoveryTestModule : ModuleBase, IEndpointModule, IGraphQ
     {
         services.AddSingleton<TestGreetingComposer>();
         services.AddTransient<DiscoveryGrpcService>();
+        services.ConfigureGraphQLTransport(builder => builder.AddInMemorySubscriptions());
         services.ConfigureGraphQLQuery(DiscoveryGraphQLQueries.Configure);
+        services.ConfigureGraphQLMutation(DiscoveryGraphQLMutations.Configure);
+        services.ConfigureGraphQLSubscription(DiscoveryGraphQLSubscriptions.Configure);
     }
 
     public override void RegisterCapabilities(ICapabilityRegistry capabilities)
@@ -246,6 +250,7 @@ internal sealed class DiscoveryGraphQLQueries
     {
         descriptor.Field("hello")
             .Argument("name", argument => argument.Type<StringType>())
+            .Type<NonNullType<GreetingEnvelopeGraphQLType>>()
             .Resolve(context =>
             {
                 var composer = context.Service<TestGreetingComposer>();
@@ -254,6 +259,62 @@ internal sealed class DiscoveryGraphQLQueries
             });
         descriptor.Field("principles")
             .Resolve(static _ => DiscoveryDefaults.Principles);
+    }
+}
+
+internal sealed class DiscoveryGraphQLMutations
+{
+    public static void Configure(IObjectTypeDescriptor descriptor)
+    {
+        descriptor.Field("publishGreeting")
+            .Argument("name", argument => argument.Type<NonNullType<StringType>>())
+            .Type<NonNullType<GreetingEnvelopeGraphQLType>>()
+            .Resolve(async context =>
+            {
+                var composer = context.Service<TestGreetingComposer>();
+                var sender = context.Service<ITopicEventSender>();
+                var name = context.ArgumentValue<string>("name");
+                var greeting = composer.Compose(name);
+                var topic = DiscoveryGraphQLTopics.Greeting(name);
+
+                await sender.SendAsync(topic, greeting, context.RequestAborted).ConfigureAwait(false);
+                await sender.CompleteAsync(topic).ConfigureAwait(false);
+
+                return greeting;
+            });
+    }
+}
+
+internal sealed class DiscoveryGraphQLSubscriptions
+{
+    public static void Configure(IObjectTypeDescriptor descriptor)
+    {
+        descriptor.Field("greetingPublished")
+            .Argument("name", argument => argument.Type<NonNullType<StringType>>())
+            .Type<NonNullType<GreetingEnvelopeGraphQLType>>()
+            .SubscribeToTopic<GreetingEnvelope>(context =>
+                DiscoveryGraphQLTopics.Greeting(context.ArgumentValue<string>("name")))
+            .Resolve(context => context.GetEventMessage<GreetingEnvelope>());
+    }
+}
+
+internal static class DiscoveryGraphQLTopics
+{
+    public static string Greeting(string name)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        return $"discovery.greetings:{name.Trim()}";
+    }
+}
+
+internal sealed class GreetingEnvelopeGraphQLType : ObjectType<GreetingEnvelope>
+{
+    protected override void Configure(IObjectTypeDescriptor<GreetingEnvelope> descriptor)
+    {
+        descriptor.Name("Greeting");
+        descriptor.Field(model => model.Message);
+        descriptor.Field(model => model.GeneratedAtUtc);
+        descriptor.Field(model => model.Traits);
     }
 }
 
