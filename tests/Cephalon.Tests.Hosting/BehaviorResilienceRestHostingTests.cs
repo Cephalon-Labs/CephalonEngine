@@ -120,6 +120,60 @@ public sealed class BehaviorResilienceRestHostingTests
         Assert.True(responses.TryGetProperty("429", out _));
     }
 
+    [Fact]
+    public async Task BehaviorRestOpenApiOmits503ForRoutesWithDisabledBehaviorExecutionTimeoutOverride()
+    {
+        const string defaultRoute = "/api/v1/tests/resilience/openapi/default/tasks/alpha";
+        const string overrideRoute = "/api/v1/tests/resilience/openapi/override/tasks/beta";
+
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["Engine:Resilience:Timeout:Enabled"] = "true";
+        builder.Configuration["Engine:Resilience:Timeout:TotalTimeoutSeconds"] = "1";
+        builder.Configuration["Engine:Resilience:BehaviorExecution:Overrides:rest-doc-timeout-disabled:Behaviors:0"] = "tests.resilience.openapi.override";
+        builder.Configuration["Engine:Resilience:BehaviorExecution:Overrides:rest-doc-timeout-disabled:Transports:0"] = "rest-api";
+        builder.Configuration["Engine:Resilience:BehaviorExecution:Overrides:rest-doc-timeout-disabled:Timeout:Enabled"] = "false";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new OpenApiTimeoutOverrideRestModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var defaultResponse = await client.GetAsync(defaultRoute);
+        var overrideResponse = await client.GetAsync(overrideRoute);
+        using var document = JsonDocument.Parse(await client.GetStringAsync("/openapi/v1.json"));
+        var defaultOperation = document.RootElement
+            .GetProperty("paths")
+            .EnumerateObject()
+            .Single(static path =>
+                path.Name.EndsWith("/tests/resilience/openapi/default/tasks/{taskId}", StringComparison.Ordinal))
+            .Value
+            .GetProperty("get");
+        var overrideOperation = document.RootElement
+            .GetProperty("paths")
+            .EnumerateObject()
+            .Single(static path =>
+                path.Name.EndsWith("/tests/resilience/openapi/override/tasks/{taskId}", StringComparison.Ordinal))
+            .Value
+            .GetProperty("get");
+
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, defaultResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, overrideResponse.StatusCode);
+        Assert.True(defaultOperation.GetProperty("responses").TryGetProperty("503", out _));
+        Assert.False(overrideOperation.GetProperty("responses").TryGetProperty("503", out _));
+    }
+
     private sealed record TimeoutInput(string TaskId);
 
     private sealed record TimeoutOutput(string TaskId, string Status);
@@ -141,6 +195,10 @@ public sealed class BehaviorResilienceRestHostingTests
 
     private sealed record BulkheadOutput(string JobId, string Value);
 
+    private sealed record OpenApiTimeoutInput(string TaskId);
+
+    private sealed record OpenApiTimeoutOutput(string TaskId, string Status);
+
     [AppBehavior("tests.resilience.bulkhead")]
     private sealed class BulkheadBehavior : IAppBehavior<BulkheadInput, BulkheadOutput>
     {
@@ -152,6 +210,32 @@ public sealed class BehaviorResilienceRestHostingTests
             BulkheadProbe.MarkStarted();
             await BulkheadProbe.WaitForReleaseAsync(cancellationToken);
             return new BulkheadOutput(input.JobId, input.Value);
+        }
+    }
+
+    [AppBehavior("tests.resilience.openapi.default")]
+    private sealed class OpenApiDefaultTimeoutBehavior : IAppBehavior<OpenApiTimeoutInput, OpenApiTimeoutOutput>
+    {
+        public async Task<OpenApiTimeoutOutput> HandleAsync(
+            OpenApiTimeoutInput input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+            return new OpenApiTimeoutOutput(input.TaskId, "done");
+        }
+    }
+
+    [AppBehavior("tests.resilience.openapi.override")]
+    private sealed class OpenApiOverrideTimeoutBehavior : IAppBehavior<OpenApiTimeoutInput, OpenApiTimeoutOutput>
+    {
+        public async Task<OpenApiTimeoutOutput> HandleAsync(
+            OpenApiTimeoutInput input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+            return new OpenApiTimeoutOutput(input.TaskId, "done");
         }
     }
 
@@ -186,6 +270,26 @@ public sealed class BehaviorResilienceRestHostingTests
         {
             var group = behaviors.Group("/tests/resilience/bulkhead/jobs");
             group.MapPost<BulkheadBehavior>("/{jobId}");
+        }
+    }
+
+    private sealed class OpenApiTimeoutOverrideRestModule : RestBehaviorModuleBase
+    {
+        private static readonly ModuleDescriptor DescriptorInstance = new(
+            id: "tests.resilience.openapi",
+            displayName: "OpenAPI Timeout Override",
+            description: "Test module for route-specific behavior execution timeout documentation.",
+            version: "1.0.0");
+
+        public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            var defaultGroup = behaviors.Group("/tests/resilience/openapi/default/tasks");
+            defaultGroup.MapGet<OpenApiDefaultTimeoutBehavior>("/{taskId}");
+
+            var overrideGroup = behaviors.Group("/tests/resilience/openapi/override/tasks");
+            overrideGroup.MapGet<OpenApiOverrideTimeoutBehavior>("/{taskId}");
         }
     }
 

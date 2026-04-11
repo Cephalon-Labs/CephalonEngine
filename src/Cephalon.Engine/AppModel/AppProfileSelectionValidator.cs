@@ -168,6 +168,10 @@ internal static class AppProfileSelectionValidator
         ValidateCircuitBreakerSelection(resilience.CircuitBreaker);
         ValidateBulkheadSelection(resilience.Bulkhead);
         ValidateRateLimitingSelection(resilience.RateLimiting);
+        foreach (var entry in resilience.BehaviorExecutionOverrides)
+        {
+            ValidateBehaviorExecutionResilienceOverrideSelection(entry);
+        }
     }
 
     private static void ValidateRetrySelection(RetrySelection retry)
@@ -372,6 +376,29 @@ internal static class AppProfileSelectionValidator
             throw new InvalidOperationException(
                 $"Rate limiting override '{overrideSelection.Id}' SegmentsPerWindow must be greater than zero when supplied.");
         }
+    }
+
+    private static void ValidateBehaviorExecutionResilienceOverrideSelection(
+        BehaviorExecutionResilienceOverrideSelection overrideSelection)
+    {
+        ArgumentNullException.ThrowIfNull(overrideSelection);
+
+        if (overrideSelection.BehaviorIds.Count == 0 && overrideSelection.TransportIds.Count == 0)
+        {
+            throw new InvalidOperationException(
+                $"Behavior execution resilience override '{overrideSelection.Id}' must target at least one behavior or transport.");
+        }
+
+        if (!overrideSelection.HasStrategyValues)
+        {
+            throw new InvalidOperationException(
+                $"Behavior execution resilience override '{overrideSelection.Id}' must specify at least one retry, timeout, circuit-breaker, or bulkhead value.");
+        }
+
+        ValidateRetrySelection(overrideSelection.Retry);
+        ValidateTimeoutSelection(overrideSelection.Timeout);
+        ValidateCircuitBreakerSelection(overrideSelection.CircuitBreaker);
+        ValidateBulkheadSelection(overrideSelection.Bulkhead);
     }
 
     private static void ValidateDatabaseRoleReferences(

@@ -68,7 +68,7 @@ public sealed class SseBehaviorBinding : IHttpBehaviorBinding
                 ctx.Response.Headers["X-Accel-Buffering"] = "no"; // nginx compat
 
                 var input = ParseQueryAsJsonElement(ctx.Request.Query);
-                var context = DefaultBehaviorContext.From(ctx, descriptor.Id);
+                var context = DefaultBehaviorContext.From(ctx, descriptor.Id, TransportId);
 
                 try
                 {

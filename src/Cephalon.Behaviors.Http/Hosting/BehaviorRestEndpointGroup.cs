@@ -577,7 +577,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         try
         {
             var input = await BehaviorRequestJsonComposer.ComposeAsync<TInput>(context, acceptsBody).ConfigureAwait(false);
-            var behaviorContext = DefaultBehaviorContext.From(context, behaviorId);
+            var behaviorContext = DefaultBehaviorContext.From(context, behaviorId, "rest-api");
             var result = await dispatcher.DispatchAsync(
                 behaviorId,
                 input,
@@ -708,14 +708,29 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             ? new HashSet<int>(new OpenApiEndpointOptions().BehaviorRestDocumentedStatusCodes)
             : new HashSet<int>(OpenApiEndpointOptions.FromConfiguration(configuration).BehaviorRestDocumentedStatusCodes);
         var behaviorResilienceCatalog = services.GetService<IBehaviorResilienceRuntimeCatalog>();
-        if (behaviorResilienceCatalog?.Policies.Any(static policy =>
+        var resolvedBehaviorResiliencePolicy = string.IsNullOrWhiteSpace(behaviorId)
+            ? null
+            : behaviorResilienceCatalog?.Resolve(behaviorId, transportId);
+        if (resolvedBehaviorResiliencePolicy?.Effective.Timeout.Enabled == true &&
+            resolvedBehaviorResiliencePolicy.Effective.Timeout.HasValues)
+        {
+            statusCodes.Add(StatusCodes.Status503ServiceUnavailable);
+        }
+        else if (resolvedBehaviorResiliencePolicy is null &&
+            behaviorResilienceCatalog?.Policies.Any(static policy =>
                 policy.Effective.Timeout.Enabled == true &&
                 policy.Effective.Timeout.HasValues) == true)
         {
             statusCodes.Add(StatusCodes.Status503ServiceUnavailable);
         }
 
-        if (behaviorResilienceCatalog?.Policies.Any(static policy =>
+        if (resolvedBehaviorResiliencePolicy?.Effective.Bulkhead.Enabled == true &&
+            resolvedBehaviorResiliencePolicy.Effective.Bulkhead.HasValues)
+        {
+            statusCodes.Add(StatusCodes.Status429TooManyRequests);
+        }
+        else if (resolvedBehaviorResiliencePolicy is null &&
+            behaviorResilienceCatalog?.Policies.Any(static policy =>
                 policy.Effective.Bulkhead.Enabled == true &&
                 policy.Effective.Bulkhead.HasValues) == true)
         {

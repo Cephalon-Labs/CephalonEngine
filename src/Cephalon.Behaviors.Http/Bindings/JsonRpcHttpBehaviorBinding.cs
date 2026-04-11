@@ -180,7 +180,7 @@ public sealed class JsonRpcHttpBehaviorBinding : IHttpBehaviorBinding
 
                 try
                 {
-                    var context = DefaultBehaviorContext.From(ctx, descriptor.Id);
+                    var context = DefaultBehaviorContext.From(ctx, descriptor.Id, TransportId);
                     var result = await dispatcher.DispatchAsync(descriptor.Id, input, context, ctx.RequestAborted)
                         .ConfigureAwait(false);
 

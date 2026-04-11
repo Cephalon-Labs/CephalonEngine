@@ -19,8 +19,9 @@ internal sealed class DefaultBehaviorContext : IBehaviorContext
     /// </summary>
     /// <param name="ctx">The active HTTP context.</param>
     /// <param name="behaviorId">The behavior identifier being dispatched.</param>
+    /// <param name="transportId">The transport identifier that produced this behavior invocation when one is known.</param>
     /// <returns>A populated context instance.</returns>
-    internal static DefaultBehaviorContext From(HttpContext ctx, string behaviorId)
+    internal static DefaultBehaviorContext From(HttpContext ctx, string behaviorId, string? transportId = null)
     {
         ArgumentNullException.ThrowIfNull(ctx);
         ArgumentNullException.ThrowIfNull(behaviorId);
@@ -43,6 +44,7 @@ internal sealed class DefaultBehaviorContext : IBehaviorContext
         if (tenantId is not null) metadata["TenantId"] = tenantId;
         if (userId is not null) metadata["UserId"] = userId;
         if (traceId is not null) metadata["TraceId"] = traceId;
+        if (!string.IsNullOrWhiteSpace(transportId)) metadata["TransportId"] = transportId.Trim();
 
         return new DefaultBehaviorContext
         {

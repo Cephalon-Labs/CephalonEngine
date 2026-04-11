@@ -38,6 +38,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.AppModel.AuditHistoryRetentionSelection),
             typeof(global::Cephalon.Abstractions.AppModel.AuditHistorySelection),
             typeof(global::Cephalon.Abstractions.AppModel.AuditSelection),
+            typeof(global::Cephalon.Abstractions.AppModel.BehaviorExecutionResilienceOverrideSelection),
             typeof(global::Cephalon.Abstractions.AppModel.BulkheadSelection),
             typeof(global::Cephalon.Abstractions.AppModel.CircuitBreakerSelection),
             typeof(global::Cephalon.Abstractions.AppModel.DataSelection),

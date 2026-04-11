@@ -103,7 +103,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 31` follow-through: `ENG-064` is now shipped on top of the same durable history baseline so audit history now also includes a host-agnostic bounded export contract, `Engine:Audit:History:Export`, `/engine/audit-history/export`, and showcase-facing `/api/v1/showcase/audit/history/export` endpoints
 - `Sprint 31` follow-through: `ENG-065` is now shipped on top of the same topology baseline so dependent database targets can explicitly reference `write` through `UseRole`, `Cephalon.Data.EntityFramework` plus `Cephalon.Audit.EntityFramework` now surface requested versus resolved roles truthfully, and the showcase sample now demonstrates explicit `Outbox -> write` routing while keeping a dedicated configured `HistoryDb` role for Docker-backed relational bootstrap
 - `Sprint 31` follow-through: `ENG-066` is now shipped on top of the same topology baseline so the engine now exposes `IDatabaseRoleCatalog`, `/engine/database-roles`, `/engine/database-roles/{databaseRoleId}`, and `snapshot.DatabaseRoles` with requested versus resolved role truth, role-consumer metadata, co-location answers, and audit-history enrichment
-- `Sprint 36–37 (Phase 11)`: `ENG-076` now ships the contract-first resilience baseline — `Engine:Resilience`, `AppProfile.Resilience`, `/engine/resilience`, and the missing `onion-architecture` plus `anti-corruption-layer` pattern descriptors — `ENG-077` now ships the first transport-native follow-through through ASP.NET Core public-HTTP rate limiting plus `/engine/rate-limiting`, `ENG-078` now adds endpoint-scoped behavior/transport override modeling for ASP.NET Core HTTP surfaces, and `ENG-079` now adds the first behavior-pipeline follow-through through shared timeout-plus-bulkhead enforcement plus `/engine/behavior-resilience`; retry, circuit breaker, and broader transport-native semantics remain planned follow-through
+- `Sprint 36–37 (Phase 11)`: `ENG-076` now ships the contract-first resilience baseline — `Engine:Resilience`, `AppProfile.Resilience`, `/engine/resilience`, and the missing `onion-architecture` plus `anti-corruption-layer` pattern descriptors — `ENG-077` now ships the first transport-native follow-through through ASP.NET Core public-HTTP rate limiting plus `/engine/rate-limiting`, `ENG-078` now adds endpoint-scoped behavior/transport override modeling for ASP.NET Core HTTP surfaces, `ENG-079` now adds the first behavior-pipeline follow-through through shared timeout-plus-bulkhead enforcement plus `/engine/behavior-resilience`, and `ENG-080` now adds behavior-execution override resolution with behavior/transport precedence plus route-truthful REST/OpenAPI answers; retry, circuit breaker, and broader transport-native semantics remain planned follow-through
 - `Sprint 38–39 (Phase 12)`: planned migration and advanced coordination — strangler fig, saga choreography, BFF pattern, feature flags, durable execution foundations
 - `Sprint 40–41 (Phase 13)`: planned next-generation patterns — cell-based architecture, data mesh, CDC
 - `Later / not scheduled yet`: further cloud/platform integrations beyond the shipped phase 6 baseline, `ENG-054` hybrid-runtime service-mesh and serverless expansion, and future solution-level expansion only when an explicit adoption scenario needs them
@@ -637,12 +637,13 @@ Shipped baseline:
 - projection of that requested contract into `EngineSettings`, `AppProfile.Resilience`, `/engine/app-model`, and `/engine/resilience`
 - ASP.NET Core public-HTTP rate limiting wired through `Microsoft.AspNetCore.RateLimiting`, `/engine/rate-limiting`, and `snapshot.RateLimitingPolicies` with operator/docs route exclusions
 - additive `Engine:Resilience:RateLimiting:Overrides` modeling projected into `AppProfile.Resilience` so ASP.NET Core hosts can resolve endpoint-scoped behavior and transport overrides with truthful runtime/OpenAPI answers
+- additive `Engine:Resilience:BehaviorExecution:Overrides` modeling projected into `AppProfile.Resilience` so `Cephalon.Behaviors` can resolve behavior-scoped, transport-scoped, and behavior+transport timeout/bulkhead overrides with explicit disable answers and truthful `/engine/behavior-resilience` plus REST/OpenAPI status metadata
 - showcase sample configuration now demonstrates the same resilience contract in `showcase.settings.json`
 
 Remaining follow-through:
 
 - circuit breaker abstraction (`ICircuitBreaker` with open/half-open/closed state machine) integrated into the behavior pipeline
-- retry with exponential backoff and jitter, timeout enforcement, and bulkhead isolation policies through `Microsoft.Extensions.Resilience` (Polly v8)
+- retry with exponential backoff and jitter plus circuit-breaker enforcement through `Microsoft.Extensions.Resilience` (Polly v8)
 - transport-native rate-limiting semantics beyond ASP.NET Core endpoint gating, especially for long-lived connection transports
 - capabilities: `resilience.circuit-breaker`, `resilience.retry`, `resilience.timeout`, `resilience.bulkhead`, `resilience.rate-limiting`
 
@@ -650,6 +651,7 @@ Exit criteria:
 
 - a consumer app can configure per-behavior resilience policies through `Engine:Resilience` without writing custom middleware
 - the requested and effective resilience contract remains introspectable through `AppProfile.Resilience`, `/engine/resilience`, `/engine/rate-limiting`, and `/engine/snapshot`
+- default and scoped behavior-execution timeout/bulkhead policies can be configured through `Engine:Resilience:BehaviorExecution` plus `Engine:Resilience:BehaviorExecution:Overrides` without custom dispatch glue
 - health probes and circuit breakers compose together to prevent cascading failures
 - ASP.NET Core HTTP rate limiting can be configured per behavior or per transport
 

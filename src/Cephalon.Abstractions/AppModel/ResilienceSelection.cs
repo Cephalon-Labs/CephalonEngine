@@ -20,19 +20,24 @@ public sealed class ResilienceSelection
     /// <param name="circuitBreaker">The circuit-breaker policy resolved for the app.</param>
     /// <param name="bulkhead">The bulkhead policy resolved for the app.</param>
     /// <param name="rateLimiting">The rate-limiting policy resolved for the app.</param>
+    /// <param name="behaviorExecutionOverrides">The named behavior-execution override policies targeted at specific behaviors or transports.</param>
     [JsonConstructor]
     public ResilienceSelection(
         RetrySelection? retry = null,
         TimeoutSelection? timeout = null,
         CircuitBreakerSelection? circuitBreaker = null,
         BulkheadSelection? bulkhead = null,
-        RateLimitingSelection? rateLimiting = null)
+        RateLimitingSelection? rateLimiting = null,
+        IReadOnlyList<BehaviorExecutionResilienceOverrideSelection>? behaviorExecutionOverrides = null)
     {
         Retry = retry ?? RetrySelection.Empty;
         Timeout = timeout ?? TimeoutSelection.Empty;
         CircuitBreaker = circuitBreaker ?? CircuitBreakerSelection.Empty;
         Bulkhead = bulkhead ?? BulkheadSelection.Empty;
         RateLimiting = rateLimiting ?? RateLimitingSelection.Empty;
+        BehaviorExecutionOverrides = behaviorExecutionOverrides?
+            .Where(static entry => entry is not null)
+            .ToArray() ?? [];
     }
 
     /// <summary>
@@ -61,6 +66,11 @@ public sealed class ResilienceSelection
     public RateLimitingSelection RateLimiting { get; }
 
     /// <summary>
+    /// Gets the named behavior-execution override policies targeted at specific behaviors or transports.
+    /// </summary>
+    public IReadOnlyList<BehaviorExecutionResilienceOverrideSelection> BehaviorExecutionOverrides { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any resilience-selection inputs were explicitly supplied.
     /// </summary>
     public bool HasValues =>
@@ -68,5 +78,6 @@ public sealed class ResilienceSelection
         Timeout.HasValues ||
         CircuitBreaker.HasValues ||
         Bulkhead.HasValues ||
-        RateLimiting.HasValues;
+        RateLimiting.HasValues ||
+        BehaviorExecutionOverrides.Count > 0;
 }

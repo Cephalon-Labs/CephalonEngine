@@ -367,6 +367,7 @@ public sealed class RabbitMqTransportBinding : IMessagingBehaviorBinding, IAsync
             BehaviorId = behaviorId;
 
             var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            metadata["TransportId"] = "rabbitmq";
             if (ea.BasicProperties?.CorrelationId is { } corrId)
             {
                 metadata["CorrelationId"] = corrId;

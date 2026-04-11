@@ -71,7 +71,7 @@ public sealed class GraphqlWsBehaviorBinding : IHttpBehaviorBinding
                 var logger = ctx.RequestServices.GetService<ILoggerFactory>()
                     ?.CreateLogger<GraphqlWsBehaviorBinding>();
                 using var ws = await ctx.WebSockets.AcceptWebSocketAsync("graphql-transport-ws").ConfigureAwait(false);
-                await HandleGraphqlWsAsync(ws, ctx, descriptor.Id, dispatcher, logger).ConfigureAwait(false);
+                await HandleGraphqlWsAsync(ws, ctx, descriptor.Id, dispatcher, logger, TransportId).ConfigureAwait(false);
             })
             .ApplyCephalonRateLimiting(app.Services, TransportId, descriptor.Id)
             .ExcludeFromDescription();
@@ -85,7 +85,8 @@ public sealed class GraphqlWsBehaviorBinding : IHttpBehaviorBinding
         HttpContext ctx,
         string behaviorId,
         BehaviorDispatcher dispatcher,
-        ILogger? logger)
+        ILogger? logger,
+        string transportId)
     {
         // G-GQL-WS-04: track active subscription ids
         var activeSubscriptions = new ConcurrentDictionary<string, CancellationTokenSource>(StringComparer.Ordinal);
@@ -190,7 +191,7 @@ public sealed class GraphqlWsBehaviorBinding : IHttpBehaviorBinding
                             ? JsonSerializer.Deserialize<object>(variablesRaw)!
                             : JsonSerializer.Deserialize<object>("{}")!;
 
-                        var context = DefaultBehaviorContext.From(ctx, behaviorId);
+                        var context = DefaultBehaviorContext.From(ctx, behaviorId, transportId);
 
                         try
                         {

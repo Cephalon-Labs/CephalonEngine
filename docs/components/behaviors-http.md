@@ -225,6 +225,10 @@ separate concerns:
   document and return `429` for bulkhead saturation
 - when shared behavior-execution timeout enforcement is active, behavior-owned REST helpers also
   document and return `503` for timed-out dispatches
+- `Engine:Resilience:BehaviorExecution:Overrides` can narrow or disable inherited timeout/bulkhead
+  answers per behavior id, per transport id, or per behavior+transport pair with
+  `behavior+transport > behavior > transport > default` precedence, and REST docs follow that
+  resolved runtime answer per endpoint
 - GraphQL and JSON-RPC keep their protocol-native response shapes and are intentionally not wrapped
   in `ResultModel`
 

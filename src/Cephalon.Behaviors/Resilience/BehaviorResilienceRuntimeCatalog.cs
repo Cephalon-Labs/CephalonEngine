@@ -4,14 +4,18 @@ namespace Cephalon.Behaviors.Resilience;
 
 internal sealed class BehaviorResilienceRuntimeCatalog : IBehaviorResilienceRuntimeCatalog
 {
+    private readonly BehaviorResiliencePolicyCatalog _catalog;
     private readonly BehaviorResilienceRuntimeDescriptor[] _policies;
     private readonly Dictionary<string, BehaviorResilienceRuntimeDescriptor> _policiesById;
 
-    public BehaviorResilienceRuntimeCatalog(IReadOnlyList<BehaviorResilienceRuntimeDescriptor> policies)
+    public BehaviorResilienceRuntimeCatalog(BehaviorResiliencePolicyCatalog catalog)
     {
-        ArgumentNullException.ThrowIfNull(policies);
+        ArgumentNullException.ThrowIfNull(catalog);
 
-        _policies = policies.ToArray();
+        _catalog = catalog;
+        _policies = catalog.Policies
+            .Select(static policy => policy.ToDescriptor())
+            .ToArray();
         _policiesById = _policies.ToDictionary(
             static policy => policy.Id,
             StringComparer.OrdinalIgnoreCase);
@@ -29,5 +33,18 @@ internal sealed class BehaviorResilienceRuntimeCatalog : IBehaviorResilienceRunt
         return _policiesById.TryGetValue(policyId.Trim(), out var policy)
             ? policy
             : null;
+    }
+
+    public BehaviorResilienceRuntimeDescriptor? Resolve(string behaviorId, string? transportId = null)
+    {
+        if (string.IsNullOrWhiteSpace(behaviorId))
+        {
+            return null;
+        }
+
+        var resolution = _catalog.Resolve(behaviorId, transportId);
+        return resolution.Policy is null
+            ? null
+            : GetById(resolution.Policy.Id);
     }
 }

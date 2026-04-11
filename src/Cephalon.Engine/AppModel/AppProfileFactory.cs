@@ -167,6 +167,31 @@ public static class AppProfileFactory
                     permitLimit: entry.PermitLimit,
                     queueLimit: entry.QueueLimit,
                     windowSeconds: entry.WindowSeconds,
-                    segmentsPerWindow: entry.SegmentsPerWindow)).ToArray()));
+                    segmentsPerWindow: entry.SegmentsPerWindow)).ToArray()),
+            behaviorExecutionOverrides: settings.BehaviorExecutionOverrides.Select(static entry => new Abstractions.AppModel.BehaviorExecutionResilienceOverrideSelection(
+                id: entry.Id,
+                behaviorIds: entry.BehaviorIds,
+                transportIds: entry.TransportIds,
+                retry: new Abstractions.AppModel.RetrySelection(
+                    enabled: entry.Retry.Enabled,
+                    maxAttempts: entry.Retry.MaxAttempts,
+                    backoff: entry.Retry.Backoff,
+                    baseDelayMilliseconds: entry.Retry.BaseDelayMilliseconds,
+                    maxDelayMilliseconds: entry.Retry.MaxDelayMilliseconds,
+                    useJitter: entry.Retry.UseJitter),
+                timeout: new Abstractions.AppModel.TimeoutSelection(
+                    enabled: entry.Timeout.Enabled,
+                    totalTimeoutSeconds: entry.Timeout.TotalTimeoutSeconds,
+                    attemptTimeoutSeconds: entry.Timeout.AttemptTimeoutSeconds),
+                circuitBreaker: new Abstractions.AppModel.CircuitBreakerSelection(
+                    enabled: entry.CircuitBreaker.Enabled,
+                    failureRatio: entry.CircuitBreaker.FailureRatio,
+                    minimumThroughput: entry.CircuitBreaker.MinimumThroughput,
+                    samplingDurationSeconds: entry.CircuitBreaker.SamplingDurationSeconds,
+                    breakDurationSeconds: entry.CircuitBreaker.BreakDurationSeconds),
+                bulkhead: new Abstractions.AppModel.BulkheadSelection(
+                    enabled: entry.Bulkhead.Enabled,
+                    maxConcurrentExecutions: entry.Bulkhead.MaxConcurrentExecutions,
+                    maxQueuedActions: entry.Bulkhead.MaxQueuedActions))).ToArray());
     }
 }

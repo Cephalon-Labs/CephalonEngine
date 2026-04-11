@@ -94,20 +94,23 @@ The phase-8 families stay runtime-neutral on purpose:
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,
 `BulkheadSelection`, and `RateLimitingSelection`. `RateLimitingSelection` now also carries additive
-`RateLimitingOverrideSelection` entries so the public app model can describe narrower behavior- or
-transport-scoped intent without leaking ASP.NET Core-specific endpoint conventions into
-`Cephalon.Abstractions`. Those types stay transport- and host-agnostic on purpose: they capture
-requested resilience intent in the public model without forcing ASP.NET Core, Polly, or
+`RateLimitingOverrideSelection` entries, and `ResilienceSelection` now also carries additive
+`BehaviorExecutionResilienceOverrideSelection` entries, so the public app model can describe
+narrower behavior- or transport-scoped intent without leaking ASP.NET Core-specific endpoint
+conventions into `Cephalon.Abstractions`. Those types stay transport- and host-agnostic on purpose:
+they capture requested resilience intent in the public model without forcing ASP.NET Core, Polly, or
 behavior-pipeline enforcement details into `Cephalon.Abstractions`.
 
 When a host adapter does enforce HTTP rate limiting, the same package now also carries the narrow
 runtime-facing `IRateLimitingRuntimeCatalog` and `RateLimitingRuntimeDescriptor` contracts. That
 lets hosts publish effective policy truth into operator surfaces and snapshots without leaking
 ASP.NET Core middleware types back into engine-core or application behavior code. The same package
-now also carries `IBehaviorResilienceRuntimeCatalog`, `BehaviorResilienceRuntimeDescriptor`, and
-`BehaviorExecutionResilienceSelection` so the engine can publish effective behavior-execution
-timeout-plus-bulkhead answers without leaking Polly types or host-specific middleware contracts into
-consumer code.
+now also carries `IBehaviorResilienceRuntimeCatalog`, `BehaviorResilienceRuntimeDescriptor`,
+`BehaviorExecutionResilienceSelection`, and `BehaviorExecutionResilienceOverrideSelection` so the
+engine can publish both requested override intent and effective behavior-execution timeout-plus-bulkhead
+answers without leaking Polly types or host-specific middleware contracts into consumer code. The
+runtime descriptor now also carries targeted behavior ids plus transport ids so operator tooling can
+see whether an answer came from the default policy or from a narrower override.
 
 ## Related docs
 

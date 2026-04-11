@@ -282,6 +282,7 @@ public sealed class KafkaTransportBinding : IMessagingBehaviorBinding, IAsyncDis
 
             var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
+                ["TransportId"] = "kafka",
                 ["Topic"] = result.Topic,
                 ["Partition"] = result.Partition.Value.ToString(System.Globalization.CultureInfo.InvariantCulture),
                 ["Offset"] = result.Offset.Value.ToString(System.Globalization.CultureInfo.InvariantCulture),

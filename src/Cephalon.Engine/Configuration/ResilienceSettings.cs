@@ -20,18 +20,23 @@ public sealed class ResilienceSettings
     /// <param name="circuitBreaker">The circuit-breaker settings resolved for the app.</param>
     /// <param name="bulkhead">The bulkhead settings resolved for the app.</param>
     /// <param name="rateLimiting">The rate-limiting settings resolved for the app.</param>
+    /// <param name="behaviorExecutionOverrides">The named behavior-execution override policies targeted at specific behaviors or transports.</param>
     public ResilienceSettings(
         RetrySettings? retry = null,
         TimeoutSettings? timeout = null,
         CircuitBreakerSettings? circuitBreaker = null,
         BulkheadSettings? bulkhead = null,
-        RateLimitingSettings? rateLimiting = null)
+        RateLimitingSettings? rateLimiting = null,
+        IReadOnlyList<BehaviorExecutionResilienceOverrideSettings>? behaviorExecutionOverrides = null)
     {
         Retry = retry ?? RetrySettings.Empty;
         Timeout = timeout ?? TimeoutSettings.Empty;
         CircuitBreaker = circuitBreaker ?? CircuitBreakerSettings.Empty;
         Bulkhead = bulkhead ?? BulkheadSettings.Empty;
         RateLimiting = rateLimiting ?? RateLimitingSettings.Empty;
+        BehaviorExecutionOverrides = behaviorExecutionOverrides?
+            .Where(static entry => entry is not null)
+            .ToArray() ?? [];
     }
 
     /// <summary>
@@ -60,6 +65,11 @@ public sealed class ResilienceSettings
     public RateLimitingSettings RateLimiting { get; }
 
     /// <summary>
+    /// Gets the named behavior-execution override policies targeted at specific behaviors or transports.
+    /// </summary>
+    public IReadOnlyList<BehaviorExecutionResilienceOverrideSettings> BehaviorExecutionOverrides { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any resilience settings were explicitly supplied.
     /// </summary>
     public bool HasValues =>
@@ -67,7 +77,8 @@ public sealed class ResilienceSettings
         Timeout.HasValues ||
         CircuitBreaker.HasValues ||
         Bulkhead.HasValues ||
-        RateLimiting.HasValues;
+        RateLimiting.HasValues ||
+        BehaviorExecutionOverrides.Count > 0;
 
     /// <summary>
     /// Reads resilience settings from configuration.
@@ -90,6 +101,8 @@ public sealed class ResilienceSettings
             timeout: TimeoutSettings.FromSection(section.GetSection("Timeout")),
             circuitBreaker: CircuitBreakerSettings.FromSection(section.GetSection("CircuitBreaker")),
             bulkhead: BulkheadSettings.FromSection(section.GetSection("Bulkhead")),
-            rateLimiting: RateLimitingSettings.FromSection(section.GetSection("RateLimiting")));
+            rateLimiting: RateLimitingSettings.FromSection(section.GetSection("RateLimiting")),
+            behaviorExecutionOverrides: BehaviorExecutionResilienceOverrideSettings.FromSection(
+                section.GetSection("BehaviorExecution").GetSection("Overrides")));
     }
 }

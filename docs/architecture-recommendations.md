@@ -38,14 +38,14 @@ Effort: medium.
 
 ### Retry with Backoff, Timeout, and Bulkhead (resilience suite)
 
-Current state: the contract-first baseline is now shipped through `Engine:Resilience` with `Retry`, `Timeout`, and `Bulkhead` selections plus operator-facing introspection, and the first behavior-pipeline follow-through now enforces a shared execution timeout plus bulkhead through `Cephalon.Behaviors`, `/engine/behavior-resilience`, and `snapshot.BehaviorResiliencePolicies`. Retry remains contract-only until idempotency and failure-classification rules exist, and there is still no behavior-level override path yet.
+Current state: the contract-first baseline is now shipped through `Engine:Resilience` with `Retry`, `Timeout`, and `Bulkhead` selections plus operator-facing introspection, and the current behavior-pipeline follow-through now enforces a shared execution timeout plus bulkhead through `Cephalon.Behaviors`, `/engine/behavior-resilience`, and `snapshot.BehaviorResiliencePolicies`. `Engine:Resilience:BehaviorExecution:Overrides` now adds behavior- and transport-scoped override resolution with precedence `behavior+transport > behavior > transport > default`, including explicit disable answers that suppress inherited timeout/bulkhead behavior for a narrower surface. Retry remains contract-only until idempotency and failure-classification rules exist.
 
 Recommendation: create `Cephalon.Resilience` companion package or add resilience middleware to `Cephalon.Behaviors`.
 
 Implementation outline:
 - `IResiliencePolicy` abstraction covering retry, timeout, and bulkhead
 - Integration with `Microsoft.Extensions.Resilience` (Polly v8) as the default implementation
-- Per-behavior resilience configuration through `Engine:Resilience` or behavior-level metadata
+- Per-behavior and per-transport resilience configuration through `Engine:Resilience:BehaviorExecution:Overrides`
 - Capabilities: `resilience.retry`, `resilience.timeout`, `resilience.bulkhead`
 
 Effort: medium.

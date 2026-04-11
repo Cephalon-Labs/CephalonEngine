@@ -59,7 +59,7 @@ public sealed class GraphqlSseBehaviorBinding : IHttpBehaviorBinding
                     ? JsonSerializer.Deserialize<object>(variables.GetRawText())!
                     : JsonSerializer.Deserialize<object>("{}")!;
 
-                var context = DefaultBehaviorContext.From(ctx, descriptor.Id);
+                var context = DefaultBehaviorContext.From(ctx, descriptor.Id, TransportId);
 
                 ctx.Response.ContentType = "text/event-stream";
                 ctx.Response.Headers.CacheControl = "no-cache";

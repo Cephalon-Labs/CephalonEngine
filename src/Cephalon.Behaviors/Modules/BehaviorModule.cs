@@ -131,30 +131,35 @@ internal sealed class BehaviorModule(
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        var policy = ResolveBehaviorResiliencePolicy(services, configuration);
+        var policyCatalog = ResolveBehaviorResiliencePolicyCatalog(services, configuration);
+        services.TryAddSingleton(policyCatalog);
         services.TryAddSingleton<Cephalon.Abstractions.Resilience.IBehaviorResilienceRuntimeCatalog>(_ =>
-            new BehaviorResilienceRuntimeCatalog(
-                policy is null
-                    ? []
-                    : [policy.ToDescriptor()]));
+            new BehaviorResilienceRuntimeCatalog(policyCatalog));
 
-        if (policy is null || !policy.HasEnforcedStrategies)
+        if (!policyCatalog.HasEnforcedPolicies)
         {
             return;
         }
 
-        services.TryAddSingleton(policy);
-        services.AddResiliencePipeline<string>(
-            policy.Id,
-            static (builder, context) =>
-            {
-                var resolvedPolicy = context.ServiceProvider.GetRequiredService<ResolvedBehaviorResiliencePolicy>();
-                resolvedPolicy.Configure(builder);
-            });
+        foreach (var policy in policyCatalog.EnforcedPolicies)
+        {
+            var policyId = policy.Id;
+            services.AddResiliencePipeline<string>(
+                policyId,
+                (builder, context) =>
+                {
+                    var resolvedPolicyCatalog = context.ServiceProvider.GetRequiredService<BehaviorResiliencePolicyCatalog>();
+                    var resolvedPolicy = resolvedPolicyCatalog.GetById(policyId)
+                        ?? throw new InvalidOperationException(
+                            $"Behavior resilience policy '{policyId}' was not found when building its resilience pipeline.");
+                    resolvedPolicy.Configure(builder);
+                });
+        }
+
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionMiddleware, BehaviorResilienceExecutionMiddleware>());
     }
 
-    private static ResolvedBehaviorResiliencePolicy? ResolveBehaviorResiliencePolicy(
+    private static BehaviorResiliencePolicyCatalog ResolveBehaviorResiliencePolicyCatalog(
         IServiceCollection services,
         IConfiguration? configuration)
     {
@@ -163,12 +168,12 @@ internal sealed class BehaviorModule(
         var appProfile = ResolveRegisteredSingleton<AppProfile>(services);
         if (appProfile is not null)
         {
-            return BehaviorResiliencePolicyResolver.Resolve(appProfile.Resilience);
+            return BehaviorResiliencePolicyResolver.ResolvePolicies(appProfile.Resilience);
         }
 
         return configuration is null
-            ? null
-            : BehaviorResiliencePolicyResolver.Resolve(ResilienceSettings.FromConfiguration(configuration));
+            ? new BehaviorResiliencePolicyCatalog([])
+            : BehaviorResiliencePolicyResolver.ResolvePolicies(ResilienceSettings.FromConfiguration(configuration));
     }
 
     private static IReadOnlyList<OwnedBehaviorRegistration> ResolveOwnedBehaviorRegistrations(

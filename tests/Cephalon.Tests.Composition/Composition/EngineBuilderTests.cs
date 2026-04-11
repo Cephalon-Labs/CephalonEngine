@@ -1445,6 +1445,42 @@ public sealed class EngineBuilderTests
         Assert.Equal(50, appProfile.Resilience.RateLimiting.QueueLimit);
         Assert.Equal(60, appProfile.Resilience.RateLimiting.WindowSeconds);
         Assert.Equal(1, appProfile.Resilience.RateLimiting.SegmentsPerWindow);
+        Assert.Empty(appProfile.Resilience.BehaviorExecutionOverrides);
+    }
+
+    [Fact]
+    public void BuildIncludesBehaviorExecutionResilienceOverrides()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularMonolith",
+            resilience: new ResilienceSettings(
+                timeout: new TimeoutSettings(
+                    enabled: true,
+                    totalTimeoutSeconds: 30),
+                behaviorExecutionOverrides:
+                [
+                    new BehaviorExecutionResilienceOverrideSettings(
+                        id: "catalog-rest-fast-path",
+                        behaviorIds: ["catalog.get-product"],
+                        transportIds: ["rest-api"],
+                        timeout: new TimeoutSettings(enabled: false),
+                        bulkhead: new BulkheadSettings(
+                            maxConcurrentExecutions: 128,
+                            maxQueuedActions: 256))
+                ])));
+        builder.AddModule(new PlatformTestModule());
+        builder.AddModule(new DiscoveryTestModule());
+
+        var appProfile = builder.Build().Manifest.AppProfile;
+
+        var overrideSelection = Assert.Single(appProfile.Resilience.BehaviorExecutionOverrides);
+        Assert.Equal("catalog-rest-fast-path", overrideSelection.Id);
+        Assert.Equal(["catalog.get-product"], overrideSelection.BehaviorIds);
+        Assert.Equal(["rest-api"], overrideSelection.TransportIds);
+        Assert.False(overrideSelection.Timeout.Enabled);
+        Assert.Equal(128, overrideSelection.Bulkhead.MaxConcurrentExecutions);
+        Assert.Equal(256, overrideSelection.Bulkhead.MaxQueuedActions);
     }
 
     [Fact]

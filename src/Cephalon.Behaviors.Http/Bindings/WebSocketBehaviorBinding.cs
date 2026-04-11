@@ -74,7 +74,7 @@ public sealed class WebSocketBehaviorBinding : IHttpBehaviorBinding
                 var logger = ctx.RequestServices.GetService<ILoggerFactory>()
                     ?.CreateLogger<WebSocketBehaviorBinding>();
                 using var ws = await ctx.WebSockets.AcceptWebSocketAsync().ConfigureAwait(false);
-                await HandleWebSocketAsync(ws, ctx, descriptor.Id, dispatcher, logger).ConfigureAwait(false);
+                await HandleWebSocketAsync(ws, ctx, descriptor.Id, dispatcher, logger, TransportId).ConfigureAwait(false);
             })
             .ApplyCephalonRateLimiting(app.Services, TransportId, descriptor.Id)
             .ExcludeFromDescription();
@@ -88,7 +88,8 @@ public sealed class WebSocketBehaviorBinding : IHttpBehaviorBinding
         HttpContext ctx,
         string behaviorId,
         BehaviorDispatcher dispatcher,
-        ILogger? logger)
+        ILogger? logger,
+        string transportId)
     {
         // G-WS-05: rent from ArrayPool, release in finally
         var buffer = ArrayPool<byte>.Shared.Rent(4096);
@@ -152,7 +153,7 @@ public sealed class WebSocketBehaviorBinding : IHttpBehaviorBinding
 
                 try
                 {
-                    var context = DefaultBehaviorContext.From(ctx, behaviorId);
+                    var context = DefaultBehaviorContext.From(ctx, behaviorId, transportId);
                     var dispatchResult = await dispatcher.DispatchAsync(behaviorId, input, context, ctx.RequestAborted)
                         .ConfigureAwait(false);
 

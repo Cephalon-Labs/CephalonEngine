@@ -188,6 +188,171 @@ public sealed class BehaviorResilienceTests
         Assert.Empty(snapshot.BehaviorResiliencePolicies);
     }
 
+    [Fact]
+    public void AddBehaviorsPublishesBehaviorExecutionOverridePoliciesAndResolvePrefersMostSpecificMatch()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                resilience: new ResilienceSettings(
+                    timeout: new TimeoutSettings(
+                        enabled: true,
+                        totalTimeoutSeconds: 5),
+                    behaviorExecutionOverrides:
+                    new[]
+                    {
+                        new BehaviorExecutionResilienceOverrideSettings(
+                            id: "rest-timeout",
+                            transportIds: ["rest-api"],
+                            timeout: new TimeoutSettings(totalTimeoutSeconds: 9)),
+                        new BehaviorExecutionResilienceOverrideSettings(
+                            id: "slow-disabled",
+                            behaviorIds: ["tests.resilience.slow"],
+                            timeout: new TimeoutSettings(enabled: false)),
+                        new BehaviorExecutionResilienceOverrideSettings(
+                            id: "slow-rest-timeout",
+                            behaviorIds: ["tests.resilience.slow"],
+                            transportIds: ["rest-api"],
+                            timeout: new TimeoutSettings(totalTimeoutSeconds: 12))
+                    })));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors =>
+                {
+                    behaviors.Register<FastGreetingBehavior>(topology => topology
+                        .AsDirect()
+                        .ViaInMemory());
+                    behaviors.Register<SlowBehavior>(topology => topology
+                        .AsDirect()
+                        .ViaInMemory());
+                });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IBehaviorResilienceRuntimeCatalog>();
+        var snapshot = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+
+        Assert.Equal(4, catalog.Policies.Count);
+        Assert.Equal(4, snapshot.BehaviorResiliencePolicies.Count);
+
+        var slowRestPolicy = catalog.Resolve("tests.resilience.slow", "rest-api");
+        Assert.NotNull(slowRestPolicy);
+        Assert.Equal("slow-rest-timeout", slowRestPolicy!.Metadata["overrideId"]);
+        Assert.Equal("behavior-executions-by-behavior-and-transport", slowRestPolicy.Scope);
+        Assert.Equal(12, slowRestPolicy.Effective.Timeout.TotalTimeoutSeconds);
+        Assert.Equal(["tests.resilience.slow"], slowRestPolicy.BehaviorIds);
+        Assert.Equal(["rest-api"], slowRestPolicy.TransportIds);
+
+        var slowKafkaPolicy = catalog.Resolve("tests.resilience.slow", "kafka");
+        Assert.NotNull(slowKafkaPolicy);
+        Assert.Equal("disabled", slowKafkaPolicy!.ExecutionMode);
+        Assert.False(slowKafkaPolicy.Effective.Timeout.HasValues);
+        Assert.Equal("slow-disabled", slowKafkaPolicy.Metadata["overrideId"]);
+        Assert.Equal("timeout", slowKafkaPolicy.Metadata["explicitStrategies"]);
+        Assert.Equal("none", slowKafkaPolicy.Metadata["requestedStrategies"]);
+        Assert.Equal("disabled-by-override", slowKafkaPolicy.Metadata["reason"]);
+
+        var fastRestPolicy = catalog.Resolve("tests.resilience.fast", "rest-api");
+        Assert.NotNull(fastRestPolicy);
+        Assert.Equal("rest-timeout", fastRestPolicy!.Metadata["overrideId"]);
+        Assert.Equal(9, fastRestPolicy.Effective.Timeout.TotalTimeoutSeconds);
+
+        var fastInMemoryPolicy = catalog.Resolve("tests.resilience.fast", "in-memory");
+        Assert.NotNull(fastInMemoryPolicy);
+        Assert.Equal("cephalon-behavior-execution", fastInMemoryPolicy!.Id);
+        Assert.Equal(5, fastInMemoryPolicy.Effective.Timeout.TotalTimeoutSeconds);
+    }
+
+    [Fact]
+    public async Task BehaviorDispatcherSkipsTimeoutWhenBehaviorSpecificOverrideDisablesDefaultTimeout()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                resilience: new ResilienceSettings(
+                    timeout: new TimeoutSettings(
+                        enabled: true,
+                        totalTimeoutSeconds: 1),
+                    behaviorExecutionOverrides:
+                    new[]
+                    {
+                        new BehaviorExecutionResilienceOverrideSettings(
+                            id: "slow-timeout-disabled",
+                            behaviorIds: ["tests.resilience.slow"],
+                            timeout: new TimeoutSettings(enabled: false))
+                    })));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors => behaviors.Register<SlowBehavior>(topology => topology
+                    .AsDirect()
+                    .ViaInMemory()));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<BehaviorDispatcher>();
+
+        var result = await dispatcher.DispatchAsync(
+            "tests.resilience.slow",
+            new SlowInput(1500),
+            new TestBehaviorContext("tests.resilience.slow", isDirect: true));
+
+        Assert.Equal("completed", result);
+    }
+
+    [Fact]
+    public async Task BehaviorDispatcherSkipsTimeoutWhenTransportSpecificOverrideDisablesDefaultTimeout()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                resilience: new ResilienceSettings(
+                    timeout: new TimeoutSettings(
+                        enabled: true,
+                        totalTimeoutSeconds: 1),
+                    behaviorExecutionOverrides:
+                    new[]
+                    {
+                        new BehaviorExecutionResilienceOverrideSettings(
+                            id: "rest-timeout-disabled",
+                            transportIds: ["rest-api"],
+                            timeout: new TimeoutSettings(enabled: false))
+                    })));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors => behaviors.Register<SlowBehavior>(topology => topology
+                    .AsDirect()
+                    .ViaInMemory()));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<BehaviorDispatcher>();
+
+        await Assert.ThrowsAsync<TimeoutRejectedException>(() =>
+            dispatcher.DispatchAsync(
+                "tests.resilience.slow",
+                new SlowInput(1500),
+                new TestBehaviorContext("tests.resilience.slow", isDirect: true)));
+
+        var result = await dispatcher.DispatchAsync(
+            "tests.resilience.slow",
+            new SlowInput(1500),
+            new TestBehaviorContext(
+                "tests.resilience.slow",
+                isDirect: true,
+                metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["TransportId"] = "rest-api"
+                }));
+
+        Assert.Equal("completed", result);
+    }
+
     [AppBehavior("tests.resilience.fast")]
     private sealed class FastGreetingBehavior : IAppBehavior<string, string>
     {

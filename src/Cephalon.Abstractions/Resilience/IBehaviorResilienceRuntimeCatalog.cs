@@ -21,4 +21,15 @@ public interface IBehaviorResilienceRuntimeCatalog
     /// <param name="policyId">The stable policy identifier to resolve.</param>
     /// <returns>The matching policy descriptor, or <see langword="null" /> when it is not active.</returns>
     BehaviorResilienceRuntimeDescriptor? GetById(string policyId);
+
+    /// <summary>
+    /// Resolves the effective behavior-execution resilience policy for one behavior and optional transport.
+    /// </summary>
+    /// <param name="behaviorId">The stable behavior identifier to resolve.</param>
+    /// <param name="transportId">The stable transport identifier when one is known.</param>
+    /// <returns>
+    /// The matched policy descriptor, including explicit disable overrides when one suppresses the default policy;
+    /// otherwise <see langword="null" /> when no behavior-execution policy applies.
+    /// </returns>
+    BehaviorResilienceRuntimeDescriptor? Resolve(string behaviorId, string? transportId = null);
 }

@@ -10,6 +10,12 @@ namespace Cephalon.Abstractions.Resilience;
 /// The enforcement mode used by the active runtime, such as <c>behavior-dispatch-middleware</c> or <c>contract-only</c>.
 /// </param>
 /// <param name="Scope">The runtime scope covered by the policy, such as <c>all-behavior-executions</c>.</param>
+/// <param name="BehaviorIds">
+/// The behavior identifiers covered by the policy when it is scoped to a behavior subset.
+/// </param>
+/// <param name="TransportIds">
+/// The transport identifiers covered by the policy when it is scoped to a transport subset.
+/// </param>
 /// <param name="Requested">The requested behavior-execution resilience contract.</param>
 /// <param name="Effective">The effective behavior-execution resilience contract after runtime normalization.</param>
 /// <param name="Metadata">Additional runtime-specific metadata describing the policy.</param>
@@ -19,6 +25,8 @@ public sealed record BehaviorResilienceRuntimeDescriptor(
     string Description,
     string ExecutionMode,
     string Scope,
+    IReadOnlyList<string> BehaviorIds,
+    IReadOnlyList<string> TransportIds,
     BehaviorExecutionResilienceSelection Requested,
     BehaviorExecutionResilienceSelection Effective,
     IReadOnlyDictionary<string, string> Metadata);
