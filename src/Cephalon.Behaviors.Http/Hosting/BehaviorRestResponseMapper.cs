@@ -118,6 +118,13 @@ internal static class BehaviorRestResponseMapper
     }
 
     public static IResult MapServiceUnavailable(string message, IServiceProvider services, string? code = null)
+        => MapServiceUnavailable(message, services, code, retryAfterSeconds: null);
+
+    public static IResult MapServiceUnavailable(
+        string message,
+        IServiceProvider services,
+        string? code,
+        int? retryAfterSeconds)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(message);
         ArgumentNullException.ThrowIfNull(services);
@@ -131,18 +138,27 @@ internal static class BehaviorRestResponseMapper
                 Detail = message
             };
 
+            if (retryAfterSeconds.HasValue)
+            {
+                problem.Extensions["retryAfterSeconds"] = retryAfterSeconds.Value;
+            }
+
             return Results.Json(
                 problem,
                 statusCode: StatusCodes.Status503ServiceUnavailable,
                 contentType: "application/problem+json");
         }
 
+        var details = retryAfterSeconds.HasValue
+            ? $"Retry after {retryAfterSeconds.Value} seconds."
+            : null;
         return CreateErrorEnvelope(
             statusCode: StatusCodes.Status503ServiceUnavailable,
             title: "Service Unavailable",
             message: message,
             code: code ?? "service_unavailable",
-            severity: BehaviorFaultSeverity.Error);
+            severity: BehaviorFaultSeverity.Error,
+            details: details);
     }
 
     public static IResult MapBehaviorResult(IBehaviorResult result, IServiceProvider services)

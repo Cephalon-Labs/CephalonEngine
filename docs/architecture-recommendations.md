@@ -22,31 +22,30 @@ Effort: trivial — taxonomy-only, no new runtime code.
 
 ### Circuit Breaker (resilience infrastructure)
 
-Current state: the contract-first baseline is now shipped through `Engine:Resilience:CircuitBreaker`, `AppProfile.Resilience`, and `/engine/resilience`, and the new `/engine/behavior-resilience` surface now makes it explicit that circuit breaker is still contract-only at the behavior pipeline layer. Health checks still tell you something is down; the engine does not yet stop calling it.
+Current state: the contract-first baseline is now shipped through `Engine:Resilience:CircuitBreaker`, `AppProfile.Resilience`, and `/engine/resilience`, and the behavior pipeline now also enforces circuit-breaker policy through `Cephalon.Behaviors`, `/engine/behavior-resilience`, and `snapshot.BehaviorResiliencePolicies`. The runtime publishes live circuit metadata such as current state, last-open timestamps, retry-after timing, and the last exception type that opened the circuit, and `Cephalon.Behaviors.Http` now translates open-circuit rejections into truthful REST `503` responses plus per-route OpenAPI metadata.
 
-Recommendation: integrate `Microsoft.Extensions.Resilience` (Polly v8) or build a lightweight `ICircuitBreakerPolicy` abstraction.
+Recommendation: keep the shared `Microsoft.Extensions.Resilience` (Polly v8) baseline in `Cephalon.Behaviors` and extend it through host-agnostic exception classification plus dependency-health-informed policy tuning, rather than adding a second parallel circuit-breaker abstraction too early.
 
 Implementation outline:
-- `Cephalon.Abstractions/Resilience/ICircuitBreaker.cs` — interface with open/half-open/closed semantics
-- `Cephalon.Behaviors/Resilience/CircuitBreakerBehaviorMiddleware.cs` — behavior pipeline middleware
-- `PatternDescriptor` "circuit-breaker" in `BuiltInPatterns.cs`
-- Configuration: `Engine:Resilience:CircuitBreaker` section
-- Integrates with existing `IDependencyHealthContributor`
-- Capability: `resilience.circuit-breaker`
+- keep `Engine:Resilience:CircuitBreaker` as the requested configuration contract
+- keep `IBehaviorResilienceExceptionClassifier` as the host-agnostic failure-classification seam
+- keep live breaker truth in `/engine/behavior-resilience` and `snapshot.BehaviorResiliencePolicies`
+- compose future health and upstream-signal inputs into the same runtime instead of inventing a second breaker stack
+- add a first-class capability only when it becomes part of a broader resilience/runtime-governance story
 
 Effort: medium.
 
 ### Retry with Backoff, Timeout, and Bulkhead (resilience suite)
 
-Current state: the contract-first baseline is now shipped through `Engine:Resilience` with `Retry`, `Timeout`, and `Bulkhead` selections plus operator-facing introspection, and the current behavior-pipeline follow-through now enforces a shared execution timeout plus bulkhead through `Cephalon.Behaviors`, `/engine/behavior-resilience`, and `snapshot.BehaviorResiliencePolicies`. `Engine:Resilience:BehaviorExecution:Overrides` now adds behavior- and transport-scoped override resolution with precedence `behavior+transport > behavior > transport > default`, including explicit disable answers that suppress inherited timeout/bulkhead behavior for a narrower surface. Retry remains contract-only until idempotency and failure-classification rules exist.
+Current state: the contract-first baseline is now shipped through `Engine:Resilience` with `Retry`, `Timeout`, `CircuitBreaker`, and `Bulkhead` selections plus operator-facing introspection, and the current behavior-pipeline follow-through now enforces shared execution timeout, circuit-breaker, and bulkhead policies through `Cephalon.Behaviors`, `/engine/behavior-resilience`, and `snapshot.BehaviorResiliencePolicies`. `Engine:Resilience:BehaviorExecution:Overrides` now adds behavior- and transport-scoped override resolution with precedence `behavior+transport > behavior > transport > default`, including explicit disable answers that suppress inherited timeout, circuit-breaker, or bulkhead behavior for a narrower surface. Retry remains contract-only until idempotency and failure-classification rules exist.
 
 Recommendation: create `Cephalon.Resilience` companion package or add resilience middleware to `Cephalon.Behaviors`.
 
 Implementation outline:
-- `IResiliencePolicy` abstraction covering retry, timeout, and bulkhead
+- `IResiliencePolicy` abstraction covering retry, timeout, circuit breaker, and bulkhead
 - Integration with `Microsoft.Extensions.Resilience` (Polly v8) as the default implementation
 - Per-behavior and per-transport resilience configuration through `Engine:Resilience:BehaviorExecution:Overrides`
-- Capabilities: `resilience.retry`, `resilience.timeout`, `resilience.bulkhead`
+- Capabilities: `resilience.retry`, `resilience.timeout`, `resilience.circuit-breaker`, `resilience.bulkhead`
 
 Effort: medium.
 
@@ -216,8 +215,8 @@ Target: Sprint 36–37
 
 Deliverables:
 - Onion Architecture pattern descriptor — shipped
-- Circuit Breaker abstraction and behavior middleware
-- Retry/Timeout/Bulkhead resilience policies
+- Circuit Breaker behavior middleware and runtime catalog — shipped
+- Retry/Timeout/Bulkhead resilience policies — timeout + circuit breaker + bulkhead shipped, retry pending
 - Rate Limiting middleware integration — shipped
 - Anti-Corruption Layer pattern descriptor — shipped
 - `Cephalon.Resilience` companion package or `Cephalon.Behaviors` resilience extension

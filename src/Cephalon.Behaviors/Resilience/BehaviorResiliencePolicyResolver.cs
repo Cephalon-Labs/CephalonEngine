@@ -2,6 +2,7 @@ using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Engine.Configuration;
 using Polly;
+using Polly.CircuitBreaker;
 using Polly.RateLimiting;
 using Polly.Timeout;
 
@@ -18,6 +19,10 @@ internal static class BehaviorResiliencePolicyResolver
     internal const int DefaultAttemptTimeoutSeconds = 10;
     internal const int DefaultMaxConcurrentExecutions = 64;
     internal const int DefaultMaxQueuedActions = 0;
+    internal const decimal DefaultCircuitBreakerFailureRatio = 0.1m;
+    internal const int DefaultCircuitBreakerMinimumThroughput = 100;
+    internal const int DefaultCircuitBreakerSamplingDurationSeconds = 30;
+    internal const int DefaultCircuitBreakerBreakDurationSeconds = 5;
 
     internal static BehaviorResiliencePolicyCatalog ResolvePolicies(ResilienceSettings settings)
     {
@@ -214,8 +219,35 @@ internal static class BehaviorResiliencePolicyResolver
         ArgumentNullException.ThrowIfNull(requested);
 
         return new BehaviorExecutionResilienceSelection(
+            circuitBreaker: ResolveCircuitBreaker(requested.CircuitBreaker),
             timeout: ResolveTimeout(requested),
             bulkhead: ResolveBulkhead(requested.Bulkhead));
+    }
+
+    private static CircuitBreakerSelection ResolveCircuitBreaker(CircuitBreakerSelection settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+
+        if (settings.Enabled == false)
+        {
+            return CircuitBreakerSelection.Empty;
+        }
+
+        if (settings.Enabled != true &&
+            !settings.FailureRatio.HasValue &&
+            !settings.MinimumThroughput.HasValue &&
+            !settings.SamplingDurationSeconds.HasValue &&
+            !settings.BreakDurationSeconds.HasValue)
+        {
+            return CircuitBreakerSelection.Empty;
+        }
+
+        return new CircuitBreakerSelection(
+            enabled: true,
+            failureRatio: settings.FailureRatio ?? DefaultCircuitBreakerFailureRatio,
+            minimumThroughput: settings.MinimumThroughput ?? DefaultCircuitBreakerMinimumThroughput,
+            samplingDurationSeconds: settings.SamplingDurationSeconds ?? DefaultCircuitBreakerSamplingDurationSeconds,
+            breakDurationSeconds: settings.BreakDurationSeconds ?? DefaultCircuitBreakerBreakDurationSeconds);
     }
 
     private static BehaviorExecutionResilienceSelection MergeRequested(
@@ -386,7 +418,7 @@ internal static class BehaviorResiliencePolicyResolver
             ["isOverride"] = isOverride ? "true" : "false",
             ["retryMode"] = IsRequested(requested.Retry) ? "contract-only" : "disabled",
             ["timeoutMode"] = effective.Timeout.HasValues ? "enforced" : "disabled",
-            ["circuitBreakerMode"] = IsRequested(requested.CircuitBreaker) ? "contract-only" : "disabled",
+            ["circuitBreakerMode"] = effective.CircuitBreaker.HasValues ? "enforced" : IsRequested(requested.CircuitBreaker) ? "contract-only" : "disabled",
             ["bulkheadMode"] = effective.Bulkhead.HasValues ? "enforced" : "disabled"
         };
         if (!string.IsNullOrWhiteSpace(overrideId))
@@ -433,6 +465,26 @@ internal static class BehaviorResiliencePolicyResolver
         if (effective.Timeout.AttemptTimeoutSeconds.HasValue)
         {
             metadata["attemptTimeoutSeconds"] = effective.Timeout.AttemptTimeoutSeconds.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        if (effective.CircuitBreaker.FailureRatio.HasValue)
+        {
+            metadata["failureRatio"] = effective.CircuitBreaker.FailureRatio.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        if (effective.CircuitBreaker.MinimumThroughput.HasValue)
+        {
+            metadata["minimumThroughput"] = effective.CircuitBreaker.MinimumThroughput.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        if (effective.CircuitBreaker.SamplingDurationSeconds.HasValue)
+        {
+            metadata["samplingDurationSeconds"] = effective.CircuitBreaker.SamplingDurationSeconds.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        if (effective.CircuitBreaker.BreakDurationSeconds.HasValue)
+        {
+            metadata["breakDurationSeconds"] = effective.CircuitBreaker.BreakDurationSeconds.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
 
         if (effective.Bulkhead.MaxConcurrentExecutions.HasValue)
@@ -512,6 +564,11 @@ internal static class BehaviorResiliencePolicyResolver
         if (selection.Timeout.HasValues && selection.Timeout.Enabled == true)
         {
             strategies.Add("timeout");
+        }
+
+        if (selection.CircuitBreaker.HasValues && selection.CircuitBreaker.Enabled == true)
+        {
+            strategies.Add("circuit-breaker");
         }
 
         if (selection.Bulkhead.HasValues && selection.Bulkhead.Enabled == true)
@@ -621,6 +678,7 @@ internal static class BehaviorResiliencePolicyResolver
         ArgumentNullException.ThrowIfNull(selection);
         return selection.HasValues && selection.Enabled != false;
     }
+
 }
 
 internal sealed class BehaviorResiliencePolicyCatalog
@@ -757,9 +815,66 @@ internal sealed record ResolvedBehaviorResiliencePolicy(
             TransportIds.Contains(transportId.Trim(), StringComparer.OrdinalIgnoreCase);
     }
 
-    public void Configure(ResiliencePipelineBuilder builder)
+    public void Configure(
+        ResiliencePipelineBuilder builder,
+        Cephalon.Abstractions.Resilience.IBehaviorResilienceExceptionClassifier exceptionClassifier,
+        BehaviorCircuitBreakerRuntimeState? circuitBreakerRuntimeState)
     {
         ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(exceptionClassifier);
+
+        if (Effective.CircuitBreaker.HasValues && Effective.CircuitBreaker.Enabled == true)
+        {
+            builder.AddCircuitBreaker(new CircuitBreakerStrategyOptions
+            {
+                FailureRatio = (double)(Effective.CircuitBreaker.FailureRatio ?? BehaviorResiliencePolicyResolver.DefaultCircuitBreakerFailureRatio),
+                MinimumThroughput = Effective.CircuitBreaker.MinimumThroughput ?? BehaviorResiliencePolicyResolver.DefaultCircuitBreakerMinimumThroughput,
+                SamplingDuration = TimeSpan.FromSeconds(Effective.CircuitBreaker.SamplingDurationSeconds ?? BehaviorResiliencePolicyResolver.DefaultCircuitBreakerSamplingDurationSeconds),
+                BreakDuration = TimeSpan.FromSeconds(Effective.CircuitBreaker.BreakDurationSeconds ?? BehaviorResiliencePolicyResolver.DefaultCircuitBreakerBreakDurationSeconds),
+                ShouldHandle = args =>
+                {
+                    if (args.Outcome.Exception is not Exception exception)
+                    {
+                        return PredicateResult.False();
+                    }
+
+                    var behaviorId = args.Context.Properties.TryGetValue(BehaviorResilienceExecutionContextKeys.BehaviorId, out var activeBehaviorId) &&
+                        !string.IsNullOrWhiteSpace(activeBehaviorId)
+                            ? activeBehaviorId
+                            : BehaviorIds.Count > 0 ? BehaviorIds[0] : Id;
+                    var transportId = args.Context.Properties.TryGetValue(BehaviorResilienceExecutionContextKeys.TransportId, out var activeTransportId) &&
+                        !string.IsNullOrWhiteSpace(activeTransportId)
+                            ? activeTransportId
+                            : null;
+                    var handling = exceptionClassifier.Classify(new Cephalon.Abstractions.Resilience.BehaviorResilienceExceptionContext(
+                        policyId: Id,
+                        behaviorId: behaviorId,
+                        transportId: transportId,
+                        targetedBehaviorIds: BehaviorIds,
+                        targetedTransportIds: TransportIds,
+                        exception: exception));
+                    return handling == Cephalon.Abstractions.Resilience.BehaviorResilienceExceptionHandling.Ignore
+                        ? PredicateResult.False()
+                        : PredicateResult.True();
+                },
+                StateProvider = circuitBreakerRuntimeState?.StateProvider,
+                OnOpened = args =>
+                {
+                    circuitBreakerRuntimeState?.MarkOpened(args.BreakDuration, args.Outcome.Exception);
+                    return default;
+                },
+                OnClosed = args =>
+                {
+                    circuitBreakerRuntimeState?.MarkClosed();
+                    return default;
+                },
+                OnHalfOpened = args =>
+                {
+                    circuitBreakerRuntimeState?.MarkHalfOpened();
+                    return default;
+                }
+            });
+        }
 
         if (Effective.Timeout.TotalTimeoutSeconds.HasValue)
         {
@@ -774,8 +889,38 @@ internal sealed record ResolvedBehaviorResiliencePolicy(
         }
     }
 
-    public BehaviorResilienceRuntimeDescriptor ToDescriptor()
+    public BehaviorResilienceRuntimeDescriptor ToDescriptor(BehaviorCircuitBreakerRuntimeState? circuitBreakerRuntimeState = null)
     {
+        var metadata = new Dictionary<string, string>(Metadata, StringComparer.OrdinalIgnoreCase);
+        if (circuitBreakerRuntimeState is not null && Effective.CircuitBreaker.HasValues && Effective.CircuitBreaker.Enabled == true)
+        {
+            metadata["circuitState"] = circuitBreakerRuntimeState.StateKey;
+            metadata["circuitStateInitialized"] = "true";
+            var stateChangedAtUtc = circuitBreakerRuntimeState.LastHalfOpenedAtUtc ??
+                circuitBreakerRuntimeState.LastClosedAtUtc ??
+                circuitBreakerRuntimeState.LastOpenedAtUtc;
+            if (stateChangedAtUtc is not null)
+            {
+                metadata["circuitStateChangedAtUtc"] = stateChangedAtUtc.Value.ToString("O", System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            if (circuitBreakerRuntimeState.LastOpenedAtUtc is { } lastOpenedAtUtc &&
+                circuitBreakerRuntimeState.LastBreakDuration is { } lastBreakDuration &&
+                string.Equals(circuitBreakerRuntimeState.StateKey, "open", StringComparison.OrdinalIgnoreCase))
+            {
+                var remaining = (lastOpenedAtUtc + lastBreakDuration) - DateTimeOffset.UtcNow;
+                var retryAfterSeconds = remaining <= TimeSpan.Zero
+                    ? 0
+                    : (int)Math.Ceiling(remaining.TotalSeconds);
+                metadata["circuitRetryAfterSeconds"] = retryAfterSeconds.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            if (!string.IsNullOrWhiteSpace(circuitBreakerRuntimeState.LastOpenedExceptionType))
+            {
+                metadata["circuitLastOpenedExceptionType"] = circuitBreakerRuntimeState.LastOpenedExceptionType;
+            }
+        }
+
         return new BehaviorResilienceRuntimeDescriptor(
             Id,
             DisplayName,
@@ -786,6 +931,6 @@ internal sealed record ResolvedBehaviorResiliencePolicy(
             TransportIds,
             Requested,
             Effective,
-            Metadata);
+            metadata);
     }
 }

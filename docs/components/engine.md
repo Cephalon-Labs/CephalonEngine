@@ -104,9 +104,9 @@ ASP.NET Core-specific types into the engine core. The current shipped follow-thr
 both ASP.NET Core public-HTTP rate limiting plus an endpoint-scoped effective runtime catalog and the
 first behavior-execution runtime catalog through `IBehaviorResilienceRuntimeCatalog`,
 `/engine/behavior-resilience`, and `snapshot.BehaviorResiliencePolicies`. The current behavior
-pipeline truthfully enforces timeout plus bulkhead across dispatch, now resolves narrower
-behavior/transport overrides with explicit disable answers, and leaves retry, circuit breaker, and
-broader transport-native rate-limiting semantics beyond HTTP route mapping as later work.
+pipeline truthfully enforces timeout, circuit breaker, and bulkhead across dispatch, resolves
+narrower behavior/transport overrides with explicit disable answers, and leaves retry plus broader
+transport-native rate-limiting semantics beyond HTTP route mapping as later work.
 
 Package loading is also governed here. `cephalon.package.json` compatibility metadata, external distribution and provenance hints, publisher/signature provenance fields, optional integrity hashes, detached signature verification against trusted public keys or trusted signing certificate chains, publisher/signer/checksum-based trust allow-lists, and `/engine/packages` manifest output are all part of the engine contract rather than host-specific behavior.
 

@@ -3,6 +3,7 @@ using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Behaviors.Builders;
 using Cephalon.Behaviors.Compatibility;
@@ -132,9 +133,12 @@ internal sealed class BehaviorModule(
         ArgumentNullException.ThrowIfNull(services);
 
         var policyCatalog = ResolveBehaviorResiliencePolicyCatalog(services, configuration);
+        var circuitBreakerStates = new BehaviorCircuitBreakerStateRegistry();
         services.TryAddSingleton(policyCatalog);
+        services.TryAddSingleton(circuitBreakerStates);
+        services.TryAddSingleton<IBehaviorResilienceExceptionClassifier, DefaultBehaviorResilienceExceptionClassifier>();
         services.TryAddSingleton<Cephalon.Abstractions.Resilience.IBehaviorResilienceRuntimeCatalog>(_ =>
-            new BehaviorResilienceRuntimeCatalog(policyCatalog));
+            new BehaviorResilienceRuntimeCatalog(policyCatalog, circuitBreakerStates));
 
         if (!policyCatalog.HasEnforcedPolicies)
         {
@@ -144,15 +148,26 @@ internal sealed class BehaviorModule(
         foreach (var policy in policyCatalog.EnforcedPolicies)
         {
             var policyId = policy.Id;
+            if (policy.Effective.CircuitBreaker.Enabled == true &&
+                policy.Effective.CircuitBreaker.HasValues)
+            {
+                circuitBreakerStates.Ensure(policyId);
+            }
+
             services.AddResiliencePipeline<string>(
                 policyId,
                 (builder, context) =>
                 {
                     var resolvedPolicyCatalog = context.ServiceProvider.GetRequiredService<BehaviorResiliencePolicyCatalog>();
+                    var exceptionClassifier = context.ServiceProvider.GetRequiredService<IBehaviorResilienceExceptionClassifier>();
+                    var resolvedCircuitBreakerStates = context.ServiceProvider.GetRequiredService<BehaviorCircuitBreakerStateRegistry>();
                     var resolvedPolicy = resolvedPolicyCatalog.GetById(policyId)
                         ?? throw new InvalidOperationException(
                             $"Behavior resilience policy '{policyId}' was not found when building its resilience pipeline.");
-                    resolvedPolicy.Configure(builder);
+                    resolvedPolicy.Configure(
+                        builder,
+                        exceptionClassifier,
+                        resolvedCircuitBreakerStates.Get(policyId));
                 });
         }
 

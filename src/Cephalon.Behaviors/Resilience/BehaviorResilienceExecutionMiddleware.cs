@@ -20,7 +20,7 @@ internal sealed class BehaviorResilienceExecutionMiddleware : IBehaviorExecution
         _pipelineProvider = pipelineProvider;
     }
 
-    public ValueTask<object?> InvokeAsync(
+    public async ValueTask<object?> InvokeAsync(
         BehaviorExecutionInvocation invocation,
         BehaviorExecutionDelegate next,
         CancellationToken cancellationToken)
@@ -36,13 +36,28 @@ internal sealed class BehaviorResilienceExecutionMiddleware : IBehaviorExecution
             resolution.Policy is null ||
             !resolution.Policy.HasEnforcedStrategies)
         {
-            return next(invocation, cancellationToken);
+            return await next(invocation, cancellationToken).ConfigureAwait(false);
         }
 
         var pipeline = _pipelineProvider.GetPipeline(resolution.Policy.Id);
-        return pipeline.ExecuteAsync(
-            static (state, token) => state.Next(state.Invocation, token),
-            (Invocation: invocation, Next: next),
-            cancellationToken);
+        var resilienceContext = ResilienceContextPool.Shared.Get(invocation.BehaviorId, cancellationToken);
+        resilienceContext.Properties.Set(BehaviorResilienceExecutionContextKeys.BehaviorId, invocation.BehaviorId);
+        if (!string.IsNullOrWhiteSpace(transportId))
+        {
+            resilienceContext.Properties.Set(BehaviorResilienceExecutionContextKeys.TransportId, transportId);
+        }
+
+        try
+        {
+            return await pipeline.ExecuteAsync(
+                    static (context, state) => state.Next(state.Invocation, context.CancellationToken),
+                    resilienceContext,
+                    (Invocation: invocation, Next: next))
+                .ConfigureAwait(false);
+        }
+        finally
+        {
+            ResilienceContextPool.Shared.Return(resilienceContext);
+        }
     }
 }

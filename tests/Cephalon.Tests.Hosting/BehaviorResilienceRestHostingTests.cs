@@ -66,6 +66,56 @@ public sealed class BehaviorResilienceRestHostingTests
     }
 
     [Fact]
+    public async Task BehaviorRestCircuitBreakerReturns503WithRetryAfterDetailsAfterHandledFailures()
+    {
+        const string route = "/api/v1/tests/resilience/circuit-breaker/tasks/alpha";
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["ApiRoutes:ResultEnvelope:Enabled"] = "true";
+        builder.Configuration["Engine:Resilience:Timeout:Enabled"] = "true";
+        builder.Configuration["Engine:Resilience:Timeout:TotalTimeoutSeconds"] = "1";
+        builder.Configuration["Engine:Resilience:CircuitBreaker:Enabled"] = "true";
+        builder.Configuration["Engine:Resilience:CircuitBreaker:FailureRatio"] = "0.5";
+        builder.Configuration["Engine:Resilience:CircuitBreaker:MinimumThroughput"] = "2";
+        builder.Configuration["Engine:Resilience:CircuitBreaker:SamplingDurationSeconds"] = "30";
+        builder.Configuration["Engine:Resilience:CircuitBreaker:BreakDurationSeconds"] = "20";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new CircuitBreakerRestModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var firstResponse = await client.GetAsync(route);
+        var secondResponse = await client.GetAsync(route);
+        var openCircuitResponse = await client.GetAsync(route);
+        var firstPayload = await firstResponse.Content.ReadFromJsonAsync<ResultModelError>();
+        var openCircuitPayload = await openCircuitResponse.Content.ReadFromJsonAsync<ResultModelError>();
+
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, firstResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, secondResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, openCircuitResponse.StatusCode);
+        Assert.NotNull(firstPayload);
+        Assert.NotNull(openCircuitPayload);
+        Assert.NotNull(firstPayload!.Errors);
+        Assert.NotNull(openCircuitPayload!.Errors);
+        Assert.Equal("behavior_execution_timeout", Assert.Single(firstPayload.Errors!).Key);
+        var openCircuitError = Assert.Single(openCircuitPayload.Errors!);
+        Assert.Equal("behavior_execution_circuit_breaker_open", openCircuitError.Key);
+        Assert.Contains("Retry after", openCircuitError.Details, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task BehaviorRestBulkheadRejectsWith429AndOpenApiDocuments429WhenExecutionBulkheadIsEnabled()
     {
         const string route = "/api/v1/tests/resilience/bulkhead/jobs";
@@ -118,6 +168,44 @@ public sealed class BehaviorResilienceRestHostingTests
         Assert.Equal(429, rejectedPayload!.Status);
         Assert.Contains("concurrency", rejectedPayload.Detail, StringComparison.OrdinalIgnoreCase);
         Assert.True(responses.TryGetProperty("429", out _));
+    }
+
+    [Fact]
+    public async Task BehaviorRestOpenApiDocuments503WhenExecutionCircuitBreakerIsEnabledWithoutTimeout()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["Engine:Resilience:CircuitBreaker:Enabled"] = "true";
+        builder.Configuration["Engine:Resilience:CircuitBreaker:FailureRatio"] = "0.5";
+        builder.Configuration["Engine:Resilience:CircuitBreaker:MinimumThroughput"] = "2";
+        builder.Configuration["Engine:Resilience:CircuitBreaker:SamplingDurationSeconds"] = "30";
+        builder.Configuration["Engine:Resilience:CircuitBreaker:BreakDurationSeconds"] = "20";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new CircuitBreakerRestModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        using var document = JsonDocument.Parse(await client.GetStringAsync("/openapi/v1.json"));
+        var circuitBreakerOperation = document.RootElement
+            .GetProperty("paths")
+            .EnumerateObject()
+            .Single(static path =>
+                path.Name.EndsWith("/tests/resilience/circuit-breaker/tasks/{taskId}", StringComparison.Ordinal))
+            .Value
+            .GetProperty("get");
+
+        Assert.True(circuitBreakerOperation.GetProperty("responses").TryGetProperty("503", out _));
     }
 
     [Fact]
@@ -195,6 +283,10 @@ public sealed class BehaviorResilienceRestHostingTests
 
     private sealed record BulkheadOutput(string JobId, string Value);
 
+    private sealed record CircuitBreakerInput(string TaskId);
+
+    private sealed record CircuitBreakerOutput(string TaskId, string Status);
+
     private sealed record OpenApiTimeoutInput(string TaskId);
 
     private sealed record OpenApiTimeoutOutput(string TaskId, string Status);
@@ -210,6 +302,19 @@ public sealed class BehaviorResilienceRestHostingTests
             BulkheadProbe.MarkStarted();
             await BulkheadProbe.WaitForReleaseAsync(cancellationToken);
             return new BulkheadOutput(input.JobId, input.Value);
+        }
+    }
+
+    [AppBehavior("tests.resilience.circuit-breaker")]
+    private sealed class CircuitBreakerBehavior : IAppBehavior<CircuitBreakerInput, CircuitBreakerOutput>
+    {
+        public async Task<CircuitBreakerOutput> HandleAsync(
+            CircuitBreakerInput input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+            return new CircuitBreakerOutput(input.TaskId, "done");
         }
     }
 
@@ -270,6 +375,23 @@ public sealed class BehaviorResilienceRestHostingTests
         {
             var group = behaviors.Group("/tests/resilience/bulkhead/jobs");
             group.MapPost<BulkheadBehavior>("/{jobId}");
+        }
+    }
+
+    private sealed class CircuitBreakerRestModule : RestBehaviorModuleBase
+    {
+        private static readonly ModuleDescriptor DescriptorInstance = new(
+            id: "tests.resilience.circuit-breaker",
+            displayName: "Circuit Breaker Resilience",
+            description: "Test module for behavior execution circuit-breaker translation and documentation.",
+            version: "1.0.0");
+
+        public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            var group = behaviors.Group("/tests/resilience/circuit-breaker/tasks");
+            group.MapGet<CircuitBreakerBehavior>("/{taskId}");
         }
     }
 

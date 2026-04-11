@@ -58,6 +58,11 @@ public sealed class BehaviorResilienceHostingTests
         Assert.Equal("behavior-dispatch-middleware", policy.ExecutionMode);
         Assert.True(policy.Requested.Retry.Enabled);
         Assert.True(policy.Requested.CircuitBreaker.Enabled);
+        Assert.True(policy.Effective.CircuitBreaker.Enabled);
+        Assert.Equal(0.25m, policy.Effective.CircuitBreaker.FailureRatio);
+        Assert.Equal(5, policy.Effective.CircuitBreaker.MinimumThroughput);
+        Assert.Equal(15, policy.Effective.CircuitBreaker.SamplingDurationSeconds);
+        Assert.Equal(20, policy.Effective.CircuitBreaker.BreakDurationSeconds);
         Assert.True(policy.Effective.Timeout.Enabled);
         Assert.Equal(9, policy.Effective.Timeout.TotalTimeoutSeconds);
         Assert.Null(policy.Effective.Timeout.AttemptTimeoutSeconds);
@@ -65,8 +70,8 @@ public sealed class BehaviorResilienceHostingTests
         Assert.Equal(4, policy.Effective.Bulkhead.MaxConcurrentExecutions);
         Assert.Equal(2, policy.Effective.Bulkhead.MaxQueuedActions);
         Assert.Equal("contract-only", policy.Metadata["retryMode"]);
-        Assert.Equal("contract-only", policy.Metadata["circuitBreakerMode"]);
-        Assert.Equal("timeout,bulkhead", policy.Metadata["effectiveStrategies"]);
+        Assert.Equal("enforced", policy.Metadata["circuitBreakerMode"]);
+        Assert.Equal("timeout,circuit-breaker,bulkhead", policy.Metadata["effectiveStrategies"]);
 
         Assert.NotNull(snapshot);
         var snapshotPolicy = Assert.Single(snapshot!.BehaviorResiliencePolicies);

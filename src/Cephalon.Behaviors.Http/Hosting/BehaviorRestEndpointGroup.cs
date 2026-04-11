@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Polly.CircuitBreaker;
 using Polly.RateLimiting;
 using Polly.Timeout;
 
@@ -620,6 +621,17 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 context.RequestServices,
                 code: "behavior_execution_timeout");
         }
+        catch (BrokenCircuitException)
+        {
+            return BehaviorRestResponseMapper.MapServiceUnavailable(
+                "The request was rejected because the configured Cephalon behavior circuit breaker is open.",
+                context.RequestServices,
+                code: "behavior_execution_circuit_breaker_open",
+                retryAfterSeconds: ResolveCircuitRetryAfterSeconds(
+                    context.RequestServices,
+                    behaviorId,
+                    "rest-api"));
+        }
         catch (RateLimiterRejectedException)
         {
             return BehaviorRestResponseMapper.MapTooManyRequests(
@@ -716,10 +728,17 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         {
             statusCodes.Add(StatusCodes.Status503ServiceUnavailable);
         }
+        else if (resolvedBehaviorResiliencePolicy?.Effective.CircuitBreaker.Enabled == true &&
+            resolvedBehaviorResiliencePolicy.Effective.CircuitBreaker.HasValues)
+        {
+            statusCodes.Add(StatusCodes.Status503ServiceUnavailable);
+        }
         else if (resolvedBehaviorResiliencePolicy is null &&
             behaviorResilienceCatalog?.Policies.Any(static policy =>
-                policy.Effective.Timeout.Enabled == true &&
-                policy.Effective.Timeout.HasValues) == true)
+                ((policy.Effective.Timeout.Enabled == true &&
+                  policy.Effective.Timeout.HasValues) ||
+                 (policy.Effective.CircuitBreaker.Enabled == true &&
+                  policy.Effective.CircuitBreaker.HasValues))) == true)
         {
             statusCodes.Add(StatusCodes.Status503ServiceUnavailable);
         }
@@ -743,6 +762,27 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         }
 
         return statusCodes;
+    }
+
+    private static int? ResolveCircuitRetryAfterSeconds(
+        IServiceProvider services,
+        string behaviorId,
+        string transportId)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(transportId);
+
+        var behaviorResilienceCatalog = services.GetService<IBehaviorResilienceRuntimeCatalog>();
+        var policy = behaviorResilienceCatalog?.Resolve(behaviorId, transportId);
+        if (policy?.Metadata.TryGetValue("circuitRetryAfterSeconds", out var rawRetryAfterSeconds) != true)
+        {
+            return null;
+        }
+
+        return int.TryParse(rawRetryAfterSeconds, out var retryAfterSeconds)
+            ? retryAfterSeconds
+            : null;
     }
 
     private static MethodInfo GetRequiredCoreMethod(string methodName)

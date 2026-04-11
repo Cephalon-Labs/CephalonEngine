@@ -107,10 +107,14 @@ lets hosts publish effective policy truth into operator surfaces and snapshots w
 ASP.NET Core middleware types back into engine-core or application behavior code. The same package
 now also carries `IBehaviorResilienceRuntimeCatalog`, `BehaviorResilienceRuntimeDescriptor`,
 `BehaviorExecutionResilienceSelection`, and `BehaviorExecutionResilienceOverrideSelection` so the
-engine can publish both requested override intent and effective behavior-execution timeout-plus-bulkhead
-answers without leaking Polly types or host-specific middleware contracts into consumer code. The
-runtime descriptor now also carries targeted behavior ids plus transport ids so operator tooling can
-see whether an answer came from the default policy or from a narrower override.
+engine can publish both requested override intent and effective behavior-execution timeout,
+circuit-breaker, and bulkhead answers without leaking Polly types or host-specific middleware
+contracts into consumer code. The same resilience namespace now also exposes
+`BehaviorResilienceExceptionContext`, `BehaviorResilienceExceptionHandling`, and
+`IBehaviorResilienceExceptionClassifier` so runtime packs can classify failures without hard-coding
+Polly-specific exception decisions into consumer modules. The runtime descriptor now also carries
+targeted behavior ids plus transport ids so operator tooling can see whether an answer came from the
+default policy or from a narrower override.
 
 ## Related docs
 

@@ -5,23 +5,21 @@ namespace Cephalon.Behaviors.Resilience;
 internal sealed class BehaviorResilienceRuntimeCatalog : IBehaviorResilienceRuntimeCatalog
 {
     private readonly BehaviorResiliencePolicyCatalog _catalog;
-    private readonly BehaviorResilienceRuntimeDescriptor[] _policies;
-    private readonly Dictionary<string, BehaviorResilienceRuntimeDescriptor> _policiesById;
+    private readonly BehaviorCircuitBreakerStateRegistry _circuitBreakerStates;
 
-    public BehaviorResilienceRuntimeCatalog(BehaviorResiliencePolicyCatalog catalog)
+    public BehaviorResilienceRuntimeCatalog(
+        BehaviorResiliencePolicyCatalog catalog,
+        BehaviorCircuitBreakerStateRegistry? circuitBreakerStates = null)
     {
         ArgumentNullException.ThrowIfNull(catalog);
 
         _catalog = catalog;
-        _policies = catalog.Policies
-            .Select(static policy => policy.ToDescriptor())
-            .ToArray();
-        _policiesById = _policies.ToDictionary(
-            static policy => policy.Id,
-            StringComparer.OrdinalIgnoreCase);
+        _circuitBreakerStates = circuitBreakerStates ?? new BehaviorCircuitBreakerStateRegistry();
     }
 
-    public IReadOnlyList<BehaviorResilienceRuntimeDescriptor> Policies => _policies;
+    public IReadOnlyList<BehaviorResilienceRuntimeDescriptor> Policies => _catalog.Policies
+        .Select(ToDescriptor)
+        .ToArray();
 
     public BehaviorResilienceRuntimeDescriptor? GetById(string policyId)
     {
@@ -30,9 +28,10 @@ internal sealed class BehaviorResilienceRuntimeCatalog : IBehaviorResilienceRunt
             return null;
         }
 
-        return _policiesById.TryGetValue(policyId.Trim(), out var policy)
-            ? policy
-            : null;
+        var policy = _catalog.GetById(policyId.Trim());
+        return policy is null
+            ? null
+            : ToDescriptor(policy);
     }
 
     public BehaviorResilienceRuntimeDescriptor? Resolve(string behaviorId, string? transportId = null)
@@ -45,6 +44,13 @@ internal sealed class BehaviorResilienceRuntimeCatalog : IBehaviorResilienceRunt
         var resolution = _catalog.Resolve(behaviorId, transportId);
         return resolution.Policy is null
             ? null
-            : GetById(resolution.Policy.Id);
+            : ToDescriptor(resolution.Policy);
+    }
+
+    private BehaviorResilienceRuntimeDescriptor ToDescriptor(ResolvedBehaviorResiliencePolicy policy)
+    {
+        ArgumentNullException.ThrowIfNull(policy);
+
+        return policy.ToDescriptor(_circuitBreakerStates.Get(policy.Id));
     }
 }

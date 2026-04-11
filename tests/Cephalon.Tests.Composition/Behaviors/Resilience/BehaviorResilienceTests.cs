@@ -6,6 +6,7 @@ using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Runtime;
 using Microsoft.Extensions.DependencyInjection;
+using Polly.CircuitBreaker;
 using Polly.RateLimiting;
 using Polly.Timeout;
 
@@ -60,6 +61,11 @@ public sealed class BehaviorResilienceTests
         Assert.Equal("behavior-dispatch-middleware", policy.ExecutionMode);
         Assert.True(policy.Requested.Retry.Enabled);
         Assert.True(policy.Requested.CircuitBreaker.Enabled);
+        Assert.True(policy.Effective.CircuitBreaker.Enabled);
+        Assert.Equal(0.5m, policy.Effective.CircuitBreaker.FailureRatio);
+        Assert.Equal(8, policy.Effective.CircuitBreaker.MinimumThroughput);
+        Assert.Equal(30, policy.Effective.CircuitBreaker.SamplingDurationSeconds);
+        Assert.Equal(20, policy.Effective.CircuitBreaker.BreakDurationSeconds);
         Assert.True(policy.Effective.Timeout.Enabled);
         Assert.Equal(12, policy.Effective.Timeout.TotalTimeoutSeconds);
         Assert.Null(policy.Effective.Timeout.AttemptTimeoutSeconds);
@@ -67,11 +73,11 @@ public sealed class BehaviorResilienceTests
         Assert.Equal(2, policy.Effective.Bulkhead.MaxConcurrentExecutions);
         Assert.Equal(1, policy.Effective.Bulkhead.MaxQueuedActions);
         Assert.Equal("contract-only", policy.Metadata["retryMode"]);
-        Assert.Equal("contract-only", policy.Metadata["circuitBreakerMode"]);
+        Assert.Equal("enforced", policy.Metadata["circuitBreakerMode"]);
         Assert.Equal("enforced", policy.Metadata["timeoutMode"]);
         Assert.Equal("enforced", policy.Metadata["bulkheadMode"]);
         Assert.Equal("retry,timeout,circuit-breaker,bulkhead", policy.Metadata["requestedStrategies"]);
-        Assert.Equal("timeout,bulkhead", policy.Metadata["effectiveStrategies"]);
+        Assert.Equal("timeout,circuit-breaker,bulkhead", policy.Metadata["effectiveStrategies"]);
 
         var snapshotPolicy = Assert.Single(snapshot.BehaviorResiliencePolicies);
         Assert.Equal(policy.Id, snapshotPolicy.Id);
@@ -109,6 +115,63 @@ public sealed class BehaviorResilienceTests
                 new TestBehaviorContext("tests.resilience.slow", isDirect: true)));
 
         Assert.Contains("timeout", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task BehaviorDispatcherOpensCircuitBreakerAfterHandledFailuresAndPublishesRuntimeState()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                resilience: new ResilienceSettings(
+                    timeout: new TimeoutSettings(
+                        enabled: true,
+                        totalTimeoutSeconds: 1),
+                    circuitBreaker: new CircuitBreakerSettings(
+                        enabled: true,
+                        failureRatio: 0.5m,
+                        minimumThroughput: 2,
+                        samplingDurationSeconds: 30,
+                        breakDurationSeconds: 15))));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors => behaviors.Register<SlowBehavior>(topology => topology
+                    .AsDirect()
+                    .ViaInMemory()));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<BehaviorDispatcher>();
+        var catalog = provider.GetRequiredService<IBehaviorResilienceRuntimeCatalog>();
+
+        await Assert.ThrowsAsync<TimeoutRejectedException>(() =>
+            dispatcher.DispatchAsync(
+                "tests.resilience.slow",
+                new SlowInput(1500),
+                new TestBehaviorContext("tests.resilience.slow", isDirect: true)));
+
+        await Assert.ThrowsAsync<TimeoutRejectedException>(() =>
+            dispatcher.DispatchAsync(
+                "tests.resilience.slow",
+                new SlowInput(1500),
+                new TestBehaviorContext("tests.resilience.slow", isDirect: true)));
+
+        var openCircuitException = await Assert.ThrowsAsync<BrokenCircuitException>(() =>
+            dispatcher.DispatchAsync(
+                "tests.resilience.slow",
+                new SlowInput(1500),
+                new TestBehaviorContext("tests.resilience.slow", isDirect: true)));
+
+        var policy = catalog.Resolve("tests.resilience.slow");
+
+        Assert.NotNull(openCircuitException);
+        Assert.NotNull(policy);
+        Assert.Equal("open", policy!.Metadata["circuitState"]);
+        Assert.True(policy.Metadata.ContainsKey("circuitStateChangedAtUtc"));
+        Assert.True(policy.Metadata.ContainsKey("circuitRetryAfterSeconds"));
+        Assert.True(policy.Metadata.ContainsKey("circuitLastOpenedExceptionType"));
     }
 
     [Fact]
