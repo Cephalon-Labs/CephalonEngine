@@ -194,6 +194,11 @@ internal sealed record ShowcaseDatabaseTopologyMigrationRow(
     string? Provider,
     string? DbContextType,
     int? RecommendedExecutionOrder,
+    string? RoleHealthState,
+    string? RoleHealthDescription,
+    string? RoleMigrationState,
+    string? RoleMigrationDescription,
+    DateTimeOffset? RoleObservedAtUtc,
     IReadOnlyList<ShowcaseDatabaseTopologyMigrationCommandRow> Commands,
     IReadOnlyDictionary<string, string> MetadataPreview);
 

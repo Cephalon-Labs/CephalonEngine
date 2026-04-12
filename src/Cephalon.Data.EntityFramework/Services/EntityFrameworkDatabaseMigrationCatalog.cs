@@ -317,7 +317,12 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
         DateTimeOffset? startedAtUtc = null,
         DateTimeOffset? completedAtUtc = null,
         string? lastError = null,
-        IReadOnlyDictionary<string, string>? metadata = null)
+        IReadOnlyDictionary<string, string>? metadata = null,
+        Cephalon.Abstractions.Health.HealthState? roleHealthState = null,
+        string? roleHealthDescription = null,
+        string? roleMigrationState = null,
+        string? roleMigrationDescription = null,
+        DateTimeOffset? roleObservedAtUtc = null)
     {
         return new DatabaseMigrationDescriptor(
             id: entry.Id,
@@ -337,7 +342,12 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
             lastError: lastError ?? entry.LastError,
             commands: entry.Commands,
             metadata: metadata ?? entry.Metadata,
-            recommendedExecutionOrder: entry.RecommendedExecutionOrder);
+            recommendedExecutionOrder: entry.RecommendedExecutionOrder,
+            roleHealthState: roleHealthState ?? entry.RoleHealthState,
+            roleHealthDescription: roleHealthDescription ?? entry.RoleHealthDescription,
+            roleMigrationState: roleMigrationState ?? entry.RoleMigrationState,
+            roleMigrationDescription: roleMigrationDescription ?? entry.RoleMigrationDescription,
+            roleObservedAtUtc: roleObservedAtUtc ?? entry.RoleObservedAtUtc);
     }
 
     private static DatabaseMigrationDescriptor? DecorateWithRoleRuntime(
@@ -381,7 +391,14 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
             metadata[$"roleRuntime.{pair.Key}"] = pair.Value;
         }
 
-        return Clone(entry, metadata: metadata);
+        return Clone(
+            entry,
+            metadata: metadata,
+            roleHealthState: role.HealthState,
+            roleHealthDescription: role.HealthDescription,
+            roleMigrationState: role.MigrationState,
+            roleMigrationDescription: role.MigrationDescription,
+            roleObservedAtUtc: role.ObservedAtUtc);
     }
 
     private static int? GetRecommendedExecutionOrder(string targetRoleId)

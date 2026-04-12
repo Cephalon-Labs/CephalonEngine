@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `April 11, 2026`.
+Backlog status in this document reflects the repository state as of `April 13, 2026`.
 
 ## Completed foundation work
 
@@ -1648,7 +1648,9 @@ Delivered:
 - `Cephalon.Data.EntityFramework` now decorates logical migration targets with role-health/runtime metadata and publishes `dotnet ef` bundle/script/update templates per target, marking bundle/script as production-recommended
 - `DatabaseMigrationCommandDescriptor` now also carries typed operator metadata such as `ToolId`, `ExecutionCategory`, and `WorkingDirectoryHint`, and the EF pack now populates those fields while preserving additive metadata for compatibility
 - `DatabaseMigrationDescriptor` now also carries a typed `RecommendedExecutionOrder` hint, the EF pack now publishes recommended `write` / `read` / `history` / `outbox` sequencing additively, and both the engine-owned migration catalog plus the showcase playbook now consume that shared order instead of re-encoding target ids locally
+- `DatabaseMigrationDescriptor` now also mirrors resolved-role runtime truth through typed `RoleHealthState`, `RoleHealthDescription`, `RoleMigrationState`, `RoleMigrationDescription`, and `RoleObservedAtUtc` fields, while `Cephalon.Data.EntityFramework` continues to preserve the older `roleHealthState` / `roleMigrationState` metadata keys for compatibility
 - the showcase sample plus hosting/composition tests now prove live role health, inherited role runtime, migration-runtime metadata, command templates, durable read-projection jobs, and the adoption-quality `/api/v1/showcase/system/database-topology` operator projection end to end through `/engine/database-roles`, `/engine/database-migrations`, `snapshot`, and a dedicated `Database Topology` section on `/showcase` that now also derives operator insights for aligned versus drifting topology state, preserves rich migration-command guidance instead of collapsing the engine-owned descriptors to raw strings, adapts those published templates into runnable sample commands from the repo root, presents the same target set as an ordered sample migration playbook backed by engine-published order hints before the lower-level migration table, answers readiness directly as `ready`, `attention`, or `blocked`, publishes an ordered operator action plan for what to do next, exposes `/api/v1/showcase/system/database-topology/brief` as a shareable Markdown handoff derived from the same live projection, and now exposes `/api/v1/showcase/system/database-topology/handoff` as a downloadable self-describing package that bundles a package `README.md`, a machine-readable `handoff-manifest.json`, the brief, and the raw projection payload
+- the showcase sample now also exposes those typed migration role-runtime fields directly in its database-topology projection and `/showcase` operator console, using metadata previews only for provider-specific extras instead of stable engine-owned fields
 - component docs, architecture guidance, backlog, roadmap, and project memory now call out that live provider diagnostics and command templates are shipped while true bundle/script generation or execution orchestration remains a later slice
 
 Remaining follow-through inside `ENG-068`:

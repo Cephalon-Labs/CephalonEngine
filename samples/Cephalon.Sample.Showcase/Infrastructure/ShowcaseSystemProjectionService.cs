@@ -152,6 +152,11 @@ internal sealed class ShowcaseSystemProjectionService(
                 Provider: migration.Provider,
                 DbContextType: migration.DbContextType,
                 RecommendedExecutionOrder: migration.RecommendedExecutionOrder,
+                RoleHealthState: migration.RoleHealthState?.ToString(),
+                RoleHealthDescription: migration.RoleHealthDescription,
+                RoleMigrationState: migration.RoleMigrationState,
+                RoleMigrationDescription: migration.RoleMigrationDescription,
+                RoleObservedAtUtc: migration.RoleObservedAtUtc,
                 Commands: migration.Commands
                     .Select(command => new ShowcaseDatabaseTopologyMigrationCommandRow(
                         Id: command.Id,
@@ -182,10 +187,9 @@ internal sealed class ShowcaseSystemProjectionService(
                     preferredKeys:
                     [
                         "runtimeProvider",
-                        "roleHealthState",
-                        "roleMigrationState",
+                        "recommendedExecutionMode",
                         "roleRuntime.probeOutcome",
-                        "dbContextType",
+                        "dbContext",
                         "mechanism"
                     ])))
             .ToArray();

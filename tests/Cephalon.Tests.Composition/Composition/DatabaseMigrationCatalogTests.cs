@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Data;
+using Cephalon.Abstractions.Health;
 using Cephalon.Engine.Composition;
 using Cephalon.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +25,9 @@ public sealed class DatabaseMigrationCatalogTests
                 applyOnStartup: true,
                 exitAfterApply: false,
                 provider: "PostgreSql",
-                recommendedExecutionOrder: 3)
+                recommendedExecutionOrder: 3,
+                roleHealthState: HealthState.Healthy,
+                roleMigrationState: "succeeded")
         ]));
         services.AddSingleton<IDatabaseMigrationContributor>(new StubDatabaseMigrationContributor(
         [
@@ -40,6 +43,8 @@ public sealed class DatabaseMigrationCatalogTests
                 exitAfterApply: false,
                 provider: "PostgreSql",
                 recommendedExecutionOrder: 1,
+                roleHealthState: HealthState.Healthy,
+                roleMigrationState: "pending-startup-apply",
                 commands:
                 [
                     new DatabaseMigrationCommandDescriptor(
@@ -71,8 +76,12 @@ public sealed class DatabaseMigrationCatalogTests
         Assert.Equal(1, writeMigration.RecommendedExecutionOrder);
         Assert.Equal(DatabaseMigrationStatus.Planned, writeMigration.Status);
         Assert.Equal("startup-hosted-service", writeMigration.ExecutionMode);
+        Assert.Equal(HealthState.Healthy, writeMigration.RoleHealthState);
+        Assert.Equal("pending-startup-apply", writeMigration.RoleMigrationState);
         Assert.Equal("history", historyMigration.Id);
         Assert.Equal(3, historyMigration.RecommendedExecutionOrder);
+        Assert.Equal(HealthState.Healthy, historyMigration.RoleHealthState);
+        Assert.Equal("succeeded", historyMigration.RoleMigrationState);
         var command = Assert.Single(writeMigration.Commands);
         Assert.Equal("bundle", command.Id);
         Assert.Equal("dotnet-ef", command.ToolId);

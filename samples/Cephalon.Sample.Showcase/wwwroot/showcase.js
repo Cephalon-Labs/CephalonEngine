@@ -530,14 +530,21 @@ function renderDatabaseTopology() {
           <div class="status-stack">
             <span class="status-badge ${tone(migration.status)}">${escapeHtml(migration.status)}</span>
             <span class="status-badge ${migration.applyOnStartup ? "status-success" : ""}">${migration.applyOnStartup ? "apply on startup" : "manual"}</span>
+            <span class="status-badge ${tone(migration.roleHealthState || "")}">${escapeHtml(migration.roleHealthState || "Unknown health")}</span>
+            <span class="status-badge ${tone(migration.roleMigrationState || "")}">${escapeHtml(migration.roleMigrationState || "Unknown role migration")}</span>
           </div>
         </td>
         <td>
           <strong>${escapeHtml(migration.executionMode)}</strong>
           ${migration.provider ? `<div class="mono">${escapeHtml(migration.provider)}</div>` : ""}
+          ${migration.roleObservedAtUtc ? `<div class="caption">Observed ${escapeHtml(formatDate(migration.roleObservedAtUtc))}</div>` : ""}
         </td>
         <td>${renderMigrationCommandGuidance(migration.commands)}</td>
         <td>${renderMetadataSections([
+          ["Role runtime", compactMetadata({
+            health: migration.roleHealthDescription,
+            migration: migration.roleMigrationDescription
+          })],
           ["Metadata", migration.metadataPreview]
         ], "No migration metadata preview available.")}</td>
       </tr>`).join("")
@@ -1914,6 +1921,16 @@ function renderMetadataPreview(metadata) {
   }
 
   return entries.map(([key, value]) => `<span class="token"><strong>${escapeHtml(key)}</strong>: ${escapeHtml(String(value))}</span>`).join("");
+}
+
+function compactMetadata(metadata) {
+  if (!metadata || typeof metadata !== "object") {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(metadata).filter(([, value]) => value !== null && value !== undefined && String(value).trim().length)
+  );
 }
 
 function renderMetadataSections(sections, emptyMessage = "No metadata preview available.") {

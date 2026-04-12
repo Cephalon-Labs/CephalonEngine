@@ -378,6 +378,11 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("1", pendingWrite.Metadata["recommendedExecutionOrder"]);
         Assert.Equal("bundle-or-script", pendingWrite.Metadata["recommendedExecutionMode"]);
         Assert.Equal("bundle,script,update", pendingWrite.Metadata["commandIds"]);
+        Assert.Equal(HealthState.Healthy, pendingWrite.RoleHealthState);
+        Assert.Contains("Entity Framework", pendingWrite.RoleHealthDescription ?? string.Empty, StringComparison.Ordinal);
+        Assert.Equal("pending-startup-apply", pendingWrite.RoleMigrationState);
+        Assert.Contains("startup schema apply", pendingWrite.RoleMigrationDescription ?? string.Empty, StringComparison.OrdinalIgnoreCase);
+        Assert.True(pendingWrite.RoleObservedAtUtc.HasValue);
         Assert.Equal("healthy", pendingWrite.Metadata["roleHealthState"]);
         Assert.Equal("pending-startup-apply", pendingWrite.Metadata["roleMigrationState"]);
         Assert.Equal("succeeded", pendingWrite.Metadata["roleRuntime.probeOutcome"]);
@@ -422,6 +427,10 @@ public sealed class EntityFrameworkDataPackTests
         Assert.True(appliedWrite.CompletedAtUtc.HasValue);
         Assert.Null(appliedWrite.LastError);
         Assert.Equal(1, appliedWrite.RecommendedExecutionOrder);
+        Assert.Equal(HealthState.Healthy, appliedWrite.RoleHealthState);
+        Assert.Equal("succeeded", appliedWrite.RoleMigrationState);
+        Assert.Contains("succeeded", appliedWrite.RoleMigrationDescription ?? string.Empty, StringComparison.OrdinalIgnoreCase);
+        Assert.True(appliedWrite.RoleObservedAtUtc.HasValue);
         Assert.Equal("healthy", appliedWrite.Metadata["roleHealthState"]);
         Assert.Equal("succeeded", appliedWrite.Metadata["roleMigrationState"]);
         Assert.Equal("succeeded", appliedWrite.Metadata["roleRuntime.probeOutcome"]);
@@ -432,6 +441,9 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal(1, snapshotMigration.RecommendedExecutionOrder);
         Assert.Equal(DatabaseMigrationStatus.Succeeded, snapshotMigration.Status);
         Assert.Equal(3, snapshotMigration.Commands.Count);
+        Assert.Equal(HealthState.Healthy, snapshotMigration.RoleHealthState);
+        Assert.Equal("succeeded", snapshotMigration.RoleMigrationState);
+        Assert.True(snapshotMigration.RoleObservedAtUtc.HasValue);
         Assert.Equal("healthy", snapshotMigration.Metadata["roleHealthState"]);
         Assert.Equal("succeeded", snapshotMigration.Metadata["roleRuntime.probeOutcome"]);
     }

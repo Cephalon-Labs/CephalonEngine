@@ -304,6 +304,9 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(DatabaseMigrationStatus.Succeeded, readMigration.Status);
         Assert.Equal("startup-hosted-service", readMigration.ExecutionMode);
         Assert.Equal("InMemory", readMigration.Provider);
+        Assert.Equal(HealthState.Healthy, readMigration.RoleHealthState);
+        Assert.Equal("succeeded", readMigration.RoleMigrationState);
+        Assert.True(readMigration.RoleObservedAtUtc.HasValue);
         Assert.Equal("entity-framework", readMigration.Metadata["runtimeProvider"]);
         Assert.Equal("healthy", readMigration.Metadata["roleHealthState"]);
         Assert.Equal("succeeded", readMigration.Metadata["roleMigrationState"]);
@@ -316,6 +319,9 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(DatabaseMigrationStatus.Succeeded, historyMigration.Status);
         Assert.Equal("startup-hosted-service", historyMigration.ExecutionMode);
         Assert.Equal("InMemory", historyMigration.Provider);
+        Assert.Equal(HealthState.Healthy, historyMigration.RoleHealthState);
+        Assert.Equal("succeeded", historyMigration.RoleMigrationState);
+        Assert.True(historyMigration.RoleObservedAtUtc.HasValue);
         Assert.Equal("entity-framework", historyMigration.Metadata["runtimeProvider"]);
         Assert.Equal("healthy", historyMigration.Metadata["roleHealthState"]);
         Assert.Equal("succeeded", historyMigration.Metadata["roleMigrationState"]);
@@ -352,6 +358,9 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("history", snapshot.DatabaseMigrations[2].Id);
         Assert.Equal(3, snapshot.DatabaseMigrations[2].RecommendedExecutionOrder);
         Assert.All(snapshot.DatabaseMigrations, migration => Assert.Equal(3, migration.Commands.Count));
+        Assert.All(snapshot.DatabaseMigrations, migration => Assert.Equal(HealthState.Healthy, migration.RoleHealthState));
+        Assert.All(snapshot.DatabaseMigrations, migration => Assert.Equal("succeeded", migration.RoleMigrationState));
+        Assert.All(snapshot.DatabaseMigrations, migration => Assert.True(migration.RoleObservedAtUtc.HasValue));
     }
 
     [Fact]
@@ -1577,7 +1586,14 @@ public sealed class ShowcaseSampleHostingTests
             migration =>
                 string.Equals(migration.GetProperty("id").GetString(), "read", StringComparison.Ordinal) &&
                 string.Equals(migration.GetProperty("status").GetString(), "Succeeded", StringComparison.Ordinal) &&
-                string.Equals(migration.GetProperty("executionMode").GetString(), "startup-hosted-service", StringComparison.Ordinal));
+                string.Equals(migration.GetProperty("executionMode").GetString(), "startup-hosted-service", StringComparison.Ordinal) &&
+                string.Equals(migration.GetProperty("roleHealthState").GetString(), "Healthy", StringComparison.Ordinal) &&
+                string.Equals(migration.GetProperty("roleMigrationState").GetString(), "succeeded", StringComparison.Ordinal) &&
+                migration.GetProperty("roleObservedAtUtc").ValueKind == JsonValueKind.String &&
+                string.Equals(
+                    migration.GetProperty("metadataPreview").GetProperty("roleRuntime.probeOutcome").GetString(),
+                    "succeeded",
+                    StringComparison.Ordinal));
         Assert.Contains(
             migrations,
             migration =>
@@ -1593,6 +1609,13 @@ public sealed class ShowcaseSampleHostingTests
                 }
 
                 var commands = migration.GetProperty("commands").EnumerateArray().ToArray();
+                if (!string.Equals(migration.GetProperty("roleHealthState").GetString(), "Healthy", StringComparison.Ordinal) ||
+                    !string.Equals(migration.GetProperty("roleMigrationState").GetString(), "succeeded", StringComparison.Ordinal) ||
+                    migration.GetProperty("roleObservedAtUtc").ValueKind != JsonValueKind.String)
+                {
+                    return false;
+                }
+
                 return commands.Any(command =>
                     string.Equals(command.GetProperty("id").GetString(), "bundle", StringComparison.Ordinal) &&
                     string.Equals(command.GetProperty("displayName").GetString(), "EF Core migration bundle", StringComparison.Ordinal) &&
@@ -1698,6 +1721,13 @@ public sealed class ShowcaseSampleHostingTests
         using var archivedProjectionDocument = JsonDocument.Parse(archivedProjection);
         Assert.Equal("Ready", archivedProjectionDocument.RootElement.GetProperty("readiness").GetProperty("state").GetString());
         Assert.Equal(4, archivedProjectionDocument.RootElement.GetProperty("summary").GetProperty("roleCount").GetInt32());
+        Assert.Contains(
+            archivedProjectionDocument.RootElement.GetProperty("migrations").EnumerateArray(),
+            migration =>
+                string.Equals(migration.GetProperty("id").GetString(), "history", StringComparison.Ordinal) &&
+                string.Equals(migration.GetProperty("roleHealthState").GetString(), "Healthy", StringComparison.Ordinal) &&
+                string.Equals(migration.GetProperty("roleMigrationState").GetString(), "succeeded", StringComparison.Ordinal) &&
+                migration.GetProperty("roleObservedAtUtc").ValueKind == JsonValueKind.String);
 
         var archivedManifest = await ReadZipEntryAsStringAsync(handoffArchive, "handoff-manifest.json");
         using var archivedManifestDocument = JsonDocument.Parse(archivedManifest);

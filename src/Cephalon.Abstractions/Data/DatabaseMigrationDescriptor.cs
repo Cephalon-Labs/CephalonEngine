@@ -1,3 +1,5 @@
+using Cephalon.Abstractions.Health;
+
 namespace Cephalon.Abstractions.Data;
 
 /// <summary>
@@ -28,6 +30,11 @@ public sealed class DatabaseMigrationDescriptor
     /// <param name="recommendedExecutionOrder">
     /// An optional positive ordinal that operator surfaces can use when presenting a recommended migration sequence.
     /// </param>
+    /// <param name="roleHealthState">The current runtime health state reported for the resolved role behind this target, when available.</param>
+    /// <param name="roleHealthDescription">The operator-facing health description reported for the resolved role behind this target, when available.</param>
+    /// <param name="roleMigrationState">The current migration execution state reported for the resolved role behind this target, when available.</param>
+    /// <param name="roleMigrationDescription">The operator-facing migration description reported for the resolved role behind this target, when available.</param>
+    /// <param name="roleObservedAtUtc">The UTC timestamp when resolved-role runtime state was last observed for this target, when available.</param>
     public DatabaseMigrationDescriptor(
         string id,
         string displayName,
@@ -46,7 +53,12 @@ public sealed class DatabaseMigrationDescriptor
         string? lastError = null,
         IReadOnlyList<DatabaseMigrationCommandDescriptor>? commands = null,
         IReadOnlyDictionary<string, string>? metadata = null,
-        int? recommendedExecutionOrder = null)
+        int? recommendedExecutionOrder = null,
+        HealthState? roleHealthState = null,
+        string? roleHealthDescription = null,
+        string? roleMigrationState = null,
+        string? roleMigrationDescription = null,
+        DateTimeOffset? roleObservedAtUtc = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -102,6 +114,11 @@ public sealed class DatabaseMigrationDescriptor
         CompletedAtUtc = completedAtUtc;
         LastError = string.IsNullOrWhiteSpace(lastError) ? null : lastError.Trim();
         RecommendedExecutionOrder = recommendedExecutionOrder;
+        RoleHealthState = roleHealthState;
+        RoleHealthDescription = string.IsNullOrWhiteSpace(roleHealthDescription) ? null : roleHealthDescription.Trim();
+        RoleMigrationState = string.IsNullOrWhiteSpace(roleMigrationState) ? null : roleMigrationState.Trim();
+        RoleMigrationDescription = string.IsNullOrWhiteSpace(roleMigrationDescription) ? null : roleMigrationDescription.Trim();
+        RoleObservedAtUtc = roleObservedAtUtc;
         Commands = commands?.ToArray() ?? [];
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -187,6 +204,31 @@ public sealed class DatabaseMigrationDescriptor
     /// Gets the recommended positive ordinal for operator-facing migration playbooks when the provider can publish one.
     /// </summary>
     public int? RecommendedExecutionOrder { get; }
+
+    /// <summary>
+    /// Gets the current runtime health state reported for the resolved role behind this target, when available.
+    /// </summary>
+    public HealthState? RoleHealthState { get; }
+
+    /// <summary>
+    /// Gets the operator-facing health description reported for the resolved role behind this target, when available.
+    /// </summary>
+    public string? RoleHealthDescription { get; }
+
+    /// <summary>
+    /// Gets the current migration execution state reported for the resolved role behind this target, when available.
+    /// </summary>
+    public string? RoleMigrationState { get; }
+
+    /// <summary>
+    /// Gets the operator-facing migration description reported for the resolved role behind this target, when available.
+    /// </summary>
+    public string? RoleMigrationDescription { get; }
+
+    /// <summary>
+    /// Gets the UTC timestamp when resolved-role runtime state was last observed for this target, when available.
+    /// </summary>
+    public DateTimeOffset? RoleObservedAtUtc { get; }
 
     /// <summary>
     /// Gets optional operator-facing command templates for executing this target outside startup apply.
