@@ -165,7 +165,7 @@ public sealed class ShowcaseSystemModule : ModuleBase, IEndpointModule
             .RequireCapability(ReadCapabilityKey)
             .WithName("GetShowcaseDatabaseTopologyHandoff")
             .WithSummary("Download the database-topology operator handoff package.")
-            .WithDescription("Returns a zip package that bundles the Markdown operator brief with the raw showcase database-topology projection so operators can share one artifact without losing the live source data.")
+            .WithDescription("Returns a zip package that bundles a package README, the Markdown operator brief, a machine-readable handoff manifest, and the raw showcase database-topology projection so operators can share one artifact without losing route context or source data.")
             .Produces(StatusCodes.Status200OK, contentType: "application/zip")
             .ProducesProblem(StatusCodes.Status403Forbidden);
 

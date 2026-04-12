@@ -40,6 +40,16 @@ internal sealed class ShowcaseSystemProjectionService(
     ShowcaseWriteDbContext? writeDb,
     IAuditHistoryReader? auditHistoryReader)
 {
+    private const string DatabaseTopologyBriefEntryName = "database-topology-brief.md";
+    private const string DatabaseTopologyProjectionEntryName = "database-topology-projection.json";
+    private const string DatabaseTopologyHandoffManifestEntryName = "handoff-manifest.json";
+    private const string DatabaseTopologyHandoffReadmeEntryName = "README.md";
+    private const string DatabaseTopologyHandoffPackageId = "showcase.database-topology.handoff";
+    private const string DatabaseTopologyHandoffSchemaVersion = "1.0";
+    private const string DatabaseTopologyHandoffScope = "sample-operator-handoff";
+    private const string EngineDatabaseRolesPath = "/engine/database-roles";
+    private const string EngineDatabaseMigrationsPath = "/engine/database-migrations";
+    private const string EngineRuntimeSnapshotPath = "/engine/snapshot";
     private const string ShowcaseProjectPath = "samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj";
     private const string ShowcaseRepoRootHint = "Run from the repository root, or adapt the project paths for another host layout.";
     private static readonly JsonSerializerOptions HandoffJsonOptions = new(JsonSerializerDefaults.Web)
@@ -1493,10 +1503,11 @@ internal sealed class ShowcaseSystemProjectionService(
             DatabaseTopologyHandoffPath: $"{databaseTopologyPath}/handoff");
     }
 
-    private static string BuildDatabaseTopologyBrief(ShowcaseDatabaseTopologyResponse projection)
+    private string BuildDatabaseTopologyBrief(ShowcaseDatabaseTopologyResponse projection)
     {
         ArgumentNullException.ThrowIfNull(projection);
 
+        var documentation = BuildDocumentationLinks();
         var builder = new StringBuilder();
         var summary = projection.Summary;
         var readiness = projection.Readiness;
@@ -1542,32 +1553,167 @@ internal sealed class ShowcaseSystemProjectionService(
         builder.AppendLine();
         builder.AppendLine("## Drill-down Routes");
         builder.AppendLine();
-        builder.AppendLine("- Showcase projection JSON: `/api/v1/showcase/system/database-topology`");
-        builder.AppendLine("- Database roles: `/engine/database-roles`");
-        builder.AppendLine("- Migration targets: `/engine/database-migrations`");
-        builder.AppendLine("- Runtime snapshot: `/engine/snapshot`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Showcase projection JSON: `{documentation.DatabaseTopologyPath}`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Database roles: `{EngineDatabaseRolesPath}`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Migration targets: `{EngineDatabaseMigrationsPath}`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Runtime snapshot: `{EngineRuntimeSnapshotPath}`");
 
         return builder.ToString().TrimEnd();
     }
 
-    private static ShowcaseDocumentPayload BuildDatabaseTopologyHandoff(ShowcaseDatabaseTopologyResponse projection)
+    private ShowcaseDocumentPayload BuildDatabaseTopologyHandoff(ShowcaseDatabaseTopologyResponse projection)
     {
         ArgumentNullException.ThrowIfNull(projection);
 
+        var documentation = BuildDocumentationLinks();
+        var contents = CreateDatabaseTopologyHandoffContents();
+        var manifest = BuildDatabaseTopologyHandoffManifest(projection, documentation, contents);
         var brief = BuildDatabaseTopologyBrief(projection);
+        var readme = BuildDatabaseTopologyHandoffReadme(projection, manifest);
         var projectionJson = JsonSerializer.Serialize(projection, HandoffJsonOptions);
+        var manifestJson = JsonSerializer.Serialize(manifest, HandoffJsonOptions);
 
         using var stream = new MemoryStream();
         using (var archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true))
         {
-            WriteZipEntry(archive, "database-topology-brief.md", brief);
-            WriteZipEntry(archive, "database-topology-projection.json", projectionJson);
+            WriteZipEntry(archive, DatabaseTopologyHandoffReadmeEntryName, readme);
+            WriteZipEntry(archive, DatabaseTopologyBriefEntryName, brief);
+            WriteZipEntry(archive, DatabaseTopologyProjectionEntryName, projectionJson);
+            WriteZipEntry(archive, DatabaseTopologyHandoffManifestEntryName, manifestJson);
         }
 
         return new ShowcaseDocumentPayload(
             FileName: "database-topology-handoff.zip",
             ContentType: "application/zip",
             Bytes: stream.ToArray());
+    }
+
+    private static ShowcaseHandoffPackageContent[] CreateDatabaseTopologyHandoffContents()
+    {
+        return
+        [
+            new ShowcaseHandoffPackageContent(
+                RecommendedReviewOrder: 1,
+                FileName: DatabaseTopologyHandoffReadmeEntryName,
+                ContentType: "text/markdown",
+                Description: "Read this first for package scope, included files, and source routes."),
+            new ShowcaseHandoffPackageContent(
+                RecommendedReviewOrder: 2,
+                FileName: DatabaseTopologyBriefEntryName,
+                ContentType: "text/markdown",
+                Description: "Human-readable operator brief derived from the live showcase topology projection."),
+            new ShowcaseHandoffPackageContent(
+                RecommendedReviewOrder: 3,
+                FileName: DatabaseTopologyHandoffManifestEntryName,
+                ContentType: "application/json",
+                Description: "Machine-readable handoff metadata for readiness, routes, and packaged contents."),
+            new ShowcaseHandoffPackageContent(
+                RecommendedReviewOrder: 4,
+                FileName: DatabaseTopologyProjectionEntryName,
+                ContentType: "application/json",
+                Description: "Raw showcase database-topology projection payload for deeper drill-down or automation.")
+        ];
+    }
+
+    private static ShowcaseHandoffManifest BuildDatabaseTopologyHandoffManifest(
+        ShowcaseDatabaseTopologyResponse projection,
+        ShowcaseDocumentationLinks documentation,
+        IReadOnlyList<ShowcaseHandoffPackageContent> contents)
+    {
+        ArgumentNullException.ThrowIfNull(projection);
+        ArgumentNullException.ThrowIfNull(documentation);
+        ArgumentNullException.ThrowIfNull(contents);
+
+        return new ShowcaseHandoffManifest(
+            PackageId: DatabaseTopologyHandoffPackageId,
+            SchemaVersion: DatabaseTopologyHandoffSchemaVersion,
+            Scope: DatabaseTopologyHandoffScope,
+            GeneratedAtUtc: projection.Summary.GeneratedAtUtc,
+            Readiness: new ShowcaseHandoffReadinessManifest(
+                State: projection.Readiness.State,
+                Headline: projection.Readiness.Headline,
+                ActionPath: projection.Readiness.ActionPath,
+                TotalActionCount: projection.ActionPlan.Summary.TotalActionCount),
+            Summary: new ShowcaseHandoffSummaryManifest(
+                RoleCount: projection.Summary.RoleCount,
+                HealthyRoleCount: projection.Summary.HealthyRoleCount,
+                MigrationTargetCount: projection.Summary.MigrationTargetCount,
+                SucceededMigrationTargetCount: projection.Summary.SucceededMigrationTargetCount,
+                ReadModelSyncEnabled: projection.Summary.ReadModelSyncEnabled,
+                WriteProvider: projection.Summary.WriteProvider,
+                ReadProvider: projection.Summary.ReadProvider,
+                HistoryProvider: projection.Summary.HistoryProvider),
+            SourceRoutes: new ShowcaseHandoffSourceRoutes(
+                Projection: documentation.DatabaseTopologyPath,
+                Brief: documentation.DatabaseTopologyBriefPath,
+                Handoff: documentation.DatabaseTopologyHandoffPath,
+                DatabaseRoles: EngineDatabaseRolesPath,
+                DatabaseMigrations: EngineDatabaseMigrationsPath,
+                RuntimeSnapshot: EngineRuntimeSnapshotPath),
+            Contents: contents);
+    }
+
+    private static string BuildDatabaseTopologyHandoffReadme(
+        ShowcaseDatabaseTopologyResponse projection,
+        ShowcaseHandoffManifest manifest)
+    {
+        ArgumentNullException.ThrowIfNull(projection);
+        ArgumentNullException.ThrowIfNull(manifest);
+
+        var builder = new StringBuilder();
+        builder.AppendLine("# Database Topology Handoff Package");
+        builder.AppendLine();
+        builder.AppendLine("This sample-level operator package bundles the live showcase database-topology answer into one shareable artifact.");
+        builder.AppendLine("It is an adoption aid for the showcase sample and does not redefine the engine-owned database contract.");
+        builder.AppendLine();
+        builder.AppendLine("## Readiness Snapshot");
+        builder.AppendLine();
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- State: `{manifest.Readiness.State}`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Headline: {manifest.Readiness.Headline}");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Action Path: `{manifest.Readiness.ActionPath}`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Generated At (UTC): `{manifest.GeneratedAtUtc:O}`");
+        builder.AppendLine();
+        builder.AppendLine("## Topology Summary");
+        builder.AppendLine();
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Roles: {projection.Summary.RoleCount} total / {projection.Summary.HealthyRoleCount} healthy");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Migrations: {projection.Summary.SucceededMigrationTargetCount} succeeded of {projection.Summary.MigrationTargetCount}");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Providers: write=`{projection.Summary.WriteProvider}`, read=`{projection.Summary.ReadProvider}`, history=`{projection.Summary.HistoryProvider}`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Read-model sync enabled: `{projection.Summary.ReadModelSyncEnabled}`");
+        builder.AppendLine();
+        builder.AppendLine("## Included Files");
+        builder.AppendLine();
+
+        foreach (var content in manifest.Contents.OrderBy(static content => content.RecommendedReviewOrder))
+        {
+            builder.AppendLine(CultureInfo.InvariantCulture, $"- `{content.FileName}` ({content.ContentType}) - {content.Description}");
+        }
+
+        builder.AppendLine();
+        builder.AppendLine("## Suggested Review Order");
+        builder.AppendLine();
+
+        foreach (var content in manifest.Contents.OrderBy(static content => content.RecommendedReviewOrder))
+        {
+            builder.AppendLine(CultureInfo.InvariantCulture, $"{content.RecommendedReviewOrder}. `{content.FileName}`");
+        }
+
+        builder.AppendLine();
+        builder.AppendLine("## Source Routes");
+        builder.AppendLine();
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Showcase projection JSON: `{manifest.SourceRoutes.Projection}`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Operator brief: `{manifest.SourceRoutes.Brief}`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Handoff download: `{manifest.SourceRoutes.Handoff}`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Engine database roles: `{manifest.SourceRoutes.DatabaseRoles}`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Engine migration targets: `{manifest.SourceRoutes.DatabaseMigrations}`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Runtime snapshot: `{manifest.SourceRoutes.RuntimeSnapshot}`");
+        builder.AppendLine();
+        builder.AppendLine("## Notes");
+        builder.AppendLine();
+        builder.AppendLine("- `database-topology-brief.md` is the fastest human-readable operator summary.");
+        builder.AppendLine("- `handoff-manifest.json` is the automation-friendly metadata index for this package.");
+        builder.AppendLine("- `database-topology-projection.json` remains the raw sample-level source data inside the package.");
+
+        return builder.ToString().TrimEnd();
     }
 
     private static void WriteZipEntry(ZipArchive archive, string entryName, string content)

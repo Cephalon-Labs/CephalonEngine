@@ -1660,8 +1660,16 @@ public sealed class ShowcaseSampleHostingTests
 
         using var handoffStream = new MemoryStream(await handoffResponse.Content.ReadAsByteArrayAsync());
         using var handoffArchive = new ZipArchive(handoffStream, ZipArchiveMode.Read);
+        Assert.NotNull(handoffArchive.GetEntry("README.md"));
         Assert.NotNull(handoffArchive.GetEntry("database-topology-brief.md"));
         Assert.NotNull(handoffArchive.GetEntry("database-topology-projection.json"));
+        Assert.NotNull(handoffArchive.GetEntry("handoff-manifest.json"));
+
+        var archivedReadme = await ReadZipEntryAsStringAsync(handoffArchive, "README.md");
+        Assert.Contains("# Database Topology Handoff Package", archivedReadme, StringComparison.Ordinal);
+        Assert.Contains("State: `Ready`", archivedReadme, StringComparison.Ordinal);
+        Assert.Contains("`handoff-manifest.json`", archivedReadme, StringComparison.Ordinal);
+        Assert.Contains("Showcase projection JSON: `/api/v1/showcase/system/database-topology`", archivedReadme, StringComparison.Ordinal);
 
         var archivedBrief = await ReadZipEntryAsStringAsync(handoffArchive, "database-topology-brief.md");
         Assert.Contains("Readiness: **Ready**", archivedBrief, StringComparison.Ordinal);
@@ -1670,6 +1678,30 @@ public sealed class ShowcaseSampleHostingTests
         using var archivedProjectionDocument = JsonDocument.Parse(archivedProjection);
         Assert.Equal("Ready", archivedProjectionDocument.RootElement.GetProperty("readiness").GetProperty("state").GetString());
         Assert.Equal(4, archivedProjectionDocument.RootElement.GetProperty("summary").GetProperty("roleCount").GetInt32());
+
+        var archivedManifest = await ReadZipEntryAsStringAsync(handoffArchive, "handoff-manifest.json");
+        using var archivedManifestDocument = JsonDocument.Parse(archivedManifest);
+        Assert.Equal("showcase.database-topology.handoff", archivedManifestDocument.RootElement.GetProperty("packageId").GetString());
+        Assert.Equal("1.0", archivedManifestDocument.RootElement.GetProperty("schemaVersion").GetString());
+        Assert.Equal("sample-operator-handoff", archivedManifestDocument.RootElement.GetProperty("scope").GetString());
+        Assert.Equal("Ready", archivedManifestDocument.RootElement.GetProperty("readiness").GetProperty("state").GetString());
+        Assert.Equal("/api/v1/showcase/system/database-topology", archivedManifestDocument.RootElement.GetProperty("sourceRoutes").GetProperty("projection").GetString());
+        Assert.Equal("/api/v1/showcase/system/database-topology/brief", archivedManifestDocument.RootElement.GetProperty("sourceRoutes").GetProperty("brief").GetString());
+        Assert.Equal("/api/v1/showcase/system/database-topology/handoff", archivedManifestDocument.RootElement.GetProperty("sourceRoutes").GetProperty("handoff").GetString());
+        Assert.Equal("/engine/database-roles", archivedManifestDocument.RootElement.GetProperty("sourceRoutes").GetProperty("databaseRoles").GetString());
+        Assert.Equal("/engine/database-migrations", archivedManifestDocument.RootElement.GetProperty("sourceRoutes").GetProperty("databaseMigrations").GetString());
+        Assert.Equal("/engine/snapshot", archivedManifestDocument.RootElement.GetProperty("sourceRoutes").GetProperty("runtimeSnapshot").GetString());
+        Assert.Equal(4, archivedManifestDocument.RootElement.GetProperty("contents").GetArrayLength());
+        Assert.Contains(
+            archivedManifestDocument.RootElement.GetProperty("contents").EnumerateArray(),
+            entry =>
+                string.Equals(entry.GetProperty("fileName").GetString(), "README.md", StringComparison.Ordinal) &&
+                entry.GetProperty("recommendedReviewOrder").GetInt32() == 1);
+        Assert.Contains(
+            archivedManifestDocument.RootElement.GetProperty("contents").EnumerateArray(),
+            entry =>
+                string.Equals(entry.GetProperty("fileName").GetString(), "handoff-manifest.json", StringComparison.Ordinal) &&
+                entry.GetProperty("recommendedReviewOrder").GetInt32() == 3);
     }
 
     [Fact]
@@ -1757,12 +1789,25 @@ public sealed class ShowcaseSampleHostingTests
 
         using var handoffStream = new MemoryStream(await handoffResponse.Content.ReadAsByteArrayAsync());
         using var handoffArchive = new ZipArchive(handoffStream, ZipArchiveMode.Read);
+        Assert.NotNull(handoffArchive.GetEntry("README.md"));
+        Assert.NotNull(handoffArchive.GetEntry("handoff-manifest.json"));
+
+        var archivedReadme = await ReadZipEntryAsStringAsync(handoffArchive, "README.md");
+        Assert.Contains("State: `Attention`", archivedReadme, StringComparison.Ordinal);
+
         var archivedBrief = await ReadZipEntryAsStringAsync(handoffArchive, "database-topology-brief.md");
         Assert.Contains("Readiness: **Attention**", archivedBrief, StringComparison.Ordinal);
 
         var archivedProjection = await ReadZipEntryAsStringAsync(handoffArchive, "database-topology-projection.json");
         using var archivedProjectionDocument = JsonDocument.Parse(archivedProjection);
         Assert.Equal("Attention", archivedProjectionDocument.RootElement.GetProperty("readiness").GetProperty("state").GetString());
+
+        var archivedManifest = await ReadZipEntryAsStringAsync(handoffArchive, "handoff-manifest.json");
+        using var archivedManifestDocument = JsonDocument.Parse(archivedManifest);
+        Assert.Equal("Attention", archivedManifestDocument.RootElement.GetProperty("readiness").GetProperty("state").GetString());
+        Assert.Equal(1, archivedManifestDocument.RootElement.GetProperty("readiness").GetProperty("totalActionCount").GetInt32());
+        Assert.Equal("/api/v1/showcase/system/database-topology", archivedManifestDocument.RootElement.GetProperty("readiness").GetProperty("actionPath").GetString());
+        Assert.Equal(4, archivedManifestDocument.RootElement.GetProperty("contents").GetArrayLength());
     }
 
     [Fact]

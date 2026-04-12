@@ -18,6 +18,46 @@ internal sealed record ShowcaseDocumentPayload(
     string ContentType,
     byte[] Bytes);
 
+internal sealed record ShowcaseHandoffManifest(
+    string PackageId,
+    string SchemaVersion,
+    string Scope,
+    DateTimeOffset GeneratedAtUtc,
+    ShowcaseHandoffReadinessManifest Readiness,
+    ShowcaseHandoffSummaryManifest Summary,
+    ShowcaseHandoffSourceRoutes SourceRoutes,
+    IReadOnlyList<ShowcaseHandoffPackageContent> Contents);
+
+internal sealed record ShowcaseHandoffReadinessManifest(
+    string State,
+    string Headline,
+    string ActionPath,
+    int TotalActionCount);
+
+internal sealed record ShowcaseHandoffSummaryManifest(
+    int RoleCount,
+    int HealthyRoleCount,
+    int MigrationTargetCount,
+    int SucceededMigrationTargetCount,
+    bool ReadModelSyncEnabled,
+    string WriteProvider,
+    string ReadProvider,
+    string HistoryProvider);
+
+internal sealed record ShowcaseHandoffSourceRoutes(
+    string Projection,
+    string Brief,
+    string Handoff,
+    string DatabaseRoles,
+    string DatabaseMigrations,
+    string RuntimeSnapshot);
+
+internal sealed record ShowcaseHandoffPackageContent(
+    int RecommendedReviewOrder,
+    string FileName,
+    string ContentType,
+    string Description);
+
 internal sealed record ShowcaseRuntimeSummary(
     string Environment,
     string BlueprintId,

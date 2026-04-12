@@ -318,7 +318,7 @@ Inspect:
 
 - `/api/v1/showcase/system/database-topology`
 - `/api/v1/showcase/system/database-topology/brief`
-- `/api/v1/showcase/system/database-topology/handoff`
+- `/api/v1/showcase/system/database-topology/handoff` (self-describing zip with `README.md`, `handoff-manifest.json`, brief, and raw projection)
 - `/engine/database-roles`
 - `/engine/database-migrations`
 

@@ -58,7 +58,7 @@ dotnet run --project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.c
   - durable projection-job backlog and completion state
   - per-scope retry/completion metrics for `products`, `inventory`, `orders`, and `shipments`
 - `/api/v1/showcase/system/database-topology/brief` exports the same live topology answer as a shareable Markdown operator brief.
-- `/api/v1/showcase/system/database-topology/handoff` downloads a zip package that bundles the operator brief with the raw topology projection.
+- `/api/v1/showcase/system/database-topology/handoff` downloads a self-describing zip package that bundles a package `README.md`, the operator brief, a machine-readable `handoff-manifest.json`, and the raw topology projection.
 - The showcase UI now promotes that projection into a dedicated `Database Topology` section on `/showcase`, adds a top-level readiness summary for `Ready` versus `Attention` or `Blocked` states, publishes an ordered operator action plan for what to do next, derives operator insights for healthy-versus-drifting topology state, preserves migration-command ids/display names/descriptions plus production-recommendation flags, adapts the published templates into repo-root runnable commands for this sample, publishes an ordered migration playbook (`write -> read -> history`) before the lower-level target table, and links the raw JSON projection, the operator brief, and the downloadable handoff package alongside the underlying `/engine/databases`, `/engine/database-roles`, and `/engine/database-migrations` surfaces for drill-down.
 
 ## Manual Migration Commands
