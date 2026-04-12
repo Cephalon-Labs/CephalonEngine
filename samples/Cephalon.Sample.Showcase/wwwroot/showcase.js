@@ -7,6 +7,7 @@ const ENDPOINTS = Object.freeze({
   systemRuntime: `${SYSTEM_API}/runtime`,
   systemDatabaseTopology: `${SYSTEM_API}/database-topology`,
   systemDatabaseTopologyBrief: `${SYSTEM_API}/database-topology/brief`,
+  systemDatabaseTopologyHandoff: `${SYSTEM_API}/database-topology/handoff`,
   systemGovernance: `${SYSTEM_API}/governance`,
   systemTransports: `${SYSTEM_API}/transports`,
   systemActivity: `${SYSTEM_API}/activity`,
@@ -437,7 +438,8 @@ function renderOverview() {
     linkButton("Diagnostics", documentation.diagnosticsPath),
     linkButton("Audit History", documentation.auditHistoryPath),
     linkButton("Database Topology", documentation.databaseTopologyPath),
-    linkButton("Topology Brief", documentation.databaseTopologyBriefPath || ENDPOINTS.systemDatabaseTopologyBrief)
+    linkButton("Topology Brief", documentation.databaseTopologyBriefPath || ENDPOINTS.systemDatabaseTopologyBrief),
+    linkButton("Handoff Package", documentation.databaseTopologyHandoffPath || ENDPOINTS.systemDatabaseTopologyHandoff)
   ].join("");
 }
 
@@ -1768,6 +1770,7 @@ function renderDatabaseTopologyLinks() {
   document.getElementById("databaseTopologyLinks").innerHTML = [
     linkButton("Showcase Projection JSON", state.summary?.documentation?.databaseTopologyPath || ENDPOINTS.systemDatabaseTopology),
     linkButton("Operator Brief", state.summary?.documentation?.databaseTopologyBriefPath || ENDPOINTS.systemDatabaseTopologyBrief),
+    linkButton("Handoff Package", state.summary?.documentation?.databaseTopologyHandoffPath || ENDPOINTS.systemDatabaseTopologyHandoff),
     linkButton("Raw Databases", engine.databases || "/engine/databases"),
     linkButton("Database Roles", engine.databaseRoles || "/engine/database-roles"),
     linkButton("Migration Targets", engine.databaseMigrations || "/engine/database-migrations")

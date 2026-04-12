@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.IO.Compression;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -1485,6 +1486,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("/openapi/v1.json", root.GetProperty("documentation").GetProperty("openApiJsonPath").GetString());
         Assert.Equal("/api/v1/showcase/system/database-topology", root.GetProperty("documentation").GetProperty("databaseTopologyPath").GetString());
         Assert.Equal("/api/v1/showcase/system/database-topology/brief", root.GetProperty("documentation").GetProperty("databaseTopologyBriefPath").GetString());
+        Assert.Equal("/api/v1/showcase/system/database-topology/handoff", root.GetProperty("documentation").GetProperty("databaseTopologyHandoffPath").GetString());
         Assert.True(root.GetProperty("business").GetProperty("activeProducts").GetInt32() >= 10);
         Assert.True(root.GetProperty("suggestedJourneys").GetArrayLength() > 0);
     }
@@ -1649,6 +1651,25 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Contains("Readiness: **Ready**", brief, StringComparison.Ordinal);
         Assert.Contains("1. Topology is ready for operator validation", brief, StringComparison.Ordinal);
         Assert.Contains("Showcase projection JSON: `/api/v1/showcase/system/database-topology`", brief, StringComparison.Ordinal);
+
+        var handoffResponse = await client.GetAsync("/api/v1/showcase/system/database-topology/handoff");
+
+        Assert.Equal(HttpStatusCode.OK, handoffResponse.StatusCode);
+        Assert.Equal("application/zip", handoffResponse.Content.Headers.ContentType?.MediaType);
+        Assert.Contains("database-topology-handoff.zip", handoffResponse.Content.Headers.ContentDisposition?.ToString(), StringComparison.Ordinal);
+
+        using var handoffStream = new MemoryStream(await handoffResponse.Content.ReadAsByteArrayAsync());
+        using var handoffArchive = new ZipArchive(handoffStream, ZipArchiveMode.Read);
+        Assert.NotNull(handoffArchive.GetEntry("database-topology-brief.md"));
+        Assert.NotNull(handoffArchive.GetEntry("database-topology-projection.json"));
+
+        var archivedBrief = await ReadZipEntryAsStringAsync(handoffArchive, "database-topology-brief.md");
+        Assert.Contains("Readiness: **Ready**", archivedBrief, StringComparison.Ordinal);
+
+        var archivedProjection = await ReadZipEntryAsStringAsync(handoffArchive, "database-topology-projection.json");
+        using var archivedProjectionDocument = JsonDocument.Parse(archivedProjection);
+        Assert.Equal("Ready", archivedProjectionDocument.RootElement.GetProperty("readiness").GetProperty("state").GetString());
+        Assert.Equal(4, archivedProjectionDocument.RootElement.GetProperty("summary").GetProperty("roleCount").GetInt32());
     }
 
     [Fact]
@@ -1728,6 +1749,20 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Contains("Readiness: **Attention**", brief, StringComparison.Ordinal);
         Assert.Contains("1. Let the read-model catch up", brief, StringComparison.Ordinal);
         Assert.Contains("Showcase projection JSON: `/api/v1/showcase/system/database-topology`", brief, StringComparison.Ordinal);
+
+        var handoffResponse = await client.GetAsync("/api/v1/showcase/system/database-topology/handoff");
+
+        Assert.Equal(HttpStatusCode.OK, handoffResponse.StatusCode);
+        Assert.Equal("application/zip", handoffResponse.Content.Headers.ContentType?.MediaType);
+
+        using var handoffStream = new MemoryStream(await handoffResponse.Content.ReadAsByteArrayAsync());
+        using var handoffArchive = new ZipArchive(handoffStream, ZipArchiveMode.Read);
+        var archivedBrief = await ReadZipEntryAsStringAsync(handoffArchive, "database-topology-brief.md");
+        Assert.Contains("Readiness: **Attention**", archivedBrief, StringComparison.Ordinal);
+
+        var archivedProjection = await ReadZipEntryAsStringAsync(handoffArchive, "database-topology-projection.json");
+        using var archivedProjectionDocument = JsonDocument.Parse(archivedProjection);
+        Assert.Equal("Attention", archivedProjectionDocument.RootElement.GetProperty("readiness").GetProperty("state").GetString());
     }
 
     [Fact]
@@ -2243,6 +2278,19 @@ public sealed class ShowcaseSampleHostingTests
         }
 
         throw new TimeoutException($"Timed out waiting for response body to contain '{expectedContent}'.");
+    }
+
+    private static async Task<string> ReadZipEntryAsStringAsync(ZipArchive archive, string entryName)
+    {
+        ArgumentNullException.ThrowIfNull(archive);
+        ArgumentException.ThrowIfNullOrWhiteSpace(entryName);
+
+        var entry = archive.GetEntry(entryName);
+        Assert.NotNull(entry);
+
+        await using var entryStream = entry.Open();
+        using var reader = new StreamReader(entryStream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
+        return await reader.ReadToEndAsync();
     }
 
     private sealed class FailingAuditWriter : IAuditWriter

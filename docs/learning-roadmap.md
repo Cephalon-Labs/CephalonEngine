@@ -318,6 +318,7 @@ Inspect:
 
 - `/api/v1/showcase/system/database-topology`
 - `/api/v1/showcase/system/database-topology/brief`
+- `/api/v1/showcase/system/database-topology/handoff`
 - `/engine/database-roles`
 - `/engine/database-migrations`
 

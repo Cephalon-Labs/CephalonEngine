@@ -148,6 +148,27 @@ public sealed class ShowcaseSystemModule : ModuleBase, IEndpointModule
             .Produces<string>(StatusCodes.Status200OK, "text/markdown")
             .ProducesProblem(StatusCodes.Status403Forbidden);
 
+        routes.MapGet("/database-topology/handoff", async (
+                HttpContext httpContext,
+                ShowcaseSystemProjectionService projections,
+                CancellationToken cancellationToken) =>
+            {
+                var denied = TryRequireCapability(httpContext, ReadCapabilityKey);
+                if (denied is not null)
+                {
+                    return denied;
+                }
+
+                var handoff = await projections.GetDatabaseTopologyHandoffAsync(cancellationToken).ConfigureAwait(false);
+                return Results.File(handoff.Bytes, handoff.ContentType, handoff.FileName);
+            })
+            .RequireCapability(ReadCapabilityKey)
+            .WithName("GetShowcaseDatabaseTopologyHandoff")
+            .WithSummary("Download the database-topology operator handoff package.")
+            .WithDescription("Returns a zip package that bundles the Markdown operator brief with the raw showcase database-topology projection so operators can share one artifact without losing the live source data.")
+            .Produces(StatusCodes.Status200OK, contentType: "application/zip")
+            .ProducesProblem(StatusCodes.Status403Forbidden);
+
         routes.MapGet("/transports", async (
                 HttpContext httpContext,
                 ShowcaseSystemProjectionService projections,

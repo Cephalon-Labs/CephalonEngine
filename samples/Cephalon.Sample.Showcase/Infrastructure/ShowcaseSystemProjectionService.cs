@@ -1,6 +1,8 @@
+using System.Globalization;
+using System.IO.Compression;
 using System.Reflection;
 using System.Text;
-using System.Globalization;
+using System.Text.Json;
 using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Authorization;
 using Cephalon.Abstractions.Behaviors;
@@ -40,6 +42,10 @@ internal sealed class ShowcaseSystemProjectionService(
 {
     private const string ShowcaseProjectPath = "samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj";
     private const string ShowcaseRepoRootHint = "Run from the repository root, or adapt the project paths for another host layout.";
+    private static readonly JsonSerializerOptions HandoffJsonOptions = new(JsonSerializerDefaults.Web)
+    {
+        WriteIndented = true
+    };
     private readonly ApiRoutesOptions apiRoutes = ApiRoutesOptions.FromConfiguration(configuration);
     private readonly OpenApiEndpointOptions openApiOptions = OpenApiEndpointOptions.FromConfiguration(configuration);
     private readonly string defaultOpenApiDocumentName = ResolveDefaultOpenApiDocumentName(configuration);
@@ -211,6 +217,13 @@ internal sealed class ShowcaseSystemProjectionService(
     {
         var projection = await GetDatabaseTopologyAsync(cancellationToken).ConfigureAwait(false);
         return BuildDatabaseTopologyBrief(projection);
+    }
+
+    public async Task<ShowcaseDocumentPayload> GetDatabaseTopologyHandoffAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var projection = await GetDatabaseTopologyAsync(cancellationToken).ConfigureAwait(false);
+        return BuildDatabaseTopologyHandoff(projection);
     }
 
     public Task<ShowcaseRuntimeResponse> GetRuntimeAsync(
@@ -1476,7 +1489,8 @@ internal sealed class ShowcaseSystemProjectionService(
             CapabilitiesPath: "/engine/capabilities",
             AuditHistoryPath: $"{apiRoutes.RestPrefix}/v1/showcase/audit/history",
             DatabaseTopologyPath: databaseTopologyPath,
-            DatabaseTopologyBriefPath: $"{databaseTopologyPath}/brief");
+            DatabaseTopologyBriefPath: $"{databaseTopologyPath}/brief",
+            DatabaseTopologyHandoffPath: $"{databaseTopologyPath}/handoff");
     }
 
     private static string BuildDatabaseTopologyBrief(ShowcaseDatabaseTopologyResponse projection)
@@ -1534,6 +1548,38 @@ internal sealed class ShowcaseSystemProjectionService(
         builder.AppendLine("- Runtime snapshot: `/engine/snapshot`");
 
         return builder.ToString().TrimEnd();
+    }
+
+    private static ShowcaseDocumentPayload BuildDatabaseTopologyHandoff(ShowcaseDatabaseTopologyResponse projection)
+    {
+        ArgumentNullException.ThrowIfNull(projection);
+
+        var brief = BuildDatabaseTopologyBrief(projection);
+        var projectionJson = JsonSerializer.Serialize(projection, HandoffJsonOptions);
+
+        using var stream = new MemoryStream();
+        using (var archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true))
+        {
+            WriteZipEntry(archive, "database-topology-brief.md", brief);
+            WriteZipEntry(archive, "database-topology-projection.json", projectionJson);
+        }
+
+        return new ShowcaseDocumentPayload(
+            FileName: "database-topology-handoff.zip",
+            ContentType: "application/zip",
+            Bytes: stream.ToArray());
+    }
+
+    private static void WriteZipEntry(ZipArchive archive, string entryName, string content)
+    {
+        ArgumentNullException.ThrowIfNull(archive);
+        ArgumentException.ThrowIfNullOrWhiteSpace(entryName);
+        ArgumentNullException.ThrowIfNull(content);
+
+        var entry = archive.CreateEntry(entryName, CompressionLevel.SmallestSize);
+        using var entryStream = entry.Open();
+        using var writer = new StreamWriter(entryStream, Encoding.UTF8, leaveOpen: false);
+        writer.Write(content);
     }
 
     private List<string> BuildSuggestedJourneys(

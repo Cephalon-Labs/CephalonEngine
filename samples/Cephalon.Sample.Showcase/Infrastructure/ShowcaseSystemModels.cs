@@ -10,7 +10,13 @@ internal sealed record ShowcaseDocumentationLinks(
     string CapabilitiesPath,
     string AuditHistoryPath,
     string DatabaseTopologyPath,
-    string DatabaseTopologyBriefPath);
+    string DatabaseTopologyBriefPath,
+    string DatabaseTopologyHandoffPath);
+
+internal sealed record ShowcaseDocumentPayload(
+    string FileName,
+    string ContentType,
+    byte[] Bytes);
 
 internal sealed record ShowcaseRuntimeSummary(
     string Environment,
