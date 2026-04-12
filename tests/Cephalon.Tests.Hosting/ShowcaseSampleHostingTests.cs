@@ -1,5 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Reflection;
+using System.Text;
 using System.Text.Json;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
@@ -7,9 +9,12 @@ using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Health;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Sample.Showcase;
+using Cephalon.Sample.Showcase.Infrastructure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Hosting;
@@ -20,11 +25,16 @@ namespace Cephalon.Tests.Hosting;
 /// </summary>
 public sealed class ShowcaseSampleHostingTests
 {
+    private static readonly string[] DatabaseTopologyProjectionTags =
+    [
+        "database-topology",
+        "projection"
+    ];
+
     [Fact]
     public async Task ShowcaseSampleBootsAndExposesRootSummary()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -40,8 +50,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleResolvesCanonicalShowcaseRoute()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -56,8 +65,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleExposesAppProfileWithAllCapabilities()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -97,7 +105,10 @@ public sealed class ShowcaseSampleHostingTests
         Assert.StartsWith("showcase-history-", profile.Databases.History.ConnectionString!, StringComparison.Ordinal);
         Assert.Null(profile.Databases.History.ConnectionStringName);
         Assert.True(profile.Databases.Migrations.ApplyOnStartup);
-        Assert.Equal(["history", "write"], profile.Databases.Migrations.Targets);
+        Assert.Equal(3, profile.Databases.Migrations.Targets.Count);
+        Assert.Contains("write", profile.Databases.Migrations.Targets);
+        Assert.Contains("read", profile.Databases.Migrations.Targets);
+        Assert.Contains("history", profile.Databases.Migrations.Targets);
         Assert.True(profile.Resilience.RateLimiting.Enabled);
         Assert.Equal("SlidingWindow", profile.Resilience.RateLimiting.Algorithm);
         Assert.Equal(200, profile.Resilience.RateLimiting.PermitLimit);
@@ -116,8 +127,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleExposesEffectiveRateLimitingRuntimeCatalog()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -175,16 +185,17 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleExposesDatabaseRoleCatalogWithRequestedAndResolvedTruth()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
 
         var roles = await client.GetFromJsonAsync<DatabaseRoleDescriptor[]>("/engine/database-roles");
         var outbox = await client.GetFromJsonAsync<DatabaseRoleDescriptor>("/engine/database-roles/outbox");
+        var readRole = await client.GetFromJsonAsync<DatabaseRoleDescriptor>("/engine/database-roles/read");
         var history = await client.GetFromJsonAsync<DatabaseRoleDescriptor>("/engine/database-roles/history");
         var migrations = await client.GetFromJsonAsync<DatabaseMigrationDescriptor[]>("/engine/database-migrations");
+        var readMigration = await client.GetFromJsonAsync<DatabaseMigrationDescriptor>("/engine/database-migrations/read");
         var historyMigration = await client.GetFromJsonAsync<DatabaseMigrationDescriptor>("/engine/database-migrations/history");
         var snapshot = await client.GetFromJsonAsync<Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
@@ -207,6 +218,16 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Contains("write", outbox.CoLocatedRoles);
         Assert.Equal("true", outbox.Metadata["inheritsResolvedRoleRuntime"]);
 
+        Assert.NotNull(readRole);
+        Assert.Equal("read", readRole.RequestedRoleId);
+        Assert.Equal("read", readRole.ResolvedRoleId);
+        Assert.Equal("direct", readRole.ResolutionMode);
+        Assert.False(readRole.UsesRoleReference);
+        Assert.Equal("InMemory", readRole.Provider);
+        Assert.Equal("inline", readRole.ConnectionMode);
+        Assert.Null(readRole.ConnectionStringName);
+        Assert.Contains("migrations", readRole.Consumers);
+
         Assert.NotNull(history);
         Assert.Equal("history", history.RequestedRoleId);
         Assert.Equal("history", history.ResolvedRoleId);
@@ -223,7 +244,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(HealthState.Healthy, outbox.HealthState);
         Assert.Equal(HealthState.Healthy, history.HealthState);
         Assert.Equal("succeeded", write.MigrationState);
-        Assert.Equal("not-targeted", read.MigrationState);
+        Assert.Equal("succeeded", read.MigrationState);
         Assert.Equal("succeeded", outbox.MigrationState);
         Assert.Equal("succeeded", history.MigrationState);
         Assert.Equal("entity-framework", write.RuntimeMetadata["providerPack"]);
@@ -231,7 +252,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("entity-framework", outbox.RuntimeMetadata["providerPack"]);
         Assert.Equal("entity-framework", history.RuntimeMetadata["providerPack"]);
         Assert.Equal("startup-hosted-service", write.RuntimeMetadata["executionMode"]);
-        Assert.Equal("not-targeted", read.RuntimeMetadata["executionMode"]);
+        Assert.Equal("startup-hosted-service", read.RuntimeMetadata["executionMode"]);
         Assert.Equal("startup-hosted-service", outbox.RuntimeMetadata["executionMode"]);
         Assert.Equal("startup-hosted-service", history.RuntimeMetadata["executionMode"]);
         Assert.Equal("succeeded", write.RuntimeMetadata["probeOutcome"]);
@@ -239,8 +260,20 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("succeeded", outbox.RuntimeMetadata["probeOutcome"]);
         Assert.Equal("succeeded", history.RuntimeMetadata["probeOutcome"]);
         Assert.NotNull(migrations);
-        Assert.Equal(2, migrations.Length);
+        Assert.Equal(3, migrations.Length);
+        Assert.Contains(migrations, migration => migration.Id == "read" && migration.Status == DatabaseMigrationStatus.Succeeded);
         Assert.Contains(migrations, migration => migration.Id == "write" && migration.Status == DatabaseMigrationStatus.Succeeded);
+        Assert.NotNull(readMigration);
+        Assert.Equal("read", readMigration.Id);
+        Assert.Equal("read", readMigration.RequestedRoleId);
+        Assert.Equal("read", readMigration.ResolvedRoleId);
+        Assert.Equal(DatabaseMigrationStatus.Succeeded, readMigration.Status);
+        Assert.Equal("startup-hosted-service", readMigration.ExecutionMode);
+        Assert.Equal("InMemory", readMigration.Provider);
+        Assert.Equal("entity-framework", readMigration.Metadata["runtimeProvider"]);
+        Assert.Equal("healthy", readMigration.Metadata["roleHealthState"]);
+        Assert.Equal("succeeded", readMigration.Metadata["roleMigrationState"]);
+        Assert.Equal("succeeded", readMigration.Metadata["roleRuntime.probeOutcome"]);
         Assert.NotNull(historyMigration);
         Assert.Equal("history", historyMigration.Id);
         Assert.Equal("history", historyMigration.RequestedRoleId);
@@ -276,15 +309,99 @@ public sealed class ShowcaseSampleHostingTests
 
         Assert.NotNull(snapshot);
         Assert.Equal(4, snapshot.DatabaseRoles.Count);
-        Assert.Equal(2, snapshot.DatabaseMigrations.Count);
+        Assert.Equal(3, snapshot.DatabaseMigrations.Count);
         Assert.All(snapshot.DatabaseMigrations, migration => Assert.Equal(3, migration.Commands.Count));
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleKeepsReadStoreSeparateFromDirectWriteChanges()
+    {
+        await using var app = BuildShowcaseForTests();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        using var scope = app.Services.CreateScope();
+        var writeDb = scope.ServiceProvider.GetRequiredService<ShowcaseWriteDbContext>();
+        var readDb = scope.ServiceProvider.GetRequiredService<ShowcaseReadDbContext>();
+
+        const string productId = "proj-separation-001";
+        writeDb.Products.Add(new ShowcaseProductEntity
+        {
+            Id = productId,
+            Sku = "PROJ-SEPARATION-001",
+            Name = "Projection Separation Test Product",
+            Description = "Verifies read/write stores stay separate until projection runs.",
+            Category = "Testing",
+            PriceInCents = 4242,
+            Currency = "USD",
+            IsActive = true,
+            TagsJson = "[\"projection\",\"separation\"]",
+            CreatedAtUtc = DateTime.UtcNow
+        });
+
+        await writeDb.SaveChangesAsync();
+
+        Assert.False(await readDb.Products.AnyAsync(product => product.Id == productId));
+        var response = await client.GetAsync($"/api/v1/showcase/catalog/products/{productId}");
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleCompletesProjectionJobsAndResetClearsThem()
+    {
+        await using var app = BuildShowcaseForTests();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var payload = new
+        {
+            sku = "PROJ-JOB-001",
+            name = "Projection Job Test Product",
+            description = "Verifies projection jobs complete and reset clears them.",
+            category = "Testing",
+            priceInCents = 5151,
+            currency = "USD",
+            tags = new[] { "projection", "jobs" }
+        };
+
+        var createResponse = await client.PostAsJsonAsync("/api/v1/showcase/catalog/products", payload);
+        Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+
+        var created = JsonSerializer.Deserialize<JsonElement>(await createResponse.Content.ReadAsStringAsync());
+        var productId = created.GetProperty("id").GetString();
+        Assert.False(string.IsNullOrWhiteSpace(productId));
+
+        using (var createdScope = app.Services.CreateScope())
+        {
+            var writeDb = createdScope.ServiceProvider.GetRequiredService<ShowcaseWriteDbContext>();
+            var readDb = createdScope.ServiceProvider.GetRequiredService<ShowcaseReadDbContext>();
+
+            var jobs = await writeDb.ReadProjectionJobs
+                .Where(job => job.Scope == "products" && job.EntityKey == productId)
+                .ToListAsync();
+
+            var completedJob = Assert.Single(jobs);
+            Assert.NotNull(completedJob.CompletedAtUtc);
+            Assert.True(await readDb.Products.AnyAsync(product => product.Id == productId));
+        }
+
+        var resetResponse = await client.PostAsJsonAsync("/api/v1/showcase/system/reset", new { });
+        Assert.Equal(HttpStatusCode.OK, resetResponse.StatusCode);
+
+        using var resetScope = app.Services.CreateScope();
+        var resetWriteDb = resetScope.ServiceProvider.GetRequiredService<ShowcaseWriteDbContext>();
+        var resetReadDb = resetScope.ServiceProvider.GetRequiredService<ShowcaseReadDbContext>();
+
+        Assert.Empty(await resetWriteDb.ReadProjectionJobs.ToListAsync());
+        Assert.False(await resetReadDb.Products.AnyAsync(product => product.Id == productId));
+        Assert.True(await resetReadDb.Products.AnyAsync(product => product.Id == "prod-001"));
     }
 
     [Fact]
     public async Task ShowcaseSampleExposesConfiguredEventDispatchRuntimeCatalog()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -317,8 +434,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleDocumentsAndServesAuditHistoryThroughDurableProvider()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -370,8 +486,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleExposesEngineManifest()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -390,8 +505,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleExposesCapabilities()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -422,8 +536,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleExposesCatalogProductsViaRestEndpoint()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -442,8 +555,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleExposesCatalogProductByIdViaRestEndpoint()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -459,8 +571,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleReturnsNotFoundForMissingProduct()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -473,8 +584,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleExposesHealthEndpoints()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -491,8 +601,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleExposesModulesEndpoint()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -513,8 +622,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleExposesMultipleTenants()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -528,8 +636,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleExposesAuthorizationPolicies()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -546,8 +653,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleSupportsCreateProductViaPost()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -574,9 +680,8 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleKeepsCommittedWritesSuccessfulWhenAuditWriterFails()
     {
-        await using var app = ShowcaseSampleApp.Build(configureBuilder: builder =>
+        await using var app = BuildShowcaseForTests(configureBuilder: builder =>
         {
-            builder.WebHost.UseTestServer();
             builder.Services.AddSingleton<IAuditWriter, FailingAuditWriter>();
         });
 
@@ -608,8 +713,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleSupportsUpdateProductViaPut()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -632,8 +736,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleHandlesConcurrentReadsWithoutErrors()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -651,8 +754,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleHandlesConcurrentWritesWithoutDataLoss()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -692,8 +794,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleReturnsNotFoundForUpdateOfMissingProduct()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -713,8 +814,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleExposesOrdersListEndpoint()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -730,8 +830,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSamplePlacesAndRetrievesOrder()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -766,8 +865,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleCancelsOrder()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -800,8 +898,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleReturnsNotFoundForMissingOrder()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -818,8 +915,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleExposesInventoryListEndpoint()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -835,8 +931,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleExposesInventoryByProductId()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -851,8 +946,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleReservesStock()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -877,8 +971,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleReserveStockPromotesOrderToConfirmed()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -917,8 +1010,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleReturnsNotFoundForMissingInventoryItem()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -935,8 +1027,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleExposesShipmentsListEndpoint()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -952,8 +1043,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleInitiatesAndTracksShipment()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -988,8 +1078,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleConfirmsDelivery()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -1019,8 +1108,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleShippingPromotesOrderToProcessingAndRejectsDuplicateShipment()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -1060,8 +1148,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleReturnsNotFoundForMissingShipment()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -1078,8 +1165,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleAddsItemToCartAndRetrievesCart()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -1200,8 +1286,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleRemovesItemFromCart()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -1227,8 +1312,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleChecksOutCart()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -1255,8 +1339,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSamplePlacesOrderUsingCheckoutGeneratedOrderId()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -1314,8 +1397,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleReturnsNotFoundForMissingCart()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -1328,8 +1410,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleOpenApiUsesBehaviorSummaryAndRemarksWithoutDuplicatingSummary()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -1359,8 +1440,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleExposesSystemSummaryProjectionForOperatorConsole()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -1375,15 +1455,92 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("Started", root.GetProperty("runtime").GetProperty("status").GetString());
         Assert.Equal("/scalar/v1", root.GetProperty("documentation").GetProperty("scalarPath").GetString());
         Assert.Equal("/openapi/v1.json", root.GetProperty("documentation").GetProperty("openApiJsonPath").GetString());
+        Assert.Equal("/api/v1/showcase/system/database-topology", root.GetProperty("documentation").GetProperty("databaseTopologyPath").GetString());
         Assert.True(root.GetProperty("business").GetProperty("activeProducts").GetInt32() >= 10);
         Assert.True(root.GetProperty("suggestedJourneys").GetArrayLength() > 0);
     }
 
     [Fact]
+    public async Task ShowcaseSampleExposesDatabaseTopologyProjectionForOperatorConsole()
+    {
+        await using var app = BuildShowcaseForTests();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var createResponse = await client.PostAsJsonAsync("/api/v1/showcase/catalog/products", new
+        {
+            sku = "TOPOLOGY-PROJ-001",
+            name = "Topology Projection Product",
+            description = "Exercises the database-topology operator projection.",
+            category = "Testing",
+            priceInCents = 6161,
+            currency = "USD",
+            tags = DatabaseTopologyProjectionTags
+        });
+        Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+
+        var response = await client.GetAsync("/api/v1/showcase/system/database-topology");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var root = document.RootElement;
+        var summary = root.GetProperty("summary");
+
+        Assert.Equal(4, summary.GetProperty("roleCount").GetInt32());
+        Assert.Equal(4, summary.GetProperty("healthyRoleCount").GetInt32());
+        Assert.Equal(3, summary.GetProperty("migrationTargetCount").GetInt32());
+        Assert.Equal(3, summary.GetProperty("succeededMigrationTargetCount").GetInt32());
+        Assert.True(summary.GetProperty("readModelSyncEnabled").GetBoolean());
+        Assert.Equal("InMemory", summary.GetProperty("writeProvider").GetString());
+        Assert.Equal("InMemory", summary.GetProperty("readProvider").GetString());
+        Assert.Equal("InMemory", summary.GetProperty("historyProvider").GetString());
+
+        var roles = root.GetProperty("roles").EnumerateArray().ToArray();
+        Assert.Contains(
+            roles,
+            role =>
+                string.Equals(role.GetProperty("id").GetString(), "read", StringComparison.Ordinal) &&
+                string.Equals(role.GetProperty("provider").GetString(), "InMemory", StringComparison.Ordinal) &&
+                string.Equals(role.GetProperty("healthState").GetString(), "Healthy", StringComparison.Ordinal));
+
+        var migrations = root.GetProperty("migrations").EnumerateArray().ToArray();
+        Assert.Contains(
+            migrations,
+            migration =>
+                string.Equals(migration.GetProperty("id").GetString(), "read", StringComparison.Ordinal) &&
+                string.Equals(migration.GetProperty("status").GetString(), "Succeeded", StringComparison.Ordinal) &&
+                string.Equals(migration.GetProperty("executionMode").GetString(), "startup-hosted-service", StringComparison.Ordinal));
+
+        var readModelSync = root.GetProperty("readModelSync");
+        Assert.True(readModelSync.GetProperty("enabled").GetBoolean());
+        Assert.False(readModelSync.GetProperty("isLagging").GetBoolean());
+
+        var writeStore = readModelSync.GetProperty("writeStore");
+        var readStore = readModelSync.GetProperty("readStore");
+        Assert.Equal(writeStore.GetProperty("products").GetInt32(), readStore.GetProperty("products").GetInt32());
+        Assert.Equal(writeStore.GetProperty("inventory").GetInt32(), readStore.GetProperty("inventory").GetInt32());
+
+        var jobs = readModelSync.GetProperty("jobs");
+        Assert.True(jobs.GetProperty("totalJobs").GetInt32() >= 1);
+        Assert.True(jobs.GetProperty("completedJobs").GetInt32() >= 1);
+        Assert.Equal(0, jobs.GetProperty("pendingJobs").GetInt32());
+        Assert.Equal(0, jobs.GetProperty("failedJobs").GetInt32());
+        Assert.True(jobs.GetProperty("distinctScopes").GetInt32() >= 1);
+
+        var scopes = readModelSync.GetProperty("scopes").EnumerateArray().ToArray();
+        Assert.Contains(
+            scopes,
+            scope =>
+                string.Equals(scope.GetProperty("scope").GetString(), "products", StringComparison.Ordinal) &&
+                scope.GetProperty("completedJobs").GetInt32() >= 1);
+    }
+
+    [Fact]
     public async Task ShowcaseSampleTransportProjectionIncludesBehaviorOwnedRestRoutes()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -1463,8 +1620,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleClientConfigPublishesBrowserTransportPrefixes()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -1499,8 +1655,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleActivityProjectionCapturesRecentRequestsWithDurations()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -1524,10 +1679,42 @@ public sealed class ShowcaseSampleHostingTests
     }
 
     [Fact]
+    public async Task ShowcaseSampleActivityStreamTreatsRequestCancellationAsGracefulDisconnect()
+    {
+        var streamMethod = typeof(Cephalon.Sample.Showcase.Modules.ShowcaseSystemModule)
+            .GetMethod("StreamActivityAsync", BindingFlags.NonPublic | BindingFlags.Static);
+        Assert.NotNull(streamMethod);
+
+        var activityFeedType = typeof(ShowcaseSampleApp).Assembly.GetType(
+            "Cephalon.Sample.Showcase.Infrastructure.ShowcaseActivityFeed",
+            throwOnError: true);
+        Assert.NotNull(activityFeedType);
+
+        var activityFeed = Activator.CreateInstance(activityFeedType!);
+        Assert.NotNull(activityFeed);
+
+        var httpContext = new DefaultHttpContext();
+        await using var responseBody = new MemoryStream();
+        httpContext.Response.Body = responseBody;
+
+        using var cts = new CancellationTokenSource();
+        httpContext.RequestAborted = cts.Token;
+
+        var task = (Task<IResult>)streamMethod!.Invoke(null, [httpContext, activityFeed, cts.Token])!;
+        await WaitForResponseBodyToContainAsync(responseBody, "event: ready", TimeSpan.FromSeconds(2));
+
+        cts.Cancel();
+
+        var result = await task;
+
+        Assert.NotNull(result);
+        Assert.Equal("text/event-stream", httpContext.Response.ContentType);
+    }
+
+    [Fact]
     public async Task ShowcaseSampleResetProjectionRestoresDeterministicBusinessState()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -1596,8 +1783,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleGovernanceProjectionSummarizesPolicyAndTechnologySurfaces()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -1641,9 +1827,8 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleSystemEndpointsHonorCapabilityPolicy()
     {
-        await using var app = ShowcaseSampleApp.Build(configureBuilder: builder =>
+        await using var app = BuildShowcaseForTests(configureBuilder: builder =>
         {
-            builder.WebHost.UseTestServer();
             builder.Configuration["Engine:Trust:Capabilities:showcase.system.read"] = "Denied";
             builder.Configuration["Engine:Trust:Capabilities:showcase.system.reset"] = "Denied";
         });
@@ -1673,8 +1858,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleSupportsEndToEndOrderFlow()
     {
-        await using var app = ShowcaseSampleApp.Build(
-            configureBuilder: builder => builder.WebHost.UseTestServer());
+        await using var app = BuildShowcaseForTests();
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -1767,24 +1951,82 @@ public sealed class ShowcaseSampleHostingTests
 
     private static WebApplication BuildShowcaseWithRestEnvelope()
     {
-        return ShowcaseSampleApp.Build(configureBuilder: builder =>
+        return BuildShowcaseForTests(configureBuilder: builder =>
         {
-            builder.WebHost.UseTestServer();
             builder.Configuration["ApiRoutes:ResultEnvelope:Enabled"] = "true";
         });
     }
 
     private static WebApplication BuildShowcaseWithTightRateLimiting()
     {
-        return ShowcaseSampleApp.Build(configureBuilder: builder =>
+        return BuildShowcaseForTests(configureBuilder: builder =>
         {
-            builder.WebHost.UseTestServer();
             builder.Configuration["Engine:Resilience:RateLimiting:Enabled"] = "true";
             builder.Configuration["Engine:Resilience:RateLimiting:Algorithm"] = "FixedWindow";
             builder.Configuration["Engine:Resilience:RateLimiting:PermitLimit"] = "1";
             builder.Configuration["Engine:Resilience:RateLimiting:QueueLimit"] = "0";
             builder.Configuration["Engine:Resilience:RateLimiting:WindowSeconds"] = "60";
         });
+    }
+
+    private static WebApplication BuildShowcaseForTests(
+        Action<WebApplicationBuilder>? configureBuilder = null)
+    {
+        return ShowcaseSampleApp.Build(configureBuilder: builder =>
+        {
+            builder.WebHost.UseTestServer();
+            ConfigureShowcaseInMemoryTestProfile(builder);
+            configureBuilder?.Invoke(builder);
+        });
+    }
+
+    private static void ConfigureShowcaseInMemoryTestProfile(WebApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        var suffix = Guid.NewGuid().ToString("N");
+
+        ConfigureInMemoryRole(builder, "Write", $"showcase-write-{suffix}");
+        ConfigureInMemoryRole(builder, "Read", $"showcase-read-{suffix}");
+        ConfigureInMemoryRole(builder, "History", $"showcase-history-{suffix}");
+
+        builder.Configuration["Engine:Data:MongoDB:ConnectionStringName"] = string.Empty;
+        builder.Configuration["Engine:Data:MongoDB:ConnectionString"] = string.Empty;
+        builder.Configuration["Engine:Data:Redis:ConnectionStringName"] = string.Empty;
+        builder.Configuration["Engine:Data:Redis:ConnectionString"] = string.Empty;
+    }
+
+    private static void ConfigureInMemoryRole(
+        WebApplicationBuilder builder,
+        string roleSectionName,
+        string databaseName)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentException.ThrowIfNullOrWhiteSpace(roleSectionName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(databaseName);
+
+        builder.Configuration[$"Engine:Databases:{roleSectionName}:Provider"] = "InMemory";
+        builder.Configuration[$"Engine:Databases:{roleSectionName}:ConnectionStringName"] = string.Empty;
+        builder.Configuration[$"Engine:Databases:{roleSectionName}:ConnectionString"] = databaseName;
+    }
+
+    private static async Task WaitForResponseBodyToContainAsync(
+        MemoryStream responseBody,
+        string expectedContent,
+        TimeSpan timeout)
+    {
+        var startedAt = DateTimeOffset.UtcNow;
+        while (DateTimeOffset.UtcNow - startedAt < timeout)
+        {
+            if (Encoding.UTF8.GetString(responseBody.ToArray()).Contains(expectedContent, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            await Task.Delay(25);
+        }
+
+        throw new TimeoutException($"Timed out waiting for response body to contain '{expectedContent}'.");
     }
 
     private sealed class FailingAuditWriter : IAuditWriter

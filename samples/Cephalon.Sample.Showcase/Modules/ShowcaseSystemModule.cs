@@ -113,6 +113,22 @@ public sealed class ShowcaseSystemModule : ModuleBase, IEndpointModule
             .WithDescription("Returns aggregated product, cart, order, inventory, and shipment views so the showcase UI can render workload state without browser-side fan-out.")
             .ProducesProblem(StatusCodes.Status403Forbidden);
 
+        routes.MapGet("/database-topology", async (
+                HttpContext httpContext,
+                ShowcaseSystemProjectionService projections,
+                CancellationToken cancellationToken) =>
+            {
+                var denied = TryRequireCapability(httpContext, ReadCapabilityKey);
+                return denied is not null
+                    ? denied
+                    : Results.Ok(await projections.GetDatabaseTopologyAsync(cancellationToken).ConfigureAwait(false));
+            })
+            .RequireCapability(ReadCapabilityKey)
+            .WithName("GetShowcaseDatabaseTopologyProjection")
+            .WithSummary("Get the database-topology and read-model sync projection.")
+            .WithDescription("Returns the engine-owned database role and migration catalogs plus showcase read-model sync lag and durable projection-job state for the operator console.")
+            .ProducesProblem(StatusCodes.Status403Forbidden);
+
         routes.MapGet("/transports", async (
                 HttpContext httpContext,
                 ShowcaseSystemProjectionService projections,
@@ -180,24 +196,44 @@ public sealed class ShowcaseSystemModule : ModuleBase, IEndpointModule
         ShowcaseActivityFeed activityFeed,
         CancellationToken cancellationToken)
     {
-        httpContext.Response.Headers.CacheControl = "no-cache";
-        httpContext.Response.Headers["X-Accel-Buffering"] = "no";
-        httpContext.Response.ContentType = "text/event-stream";
+        using var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(
+            cancellationToken,
+            httpContext.RequestAborted);
+        var streamCancellationToken = linkedCancellation.Token;
 
-        var reader = activityFeed.Subscribe(cancellationToken);
-        var readyPayload = JsonSerializer.Serialize(new
+        try
         {
-            connectedAtUtc = DateTimeOffset.UtcNow,
-            totalRecorded = activityFeed.TotalRecorded
-        });
-        await httpContext.Response.WriteAsync($"event: ready\ndata: {readyPayload}\n\n", cancellationToken).ConfigureAwait(false);
-        await httpContext.Response.Body.FlushAsync(cancellationToken).ConfigureAwait(false);
+            httpContext.Response.Headers.CacheControl = "no-cache";
+            httpContext.Response.Headers["X-Accel-Buffering"] = "no";
+            httpContext.Response.ContentType = "text/event-stream";
 
-        await foreach (var entry in reader.ReadAllAsync(cancellationToken).ConfigureAwait(false))
+            var reader = activityFeed.Subscribe(streamCancellationToken);
+            var readyPayload = JsonSerializer.Serialize(new
+            {
+                connectedAtUtc = DateTimeOffset.UtcNow,
+                totalRecorded = activityFeed.TotalRecorded
+            });
+            await httpContext.Response.WriteAsync($"event: ready\ndata: {readyPayload}\n\n", streamCancellationToken).ConfigureAwait(false);
+            await httpContext.Response.Body.FlushAsync(streamCancellationToken).ConfigureAwait(false);
+
+            await foreach (var entry in reader.ReadAllAsync(streamCancellationToken).ConfigureAwait(false))
+            {
+                var payload = JsonSerializer.Serialize(entry, SseJsonOptions);
+                await httpContext.Response.WriteAsync($"event: activity\ndata: {payload}\n\n", streamCancellationToken).ConfigureAwait(false);
+                await httpContext.Response.Body.FlushAsync(streamCancellationToken).ConfigureAwait(false);
+            }
+        }
+        catch (OperationCanceledException) when (
+            streamCancellationToken.IsCancellationRequested ||
+            httpContext.RequestAborted.IsCancellationRequested)
         {
-            var payload = JsonSerializer.Serialize(entry, SseJsonOptions);
-            await httpContext.Response.WriteAsync($"event: activity\ndata: {payload}\n\n", cancellationToken).ConfigureAwait(false);
-            await httpContext.Response.Body.FlushAsync(cancellationToken).ConfigureAwait(false);
+            // Client disconnected or the request was aborted. Treat this as a normal SSE shutdown.
+        }
+        catch (IOException) when (
+            streamCancellationToken.IsCancellationRequested ||
+            httpContext.RequestAborted.IsCancellationRequested)
+        {
+            // Some transports surface client disconnects as IO failures after headers have already been written.
         }
 
         return Results.Empty;

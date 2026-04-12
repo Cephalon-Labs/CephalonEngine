@@ -1455,7 +1455,7 @@ Delivered:
 - `IAuditStoreRuntimeContributor` now lets additive provider packs publish durable audit-store descriptors without widening `Cephalon.Audit` into a mandatory storage abstraction
 - durable audit history now targets a named database role, defaults to `history`, can be redirected through `Engine:Audit:History:DatabaseRole`, and publishes its runtime truth through `/engine/audit-stores` and `/engine/snapshot`
 - durable audit history now also consumes the engine-owned `UseRole` contract when the selected database role is a dependent alias, and audit-store runtime metadata now exposes requested versus resolved roles
-- the showcase sample now records durable audit history through the new provider pack while keeping a dedicated configured `HistoryDb` role for Docker-backed runs, a logical `ReadDb` role that currently shares the write store until projector-driven physical separation lands, and a truthful zero-setup fallback outside Docker
+- the showcase sample now records durable audit history through the new provider pack while keeping dedicated configured `WriteDb`, `ReadDb`, and `HistoryDb` roles for Docker-backed runs plus a truthful zero-setup fallback outside Docker
 - the same baseline now includes `Engine:Audit:History:Retention`, the first engine-owned retention pass, `IAuditHistoryReader`, `/engine/audit-history`, and showcase-facing audit-history read endpoints
 
 Remaining follow-through inside `ENG-062`:
@@ -1611,7 +1611,7 @@ Delivered:
 - `IDatabaseMigrationCatalog`, `IDatabaseMigrationContributor`, and `DatabaseMigrationDescriptor` now ship in `Cephalon.Abstractions` as the engine-owned migration catalog contract
 - `Cephalon.Engine` now projects resolved migration targets into `snapshot.DatabaseMigrations` and ASP.NET Core hosts now expose `/engine/database-migrations` plus `/engine/database-migrations/{databaseMigrationId}`
 - `Cephalon.Data.EntityFramework` now contributes planned/running/succeeded/failed migration truth through the engine-owned catalog instead of keeping execution state inside hosted services only
-- the showcase sample now always wires Entity Framework data plus durable audit history, uses PostgreSQL in Docker mode, rewrites `Write` / `Read` / `History` to unique in-memory targets outside Docker, and proves `/engine/database-migrations` plus the public audit-history routes end to end in zero-setup runs
+- the showcase sample now always wires Entity Framework data plus durable audit history, uses PostgreSQL in Docker mode, rewrites `Write` / `Read` / `History` to unique in-memory targets outside Docker, keeps separate `write`, `read`, and `history` migration targets truthful, and proves `/engine/database-migrations` plus the public audit-history routes end to end in zero-setup runs
 
 Remaining follow-through inside `ENG-067`:
 
@@ -1646,7 +1646,7 @@ Delivered:
 - the resolved database-role catalog now lets dependent `UseRole` targets such as `outbox -> write` inherit resolved-role runtime truth while staying explicit that the logical role is still `outbox`
 - `Cephalon.Abstractions` now ships `DatabaseMigrationCommandDescriptor`, and `DatabaseMigrationDescriptor` now carries a typed `Commands` collection instead of forcing deploy-time guidance into ad-hoc metadata keys only
 - `Cephalon.Data.EntityFramework` now decorates logical migration targets with role-health/runtime metadata and publishes `dotnet ef` bundle/script/update templates per target, marking bundle/script as production-recommended
-- the showcase sample plus hosting/composition tests now prove live role health, inherited role runtime, migration-runtime metadata, and command templates end to end through `/engine/database-roles`, `/engine/database-migrations`, and `snapshot`
+- the showcase sample plus hosting/composition tests now prove live role health, inherited role runtime, migration-runtime metadata, command templates, durable read-projection jobs, and the adoption-quality `/api/v1/showcase/system/database-topology` operator projection end to end through `/engine/database-roles`, `/engine/database-migrations`, `snapshot`, and the sample UI
 - component docs, architecture guidance, backlog, roadmap, and project memory now call out that live provider diagnostics and command templates are shipped while true bundle/script generation or execution orchestration remains a later slice
 
 Remaining follow-through inside `ENG-068`:

@@ -8,6 +8,7 @@ namespace Cephalon.Sample.Showcase.Infrastructure;
 internal sealed class ShowcaseResetService(
     ShowcaseActivityFeed activityFeed,
     ShowcaseInMemoryEventStore eventStore,
+    ShowcaseReadModelProjector readModelProjector,
     ShowcaseWriteDbContext? writeDb,
     ShowcaseReadDbContext? readDb,
     ShowcaseAuditHistoryDbContext? historyDb)
@@ -27,8 +28,9 @@ internal sealed class ShowcaseResetService(
         if (readDb is not null)
         {
             await ClearReadDatabaseAsync(readDb, cancellationToken).ConfigureAwait(false);
-            ShowcaseDatabaseSeeder.SeedCommerceReferenceData(readDb);
         }
+
+        await readModelProjector.ProjectAllAsync(cancellationToken).ConfigureAwait(false);
 
         var auditEntryCount = 0;
         if (historyDb is not null)
@@ -63,6 +65,12 @@ internal sealed class ShowcaseResetService(
         if (inboxEntries.Count > 0)
         {
             db.InboxMessages.RemoveRange(inboxEntries);
+        }
+
+        var projectionJobs = await db.ReadProjectionJobs.ToListAsync(cancellationToken).ConfigureAwait(false);
+        if (projectionJobs.Count > 0)
+        {
+            db.ReadProjectionJobs.RemoveRange(projectionJobs);
         }
 
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

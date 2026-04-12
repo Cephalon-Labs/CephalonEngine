@@ -3,6 +3,7 @@ using System;
 using Cephalon.Sample.Showcase.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Cephalon.Sample.Showcase.Infrastructure.Migrations.Write
 {
     [DbContext(typeof(ShowcaseWriteDbContext))]
-    partial class ShowcaseWriteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260412092749_DurableReadProjectionJobs")]
+    partial class DurableReadProjectionJobs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

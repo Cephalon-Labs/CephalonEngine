@@ -56,9 +56,10 @@ namespace Cephalon.Sample.Showcase;
 /// </list>
 /// <para>
 /// Infrastructure services can run through Docker Compose (compose.yaml): PostgreSQL, MongoDB,
-/// Redis, RabbitMQ, Kafka, and OpenTelemetry Collector. When Docker mode is not enabled, the
-/// sample falls back to in-memory Entity Framework stores for write, read, and audit-history
-/// roles so the showcase stays fully bootable and introspectable without external dependencies.
+/// Redis, RabbitMQ, Kafka, and OpenTelemetry Collector. The showcase host now treats the split
+/// configuration files as the source of truth for provider selection, so Local and Development
+/// profiles can point directly at Docker Desktop-backed infrastructure while tests or alternate
+/// environments can still override the same configuration keys to use in-memory stores.
 /// </para>
 /// </remarks>
 public static class ShowcaseSampleApp
@@ -94,16 +95,21 @@ public static class ShowcaseSampleApp
         builder.AddCephalonSerilog();
 
         var config = builder.Configuration;
-
-        // Docker infrastructure toggle — set SHOWCASE_DOCKER=true to connect to Docker services
-        var dockerMode = string.Equals(
-            Environment.GetEnvironmentVariable("SHOWCASE_DOCKER"), "true",
-            StringComparison.OrdinalIgnoreCase);
-        var fallbackDatabaseSuffix = Guid.NewGuid().ToString("N");
-        if (!dockerMode)
-        {
-            ApplyNonDockerDatabaseOverrides(builder.Configuration, fallbackDatabaseSuffix);
-        }
+        var registerMongoDbData = HasConfiguredValue(
+            config,
+            $"{MongoDbDataOptions.SectionPath}:ConnectionStringName",
+            $"{MongoDbDataOptions.SectionPath}:ConnectionString");
+        var registerRedisData = HasConfiguredValue(
+            config,
+            $"{RedisDataOptions.SectionPath}:ConnectionStringName",
+            $"{RedisDataOptions.SectionPath}:ConnectionString");
+        var registerRabbitMqMessaging = HasConfiguredValue(
+            config,
+            "Engine:Messaging:RabbitMQ:ConnectionString",
+            "Engine:Messaging:RabbitMQ:HostName");
+        var registerKafkaMessaging = HasConfiguredValue(
+            config,
+            "Engine:Messaging:Kafka:BootstrapServers");
 
         builder.AddCephalon(engine =>
         {
@@ -114,10 +120,10 @@ public static class ShowcaseSampleApp
             engine.AddData();
 
             // --- Entity Framework data and durable audit history ---
-            // Docker mode uses PostgreSQL. Local/test mode falls back to in-memory EF stores so
-            // the showcase still exercises database-role, migration, and audit-history surfaces.
+            // The active provider comes from Engine:Databases:* so the sample host does not need
+            // hard-coded Docker-vs-in-memory branches.
             engine.AddEntityFrameworkData<ShowcaseReadDbContext, ShowcaseWriteDbContext>(
-                configureDbContext: (role, opts) => ConfigureShowcaseDatabaseRole(role, opts, dockerMode),
+                configureDbContext: ConfigureShowcaseDatabaseRole,
                 configure: efOpts =>
                 {
                     efOpts.RegisterOutbox = true;
@@ -125,10 +131,10 @@ public static class ShowcaseSampleApp
                 });
 
             engine.AddEntityFrameworkAuditHistory<ShowcaseAuditHistoryDbContext>(
-                configureDbContext: (role, opts) => ConfigureShowcaseDatabaseRole(role, opts, dockerMode));
+                configureDbContext: ConfigureShowcaseDatabaseRole);
 
-            // --- MongoDB document store (Docker mode only) ---
-            if (dockerMode)
+            // --- MongoDB document store ---
+            if (registerMongoDbData)
             {
                 engine.AddMongoDbData(opts =>
                 {
@@ -136,8 +142,8 @@ public static class ShowcaseSampleApp
                 });
             }
 
-            // --- Redis cache (Docker mode only) ---
-            if (dockerMode)
+            // --- Redis cache ---
+            if (registerRedisData)
             {
                 engine.AddRedisData(opts =>
                 {
@@ -173,10 +179,18 @@ public static class ShowcaseSampleApp
                 behaviors.AddHttpBehaviorBindings();
 
                 // Register messaging transport bindings — auto-bind from Engine:Messaging config
-                behaviors.AddMessagingBehaviorBindings(config)
-                    .AddInMemory()
-                    .AddRabbitMq()
-                    .AddKafka();
+                var messagingBindings = behaviors.AddMessagingBehaviorBindings(config)
+                    .AddInMemory();
+
+                if (registerRabbitMqMessaging)
+                {
+                    messagingBindings.AddRabbitMq();
+                }
+
+                if (registerKafkaMessaging)
+                {
+                    messagingBindings.AddKafka();
+                }
             });
         });
 
@@ -193,8 +207,11 @@ public static class ShowcaseSampleApp
             serviceProvider.GetRequiredService<ShowcaseInMemoryEventStore>());
         builder.Services.AddSingleton<ShowcaseActivityFeed>();
         builder.Services.AddScoped<ShowcaseSystemProjectionService>();
+        builder.Services.AddScoped<ShowcaseReadModelProjector>();
+        builder.Services.AddScoped<ShowcaseReadModelSyncService>();
         builder.Services.AddScoped<ShowcaseResetService>();
         builder.Services.AddHostedService<ShowcaseDatabaseSeedHostedService>();
+        builder.Services.AddHostedService<ShowcaseReadModelProjectionHostedService>();
 
         var app = builder.Build();
         var apiRoutes = ApiRoutesOptions.FromConfiguration(app.Configuration);
@@ -282,71 +299,70 @@ public static class ShowcaseSampleApp
             : environmentName.Trim();
     }
 
-    private static void ApplyNonDockerDatabaseOverrides(
+    private static bool HasConfiguredValue(
         ConfigurationManager configuration,
-        string databaseSuffix)
+        params string[] configurationPaths)
     {
         ArgumentNullException.ThrowIfNull(configuration);
-        ArgumentException.ThrowIfNullOrWhiteSpace(databaseSuffix);
+        ArgumentNullException.ThrowIfNull(configurationPaths);
 
-        var normalizedSuffix = databaseSuffix.Trim();
-        OverrideInMemoryRole(configuration, "Write", $"showcase-write-{normalizedSuffix}");
-        OverrideInMemoryRole(configuration, "Read", $"showcase-read-{normalizedSuffix}");
-        OverrideInMemoryRole(configuration, "History", $"showcase-history-{normalizedSuffix}");
-    }
-
-    private static void OverrideInMemoryRole(
-        ConfigurationManager configuration,
-        string roleSectionName,
-        string databaseName)
-    {
-        ArgumentNullException.ThrowIfNull(configuration);
-        ArgumentException.ThrowIfNullOrWhiteSpace(roleSectionName);
-        ArgumentException.ThrowIfNullOrWhiteSpace(databaseName);
-
-        configuration[$"Engine:Databases:{roleSectionName}:Provider"] = "InMemory";
-        configuration[$"Engine:Databases:{roleSectionName}:ConnectionStringName"] = string.Empty;
-        configuration[$"Engine:Databases:{roleSectionName}:ConnectionString"] = databaseName.Trim();
+        return configurationPaths.Any(path => !string.IsNullOrWhiteSpace(configuration[path]));
     }
 
     private static void ConfigureShowcaseDatabaseRole(
         EntityFrameworkDatabaseRoleContext role,
-        DbContextOptionsBuilder optionsBuilder,
-        bool dockerMode)
+        DbContextOptionsBuilder optionsBuilder)
     {
         ArgumentNullException.ThrowIfNull(role);
         ArgumentNullException.ThrowIfNull(optionsBuilder);
 
-        if (!dockerMode)
+        if (string.IsNullOrWhiteSpace(role.Provider))
         {
-            optionsBuilder.UseInMemoryDatabase(role.ConnectionString);
-            return;
+            throw new InvalidOperationException(
+                $"Database role '{role.Role}' must declare Engine:Databases:{role.Role}:Provider so the showcase host can select the correct EF provider.");
         }
 
-        optionsBuilder.UseNpgsql(
-            role.ConnectionString,
-            npgsql =>
-            {
-                if (role.Runtime.CommandTimeoutSeconds is { } commandTimeoutSeconds)
-                {
-                    npgsql.CommandTimeout(commandTimeoutSeconds);
-                }
+        var provider = role.Provider.Trim().ToUpperInvariant();
 
-                if (role.Runtime.MaxBatchSize is { } maxBatchSize)
-                {
-                    npgsql.MaxBatchSize(maxBatchSize);
-                }
+        switch (provider)
+        {
+            case "INMEMORY":
+                optionsBuilder.UseInMemoryDatabase(role.ConnectionString);
+                return;
 
-                if (role.Runtime.EnableRetryOnFailure == true)
-                {
-                    npgsql.EnableRetryOnFailure(
-                        maxRetryCount: role.Runtime.MaxRetryCount ?? 6,
-                        maxRetryDelay: role.Runtime.MaxRetryDelaySeconds is { } seconds
-                            ? TimeSpan.FromSeconds(seconds)
-                            : TimeSpan.FromSeconds(30),
-                        errorCodesToAdd: null);
-                }
-            });
+            case "POSTGRESQL":
+            case "POSTGRES":
+            case "NPGSQL":
+                optionsBuilder.UseNpgsql(
+                    role.ConnectionString,
+                    npgsql =>
+                    {
+                        if (role.Runtime.CommandTimeoutSeconds is { } commandTimeoutSeconds)
+                        {
+                            npgsql.CommandTimeout(commandTimeoutSeconds);
+                        }
+
+                        if (role.Runtime.MaxBatchSize is { } maxBatchSize)
+                        {
+                            npgsql.MaxBatchSize(maxBatchSize);
+                        }
+
+                        if (role.Runtime.EnableRetryOnFailure == true)
+                        {
+                            npgsql.EnableRetryOnFailure(
+                                maxRetryCount: role.Runtime.MaxRetryCount ?? 6,
+                                maxRetryDelay: role.Runtime.MaxRetryDelaySeconds is { } seconds
+                                    ? TimeSpan.FromSeconds(seconds)
+                                    : TimeSpan.FromSeconds(30),
+                                errorCodesToAdd: null);
+                        }
+                    });
+                return;
+
+            default:
+                throw new InvalidOperationException(
+                    $"Database role '{role.Role}' uses unsupported provider '{role.Provider}'. The showcase host currently supports InMemory and PostgreSql for EF-backed roles.");
+        }
     }
 
     private static bool ShouldCaptureShowcaseActivity(PathString path)

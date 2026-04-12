@@ -34,6 +34,7 @@
         "ExitAfterApply": false,
         "Targets": [
           "write",
+          "read",
           "history"
         ]
       }

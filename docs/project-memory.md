@@ -198,11 +198,13 @@ These are explicit working agreements from the current collaboration and should 
 Current standing examples from this collaboration:
 
 - keep important collaboration memory in `docs/project-memory.md`
+- keep the durable planning workflow explicit through `docs/planning-governance.md`; meaningful work must stay aligned across repo docs, GitHub Project tracking, sprint placement, validation expectations, and commit-reference history
 - treat internet-backed research as the default follow-through for sub-agent learning tasks when accuracy or freshness matters
 - when a coding task is complete and the change is validated, stage only the intended files, create a commit, keep `master` updated as the integration branch, push the finished work to GitHub, and leave project docs aligned with the shipped behavior
 - when a code change affects documented behavior, inspect the related `docs/*` graph and update every impacted hand-authored document that references that surface instead of patching only one nearby page
 - GitHub Project cards should contain enough narrative detail for a reader to understand the work without extra thread context, and they should populate the standard fields `Assignee`, `Label`, `Type`, `Project`, `Estimate`, `Iteration`, `Test`, `Benchmark`, `Milestone`, and `Relationship` when cross-card references exist
 - when a commit materially advances a GitHub Project card, add a card comment that records what changed and references the commit id so the card keeps a readable implementation history
+- roadmap, backlog, sprint placement, plan details, and GitHub Project cards must stay synchronized; if scope, estimate, validation, milestone, or relationships change, update both the docs and the card instead of leaving one side stale
 - repository-facing written artifacts should be in English, including hand-authored documentation, commit messages, and planning or tracking content that becomes part of the project record
 - use sub-agents proactively for review, consultation, and parallel investigation when a task benefits from multiple perspectives instead of treating delegation as a last resort
 - keep future-facing engine quality in view during POC work, including architecture strength, design-pattern fit, performance, security, support for broad project shapes, and overall developer experience
@@ -246,6 +248,7 @@ Unless the code clearly proves otherwise, contributors should assume:
 - documents under `docs/*` often cross-reference one another, so code changes may require multi-file doc updates across hubs, component pages, operations guides, compatibility guidance, roadmap/backlog notes, and related adoption docs
 - GitHub Project tracking should stay readable on its own, with complete card descriptions and the expected planning fields filled in so another contributor can understand scope, validation, timing, and dependencies quickly
 - GitHub Project history should remain traceable from the card itself, including comment-level references to relevant commit ids as work lands
+- meaningful work should appear in both repo-owned planning/docs surfaces and GitHub Project tracking; if one side is missing, treat the planning record as incomplete
 - the durable written project record should stay in English so docs, commits, cards, and related planning artifacts read consistently across the repository
 - XML comments on public contracts are not optional polish; they are part of the supported documentation surface
 

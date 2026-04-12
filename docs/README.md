@@ -11,6 +11,8 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 ## Start here
 
 - [Project memory](project-memory.md)
+- [Learning roadmap](learning-roadmap.md)
+- [Learning starters](learning/README.md)
 - [Getting started](getting-started.md)
 - [Generated app publishing](generated-app-publishing.md)
 - [Container image publishing](container-image-publishing.md)
@@ -21,6 +23,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [Kubernetes deployment](kubernetes-deployment.md)
 - [Linux systemd deployment](linux-systemd-deployment.md)
 - [Architecture](architecture.md)
+- [Architecture review (April 2026)](architecture-review-2026-04.md)
 - [Database topology](database-topology.md)
 - [Component catalog](components/README.md)
 - [Compatibility](compatibility.md)
@@ -50,6 +53,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 
 ## Research references
 
+- [Architecture review (April 2026)](architecture-review-2026-04.md)
 - [Architecture patterns research](architecture-patterns-research.md)
 - [Design patterns reference](architecture/design-patterns-reference.md)
 - [.NET ecosystem reference](dotnet-ecosystem-reference.md)
@@ -69,6 +73,7 @@ Downstream provider and edge-runtime integrations that are not shipped as first-
 
 ## Planning
 
+- [Planning governance](planning-governance.md)
 - [Engine roadmap](engine-roadmap.md)
 - [Engine backlog](engine-backlog.md)
 - planning issues and phase milestones can be synchronized from those docs through `scripts/sync-planning-github.ps1` and `.github/workflows/planning-sync.yml`

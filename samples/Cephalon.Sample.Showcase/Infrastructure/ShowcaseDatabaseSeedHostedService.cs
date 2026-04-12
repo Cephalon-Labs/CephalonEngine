@@ -16,16 +16,10 @@ internal sealed class ShowcaseDatabaseSeedHostedService(IServiceProvider service
     {
         using var scope = serviceProvider.CreateScope();
         var writeDb = scope.ServiceProvider.GetService<ShowcaseWriteDbContext>();
-        var readDb = scope.ServiceProvider.GetService<ShowcaseReadDbContext>();
 
         if (writeDb is not null)
         {
             await SeedAsync(writeDb, cancellationToken).ConfigureAwait(false);
-        }
-
-        if (readDb is not null)
-        {
-            await SeedAsync(readDb, cancellationToken).ConfigureAwait(false);
         }
     }
 

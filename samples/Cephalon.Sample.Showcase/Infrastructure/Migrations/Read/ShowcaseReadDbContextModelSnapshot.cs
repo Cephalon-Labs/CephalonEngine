@@ -8,10 +8,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Cephalon.Sample.Showcase.Infrastructure.Migrations.Write
+namespace Cephalon.Sample.Showcase.Infrastructure.Migrations.Read
 {
-    [DbContext(typeof(ShowcaseWriteDbContext))]
-    partial class ShowcaseWriteDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(ShowcaseReadDbContext))]
+    partial class ShowcaseReadDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -21,138 +21,6 @@ namespace Cephalon.Sample.Showcase.Infrastructure.Migrations.Write
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text")
-                        .HasColumnName("id");
-
-                    b.Property<string>("ChannelId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("channel_id");
-
-                    b.Property<string>("ContentType")
-                        .HasColumnType("text")
-                        .HasColumnName("content_type");
-
-                    b.Property<string>("CorrelationId")
-                        .HasColumnType("text")
-                        .HasColumnName("correlation_id");
-
-                    b.Property<string>("HeadersJson")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("headers_json");
-
-                    b.Property<string>("MessageType")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("message_type");
-
-                    b.Property<string>("MetadataJson")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("metadata_json");
-
-                    b.Property<string>("Payload")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("payload");
-
-                    b.Property<DateTimeOffset>("ProcessedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("processed_at_utc");
-
-                    b.Property<DateTimeOffset>("ReceivedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("received_at_utc");
-
-                    b.Property<string>("TenantId")
-                        .HasColumnType("text")
-                        .HasColumnName("tenant_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChannelId");
-
-                    b.HasIndex("ProcessedAtUtc");
-
-                    b.ToTable("cephalon_inbox_messages", (string)null);
-                });
-
-            modelBuilder.Entity("Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text")
-                        .HasColumnName("id");
-
-                    b.Property<string>("ChannelId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("channel_id");
-
-                    b.Property<string>("ContentType")
-                        .HasColumnType("text")
-                        .HasColumnName("content_type");
-
-                    b.Property<string>("CorrelationId")
-                        .HasColumnType("text")
-                        .HasColumnName("correlation_id");
-
-                    b.Property<DateTimeOffset>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at_utc");
-
-                    b.Property<int>("DispatchAttemptCount")
-                        .HasColumnType("integer")
-                        .HasColumnName("dispatch_attempt_count");
-
-                    b.Property<DateTimeOffset?>("DispatchedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("dispatched_at_utc");
-
-                    b.Property<string>("HeadersJson")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("headers_json");
-
-                    b.Property<string>("MessageType")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("message_type");
-
-                    b.Property<string>("MetadataJson")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("metadata_json");
-
-                    b.Property<DateTimeOffset?>("NextAttemptAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("next_attempt_at_utc");
-
-                    b.Property<DateTimeOffset>("OccurredAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("occurred_at_utc");
-
-                    b.Property<string>("Payload")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("payload");
-
-                    b.Property<string>("TenantId")
-                        .HasColumnType("text")
-                        .HasColumnName("tenant_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DispatchedAtUtc");
-
-                    b.HasIndex("NextAttemptAtUtc");
-
-                    b.ToTable("cephalon_outbox_messages", (string)null);
-                });
 
             modelBuilder.Entity("Cephalon.Sample.Showcase.Infrastructure.ShowcaseInventoryEntity", b =>
                 {
@@ -348,61 +216,6 @@ namespace Cephalon.Sample.Showcase.Infrastructure.Migrations.Write
                         .IsUnique();
 
                     b.ToTable("showcase_products", (string)null);
-                });
-
-            modelBuilder.Entity("Cephalon.Sample.Showcase.Infrastructure.ShowcaseReadProjectionJobEntity", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<int>("AttemptCount")
-                        .HasColumnType("integer")
-                        .HasColumnName("attempt_count");
-
-                    b.Property<DateTime>("AvailableAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("available_at_utc");
-
-                    b.Property<DateTime?>("CompletedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("completed_at_utc");
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at_utc");
-
-                    b.Property<string>("EntityKey")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
-                        .HasColumnName("entity_key");
-
-                    b.Property<DateTime?>("LastAttemptAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_attempt_at_utc");
-
-                    b.Property<string>("LastError")
-                        .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)")
-                        .HasColumnName("last_error");
-
-                    b.Property<string>("Scope")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
-                        .HasColumnName("scope");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompletedAtUtc", "AvailableAtUtc");
-
-                    b.HasIndex("Scope", "EntityKey", "CompletedAtUtc");
-
-                    b.ToTable("showcase_read_projection_jobs", (string)null);
                 });
 
             modelBuilder.Entity("Cephalon.Sample.Showcase.Infrastructure.ShowcaseShipmentEntity", b =>

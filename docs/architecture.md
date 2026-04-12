@@ -4,6 +4,7 @@ Editable diagram: `docs/cephalon-architecture.drawio`
 Planning docs: `docs/engine-roadmap.md`, `docs/engine-backlog.md`, `docs/app-models.md`
 Architecture inventory: `docs/architecture-inventory.md`
 Architecture recommendations: `docs/architecture-recommendations.md`
+Current architecture review: `docs/architecture-review-2026-04.md`
 Database direction: `docs/database-topology.md`
 Docs hub: `docs/README.md`
 Component docs: `docs/components/README.md`

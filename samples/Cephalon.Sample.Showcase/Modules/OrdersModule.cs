@@ -16,7 +16,7 @@ namespace Cephalon.Sample.Showcase.Modules;
 /// <summary>
 /// Registers the orders bounded context module.
 /// Implements the event-driven behavior pattern with a module-owned REST surface.
-/// Uses PostgreSQL (via EF) when available, otherwise falls back to in-memory store.
+/// Uses the EF-backed database role configured for the showcase host.
 /// </summary>
 public sealed class OrdersModule : RestBehaviorModuleBase
 {
@@ -97,14 +97,13 @@ public sealed class OrdersModule : RestBehaviorModuleBase
                 : Results.NotFound();
         });
 
-        routes.MapPost(string.Empty, async (PlaceOrderInput input, HttpContext ctx) =>
+        routes.MapPost(string.Empty, async (PlaceOrderInput input, HttpContext ctx, ShowcaseReadModelSyncService readModelSync) =>
         {
             var requestedOrderId = string.IsNullOrWhiteSpace(input.OrderId)
                 ? null
                 : input.OrderId.Trim();
             var orderId = requestedOrderId ?? $"ord-{Guid.NewGuid():N}"[..16];
             var writeDb = ctx.RequestServices.GetService<ShowcaseWriteDbContext>();
-            var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
 
             if (writeDb is not null)
             {
@@ -134,12 +133,9 @@ public sealed class OrdersModule : RestBehaviorModuleBase
                     }).ToList()
                 };
                 writeDb.Orders.Add(entity);
+                readModelSync.EnqueueOrders([entity.OrderId]);
                 await writeDb.SaveChangesAsync(ctx.RequestAborted);
-
-                if (readDb is not null)
-                {
-                    await UpsertReadOrderAsync(readDb, entity, ctx.RequestAborted);
-                }
+                await readModelSync.FlushAsync(ctx.RequestAborted);
 
                 await ShowcaseAuditHelper.RecordAsync(
                     ctx,
@@ -185,10 +181,9 @@ public sealed class OrdersModule : RestBehaviorModuleBase
             return Results.Created(BuildCreatedLocation(ctx, orderId), new PlaceOrderOutput(orderId, "Pending"));
         });
 
-        routes.MapPut("/{orderId}/cancel", async (string orderId, CancelOrderInput input, HttpContext ctx) =>
+        routes.MapPut("/{orderId}/cancel", async (string orderId, CancelOrderInput input, HttpContext ctx, ShowcaseReadModelSyncService readModelSync) =>
         {
             var writeDb = ctx.RequestServices.GetService<ShowcaseWriteDbContext>();
-            var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
             if (writeDb is not null)
             {
                 var entity = await writeDb.Orders.FindAsync([orderId], ctx.RequestAborted);
@@ -205,12 +200,9 @@ public sealed class OrdersModule : RestBehaviorModuleBase
                 entity.Status = "Cancelled";
                 entity.CancellationReason = input.Reason;
                 entity.UpdatedAtUtc = DateTime.UtcNow;
+                readModelSync.EnqueueOrders([entity.OrderId]);
                 await writeDb.SaveChangesAsync(ctx.RequestAborted);
-
-                if (readDb is not null)
-                {
-                    await UpsertReadOrderAsync(readDb, entity, ctx.RequestAborted);
-                }
+                await readModelSync.FlushAsync(ctx.RequestAborted);
 
                 await ShowcaseAuditHelper.RecordAsync(
                     ctx,
@@ -248,56 +240,6 @@ public sealed class OrdersModule : RestBehaviorModuleBase
             return Results.Ok(new CancelOrderOutput(orderId, "Cancelled"));
         });
     }
-
-    private static async Task UpsertReadOrderAsync(
-        ShowcaseReadDbContext readDb,
-        ShowcaseOrderEntity source,
-        CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(readDb);
-        ArgumentNullException.ThrowIfNull(source);
-
-        var projection = await readDb.Orders
-            .Include(order => order.Items)
-            .FirstOrDefaultAsync(order => order.OrderId == source.OrderId, cancellationToken);
-        if (projection is null)
-        {
-            projection = new ShowcaseOrderEntity
-            {
-                OrderId = source.OrderId
-            };
-            readDb.Orders.Add(projection);
-        }
-        else
-        {
-            var existingItems = await readDb.OrderLineItems
-                .Where(item => item.OrderId == source.OrderId)
-                .ToListAsync(cancellationToken);
-            readDb.OrderLineItems.RemoveRange(existingItems);
-        }
-
-        projection.CustomerId = source.CustomerId;
-        projection.TenantId = source.TenantId;
-        projection.Status = source.Status;
-        projection.TotalInCents = source.TotalInCents;
-        projection.ShippingAddress = source.ShippingAddress;
-        projection.PlacedAtUtc = source.PlacedAtUtc;
-        projection.UpdatedAtUtc = source.UpdatedAtUtc;
-        projection.CancellationReason = source.CancellationReason;
-        projection.Items = source.Items
-            .Select(item => new ShowcaseOrderLineItemEntity
-            {
-                OrderId = source.OrderId,
-                ProductId = item.ProductId,
-                ProductName = item.ProductName,
-                Quantity = item.Quantity,
-                UnitPriceInCents = item.UnitPriceInCents
-            })
-            .ToList();
-
-        await readDb.SaveChangesAsync(cancellationToken);
-    }
-
     private static object ToOrderDto(ShowcaseOrderEntity entity)
     {
         return new

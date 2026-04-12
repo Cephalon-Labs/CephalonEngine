@@ -134,6 +134,9 @@ public sealed class ShowcaseWriteDbContext(DbContextOptions<ShowcaseWriteDbConte
     /// <inheritdoc />
     public DbSet<EntityFrameworkInboxEntry> InboxMessages => Set<EntityFrameworkInboxEntry>();
 
+    /// <summary>Gets the durable read-model projection jobs staged in the write database.</summary>
+    public DbSet<ShowcaseReadProjectionJobEntity> ReadProjectionJobs => Set<ShowcaseReadProjectionJobEntity>();
+
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -142,6 +145,22 @@ public sealed class ShowcaseWriteDbContext(DbContextOptions<ShowcaseWriteDbConte
         base.OnModelCreating(modelBuilder);
         modelBuilder.ConfigureCephalonOutbox();
         modelBuilder.ConfigureCephalonInbox();
+        modelBuilder.Entity<ShowcaseReadProjectionJobEntity>(entity =>
+        {
+            entity.ToTable("showcase_read_projection_jobs");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
+            entity.Property(e => e.Scope).HasColumnName("scope").HasMaxLength(32);
+            entity.Property(e => e.EntityKey).HasColumnName("entity_key").HasMaxLength(128);
+            entity.Property(e => e.CreatedAtUtc).HasColumnName("created_at_utc");
+            entity.Property(e => e.LastAttemptAtUtc).HasColumnName("last_attempt_at_utc");
+            entity.Property(e => e.AttemptCount).HasColumnName("attempt_count");
+            entity.Property(e => e.AvailableAtUtc).HasColumnName("available_at_utc");
+            entity.Property(e => e.CompletedAtUtc).HasColumnName("completed_at_utc");
+            entity.Property(e => e.LastError).HasColumnName("last_error").HasMaxLength(4000);
+            entity.HasIndex(e => new { e.CompletedAtUtc, e.AvailableAtUtc });
+            entity.HasIndex(e => new { e.Scope, e.EntityKey, e.CompletedAtUtc });
+        });
     }
 }
 
@@ -161,6 +180,39 @@ public sealed class ShowcaseAuditHistoryDbContext(DbContextOptions<ShowcaseAudit
 
         modelBuilder.ConfigureCephalonAuditHistory(tableName: "showcase_audit_history");
     }
+}
+
+/// <summary>
+/// Durable projection job persisted in the write database so the read model can recover after failures.
+/// </summary>
+public sealed class ShowcaseReadProjectionJobEntity
+{
+    /// <summary>Gets or sets the auto-generated row identifier.</summary>
+    public long Id { get; set; }
+
+    /// <summary>Gets or sets the projection scope name.</summary>
+    public string Scope { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the aggregate or entity key to project.</summary>
+    public string EntityKey { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the creation timestamp.</summary>
+    public DateTime CreatedAtUtc { get; set; }
+
+    /// <summary>Gets or sets the last attempt timestamp.</summary>
+    public DateTime? LastAttemptAtUtc { get; set; }
+
+    /// <summary>Gets or sets the number of projection attempts.</summary>
+    public int AttemptCount { get; set; }
+
+    /// <summary>Gets or sets when the next attempt becomes eligible.</summary>
+    public DateTime AvailableAtUtc { get; set; }
+
+    /// <summary>Gets or sets when the job completed successfully.</summary>
+    public DateTime? CompletedAtUtc { get; set; }
+
+    /// <summary>Gets or sets the last projection error, when available.</summary>
+    public string? LastError { get; set; }
 }
 
 // ──────────────────────────────────────────────

@@ -3,6 +3,8 @@ using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Authorization;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
+using Cephalon.Abstractions.Data;
+using Cephalon.Abstractions.Health;
 using Cephalon.AspNetCore.Documentation;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.Engine.Configuration;
@@ -70,6 +72,97 @@ internal sealed class ShowcaseSystemProjectionService(
             Orders: commerce.Orders,
             Inventory: commerce.Inventory,
             Shipments: commerce.Shipments);
+    }
+
+    public async Task<ShowcaseDatabaseTopologyResponse> GetDatabaseTopologyAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var runtimeSnapshot = snapshotProvider.CreateSnapshot();
+        var readModelSync = await LoadReadModelSyncStatusAsync(cancellationToken).ConfigureAwait(false);
+
+        var roles = runtimeSnapshot.DatabaseRoles
+            .OrderBy(static role => role.Id, StringComparer.OrdinalIgnoreCase)
+            .Select(role => new ShowcaseDatabaseTopologyRoleRow(
+                Id: role.Id,
+                RequestedRoleId: role.RequestedRoleId,
+                ResolvedRoleId: role.ResolvedRoleId,
+                Provider: role.Provider,
+                ResolutionMode: role.ResolutionMode,
+                ConnectionMode: role.ConnectionMode,
+                Schema: role.Schema,
+                HealthState: role.HealthState?.ToString(),
+                MigrationState: role.MigrationState,
+                Consumers: role.Consumers,
+                MetadataPreview: CreateMetadataPreview(
+                    role.Metadata,
+                    maxEntries: 6,
+                    preferredKeys:
+                    [
+                        "topologySource",
+                        "runtimeProvider",
+                        "dbContextType",
+                        "roleReferenceSource",
+                        "connectionMode",
+                        "schema"
+                    ]),
+                RuntimeMetadataPreview: CreateMetadataPreview(
+                    role.RuntimeMetadata,
+                    maxEntries: 6,
+                    preferredKeys:
+                    [
+                        "providerPack",
+                        "executionMode",
+                        "probeOutcome",
+                        "pendingMigrations",
+                        "appliedMigrations",
+                        "lastProbeAtUtc"
+                    ])))
+            .ToArray();
+
+        var migrations = runtimeSnapshot.DatabaseMigrations
+            .OrderBy(static migration => migration.Id, StringComparer.OrdinalIgnoreCase)
+            .Select(migration => new ShowcaseDatabaseTopologyMigrationRow(
+                Id: migration.Id,
+                RequestedRoleId: migration.RequestedRoleId,
+                ResolvedRoleId: migration.ResolvedRoleId,
+                Status: migration.Status.ToString(),
+                ExecutionMode: migration.ExecutionMode,
+                ApplyOnStartup: migration.ApplyOnStartup,
+                Provider: migration.Provider,
+                DbContextType: migration.DbContextType,
+                Commands: migration.Commands
+                    .Select(static command => command.CommandTemplate)
+                    .ToArray(),
+                MetadataPreview: CreateMetadataPreview(
+                    migration.Metadata,
+                    maxEntries: 6,
+                    preferredKeys:
+                    [
+                        "runtimeProvider",
+                        "roleHealthState",
+                        "roleMigrationState",
+                        "roleRuntime.probeOutcome",
+                        "dbContextType",
+                        "mechanism"
+                    ])))
+            .ToArray();
+
+        var summary = new ShowcaseDatabaseTopologySummary(
+            RoleCount: roles.Length,
+            HealthyRoleCount: runtimeSnapshot.DatabaseRoles.Count(static role => role.HealthState == HealthState.Healthy),
+            MigrationTargetCount: migrations.Length,
+            SucceededMigrationTargetCount: runtimeSnapshot.DatabaseMigrations.Count(static migration => migration.Status == DatabaseMigrationStatus.Succeeded),
+            ReadModelSyncEnabled: readModelSync.Enabled,
+            WriteProvider: runtimeSnapshot.Manifest.AppProfile.Databases.Write.Provider ?? "Unknown",
+            ReadProvider: runtimeSnapshot.Manifest.AppProfile.Databases.Read.Provider ?? "Unknown",
+            HistoryProvider: runtimeSnapshot.Manifest.AppProfile.Databases.History.Provider ?? "Unknown",
+            GeneratedAtUtc: DateTimeOffset.UtcNow);
+
+        return new ShowcaseDatabaseTopologyResponse(
+            Summary: summary,
+            Roles: roles,
+            Migrations: migrations,
+            ReadModelSync: readModelSync);
     }
 
     public Task<ShowcaseRuntimeResponse> GetRuntimeAsync(
@@ -503,6 +596,165 @@ internal sealed class ShowcaseSystemProjectionService(
                 .ToArray());
     }
 
+    private async Task<ShowcaseReadModelSyncStatus> LoadReadModelSyncStatusAsync(CancellationToken cancellationToken)
+    {
+        var writeStore = await LoadStoreCountsAsync(writeDb, cancellationToken).ConfigureAwait(false);
+        var readStore = await LoadStoreCountsAsync(readDb, cancellationToken).ConfigureAwait(false);
+
+        if (writeDb is null)
+        {
+            return new ShowcaseReadModelSyncStatus(
+                Enabled: false,
+                IsLagging: false,
+                WriteStore: writeStore,
+                ReadStore: readStore,
+                ProductDelta: writeStore.Products - readStore.Products,
+                InventoryDelta: writeStore.Inventory - readStore.Inventory,
+                OrderDelta: writeStore.Orders - readStore.Orders,
+                ShipmentDelta: writeStore.Shipments - readStore.Shipments,
+                Jobs: new ShowcaseProjectionJobSummary(0, 0, 0, 0, 0, null, null),
+                Scopes: []);
+        }
+
+        var jobs = await writeDb.ReadProjectionJobs
+            .AsNoTracking()
+            .OrderBy(job => job.Scope)
+            .ThenBy(job => job.CreatedAtUtc)
+            .ThenBy(job => job.Id)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        var summary = BuildProjectionJobSummary(jobs);
+        var productDelta = writeStore.Products - readStore.Products;
+        var inventoryDelta = writeStore.Inventory - readStore.Inventory;
+        var orderDelta = writeStore.Orders - readStore.Orders;
+        var shipmentDelta = writeStore.Shipments - readStore.Shipments;
+
+        return new ShowcaseReadModelSyncStatus(
+            Enabled: readDb is not null,
+            IsLagging:
+                productDelta != 0 ||
+                inventoryDelta != 0 ||
+                orderDelta != 0 ||
+                shipmentDelta != 0 ||
+                summary.PendingJobs > 0 ||
+                summary.FailedJobs > 0,
+            WriteStore: writeStore,
+            ReadStore: readStore,
+            ProductDelta: productDelta,
+            InventoryDelta: inventoryDelta,
+            OrderDelta: orderDelta,
+            ShipmentDelta: shipmentDelta,
+            Jobs: summary,
+            Scopes: jobs
+                .GroupBy(static job => string.IsNullOrWhiteSpace(job.Scope) ? "unknown" : job.Scope, StringComparer.OrdinalIgnoreCase)
+                .OrderBy(static group => group.Key, StringComparer.OrdinalIgnoreCase)
+                .Select(group => BuildProjectionJobScopeRow(group.Key, group.ToArray()))
+                .ToArray());
+    }
+
+    private static async Task<ShowcaseReadModelStoreCounts> LoadStoreCountsAsync(
+        ShowcaseCommerceDbContextBase? db,
+        CancellationToken cancellationToken)
+    {
+        if (db is null)
+        {
+            return new ShowcaseReadModelStoreCounts(0, 0, 0, 0);
+        }
+
+        var productCount = await db.Products.CountAsync(cancellationToken).ConfigureAwait(false);
+        var inventoryCount = await db.InventoryItems.CountAsync(cancellationToken).ConfigureAwait(false);
+        var orderCount = await db.Orders.CountAsync(cancellationToken).ConfigureAwait(false);
+        var shipmentCount = await db.Shipments.CountAsync(cancellationToken).ConfigureAwait(false);
+
+        return new ShowcaseReadModelStoreCounts(
+            Products: productCount,
+            Inventory: inventoryCount,
+            Orders: orderCount,
+            Shipments: shipmentCount);
+    }
+
+    private static ShowcaseProjectionJobSummary BuildProjectionJobSummary(
+        List<ShowcaseReadProjectionJobEntity> jobs)
+    {
+        ArgumentNullException.ThrowIfNull(jobs);
+
+        return new ShowcaseProjectionJobSummary(
+            TotalJobs: jobs.Count,
+            PendingJobs: jobs.Count(IsPendingJob),
+            FailedJobs: jobs.Count(IsFailedJob),
+            CompletedJobs: jobs.Count(static job => job.CompletedAtUtc is not null),
+            DistinctScopes: jobs
+                .Select(static job => string.IsNullOrWhiteSpace(job.Scope) ? "unknown" : job.Scope.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Count(),
+            NextAvailableAtUtc: ToUtcOffset(jobs
+                .Where(IsPendingJob)
+                .OrderBy(static job => job.AvailableAtUtc)
+                .Select(static job => (DateTime?)job.AvailableAtUtc)
+                .FirstOrDefault()),
+            LastCompletedAtUtc: ToUtcOffset(jobs
+                .Where(static job => job.CompletedAtUtc is not null)
+                .OrderByDescending(static job => job.CompletedAtUtc)
+                .Select(static job => job.CompletedAtUtc)
+                .FirstOrDefault()));
+    }
+
+    private static ShowcaseProjectionJobScopeRow BuildProjectionJobScopeRow(
+        string scope,
+        ShowcaseReadProjectionJobEntity[] jobs)
+    {
+        ArgumentNullException.ThrowIfNull(scope);
+        ArgumentNullException.ThrowIfNull(jobs);
+
+        return new ShowcaseProjectionJobScopeRow(
+            Scope: scope,
+            TotalJobs: jobs.Length,
+            PendingJobs: jobs.Count(IsPendingJob),
+            FailedJobs: jobs.Count(IsFailedJob),
+            CompletedJobs: jobs.Count(static job => job.CompletedAtUtc is not null),
+            MaxAttemptCount: jobs.Length == 0 ? 0 : jobs.Max(static job => job.AttemptCount),
+            NextAvailableAtUtc: ToUtcOffset(jobs
+                .Where(IsPendingJob)
+                .OrderBy(static job => job.AvailableAtUtc)
+                .Select(static job => (DateTime?)job.AvailableAtUtc)
+                .FirstOrDefault()),
+            LastCompletedAtUtc: ToUtcOffset(jobs
+                .Where(static job => job.CompletedAtUtc is not null)
+                .OrderByDescending(static job => job.CompletedAtUtc)
+                .Select(static job => job.CompletedAtUtc)
+                .FirstOrDefault()));
+    }
+
+    private static bool IsPendingJob(ShowcaseReadProjectionJobEntity job)
+    {
+        ArgumentNullException.ThrowIfNull(job);
+        return job.CompletedAtUtc is null;
+    }
+
+    private static bool IsFailedJob(ShowcaseReadProjectionJobEntity job)
+    {
+        ArgumentNullException.ThrowIfNull(job);
+        return job.CompletedAtUtc is null && !string.IsNullOrWhiteSpace(job.LastError);
+    }
+
+    private static DateTimeOffset? ToUtcOffset(DateTime? value)
+    {
+        if (value is null)
+        {
+            return null;
+        }
+
+        var utcValue = value.Value.Kind switch
+        {
+            DateTimeKind.Utc => value.Value,
+            DateTimeKind.Local => value.Value.ToUniversalTime(),
+            _ => DateTime.SpecifyKind(value.Value, DateTimeKind.Utc)
+        };
+
+        return new DateTimeOffset(utcValue);
+    }
+
     private ShowcaseCartRow[] BuildCartRows()
     {
         var aggregate = new Domain.Cart.Models.ShoppingCartAggregate();
@@ -625,7 +877,8 @@ internal sealed class ShowcaseSystemProjectionService(
             DiagnosticsPath: "/engine/diagnostics",
             ModulesPath: "/engine/modules",
             CapabilitiesPath: "/engine/capabilities",
-            AuditHistoryPath: $"{apiRoutes.RestPrefix}/v1/showcase/audit/history");
+            AuditHistoryPath: $"{apiRoutes.RestPrefix}/v1/showcase/audit/history",
+            DatabaseTopologyPath: $"{apiRoutes.RestPrefix}/v1/showcase/system/database-topology");
     }
 
     private List<string> BuildSuggestedJourneys(

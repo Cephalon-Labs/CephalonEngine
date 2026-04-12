@@ -15,7 +15,7 @@ namespace Cephalon.Sample.Showcase.Modules;
 /// <summary>
 /// Registers the shipping bounded context module.
 /// Implements the process-manager behavior pattern with a module-owned REST surface.
-/// Uses PostgreSQL (via EF) when available, otherwise falls back to in-memory store.
+/// Uses the EF-backed database role configured for the showcase host.
 /// </summary>
 public sealed class ShippingModule : RestBehaviorModuleBase
 {
@@ -94,14 +94,13 @@ public sealed class ShippingModule : RestBehaviorModuleBase
                 : Results.NotFound();
         });
 
-        routes.MapPost(string.Empty, async (InitiateShippingInput input, HttpContext ctx) =>
+        routes.MapPost(string.Empty, async (InitiateShippingInput input, HttpContext ctx, ShowcaseReadModelSyncService readModelSync) =>
         {
             var shipmentId = $"shp-{Guid.NewGuid():N}"[..16];
             var trackingNumber = $"TRK-{Guid.NewGuid():N}"[..16].ToUpperInvariant();
             var estimatedDelivery = DateTime.UtcNow.AddDays(3);
 
             var writeDb = ctx.RequestServices.GetService<ShowcaseWriteDbContext>();
-            var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
             if (writeDb is not null)
             {
                 var existingShipment = await writeDb.Shipments
@@ -131,16 +130,14 @@ public sealed class ShippingModule : RestBehaviorModuleBase
                     CreatedAtUtc = DateTime.UtcNow
                 };
                 writeDb.Shipments.Add(entity);
-                await writeDb.SaveChangesAsync(ctx.RequestAborted);
-
-                if (readDb is not null)
+                readModelSync.EnqueueShipments([entity.ShipmentId]);
+                if (order is not null)
                 {
-                    await UpsertReadShipmentAsync(readDb, entity, ctx.RequestAborted);
-                    if (order is not null)
-                    {
-                        await UpsertReadOrderStatusAsync(readDb, order, ctx.RequestAborted);
-                    }
+                    readModelSync.EnqueueOrders([order.OrderId]);
                 }
+
+                await writeDb.SaveChangesAsync(ctx.RequestAborted);
+                await readModelSync.FlushAsync(ctx.RequestAborted);
 
                 await ShowcaseAuditHelper.RecordAsync(
                     ctx,
@@ -191,10 +188,9 @@ public sealed class ShippingModule : RestBehaviorModuleBase
                 new InitiateShippingOutput(shipmentId, "LabelCreated", estimatedDelivery));
         });
 
-        routes.MapPut("/{shipmentId}/deliver", async (string shipmentId, ConfirmDeliveryInput input, HttpContext ctx) =>
+        routes.MapPut("/{shipmentId}/deliver", async (string shipmentId, ConfirmDeliveryInput input, HttpContext ctx, ShowcaseReadModelSyncService readModelSync) =>
         {
             var writeDb = ctx.RequestServices.GetService<ShowcaseWriteDbContext>();
-            var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
             if (writeDb is not null)
             {
                 var entity = await writeDb.Shipments.FindAsync([shipmentId], ctx.RequestAborted);
@@ -205,24 +201,22 @@ public sealed class ShippingModule : RestBehaviorModuleBase
 
                 entity.Status = "Delivered";
                 entity.DeliveredAtUtc = DateTime.UtcNow;
-                await writeDb.SaveChangesAsync(ctx.RequestAborted);
 
                 var order = await writeDb.Orders.FindAsync([entity.OrderId], ctx.RequestAborted);
                 if (order is not null)
                 {
                     order.Status = "Delivered";
                     order.UpdatedAtUtc = DateTime.UtcNow;
-                    await writeDb.SaveChangesAsync(ctx.RequestAborted);
                 }
 
-                if (readDb is not null)
+                readModelSync.EnqueueShipments([entity.ShipmentId]);
+                if (order is not null)
                 {
-                    await UpsertReadShipmentAsync(readDb, entity, ctx.RequestAborted);
-                    if (order is not null)
-                    {
-                        await UpsertReadOrderStatusAsync(readDb, order, ctx.RequestAborted);
-                    }
+                    readModelSync.EnqueueOrders([order.OrderId]);
                 }
+
+                await writeDb.SaveChangesAsync(ctx.RequestAborted);
+                await readModelSync.FlushAsync(ctx.RequestAborted);
 
                 await ShowcaseAuditHelper.RecordAsync(
                     ctx,
@@ -267,57 +261,6 @@ public sealed class ShippingModule : RestBehaviorModuleBase
                 shipment.DeliveredAtUtc!.Value));
         });
     }
-
-    private static async Task UpsertReadShipmentAsync(
-        ShowcaseReadDbContext readDb,
-        ShowcaseShipmentEntity source,
-        CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(readDb);
-        ArgumentNullException.ThrowIfNull(source);
-
-        var projection = await readDb.Shipments.FindAsync([source.ShipmentId], cancellationToken);
-        if (projection is null)
-        {
-            projection = new ShowcaseShipmentEntity
-            {
-                ShipmentId = source.ShipmentId
-            };
-            readDb.Shipments.Add(projection);
-        }
-
-        projection.OrderId = source.OrderId;
-        projection.DestinationAddress = source.DestinationAddress;
-        projection.Carrier = source.Carrier;
-        projection.TrackingNumber = source.TrackingNumber;
-        projection.Status = source.Status;
-        projection.EstimatedDeliveryUtc = source.EstimatedDeliveryUtc;
-        projection.DeliveredAtUtc = source.DeliveredAtUtc;
-        projection.CreatedAtUtc = source.CreatedAtUtc;
-
-        await readDb.SaveChangesAsync(cancellationToken);
-    }
-
-    private static async Task UpsertReadOrderStatusAsync(
-        ShowcaseReadDbContext readDb,
-        ShowcaseOrderEntity source,
-        CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(readDb);
-        ArgumentNullException.ThrowIfNull(source);
-
-        var projection = await readDb.Orders.FindAsync([source.OrderId], cancellationToken);
-        if (projection is null)
-        {
-            return;
-        }
-
-        projection.Status = source.Status;
-        projection.UpdatedAtUtc = source.UpdatedAtUtc;
-        projection.CancellationReason = source.CancellationReason;
-        await readDb.SaveChangesAsync(cancellationToken);
-    }
-
     private static object ToShipmentDto(ShowcaseShipmentEntity entity)
     {
         return new

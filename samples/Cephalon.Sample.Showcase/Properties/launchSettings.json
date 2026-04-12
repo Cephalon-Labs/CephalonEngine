@@ -2,7 +2,35 @@
   "profiles": {
     "Cephalon.Sample.Showcase": {
       "commandName": "Project",
+      "dotnetRunMessages": true,
       "launchBrowser": true,
+      "launchUrl": "showcase",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Engine__Databases__Write__Provider": "InMemory",
+        "Engine__Databases__Write__ConnectionStringName": "",
+        "Engine__Databases__Write__ConnectionString": "showcase-vs-write",
+        "Engine__Databases__Read__Provider": "InMemory",
+        "Engine__Databases__Read__ConnectionStringName": "",
+        "Engine__Databases__Read__ConnectionString": "showcase-vs-read",
+        "Engine__Databases__History__Provider": "InMemory",
+        "Engine__Databases__History__ConnectionStringName": "",
+        "Engine__Databases__History__ConnectionString": "showcase-vs-history",
+        "Engine__Data__MongoDB__ConnectionStringName": "",
+        "Engine__Data__MongoDB__ConnectionString": "",
+        "Engine__Data__Redis__ConnectionStringName": "",
+        "Engine__Data__Redis__ConnectionString": "",
+        "Engine__Messaging__RabbitMQ__ConnectionString": "",
+        "Engine__Messaging__RabbitMQ__HostName": "",
+        "Engine__Messaging__Kafka__BootstrapServers": ""
+      },
+      "applicationUrl": "https://localhost:54191;http://localhost:54192"
+    },
+    "Cephalon.Sample.Showcase (Docker)": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "showcase",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

@@ -427,7 +427,8 @@ function renderOverview() {
     linkButton("Runtime Snapshot", documentation.runtimeSnapshotPath),
     linkButton("Runtime Story", documentation.runtimeStoryPath),
     linkButton("Diagnostics", documentation.diagnosticsPath),
-    linkButton("Audit History", documentation.auditHistoryPath)
+    linkButton("Audit History", documentation.auditHistoryPath),
+    linkButton("Database Topology", documentation.databaseTopologyPath)
   ].join("");
 }
 

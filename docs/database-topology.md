@@ -79,8 +79,11 @@ The new baseline is visible through:
 - `/engine/audit-history`
 - `/engine/audit-history/export`
 - `/engine/snapshot`
+- `/api/v1/showcase/system/database-topology` in the showcase sample
 
 `/engine/databases` remains the raw engine-owned topology answer. `/engine/database-roles` is the resolved operator catalog for active roles and their runtime metadata, including provider-contributed health and migration-pressure signals when a pack can supply them. `/engine/database-migrations` is the resolved operator catalog for logical migration targets, their execution state, and any provider-added deploy-time command templates. Together they keep database-topology choices explicit and operator-visible even before deeper provider packs consume every part of the contract.
+
+The showcase sample now also exposes `/api/v1/showcase/system/database-topology` as an adoption-quality operator projection that combines the engine-owned role and migration catalogs with sample-specific read-model sync truth: write-side versus read-side row counts, durable projection-job backlog, retry state, and per-scope completion status. That keeps the split `write`/`read` story observable without requiring operators to inspect the underlying databases directly.
 
 ## Current example
 
@@ -156,7 +159,7 @@ The new baseline is visible through:
 }
 ```
 
-The showcase sample keeps PostgreSQL root-role settings in grouped files under `Configurations/ConnectionStrings/*` plus `Configurations/Engine/Databases/*` for Docker-backed runs, applies startup migrations for `write` and `history`, currently keeps the logical `read` role co-located with `write`, and still rewrites the `Write`, `Read`, and `History` roles to unique in-memory targets when `SHOWCASE_DOCKER` is not enabled. That keeps the sample's database-role catalog, migration catalog, and durable audit-history routes truthfully active in local and test runs without requiring external infrastructure.
+The showcase sample keeps PostgreSQL root-role settings in grouped files under `Configurations/ConnectionStrings/*` plus `Configurations/Engine/Databases/*` for Docker-backed runs, applies startup migrations for `write`, `read`, and `history`, and lets tests or alternate hosts override those same config keys to isolated in-memory roles without changing the host code. The sample now also stages durable read-projection jobs in the write database and reconciles the separate read database through a startup rebuild plus background retry loop, so the read-side split remains truthful even when immediate projection fails. The new `/api/v1/showcase/system/database-topology` projection makes that reconciliation visible in one place for demos, operator walkthroughs, and regression tests.
 
 For Entity Framework-backed roles, the migration catalog now also carries operator-facing command templates such as:
 

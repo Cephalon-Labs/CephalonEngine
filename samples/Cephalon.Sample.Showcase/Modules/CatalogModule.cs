@@ -17,7 +17,7 @@ namespace Cephalon.Sample.Showcase.Modules;
 /// <summary>
 /// Registers the catalog bounded context module.
 /// Exposes product CRUD operations through a module-owned REST surface.
-/// Uses PostgreSQL (via EF) when available, otherwise falls back to in-memory store.
+/// Uses the EF-backed database role configured for the showcase host.
 /// </summary>
 public sealed class CatalogModule : RestBehaviorModuleBase
 {
@@ -98,11 +98,10 @@ public sealed class CatalogModule : RestBehaviorModuleBase
                 : Results.NotFound();
         });
 
-        routes.MapPost("/products", async (CreateProductInput input, HttpContext ctx) =>
+        routes.MapPost("/products", async (CreateProductInput input, HttpContext ctx, ShowcaseReadModelSyncService readModelSync) =>
         {
             var productId = $"prod-{Guid.NewGuid():N}"[..16];
             var writeDb = ctx.RequestServices.GetService<ShowcaseWriteDbContext>();
-            var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
 
             if (writeDb is not null)
             {
@@ -119,12 +118,9 @@ public sealed class CatalogModule : RestBehaviorModuleBase
                     CreatedAtUtc = DateTime.UtcNow
                 };
                 writeDb.Products.Add(entity);
+                readModelSync.EnqueueProducts([entity.Id]);
                 await writeDb.SaveChangesAsync(ctx.RequestAborted);
-
-                if (readDb is not null)
-                {
-                    await UpsertReadProductAsync(readDb, entity, ctx.RequestAborted);
-                }
+                await readModelSync.FlushAsync(ctx.RequestAborted);
 
                 await ShowcaseAuditHelper.RecordAsync(
                     ctx,
@@ -165,10 +161,9 @@ public sealed class CatalogModule : RestBehaviorModuleBase
             return Results.Created(BuildCreatedLocation(ctx, productId), product);
         });
 
-        routes.MapPut("/products/{productId}", async (string productId, UpdateProductInput input, HttpContext ctx) =>
+        routes.MapPut("/products/{productId}", async (string productId, UpdateProductInput input, HttpContext ctx, ShowcaseReadModelSyncService readModelSync) =>
         {
             var writeDb = ctx.RequestServices.GetService<ShowcaseWriteDbContext>();
-            var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
             if (writeDb is not null)
             {
                 var entity = await writeDb.Products.FindAsync([productId], ctx.RequestAborted);
@@ -207,12 +202,9 @@ public sealed class CatalogModule : RestBehaviorModuleBase
                 }
 
                 entity.UpdatedAtUtc = DateTime.UtcNow;
+                readModelSync.EnqueueProducts([entity.Id]);
                 await writeDb.SaveChangesAsync(ctx.RequestAborted);
-
-                if (readDb is not null)
-                {
-                    await UpsertReadProductAsync(readDb, entity, ctx.RequestAborted);
-                }
+                await readModelSync.FlushAsync(ctx.RequestAborted);
 
                 await ShowcaseAuditHelper.RecordAsync(
                     ctx,
@@ -259,39 +251,6 @@ public sealed class CatalogModule : RestBehaviorModuleBase
             return Results.Ok(product);
         });
     }
-
-    private static async Task UpsertReadProductAsync(
-        ShowcaseReadDbContext readDb,
-        ShowcaseProductEntity source,
-        CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(readDb);
-        ArgumentNullException.ThrowIfNull(source);
-
-        var projection = await readDb.Products.FindAsync([source.Id], cancellationToken);
-        if (projection is null)
-        {
-            projection = new ShowcaseProductEntity
-            {
-                Id = source.Id
-            };
-            readDb.Products.Add(projection);
-        }
-
-        projection.Sku = source.Sku;
-        projection.Name = source.Name;
-        projection.Description = source.Description;
-        projection.Category = source.Category;
-        projection.PriceInCents = source.PriceInCents;
-        projection.Currency = source.Currency;
-        projection.IsActive = source.IsActive;
-        projection.TagsJson = source.TagsJson;
-        projection.CreatedAtUtc = source.CreatedAtUtc;
-        projection.UpdatedAtUtc = source.UpdatedAtUtc;
-
-        await readDb.SaveChangesAsync(cancellationToken);
-    }
-
     private static Product ToProduct(ShowcaseProductEntity entity)
     {
         return new Product

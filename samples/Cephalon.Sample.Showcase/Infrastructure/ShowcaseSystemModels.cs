@@ -8,7 +8,8 @@ internal sealed record ShowcaseDocumentationLinks(
     string DiagnosticsPath,
     string ModulesPath,
     string CapabilitiesPath,
-    string AuditHistoryPath);
+    string AuditHistoryPath,
+    string DatabaseTopologyPath);
 
 internal sealed record ShowcaseRuntimeSummary(
     string Environment,
@@ -74,6 +75,86 @@ internal sealed record ShowcaseSystemSummaryResponse(
     IReadOnlyList<ShowcaseDependencySummary> Dependencies,
     IReadOnlyList<ShowcaseRecentAuditEntry> RecentAuditEntries,
     IReadOnlyList<string> SuggestedJourneys);
+
+internal sealed record ShowcaseDatabaseTopologySummary(
+    int RoleCount,
+    int HealthyRoleCount,
+    int MigrationTargetCount,
+    int SucceededMigrationTargetCount,
+    bool ReadModelSyncEnabled,
+    string WriteProvider,
+    string ReadProvider,
+    string HistoryProvider,
+    DateTimeOffset GeneratedAtUtc);
+
+internal sealed record ShowcaseDatabaseTopologyRoleRow(
+    string Id,
+    string RequestedRoleId,
+    string ResolvedRoleId,
+    string Provider,
+    string ResolutionMode,
+    string? ConnectionMode,
+    string? Schema,
+    string? HealthState,
+    string? MigrationState,
+    IReadOnlyList<string> Consumers,
+    IReadOnlyDictionary<string, string> MetadataPreview,
+    IReadOnlyDictionary<string, string> RuntimeMetadataPreview);
+
+internal sealed record ShowcaseDatabaseTopologyMigrationRow(
+    string Id,
+    string RequestedRoleId,
+    string ResolvedRoleId,
+    string Status,
+    string ExecutionMode,
+    bool ApplyOnStartup,
+    string? Provider,
+    string? DbContextType,
+    IReadOnlyList<string> Commands,
+    IReadOnlyDictionary<string, string> MetadataPreview);
+
+internal sealed record ShowcaseReadModelStoreCounts(
+    int Products,
+    int Inventory,
+    int Orders,
+    int Shipments);
+
+internal sealed record ShowcaseProjectionJobSummary(
+    int TotalJobs,
+    int PendingJobs,
+    int FailedJobs,
+    int CompletedJobs,
+    int DistinctScopes,
+    DateTimeOffset? NextAvailableAtUtc,
+    DateTimeOffset? LastCompletedAtUtc);
+
+internal sealed record ShowcaseProjectionJobScopeRow(
+    string Scope,
+    int TotalJobs,
+    int PendingJobs,
+    int FailedJobs,
+    int CompletedJobs,
+    int MaxAttemptCount,
+    DateTimeOffset? NextAvailableAtUtc,
+    DateTimeOffset? LastCompletedAtUtc);
+
+internal sealed record ShowcaseReadModelSyncStatus(
+    bool Enabled,
+    bool IsLagging,
+    ShowcaseReadModelStoreCounts WriteStore,
+    ShowcaseReadModelStoreCounts ReadStore,
+    int ProductDelta,
+    int InventoryDelta,
+    int OrderDelta,
+    int ShipmentDelta,
+    ShowcaseProjectionJobSummary Jobs,
+    IReadOnlyList<ShowcaseProjectionJobScopeRow> Scopes);
+
+internal sealed record ShowcaseDatabaseTopologyResponse(
+    ShowcaseDatabaseTopologySummary Summary,
+    IReadOnlyList<ShowcaseDatabaseTopologyRoleRow> Roles,
+    IReadOnlyList<ShowcaseDatabaseTopologyMigrationRow> Migrations,
+    ShowcaseReadModelSyncStatus ReadModelSync);
 
 internal sealed record ShowcaseCatalogProductRow(
     string Id,

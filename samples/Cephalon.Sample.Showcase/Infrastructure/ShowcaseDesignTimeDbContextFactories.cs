@@ -21,6 +21,21 @@ public sealed class ShowcaseWriteDbContextFactory : IDesignTimeDbContextFactory<
 }
 
 /// <summary>
+/// Creates the read-side showcase DbContext for EF Core design-time tooling.
+/// </summary>
+public sealed class ShowcaseReadDbContextFactory : IDesignTimeDbContextFactory<ShowcaseReadDbContext>
+{
+    /// <inheritdoc />
+    public ShowcaseReadDbContext CreateDbContext(string[] args)
+    {
+        var configuration = ShowcaseDesignTimeDatabaseConfiguration.Build(args);
+        var optionsBuilder = new DbContextOptionsBuilder<ShowcaseReadDbContext>();
+        ShowcaseDesignTimeDatabaseConfiguration.ConfigureRole(optionsBuilder, configuration, "Read");
+        return new ShowcaseReadDbContext(optionsBuilder.Options);
+    }
+}
+
+/// <summary>
 /// Creates the audit-history showcase DbContext for EF Core design-time tooling.
 /// </summary>
 public sealed class ShowcaseAuditHistoryDbContextFactory : IDesignTimeDbContextFactory<ShowcaseAuditHistoryDbContext>

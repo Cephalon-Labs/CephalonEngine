@@ -17,7 +17,7 @@ namespace Cephalon.Sample.Showcase.Modules;
 /// <summary>
 /// Registers the inventory bounded context module.
 /// Implements the saga-step behavior pattern with a module-owned REST surface.
-/// Uses PostgreSQL (via EF) when available, otherwise falls back to in-memory store.
+/// Uses the EF-backed database role configured for the showcase host.
 /// </summary>
 public sealed class InventoryModule : RestBehaviorModuleBase
 {
@@ -94,10 +94,9 @@ public sealed class InventoryModule : RestBehaviorModuleBase
                 : Results.NotFound();
         });
 
-        routes.MapPost("/reserve", async (ReserveStockInput input, HttpContext ctx) =>
+        routes.MapPost("/reserve", async (ReserveStockInput input, HttpContext ctx, ShowcaseReadModelSyncService readModelSync) =>
         {
             var writeDb = ctx.RequestServices.GetService<ShowcaseWriteDbContext>();
-            var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
             if (writeDb is not null)
             {
                 var order = await writeDb.Orders.FindAsync([input.OrderId], ctx.RequestAborted);
@@ -132,23 +131,18 @@ public sealed class InventoryModule : RestBehaviorModuleBase
                     order.UpdatedAtUtc = DateTime.UtcNow;
                 }
 
-                await writeDb.SaveChangesAsync(ctx.RequestAborted);
-
-                if (readDb is not null)
+                if (changedProductIds.Count > 0)
                 {
-                    foreach (var productId in changedProductIds)
-                    {
-                        var source = await writeDb.InventoryItems
-                            .AsNoTracking()
-                            .FirstAsync(item => item.ProductId == productId, ctx.RequestAborted);
-                        await UpsertReadInventoryAsync(readDb, source, ctx.RequestAborted);
-                    }
-
-                    if (allReserved && order is not null)
-                    {
-                        await UpsertReadOrderStatusAsync(readDb, order, ctx.RequestAborted);
-                    }
+                    readModelSync.EnqueueInventory(changedProductIds);
                 }
+
+                if (allReserved && order is not null)
+                {
+                    readModelSync.EnqueueOrders([order.OrderId]);
+                }
+
+                await writeDb.SaveChangesAsync(ctx.RequestAborted);
+                await readModelSync.FlushAsync(ctx.RequestAborted);
 
                 await ShowcaseAuditHelper.RecordAsync(
                     ctx,
@@ -202,10 +196,9 @@ public sealed class InventoryModule : RestBehaviorModuleBase
             return Results.Ok(new ReserveStockOutput(input.OrderId, memAllReserved, memReservations));
         });
 
-        routes.MapPost("/release", async (ReleaseStockInput input, HttpContext ctx) =>
+        routes.MapPost("/release", async (ReleaseStockInput input, HttpContext ctx, ShowcaseReadModelSyncService readModelSync) =>
         {
             var writeDb = ctx.RequestServices.GetService<ShowcaseWriteDbContext>();
-            var readDb = ctx.RequestServices.GetService<ShowcaseReadDbContext>();
             if (writeDb is not null)
             {
                 var entities = await writeDb.InventoryItems.ToListAsync(ctx.RequestAborted);
@@ -220,15 +213,13 @@ public sealed class InventoryModule : RestBehaviorModuleBase
                     }
                 }
 
-                await writeDb.SaveChangesAsync(ctx.RequestAborted);
-
-                if (readDb is not null)
+                if (changedProductIds.Count > 0)
                 {
-                    foreach (var entity in entities.Where(item => changedProductIds.Contains(item.ProductId)))
-                    {
-                        await UpsertReadInventoryAsync(readDb, entity, ctx.RequestAborted);
-                    }
+                    readModelSync.EnqueueInventory(changedProductIds);
                 }
+
+                await writeDb.SaveChangesAsync(ctx.RequestAborted);
+                await readModelSync.FlushAsync(ctx.RequestAborted);
 
                 await ShowcaseAuditHelper.RecordAsync(
                     ctx,
@@ -256,52 +247,6 @@ public sealed class InventoryModule : RestBehaviorModuleBase
 
             return Results.Ok(new ReleaseStockOutput(input.OrderId, true));
         });
-    }
-
-    private static async Task UpsertReadInventoryAsync(
-        ShowcaseReadDbContext readDb,
-        ShowcaseInventoryEntity source,
-        CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(readDb);
-        ArgumentNullException.ThrowIfNull(source);
-
-        var projection = await readDb.InventoryItems.FindAsync([source.ProductId], cancellationToken);
-        if (projection is null)
-        {
-            projection = new ShowcaseInventoryEntity
-            {
-                ProductId = source.ProductId
-            };
-            readDb.InventoryItems.Add(projection);
-        }
-
-        projection.QuantityOnHand = source.QuantityOnHand;
-        projection.QuantityReserved = source.QuantityReserved;
-        projection.WarehouseCode = source.WarehouseCode;
-        projection.LastUpdatedAtUtc = source.LastUpdatedAtUtc;
-
-        await readDb.SaveChangesAsync(cancellationToken);
-    }
-
-    private static async Task UpsertReadOrderStatusAsync(
-        ShowcaseReadDbContext readDb,
-        ShowcaseOrderEntity source,
-        CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(readDb);
-        ArgumentNullException.ThrowIfNull(source);
-
-        var projection = await readDb.Orders.FindAsync([source.OrderId], cancellationToken);
-        if (projection is null)
-        {
-            return;
-        }
-
-        projection.Status = source.Status;
-        projection.UpdatedAtUtc = source.UpdatedAtUtc;
-        projection.CancellationReason = source.CancellationReason;
-        await readDb.SaveChangesAsync(cancellationToken);
     }
 
     private static object ToInventoryDto(ShowcaseInventoryEntity entity)
