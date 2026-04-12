@@ -25,7 +25,8 @@ internal sealed class DatabaseMigrationCatalogSnapshot(
     {
         var databaseMigrations = contributors
             .SelectMany(static contributor => contributor.DescribeDatabaseMigrations())
-            .OrderBy(static entry => entry.Id, StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static entry => entry.RecommendedExecutionOrder ?? int.MaxValue)
+            .ThenBy(static entry => entry.Id, StringComparer.OrdinalIgnoreCase)
             .ToArray();
         var duplicate = databaseMigrations
             .GroupBy(static entry => entry.Id, StringComparer.OrdinalIgnoreCase)

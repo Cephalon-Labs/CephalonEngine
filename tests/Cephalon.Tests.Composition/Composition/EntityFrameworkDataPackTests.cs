@@ -374,6 +374,8 @@ public sealed class EntityFrameworkDataPackTests
         Assert.False(pendingWrite.ExitAfterApply);
         Assert.Equal("entity-framework", pendingWrite.Metadata["runtimeProvider"]);
         Assert.Equal("engine-databases", pendingWrite.Metadata["topologySource"]);
+        Assert.Equal(1, pendingWrite.RecommendedExecutionOrder);
+        Assert.Equal("1", pendingWrite.Metadata["recommendedExecutionOrder"]);
         Assert.Equal("bundle-or-script", pendingWrite.Metadata["recommendedExecutionMode"]);
         Assert.Equal("bundle,script,update", pendingWrite.Metadata["commandIds"]);
         Assert.Equal("healthy", pendingWrite.Metadata["roleHealthState"]);
@@ -419,6 +421,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.True(appliedWrite.StartedAtUtc.HasValue);
         Assert.True(appliedWrite.CompletedAtUtc.HasValue);
         Assert.Null(appliedWrite.LastError);
+        Assert.Equal(1, appliedWrite.RecommendedExecutionOrder);
         Assert.Equal("healthy", appliedWrite.Metadata["roleHealthState"]);
         Assert.Equal("succeeded", appliedWrite.Metadata["roleMigrationState"]);
         Assert.Equal("succeeded", appliedWrite.Metadata["roleRuntime.probeOutcome"]);
@@ -426,6 +429,7 @@ public sealed class EntityFrameworkDataPackTests
         var snapshot = provider.GetRequiredService<global::Cephalon.Engine.Runtime.IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
         var snapshotMigration = Assert.Single(snapshot.DatabaseMigrations);
         Assert.Equal("write", snapshotMigration.Id);
+        Assert.Equal(1, snapshotMigration.RecommendedExecutionOrder);
         Assert.Equal(DatabaseMigrationStatus.Succeeded, snapshotMigration.Status);
         Assert.Equal(3, snapshotMigration.Commands.Count);
         Assert.Equal("healthy", snapshotMigration.Metadata["roleHealthState"]);

@@ -140,7 +140,8 @@ internal sealed class ShowcaseSystemProjectionService(
             .ToArray();
 
         var migrations = runtimeSnapshot.DatabaseMigrations
-            .OrderBy(static migration => migration.Id, StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static migration => migration.RecommendedExecutionOrder ?? int.MaxValue)
+            .ThenBy(static migration => migration.Id, StringComparer.OrdinalIgnoreCase)
             .Select(migration => new ShowcaseDatabaseTopologyMigrationRow(
                 Id: migration.Id,
                 RequestedRoleId: migration.RequestedRoleId,
@@ -150,6 +151,7 @@ internal sealed class ShowcaseSystemProjectionService(
                 ApplyOnStartup: migration.ApplyOnStartup,
                 Provider: migration.Provider,
                 DbContextType: migration.DbContextType,
+                RecommendedExecutionOrder: migration.RecommendedExecutionOrder,
                 Commands: migration.Commands
                     .Select(command => new ShowcaseDatabaseTopologyMigrationCommandRow(
                         Id: command.Id,
@@ -970,7 +972,7 @@ internal sealed class ShowcaseSystemProjectionService(
         ArgumentNullException.ThrowIfNull(migrations);
 
         var steps = migrations
-            .OrderBy(static migration => GetMigrationPlaybookOrder(migration.Id))
+            .OrderBy(static migration => migration.RecommendedExecutionOrder ?? int.MaxValue)
             .ThenBy(static migration => migration.Id, StringComparer.OrdinalIgnoreCase)
             .Select((migration, index) =>
             {
@@ -1321,31 +1323,6 @@ internal sealed class ShowcaseSystemProjectionService(
         }
 
         return command;
-    }
-
-    private static int GetMigrationPlaybookOrder(string migrationId)
-    {
-        if (string.Equals(migrationId, "write", StringComparison.OrdinalIgnoreCase))
-        {
-            return 0;
-        }
-
-        if (string.Equals(migrationId, "read", StringComparison.OrdinalIgnoreCase))
-        {
-            return 1;
-        }
-
-        if (string.Equals(migrationId, "history", StringComparison.OrdinalIgnoreCase))
-        {
-            return 2;
-        }
-
-        if (string.Equals(migrationId, "outbox", StringComparison.OrdinalIgnoreCase))
-        {
-            return 3;
-        }
-
-        return 10;
     }
 
     private static bool IsPendingJob(ShowcaseReadProjectionJobEntity job)

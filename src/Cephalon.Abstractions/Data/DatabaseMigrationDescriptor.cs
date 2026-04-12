@@ -25,6 +25,9 @@ public sealed class DatabaseMigrationDescriptor
     /// <param name="lastError">The latest error observed for this target.</param>
     /// <param name="commands">Optional operator-facing command templates for executing this target outside startup apply.</param>
     /// <param name="metadata">Optional operator-facing metadata associated with the migration target.</param>
+    /// <param name="recommendedExecutionOrder">
+    /// An optional positive ordinal that operator surfaces can use when presenting a recommended migration sequence.
+    /// </param>
     public DatabaseMigrationDescriptor(
         string id,
         string displayName,
@@ -42,7 +45,8 @@ public sealed class DatabaseMigrationDescriptor
         DateTimeOffset? completedAtUtc = null,
         string? lastError = null,
         IReadOnlyList<DatabaseMigrationCommandDescriptor>? commands = null,
-        IReadOnlyDictionary<string, string>? metadata = null)
+        IReadOnlyDictionary<string, string>? metadata = null,
+        int? recommendedExecutionOrder = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -74,6 +78,14 @@ public sealed class DatabaseMigrationDescriptor
             throw new ArgumentException("Database migration execution mode is required.", nameof(executionMode));
         }
 
+        if (recommendedExecutionOrder is <= 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(recommendedExecutionOrder),
+                recommendedExecutionOrder,
+                "Database migration recommended execution order must be greater than zero when supplied.");
+        }
+
         Id = id.Trim();
         DisplayName = displayName.Trim();
         Description = description.Trim();
@@ -89,6 +101,7 @@ public sealed class DatabaseMigrationDescriptor
         StartedAtUtc = startedAtUtc;
         CompletedAtUtc = completedAtUtc;
         LastError = string.IsNullOrWhiteSpace(lastError) ? null : lastError.Trim();
+        RecommendedExecutionOrder = recommendedExecutionOrder;
         Commands = commands?.ToArray() ?? [];
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -169,6 +182,11 @@ public sealed class DatabaseMigrationDescriptor
     /// Gets the latest error observed for this target.
     /// </summary>
     public string? LastError { get; }
+
+    /// <summary>
+    /// Gets the recommended positive ordinal for operator-facing migration playbooks when the provider can publish one.
+    /// </summary>
+    public int? RecommendedExecutionOrder { get; }
 
     /// <summary>
     /// Gets optional operator-facing command templates for executing this target outside startup apply.

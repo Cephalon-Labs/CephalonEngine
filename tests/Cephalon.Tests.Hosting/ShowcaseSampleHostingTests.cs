@@ -290,12 +290,17 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("succeeded", history.RuntimeMetadata["probeOutcome"]);
         Assert.NotNull(migrations);
         Assert.Equal(3, migrations.Length);
-        Assert.Contains(migrations, migration => migration.Id == "read" && migration.Status == DatabaseMigrationStatus.Succeeded);
-        Assert.Contains(migrations, migration => migration.Id == "write" && migration.Status == DatabaseMigrationStatus.Succeeded);
+        Assert.Equal("write", migrations[0].Id);
+        Assert.Equal(1, migrations[0].RecommendedExecutionOrder);
+        Assert.Equal("read", migrations[1].Id);
+        Assert.Equal(2, migrations[1].RecommendedExecutionOrder);
+        Assert.Equal("history", migrations[2].Id);
+        Assert.Equal(3, migrations[2].RecommendedExecutionOrder);
         Assert.NotNull(readMigration);
         Assert.Equal("read", readMigration.Id);
         Assert.Equal("read", readMigration.RequestedRoleId);
         Assert.Equal("read", readMigration.ResolvedRoleId);
+        Assert.Equal(2, readMigration.RecommendedExecutionOrder);
         Assert.Equal(DatabaseMigrationStatus.Succeeded, readMigration.Status);
         Assert.Equal("startup-hosted-service", readMigration.ExecutionMode);
         Assert.Equal("InMemory", readMigration.Provider);
@@ -307,6 +312,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("history", historyMigration.Id);
         Assert.Equal("history", historyMigration.RequestedRoleId);
         Assert.Equal("history", historyMigration.ResolvedRoleId);
+        Assert.Equal(3, historyMigration.RecommendedExecutionOrder);
         Assert.Equal(DatabaseMigrationStatus.Succeeded, historyMigration.Status);
         Assert.Equal("startup-hosted-service", historyMigration.ExecutionMode);
         Assert.Equal("InMemory", historyMigration.Provider);
@@ -339,6 +345,12 @@ public sealed class ShowcaseSampleHostingTests
         Assert.NotNull(snapshot);
         Assert.Equal(4, snapshot.DatabaseRoles.Count);
         Assert.Equal(3, snapshot.DatabaseMigrations.Count);
+        Assert.Equal("write", snapshot.DatabaseMigrations[0].Id);
+        Assert.Equal(1, snapshot.DatabaseMigrations[0].RecommendedExecutionOrder);
+        Assert.Equal("read", snapshot.DatabaseMigrations[1].Id);
+        Assert.Equal(2, snapshot.DatabaseMigrations[1].RecommendedExecutionOrder);
+        Assert.Equal("history", snapshot.DatabaseMigrations[2].Id);
+        Assert.Equal(3, snapshot.DatabaseMigrations[2].RecommendedExecutionOrder);
         Assert.All(snapshot.DatabaseMigrations, migration => Assert.Equal(3, migration.Commands.Count));
     }
 
@@ -1571,6 +1583,11 @@ public sealed class ShowcaseSampleHostingTests
             migration =>
             {
                 if (!string.Equals(migration.GetProperty("id").GetString(), "history", StringComparison.Ordinal))
+                {
+                    return false;
+                }
+
+                if (migration.GetProperty("recommendedExecutionOrder").GetInt32() != 3)
                 {
                     return false;
                 }

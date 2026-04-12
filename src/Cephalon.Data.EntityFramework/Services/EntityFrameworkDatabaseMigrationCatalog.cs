@@ -48,7 +48,8 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
             lock (gate)
             {
                 snapshot = databaseMigrationsById.Values
-                    .OrderBy(static entry => entry.Id, StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(static entry => entry.RecommendedExecutionOrder ?? int.MaxValue)
+                    .ThenBy(static entry => entry.Id, StringComparer.OrdinalIgnoreCase)
                     .ToArray();
             }
 
@@ -151,6 +152,7 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
         var error = hasRegistration
             ? null
             : $"No registered DbContext can satisfy migration target '{targetRoleId}'.";
+        var recommendedExecutionOrder = GetRecommendedExecutionOrder(targetRoleId);
 
         return new DatabaseMigrationDescriptor(
             id: targetRoleId,
@@ -170,7 +172,8 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
             dbContextType: hasRegistration ? GetTypeName(registration!.DbContextType) : null,
             commands: hasRegistration ? CreateCommands(targetRoleId, registration!) : null,
             lastError: error,
-            metadata: CreateMetadata(targetRoleId, role, hasRegistration, registration));
+            metadata: CreateMetadata(targetRoleId, role, hasRegistration, registration, recommendedExecutionOrder),
+            recommendedExecutionOrder: recommendedExecutionOrder);
     }
 
     private static IReadOnlyList<DatabaseMigrationCommandDescriptor> CreateCommands(
@@ -220,7 +223,8 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
         string targetRoleId,
         DatabaseRoleDescriptor? role,
         bool hasRegistration,
-        EntityFrameworkDatabaseMigrationRegistration? registration)
+        EntityFrameworkDatabaseMigrationRegistration? registration,
+        int? recommendedExecutionOrder)
     {
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -268,6 +272,11 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
         {
             metadata["dbContext"] = "<unregistered>";
             metadata["registeredTargets"] = targetRoleId;
+        }
+
+        if (recommendedExecutionOrder.HasValue)
+        {
+            metadata["recommendedExecutionOrder"] = recommendedExecutionOrder.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
 
         return metadata;
@@ -327,7 +336,8 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
             completedAtUtc: completedAtUtc ?? entry.CompletedAtUtc,
             lastError: lastError ?? entry.LastError,
             commands: entry.Commands,
-            metadata: metadata ?? entry.Metadata);
+            metadata: metadata ?? entry.Metadata,
+            recommendedExecutionOrder: entry.RecommendedExecutionOrder);
     }
 
     private static DatabaseMigrationDescriptor? DecorateWithRoleRuntime(
@@ -372,5 +382,30 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
         }
 
         return Clone(entry, metadata: metadata);
+    }
+
+    private static int? GetRecommendedExecutionOrder(string targetRoleId)
+    {
+        if (string.Equals(targetRoleId, "write", StringComparison.OrdinalIgnoreCase))
+        {
+            return 1;
+        }
+
+        if (string.Equals(targetRoleId, "read", StringComparison.OrdinalIgnoreCase))
+        {
+            return 2;
+        }
+
+        if (string.Equals(targetRoleId, "history", StringComparison.OrdinalIgnoreCase))
+        {
+            return 3;
+        }
+
+        if (string.Equals(targetRoleId, "outbox", StringComparison.OrdinalIgnoreCase))
+        {
+            return 4;
+        }
+
+        return null;
     }
 }

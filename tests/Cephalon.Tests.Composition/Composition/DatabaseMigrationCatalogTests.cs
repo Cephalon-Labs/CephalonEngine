@@ -14,6 +14,21 @@ public sealed class DatabaseMigrationCatalogTests
         services.AddSingleton<IDatabaseMigrationContributor>(new StubDatabaseMigrationContributor(
         [
             new DatabaseMigrationDescriptor(
+                id: "history",
+                displayName: "History Database Migration",
+                description: "Startup schema apply for the history database role.",
+                requestedRoleId: "history",
+                resolvedRoleId: "history",
+                executionMode: "startup-hosted-service",
+                status: DatabaseMigrationStatus.Planned,
+                applyOnStartup: true,
+                exitAfterApply: false,
+                provider: "PostgreSql",
+                recommendedExecutionOrder: 3)
+        ]));
+        services.AddSingleton<IDatabaseMigrationContributor>(new StubDatabaseMigrationContributor(
+        [
+            new DatabaseMigrationDescriptor(
                 id: "write",
                 displayName: "Write Database Migration",
                 description: "Startup schema apply for the write database role.",
@@ -24,6 +39,7 @@ public sealed class DatabaseMigrationCatalogTests
                 applyOnStartup: true,
                 exitAfterApply: false,
                 provider: "PostgreSql",
+                recommendedExecutionOrder: 1,
                 commands:
                 [
                     new DatabaseMigrationCommandDescriptor(
@@ -45,12 +61,19 @@ public sealed class DatabaseMigrationCatalogTests
         using var provider = services.BuildServiceProvider();
         var catalog = provider.GetRequiredService<IDatabaseMigrationCatalog>();
 
-        var migration = Assert.Single(catalog.DatabaseMigrations);
+        var migrations = catalog.DatabaseMigrations;
+        Assert.Equal(2, migrations.Count);
 
-        Assert.Equal("write", migration.Id);
-        Assert.Equal(DatabaseMigrationStatus.Planned, migration.Status);
-        Assert.Equal("startup-hosted-service", migration.ExecutionMode);
-        var command = Assert.Single(migration.Commands);
+        var writeMigration = migrations[0];
+        var historyMigration = migrations[1];
+
+        Assert.Equal("write", writeMigration.Id);
+        Assert.Equal(1, writeMigration.RecommendedExecutionOrder);
+        Assert.Equal(DatabaseMigrationStatus.Planned, writeMigration.Status);
+        Assert.Equal("startup-hosted-service", writeMigration.ExecutionMode);
+        Assert.Equal("history", historyMigration.Id);
+        Assert.Equal(3, historyMigration.RecommendedExecutionOrder);
+        var command = Assert.Single(writeMigration.Commands);
         Assert.Equal("bundle", command.Id);
         Assert.Equal("dotnet-ef", command.ToolId);
         Assert.Equal("deploy-time", command.ExecutionCategory);

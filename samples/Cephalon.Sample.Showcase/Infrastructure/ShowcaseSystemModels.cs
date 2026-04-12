@@ -193,6 +193,7 @@ internal sealed record ShowcaseDatabaseTopologyMigrationRow(
     bool ApplyOnStartup,
     string? Provider,
     string? DbContextType,
+    int? RecommendedExecutionOrder,
     IReadOnlyList<ShowcaseDatabaseTopologyMigrationCommandRow> Commands,
     IReadOnlyDictionary<string, string> MetadataPreview);
 
