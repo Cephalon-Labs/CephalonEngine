@@ -178,12 +178,14 @@ internal sealed class ShowcaseSystemProjectionService(
             HistoryProvider: runtimeSnapshot.Manifest.AppProfile.Databases.History.Provider ?? "Unknown",
             GeneratedAtUtc: DateTimeOffset.UtcNow);
         var insights = BuildDatabaseTopologyInsights(roles, migrations, readModelSync);
+        var migrationPlaybook = BuildDatabaseMigrationPlaybook(migrations);
 
         return new ShowcaseDatabaseTopologyResponse(
             Summary: summary,
             Insights: insights,
             Roles: roles,
             Migrations: migrations,
+            MigrationPlaybook: migrationPlaybook,
             ReadModelSync: readModelSync);
     }
 
@@ -912,6 +914,51 @@ internal sealed class ShowcaseSystemProjectionService(
             ActionPath: "/engine/database-migrations");
     }
 
+    private static ShowcaseDatabaseTopologyMigrationPlaybook BuildDatabaseMigrationPlaybook(
+        IReadOnlyList<ShowcaseDatabaseTopologyMigrationRow> migrations)
+    {
+        ArgumentNullException.ThrowIfNull(migrations);
+
+        var steps = migrations
+            .OrderBy(static migration => GetMigrationPlaybookOrder(migration.Id))
+            .ThenBy(static migration => migration.Id, StringComparer.OrdinalIgnoreCase)
+            .Select((migration, index) =>
+            {
+                var productionCommand = migration.Commands.FirstOrDefault(static command => command.RecommendedForProduction);
+                var localCommand = migration.Commands.FirstOrDefault(static command => !command.RecommendedForProduction);
+
+                return new ShowcaseDatabaseTopologyMigrationPlaybookStepRow(
+                    Order: index + 1,
+                    TargetId: migration.Id,
+                    RequestedRoleId: migration.RequestedRoleId,
+                    ResolvedRoleId: migration.ResolvedRoleId,
+                    Status: migration.Status,
+                    ExecutionMode: migration.ExecutionMode,
+                    ApplyOnStartup: migration.ApplyOnStartup,
+                    HasProductionRecommendedCommand: productionCommand is not null &&
+                        !string.IsNullOrWhiteSpace(productionCommand.SampleCommand),
+                    ProductionCommandId: productionCommand?.Id,
+                    ProductionCommandDisplayName: productionCommand?.DisplayName,
+                    ProductionCommandDescription: productionCommand?.Description,
+                    ProductionSampleCommand: productionCommand?.SampleCommand ?? productionCommand?.CommandTemplate,
+                    ProductionCommandHint: productionCommand?.SampleCommandHint,
+                    LocalCommandId: localCommand?.Id,
+                    LocalCommandDisplayName: localCommand?.DisplayName,
+                    LocalCommandDescription: localCommand?.Description,
+                    LocalSampleCommand: localCommand?.SampleCommand ?? localCommand?.CommandTemplate);
+            })
+            .ToArray();
+
+        return new ShowcaseDatabaseTopologyMigrationPlaybook(
+            Summary: new ShowcaseDatabaseTopologyMigrationPlaybookSummary(
+                TargetCount: steps.Length,
+                ProductionReadyTargetCount: steps.Count(static step => step.HasProductionRecommendedCommand),
+                LocalFallbackTargetCount: steps.Count(static step => !string.IsNullOrWhiteSpace(step.LocalCommandId)),
+                ApplyOnStartupTargetCount: steps.Count(static step => step.ApplyOnStartup),
+                GeneratedAtUtc: DateTimeOffset.UtcNow),
+            Steps: steps);
+    }
+
     private static string BuildShowcaseSampleMigrationCommand(string commandTemplate)
     {
         if (string.IsNullOrWhiteSpace(commandTemplate))
@@ -931,6 +978,31 @@ internal sealed class ShowcaseSystemProjectionService(
         }
 
         return command;
+    }
+
+    private static int GetMigrationPlaybookOrder(string migrationId)
+    {
+        if (string.Equals(migrationId, "write", StringComparison.OrdinalIgnoreCase))
+        {
+            return 0;
+        }
+
+        if (string.Equals(migrationId, "read", StringComparison.OrdinalIgnoreCase))
+        {
+            return 1;
+        }
+
+        if (string.Equals(migrationId, "history", StringComparison.OrdinalIgnoreCase))
+        {
+            return 2;
+        }
+
+        if (string.Equals(migrationId, "outbox", StringComparison.OrdinalIgnoreCase))
+        {
+            return 3;
+        }
+
+        return 10;
     }
 
     private static bool IsPendingJob(ShowcaseReadProjectionJobEntity job)

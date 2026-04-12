@@ -78,6 +78,8 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Contains("href=\"#database-topology\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"database-topology\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"databaseTopologyInsights\"", html, StringComparison.Ordinal);
+        Assert.Contains("id=\"databaseMigrationPlaybookSummary\"", html, StringComparison.Ordinal);
+        Assert.Contains("id=\"databaseMigrationPlaybookList\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"databaseRoleTable\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"databaseMigrationTable\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"readModelScopeList\"", html, StringComparison.Ordinal);
@@ -1572,6 +1574,24 @@ public sealed class ShowcaseSampleHostingTests
                 string.Equals(insight.GetProperty("tone").GetString(), "Success", StringComparison.Ordinal) &&
                 string.Equals(insight.GetProperty("actionPath").GetString(), "/engine/database-migrations", StringComparison.Ordinal) &&
                 insight.GetProperty("detail").GetString()!.Contains("runnable sample commands", StringComparison.Ordinal));
+
+        var migrationPlaybook = root.GetProperty("migrationPlaybook");
+        var playbookSummary = migrationPlaybook.GetProperty("summary");
+        Assert.Equal(3, playbookSummary.GetProperty("targetCount").GetInt32());
+        Assert.Equal(3, playbookSummary.GetProperty("productionReadyTargetCount").GetInt32());
+        Assert.Equal(3, playbookSummary.GetProperty("localFallbackTargetCount").GetInt32());
+        Assert.Equal(3, playbookSummary.GetProperty("applyOnStartupTargetCount").GetInt32());
+
+        var playbookSteps = migrationPlaybook.GetProperty("steps").EnumerateArray().ToArray();
+        Assert.Equal(3, playbookSteps.Length);
+        Assert.Equal("write", playbookSteps[0].GetProperty("targetId").GetString());
+        Assert.Equal("read", playbookSteps[1].GetProperty("targetId").GetString());
+        Assert.Equal("history", playbookSteps[2].GetProperty("targetId").GetString());
+        Assert.Equal("bundle", playbookSteps[2].GetProperty("productionCommandId").GetString());
+        Assert.Equal("update", playbookSteps[2].GetProperty("localCommandId").GetString());
+        Assert.Equal(
+            "dotnet ef migrations bundle --context ShowcaseAuditHistoryDbContext --project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj --startup-project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj",
+            playbookSteps[2].GetProperty("productionSampleCommand").GetString());
 
         var writeStore = readModelSync.GetProperty("writeStore");
         var readStore = readModelSync.GetProperty("readStore");

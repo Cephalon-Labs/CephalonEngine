@@ -131,6 +131,36 @@ internal sealed record ShowcaseDatabaseTopologyMigrationCommandRow(
     string? SampleCommandHint,
     IReadOnlyDictionary<string, string> MetadataPreview);
 
+internal sealed record ShowcaseDatabaseTopologyMigrationPlaybookSummary(
+    int TargetCount,
+    int ProductionReadyTargetCount,
+    int LocalFallbackTargetCount,
+    int ApplyOnStartupTargetCount,
+    DateTimeOffset GeneratedAtUtc);
+
+internal sealed record ShowcaseDatabaseTopologyMigrationPlaybookStepRow(
+    int Order,
+    string TargetId,
+    string RequestedRoleId,
+    string ResolvedRoleId,
+    string Status,
+    string ExecutionMode,
+    bool ApplyOnStartup,
+    bool HasProductionRecommendedCommand,
+    string? ProductionCommandId,
+    string? ProductionCommandDisplayName,
+    string? ProductionCommandDescription,
+    string? ProductionSampleCommand,
+    string? ProductionCommandHint,
+    string? LocalCommandId,
+    string? LocalCommandDisplayName,
+    string? LocalCommandDescription,
+    string? LocalSampleCommand);
+
+internal sealed record ShowcaseDatabaseTopologyMigrationPlaybook(
+    ShowcaseDatabaseTopologyMigrationPlaybookSummary Summary,
+    IReadOnlyList<ShowcaseDatabaseTopologyMigrationPlaybookStepRow> Steps);
+
 internal sealed record ShowcaseReadModelStoreCounts(
     int Products,
     int Inventory,
@@ -173,6 +203,7 @@ internal sealed record ShowcaseDatabaseTopologyResponse(
     IReadOnlyList<ShowcaseDatabaseTopologyInsight> Insights,
     IReadOnlyList<ShowcaseDatabaseTopologyRoleRow> Roles,
     IReadOnlyList<ShowcaseDatabaseTopologyMigrationRow> Migrations,
+    ShowcaseDatabaseTopologyMigrationPlaybook MigrationPlaybook,
     ShowcaseReadModelSyncStatus ReadModelSync);
 
 internal sealed record ShowcaseCatalogProductRow(

@@ -363,6 +363,7 @@ a:focus-visible {
 .timeline-list,
 .cart-lines,
 .scope-list,
+.playbook-list,
 .scope-stats,
 .metadata-stack,
 .command-stack,
@@ -649,6 +650,37 @@ tbody tr:last-child td {
   line-height: 1.55;
 }
 
+.playbook-step {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--panel-strong);
+}
+
+.playbook-step > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.playbook-path-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.playbook-path {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.58);
+}
+
 .command-variant {
   display: grid;
   gap: 6px;
@@ -885,6 +917,7 @@ tbody tr:last-child td {
   .transport-runner-intro,
   .runner-context,
   .runner-probe-grid,
+  .playbook-path-grid,
   .scope-stats {
     grid-template-columns: 1fr;
     flex-direction: column;

@@ -448,6 +448,8 @@ function renderDatabaseTopology() {
     document.getElementById("databaseTopologyTimestamp").textContent = "Database topology projection unavailable";
     document.getElementById("databaseTopologyKpis").innerHTML = `<div class="empty-state">${message}</div>`;
     document.getElementById("databaseTopologyInsights").innerHTML = `<div class="empty-state">${message}</div>`;
+    document.getElementById("databaseMigrationPlaybookSummary").innerHTML = `<div class="empty-state">${message}</div>`;
+    document.getElementById("databaseMigrationPlaybookList").innerHTML = `<div class="empty-state">${message}</div>`;
     document.getElementById("databaseRoleTable").innerHTML = `<tr><td colspan="5" class="empty-state">${message}</td></tr>`;
     document.getElementById("databaseMigrationTable").innerHTML = `<tr><td colspan="5" class="empty-state">${message}</td></tr>`;
     document.getElementById("readModelSyncSummary").innerHTML = `<div class="empty-state">${message}</div>`;
@@ -457,12 +459,13 @@ function renderDatabaseTopology() {
     return;
   }
 
-  const { summary, insights, roles, migrations, readModelSync } = state.databaseTopology;
+  const { summary, insights, roles, migrations, migrationPlaybook, readModelSync } = state.databaseTopology;
   const totalDeltaMagnitude = getReadModelDeltaMagnitude(readModelSync);
   const attentionCount = (insights || []).filter((insight) => tone(insight?.tone) !== "status-success").length;
   const recommendedMigrationTargets = (migrations || []).filter((migration) => hasRecommendedMigrationCommands(migration.commands)).length;
   document.getElementById("databaseTopologyTimestamp").textContent = `Updated ${formatDate(summary.generatedAtUtc)}`;
   renderDatabaseTopologyInsights(insights);
+  renderDatabaseMigrationPlaybook(migrationPlaybook);
 
   document.getElementById("databaseTopologyKpis").innerHTML = [
     kpiCard("Roles", summary.roleCount, `${summary.healthyRoleCount} healthy`),
@@ -574,6 +577,84 @@ function renderDatabaseTopologyInsights(insights) {
         </div>
       </article>`).join("")
     : `<div class="empty-state">No operator insights published.</div>`;
+}
+
+function renderDatabaseMigrationPlaybook(playbook) {
+  if (!playbook || !playbook.summary) {
+    document.getElementById("databaseMigrationPlaybookSummary").innerHTML = `<div class="empty-state">Migration playbook unavailable.</div>`;
+    document.getElementById("databaseMigrationPlaybookList").innerHTML = `<div class="empty-state">Migration playbook unavailable.</div>`;
+    return;
+  }
+
+  const summary = playbook.summary;
+  const steps = Array.isArray(playbook.steps) ? playbook.steps : [];
+
+  document.getElementById("databaseMigrationPlaybookSummary").innerHTML = [
+    statCard("Targets", summary.targetCount, "ordered sample runbook"),
+    statCard("Production Ready", summary.productionReadyTargetCount, "targets with recommended runnable path"),
+    statCard("Local Fallbacks", summary.localFallbackTargetCount, "manual/update path available"),
+    statCard("Startup Apply", summary.applyOnStartupTargetCount, "host-managed targets")
+  ].join("");
+
+  document.getElementById("databaseMigrationPlaybookList").innerHTML = steps.length
+    ? steps.map((step) => `
+      <article class="playbook-step">
+        <header>
+          <div>
+            <strong>Step ${escapeHtml(String(step.order))}: ${escapeHtml(step.targetId)}</strong>
+            <div class="mono">${escapeHtml(step.requestedRoleId)} -> ${escapeHtml(step.resolvedRoleId)}</div>
+          </div>
+          <div class="meta-row">
+            <span class="status-badge ${tone(step.status)}">${escapeHtml(step.status)}</span>
+            <span class="status-badge ${step.hasProductionRecommendedCommand ? "status-success" : "status-warning"}">
+              ${step.hasProductionRecommendedCommand ? "production path ready" : "local/manual only"}
+            </span>
+            <span class="token">${escapeHtml(step.executionMode)}</span>
+          </div>
+        </header>
+        <div class="playbook-path-grid">
+          ${renderMigrationPlaybookPath(
+            "Production Path",
+            step.productionCommandDisplayName,
+            step.productionCommandId,
+            step.productionCommandDescription,
+            step.productionSampleCommand,
+            step.productionCommandHint,
+            step.hasProductionRecommendedCommand)}
+          ${renderMigrationPlaybookPath(
+            "Local Fallback",
+            step.localCommandDisplayName,
+            step.localCommandId,
+            step.localCommandDescription,
+            step.localSampleCommand,
+            step.applyOnStartup ? "Startup apply is already enabled for this target in the showcase host." : null,
+            Boolean(step.localCommandId))}
+        </div>
+      </article>`).join("")
+    : `<div class="empty-state">No migration playbook steps published.</div>`;
+}
+
+function renderMigrationPlaybookPath(title, displayName, commandId, description, sampleCommand, hint, isReady) {
+  if (!displayName && !sampleCommand) {
+    return `
+      <section class="playbook-path">
+        <span class="label">${escapeHtml(title)}</span>
+        <div class="empty-inline">No path published.</div>
+      </section>`;
+  }
+
+  return `
+    <section class="playbook-path">
+      <span class="label">${escapeHtml(title)}</span>
+      <div class="meta-row">
+        ${displayName ? `<strong>${escapeHtml(displayName)}</strong>` : ""}
+        ${commandId ? `<span class="token">${escapeHtml(commandId)}</span>` : ""}
+        <span class="status-badge ${isReady ? "status-success" : "status-warning"}">${isReady ? "ready" : "review"}</span>
+      </div>
+      ${description ? `<p class="command-description">${escapeHtml(description)}</p>` : ""}
+      ${sampleCommand ? `<code class="command-snippet ${isReady ? "command-snippet-primary" : ""}">${escapeHtml(sampleCommand)}</code>` : `<div class="empty-inline">No runnable command published.</div>`}
+      ${hint ? `<small class="command-hint">${escapeHtml(hint)}</small>` : ""}
+    </section>`;
 }
 
 function renderWorkloads() {

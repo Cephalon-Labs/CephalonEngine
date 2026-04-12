@@ -57,11 +57,11 @@ dotnet run --project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.c
   - write-store versus read-store row counts
   - durable projection-job backlog and completion state
   - per-scope retry/completion metrics for `products`, `inventory`, `orders`, and `shipments`
-- The showcase UI now promotes that projection into a dedicated `Database Topology` section on `/showcase`, adds derived operator insights for healthy-versus-drifting topology state, preserves migration-command ids/display names/descriptions plus production-recommendation flags, and adapts the published templates into repo-root runnable commands for this sample while still linking the raw JSON projection plus the underlying `/engine/databases`, `/engine/database-roles`, and `/engine/database-migrations` surfaces for drill-down.
+- The showcase UI now promotes that projection into a dedicated `Database Topology` section on `/showcase`, adds derived operator insights for healthy-versus-drifting topology state, preserves migration-command ids/display names/descriptions plus production-recommendation flags, adapts the published templates into repo-root runnable commands for this sample, and now also publishes an ordered migration playbook (`write -> read -> history`) before the lower-level target table while still linking the raw JSON projection plus the underlying `/engine/databases`, `/engine/database-roles`, and `/engine/database-migrations` surfaces for drill-down.
 
 ## Manual Migration Commands
 
-The same migration-command descriptors now surface inside `/showcase` with operator-friendly names, descriptions, production recommendation badges, command metadata, and repo-root runnable commands so the sample UI mirrors the engine-owned `/engine/database-migrations` contract without leaving operators to reconstruct the sample invocation by hand.
+The same migration-command descriptors now surface inside `/showcase` with operator-friendly names, descriptions, production recommendation badges, command metadata, repo-root runnable commands, and an ordered migration playbook so the sample UI mirrors the engine-owned `/engine/database-migrations` contract without leaving operators to reconstruct the sample invocation or execution order by hand.
 
 Apply the write store:
 
