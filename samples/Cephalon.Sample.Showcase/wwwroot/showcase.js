@@ -5,6 +5,7 @@ const ENDPOINTS = Object.freeze({
   systemSummary: `${SYSTEM_API}/summary`,
   systemBusiness: `${SYSTEM_API}/business`,
   systemRuntime: `${SYSTEM_API}/runtime`,
+  systemDatabaseTopology: `${SYSTEM_API}/database-topology`,
   systemGovernance: `${SYSTEM_API}/governance`,
   systemTransports: `${SYSTEM_API}/transports`,
   systemActivity: `${SYSTEM_API}/activity`,
@@ -53,6 +54,7 @@ const state = {
   summary: null,
   business: null,
   runtime: null,
+  databaseTopology: null,
   governance: null,
   transports: null,
   activity: { entries: [], totalRecorded: 0 },
@@ -138,11 +140,12 @@ async function onClick(event) {
 }
 
 async function refreshConsole() {
-  const [summary, business, runtime, transports] = await Promise.all([
+  const [summary, business, runtime, transports, databaseTopology] = await Promise.all([
     requestJson(ENDPOINTS.systemSummary),
     requestJson(ENDPOINTS.systemBusiness),
     requestJson(ENDPOINTS.systemRuntime),
-    requestJson(ENDPOINTS.systemTransports)
+    requestJson(ENDPOINTS.systemTransports),
+    loadDatabaseTopologyProjection()
   ]);
   let governance = state.governance;
 
@@ -156,6 +159,7 @@ async function refreshConsole() {
   state.summary = summary;
   state.business = business;
   state.runtime = runtime;
+  state.databaseTopology = databaseTopology;
   state.governance = governance;
   state.transports = transports;
   populateTransportFilters();
@@ -329,12 +333,14 @@ async function deliverShipment(shipmentId) {
 }
 
 async function refreshWorkloadData() {
-  const [summary, business] = await Promise.all([
+  const [summary, business, databaseTopology] = await Promise.all([
     requestJson(ENDPOINTS.systemSummary),
-    requestJson(ENDPOINTS.systemBusiness)
+    requestJson(ENDPOINTS.systemBusiness),
+    loadDatabaseTopologyProjection()
   ]);
   state.summary = summary;
   state.business = business;
+  state.databaseTopology = databaseTopology;
   await reconcileCartState();
   state.activity = normalizeActivityResponse(await requestJson(`${ENDPOINTS.systemActivity}?limit=40`));
   renderAll();
@@ -377,6 +383,7 @@ function connectActivityStream() {
 
 function renderAll() {
   renderOverview();
+  renderDatabaseTopology();
   renderWorkloads();
   renderRuntime();
   renderGovernance();
@@ -430,6 +437,122 @@ function renderOverview() {
     linkButton("Audit History", documentation.auditHistoryPath),
     linkButton("Database Topology", documentation.databaseTopologyPath)
   ].join("");
+}
+
+function renderDatabaseTopology() {
+  renderDatabaseTopologyLinks();
+  if (!state.databaseTopology) return;
+
+  if (state.databaseTopology.errorMessage) {
+    const message = escapeHtml(state.databaseTopology.errorMessage);
+    document.getElementById("databaseTopologyTimestamp").textContent = "Database topology projection unavailable";
+    document.getElementById("databaseTopologyKpis").innerHTML = `<div class="empty-state">${message}</div>`;
+    document.getElementById("databaseRoleTable").innerHTML = `<tr><td colspan="5" class="empty-state">${message}</td></tr>`;
+    document.getElementById("databaseMigrationTable").innerHTML = `<tr><td colspan="5" class="empty-state">${message}</td></tr>`;
+    document.getElementById("readModelSyncSummary").innerHTML = `<div class="empty-state">${message}</div>`;
+    document.getElementById("readModelSyncTimeline").innerHTML = `<div class="empty-state">${message}</div>`;
+    document.getElementById("readModelStoreTable").innerHTML = `<tr><td colspan="4" class="empty-state">${message}</td></tr>`;
+    document.getElementById("readModelScopeList").innerHTML = `<div class="empty-state">${message}</div>`;
+    return;
+  }
+
+  const { summary, roles, migrations, readModelSync } = state.databaseTopology;
+  const totalDeltaMagnitude = getReadModelDeltaMagnitude(readModelSync);
+  document.getElementById("databaseTopologyTimestamp").textContent = `Updated ${formatDate(summary.generatedAtUtc)}`;
+
+  document.getElementById("databaseTopologyKpis").innerHTML = [
+    kpiCard("Roles", summary.roleCount, `${summary.healthyRoleCount} healthy`),
+    kpiCard("Migrations", summary.migrationTargetCount, `${summary.succeededMigrationTargetCount} succeeded`),
+    kpiCard("Sync", readModelSync.enabled ? (readModelSync.isLagging ? "Lagging" : "Aligned") : "Disabled", readModelSync.enabled ? "read-model loop active" : "projection loop inactive"),
+    kpiCard("Projection Jobs", readModelSync.jobs.totalJobs, `${readModelSync.jobs.pendingJobs} pending / ${readModelSync.jobs.failedJobs} failed`),
+    kpiCard("Store Delta", totalDeltaMagnitude, totalDeltaMagnitude === 0 ? "write and read aligned" : "write minus read drift"),
+    kpiCard("Scopes", readModelSync.jobs.distinctScopes, `${readModelSync.jobs.completedJobs} completed jobs`)
+  ].join("");
+
+  document.getElementById("databaseRoleTable").innerHTML = roles.length
+    ? roles.map((role) => `
+      <tr>
+        <td>
+          <strong>${escapeHtml(role.id)}</strong>
+          <div class="mono">${escapeHtml(role.requestedRoleId)} -> ${escapeHtml(role.resolvedRoleId)}</div>
+          <div class="meta-row">
+            <span class="token">${escapeHtml(role.resolutionMode)}</span>
+            ${role.connectionMode ? `<span class="token">${escapeHtml(role.connectionMode)}</span>` : ""}
+            ${role.schema ? `<span class="token">schema ${escapeHtml(role.schema)}</span>` : ""}
+          </div>
+        </td>
+        <td>
+          <strong>${escapeHtml(role.provider)}</strong>
+        </td>
+        <td>
+          <div class="status-stack">
+            <span class="status-badge ${tone(role.healthState || "")}">${escapeHtml(role.healthState || "Unknown")}</span>
+            <span class="status-badge ${tone(role.migrationState || "")}">${escapeHtml(role.migrationState || "Unknown")}</span>
+          </div>
+        </td>
+        <td>
+          ${role.consumers.length
+            ? `<div class="meta-row">${role.consumers.map((consumer) => `<span class="token">${escapeHtml(consumer)}</span>`).join("")}</div>`
+            : `<div class="empty-inline">No consumers</div>`}
+        </td>
+        <td>${renderMetadataSections([
+          ["Declared", role.metadataPreview],
+          ["Runtime", role.runtimeMetadataPreview]
+        ])}</td>
+      </tr>`).join("")
+    : `<tr><td colspan="5" class="empty-state">No database roles published.</td></tr>`;
+
+  document.getElementById("databaseMigrationTable").innerHTML = migrations.length
+    ? migrations.map((migration) => `
+      <tr>
+        <td>
+          <strong>${escapeHtml(migration.id)}</strong>
+          <div class="mono">${escapeHtml(migration.requestedRoleId)} -> ${escapeHtml(migration.resolvedRoleId)}</div>
+          ${migration.dbContextType ? `<div class="meta-row"><span class="token">${escapeHtml(shortTypeName(migration.dbContextType))}</span></div>` : ""}
+        </td>
+        <td>
+          <div class="status-stack">
+            <span class="status-badge ${tone(migration.status)}">${escapeHtml(migration.status)}</span>
+            <span class="status-badge ${migration.applyOnStartup ? "status-success" : ""}">${migration.applyOnStartup ? "apply on startup" : "manual"}</span>
+          </div>
+        </td>
+        <td>
+          <strong>${escapeHtml(migration.executionMode)}</strong>
+          ${migration.provider ? `<div class="mono">${escapeHtml(migration.provider)}</div>` : ""}
+        </td>
+        <td>${renderCommandStack(migration.commands)}</td>
+        <td>${renderMetadataSections([
+          ["Metadata", migration.metadataPreview]
+        ], "No migration metadata preview available.")}</td>
+      </tr>`).join("")
+    : `<tr><td colspan="5" class="empty-state">No migration targets published.</td></tr>`;
+
+  document.getElementById("readModelSyncSummary").innerHTML = [
+    statCard("Sync loop", readModelSync.enabled ? "Enabled" : "Disabled", readModelSync.isLagging ? "lagging" : "stores aligned"),
+    statCard("Pending jobs", readModelSync.jobs.pendingJobs, readModelSync.jobs.failedJobs ? `${readModelSync.jobs.failedJobs} failed` : "no failed jobs"),
+    statCard("Products delta", formatSignedNumber(readModelSync.productDelta), "write minus read"),
+    statCard("Inventory delta", formatSignedNumber(readModelSync.inventoryDelta), "write minus read"),
+    statCard("Orders delta", formatSignedNumber(readModelSync.orderDelta), "write minus read"),
+    statCard("Shipments delta", formatSignedNumber(readModelSync.shipmentDelta), "write minus read")
+  ].join("");
+
+  document.getElementById("readModelSyncTimeline").innerHTML = [
+    metricRow("Distinct job scopes", readModelSync.jobs.distinctScopes),
+    metricRow("Completed jobs", readModelSync.jobs.completedJobs),
+    metricRow("Next available job", readModelSync.jobs.nextAvailableAtUtc ? formatDate(readModelSync.jobs.nextAvailableAtUtc) : "none pending"),
+    metricRow("Last completed job", readModelSync.jobs.lastCompletedAtUtc ? formatDate(readModelSync.jobs.lastCompletedAtUtc) : "not yet")
+  ].join("");
+
+  document.getElementById("readModelStoreTable").innerHTML = [
+    buildReadModelStoreRow("Products", readModelSync.writeStore.products, readModelSync.readStore.products, readModelSync.productDelta),
+    buildReadModelStoreRow("Inventory", readModelSync.writeStore.inventory, readModelSync.readStore.inventory, readModelSync.inventoryDelta),
+    buildReadModelStoreRow("Orders", readModelSync.writeStore.orders, readModelSync.readStore.orders, readModelSync.orderDelta),
+    buildReadModelStoreRow("Shipments", readModelSync.writeStore.shipments, readModelSync.readStore.shipments, readModelSync.shipmentDelta)
+  ].join("");
+
+  document.getElementById("readModelScopeList").innerHTML = readModelSync.scopes.length
+    ? readModelSync.scopes.map((scope) => renderProjectionScopeCard(scope)).join("")
+    : `<div class="empty-state">No projection scopes published.</div>`;
 }
 
 function renderWorkloads() {
@@ -1471,6 +1594,16 @@ function renderActivity() {
   ].join("");
 }
 
+function renderDatabaseTopologyLinks() {
+  const engine = SHOWCASE_CONFIG.engine || {};
+  document.getElementById("databaseTopologyLinks").innerHTML = [
+    linkButton("Showcase Projection JSON", state.summary?.documentation?.databaseTopologyPath || ENDPOINTS.systemDatabaseTopology),
+    linkButton("Raw Databases", engine.databases || "/engine/databases"),
+    linkButton("Database Roles", engine.databaseRoles || "/engine/database-roles"),
+    linkButton("Migration Targets", engine.databaseMigrations || "/engine/database-migrations")
+  ].join("");
+}
+
 function populateTransportFilters() {
   if (!state.transports) return;
   fillSelect("patternFilter", state.transports.behaviors.map((behavior) => behavior.pattern));
@@ -1548,6 +1681,15 @@ async function requestJson(url, options = {}) {
   return payload;
 }
 
+async function loadDatabaseTopologyProjection() {
+  try {
+    return await requestJson(ENDPOINTS.systemDatabaseTopology);
+  } catch (error) {
+    toast("Database topology projection is temporarily unavailable.", "warning");
+    return { errorMessage: error.message || "Database topology projection unavailable." };
+  }
+}
+
 function unwrapPayload(payload) {
   return payload && typeof payload === "object" && "success" in payload && "data" in payload
     ? payload.data
@@ -1601,6 +1743,70 @@ function renderMetadataPreview(metadata) {
   return entries.map(([key, value]) => `<span class="token"><strong>${escapeHtml(key)}</strong>: ${escapeHtml(String(value))}</span>`).join("");
 }
 
+function renderMetadataSections(sections, emptyMessage = "No metadata preview available.") {
+  const blocks = (sections || [])
+    .filter(([, metadata]) => metadata && Object.keys(metadata).length)
+    .map(([label, metadata]) => `
+      <div class="metadata-block">
+        <span class="label">${escapeHtml(label)}</span>
+        <div class="meta-row">${renderMetadataPreview(metadata)}</div>
+      </div>`);
+
+  return blocks.length
+    ? `<div class="metadata-stack">${blocks.join("")}</div>`
+    : `<div class="empty-inline">${escapeHtml(emptyMessage)}</div>`;
+}
+
+function renderCommandStack(commands) {
+  return Array.isArray(commands) && commands.length
+    ? `<div class="command-stack">${commands.map((command) => `<code class="command-snippet">${escapeHtml(command)}</code>`).join("")}</div>`
+    : `<div class="empty-inline">No command guidance published.</div>`;
+}
+
+function buildReadModelStoreRow(label, writeCount, readCount, delta) {
+  return `
+    <tr>
+      <td><strong>${escapeHtml(label)}</strong></td>
+      <td>${escapeHtml(String(writeCount))}</td>
+      <td>${escapeHtml(String(readCount))}</td>
+      <td><span class="status-badge ${deltaTone(delta)}">${escapeHtml(formatSignedNumber(delta))}</span></td>
+    </tr>`;
+}
+
+function renderProjectionScopeCard(scope) {
+  const scopeTone = scope.failedJobs > 0
+    ? "status-error"
+    : scope.pendingJobs > 0
+      ? "status-warning"
+      : "status-success";
+  const scopeStatus = scope.failedJobs > 0
+    ? `${scope.failedJobs} failed`
+    : scope.pendingJobs > 0
+      ? `${scope.pendingJobs} pending`
+      : "caught up";
+
+  return `
+    <article class="scope-card">
+      <header>
+        <strong>${escapeHtml(scope.scope)}</strong>
+        <div class="meta-row">
+          <span class="status-badge ${scopeTone}">${escapeHtml(scopeStatus)}</span>
+          <span class="token">max attempts ${escapeHtml(String(scope.maxAttemptCount))}</span>
+        </div>
+      </header>
+      <div class="scope-stats">
+        ${statCard("Total", scope.totalJobs, "jobs")}
+        ${statCard("Completed", scope.completedJobs, "done")}
+        ${statCard("Pending", scope.pendingJobs, "queued")}
+        ${statCard("Failed", scope.failedJobs, "needs attention")}
+      </div>
+      <div class="meta-row">
+        <span class="token">Next ${escapeHtml(scope.nextAvailableAtUtc ? formatDate(scope.nextAvailableAtUtc) : "none")}</span>
+        <span class="token">Last completed ${escapeHtml(scope.lastCompletedAtUtc ? formatDate(scope.lastCompletedAtUtc) : "not yet")}</span>
+      </div>
+    </article>`;
+}
+
 function orderActions(order) {
   if (order.status === "Pending") {
     return `<button class="btn btn-sm btn-outline" data-action="reserve-order" data-order-id="${escapeHtml(order.orderId)}">Reserve</button>`;
@@ -1617,6 +1823,12 @@ function tone(value) {
   if (["degraded", "pending", "warning", "confirmed", "processing", "shipped", "labelcreated", "trustedonly", "partial"].includes(normalized)) return "status-warning";
   if (["unhealthy", "failed", "error", "cancelled", "conflict", "denied"].includes(normalized)) return "status-error";
   return "";
+}
+
+function deltaTone(value) {
+  const numeric = Number(value || 0);
+  if (numeric === 0) return "status-success";
+  return numeric > 0 ? "status-warning" : "status-error";
 }
 
 function countBy(items, selector) {
@@ -1645,6 +1857,20 @@ function shortId(value) {
 
 function formatDuration(value) {
   return Number.isFinite(value) ? `${value.toFixed(1)} ms` : "n/a";
+}
+
+function formatSignedNumber(value) {
+  const numeric = Number(value || 0);
+  return numeric > 0 ? `+${numeric}` : `${numeric}`;
+}
+
+function getReadModelDeltaMagnitude(sync) {
+  return [
+    sync.productDelta,
+    sync.inventoryDelta,
+    sync.orderDelta,
+    sync.shipmentDelta
+  ].reduce((total, value) => total + Math.abs(Number(value || 0)), 0);
 }
 
 function normalizeActivityResponse(payload) {
@@ -1680,6 +1906,12 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function shortTypeName(value) {
+  const text = String(value || "");
+  const lastDot = text.lastIndexOf(".");
+  return lastDot >= 0 ? text.slice(lastDot + 1) : text;
 }
 
 function loadCartId() {

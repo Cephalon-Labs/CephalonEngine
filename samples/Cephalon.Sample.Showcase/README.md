@@ -57,7 +57,7 @@ dotnet run --project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.c
   - write-store versus read-store row counts
   - durable projection-job backlog and completion state
   - per-scope retry/completion metrics for `products`, `inventory`, `orders`, and `shipments`
-- The showcase UI links to that projection directly from the documentation link grid on `/showcase`.
+- The showcase UI now promotes that projection into a dedicated `Database Topology` section on `/showcase`, while still linking the raw JSON projection and the underlying `/engine/databases`, `/engine/database-roles`, and `/engine/database-migrations` surfaces for drill-down.
 
 ## Manual Migration Commands
 

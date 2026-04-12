@@ -269,6 +269,9 @@ public static class ShowcaseSampleApp
                 },
                 engine = new
                 {
+                    databases = "/engine/databases",
+                    databaseRoles = "/engine/database-roles",
+                    databaseMigrations = "/engine/database-migrations",
                     snapshot = "/engine/snapshot",
                     runtimeStory = "/engine/runtime-story",
                     diagnostics = "/engine/diagnostics",

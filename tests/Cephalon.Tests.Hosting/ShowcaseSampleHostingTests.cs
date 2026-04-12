@@ -63,6 +63,27 @@ public sealed class ShowcaseSampleHostingTests
     }
 
     [Fact]
+    public async Task ShowcaseSampleShowcaseHtmlPromotesDatabaseTopologyOperatorSection()
+    {
+        await using var app = BuildShowcaseForTests();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.GetAsync("/showcase.html");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var html = await response.Content.ReadAsStringAsync();
+        Assert.Contains("href=\"#database-topology\"", html, StringComparison.Ordinal);
+        Assert.Contains("id=\"database-topology\"", html, StringComparison.Ordinal);
+        Assert.Contains("id=\"databaseRoleTable\"", html, StringComparison.Ordinal);
+        Assert.Contains("id=\"databaseMigrationTable\"", html, StringComparison.Ordinal);
+        Assert.Contains("id=\"readModelScopeList\"", html, StringComparison.Ordinal);
+        Assert.Contains("Read-Model Sync", html, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task ShowcaseSampleExposesAppProfileWithAllCapabilities()
     {
         await using var app = BuildShowcaseForTests();
@@ -1639,6 +1660,7 @@ public sealed class ShowcaseSampleHostingTests
         using var document = JsonDocument.Parse(payload);
         var root = document.RootElement;
         var behaviorRoutes = root.GetProperty("behaviorRoutes");
+        var engine = root.GetProperty("engine");
 
         Assert.Equal("/api/v1/showcase", root.GetProperty("restApiBase").GetString());
         Assert.Equal("v1", root.GetProperty("behaviorVersion").GetString());
@@ -1648,6 +1670,9 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("/sse", behaviorRoutes.GetProperty("sse").GetString());
         Assert.Equal("/graphql-ws", behaviorRoutes.GetProperty("graphQLWs").GetString());
         Assert.Equal("/graphql-sse", behaviorRoutes.GetProperty("graphQLSse").GetString());
+        Assert.Equal("/engine/databases", engine.GetProperty("databases").GetString());
+        Assert.Equal("/engine/database-roles", engine.GetProperty("databaseRoles").GetString());
+        Assert.Equal("/engine/database-migrations", engine.GetProperty("databaseMigrations").GetString());
         Assert.Equal("/scalar/v1", root.GetProperty("docs").GetProperty("scalar").GetString());
         Assert.Equal("/openapi/v1.json", root.GetProperty("docs").GetProperty("openApiJson").GetString());
     }

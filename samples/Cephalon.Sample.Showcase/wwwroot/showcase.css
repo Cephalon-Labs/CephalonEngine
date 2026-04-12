@@ -264,6 +264,7 @@ a:focus-visible {
 .workspace-grid,
 .runtime-grid,
 .governance-grid,
+.database-grid,
 .transport-grid,
 .activity-grid,
 .catalog-cart-grid,
@@ -285,7 +286,8 @@ a:focus-visible {
 
 .workspace-grid,
 .runtime-grid,
-.governance-grid {
+.governance-grid,
+.database-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -353,7 +355,12 @@ a:focus-visible {
 .audit-list,
 .activity-stats,
 .timeline-list,
-.cart-lines {
+.cart-lines,
+.scope-list,
+.scope-stats,
+.metadata-stack,
+.command-stack,
+.status-stack {
   display: grid;
   gap: 10px;
 }
@@ -539,6 +546,55 @@ tbody tr:last-child td {
   line-height: 1.6;
 }
 
+.metadata-block {
+  display: grid;
+  gap: 6px;
+}
+
+.metadata-block .meta-row,
+.status-stack .meta-row {
+  margin-top: 0;
+}
+
+.empty-inline {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.command-snippet {
+  display: block;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.74);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.scope-card {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--panel-strong);
+}
+
+.scope-card > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.scope-stats {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .transport-runner-intro {
   display: flex;
   justify-content: space-between;
@@ -704,6 +760,7 @@ tbody tr:last-child td {
   .hero-shell,
   .transport-summary,
   .overview-grid,
+  .database-grid,
   .transport-grid,
   .activity-grid,
   .workspace-grid,
@@ -754,7 +811,8 @@ tbody tr:last-child td {
 
   .transport-runner-intro,
   .runner-context,
-  .runner-probe-grid {
+  .runner-probe-grid,
+  .scope-stats {
     grid-template-columns: 1fr;
     flex-direction: column;
   }

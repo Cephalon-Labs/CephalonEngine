@@ -34,6 +34,7 @@
 
 <nav class="section-nav" aria-label="Showcase sections">
   <a href="#overview">Overview</a>
+  <a href="#database-topology">Database Topology</a>
   <a href="#workloads">Workloads</a>
   <a href="#runtime">Runtime</a>
   <a href="#governance">Governance</a>
@@ -85,6 +86,91 @@
           <li class="empty-state">Preparing scenario suggestions...</li>
         </ul>
         <div class="link-grid" id="documentationLinks"></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="database-topology" class="section-block">
+    <div class="section-header">
+      <div>
+        <p class="section-kicker">Database Topology</p>
+        <h2>Inspect role routing, migration truth, and read-model sync in one operator view.</h2>
+      </div>
+      <p class="section-caption" id="databaseTopologyTimestamp">Refreshing database topology...</p>
+    </div>
+
+    <div class="kpi-grid" id="databaseTopologyKpis">
+      <div class="empty-state">Loading database topology...</div>
+    </div>
+
+    <div class="link-grid" id="databaseTopologyLinks"></div>
+
+    <div class="database-grid">
+      <article class="panel panel-span-2">
+        <div class="panel-header">
+          <h3>Database Roles</h3>
+          <span class="panel-badge">Resolved Runtime</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Role</th><th>Provider</th><th>Health</th><th>Consumers</th><th>Runtime Notes</th></tr>
+            </thead>
+            <tbody id="databaseRoleTable">
+              <tr><td colspan="5" class="empty-state">Loading database roles...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="panel panel-span-2">
+        <div class="panel-header">
+          <h3>Migration Targets</h3>
+          <span class="panel-badge">Deploy Guidance</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Target</th><th>Status</th><th>Execution</th><th>Commands</th><th>Notes</th></tr>
+            </thead>
+            <tbody id="databaseMigrationTable">
+              <tr><td colspan="5" class="empty-state">Loading migration targets...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Read-Model Sync</h3>
+          <span class="panel-badge">Projection Loop</span>
+        </div>
+        <div class="facet-grid" id="readModelSyncSummary">
+          <div class="empty-state">Loading read-model sync...</div>
+        </div>
+        <dl class="metric-list" id="readModelSyncTimeline">
+          <div class="empty-state">Waiting for projection timing...</div>
+        </dl>
+        <div class="table-wrap compact-table">
+          <table>
+            <thead>
+              <tr><th>Store</th><th>Write</th><th>Read</th><th>Delta</th></tr>
+            </thead>
+            <tbody id="readModelStoreTable">
+              <tr><td colspan="4" class="empty-state">Loading store counts...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <h3>Projection Scope Health</h3>
+          <span class="panel-badge">Durable Jobs</span>
+        </div>
+        <div class="scope-list" id="readModelScopeList">
+          <div class="empty-state">Loading projection scopes...</div>
+        </div>
       </article>
     </div>
   </section>
