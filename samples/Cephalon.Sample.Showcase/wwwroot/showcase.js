@@ -447,6 +447,7 @@ function renderDatabaseTopology() {
     const message = escapeHtml(state.databaseTopology.errorMessage);
     document.getElementById("databaseTopologyTimestamp").textContent = "Database topology projection unavailable";
     document.getElementById("databaseTopologyKpis").innerHTML = `<div class="empty-state">${message}</div>`;
+    document.getElementById("databaseTopologyReadiness").innerHTML = `<div class="empty-state">${message}</div>`;
     document.getElementById("databaseTopologyInsights").innerHTML = `<div class="empty-state">${message}</div>`;
     document.getElementById("databaseMigrationPlaybookSummary").innerHTML = `<div class="empty-state">${message}</div>`;
     document.getElementById("databaseMigrationPlaybookList").innerHTML = `<div class="empty-state">${message}</div>`;
@@ -459,11 +460,12 @@ function renderDatabaseTopology() {
     return;
   }
 
-  const { summary, insights, roles, migrations, migrationPlaybook, readModelSync } = state.databaseTopology;
+  const { summary, readiness, insights, roles, migrations, migrationPlaybook, readModelSync } = state.databaseTopology;
   const totalDeltaMagnitude = getReadModelDeltaMagnitude(readModelSync);
   const attentionCount = (insights || []).filter((insight) => tone(insight?.tone) !== "status-success").length;
   const recommendedMigrationTargets = (migrations || []).filter((migration) => hasRecommendedMigrationCommands(migration.commands)).length;
   document.getElementById("databaseTopologyTimestamp").textContent = `Updated ${formatDate(summary.generatedAtUtc)}`;
+  renderDatabaseTopologyReadiness(readiness);
   renderDatabaseTopologyInsights(insights);
   renderDatabaseMigrationPlaybook(migrationPlaybook);
 
@@ -577,6 +579,27 @@ function renderDatabaseTopologyInsights(insights) {
         </div>
       </article>`).join("")
     : `<div class="empty-state">No operator insights published.</div>`;
+}
+
+function renderDatabaseTopologyReadiness(readiness) {
+  if (!readiness) {
+    document.getElementById("databaseTopologyReadiness").innerHTML = `<div class="empty-state">Topology readiness unavailable.</div>`;
+    return;
+  }
+
+  document.getElementById("databaseTopologyReadiness").className = `readiness-banner ${tone(readiness.state)}`;
+  document.getElementById("databaseTopologyReadiness").innerHTML = `
+    <header>
+      <div>
+        <span class="label">Topology Readiness</span>
+        <h3>${escapeHtml(readiness.headline || "Topology readiness unavailable")}</h3>
+      </div>
+      <span class="status-badge ${tone(readiness.state)}">${escapeHtml(readiness.state || "Unknown")}</span>
+    </header>
+    <p>${escapeHtml(readiness.detail || "No readiness detail published.")}</p>
+    <div class="insight-actions">
+      ${readiness.actionPath ? linkButton(readiness.actionLabel || "Open", readiness.actionPath) : ""}
+    </div>`;
 }
 
 function renderDatabaseMigrationPlaybook(playbook) {
@@ -1959,9 +1982,9 @@ function orderActions(order) {
 
 function tone(value) {
   const normalized = String(value || "").toLowerCase();
-  if (["healthy", "started", "success", "delivered", "trusted", "allowed", "succeeded", "completed"].includes(normalized)) return "status-success";
-  if (["degraded", "pending", "warning", "confirmed", "processing", "shipped", "labelcreated", "trustedonly", "partial"].includes(normalized)) return "status-warning";
-  if (["unhealthy", "failed", "error", "cancelled", "conflict", "denied"].includes(normalized)) return "status-error";
+  if (["healthy", "started", "success", "delivered", "trusted", "allowed", "succeeded", "completed", "ready"].includes(normalized)) return "status-success";
+  if (["degraded", "pending", "warning", "confirmed", "processing", "shipped", "labelcreated", "trustedonly", "partial", "attention"].includes(normalized)) return "status-warning";
+  if (["unhealthy", "failed", "error", "cancelled", "conflict", "denied", "blocked"].includes(normalized)) return "status-error";
   return "";
 }
 

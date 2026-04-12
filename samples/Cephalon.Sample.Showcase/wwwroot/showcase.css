@@ -275,6 +275,44 @@ a:focus-visible {
   gap: 16px;
 }
 
+.readiness-banner {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--panel-strong);
+}
+
+.readiness-banner > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.readiness-banner p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+
+.readiness-banner.status-success {
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--line));
+  background: color-mix(in srgb, var(--accent-soft) 18%, var(--panel-strong));
+}
+
+.readiness-banner.status-warning {
+  border-color: color-mix(in srgb, var(--amber) 34%, var(--line));
+  background: color-mix(in srgb, var(--amber-soft) 18%, var(--panel-strong));
+}
+
+.readiness-banner.status-error {
+  border-color: color-mix(in srgb, var(--rose) 36%, var(--line));
+  background: color-mix(in srgb, var(--rose-soft) 16%, var(--panel-strong));
+}
+
 .kpi-grid {
   grid-template-columns: repeat(6, minmax(0, 1fr));
   margin-bottom: 16px;

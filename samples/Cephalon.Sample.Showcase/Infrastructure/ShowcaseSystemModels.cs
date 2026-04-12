@@ -95,6 +95,13 @@ internal sealed record ShowcaseDatabaseTopologyInsight(
     string ActionLabel,
     string ActionPath);
 
+internal sealed record ShowcaseDatabaseTopologyReadiness(
+    string State,
+    string Headline,
+    string Detail,
+    string ActionLabel,
+    string ActionPath);
+
 internal sealed record ShowcaseDatabaseTopologyRoleRow(
     string Id,
     string RequestedRoleId,
@@ -200,6 +207,7 @@ internal sealed record ShowcaseReadModelSyncStatus(
 
 internal sealed record ShowcaseDatabaseTopologyResponse(
     ShowcaseDatabaseTopologySummary Summary,
+    ShowcaseDatabaseTopologyReadiness Readiness,
     IReadOnlyList<ShowcaseDatabaseTopologyInsight> Insights,
     IReadOnlyList<ShowcaseDatabaseTopologyRoleRow> Roles,
     IReadOnlyList<ShowcaseDatabaseTopologyMigrationRow> Migrations,

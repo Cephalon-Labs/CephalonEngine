@@ -77,6 +77,7 @@ public sealed class ShowcaseSampleHostingTests
         var html = await response.Content.ReadAsStringAsync();
         Assert.Contains("href=\"#database-topology\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"database-topology\"", html, StringComparison.Ordinal);
+        Assert.Contains("id=\"databaseTopologyReadiness\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"databaseTopologyInsights\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"databaseMigrationPlaybookSummary\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"databaseMigrationPlaybookList\"", html, StringComparison.Ordinal);
@@ -1522,6 +1523,12 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("InMemory", summary.GetProperty("readProvider").GetString());
         Assert.Equal("InMemory", summary.GetProperty("historyProvider").GetString());
 
+        var readiness = root.GetProperty("readiness");
+        Assert.Equal("Ready", readiness.GetProperty("state").GetString());
+        Assert.Equal("Database topology is ready", readiness.GetProperty("headline").GetString());
+        Assert.Equal("/engine/snapshot", readiness.GetProperty("actionPath").GetString());
+        Assert.Contains("playbook", readiness.GetProperty("detail").GetString(), StringComparison.Ordinal);
+
         var roles = root.GetProperty("roles").EnumerateArray().ToArray();
         Assert.Contains(
             roles,
@@ -1647,6 +1654,10 @@ public sealed class ShowcaseSampleHostingTests
 
         using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         var root = document.RootElement;
+        var readiness = root.GetProperty("readiness");
+        Assert.Equal("Attention", readiness.GetProperty("state").GetString());
+        Assert.Equal("Read-model catch-up is still in progress", readiness.GetProperty("headline").GetString());
+        Assert.Equal("/api/v1/showcase/system/database-topology", readiness.GetProperty("actionPath").GetString());
         var readModelSync = root.GetProperty("readModelSync");
         Assert.True(readModelSync.GetProperty("enabled").GetBoolean());
         Assert.True(readModelSync.GetProperty("isLagging").GetBoolean());

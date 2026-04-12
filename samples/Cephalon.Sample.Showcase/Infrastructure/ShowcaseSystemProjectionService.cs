@@ -177,11 +177,13 @@ internal sealed class ShowcaseSystemProjectionService(
             ReadProvider: runtimeSnapshot.Manifest.AppProfile.Databases.Read.Provider ?? "Unknown",
             HistoryProvider: runtimeSnapshot.Manifest.AppProfile.Databases.History.Provider ?? "Unknown",
             GeneratedAtUtc: DateTimeOffset.UtcNow);
-        var insights = BuildDatabaseTopologyInsights(roles, migrations, readModelSync);
         var migrationPlaybook = BuildDatabaseMigrationPlaybook(migrations);
+        var readiness = BuildDatabaseTopologyReadiness(roles, migrations, migrationPlaybook, readModelSync);
+        var insights = BuildDatabaseTopologyInsights(roles, migrations, readModelSync);
 
         return new ShowcaseDatabaseTopologyResponse(
             Summary: summary,
+            Readiness: readiness,
             Insights: insights,
             Roles: roles,
             Migrations: migrations,
@@ -957,6 +959,118 @@ internal sealed class ShowcaseSystemProjectionService(
                 ApplyOnStartupTargetCount: steps.Count(static step => step.ApplyOnStartup),
                 GeneratedAtUtc: DateTimeOffset.UtcNow),
             Steps: steps);
+    }
+
+    private static ShowcaseDatabaseTopologyReadiness BuildDatabaseTopologyReadiness(
+        IReadOnlyList<ShowcaseDatabaseTopologyRoleRow> roles,
+        IReadOnlyList<ShowcaseDatabaseTopologyMigrationRow> migrations,
+        ShowcaseDatabaseTopologyMigrationPlaybook migrationPlaybook,
+        ShowcaseReadModelSyncStatus readModelSync)
+    {
+        ArgumentNullException.ThrowIfNull(roles);
+        ArgumentNullException.ThrowIfNull(migrations);
+        ArgumentNullException.ThrowIfNull(migrationPlaybook);
+        ArgumentNullException.ThrowIfNull(readModelSync);
+
+        var hasUnhealthyRole = roles.Any(static role =>
+            string.Equals(role.HealthState, nameof(HealthState.Unhealthy), StringComparison.OrdinalIgnoreCase));
+        if (hasUnhealthyRole)
+        {
+            return new ShowcaseDatabaseTopologyReadiness(
+                State: "Blocked",
+                Headline: "Database topology is blocked",
+                Detail: "At least one resolved database role is unhealthy, so the sample cannot be trusted for operator or workload validation until connectivity recovers.",
+                ActionLabel: "Open database roles",
+                ActionPath: "/engine/database-roles");
+        }
+
+        var hasFailedMigration = migrations.Any(static migration =>
+            string.Equals(migration.Status, nameof(DatabaseMigrationStatus.Failed), StringComparison.OrdinalIgnoreCase));
+        if (hasFailedMigration)
+        {
+            return new ShowcaseDatabaseTopologyReadiness(
+                State: "Blocked",
+                Headline: "Migration targets are blocked",
+                Detail: "One or more migration targets failed, so the environment needs intervention before the sample topology should be treated as current.",
+                ActionLabel: "Open migration targets",
+                ActionPath: "/engine/database-migrations");
+        }
+
+        if (readModelSync.Jobs.FailedJobs > 0)
+        {
+            return new ShowcaseDatabaseTopologyReadiness(
+                State: "Blocked",
+                Headline: "Read-model sync is failing",
+                Detail: $"{readModelSync.Jobs.FailedJobs} projection job(s) are failed, so the read side is no longer a trustworthy operator surface until the backlog is repaired.",
+                ActionLabel: "Open projection JSON",
+                ActionPath: "/api/v1/showcase/system/database-topology");
+        }
+
+        var hasDegradedRole = roles.Any(static role =>
+            string.Equals(role.HealthState, nameof(HealthState.Degraded), StringComparison.OrdinalIgnoreCase));
+        if (hasDegradedRole)
+        {
+            return new ShowcaseDatabaseTopologyReadiness(
+                State: "Attention",
+                Headline: "Database topology needs attention",
+                Detail: "At least one resolved role is degraded, so operators should inspect role health and probe metadata before relying on the environment.",
+                ActionLabel: "Open database roles",
+                ActionPath: "/engine/database-roles");
+        }
+
+        var hasPendingMigration = migrations.Any(static migration =>
+            !string.Equals(migration.Status, nameof(DatabaseMigrationStatus.Succeeded), StringComparison.OrdinalIgnoreCase));
+        if (hasPendingMigration)
+        {
+            return new ShowcaseDatabaseTopologyReadiness(
+                State: "Attention",
+                Headline: "Migration work is still pending",
+                Detail: "Some migration targets are not yet succeeded, so the sample still needs migration follow-through before the database topology is fully aligned.",
+                ActionLabel: "Open migration targets",
+                ActionPath: "/engine/database-migrations");
+        }
+
+        if (!readModelSync.Enabled)
+        {
+            return new ShowcaseDatabaseTopologyReadiness(
+                State: "Attention",
+                Headline: "Read-model sync is disabled",
+                Detail: "The read-model loop is not running, so the sample cannot prove write/read alignment even though the underlying role and migration surfaces are available.",
+                ActionLabel: "Open projection JSON",
+                ActionPath: "/api/v1/showcase/system/database-topology");
+        }
+
+        var deltaMagnitude =
+            Math.Abs(readModelSync.ProductDelta) +
+            Math.Abs(readModelSync.InventoryDelta) +
+            Math.Abs(readModelSync.OrderDelta) +
+            Math.Abs(readModelSync.ShipmentDelta);
+        if (readModelSync.Jobs.PendingJobs > 0 || deltaMagnitude > 0)
+        {
+            return new ShowcaseDatabaseTopologyReadiness(
+                State: "Attention",
+                Headline: "Read-model catch-up is still in progress",
+                Detail: "The write and read stores are not fully aligned yet, so operators should let the projection backlog settle before treating the showcase topology as current.",
+                ActionLabel: "Open projection JSON",
+                ActionPath: "/api/v1/showcase/system/database-topology");
+        }
+
+        if (migrationPlaybook.Summary.ProductionReadyTargetCount < migrationPlaybook.Summary.TargetCount)
+        {
+            return new ShowcaseDatabaseTopologyReadiness(
+                State: "Attention",
+                Headline: "Production migration guidance is incomplete",
+                Detail: "The showcase topology is currently healthy, but not every migration target publishes a production-ready runnable path yet.",
+                ActionLabel: "Open migration targets",
+                ActionPath: "/engine/database-migrations");
+        }
+
+        return new ShowcaseDatabaseTopologyReadiness(
+            State: "Ready",
+            Headline: "Database topology is ready",
+            Detail: "Resolved roles are healthy, migration targets succeeded, read-model sync is caught up, and the sample playbook now publishes runnable production and local paths.",
+            ActionLabel: "Open runtime snapshot",
+            ActionPath: "/engine/snapshot");
     }
 
     private static string BuildShowcaseSampleMigrationCommand(string commandTemplate)
