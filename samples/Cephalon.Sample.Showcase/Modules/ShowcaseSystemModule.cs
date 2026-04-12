@@ -129,6 +129,25 @@ public sealed class ShowcaseSystemModule : ModuleBase, IEndpointModule
             .WithDescription("Returns the engine-owned database role and migration catalogs plus showcase read-model sync lag and durable projection-job state for the operator console.")
             .ProducesProblem(StatusCodes.Status403Forbidden);
 
+        routes.MapGet("/database-topology/brief", async (
+                HttpContext httpContext,
+                ShowcaseSystemProjectionService projections,
+                CancellationToken cancellationToken) =>
+            {
+                var denied = TryRequireCapability(httpContext, ReadCapabilityKey);
+                return denied is not null
+                    ? denied
+                    : Results.Text(
+                        await projections.GetDatabaseTopologyBriefAsync(cancellationToken).ConfigureAwait(false),
+                        "text/markdown; charset=utf-8");
+            })
+            .RequireCapability(ReadCapabilityKey)
+            .WithName("GetShowcaseDatabaseTopologyBrief")
+            .WithSummary("Get the shareable database-topology operator brief.")
+            .WithDescription("Returns a Markdown operator brief derived from the live showcase database-topology projection, including readiness, next actions, and drill-down routes.")
+            .Produces<string>(StatusCodes.Status200OK, "text/markdown")
+            .ProducesProblem(StatusCodes.Status403Forbidden);
+
         routes.MapGet("/transports", async (
                 HttpContext httpContext,
                 ShowcaseSystemProjectionService projections,

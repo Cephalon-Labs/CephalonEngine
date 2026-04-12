@@ -9,7 +9,8 @@ internal sealed record ShowcaseDocumentationLinks(
     string ModulesPath,
     string CapabilitiesPath,
     string AuditHistoryPath,
-    string DatabaseTopologyPath);
+    string DatabaseTopologyPath,
+    string DatabaseTopologyBriefPath);
 
 internal sealed record ShowcaseRuntimeSummary(
     string Environment,

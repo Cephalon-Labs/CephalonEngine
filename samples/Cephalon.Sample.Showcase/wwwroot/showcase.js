@@ -6,6 +6,7 @@ const ENDPOINTS = Object.freeze({
   systemBusiness: `${SYSTEM_API}/business`,
   systemRuntime: `${SYSTEM_API}/runtime`,
   systemDatabaseTopology: `${SYSTEM_API}/database-topology`,
+  systemDatabaseTopologyBrief: `${SYSTEM_API}/database-topology/brief`,
   systemGovernance: `${SYSTEM_API}/governance`,
   systemTransports: `${SYSTEM_API}/transports`,
   systemActivity: `${SYSTEM_API}/activity`,
@@ -435,7 +436,8 @@ function renderOverview() {
     linkButton("Runtime Story", documentation.runtimeStoryPath),
     linkButton("Diagnostics", documentation.diagnosticsPath),
     linkButton("Audit History", documentation.auditHistoryPath),
-    linkButton("Database Topology", documentation.databaseTopologyPath)
+    linkButton("Database Topology", documentation.databaseTopologyPath),
+    linkButton("Topology Brief", documentation.databaseTopologyBriefPath || ENDPOINTS.systemDatabaseTopologyBrief)
   ].join("");
 }
 
@@ -1765,6 +1767,7 @@ function renderDatabaseTopologyLinks() {
   const engine = SHOWCASE_CONFIG.engine || {};
   document.getElementById("databaseTopologyLinks").innerHTML = [
     linkButton("Showcase Projection JSON", state.summary?.documentation?.databaseTopologyPath || ENDPOINTS.systemDatabaseTopology),
+    linkButton("Operator Brief", state.summary?.documentation?.databaseTopologyBriefPath || ENDPOINTS.systemDatabaseTopologyBrief),
     linkButton("Raw Databases", engine.databases || "/engine/databases"),
     linkButton("Database Roles", engine.databaseRoles || "/engine/database-roles"),
     linkButton("Migration Targets", engine.databaseMigrations || "/engine/database-migrations")

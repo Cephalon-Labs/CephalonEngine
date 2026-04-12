@@ -29,6 +29,6 @@ Database behavior:
 - The checked-in `Development.json` and `Local.json` profiles point at Docker Desktop-backed PostgreSQL roles and apply EF Core migrations on startup for `write`, `read`, and `history`.
 - Tests can override the same keys to isolated `InMemory` roles without changing host code.
 - `dotnet ef` is supported through design-time DbContext factories for `ShowcaseWriteDbContext`, `ShowcaseReadDbContext`, and `ShowcaseAuditHistoryDbContext`.
-- When the sample is running, `/api/v1/showcase/system/database-topology` gives one operator-facing answer for the active role providers, migration targets, write/read row counts, and durable projection-job state resolved from those configuration files.
+- When the sample is running, `/api/v1/showcase/system/database-topology` gives the rich JSON operator-facing answer for the active role providers, migration targets, write/read row counts, and durable projection-job state resolved from those configuration files, while `/api/v1/showcase/system/database-topology/brief` exports the same live answer as a shareable Markdown handoff.
 
 If you want a local-only profile, add `Local.json` beside any existing `Development.json` file, then run the sample with `DOTNET_ENVIRONMENT=Local` or `ASPNETCORE_ENVIRONMENT=Local`.

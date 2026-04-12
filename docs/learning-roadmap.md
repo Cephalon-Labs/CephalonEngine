@@ -317,6 +317,7 @@ Study code:
 Inspect:
 
 - `/api/v1/showcase/system/database-topology`
+- `/api/v1/showcase/system/database-topology/brief`
 - `/engine/database-roles`
 - `/engine/database-migrations`
 

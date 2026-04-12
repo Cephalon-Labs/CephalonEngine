@@ -269,6 +269,7 @@ Working definition:
 Where to verify:
 
 - `/api/v1/showcase/system/database-topology`
+- `/api/v1/showcase/system/database-topology/brief`
 - `samples/Cephalon.Sample.Showcase/Infrastructure/ShowcaseReadModelSyncService.cs`
 
 Your notes:

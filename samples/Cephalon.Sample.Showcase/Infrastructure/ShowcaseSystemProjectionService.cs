@@ -1,4 +1,6 @@
 using System.Reflection;
+using System.Text;
+using System.Globalization;
 using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Authorization;
 using Cephalon.Abstractions.Behaviors;
@@ -202,6 +204,13 @@ internal sealed class ShowcaseSystemProjectionService(
             Migrations: migrations,
             MigrationPlaybook: migrationPlaybook,
             ReadModelSync: readModelSync);
+    }
+
+    public async Task<string> GetDatabaseTopologyBriefAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var projection = await GetDatabaseTopologyAsync(cancellationToken).ConfigureAwait(false);
+        return BuildDatabaseTopologyBrief(projection);
     }
 
     public Task<ShowcaseRuntimeResponse> GetRuntimeAsync(
@@ -1455,6 +1464,7 @@ internal sealed class ShowcaseSystemProjectionService(
             defaultOpenApiDocumentName,
             StringComparison.OrdinalIgnoreCase);
         var scalarPath = $"{openApiOptions.ScalarRoutePrefix.TrimEnd('/')}/{defaultOpenApiDocumentName}";
+        var databaseTopologyPath = $"{apiRoutes.RestPrefix}/v1/showcase/system/database-topology";
 
         return new ShowcaseDocumentationLinks(
             OpenApiJsonPath: openApiJsonPath,
@@ -1465,7 +1475,65 @@ internal sealed class ShowcaseSystemProjectionService(
             ModulesPath: "/engine/modules",
             CapabilitiesPath: "/engine/capabilities",
             AuditHistoryPath: $"{apiRoutes.RestPrefix}/v1/showcase/audit/history",
-            DatabaseTopologyPath: $"{apiRoutes.RestPrefix}/v1/showcase/system/database-topology");
+            DatabaseTopologyPath: databaseTopologyPath,
+            DatabaseTopologyBriefPath: $"{databaseTopologyPath}/brief");
+    }
+
+    private static string BuildDatabaseTopologyBrief(ShowcaseDatabaseTopologyResponse projection)
+    {
+        ArgumentNullException.ThrowIfNull(projection);
+
+        var builder = new StringBuilder();
+        var summary = projection.Summary;
+        var readiness = projection.Readiness;
+        var actionPlan = projection.ActionPlan;
+        var playbook = projection.MigrationPlaybook;
+        var readModelSync = projection.ReadModelSync;
+
+        builder.AppendLine("# Database Topology Operator Brief");
+        builder.AppendLine();
+        builder.AppendLine(CultureInfo.InvariantCulture, $"Generated: `{summary.GeneratedAtUtc:O}`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"Readiness: **{readiness.State}**");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"Headline: {readiness.Headline}");
+        builder.AppendLine();
+        builder.AppendLine("## Summary");
+        builder.AppendLine();
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Roles: {summary.RoleCount} total, {summary.HealthyRoleCount} healthy");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Migrations: {summary.MigrationTargetCount} total, {summary.SucceededMigrationTargetCount} succeeded");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Read-model sync: {(readModelSync.Enabled ? (readModelSync.IsLagging ? "enabled, catching up" : "enabled and aligned") : "disabled")}");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Providers: write `{summary.WriteProvider}`, read `{summary.ReadProvider}`, history `{summary.HistoryProvider}`");
+        builder.AppendLine();
+        builder.AppendLine("## Recommended Next Actions");
+        builder.AppendLine();
+
+        foreach (var action in actionPlan.Actions)
+        {
+            builder.AppendLine(CultureInfo.InvariantCulture, $"{action.Order}. {action.Title}");
+            builder.AppendLine(CultureInfo.InvariantCulture, $"   - Tone: {action.Tone}");
+            builder.AppendLine(CultureInfo.InvariantCulture, $"   - Detail: {action.Detail}");
+            builder.AppendLine(CultureInfo.InvariantCulture, $"   - Done when: {action.CompletionSignal}");
+            builder.AppendLine(CultureInfo.InvariantCulture, $"   - Open: `{action.ActionPath}`");
+        }
+
+        builder.AppendLine();
+        builder.AppendLine("## Migration Playbook Snapshot");
+        builder.AppendLine();
+
+        foreach (var step in playbook.Steps)
+        {
+            var pathStatus = step.HasProductionRecommendedCommand ? "production path ready" : "local/manual review";
+            builder.AppendLine(CultureInfo.InvariantCulture, $"{step.Order}. `{step.TargetId}` - {step.Status} - {pathStatus}");
+        }
+
+        builder.AppendLine();
+        builder.AppendLine("## Drill-down Routes");
+        builder.AppendLine();
+        builder.AppendLine("- Showcase projection JSON: `/api/v1/showcase/system/database-topology`");
+        builder.AppendLine("- Database roles: `/engine/database-roles`");
+        builder.AppendLine("- Migration targets: `/engine/database-migrations`");
+        builder.AppendLine("- Runtime snapshot: `/engine/snapshot`");
+
+        return builder.ToString().TrimEnd();
     }
 
     private List<string> BuildSuggestedJourneys(

@@ -1484,6 +1484,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("/scalar/v1", root.GetProperty("documentation").GetProperty("scalarPath").GetString());
         Assert.Equal("/openapi/v1.json", root.GetProperty("documentation").GetProperty("openApiJsonPath").GetString());
         Assert.Equal("/api/v1/showcase/system/database-topology", root.GetProperty("documentation").GetProperty("databaseTopologyPath").GetString());
+        Assert.Equal("/api/v1/showcase/system/database-topology/brief", root.GetProperty("documentation").GetProperty("databaseTopologyBriefPath").GetString());
         Assert.True(root.GetProperty("business").GetProperty("activeProducts").GetInt32() >= 10);
         Assert.True(root.GetProperty("suggestedJourneys").GetArrayLength() > 0);
     }
@@ -1637,6 +1638,17 @@ public sealed class ShowcaseSampleHostingTests
             scope =>
                 string.Equals(scope.GetProperty("scope").GetString(), "products", StringComparison.Ordinal) &&
                 scope.GetProperty("completedJobs").GetInt32() >= 1);
+
+        var briefResponse = await client.GetAsync("/api/v1/showcase/system/database-topology/brief");
+
+        Assert.Equal(HttpStatusCode.OK, briefResponse.StatusCode);
+        Assert.Equal("text/markdown", briefResponse.Content.Headers.ContentType?.MediaType);
+
+        var brief = await briefResponse.Content.ReadAsStringAsync();
+        Assert.Contains("# Database Topology Operator Brief", brief, StringComparison.Ordinal);
+        Assert.Contains("Readiness: **Ready**", brief, StringComparison.Ordinal);
+        Assert.Contains("1. Topology is ready for operator validation", brief, StringComparison.Ordinal);
+        Assert.Contains("Showcase projection JSON: `/api/v1/showcase/system/database-topology`", brief, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1706,6 +1718,16 @@ public sealed class ShowcaseSampleHostingTests
                 string.Equals(insight.GetProperty("tone").GetString(), "Warning", StringComparison.Ordinal) &&
                 string.Equals(insight.GetProperty("actionPath").GetString(), "/api/v1/showcase/system/database-topology", StringComparison.Ordinal) &&
                 insight.GetProperty("detail").GetString()!.Contains("Store delta magnitude is", StringComparison.Ordinal));
+
+        var briefResponse = await client.GetAsync("/api/v1/showcase/system/database-topology/brief");
+
+        Assert.Equal(HttpStatusCode.OK, briefResponse.StatusCode);
+        Assert.Equal("text/markdown", briefResponse.Content.Headers.ContentType?.MediaType);
+
+        var brief = await briefResponse.Content.ReadAsStringAsync();
+        Assert.Contains("Readiness: **Attention**", brief, StringComparison.Ordinal);
+        Assert.Contains("1. Let the read-model catch up", brief, StringComparison.Ordinal);
+        Assert.Contains("Showcase projection JSON: `/api/v1/showcase/system/database-topology`", brief, StringComparison.Ordinal);
     }
 
     [Fact]
