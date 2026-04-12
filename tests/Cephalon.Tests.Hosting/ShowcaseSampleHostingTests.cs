@@ -1580,6 +1580,9 @@ public sealed class ShowcaseSampleHostingTests
                     string.Equals(command.GetProperty("id").GetString(), "bundle", StringComparison.Ordinal) &&
                     string.Equals(command.GetProperty("displayName").GetString(), "EF Core migration bundle", StringComparison.Ordinal) &&
                     command.GetProperty("recommendedForProduction").GetBoolean() &&
+                    string.Equals(command.GetProperty("toolId").GetString(), "dotnet-ef", StringComparison.Ordinal) &&
+                    string.Equals(command.GetProperty("executionCategory").GetString(), "deploy-time", StringComparison.Ordinal) &&
+                    string.Equals(command.GetProperty("workingDirectoryHint").GetString(), "startup-project", StringComparison.Ordinal) &&
                     string.Equals(command.GetProperty("sampleCommandHint").GetString(), "Run from the repository root, or adapt the project paths for another host layout.", StringComparison.Ordinal) &&
                     string.Equals(command.GetProperty("sampleCommand").GetString(), "dotnet ef migrations bundle --context ShowcaseAuditHistoryDbContext --project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj --startup-project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj", StringComparison.Ordinal) &&
                     command.GetProperty("description").GetString()!.Contains("'history'", StringComparison.Ordinal) &&

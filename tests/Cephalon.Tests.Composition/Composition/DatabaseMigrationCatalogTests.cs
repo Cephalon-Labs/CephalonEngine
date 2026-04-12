@@ -23,7 +23,19 @@ public sealed class DatabaseMigrationCatalogTests
                 status: DatabaseMigrationStatus.Planned,
                 applyOnStartup: true,
                 exitAfterApply: false,
-                provider: "PostgreSql")
+                provider: "PostgreSql",
+                commands:
+                [
+                    new DatabaseMigrationCommandDescriptor(
+                        id: "bundle",
+                        displayName: "Migration bundle",
+                        description: "Build a migration bundle for the write role.",
+                        commandTemplate: "dotnet ef migrations bundle --context SampleWriteDbContext",
+                        recommendedForProduction: true,
+                        toolId: "dotnet-ef",
+                        executionCategory: "deploy-time",
+                        workingDirectoryHint: "startup-project")
+                ])
         ]));
         services.AddCephalon(engine =>
         {
@@ -38,7 +50,11 @@ public sealed class DatabaseMigrationCatalogTests
         Assert.Equal("write", migration.Id);
         Assert.Equal(DatabaseMigrationStatus.Planned, migration.Status);
         Assert.Equal("startup-hosted-service", migration.ExecutionMode);
-        Assert.Empty(migration.Commands);
+        var command = Assert.Single(migration.Commands);
+        Assert.Equal("bundle", command.Id);
+        Assert.Equal("dotnet-ef", command.ToolId);
+        Assert.Equal("deploy-time", command.ExecutionCategory);
+        Assert.Equal("startup-project", command.WorkingDirectoryHint);
     }
 
     [Fact]

@@ -387,6 +387,9 @@ public sealed class EntityFrameworkDataPackTests
                 Assert.Equal("bundle", bundle.Id);
                 Assert.True(bundle.RecommendedForProduction);
                 Assert.Equal("dotnet ef migrations bundle --context SingleCatalogDbContext", bundle.CommandTemplate);
+                Assert.Equal("dotnet-ef", bundle.ToolId);
+                Assert.Equal("deploy-time", bundle.ExecutionCategory);
+                Assert.Equal("startup-project", bundle.WorkingDirectoryHint);
                 Assert.Equal("dotnet-ef", bundle.Metadata["tool"]);
             },
             script =>
@@ -394,12 +397,18 @@ public sealed class EntityFrameworkDataPackTests
                 Assert.Equal("script", script.Id);
                 Assert.True(script.RecommendedForProduction);
                 Assert.Equal("dotnet ef migrations script --context SingleCatalogDbContext --idempotent", script.CommandTemplate);
+                Assert.Equal("dotnet-ef", script.ToolId);
+                Assert.Equal("deploy-time", script.ExecutionCategory);
+                Assert.Equal("startup-project", script.WorkingDirectoryHint);
             },
             update =>
             {
                 Assert.Equal("update", update.Id);
                 Assert.False(update.RecommendedForProduction);
                 Assert.Equal("dotnet ef database update --context SingleCatalogDbContext", update.CommandTemplate);
+                Assert.Equal("dotnet-ef", update.ToolId);
+                Assert.Equal("manual", update.ExecutionCategory);
+                Assert.Equal("startup-project", update.WorkingDirectoryHint);
             });
 
         await hostedService.StartAsync(CancellationToken.None);

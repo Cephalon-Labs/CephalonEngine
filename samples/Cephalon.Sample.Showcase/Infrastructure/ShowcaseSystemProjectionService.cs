@@ -157,6 +157,9 @@ internal sealed class ShowcaseSystemProjectionService(
                         Description: command.Description,
                         CommandTemplate: command.CommandTemplate,
                         RecommendedForProduction: command.RecommendedForProduction,
+                        ToolId: command.ToolId,
+                        ExecutionCategory: command.ExecutionCategory,
+                        WorkingDirectoryHint: command.WorkingDirectoryHint,
                         SampleCommand: BuildShowcaseSampleMigrationCommand(command.CommandTemplate),
                         SampleCommandHint: ShowcaseRepoRootHint,
                         MetadataPreview: CreateMetadataPreview(

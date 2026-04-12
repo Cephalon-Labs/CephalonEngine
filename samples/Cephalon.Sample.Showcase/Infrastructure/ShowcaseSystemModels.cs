@@ -202,6 +202,9 @@ internal sealed record ShowcaseDatabaseTopologyMigrationCommandRow(
     string Description,
     string CommandTemplate,
     bool RecommendedForProduction,
+    string? ToolId,
+    string? ExecutionCategory,
+    string? WorkingDirectoryHint,
     string? SampleCommand,
     string? SampleCommandHint,
     IReadOnlyDictionary<string, string> MetadataPreview);

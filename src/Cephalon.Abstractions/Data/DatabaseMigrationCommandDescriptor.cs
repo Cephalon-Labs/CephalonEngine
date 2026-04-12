@@ -14,13 +14,19 @@ public sealed class DatabaseMigrationCommandDescriptor
     /// <param name="commandTemplate">The command template that operators can adapt for their environment.</param>
     /// <param name="recommendedForProduction">Whether this command is recommended for production use.</param>
     /// <param name="metadata">Optional operator-facing metadata associated with the command.</param>
+    /// <param name="toolId">An optional stable tool identifier such as <c>dotnet-ef</c>.</param>
+    /// <param name="executionCategory">An optional execution category such as <c>deploy-time</c> or <c>manual</c>.</param>
+    /// <param name="workingDirectoryHint">An optional working-directory hint for where the command is typically run.</param>
     public DatabaseMigrationCommandDescriptor(
         string id,
         string displayName,
         string description,
         string commandTemplate,
         bool recommendedForProduction = false,
-        IReadOnlyDictionary<string, string>? metadata = null)
+        IReadOnlyDictionary<string, string>? metadata = null,
+        string? toolId = null,
+        string? executionCategory = null,
+        string? workingDirectoryHint = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -47,6 +53,9 @@ public sealed class DatabaseMigrationCommandDescriptor
         Description = description.Trim();
         CommandTemplate = commandTemplate.Trim();
         RecommendedForProduction = recommendedForProduction;
+        ToolId = string.IsNullOrWhiteSpace(toolId) ? null : toolId.Trim();
+        ExecutionCategory = string.IsNullOrWhiteSpace(executionCategory) ? null : executionCategory.Trim();
+        WorkingDirectoryHint = string.IsNullOrWhiteSpace(workingDirectoryHint) ? null : workingDirectoryHint.Trim();
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
@@ -76,6 +85,21 @@ public sealed class DatabaseMigrationCommandDescriptor
     /// Gets a value indicating whether this command is recommended for production use.
     /// </summary>
     public bool RecommendedForProduction { get; }
+
+    /// <summary>
+    /// Gets the stable operator tool identifier when the provider can name one.
+    /// </summary>
+    public string? ToolId { get; }
+
+    /// <summary>
+    /// Gets the execution category when the provider can distinguish deploy-time, manual, or other command paths.
+    /// </summary>
+    public string? ExecutionCategory { get; }
+
+    /// <summary>
+    /// Gets the provider-published working-directory hint when one is known.
+    /// </summary>
+    public string? WorkingDirectoryHint { get; }
 
     /// <summary>
     /// Gets optional operator-facing metadata associated with the command.

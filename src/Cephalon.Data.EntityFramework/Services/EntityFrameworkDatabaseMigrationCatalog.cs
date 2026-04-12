@@ -189,21 +189,30 @@ internal sealed class EntityFrameworkDatabaseMigrationCatalog : IDatabaseMigrati
                 description: $"Build a deploy-time migration bundle for the '{normalizedTarget}' database role.",
                 commandTemplate: $"dotnet ef migrations bundle --context {dbContextName}",
                 recommendedForProduction: true,
-                metadata: CreateCommandMetadata(normalizedTarget, dbContextTypeName, "bundle", "deploy-time")),
+                metadata: CreateCommandMetadata(normalizedTarget, dbContextTypeName, "bundle", "deploy-time"),
+                toolId: "dotnet-ef",
+                executionCategory: "deploy-time",
+                workingDirectoryHint: "startup-project"),
             new DatabaseMigrationCommandDescriptor(
                 id: "script",
                 displayName: "EF Core idempotent migration script",
                 description: $"Generate an idempotent SQL script for the '{normalizedTarget}' database role.",
                 commandTemplate: $"dotnet ef migrations script --context {dbContextName} --idempotent",
                 recommendedForProduction: true,
-                metadata: CreateCommandMetadata(normalizedTarget, dbContextTypeName, "script", "deploy-time")),
+                metadata: CreateCommandMetadata(normalizedTarget, dbContextTypeName, "script", "deploy-time"),
+                toolId: "dotnet-ef",
+                executionCategory: "deploy-time",
+                workingDirectoryHint: "startup-project"),
             new DatabaseMigrationCommandDescriptor(
                 id: "update",
                 displayName: "EF Core direct database update",
                 description: $"Apply pending migrations directly for the '{normalizedTarget}' database role from the startup project.",
                 commandTemplate: $"dotnet ef database update --context {dbContextName}",
                 recommendedForProduction: false,
-                metadata: CreateCommandMetadata(normalizedTarget, dbContextTypeName, "update", "manual"))
+                metadata: CreateCommandMetadata(normalizedTarget, dbContextTypeName, "update", "manual"),
+                toolId: "dotnet-ef",
+                executionCategory: "manual",
+                workingDirectoryHint: "startup-project")
         ];
     }
 
