@@ -460,12 +460,13 @@ function renderDatabaseTopology() {
   const { summary, insights, roles, migrations, readModelSync } = state.databaseTopology;
   const totalDeltaMagnitude = getReadModelDeltaMagnitude(readModelSync);
   const attentionCount = (insights || []).filter((insight) => tone(insight?.tone) !== "status-success").length;
+  const recommendedMigrationTargets = (migrations || []).filter((migration) => hasRecommendedMigrationCommands(migration.commands)).length;
   document.getElementById("databaseTopologyTimestamp").textContent = `Updated ${formatDate(summary.generatedAtUtc)}`;
   renderDatabaseTopologyInsights(insights);
 
   document.getElementById("databaseTopologyKpis").innerHTML = [
     kpiCard("Roles", summary.roleCount, `${summary.healthyRoleCount} healthy`),
-    kpiCard("Migrations", summary.migrationTargetCount, `${summary.succeededMigrationTargetCount} succeeded`),
+    kpiCard("Migrations", summary.migrationTargetCount, `${summary.succeededMigrationTargetCount} succeeded / ${recommendedMigrationTargets} production-guided`),
     kpiCard("Sync", readModelSync.enabled ? (readModelSync.isLagging ? "Lagging" : "Aligned") : "Disabled", readModelSync.enabled ? "read-model loop active" : "projection loop inactive"),
     kpiCard("Projection Jobs", readModelSync.jobs.totalJobs, `${readModelSync.jobs.pendingJobs} pending / ${readModelSync.jobs.failedJobs} failed`),
     kpiCard("Store Delta", totalDeltaMagnitude, totalDeltaMagnitude === 0 ? "write and read aligned" : "write minus read drift"),
@@ -523,7 +524,7 @@ function renderDatabaseTopology() {
           <strong>${escapeHtml(migration.executionMode)}</strong>
           ${migration.provider ? `<div class="mono">${escapeHtml(migration.provider)}</div>` : ""}
         </td>
-        <td>${renderCommandStack(migration.commands)}</td>
+        <td>${renderMigrationCommandGuidance(migration.commands)}</td>
         <td>${renderMetadataSections([
           ["Metadata", migration.metadataPreview]
         ], "No migration metadata preview available.")}</td>
@@ -1777,9 +1778,25 @@ function renderMetadataSections(sections, emptyMessage = "No metadata preview av
     : `<div class="empty-inline">${escapeHtml(emptyMessage)}</div>`;
 }
 
-function renderCommandStack(commands) {
+function renderMigrationCommandGuidance(commands) {
   return Array.isArray(commands) && commands.length
-    ? `<div class="command-stack">${commands.map((command) => `<code class="command-snippet">${escapeHtml(command)}</code>`).join("")}</div>`
+    ? `<div class="command-stack">${commands.map((command) => `
+      <article class="migration-command-card">
+        <header>
+          <strong>${escapeHtml(command.displayName || command.id || "Command")}</strong>
+          <div class="meta-row">
+            ${command.id ? `<span class="token">${escapeHtml(command.id)}</span>` : ""}
+            <span class="status-badge ${command.recommendedForProduction ? "status-success" : ""}">
+              ${command.recommendedForProduction ? "production recommended" : "manual/local"}
+            </span>
+          </div>
+        </header>
+        <p class="command-description">${escapeHtml(command.description || "No command description published.")}</p>
+        <code class="command-snippet">${escapeHtml(command.commandTemplate || "")}</code>
+        ${renderMetadataSections([
+          ["Command metadata", command.metadataPreview]
+        ], "No command metadata preview available.")}
+      </article>`).join("")}</div>`
     : `<div class="empty-inline">No command guidance published.</div>`;
 }
 
@@ -1891,6 +1908,10 @@ function getReadModelDeltaMagnitude(sync) {
     sync.orderDelta,
     sync.shipmentDelta
   ].reduce((total, value) => total + Math.abs(Number(value || 0)), 0);
+}
+
+function hasRecommendedMigrationCommands(commands) {
+  return Array.isArray(commands) && commands.some((command) => Boolean(command?.recommendedForProduction));
 }
 
 function normalizeActivityResponse(payload) {

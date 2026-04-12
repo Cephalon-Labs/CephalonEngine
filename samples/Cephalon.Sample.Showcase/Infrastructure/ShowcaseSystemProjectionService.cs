@@ -131,7 +131,23 @@ internal sealed class ShowcaseSystemProjectionService(
                 Provider: migration.Provider,
                 DbContextType: migration.DbContextType,
                 Commands: migration.Commands
-                    .Select(static command => command.CommandTemplate)
+                    .Select(command => new ShowcaseDatabaseTopologyMigrationCommandRow(
+                        Id: command.Id,
+                        DisplayName: command.DisplayName,
+                        Description: command.Description,
+                        CommandTemplate: command.CommandTemplate,
+                        RecommendedForProduction: command.RecommendedForProduction,
+                        MetadataPreview: CreateMetadataPreview(
+                            command.Metadata,
+                            maxEntries: 5,
+                            preferredKeys:
+                            [
+                                "tool",
+                                "executionCategory",
+                                "workingDirectoryHint",
+                                "targetRole",
+                                "dbContext"
+                            ])))
                     .ToArray(),
                 MetadataPreview: CreateMetadataPreview(
                     migration.Metadata,
@@ -825,7 +841,9 @@ internal sealed class ShowcaseSystemProjectionService(
                 ActionPath: $"{apiRoutes.RestPrefix}/v1/showcase/system/database-topology"));
         }
 
-        if (insights.Count == 0)
+        var hasOperationalAttention = insights.Any(insight =>
+            !string.Equals(insight.Tone, "Success", StringComparison.OrdinalIgnoreCase));
+        if (!hasOperationalAttention)
         {
             insights.Add(new ShowcaseDatabaseTopologyInsight(
                 Id: "topology-aligned",
@@ -836,7 +854,58 @@ internal sealed class ShowcaseSystemProjectionService(
                 ActionPath: "/engine/snapshot"));
         }
 
+        var migrationGuidanceInsight = BuildMigrationCommandGuidanceInsight(migrations);
+        if (migrationGuidanceInsight is not null)
+        {
+            insights.Add(migrationGuidanceInsight);
+        }
+
         return insights.ToArray();
+    }
+
+    private static ShowcaseDatabaseTopologyInsight? BuildMigrationCommandGuidanceInsight(
+        IReadOnlyList<ShowcaseDatabaseTopologyMigrationRow> migrations)
+    {
+        ArgumentNullException.ThrowIfNull(migrations);
+
+        if (migrations.Count == 0)
+        {
+            return null;
+        }
+
+        var targetsWithProductionGuidance = migrations
+            .Where(static migration => migration.Commands.Any(static command => command.RecommendedForProduction))
+            .ToArray();
+
+        if (targetsWithProductionGuidance.Length == migrations.Count)
+        {
+            return new ShowcaseDatabaseTopologyInsight(
+                Id: "migration-production-guidance",
+                Tone: "Success",
+                Title: "Production migration guidance published",
+                Detail: $"All {migrations.Count} migration target(s) publish recommended bundle or script commands in addition to the local direct-update path.",
+                ActionLabel: "Open migration targets",
+                ActionPath: "/engine/database-migrations");
+        }
+
+        if (targetsWithProductionGuidance.Length == 0)
+        {
+            return new ShowcaseDatabaseTopologyInsight(
+                Id: "migration-production-guidance-missing",
+                Tone: "Warning",
+                Title: "Production migration guidance missing",
+                Detail: "No migration targets currently publish production-recommended bundle or script guidance, so startup apply remains the only visible path.",
+                ActionLabel: "Open migration targets",
+                ActionPath: "/engine/database-migrations");
+        }
+
+        return new ShowcaseDatabaseTopologyInsight(
+            Id: "migration-production-guidance-partial",
+            Tone: "Warning",
+            Title: "Production migration guidance is partial",
+            Detail: $"{targetsWithProductionGuidance.Length} of {migrations.Count} migration target(s) publish production-recommended commands. Review the remaining targets before relying on startup apply as the only deployment path.",
+            ActionLabel: "Open migration targets",
+            ActionPath: "/engine/database-migrations");
     }
 
     private static bool IsPendingJob(ShowcaseReadProjectionJobEntity job)

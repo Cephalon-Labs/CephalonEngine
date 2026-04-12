@@ -118,7 +118,15 @@ internal sealed record ShowcaseDatabaseTopologyMigrationRow(
     bool ApplyOnStartup,
     string? Provider,
     string? DbContextType,
-    IReadOnlyList<string> Commands,
+    IReadOnlyList<ShowcaseDatabaseTopologyMigrationCommandRow> Commands,
+    IReadOnlyDictionary<string, string> MetadataPreview);
+
+internal sealed record ShowcaseDatabaseTopologyMigrationCommandRow(
+    string Id,
+    string DisplayName,
+    string Description,
+    string CommandTemplate,
+    bool RecommendedForProduction,
     IReadOnlyDictionary<string, string> MetadataPreview);
 
 internal sealed record ShowcaseReadModelStoreCounts(

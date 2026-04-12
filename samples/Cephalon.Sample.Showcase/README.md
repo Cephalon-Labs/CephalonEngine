@@ -57,9 +57,11 @@ dotnet run --project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.c
   - write-store versus read-store row counts
   - durable projection-job backlog and completion state
   - per-scope retry/completion metrics for `products`, `inventory`, `orders`, and `shipments`
-- The showcase UI now promotes that projection into a dedicated `Database Topology` section on `/showcase`, adds derived operator insights for healthy-versus-drifting topology state, and still links the raw JSON projection plus the underlying `/engine/databases`, `/engine/database-roles`, and `/engine/database-migrations` surfaces for drill-down.
+- The showcase UI now promotes that projection into a dedicated `Database Topology` section on `/showcase`, adds derived operator insights for healthy-versus-drifting topology state, preserves migration-command ids/display names/descriptions plus production-recommendation flags, and still links the raw JSON projection plus the underlying `/engine/databases`, `/engine/database-roles`, and `/engine/database-migrations` surfaces for drill-down.
 
 ## Manual Migration Commands
+
+The same migration-command descriptors now surface inside `/showcase` with operator-friendly names, descriptions, production recommendation badges, and command metadata so the sample UI mirrors the engine-owned `/engine/database-migrations` contract instead of only repeating raw command text.
 
 Apply the write store:
 
