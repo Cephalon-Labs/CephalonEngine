@@ -136,6 +136,7 @@ a:focus-visible {
 .hero-pill-row,
 .token-list,
 .link-grid,
+.insight-actions,
 .section-actions,
 .cart-actions,
 .hero-actions,
@@ -265,6 +266,7 @@ a:focus-visible {
 .runtime-grid,
 .governance-grid,
 .database-grid,
+.insight-grid,
 .transport-grid,
 .activity-grid,
 .catalog-cart-grid,
@@ -289,6 +291,10 @@ a:focus-visible {
 .governance-grid,
 .database-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.insight-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
 .catalog-cart-grid {
@@ -376,11 +382,41 @@ a:focus-visible {
 .audit-item,
 .stat-card,
 .cart-line,
-.kpi-card {
+.kpi-card,
+.insight-card {
   padding: 14px;
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
   background: var(--panel-strong);
+}
+
+.insight-card {
+  display: grid;
+  gap: 12px;
+}
+
+.insight-card > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.insight-card p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.insight-card.status-success {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
+}
+
+.insight-card.status-warning {
+  border-color: color-mix(in srgb, var(--amber) 30%, var(--line));
+}
+
+.insight-card.status-error {
+  border-color: color-mix(in srgb, var(--rose) 35%, var(--line));
 }
 
 .kpi-card strong {

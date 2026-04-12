@@ -157,9 +157,11 @@ internal sealed class ShowcaseSystemProjectionService(
             ReadProvider: runtimeSnapshot.Manifest.AppProfile.Databases.Read.Provider ?? "Unknown",
             HistoryProvider: runtimeSnapshot.Manifest.AppProfile.Databases.History.Provider ?? "Unknown",
             GeneratedAtUtc: DateTimeOffset.UtcNow);
+        var insights = BuildDatabaseTopologyInsights(roles, migrations, readModelSync);
 
         return new ShowcaseDatabaseTopologyResponse(
             Summary: summary,
+            Insights: insights,
             Roles: roles,
             Migrations: migrations,
             ReadModelSync: readModelSync);
@@ -724,6 +726,117 @@ internal sealed class ShowcaseSystemProjectionService(
                 .OrderByDescending(static job => job.CompletedAtUtc)
                 .Select(static job => job.CompletedAtUtc)
                 .FirstOrDefault()));
+    }
+
+    private ShowcaseDatabaseTopologyInsight[] BuildDatabaseTopologyInsights(
+        IReadOnlyList<ShowcaseDatabaseTopologyRoleRow> roles,
+        IReadOnlyList<ShowcaseDatabaseTopologyMigrationRow> migrations,
+        ShowcaseReadModelSyncStatus readModelSync)
+    {
+        ArgumentNullException.ThrowIfNull(roles);
+        ArgumentNullException.ThrowIfNull(migrations);
+        ArgumentNullException.ThrowIfNull(readModelSync);
+
+        var insights = new List<ShowcaseDatabaseTopologyInsight>();
+
+        var unhealthyRoles = roles
+            .Where(role =>
+                !string.IsNullOrWhiteSpace(role.HealthState) &&
+                !string.Equals(role.HealthState, nameof(HealthState.Healthy), StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+        if (unhealthyRoles.Length > 0)
+        {
+            var roleIds = string.Join(", ", unhealthyRoles.Select(static role => role.Id));
+            var tone = unhealthyRoles.Any(static role =>
+                    string.Equals(role.HealthState, nameof(HealthState.Unhealthy), StringComparison.OrdinalIgnoreCase))
+                ? "Error"
+                : "Warning";
+
+            insights.Add(new ShowcaseDatabaseTopologyInsight(
+                Id: "role-health-attention",
+                Tone: tone,
+                Title: "Database role health needs attention",
+                Detail: $"{unhealthyRoles.Length} role(s) are not healthy: {roleIds}. Review probe metadata and connection settings before trusting the topology.",
+                ActionLabel: "Open database roles",
+                ActionPath: "/engine/database-roles"));
+        }
+
+        var migrationTargetsNeedingAttention = migrations
+            .Where(migration =>
+                !string.Equals(migration.Status, nameof(DatabaseMigrationStatus.Succeeded), StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+        if (migrationTargetsNeedingAttention.Length > 0)
+        {
+            var migrationIds = string.Join(", ", migrationTargetsNeedingAttention.Select(static migration => migration.Id));
+            var tone = migrationTargetsNeedingAttention.Any(static migration =>
+                    string.Equals(migration.Status, nameof(DatabaseMigrationStatus.Failed), StringComparison.OrdinalIgnoreCase))
+                ? "Error"
+                : "Warning";
+
+            insights.Add(new ShowcaseDatabaseTopologyInsight(
+                Id: "migration-attention",
+                Tone: tone,
+                Title: tone == "Error"
+                    ? "Migration targets failed"
+                    : "Migration targets still need attention",
+                Detail: $"{migrationTargetsNeedingAttention.Length} migration target(s) are not yet succeeded: {migrationIds}. Review execution mode and command guidance before promoting the environment.",
+                ActionLabel: "Open migration targets",
+                ActionPath: "/engine/database-migrations"));
+        }
+
+        var deltaMagnitude =
+            Math.Abs(readModelSync.ProductDelta) +
+            Math.Abs(readModelSync.InventoryDelta) +
+            Math.Abs(readModelSync.OrderDelta) +
+            Math.Abs(readModelSync.ShipmentDelta);
+
+        if (!readModelSync.Enabled)
+        {
+            insights.Add(new ShowcaseDatabaseTopologyInsight(
+                Id: "read-model-disabled",
+                Tone: "Warning",
+                Title: "Read-model sync is disabled",
+                Detail: "The projection loop is not active, so the showcase cannot prove read/write drift or catch-up behavior through the read store.",
+                ActionLabel: "Open projection JSON",
+                ActionPath: $"{apiRoutes.RestPrefix}/v1/showcase/system/database-topology"));
+        }
+        else if (readModelSync.Jobs.FailedJobs > 0)
+        {
+            insights.Add(new ShowcaseDatabaseTopologyInsight(
+                Id: "read-model-failures",
+                Tone: "Error",
+                Title: "Projection retries are failing",
+                Detail: $"{readModelSync.Jobs.FailedJobs} projection job(s) are currently failed and {readModelSync.Jobs.PendingJobs} remain pending. Review scope-level retry pressure before trusting the read model.",
+                ActionLabel: "Open projection JSON",
+                ActionPath: $"{apiRoutes.RestPrefix}/v1/showcase/system/database-topology"));
+        }
+        else if (readModelSync.Jobs.PendingJobs > 0 || deltaMagnitude > 0)
+        {
+            var backlogDetail = readModelSync.Jobs.PendingJobs > 0
+                ? $" {readModelSync.Jobs.PendingJobs} projection job(s) are still pending."
+                : string.Empty;
+
+            insights.Add(new ShowcaseDatabaseTopologyInsight(
+                Id: "read-model-catching-up",
+                Tone: "Warning",
+                Title: "Read-model sync is catching up",
+                Detail: $"Store delta magnitude is {deltaMagnitude} across products, inventory, orders, and shipments.{backlogDetail} Review the store delta and scope backlog before treating the read side as current.",
+                ActionLabel: "Open projection JSON",
+                ActionPath: $"{apiRoutes.RestPrefix}/v1/showcase/system/database-topology"));
+        }
+
+        if (insights.Count == 0)
+        {
+            insights.Add(new ShowcaseDatabaseTopologyInsight(
+                Id: "topology-aligned",
+                Tone: "Success",
+                Title: "Topology aligned",
+                Detail: "All resolved database roles are healthy, migration targets succeeded, and the read-model projection loop is caught up.",
+                ActionLabel: "Open runtime snapshot",
+                ActionPath: "/engine/snapshot"));
+        }
+
+        return insights.ToArray();
     }
 
     private static bool IsPendingJob(ShowcaseReadProjectionJobEntity job)

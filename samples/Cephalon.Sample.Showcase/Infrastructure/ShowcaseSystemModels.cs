@@ -87,6 +87,14 @@ internal sealed record ShowcaseDatabaseTopologySummary(
     string HistoryProvider,
     DateTimeOffset GeneratedAtUtc);
 
+internal sealed record ShowcaseDatabaseTopologyInsight(
+    string Id,
+    string Tone,
+    string Title,
+    string Detail,
+    string ActionLabel,
+    string ActionPath);
+
 internal sealed record ShowcaseDatabaseTopologyRoleRow(
     string Id,
     string RequestedRoleId,
@@ -152,6 +160,7 @@ internal sealed record ShowcaseReadModelSyncStatus(
 
 internal sealed record ShowcaseDatabaseTopologyResponse(
     ShowcaseDatabaseTopologySummary Summary,
+    IReadOnlyList<ShowcaseDatabaseTopologyInsight> Insights,
     IReadOnlyList<ShowcaseDatabaseTopologyRoleRow> Roles,
     IReadOnlyList<ShowcaseDatabaseTopologyMigrationRow> Migrations,
     ShowcaseReadModelSyncStatus ReadModelSync);

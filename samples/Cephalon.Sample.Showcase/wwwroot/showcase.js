@@ -447,6 +447,7 @@ function renderDatabaseTopology() {
     const message = escapeHtml(state.databaseTopology.errorMessage);
     document.getElementById("databaseTopologyTimestamp").textContent = "Database topology projection unavailable";
     document.getElementById("databaseTopologyKpis").innerHTML = `<div class="empty-state">${message}</div>`;
+    document.getElementById("databaseTopologyInsights").innerHTML = `<div class="empty-state">${message}</div>`;
     document.getElementById("databaseRoleTable").innerHTML = `<tr><td colspan="5" class="empty-state">${message}</td></tr>`;
     document.getElementById("databaseMigrationTable").innerHTML = `<tr><td colspan="5" class="empty-state">${message}</td></tr>`;
     document.getElementById("readModelSyncSummary").innerHTML = `<div class="empty-state">${message}</div>`;
@@ -456,9 +457,11 @@ function renderDatabaseTopology() {
     return;
   }
 
-  const { summary, roles, migrations, readModelSync } = state.databaseTopology;
+  const { summary, insights, roles, migrations, readModelSync } = state.databaseTopology;
   const totalDeltaMagnitude = getReadModelDeltaMagnitude(readModelSync);
+  const attentionCount = (insights || []).filter((insight) => tone(insight?.tone) !== "status-success").length;
   document.getElementById("databaseTopologyTimestamp").textContent = `Updated ${formatDate(summary.generatedAtUtc)}`;
+  renderDatabaseTopologyInsights(insights);
 
   document.getElementById("databaseTopologyKpis").innerHTML = [
     kpiCard("Roles", summary.roleCount, `${summary.healthyRoleCount} healthy`),
@@ -466,7 +469,7 @@ function renderDatabaseTopology() {
     kpiCard("Sync", readModelSync.enabled ? (readModelSync.isLagging ? "Lagging" : "Aligned") : "Disabled", readModelSync.enabled ? "read-model loop active" : "projection loop inactive"),
     kpiCard("Projection Jobs", readModelSync.jobs.totalJobs, `${readModelSync.jobs.pendingJobs} pending / ${readModelSync.jobs.failedJobs} failed`),
     kpiCard("Store Delta", totalDeltaMagnitude, totalDeltaMagnitude === 0 ? "write and read aligned" : "write minus read drift"),
-    kpiCard("Scopes", readModelSync.jobs.distinctScopes, `${readModelSync.jobs.completedJobs} completed jobs`)
+    kpiCard("Attention", attentionCount, attentionCount === 0 ? "topology aligned" : "operator insights to review")
   ].join("");
 
   document.getElementById("databaseRoleTable").innerHTML = roles.length
@@ -553,6 +556,23 @@ function renderDatabaseTopology() {
   document.getElementById("readModelScopeList").innerHTML = readModelSync.scopes.length
     ? readModelSync.scopes.map((scope) => renderProjectionScopeCard(scope)).join("")
     : `<div class="empty-state">No projection scopes published.</div>`;
+}
+
+function renderDatabaseTopologyInsights(insights) {
+  const items = Array.isArray(insights) ? insights : [];
+  document.getElementById("databaseTopologyInsights").innerHTML = items.length
+    ? items.map((insight) => `
+      <article class="insight-card ${tone(insight.tone)}">
+        <header>
+          <strong>${escapeHtml(insight.title)}</strong>
+          <span class="status-badge ${tone(insight.tone)}">${escapeHtml(insight.tone)}</span>
+        </header>
+        <p>${escapeHtml(insight.detail)}</p>
+        <div class="insight-actions">
+          ${insight.actionPath ? linkButton(insight.actionLabel || "Open", insight.actionPath) : ""}
+        </div>
+      </article>`).join("")
+    : `<div class="empty-state">No operator insights published.</div>`;
 }
 
 function renderWorkloads() {

@@ -77,6 +77,7 @@ public sealed class ShowcaseSampleHostingTests
         var html = await response.Content.ReadAsStringAsync();
         Assert.Contains("href=\"#database-topology\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"database-topology\"", html, StringComparison.Ordinal);
+        Assert.Contains("id=\"databaseTopologyInsights\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"databaseRoleTable\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"databaseMigrationTable\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"readModelScopeList\"", html, StringComparison.Ordinal);
@@ -337,7 +338,7 @@ public sealed class ShowcaseSampleHostingTests
     [Fact]
     public async Task ShowcaseSampleKeepsReadStoreSeparateFromDirectWriteChanges()
     {
-        await using var app = BuildShowcaseForTests();
+        await using var app = BuildShowcaseForTests(configureBuilder: DisableReadModelProjectionLoop);
 
         await app.StartAsync();
         var client = app.GetTestClient();
@@ -1537,6 +1538,13 @@ public sealed class ShowcaseSampleHostingTests
         var readModelSync = root.GetProperty("readModelSync");
         Assert.True(readModelSync.GetProperty("enabled").GetBoolean());
         Assert.False(readModelSync.GetProperty("isLagging").GetBoolean());
+        var insights = root.GetProperty("insights").EnumerateArray().ToArray();
+        Assert.Contains(
+            insights,
+            insight =>
+                string.Equals(insight.GetProperty("id").GetString(), "topology-aligned", StringComparison.Ordinal) &&
+                string.Equals(insight.GetProperty("tone").GetString(), "Success", StringComparison.Ordinal) &&
+                string.Equals(insight.GetProperty("actionPath").GetString(), "/engine/snapshot", StringComparison.Ordinal));
 
         var writeStore = readModelSync.GetProperty("writeStore");
         var readStore = readModelSync.GetProperty("readStore");
@@ -1556,6 +1564,55 @@ public sealed class ShowcaseSampleHostingTests
             scope =>
                 string.Equals(scope.GetProperty("scope").GetString(), "products", StringComparison.Ordinal) &&
                 scope.GetProperty("completedJobs").GetInt32() >= 1);
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleDatabaseTopologyProjectionFlagsReadModelDriftWithOperatorInsight()
+    {
+        await using var app = BuildShowcaseForTests(configureBuilder: DisableReadModelProjectionLoop);
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        using var scope = app.Services.CreateScope();
+        var writeDb = scope.ServiceProvider.GetRequiredService<ShowcaseWriteDbContext>();
+
+        const string productId = "topology-drift-001";
+        writeDb.Products.Add(new ShowcaseProductEntity
+        {
+            Id = productId,
+            Sku = "TOPOLOGY-DRIFT-001",
+            Name = "Topology Drift Product",
+            Description = "Verifies the database-topology operator projection flags read-model drift.",
+            Category = "Testing",
+            PriceInCents = 7171,
+            Currency = "USD",
+            IsActive = true,
+            TagsJson = "[\"database-topology\",\"drift\"]",
+            CreatedAtUtc = DateTime.UtcNow
+        });
+
+        await writeDb.SaveChangesAsync();
+
+        var response = await client.GetAsync("/api/v1/showcase/system/database-topology");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var root = document.RootElement;
+        var readModelSync = root.GetProperty("readModelSync");
+        Assert.True(readModelSync.GetProperty("enabled").GetBoolean());
+        Assert.True(readModelSync.GetProperty("isLagging").GetBoolean());
+        Assert.True(readModelSync.GetProperty("productDelta").GetInt32() >= 1);
+
+        var insights = root.GetProperty("insights").EnumerateArray().ToArray();
+        Assert.Contains(
+            insights,
+            insight =>
+                string.Equals(insight.GetProperty("id").GetString(), "read-model-catching-up", StringComparison.Ordinal) &&
+                string.Equals(insight.GetProperty("tone").GetString(), "Warning", StringComparison.Ordinal) &&
+                string.Equals(insight.GetProperty("actionPath").GetString(), "/api/v1/showcase/system/database-topology", StringComparison.Ordinal) &&
+                insight.GetProperty("detail").GetString()!.Contains("Store delta magnitude is", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -1992,6 +2049,25 @@ public sealed class ShowcaseSampleHostingTests
             builder.Configuration["Engine:Resilience:RateLimiting:QueueLimit"] = "0";
             builder.Configuration["Engine:Resilience:RateLimiting:WindowSeconds"] = "60";
         });
+    }
+
+    private static void DisableReadModelProjectionLoop(WebApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        var descriptors = builder.Services
+            .Where(descriptor =>
+                descriptor.ServiceType == typeof(Microsoft.Extensions.Hosting.IHostedService) &&
+                string.Equals(
+                    descriptor.ImplementationType?.Name,
+                    "ShowcaseReadModelProjectionHostedService",
+                    StringComparison.Ordinal))
+            .ToArray();
+
+        foreach (var descriptor in descriptors)
+        {
+            builder.Services.Remove(descriptor);
+        }
     }
 
     private static WebApplication BuildShowcaseForTests(
