@@ -81,7 +81,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Contains("id=\"databaseRoleTable\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"databaseMigrationTable\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"readModelScopeList\"", html, StringComparison.Ordinal);
-        Assert.Contains("Command Guidance", html, StringComparison.Ordinal);
+        Assert.Contains("Runnable Guidance", html, StringComparison.Ordinal);
         Assert.Contains("Read-Model Sync", html, StringComparison.Ordinal);
     }
 
@@ -1549,6 +1549,8 @@ public sealed class ShowcaseSampleHostingTests
                     string.Equals(command.GetProperty("id").GetString(), "bundle", StringComparison.Ordinal) &&
                     string.Equals(command.GetProperty("displayName").GetString(), "EF Core migration bundle", StringComparison.Ordinal) &&
                     command.GetProperty("recommendedForProduction").GetBoolean() &&
+                    string.Equals(command.GetProperty("sampleCommandHint").GetString(), "Run from the repository root, or adapt the project paths for another host layout.", StringComparison.Ordinal) &&
+                    string.Equals(command.GetProperty("sampleCommand").GetString(), "dotnet ef migrations bundle --context ShowcaseAuditHistoryDbContext --project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj --startup-project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj", StringComparison.Ordinal) &&
                     command.GetProperty("description").GetString()!.Contains("'history'", StringComparison.Ordinal) &&
                     string.Equals(command.GetProperty("metadataPreview").GetProperty("tool").GetString(), "dotnet-ef", StringComparison.Ordinal));
             });
@@ -1569,7 +1571,7 @@ public sealed class ShowcaseSampleHostingTests
                 string.Equals(insight.GetProperty("id").GetString(), "migration-production-guidance", StringComparison.Ordinal) &&
                 string.Equals(insight.GetProperty("tone").GetString(), "Success", StringComparison.Ordinal) &&
                 string.Equals(insight.GetProperty("actionPath").GetString(), "/engine/database-migrations", StringComparison.Ordinal) &&
-                insight.GetProperty("detail").GetString()!.Contains("publish recommended bundle or script commands", StringComparison.Ordinal));
+                insight.GetProperty("detail").GetString()!.Contains("runnable sample commands", StringComparison.Ordinal));
 
         var writeStore = readModelSync.GetProperty("writeStore");
         var readStore = readModelSync.GetProperty("readStore");

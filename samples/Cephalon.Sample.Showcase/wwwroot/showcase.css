@@ -649,6 +649,21 @@ tbody tr:last-child td {
   line-height: 1.55;
 }
 
+.command-variant {
+  display: grid;
+  gap: 6px;
+}
+
+.command-snippet-primary {
+  border-color: color-mix(in srgb, var(--accent) 22%, var(--line));
+  background: color-mix(in srgb, var(--accent-soft) 45%, white);
+}
+
+.command-hint {
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
 .scope-stats {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }

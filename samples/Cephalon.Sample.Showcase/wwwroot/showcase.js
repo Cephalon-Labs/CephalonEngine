@@ -1792,12 +1792,34 @@ function renderMigrationCommandGuidance(commands) {
           </div>
         </header>
         <p class="command-description">${escapeHtml(command.description || "No command description published.")}</p>
-        <code class="command-snippet">${escapeHtml(command.commandTemplate || "")}</code>
+        ${renderCommandVariant(
+          "Run In This Sample",
+          command.sampleCommand,
+          command.sampleCommandHint,
+          "command-snippet command-snippet-primary")}
+        ${renderCommandVariant(
+          command.sampleCommand && command.sampleCommand !== command.commandTemplate ? "Raw Engine Template" : "Command Template",
+          command.commandTemplate,
+          null,
+          "command-snippet")}
         ${renderMetadataSections([
           ["Command metadata", command.metadataPreview]
         ], "No command metadata preview available.")}
       </article>`).join("")}</div>`
     : `<div class="empty-inline">No command guidance published.</div>`;
+}
+
+function renderCommandVariant(label, commandText, hint, snippetClass) {
+  if (!commandText) {
+    return "";
+  }
+
+  return `
+    <div class="command-variant">
+      <span class="label">${escapeHtml(label)}</span>
+      <code class="${escapeHtml(snippetClass)}">${escapeHtml(commandText)}</code>
+      ${hint ? `<small class="command-hint">${escapeHtml(hint)}</small>` : ""}
+    </div>`;
 }
 
 function buildReadModelStoreRow(label, writeCount, readCount, delta) {

@@ -127,6 +127,8 @@ internal sealed record ShowcaseDatabaseTopologyMigrationCommandRow(
     string Description,
     string CommandTemplate,
     bool RecommendedForProduction,
+    string? SampleCommand,
+    string? SampleCommandHint,
     IReadOnlyDictionary<string, string> MetadataPreview);
 
 internal sealed record ShowcaseReadModelStoreCounts(

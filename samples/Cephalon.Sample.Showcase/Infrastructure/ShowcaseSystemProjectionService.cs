@@ -36,6 +36,8 @@ internal sealed class ShowcaseSystemProjectionService(
     ShowcaseWriteDbContext? writeDb,
     IAuditHistoryReader? auditHistoryReader)
 {
+    private const string ShowcaseProjectPath = "samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj";
+    private const string ShowcaseRepoRootHint = "Run from the repository root, or adapt the project paths for another host layout.";
     private readonly ApiRoutesOptions apiRoutes = ApiRoutesOptions.FromConfiguration(configuration);
     private readonly OpenApiEndpointOptions openApiOptions = OpenApiEndpointOptions.FromConfiguration(configuration);
     private readonly string defaultOpenApiDocumentName = ResolveDefaultOpenApiDocumentName(configuration);
@@ -137,6 +139,8 @@ internal sealed class ShowcaseSystemProjectionService(
                         Description: command.Description,
                         CommandTemplate: command.CommandTemplate,
                         RecommendedForProduction: command.RecommendedForProduction,
+                        SampleCommand: BuildShowcaseSampleMigrationCommand(command.CommandTemplate),
+                        SampleCommandHint: ShowcaseRepoRootHint,
                         MetadataPreview: CreateMetadataPreview(
                             command.Metadata,
                             maxEntries: 5,
@@ -883,7 +887,7 @@ internal sealed class ShowcaseSystemProjectionService(
                 Id: "migration-production-guidance",
                 Tone: "Success",
                 Title: "Production migration guidance published",
-                Detail: $"All {migrations.Count} migration target(s) publish recommended bundle or script commands in addition to the local direct-update path.",
+                Detail: $"All {migrations.Count} migration target(s) publish recommended bundle or script commands in addition to the local direct-update path, and the showcase projection now adapts them into runnable sample commands from the repo root.",
                 ActionLabel: "Open migration targets",
                 ActionPath: "/engine/database-migrations");
         }
@@ -891,11 +895,11 @@ internal sealed class ShowcaseSystemProjectionService(
         if (targetsWithProductionGuidance.Length == 0)
         {
             return new ShowcaseDatabaseTopologyInsight(
-                Id: "migration-production-guidance-missing",
-                Tone: "Warning",
-                Title: "Production migration guidance missing",
-                Detail: "No migration targets currently publish production-recommended bundle or script guidance, so startup apply remains the only visible path.",
-                ActionLabel: "Open migration targets",
+            Id: "migration-production-guidance-missing",
+            Tone: "Warning",
+            Title: "Production migration guidance missing",
+            Detail: "No migration targets currently publish production-recommended bundle or script guidance, so startup apply remains the only visible path.",
+            ActionLabel: "Open migration targets",
                 ActionPath: "/engine/database-migrations");
         }
 
@@ -903,9 +907,30 @@ internal sealed class ShowcaseSystemProjectionService(
             Id: "migration-production-guidance-partial",
             Tone: "Warning",
             Title: "Production migration guidance is partial",
-            Detail: $"{targetsWithProductionGuidance.Length} of {migrations.Count} migration target(s) publish production-recommended commands. Review the remaining targets before relying on startup apply as the only deployment path.",
+            Detail: $"{targetsWithProductionGuidance.Length} of {migrations.Count} migration target(s) publish production-recommended commands. Review the remaining targets before relying on startup apply as the only deployment path, even though the showcase now adapts the published templates into runnable sample commands.",
             ActionLabel: "Open migration targets",
             ActionPath: "/engine/database-migrations");
+    }
+
+    private static string BuildShowcaseSampleMigrationCommand(string commandTemplate)
+    {
+        if (string.IsNullOrWhiteSpace(commandTemplate))
+        {
+            return string.Empty;
+        }
+
+        var command = commandTemplate.Trim();
+        if (!command.Contains("--project", StringComparison.OrdinalIgnoreCase))
+        {
+            command = $"{command} --project {ShowcaseProjectPath}";
+        }
+
+        if (!command.Contains("--startup-project", StringComparison.OrdinalIgnoreCase))
+        {
+            command = $"{command} --startup-project {ShowcaseProjectPath}";
+        }
+
+        return command;
     }
 
     private static bool IsPendingJob(ShowcaseReadProjectionJobEntity job)
