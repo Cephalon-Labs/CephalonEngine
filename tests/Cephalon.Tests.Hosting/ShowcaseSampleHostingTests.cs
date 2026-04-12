@@ -78,6 +78,8 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Contains("href=\"#database-topology\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"database-topology\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"databaseTopologyReadiness\"", html, StringComparison.Ordinal);
+        Assert.Contains("id=\"databaseTopologyActionPlanSummary\"", html, StringComparison.Ordinal);
+        Assert.Contains("id=\"databaseTopologyActionPlanList\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"databaseTopologyInsights\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"databaseMigrationPlaybookSummary\"", html, StringComparison.Ordinal);
         Assert.Contains("id=\"databaseMigrationPlaybookList\"", html, StringComparison.Ordinal);
@@ -1529,6 +1531,23 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("/engine/snapshot", readiness.GetProperty("actionPath").GetString());
         Assert.Contains("playbook", readiness.GetProperty("detail").GetString(), StringComparison.Ordinal);
 
+        var actionPlan = root.GetProperty("actionPlan");
+        var actionPlanSummary = actionPlan.GetProperty("summary");
+        Assert.Equal(1, actionPlanSummary.GetProperty("totalActionCount").GetInt32());
+        Assert.Equal(0, actionPlanSummary.GetProperty("blockingActionCount").GetInt32());
+        Assert.Equal(0, actionPlanSummary.GetProperty("attentionActionCount").GetInt32());
+        Assert.Equal(1, actionPlanSummary.GetProperty("readyActionCount").GetInt32());
+
+        var actionPlanActions = actionPlan.GetProperty("actions").EnumerateArray().ToArray();
+        Assert.Contains(
+            actionPlanActions,
+            action =>
+                action.GetProperty("order").GetInt32() == 1 &&
+                string.Equals(action.GetProperty("id").GetString(), "topology-ready-for-validation", StringComparison.Ordinal) &&
+                string.Equals(action.GetProperty("tone").GetString(), "Success", StringComparison.Ordinal) &&
+                string.Equals(action.GetProperty("actionPath").GetString(), "/engine/snapshot", StringComparison.Ordinal) &&
+                action.GetProperty("completionSignal").GetString()!.Contains("No remediation", StringComparison.Ordinal));
+
         var roles = root.GetProperty("roles").EnumerateArray().ToArray();
         Assert.Contains(
             roles,
@@ -1658,6 +1677,22 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("Attention", readiness.GetProperty("state").GetString());
         Assert.Equal("Read-model catch-up is still in progress", readiness.GetProperty("headline").GetString());
         Assert.Equal("/api/v1/showcase/system/database-topology", readiness.GetProperty("actionPath").GetString());
+        var actionPlan = root.GetProperty("actionPlan");
+        var actionPlanSummary = actionPlan.GetProperty("summary");
+        Assert.Equal(1, actionPlanSummary.GetProperty("totalActionCount").GetInt32());
+        Assert.Equal(0, actionPlanSummary.GetProperty("blockingActionCount").GetInt32());
+        Assert.Equal(1, actionPlanSummary.GetProperty("attentionActionCount").GetInt32());
+        Assert.Equal(0, actionPlanSummary.GetProperty("readyActionCount").GetInt32());
+
+        var actionPlanActions = actionPlan.GetProperty("actions").EnumerateArray().ToArray();
+        Assert.Contains(
+            actionPlanActions,
+            action =>
+                action.GetProperty("order").GetInt32() == 1 &&
+                string.Equals(action.GetProperty("id").GetString(), "wait-for-read-model-catch-up", StringComparison.Ordinal) &&
+                string.Equals(action.GetProperty("tone").GetString(), "Warning", StringComparison.Ordinal) &&
+                string.Equals(action.GetProperty("actionPath").GetString(), "/api/v1/showcase/system/database-topology", StringComparison.Ordinal) &&
+                action.GetProperty("completionSignal").GetString()!.Contains("store delta magnitude is 0", StringComparison.Ordinal));
         var readModelSync = root.GetProperty("readModelSync");
         Assert.True(readModelSync.GetProperty("enabled").GetBoolean());
         Assert.True(readModelSync.GetProperty("isLagging").GetBoolean());

@@ -102,6 +102,27 @@ internal sealed record ShowcaseDatabaseTopologyReadiness(
     string ActionLabel,
     string ActionPath);
 
+internal sealed record ShowcaseDatabaseTopologyActionPlanSummary(
+    int TotalActionCount,
+    int BlockingActionCount,
+    int AttentionActionCount,
+    int ReadyActionCount,
+    DateTimeOffset GeneratedAtUtc);
+
+internal sealed record ShowcaseDatabaseTopologyActionPlanRow(
+    int Order,
+    string Id,
+    string Tone,
+    string Title,
+    string Detail,
+    string CompletionSignal,
+    string ActionLabel,
+    string ActionPath);
+
+internal sealed record ShowcaseDatabaseTopologyActionPlan(
+    ShowcaseDatabaseTopologyActionPlanSummary Summary,
+    IReadOnlyList<ShowcaseDatabaseTopologyActionPlanRow> Actions);
+
 internal sealed record ShowcaseDatabaseTopologyRoleRow(
     string Id,
     string RequestedRoleId,
@@ -208,6 +229,7 @@ internal sealed record ShowcaseReadModelSyncStatus(
 internal sealed record ShowcaseDatabaseTopologyResponse(
     ShowcaseDatabaseTopologySummary Summary,
     ShowcaseDatabaseTopologyReadiness Readiness,
+    ShowcaseDatabaseTopologyActionPlan ActionPlan,
     IReadOnlyList<ShowcaseDatabaseTopologyInsight> Insights,
     IReadOnlyList<ShowcaseDatabaseTopologyRoleRow> Roles,
     IReadOnlyList<ShowcaseDatabaseTopologyMigrationRow> Migrations,

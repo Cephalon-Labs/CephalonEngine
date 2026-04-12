@@ -448,6 +448,8 @@ function renderDatabaseTopology() {
     document.getElementById("databaseTopologyTimestamp").textContent = "Database topology projection unavailable";
     document.getElementById("databaseTopologyKpis").innerHTML = `<div class="empty-state">${message}</div>`;
     document.getElementById("databaseTopologyReadiness").innerHTML = `<div class="empty-state">${message}</div>`;
+    document.getElementById("databaseTopologyActionPlanSummary").innerHTML = `<div class="empty-state">${message}</div>`;
+    document.getElementById("databaseTopologyActionPlanList").innerHTML = `<div class="empty-state">${message}</div>`;
     document.getElementById("databaseTopologyInsights").innerHTML = `<div class="empty-state">${message}</div>`;
     document.getElementById("databaseMigrationPlaybookSummary").innerHTML = `<div class="empty-state">${message}</div>`;
     document.getElementById("databaseMigrationPlaybookList").innerHTML = `<div class="empty-state">${message}</div>`;
@@ -460,12 +462,13 @@ function renderDatabaseTopology() {
     return;
   }
 
-  const { summary, readiness, insights, roles, migrations, migrationPlaybook, readModelSync } = state.databaseTopology;
+  const { summary, readiness, actionPlan, insights, roles, migrations, migrationPlaybook, readModelSync } = state.databaseTopology;
   const totalDeltaMagnitude = getReadModelDeltaMagnitude(readModelSync);
   const attentionCount = (insights || []).filter((insight) => tone(insight?.tone) !== "status-success").length;
   const recommendedMigrationTargets = (migrations || []).filter((migration) => hasRecommendedMigrationCommands(migration.commands)).length;
   document.getElementById("databaseTopologyTimestamp").textContent = `Updated ${formatDate(summary.generatedAtUtc)}`;
   renderDatabaseTopologyReadiness(readiness);
+  renderDatabaseTopologyActionPlan(actionPlan);
   renderDatabaseTopologyInsights(insights);
   renderDatabaseMigrationPlaybook(migrationPlaybook);
 
@@ -600,6 +603,45 @@ function renderDatabaseTopologyReadiness(readiness) {
     <div class="insight-actions">
       ${readiness.actionPath ? linkButton(readiness.actionLabel || "Open", readiness.actionPath) : ""}
     </div>`;
+}
+
+function renderDatabaseTopologyActionPlan(actionPlan) {
+  if (!actionPlan || !actionPlan.summary) {
+    document.getElementById("databaseTopologyActionPlanSummary").innerHTML = `<div class="empty-state">Operator action plan unavailable.</div>`;
+    document.getElementById("databaseTopologyActionPlanList").innerHTML = `<div class="empty-state">Operator action plan unavailable.</div>`;
+    return;
+  }
+
+  const summary = actionPlan.summary;
+  const actions = Array.isArray(actionPlan.actions) ? actionPlan.actions : [];
+
+  document.getElementById("databaseTopologyActionPlanSummary").innerHTML = [
+    statCard("Actions", summary.totalActionCount, "ordered operator next steps"),
+    statCard("Blocking", summary.blockingActionCount, summary.blockingActionCount ? "fix before validation" : "none"),
+    statCard("Attention", summary.attentionActionCount, summary.attentionActionCount ? "follow-up required" : "none"),
+    statCard("Ready", summary.readyActionCount, summary.readyActionCount ? "no remediation required" : "waiting on action")
+  ].join("");
+
+  document.getElementById("databaseTopologyActionPlanList").innerHTML = actions.length
+    ? actions.map((action) => `
+      <article class="action-plan-step ${tone(action.tone)}">
+        <header>
+          <div>
+            <div class="meta-row">
+              <span class="token">Action ${escapeHtml(String(action.order || "?"))}</span>
+              <span class="label">Operator next step</span>
+            </div>
+            <strong>${escapeHtml(action.title || "Action")}</strong>
+          </div>
+          <span class="status-badge ${tone(action.tone)}">${escapeHtml(action.tone || "Unknown")}</span>
+        </header>
+        <p>${escapeHtml(action.detail || "No action detail published.")}</p>
+        ${action.completionSignal ? `<small class="action-plan-signal">Done when ${escapeHtml(action.completionSignal)}</small>` : ""}
+        <div class="insight-actions">
+          ${action.actionPath ? linkButton(action.actionLabel || "Open", action.actionPath) : ""}
+        </div>
+      </article>`).join("")
+    : `<div class="empty-state">No operator actions published.</div>`;
 }
 
 function renderDatabaseMigrationPlaybook(playbook) {

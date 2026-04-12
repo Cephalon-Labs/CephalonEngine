@@ -313,6 +313,10 @@ a:focus-visible {
   background: color-mix(in srgb, var(--rose-soft) 16%, var(--panel-strong));
 }
 
+.action-plan-panel {
+  margin-bottom: 16px;
+}
+
 .kpi-grid {
   grid-template-columns: repeat(6, minmax(0, 1fr));
   margin-bottom: 16px;
@@ -401,6 +405,7 @@ a:focus-visible {
 .timeline-list,
 .cart-lines,
 .scope-list,
+.action-plan-list,
 .playbook-list,
 .scope-stats,
 .metadata-stack,
@@ -456,6 +461,49 @@ a:focus-visible {
 
 .insight-card.status-error {
   border-color: color-mix(in srgb, var(--rose) 35%, var(--line));
+}
+
+.action-plan-list {
+  margin-top: 16px;
+}
+
+.action-plan-step {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--panel-strong);
+}
+
+.action-plan-step > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.action-plan-step p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+
+.action-plan-step.status-success {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
+}
+
+.action-plan-step.status-warning {
+  border-color: color-mix(in srgb, var(--amber) 30%, var(--line));
+}
+
+.action-plan-step.status-error {
+  border-color: color-mix(in srgb, var(--rose) 35%, var(--line));
+}
+
+.action-plan-signal {
+  color: var(--text-muted);
+  line-height: 1.55;
 }
 
 .kpi-card strong {
