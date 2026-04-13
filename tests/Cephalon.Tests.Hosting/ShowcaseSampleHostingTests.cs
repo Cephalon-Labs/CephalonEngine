@@ -405,6 +405,12 @@ public sealed class ShowcaseSampleHostingTests
         Assert.All(migrationPlaybook.Steps, static step => Assert.False(step.RequiresPhysicalTargetCoordination));
         Assert.All(migrationPlaybook.ExecutionGroups, static group => Assert.False(group.RequiresPhysicalTargetCoordination));
         Assert.Equal(["write"], migrationPlaybook.ExecutionGroups[0].DatabaseMigrationIds);
+        var writeGroupProductionCommand = Assert.Single(migrationPlaybook.ExecutionGroups[0].ProductionCommands);
+        Assert.Equal("write", writeGroupProductionCommand.DatabaseMigrationId);
+        Assert.Equal("bundle", writeGroupProductionCommand.Command.Id);
+        var historyGroupManualCommand = Assert.Single(migrationPlaybook.ExecutionGroups[2].ManualCommands);
+        Assert.Equal("history", historyGroupManualCommand.DatabaseMigrationId);
+        Assert.Equal("update", historyGroupManualCommand.Command.Id);
         Assert.True(migrationPlaybook.Steps[2].HasProductionRecommendedCommand);
         Assert.NotNull(migrationPlaybook.Steps[2].ProductionCommand);
         Assert.Equal("bundle", migrationPlaybook.Steps[2].ProductionCommand!.Id);
@@ -427,6 +433,8 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("history", snapshot.DatabaseMigrationPlaybook.Steps[2].DatabaseMigrationId);
         Assert.Equal("bundle", snapshot.DatabaseMigrationPlaybook.Steps[2].ProductionCommand!.Id);
         Assert.Equal("update", snapshot.DatabaseMigrationPlaybook.Steps[2].ManualCommand!.Id);
+        Assert.Equal("bundle", Assert.Single(snapshot.DatabaseMigrationPlaybook.ExecutionGroups[0].ProductionCommands).Command.Id);
+        Assert.Equal("update", Assert.Single(snapshot.DatabaseMigrationPlaybook.ExecutionGroups[2].ManualCommands).Command.Id);
         Assert.NotNull(databaseTopology);
         Assert.Equal("Ready", databaseTopology.Summary.Status);
         Assert.Equal("Database topology is ready", databaseTopology.Summary.Headline);
@@ -514,6 +522,10 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(2, sharedGroup.ManualPathTargetCount);
         Assert.Equal(0, sharedGroup.ApplyOnStartupTargetCount);
         Assert.Contains("coordinated physical-target batch", sharedGroup.CoordinationHint!, StringComparison.Ordinal);
+        Assert.Equal(["write", "read"], sharedGroup.ProductionCommands.Select(static command => command.DatabaseMigrationId));
+        Assert.All(sharedGroup.ProductionCommands, static command => Assert.Equal("bundle", command.Command.Id));
+        Assert.Equal(["write", "read"], sharedGroup.ManualCommands.Select(static command => command.DatabaseMigrationId));
+        Assert.All(sharedGroup.ManualCommands, static command => Assert.Equal("update", command.Command.Id));
         Assert.Equal(["read"], writeStep.CoordinatedMigrationIds);
         Assert.True(writeStep.RequiresPhysicalTargetCoordination);
         Assert.Contains("separate migrations projects", writeStep.CoordinationHint!, StringComparison.Ordinal);
@@ -545,6 +557,8 @@ public sealed class ShowcaseSampleHostingTests
             root.GetProperty("migrationPlaybook").GetProperty("executionGroups").EnumerateArray().ToArray(),
             executionGroup =>
                 executionGroup.GetProperty("requiresPhysicalTargetCoordination").GetBoolean() &&
+                executionGroup.GetProperty("productionCommands").EnumerateArray().Any(command => string.Equals(command.GetProperty("commandId").GetString(), "bundle", StringComparison.Ordinal)) &&
+                executionGroup.GetProperty("localCommands").EnumerateArray().Any(command => string.Equals(command.GetProperty("commandId").GetString(), "update", StringComparison.Ordinal)) &&
                 executionGroup.GetProperty("databaseMigrationIds").EnumerateArray().Any(item => string.Equals(item.GetString(), "write", StringComparison.Ordinal)) &&
                 executionGroup.GetProperty("databaseMigrationIds").EnumerateArray().Any(item => string.Equals(item.GetString(), "read", StringComparison.Ordinal)));
         Assert.Contains(
@@ -568,6 +582,9 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Contains("Shared-target coordination: 2 migration target(s)", brief, StringComparison.Ordinal);
         Assert.Contains("Execution groups: 2 total, 1 coordinated shared-target group(s)", brief, StringComparison.Ordinal);
         Assert.Contains("## Migration Execution Groups", brief, StringComparison.Ordinal);
+        Assert.Contains("Production paths:", brief, StringComparison.Ordinal);
+        Assert.Contains("Local fallback paths:", brief, StringComparison.Ordinal);
+        Assert.Contains("via `bundle`", brief, StringComparison.Ordinal);
         Assert.Contains("Coordination:", brief, StringComparison.Ordinal);
         Assert.Contains("separate migrations projects", brief, StringComparison.Ordinal);
     }
@@ -1885,6 +1902,10 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(
             "dotnet ef migrations bundle --context ShowcaseAuditHistoryDbContext --project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj --startup-project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj",
             playbookSteps[2].GetProperty("productionSampleCommand").GetString());
+        var executionGroups = migrationPlaybook.GetProperty("executionGroups").EnumerateArray().ToArray();
+        Assert.Equal(3, executionGroups.Length);
+        Assert.Equal("bundle", executionGroups[0].GetProperty("productionCommands").EnumerateArray().Single().GetProperty("commandId").GetString());
+        Assert.Equal("update", executionGroups[2].GetProperty("localCommands").EnumerateArray().Single().GetProperty("commandId").GetString());
 
         var writeStore = readModelSync.GetProperty("writeStore");
         var readStore = readModelSync.GetProperty("readStore");

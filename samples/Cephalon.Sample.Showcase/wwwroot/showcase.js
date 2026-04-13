@@ -768,6 +768,8 @@ function renderMigrationExecutionGroup(group) {
   const migrationIds = Array.isArray(group.databaseMigrationIds) ? group.databaseMigrationIds : [];
   const requestedRoleIds = Array.isArray(group.requestedRoleIds) ? group.requestedRoleIds : [];
   const resolvedRoleIds = Array.isArray(group.resolvedRoleIds) ? group.resolvedRoleIds : [];
+  const productionCommands = Array.isArray(group.productionCommands) ? group.productionCommands : [];
+  const localCommands = Array.isArray(group.localCommands) ? group.localCommands : [];
 
   return `
     <article class="playbook-step">
@@ -795,11 +797,47 @@ function renderMigrationExecutionGroup(group) {
         <div><dt>Local Fallbacks</dt><dd>${escapeHtml(String(group.localFallbackTargetCount || 0))}</dd></div>
         <div><dt>Startup Apply</dt><dd>${escapeHtml(String(group.applyOnStartupTargetCount || 0))}</dd></div>
       </dl>
+      ${renderMigrationExecutionGroupCommandSet("Production Paths", productionCommands, true)}
+      ${renderMigrationExecutionGroupCommandSet("Local Fallback Paths", localCommands, false)}
       ${group.requiresPhysicalTargetCoordination ? `
         <div class="insight-card warning">
           <strong>Coordinated Physical-Target Batch</strong>
           <p>${escapeHtml(group.coordinationHint || "This physical target batches multiple logical migration targets and should stay coordinated before deploy-time execution.")}</p>
         </div>` : ""}
+    </article>`;
+}
+
+function renderMigrationExecutionGroupCommandSet(title, commands, isReady) {
+  if (!Array.isArray(commands) || commands.length === 0) {
+    return `
+      <section class="playbook-path">
+        <span class="label">${escapeHtml(title)}</span>
+        <div class="empty-inline">No grouped commands published.</div>
+      </section>`;
+  }
+
+  return `
+    <section class="playbook-path">
+      <span class="label">${escapeHtml(title)}</span>
+      ${commands.map((command) => renderMigrationExecutionGroupCommand(command, isReady)).join("")}
+    </section>`;
+}
+
+function renderMigrationExecutionGroupCommand(command, isReady) {
+  return `
+    <article class="playbook-command">
+      <div class="meta-row">
+        <strong>${escapeHtml(command.commandDisplayName || command.commandId || "Command")}</strong>
+        ${command.commandId ? `<span class="token">${escapeHtml(command.commandId)}</span>` : ""}
+        ${command.targetId ? `<span class="token">${escapeHtml(command.targetId)}</span>` : ""}
+        <span class="status-badge ${isReady ? "status-success" : "status-warning"}">${isReady ? "ready" : "review"}</span>
+      </div>
+      <div class="caption">
+        ${escapeHtml(command.requestedRoleId || "unknown requested role")} -> ${escapeHtml(command.resolvedRoleId || "unknown resolved role")}
+      </div>
+      ${command.commandDescription ? `<p class="command-description">${escapeHtml(command.commandDescription)}</p>` : ""}
+      ${command.sampleCommand ? `<code class="command-snippet ${isReady ? "command-snippet-primary" : ""}">${escapeHtml(command.sampleCommand)}</code>` : `<div class="empty-inline">No runnable command published.</div>`}
+      ${command.commandHint ? `<small class="command-hint">${escapeHtml(command.commandHint)}</small>` : ""}
     </article>`;
 }
 

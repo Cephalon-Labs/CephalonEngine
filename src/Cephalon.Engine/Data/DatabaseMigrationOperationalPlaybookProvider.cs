@@ -125,6 +125,14 @@ internal sealed class DatabaseMigrationOperationalPlaybookProvider(
                     productionReadyTargetCount: orderedSteps.Count(static step => step.HasProductionRecommendedCommand),
                     manualPathTargetCount: orderedSteps.Count(static step => step.ManualCommand is not null),
                     applyOnStartupTargetCount: orderedSteps.Count(static step => step.ApplyOnStartup),
+                    productionCommands: orderedSteps
+                        .Where(static step => step.ProductionCommand is not null)
+                        .Select(static step => CreateExecutionGroupCommand(step, step.ProductionCommand!))
+                        .ToArray(),
+                    manualCommands: orderedSteps
+                        .Where(static step => step.ManualCommand is not null)
+                        .Select(static step => CreateExecutionGroupCommand(step, step.ManualCommand!))
+                        .ToArray(),
                     coordinationHint: orderedSteps.Length > 1
                         ? BuildExecutionGroupCoordinationHint(
                             firstStep.PhysicalTargetDisplayName ?? $"physical target '{group.Key}'",
@@ -134,6 +142,21 @@ internal sealed class DatabaseMigrationOperationalPlaybookProvider(
             .OrderBy(static group => group.Order)
             .ThenBy(static group => group.PhysicalTargetId, StringComparer.OrdinalIgnoreCase)
             .ToArray();
+    }
+
+    private static DatabaseMigrationOperationalExecutionGroupCommand CreateExecutionGroupCommand(
+        DatabaseMigrationOperationalStep step,
+        DatabaseMigrationCommandDescriptor command)
+    {
+        ArgumentNullException.ThrowIfNull(step);
+        ArgumentNullException.ThrowIfNull(command);
+
+        return new DatabaseMigrationOperationalExecutionGroupCommand(
+            order: step.Order,
+            databaseMigrationId: step.DatabaseMigrationId,
+            requestedRoleId: step.RequestedRoleId,
+            resolvedRoleId: step.ResolvedRoleId,
+            command: command);
     }
 
     private static DatabaseMigrationStatus ResolveGroupStatus(

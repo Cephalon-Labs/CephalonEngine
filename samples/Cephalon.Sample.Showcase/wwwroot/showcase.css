@@ -767,6 +767,18 @@ tbody tr:last-child td {
   background: rgba(255, 255, 255, 0.58);
 }
 
+.playbook-command {
+  display: grid;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.playbook-command:first-of-type {
+  padding-top: 0;
+  border-top: 0;
+}
+
 .command-variant {
   display: grid;
   gap: 6px;

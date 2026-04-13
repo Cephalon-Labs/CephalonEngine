@@ -98,6 +98,13 @@ public sealed class DatabaseTopologyOperationalSnapshotTests
         Assert.Equal(1, executionGroup.ProductionReadyTargetCount);
         Assert.Equal(0, executionGroup.ManualPathTargetCount);
         Assert.Equal(1, executionGroup.ApplyOnStartupTargetCount);
+        var productionCommand = Assert.Single(executionGroup.ProductionCommands);
+        Assert.Equal(1, productionCommand.Order);
+        Assert.Equal("write", productionCommand.DatabaseMigrationId);
+        Assert.Equal("write", productionCommand.RequestedRoleId);
+        Assert.Equal("write", productionCommand.ResolvedRoleId);
+        Assert.Equal("bundle", productionCommand.Command.Id);
+        Assert.Empty(executionGroup.ManualCommands);
         Assert.Equal("Ready", snapshot.Summary.Status);
         Assert.Equal("Database topology is ready", snapshot.Summary.Headline);
         Assert.Equal("/engine/snapshot", snapshot.Summary.ActionPath);
@@ -241,6 +248,10 @@ public sealed class DatabaseTopologyOperationalSnapshotTests
         Assert.Equal(0, executionGroup.ApplyOnStartupTargetCount);
         Assert.NotNull(executionGroup.CoordinationHint);
         Assert.Contains("coordinated physical-target batch", executionGroup.CoordinationHint!, StringComparison.Ordinal);
+        Assert.Equal(["read", "write"], executionGroup.ProductionCommands.Select(static command => command.DatabaseMigrationId));
+        Assert.All(executionGroup.ProductionCommands, static command => Assert.Equal("bundle", command.Command.Id));
+        Assert.Equal(["read", "write"], executionGroup.ManualCommands.Select(static command => command.DatabaseMigrationId));
+        Assert.All(executionGroup.ManualCommands, static command => Assert.Equal("update", command.Command.Id));
         var writeStep = Assert.Single(playbook.Steps, static step => step.DatabaseMigrationId == "write");
         var readStep = Assert.Single(playbook.Steps, static step => step.DatabaseMigrationId == "read");
         Assert.Equal(["read"], writeStep.CoordinatedMigrationIds);

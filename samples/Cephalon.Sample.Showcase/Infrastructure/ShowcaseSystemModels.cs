@@ -254,7 +254,20 @@ internal sealed record ShowcaseDatabaseTopologyMigrationExecutionGroupRow(
     IReadOnlyList<string> DatabaseMigrationIds,
     IReadOnlyList<string> RequestedRoleIds,
     IReadOnlyList<string> ResolvedRoleIds,
+    IReadOnlyList<ShowcaseDatabaseTopologyMigrationExecutionGroupCommandRow> ProductionCommands,
+    IReadOnlyList<ShowcaseDatabaseTopologyMigrationExecutionGroupCommandRow> LocalCommands,
     string? CoordinationHint);
+
+internal sealed record ShowcaseDatabaseTopologyMigrationExecutionGroupCommandRow(
+    int Order,
+    string TargetId,
+    string RequestedRoleId,
+    string ResolvedRoleId,
+    string CommandId,
+    string CommandDisplayName,
+    string CommandDescription,
+    string SampleCommand,
+    string? CommandHint);
 
 internal sealed record ShowcaseDatabaseTopologyMigrationPlaybookStepRow(
     int Order,

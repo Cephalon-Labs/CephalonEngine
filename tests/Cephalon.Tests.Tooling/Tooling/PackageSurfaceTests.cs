@@ -140,6 +140,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.DatabaseRoleProbeDescriptor),
             typeof(global::Cephalon.Abstractions.Data.DatabaseMigrationOperationalPlaybook),
             typeof(global::Cephalon.Abstractions.Data.DatabaseMigrationOperationalExecutionGroup),
+            typeof(global::Cephalon.Abstractions.Data.DatabaseMigrationOperationalExecutionGroupCommand),
             typeof(global::Cephalon.Abstractions.Data.DatabaseMigrationOperationalStep),
             typeof(global::Cephalon.Abstractions.Data.DatabaseTopologyOperationalAction),
             typeof(global::Cephalon.Abstractions.Data.DatabaseTopologyOperationalActionPlan),

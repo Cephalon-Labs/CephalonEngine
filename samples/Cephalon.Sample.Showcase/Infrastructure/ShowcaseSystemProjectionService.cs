@@ -899,6 +899,8 @@ internal sealed class ShowcaseSystemProjectionService(
                 DatabaseMigrationIds: executionGroup.DatabaseMigrationIds,
                 RequestedRoleIds: executionGroup.RequestedRoleIds,
                 ResolvedRoleIds: executionGroup.ResolvedRoleIds,
+                ProductionCommands: BuildDatabaseMigrationExecutionGroupCommands(executionGroup.ProductionCommands),
+                LocalCommands: BuildDatabaseMigrationExecutionGroupCommands(executionGroup.ManualCommands),
                 CoordinationHint: executionGroup.CoordinationHint))
             .ToArray();
         var steps = enginePlaybook.Steps
@@ -950,6 +952,25 @@ internal sealed class ShowcaseSystemProjectionService(
                 GeneratedAtUtc: enginePlaybook.GeneratedAtUtc),
             ExecutionGroups: executionGroups,
             Steps: steps);
+    }
+
+    private static ShowcaseDatabaseTopologyMigrationExecutionGroupCommandRow[] BuildDatabaseMigrationExecutionGroupCommands(
+        IReadOnlyList<DatabaseMigrationOperationalExecutionGroupCommand> commands)
+    {
+        ArgumentNullException.ThrowIfNull(commands);
+
+        return commands
+            .Select(command => new ShowcaseDatabaseTopologyMigrationExecutionGroupCommandRow(
+                Order: command.Order,
+                TargetId: command.DatabaseMigrationId,
+                RequestedRoleId: command.RequestedRoleId,
+                ResolvedRoleId: command.ResolvedRoleId,
+                CommandId: command.Command.Id,
+                CommandDisplayName: command.Command.DisplayName,
+                CommandDescription: command.Command.Description,
+                SampleCommand: BuildShowcaseSampleMigrationCommand(command.Command.CommandTemplate),
+                CommandHint: ShowcaseRepoRootHint))
+            .ToArray();
     }
 
     private static ShowcaseDatabaseTopologyActionPlan BuildDatabaseTopologyActionPlan(
@@ -1358,6 +1379,24 @@ internal sealed class ShowcaseSystemProjectionService(
             builder.AppendLine(
                 CultureInfo.InvariantCulture,
                 $"   - Coverage: {executionGroup.ProductionReadyTargetCount} production-ready / {executionGroup.LocalFallbackTargetCount} local fallback / {executionGroup.ApplyOnStartupTargetCount} startup apply");
+            if (executionGroup.ProductionCommands.Count > 0)
+            {
+                builder.AppendLine("   - Production paths:");
+                foreach (var command in executionGroup.ProductionCommands)
+                {
+                    builder.AppendLine(CultureInfo.InvariantCulture, $"     - `{command.TargetId}` via `{command.CommandId}`: `{command.SampleCommand}`");
+                }
+            }
+
+            if (executionGroup.LocalCommands.Count > 0)
+            {
+                builder.AppendLine("   - Local fallback paths:");
+                foreach (var command in executionGroup.LocalCommands)
+                {
+                    builder.AppendLine(CultureInfo.InvariantCulture, $"     - `{command.TargetId}` via `{command.CommandId}`: `{command.SampleCommand}`");
+                }
+            }
+
             if (executionGroup.RequiresPhysicalTargetCoordination &&
                 !string.IsNullOrWhiteSpace(executionGroup.CoordinationHint))
             {
