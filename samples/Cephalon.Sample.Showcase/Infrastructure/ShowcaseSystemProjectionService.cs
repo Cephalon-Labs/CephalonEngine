@@ -899,6 +899,8 @@ internal sealed class ShowcaseSystemProjectionService(
                 DatabaseMigrationIds: executionGroup.DatabaseMigrationIds,
                 RequestedRoleIds: executionGroup.RequestedRoleIds,
                 ResolvedRoleIds: executionGroup.ResolvedRoleIds,
+                ProductionBatch: BuildDatabaseMigrationExecutionGroupBatch(executionGroup.ProductionCommandBatch),
+                LocalBatch: BuildDatabaseMigrationExecutionGroupBatch(executionGroup.ManualCommandBatch),
                 ProductionCommands: BuildDatabaseMigrationExecutionGroupCommands(executionGroup.ProductionCommands),
                 LocalCommands: BuildDatabaseMigrationExecutionGroupCommands(executionGroup.ManualCommands),
                 CoordinationHint: executionGroup.CoordinationHint))
@@ -952,6 +954,27 @@ internal sealed class ShowcaseSystemProjectionService(
                 GeneratedAtUtc: enginePlaybook.GeneratedAtUtc),
             ExecutionGroups: executionGroups,
             Steps: steps);
+    }
+
+    private static ShowcaseDatabaseTopologyMigrationExecutionGroupBatchRow? BuildDatabaseMigrationExecutionGroupBatch(
+        DatabaseMigrationOperationalExecutionGroupCommandBatch? batch)
+    {
+        if (batch is null)
+        {
+            return null;
+        }
+
+        return new ShowcaseDatabaseTopologyMigrationExecutionGroupBatchRow(
+            BatchId: batch.Id,
+            DisplayName: batch.DisplayName,
+            Description: batch.Description,
+            CommandCount: batch.CommandCount,
+            TargetIds: batch.DatabaseMigrationIds,
+            CommandIds: batch.CommandIds,
+            ToolIds: batch.ToolIds,
+            WorkingDirectoryHints: batch.WorkingDirectoryHints,
+            SampleCommandBatch: BuildShowcaseSampleMigrationCommand(batch.CommandTemplate),
+            CommandHint: ShowcaseRepoRootHint);
     }
 
     private static ShowcaseDatabaseTopologyMigrationExecutionGroupCommandRow[] BuildDatabaseMigrationExecutionGroupCommands(
@@ -1137,6 +1160,19 @@ internal sealed class ShowcaseSystemProjectionService(
         {
             return string.Empty;
         }
+
+        var commands = commandTemplate
+            .Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(static command => !string.IsNullOrWhiteSpace(command))
+            .Select(AdaptShowcaseSampleMigrationCommandLine)
+            .ToArray();
+
+        return string.Join("\n", commands);
+    }
+
+    private static string AdaptShowcaseSampleMigrationCommandLine(string commandTemplate)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(commandTemplate);
 
         var command = commandTemplate.Trim();
         if (!command.Contains("--project", StringComparison.OrdinalIgnoreCase))
@@ -1379,6 +1415,14 @@ internal sealed class ShowcaseSystemProjectionService(
             builder.AppendLine(
                 CultureInfo.InvariantCulture,
                 $"   - Coverage: {executionGroup.ProductionReadyTargetCount} production-ready / {executionGroup.LocalFallbackTargetCount} local fallback / {executionGroup.ApplyOnStartupTargetCount} startup apply");
+            if (executionGroup.ProductionBatch is not null)
+            {
+                builder.AppendLine(
+                    CultureInfo.InvariantCulture,
+                    $"   - Production batch: {executionGroup.ProductionBatch.CommandCount} command(s) across {string.Join(", ", executionGroup.ProductionBatch.TargetIds)}");
+                AppendCommandBatchLines(builder, executionGroup.ProductionBatch.SampleCommandBatch, "     - ");
+            }
+
             if (executionGroup.ProductionCommands.Count > 0)
             {
                 builder.AppendLine("   - Production paths:");
@@ -1386,6 +1430,14 @@ internal sealed class ShowcaseSystemProjectionService(
                 {
                     builder.AppendLine(CultureInfo.InvariantCulture, $"     - `{command.TargetId}` via `{command.CommandId}`: `{command.SampleCommand}`");
                 }
+            }
+
+            if (executionGroup.LocalBatch is not null)
+            {
+                builder.AppendLine(
+                    CultureInfo.InvariantCulture,
+                    $"   - Local fallback batch: {executionGroup.LocalBatch.CommandCount} command(s) across {string.Join(", ", executionGroup.LocalBatch.TargetIds)}");
+                AppendCommandBatchLines(builder, executionGroup.LocalBatch.SampleCommandBatch, "     - ");
             }
 
             if (executionGroup.LocalCommands.Count > 0)
@@ -1438,6 +1490,22 @@ internal sealed class ShowcaseSystemProjectionService(
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Runtime snapshot: `{EngineRuntimeSnapshotPath}`");
 
         return builder.ToString().TrimEnd();
+    }
+
+    private static void AppendCommandBatchLines(
+        StringBuilder builder,
+        string commandBatch,
+        string linePrefix)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentException.ThrowIfNullOrWhiteSpace(linePrefix);
+
+        foreach (var line in commandBatch
+                     .Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                     .Where(static line => !string.IsNullOrWhiteSpace(line)))
+        {
+            builder.AppendLine(CultureInfo.InvariantCulture, $"{linePrefix}`{line}`");
+        }
     }
 
     private ShowcaseDocumentPayload BuildDatabaseTopologyHandoff(ShowcaseDatabaseTopologyResponse projection)

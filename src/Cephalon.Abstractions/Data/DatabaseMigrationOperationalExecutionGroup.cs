@@ -67,6 +67,16 @@ public sealed class DatabaseMigrationOperationalExecutionGroup
         TargetCount = DatabaseMigrationIds.Count;
         ProductionCommands = NormalizeCommands(productionCommands);
         ManualCommands = NormalizeCommands(manualCommands);
+        ProductionCommandBatch = CreateCommandBatch(
+            id: "production",
+            displayName: "Production command batch",
+            description: "Combined deploy-time command template for the selected production path of this execution group.",
+            commands: ProductionCommands);
+        ManualCommandBatch = CreateCommandBatch(
+            id: "manual",
+            displayName: "Manual command batch",
+            description: "Combined manual or direct command template for the selected fallback path of this execution group.",
+            commands: ManualCommands);
         var effectiveProductionReadyTargetCount = ProductionCommands.Count > 0
             ? ProductionCommands.Count
             : productionReadyTargetCount;
@@ -203,9 +213,19 @@ public sealed class DatabaseMigrationOperationalExecutionGroup
     public IReadOnlyList<DatabaseMigrationOperationalExecutionGroupCommand> ProductionCommands { get; }
 
     /// <summary>
+    /// Gets the combined production command-batch template for this physical-target batch, when available.
+    /// </summary>
+    public DatabaseMigrationOperationalExecutionGroupCommandBatch? ProductionCommandBatch { get; }
+
+    /// <summary>
     /// Gets the selected direct or manual commands grouped for this physical-target batch.
     /// </summary>
     public IReadOnlyList<DatabaseMigrationOperationalExecutionGroupCommand> ManualCommands { get; }
+
+    /// <summary>
+    /// Gets the combined manual command-batch template for this physical-target batch, when available.
+    /// </summary>
+    public DatabaseMigrationOperationalExecutionGroupCommandBatch? ManualCommandBatch { get; }
 
     /// <summary>
     /// Gets the number of targets in this group that are configured for startup execution.
@@ -250,6 +270,42 @@ public sealed class DatabaseMigrationOperationalExecutionGroup
             .OrderBy(static value => value.Order)
             .ThenBy(static value => value.DatabaseMigrationId, StringComparer.OrdinalIgnoreCase)
             .ToArray() ?? [];
+    }
+
+    private static DatabaseMigrationOperationalExecutionGroupCommandBatch? CreateCommandBatch(
+        string id,
+        string displayName,
+        string description,
+        IReadOnlyList<DatabaseMigrationOperationalExecutionGroupCommand> commands)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(id);
+        ArgumentException.ThrowIfNullOrWhiteSpace(displayName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(description);
+        ArgumentNullException.ThrowIfNull(commands);
+
+        if (commands.Count == 0)
+        {
+            return null;
+        }
+
+        return new DatabaseMigrationOperationalExecutionGroupCommandBatch(
+            id: id,
+            displayName: displayName,
+            description: description,
+            commandTemplate: string.Join("\n", commands.Select(static command => command.Command.CommandTemplate.Trim())),
+            commandCount: commands.Count,
+            databaseMigrationIds: commands.Select(static command => command.DatabaseMigrationId).ToArray(),
+            commandIds: commands.Select(static command => command.Command.Id).ToArray(),
+            toolIds: commands
+                .Select(static command => command.Command.ToolId)
+                .Where(static toolId => !string.IsNullOrWhiteSpace(toolId))
+                .Select(static toolId => toolId!)
+                .ToArray(),
+            workingDirectoryHints: commands
+                .Select(static command => command.Command.WorkingDirectoryHint)
+                .Where(static hint => !string.IsNullOrWhiteSpace(hint))
+                .Select(static hint => hint!)
+                .ToArray());
     }
 
     private static void ValidateCommandTargets(

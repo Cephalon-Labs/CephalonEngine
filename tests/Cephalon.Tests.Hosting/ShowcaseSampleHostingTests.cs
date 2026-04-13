@@ -408,9 +408,23 @@ public sealed class ShowcaseSampleHostingTests
         var writeGroupProductionCommand = Assert.Single(migrationPlaybook.ExecutionGroups[0].ProductionCommands);
         Assert.Equal("write", writeGroupProductionCommand.DatabaseMigrationId);
         Assert.Equal("bundle", writeGroupProductionCommand.Command.Id);
+        var writeGroupProductionBatch = Assert.IsType<DatabaseMigrationOperationalExecutionGroupCommandBatch>(
+            migrationPlaybook.ExecutionGroups[0].ProductionCommandBatch);
+        Assert.Equal("production", writeGroupProductionBatch.Id);
+        Assert.Equal(["write"], writeGroupProductionBatch.DatabaseMigrationIds);
+        Assert.Equal(
+            "dotnet ef migrations bundle --context ShowcaseWriteDbContext",
+            writeGroupProductionBatch.CommandTemplate);
         var historyGroupManualCommand = Assert.Single(migrationPlaybook.ExecutionGroups[2].ManualCommands);
         Assert.Equal("history", historyGroupManualCommand.DatabaseMigrationId);
         Assert.Equal("update", historyGroupManualCommand.Command.Id);
+        var historyGroupManualBatch = Assert.IsType<DatabaseMigrationOperationalExecutionGroupCommandBatch>(
+            migrationPlaybook.ExecutionGroups[2].ManualCommandBatch);
+        Assert.Equal("manual", historyGroupManualBatch.Id);
+        Assert.Equal(["history"], historyGroupManualBatch.DatabaseMigrationIds);
+        Assert.Equal(
+            "dotnet ef database update --context ShowcaseAuditHistoryDbContext",
+            historyGroupManualBatch.CommandTemplate);
         Assert.True(migrationPlaybook.Steps[2].HasProductionRecommendedCommand);
         Assert.NotNull(migrationPlaybook.Steps[2].ProductionCommand);
         Assert.Equal("bundle", migrationPlaybook.Steps[2].ProductionCommand!.Id);
@@ -435,6 +449,16 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("update", snapshot.DatabaseMigrationPlaybook.Steps[2].ManualCommand!.Id);
         Assert.Equal("bundle", Assert.Single(snapshot.DatabaseMigrationPlaybook.ExecutionGroups[0].ProductionCommands).Command.Id);
         Assert.Equal("update", Assert.Single(snapshot.DatabaseMigrationPlaybook.ExecutionGroups[2].ManualCommands).Command.Id);
+        var snapshotWriteGroupProductionBatch = Assert.IsType<DatabaseMigrationOperationalExecutionGroupCommandBatch>(
+            snapshot.DatabaseMigrationPlaybook.ExecutionGroups[0].ProductionCommandBatch);
+        Assert.Equal(
+            "dotnet ef migrations bundle --context ShowcaseWriteDbContext",
+            snapshotWriteGroupProductionBatch.CommandTemplate);
+        var snapshotHistoryGroupManualBatch = Assert.IsType<DatabaseMigrationOperationalExecutionGroupCommandBatch>(
+            snapshot.DatabaseMigrationPlaybook.ExecutionGroups[2].ManualCommandBatch);
+        Assert.Equal(
+            "dotnet ef database update --context ShowcaseAuditHistoryDbContext",
+            snapshotHistoryGroupManualBatch.CommandTemplate);
         Assert.NotNull(databaseTopology);
         Assert.Equal("Ready", databaseTopology.Summary.Status);
         Assert.Equal("Database topology is ready", databaseTopology.Summary.Headline);
@@ -524,8 +548,32 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Contains("coordinated physical-target batch", sharedGroup.CoordinationHint!, StringComparison.Ordinal);
         Assert.Equal(["write", "read"], sharedGroup.ProductionCommands.Select(static command => command.DatabaseMigrationId));
         Assert.All(sharedGroup.ProductionCommands, static command => Assert.Equal("bundle", command.Command.Id));
+        var sharedGroupProductionBatch = Assert.IsType<DatabaseMigrationOperationalExecutionGroupCommandBatch>(
+            sharedGroup.ProductionCommandBatch);
+        Assert.Equal(["write", "read"], sharedGroupProductionBatch.DatabaseMigrationIds);
+        Assert.Equal(["bundle"], sharedGroupProductionBatch.CommandIds);
+        Assert.Equal(
+            string.Join(
+                "\n",
+                [
+                    "dotnet ef migrations bundle --context ShowcaseWriteDbContext",
+                    "dotnet ef migrations bundle --context ShowcaseReadDbContext"
+                ]),
+            sharedGroupProductionBatch.CommandTemplate);
         Assert.Equal(["write", "read"], sharedGroup.ManualCommands.Select(static command => command.DatabaseMigrationId));
         Assert.All(sharedGroup.ManualCommands, static command => Assert.Equal("update", command.Command.Id));
+        var sharedGroupManualBatch = Assert.IsType<DatabaseMigrationOperationalExecutionGroupCommandBatch>(
+            sharedGroup.ManualCommandBatch);
+        Assert.Equal(["write", "read"], sharedGroupManualBatch.DatabaseMigrationIds);
+        Assert.Equal(["update"], sharedGroupManualBatch.CommandIds);
+        Assert.Equal(
+            string.Join(
+                "\n",
+                [
+                    "dotnet ef database update --context ShowcaseWriteDbContext",
+                    "dotnet ef database update --context ShowcaseReadDbContext"
+                ]),
+            sharedGroupManualBatch.CommandTemplate);
         Assert.Equal(["read"], writeStep.CoordinatedMigrationIds);
         Assert.True(writeStep.RequiresPhysicalTargetCoordination);
         Assert.Contains("separate migrations projects", writeStep.CoordinationHint!, StringComparison.Ordinal);
@@ -557,6 +605,8 @@ public sealed class ShowcaseSampleHostingTests
             root.GetProperty("migrationPlaybook").GetProperty("executionGroups").EnumerateArray().ToArray(),
             executionGroup =>
                 executionGroup.GetProperty("requiresPhysicalTargetCoordination").GetBoolean() &&
+                executionGroup.GetProperty("productionBatch").GetProperty("commandCount").GetInt32() == 2 &&
+                executionGroup.GetProperty("localBatch").GetProperty("commandCount").GetInt32() == 2 &&
                 executionGroup.GetProperty("productionCommands").EnumerateArray().Any(command => string.Equals(command.GetProperty("commandId").GetString(), "bundle", StringComparison.Ordinal)) &&
                 executionGroup.GetProperty("localCommands").EnumerateArray().Any(command => string.Equals(command.GetProperty("commandId").GetString(), "update", StringComparison.Ordinal)) &&
                 executionGroup.GetProperty("databaseMigrationIds").EnumerateArray().Any(item => string.Equals(item.GetString(), "write", StringComparison.Ordinal)) &&
@@ -582,7 +632,9 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Contains("Shared-target coordination: 2 migration target(s)", brief, StringComparison.Ordinal);
         Assert.Contains("Execution groups: 2 total, 1 coordinated shared-target group(s)", brief, StringComparison.Ordinal);
         Assert.Contains("## Migration Execution Groups", brief, StringComparison.Ordinal);
+        Assert.Contains("Production batch: 2 command(s) across write, read", brief, StringComparison.Ordinal);
         Assert.Contains("Production paths:", brief, StringComparison.Ordinal);
+        Assert.Contains("Local fallback batch: 2 command(s) across write, read", brief, StringComparison.Ordinal);
         Assert.Contains("Local fallback paths:", brief, StringComparison.Ordinal);
         Assert.Contains("via `bundle`", brief, StringComparison.Ordinal);
         Assert.Contains("Coordination:", brief, StringComparison.Ordinal);
@@ -1906,6 +1958,14 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(3, executionGroups.Length);
         Assert.Equal("bundle", executionGroups[0].GetProperty("productionCommands").EnumerateArray().Single().GetProperty("commandId").GetString());
         Assert.Equal("update", executionGroups[2].GetProperty("localCommands").EnumerateArray().Single().GetProperty("commandId").GetString());
+        Assert.Equal("production", executionGroups[0].GetProperty("productionBatch").GetProperty("batchId").GetString());
+        Assert.Equal(
+            "dotnet ef migrations bundle --context ShowcaseWriteDbContext --project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj --startup-project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj",
+            executionGroups[0].GetProperty("productionBatch").GetProperty("sampleCommandBatch").GetString());
+        Assert.Equal("manual", executionGroups[2].GetProperty("localBatch").GetProperty("batchId").GetString());
+        Assert.Equal(
+            "dotnet ef database update --context ShowcaseAuditHistoryDbContext --project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj --startup-project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj",
+            executionGroups[2].GetProperty("localBatch").GetProperty("sampleCommandBatch").GetString());
 
         var writeStore = readModelSync.GetProperty("writeStore");
         var readStore = readModelSync.GetProperty("readStore");

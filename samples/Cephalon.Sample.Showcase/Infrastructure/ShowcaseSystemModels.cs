@@ -254,9 +254,23 @@ internal sealed record ShowcaseDatabaseTopologyMigrationExecutionGroupRow(
     IReadOnlyList<string> DatabaseMigrationIds,
     IReadOnlyList<string> RequestedRoleIds,
     IReadOnlyList<string> ResolvedRoleIds,
+    ShowcaseDatabaseTopologyMigrationExecutionGroupBatchRow? ProductionBatch,
+    ShowcaseDatabaseTopologyMigrationExecutionGroupBatchRow? LocalBatch,
     IReadOnlyList<ShowcaseDatabaseTopologyMigrationExecutionGroupCommandRow> ProductionCommands,
     IReadOnlyList<ShowcaseDatabaseTopologyMigrationExecutionGroupCommandRow> LocalCommands,
     string? CoordinationHint);
+
+internal sealed record ShowcaseDatabaseTopologyMigrationExecutionGroupBatchRow(
+    string BatchId,
+    string DisplayName,
+    string Description,
+    int CommandCount,
+    IReadOnlyList<string> TargetIds,
+    IReadOnlyList<string> CommandIds,
+    IReadOnlyList<string> ToolIds,
+    IReadOnlyList<string> WorkingDirectoryHints,
+    string SampleCommandBatch,
+    string? CommandHint);
 
 internal sealed record ShowcaseDatabaseTopologyMigrationExecutionGroupCommandRow(
     int Order,

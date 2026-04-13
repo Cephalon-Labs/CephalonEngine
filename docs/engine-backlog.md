@@ -1866,6 +1866,35 @@ Delivered:
 - validation now covers the new grouped command-set path through composition tests `4/4`, hosting tests `60/60`, and package-surface tests `52/52`
 - database-topology, engine component docs, Entity Framework component docs, roadmap, backlog, project memory, and showcase docs now describe the shipped grouped command-set contract truthfully
 
+### ENG-094 Shared physical database migration execution-group command-batch follow-through
+
+Status: done
+Estimate: 3
+
+Why:
+
+- the engine-owned migration playbook already surfaced grouped command sets per physical-target batch, but operators and tooling still had to copy or stitch those commands together manually when they needed one combined batch answer for deploy-time work
+- execution groups already knew stable command order, tool ids, and working-directory hints, yet the contract still lacked one deterministic combined command-batch template for the selected production and manual paths
+- the showcase sample needed to consume that engine-owned batch answer directly so the proving surface stayed aligned with the engine instead of rebuilding one multiline copy/paste view locally
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes a host-agnostic command-batch contract on the shipped execution-group surface
+- `DatabaseMigrationOperationalExecutionGroup` publishes combined production and manual command-batch templates derived from the selected grouped commands
+- each combined command batch preserves playbook order plus target, command-id, tool-id, and working-directory truth for the selected path
+- the showcase sample consumes those combined command batches directly in its JSON projection, browser UI, Markdown brief, and handoff package while keeping only repo-root command adaptation local
+- composition, hosting, and package-surface tests prove the combined command-batch contract end to end
+- docs, roadmap, backlog, project memory, and GitHub tracking stay aligned with the shipped engine-first ownership line
+
+Delivered:
+
+- `Cephalon.Abstractions` now also ships `DatabaseMigrationOperationalExecutionGroupCommandBatch`, while `DatabaseMigrationOperationalExecutionGroup` now carries `ProductionCommandBatch` and `ManualCommandBatch`
+- the execution-group contract now derives one deterministic multiline combined command template per selected production or manual path, including stable target ids, command ids, tool ids, and working-directory hints
+- `/engine/database-migration-playbook` plus `snapshot.DatabaseMigrationPlaybook` now surface one combined command-batch answer per physical-target path instead of forcing operators or tooling to stitch grouped commands together locally
+- the showcase sample now consumes those engine-owned combined command batches directly in `/api/v1/showcase/system/database-topology`, `/showcase`, `/api/v1/showcase/system/database-topology/brief`, and `/api/v1/showcase/system/database-topology/handoff`, while keeping only repo-root command adaptation plus read-model follow-through local
+- validation now covers the new combined command-batch path through composition tests `4/4`, hosting tests `60/60`, and package-surface tests `52/52`
+- database-topology, engine component docs, Entity Framework component docs, roadmap, backlog, project memory, and showcase docs now describe the shipped combined command-batch contract truthfully
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2173,3 +2202,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-091 shared physical database migration coordination surface and showcase follow-through: the engine-owned database-role catalog now projects physical-target ids, display names, and physical co-location, the engine-owned migration playbook plus topology posture now surface shared-target coordination counts, per-step partner targets, and warning/action guidance when pending or failed logical migration work spans one physical database, and the showcase sample now consumes that engine-owned answer directly in `/showcase`, the Markdown brief, and the handoff package — **Shipped** · composition tests 4/4 + hosting tests 60/60 + package-surface tests 52/52
 - ENG-092 shared physical database migration execution-group playbook follow-through: the engine-owned migration playbook now groups logical targets into physical-target execution batches with aggregate status, coverage counts, grouped migration ids, and shared-target coordination hints, and the showcase sample now consumes that engine-owned grouped answer directly in `/showcase`, the Markdown brief, and the handoff package — **Shipped** · composition tests 4/4 + hosting tests 60/60 + package-surface tests 52/52
 - ENG-093 shared physical database migration execution-group command-set follow-through: the engine-owned migration playbook now also publishes grouped production and manual command sets per physical-target batch, and the showcase sample now consumes that engine-owned grouped command answer directly in `/showcase`, the Markdown brief, and the handoff package — **Shipped** · composition tests 4/4 + hosting tests 60/60 + package-surface tests 52/52
+- ENG-094 shared physical database migration execution-group command-batch follow-through: the engine-owned migration playbook now also publishes combined production and manual command-batch templates per physical-target batch, and the showcase sample now consumes that engine-owned combined batch answer directly in `/showcase`, the Markdown brief, and the handoff package — **Shipped** · composition tests 4/4 + hosting tests 60/60 + package-surface tests 52/52

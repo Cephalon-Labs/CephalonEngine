@@ -768,6 +768,8 @@ function renderMigrationExecutionGroup(group) {
   const migrationIds = Array.isArray(group.databaseMigrationIds) ? group.databaseMigrationIds : [];
   const requestedRoleIds = Array.isArray(group.requestedRoleIds) ? group.requestedRoleIds : [];
   const resolvedRoleIds = Array.isArray(group.resolvedRoleIds) ? group.resolvedRoleIds : [];
+  const productionBatch = group.productionBatch || null;
+  const localBatch = group.localBatch || null;
   const productionCommands = Array.isArray(group.productionCommands) ? group.productionCommands : [];
   const localCommands = Array.isArray(group.localCommands) ? group.localCommands : [];
 
@@ -797,7 +799,9 @@ function renderMigrationExecutionGroup(group) {
         <div><dt>Local Fallbacks</dt><dd>${escapeHtml(String(group.localFallbackTargetCount || 0))}</dd></div>
         <div><dt>Startup Apply</dt><dd>${escapeHtml(String(group.applyOnStartupTargetCount || 0))}</dd></div>
       </dl>
+      ${renderMigrationExecutionGroupBatch("Production Batch", productionBatch, true)}
       ${renderMigrationExecutionGroupCommandSet("Production Paths", productionCommands, true)}
+      ${renderMigrationExecutionGroupBatch("Local Fallback Batch", localBatch, false)}
       ${renderMigrationExecutionGroupCommandSet("Local Fallback Paths", localCommands, false)}
       ${group.requiresPhysicalTargetCoordination ? `
         <div class="insight-card warning">
@@ -805,6 +809,44 @@ function renderMigrationExecutionGroup(group) {
           <p>${escapeHtml(group.coordinationHint || "This physical target batches multiple logical migration targets and should stay coordinated before deploy-time execution.")}</p>
         </div>` : ""}
     </article>`;
+}
+
+function renderMigrationExecutionGroupBatch(title, batch, isReady) {
+  if (!batch || !batch.sampleCommandBatch) {
+    return `
+      <section class="playbook-path">
+        <span class="label">${escapeHtml(title)}</span>
+        <div class="empty-inline">No combined batch published.</div>
+      </section>`;
+  }
+
+  const targetIds = Array.isArray(batch.targetIds) ? batch.targetIds : [];
+  const commandIds = Array.isArray(batch.commandIds) ? batch.commandIds : [];
+  const toolIds = Array.isArray(batch.toolIds) ? batch.toolIds : [];
+  const workingDirectoryHints = Array.isArray(batch.workingDirectoryHints) ? batch.workingDirectoryHints : [];
+
+  return `
+    <section class="playbook-path">
+      <span class="label">${escapeHtml(title)}</span>
+      <div class="meta-row">
+        <strong>${escapeHtml(batch.displayName || title)}</strong>
+        ${batch.batchId ? `<span class="token">${escapeHtml(batch.batchId)}</span>` : ""}
+        <span class="status-badge ${isReady ? "status-success" : "status-warning"}">${isReady ? "ready" : "review"}</span>
+      </div>
+      ${batch.description ? `<p class="command-description">${escapeHtml(batch.description)}</p>` : ""}
+      <div class="caption">
+        ${escapeHtml(String(batch.commandCount || targetIds.length || 0))} command(s)
+        ${targetIds.length ? ` across ${escapeHtml(targetIds.join(", "))}` : ""}
+      </div>
+      ${(commandIds.length || toolIds.length || workingDirectoryHints.length) ? `
+        <div class="meta-row">
+          ${commandIds.map((commandId) => `<span class="token">${escapeHtml(commandId)}</span>`).join("")}
+          ${toolIds.map((toolId) => `<span class="token">${escapeHtml(toolId)}</span>`).join("")}
+          ${workingDirectoryHints.map((hint) => `<span class="token">${escapeHtml(hint)}</span>`).join("")}
+        </div>` : ""}
+      <code class="command-snippet ${isReady ? "command-snippet-primary" : ""}">${escapeHtml(batch.sampleCommandBatch)}</code>
+      ${batch.commandHint ? `<small class="command-hint">${escapeHtml(batch.commandHint)}</small>` : ""}
+    </section>`;
 }
 
 function renderMigrationExecutionGroupCommandSet(title, commands, isReady) {

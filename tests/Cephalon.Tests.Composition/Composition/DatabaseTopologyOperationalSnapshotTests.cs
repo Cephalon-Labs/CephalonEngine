@@ -104,7 +104,14 @@ public sealed class DatabaseTopologyOperationalSnapshotTests
         Assert.Equal("write", productionCommand.RequestedRoleId);
         Assert.Equal("write", productionCommand.ResolvedRoleId);
         Assert.Equal("bundle", productionCommand.Command.Id);
+        Assert.NotNull(executionGroup.ProductionCommandBatch);
+        Assert.Equal("production", executionGroup.ProductionCommandBatch!.Id);
+        Assert.Equal(1, executionGroup.ProductionCommandBatch.CommandCount);
+        Assert.Equal(["write"], executionGroup.ProductionCommandBatch.DatabaseMigrationIds);
+        Assert.Equal(["bundle"], executionGroup.ProductionCommandBatch.CommandIds);
+        Assert.Equal(["dotnet ef migrations bundle --context WriteDbContext"], executionGroup.ProductionCommandBatch.CommandTemplate.Split('\n'));
         Assert.Empty(executionGroup.ManualCommands);
+        Assert.Null(executionGroup.ManualCommandBatch);
         Assert.Equal("Ready", snapshot.Summary.Status);
         Assert.Equal("Database topology is ready", snapshot.Summary.Headline);
         Assert.Equal("/engine/snapshot", snapshot.Summary.ActionPath);
@@ -250,8 +257,30 @@ public sealed class DatabaseTopologyOperationalSnapshotTests
         Assert.Contains("coordinated physical-target batch", executionGroup.CoordinationHint!, StringComparison.Ordinal);
         Assert.Equal(["read", "write"], executionGroup.ProductionCommands.Select(static command => command.DatabaseMigrationId));
         Assert.All(executionGroup.ProductionCommands, static command => Assert.Equal("bundle", command.Command.Id));
+        Assert.NotNull(executionGroup.ProductionCommandBatch);
+        Assert.Equal("production", executionGroup.ProductionCommandBatch!.Id);
+        Assert.Equal(2, executionGroup.ProductionCommandBatch.CommandCount);
+        Assert.Equal(["read", "write"], executionGroup.ProductionCommandBatch.DatabaseMigrationIds);
+        Assert.Equal(["bundle"], executionGroup.ProductionCommandBatch.CommandIds);
+        Assert.Equal(
+            [
+                "dotnet ef migrations bundle --context ReadDbContext",
+                "dotnet ef migrations bundle --context WriteDbContext"
+            ],
+            executionGroup.ProductionCommandBatch.CommandTemplate.Split('\n'));
         Assert.Equal(["read", "write"], executionGroup.ManualCommands.Select(static command => command.DatabaseMigrationId));
         Assert.All(executionGroup.ManualCommands, static command => Assert.Equal("update", command.Command.Id));
+        Assert.NotNull(executionGroup.ManualCommandBatch);
+        Assert.Equal("manual", executionGroup.ManualCommandBatch!.Id);
+        Assert.Equal(2, executionGroup.ManualCommandBatch.CommandCount);
+        Assert.Equal(["read", "write"], executionGroup.ManualCommandBatch.DatabaseMigrationIds);
+        Assert.Equal(["update"], executionGroup.ManualCommandBatch.CommandIds);
+        Assert.Equal(
+            [
+                "dotnet ef database update --context ReadDbContext",
+                "dotnet ef database update --context WriteDbContext"
+            ],
+            executionGroup.ManualCommandBatch.CommandTemplate.Split('\n'));
         var writeStep = Assert.Single(playbook.Steps, static step => step.DatabaseMigrationId == "write");
         var readStep = Assert.Single(playbook.Steps, static step => step.DatabaseMigrationId == "read");
         Assert.Equal(["read"], writeStep.CoordinatedMigrationIds);
