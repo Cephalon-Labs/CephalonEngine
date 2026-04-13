@@ -234,6 +234,74 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains(patterns, pattern => pattern.Id == "backend-for-frontend");
     }
 
+    [Fact]
+    public async Task MapCephalonExposesStranglerFigRoutesAndResolution()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddProblemDetails();
+        builder.Services.AddHealthChecks()
+            .AddCheck("cephalon.liveness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["live", "engine"])
+            .AddCheck("cephalon.readiness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["ready", "engine"]);
+        builder.Services.AddSingleton<IRateLimitingRuntimeCatalog>(EmptyRateLimitingRuntimeCatalog.Instance);
+        builder.Services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["StranglerFig"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new DiscoveryTestModule());
+            engine.AddStranglerFigRoute(new StranglerFigRouteDescriptor(
+                id: "orders-modern",
+                sourceModuleId: "platform",
+                displayName: "Orders modernization",
+                description: "Routes order workflows to the modern Cephalon boundary.",
+                pathPrefix: "/checkout/orders",
+                preferredTarget: StranglerFigTarget.Modern,
+                legacyEndpoint: "legacy://orders",
+                modernEndpoint: "modern://orders"));
+            engine.AddStranglerFigRoute(new StranglerFigRouteDescriptor(
+                id: "reports-fallback",
+                sourceModuleId: "platform",
+                displayName: "Reports fallback",
+                description: "Keeps reporting traffic on the legacy boundary until the modern endpoint exists.",
+                pathPrefix: "/reports",
+                preferredTarget: StranglerFigTarget.Modern,
+                legacyEndpoint: "legacy://reports"));
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var routes = await client.GetFromJsonAsync<StranglerFigRouteDescriptor[]>("/engine/strangler-fig");
+        var route = await client.GetFromJsonAsync<StranglerFigRouteDescriptor>("/engine/strangler-fig/orders-modern");
+        var resolution = await client.GetFromJsonAsync<StranglerFigRouteResolution>("/engine/strangler-fig/resolve?path=/checkout/orders/42&method=GET");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(routes);
+        Assert.Equal(2, routes.Length);
+        Assert.Contains(routes, candidate => candidate.Id == "orders-modern");
+        Assert.Contains(routes, candidate => candidate.Id == "reports-fallback");
+
+        Assert.NotNull(route);
+        Assert.Equal("/checkout/orders", route.PathPrefix);
+        Assert.Equal("modern://orders", route.ModernEndpoint);
+
+        Assert.NotNull(resolution);
+        Assert.Equal("orders-modern", resolution.RouteId);
+        Assert.Equal("/checkout/orders/42", resolution.RequestedPath);
+        Assert.Equal(StranglerFigTarget.Modern, resolution.SelectedTarget);
+        Assert.Equal("modern://orders", resolution.SelectedEndpoint);
+        Assert.Equal("preferred-target", resolution.ResolutionMode);
+
+        Assert.NotNull(snapshot);
+        Assert.Contains(snapshot.StranglerFigRoutes, candidate => candidate.Id == "orders-modern");
+        Assert.Contains(snapshot.StranglerFigRoutes, candidate => candidate.Id == "reports-fallback");
+    }
+
     private sealed class EmptyRateLimitingRuntimeCatalog : IRateLimitingRuntimeCatalog
     {
         public static EmptyRateLimitingRuntimeCatalog Instance { get; } = new();

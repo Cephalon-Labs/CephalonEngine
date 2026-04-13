@@ -9,6 +9,7 @@
 - runtime startup and shutdown integration through hosted services
 - `/engine/*` metadata, status, diagnostics, and policy endpoints
 - `/engine/resilience` when the engine-owned resilience contract is active
+- `/engine/strangler-fig` and `/engine/strangler-fig/resolve` when the engine-owned strangler-fig runtime catalog is active
 - `/engine/rate-limiting` when ASP.NET Core rate-limiting enforcement is active
 - `/engine/database-roles` when the engine-owned database-role catalog is active
 - `/engine/database-migrations` when the engine-owned database-migration catalog is active
@@ -152,6 +153,13 @@ bulkhead saturation) while keeping OpenAPI in sync per route and surfacing retry
 open circuits. Retry now runs in that same shared pipeline only for explicitly idempotent behaviors
 when the effective retry policy is active and the classifier marks the failure as transient, while
 non-idempotent or unknown behaviors still fail without automatic replay.
+
+The same host surface now also exposes the first shipped strangler-fig runtime answers directly.
+`/engine/strangler-fig` and `/engine/strangler-fig/{routeId}` publish the active migration-route
+catalog composed by `Cephalon.Engine`, while `/engine/strangler-fig/resolve` evaluates one
+request-shaped `path` plus `method` pair through the host-agnostic `IStranglerFigRouter`. That
+baseline keeps migration-route ownership and request-resolution truth operator-visible before
+Cephalon adds any host-specific proxy or traffic-manager behavior.
 
 The host now also exposes additive event-dispatch operator answers directly. When eventing packs
 register the corresponding catalogs, `/engine/event-dispatch-runtimes` and

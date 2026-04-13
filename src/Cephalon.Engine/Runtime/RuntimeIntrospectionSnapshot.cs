@@ -2,6 +2,7 @@ using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Authorization;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
+using Cephalon.Abstractions.Patterns;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Diagnostics;
@@ -109,4 +110,9 @@ public sealed record RuntimeIntrospectionSnapshot(
     /// Gets the effective behavior-execution resilience policies visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<BehaviorResilienceRuntimeDescriptor> BehaviorResiliencePolicies { get; init; } = [];
+
+    /// <summary>
+    /// Gets the strangler-fig migration routes visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<StranglerFigRouteDescriptor> StranglerFigRoutes { get; init; } = [];
 }

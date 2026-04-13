@@ -42,11 +42,18 @@ internal sealed class AppProfileBuilder
     {
         ArgumentNullException.ThrowIfNull(pattern);
 
-        if (!patterns.TryAdd(pattern.Id, pattern))
+        if (!TryAddPattern(pattern))
         {
             throw new InvalidOperationException(
                 $"Pattern '{pattern.Id}' is already selected.");
         }
+    }
+
+    public bool TryAddPattern(PatternDescriptor pattern)
+    {
+        ArgumentNullException.ThrowIfNull(pattern);
+
+        return patterns.TryAdd(pattern.Id, pattern);
     }
 
     public void AddTransport(TransportDescriptor transport)

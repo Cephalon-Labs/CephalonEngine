@@ -1,6 +1,6 @@
 # Cephalon Engine Architecture Recommendations
 
-Recommendations in this document reflect the repository state as of `April 11, 2026`.
+Recommendations in this document reflect the repository state as of `April 13, 2026`.
 
 Cross-references: `docs/architecture-inventory.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`
 
@@ -80,18 +80,20 @@ These patterns provide adoption acceleration and complete the distributed system
 
 ### Strangler Fig (migration support)
 
-Current state: shipped as a taxonomy descriptor. `BuiltInPatterns.cs` now includes `strangler-fig`, so the remaining work is routing, progress tracking, and migration-runtime guidance rather than descriptor registration.
+Current state: the first contract-first runtime baseline is now shipped. `BuiltInPatterns.cs` still carries the `strangler-fig` descriptor, and `Cephalon.Abstractions` now also exports `IStranglerFigRouteContributor`, `IStranglerFigRouteRegistry`, `IStranglerFigRuntimeCatalog`, `IStranglerFigRouter`, `StranglerFigRequest`, `StranglerFigRouteDescriptor`, `StranglerFigRouteResolution`, and `StranglerFigTarget`. `Cephalon.Engine` now composes those routes into the runtime catalog and snapshot, and ASP.NET Core now exposes `/engine/strangler-fig` plus `/engine/strangler-fig/resolve` as operator-facing surfaces. Remaining work is configuration-driven migration policy, progress tracking, and concrete host-level cutover or proxy behavior.
 
-Recommendation: keep the descriptor stable and add `IStranglerFigRouter` plus migration-runtime follow-through only when a concrete host or operator slice needs progressive cutover semantics.
+Recommendation: keep the host-agnostic route-contribution, runtime-catalog, and request-resolution contracts stable, then add `Engine:Migration:StranglerFig` plus host-specific proxy or traffic-manager follow-through only when a concrete host needs real cutover behavior.
 
 Implementation outline:
 - `PatternDescriptor` "strangler-fig" in `BuiltInPatterns.cs`
-- `IStranglerFigRouter` — routes requests between legacy and new system
+- `IStranglerFigRouteContributor` + `IStranglerFigRouteRegistry` — let modules contribute migration boundaries explicitly
+- `IStranglerFigRuntimeCatalog` + `IStranglerFigRouter` — publish the active route catalog and resolve request ownership without leaking host APIs into abstractions
+- `/engine/strangler-fig`, `/engine/strangler-fig/resolve`, and `snapshot.StranglerFigRoutes` — operator-facing runtime surface for the shipped baseline
 - Migration progress tracking via runtime surface
 - Configuration: `Engine:Migration:StranglerFig` section
 - Capability: `migration.strangler-fig`
 
-Effort: medium for the remaining non-descriptor work.
+Effort: medium for the remaining non-baseline work.
 
 ### Anti-Corruption Layer (DDD integration boundary)
 

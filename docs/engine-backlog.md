@@ -1920,6 +1920,32 @@ Delivered:
 - targeted composition and hosting coverage now prove both alias resolution and `/engine/patterns` plus `/engine/app-model` visibility for the new phase 12 taxonomy entries
 - architecture inventory, architecture recommendations, engine component docs, roadmap, backlog, and project memory now describe the shipped descriptor baseline truthfully while keeping router and client-binding follow-through explicitly planned
 
+### ENG-096 Phase 12 strangler-fig runtime contract baseline
+
+Status: done
+Estimate: 3
+
+Why:
+
+- after `ENG-095`, phase 12 could name strangler fig but still could not express real migration-route ownership or request resolution through engine-owned contracts
+- modules and hosts still lacked a reusable, host-agnostic way to declare which path prefixes were under migration and which Cephalon module owned the modern boundary
+- operator tooling had no direct runtime answer for the active strangler-fig route catalog or which target would win for a specific request
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships host-agnostic strangler-fig route contribution, runtime-catalog, request, resolution, and router contracts
+- `Cephalon.Engine` composes both host-added and module-contributed strangler-fig routes, auto-selects the `strangler-fig` pattern when routes exist, and projects the route catalog into the runtime snapshot
+- ASP.NET Core hosts expose direct operator routes for the active strangler-fig route catalog and one request-resolution probe
+- docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the contract-first/runtime-only scope while remaining honest that configuration-driven migration policy, progress tracking, and host-level proxy behavior are later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `IStranglerFigRouteContributor`, `IStranglerFigRouteRegistry`, `IStranglerFigRuntimeCatalog`, `IStranglerFigRouter`, `StranglerFigRequest`, `StranglerFigRouteDescriptor`, `StranglerFigRouteResolution`, and `StranglerFigTarget`
+- `Cephalon.Engine` now composes strangler-fig routes from both `EngineBuilder.AddStranglerFigRoute(...)` and module contributors, automatically keeps the `strangler-fig` pattern visible in `AppProfile.Patterns` when routes exist, and projects the route set into `snapshot.StranglerFigRoutes`
+- `Cephalon.AspNetCore` now exposes `/engine/strangler-fig`, `/engine/strangler-fig/{routeId}`, and `/engine/strangler-fig/resolve` as direct operator routes over the shared runtime contracts
+- targeted composition, hosting, and package-surface coverage now prove route collection, longest-prefix plus fallback request resolution, runtime snapshot projection, and the new abstraction-layer public surface
+- architecture recommendations, component docs, roadmap, backlog, and project memory now describe the shipped contract-first strangler-fig baseline truthfully while keeping progress tracking, `Engine:Migration` configuration, and host-specific cutover behavior explicitly planned
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2229,3 +2255,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-093 shared physical database migration execution-group command-set follow-through: the engine-owned migration playbook now also publishes grouped production and manual command sets per physical-target batch, and the showcase sample now consumes that engine-owned grouped command answer directly in `/showcase`, the Markdown brief, and the handoff package — **Shipped** · composition tests 4/4 + hosting tests 60/60 + package-surface tests 52/52
 - ENG-094 shared physical database migration execution-group command-batch follow-through: the engine-owned migration playbook now also publishes combined production and manual command-batch templates per physical-target batch, and the showcase sample now consumes that engine-owned combined batch answer directly in `/showcase`, the Markdown brief, and the handoff package — **Shipped** · composition tests 4/4 + hosting tests 60/60 + package-surface tests 52/52
 - ENG-095 phase 12 migration-pattern taxonomy baseline: the engine now ships `strangler-fig` plus `backend-for-frontend` as built-in architecture descriptors, and ASP.NET Core hosts now surface those phase 12 entries directly through `/engine/patterns` and the runtime app model while router/client-binding follow-through remains later — **Shipped** · composition tests 2/2 + hosting tests 1/1
+- ENG-096 phase 12 strangler-fig runtime contract baseline: the engine now composes host-added and module-contributed migration routes through host-agnostic strangler-fig contracts, projects them into `/engine/strangler-fig` plus `snapshot.StranglerFigRoutes`, and exposes request resolution through `/engine/strangler-fig/resolve` while configuration-driven progress and host-level cutover remain later — **Shipped** · composition tests 2/2 + hosting tests 1/1 + package-surface tests 1/1

@@ -54,6 +54,7 @@ public sealed class EngineBuilder
     private readonly List<IModule> modules = [];
     private readonly List<ModulePackageReference> packages = [];
     private readonly List<ModulePackageDirectory> packageDirectories = [];
+    private readonly List<StranglerFigRouteDescriptor> stranglerFigRoutes = [];
     private readonly AppProfileBuilder appProfileBuilder = new();
     private EngineOptions engineOptions = EngineOptions.Empty;
     private LocalizationSettings localizationSettings = LocalizationSettings.Empty;
@@ -178,6 +179,36 @@ public sealed class EngineBuilder
     public EngineBuilder AddTechnology(TechnologyDescriptor technology)
     {
         appProfileBuilder.AddTechnology(technology);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a strangler-fig route to the current runtime composition.
+    /// </summary>
+    /// <param name="route">The route descriptor to add.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder AddStranglerFigRoute(StranglerFigRouteDescriptor route)
+    {
+        ArgumentNullException.ThrowIfNull(route);
+
+        stranglerFigRoutes.Add(route);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds multiple strangler-fig routes to the current runtime composition.
+    /// </summary>
+    /// <param name="routes">The route descriptors to add.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder AddStranglerFigRoutes(IEnumerable<StranglerFigRouteDescriptor> routes)
+    {
+        ArgumentNullException.ThrowIfNull(routes);
+
+        foreach (var route in routes)
+        {
+            AddStranglerFigRoute(route);
+        }
+
         return this;
     }
 
@@ -538,6 +569,7 @@ public sealed class EngineBuilder
             var inboxes = new List<InboxDescriptor>();
             var auditStores = new List<AuditStoreDescriptor>();
             var authorizationPolicies = new List<AuthorizationPolicyDescriptor>();
+            var activeStranglerFigRoutes = new List<StranglerFigRouteDescriptor>(stranglerFigRoutes);
             var capabilities = new CapabilityManifestCollector();
             var technologyRegistry = new TechnologyRegistryAdapter(appProfileBuilder);
             foreach (var module in orderedModules.OfType<ITechnologyContributor>())
@@ -587,6 +619,17 @@ public sealed class EngineBuilder
                     new AuthorizationPolicyRegistryAdapter(module.Descriptor.Id, authorizationPolicies));
             }
 
+            foreach (var module in orderedModules.Where(static module => module is IStranglerFigRouteContributor))
+            {
+                ((IStranglerFigRouteContributor)module).RegisterRoutes(
+                    new StranglerFigRouteRegistryAdapter(module.Descriptor.Id, activeStranglerFigRoutes));
+            }
+
+            if (activeStranglerFigRoutes.Count > 0)
+            {
+                appProfileBuilder.TryAddPattern(BuiltInPatterns.StranglerFigPattern);
+            }
+
             var appProfile = appProfileBuilder.Build();
             var technologyCatalog = new TechnologyCatalogSnapshot(appProfileBuilder.GetTechnologyCatalog());
             var technologySelection = new TechnologySelection(appProfile.Technologies, technologyCatalog.Technologies);
@@ -604,6 +647,12 @@ public sealed class EngineBuilder
             Services.TryAddSingleton<IReadOnlyList<OwnedBehaviorRegistration>>(ownedBehaviorRegistrations);
             Services.TryAddSingleton<IReadOnlyList<AuditStoreDescriptor>>(_ => auditStores.ToArray());
             Services.TryAddSingleton<IReadOnlyList<OutboxDescriptor>>(_ => outboxes.ToArray());
+            Services.TryAddSingleton<StranglerFigRuntimeCatalogSnapshot>(_ =>
+                new StranglerFigRuntimeCatalogSnapshot(activeStranglerFigRoutes));
+            Services.TryAddSingleton<IStranglerFigRuntimeCatalog>(serviceProvider =>
+                serviceProvider.GetRequiredService<StranglerFigRuntimeCatalogSnapshot>());
+            Services.TryAddSingleton<IStranglerFigRouter>(serviceProvider =>
+                serviceProvider.GetRequiredService<StranglerFigRuntimeCatalogSnapshot>());
             Services.TryAddSingleton<DatabaseRoleCatalogSnapshot>(serviceProvider =>
                 new DatabaseRoleCatalogSnapshot(
                     appProfile,

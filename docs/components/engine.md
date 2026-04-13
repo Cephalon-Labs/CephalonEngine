@@ -24,6 +24,7 @@
 - additive authorization-policy contracts and runtime authorization-policy catalogs
 - additive audit-store contracts and runtime audit-store catalogs
 - additive event-dispatch runtime descriptor and state catalogs
+- additive strangler-fig route-contribution contracts plus runtime route and request-resolution catalogs
 - manifest generation and runtime introspection snapshots
 - built-in blueprint, pattern, transport, and technology catalogs
 - trust and capability policy evaluation
@@ -48,6 +49,7 @@
 - `Data/DatabaseTopologyOperationalSnapshotProvider.cs`
 - `Authorization/AuthorizationPolicyCatalogSnapshot.cs`
 - `Audit/AuditStoreCatalogSnapshot.cs`
+- `Patterns/StranglerFigRuntimeCatalogSnapshot.cs`
 - `Runtime/RuntimeIntrospectionSnapshotProvider.cs`
 - `Runtime/EngineRuntime.cs`
 - `Runtime/IRuntime.cs`
@@ -98,8 +100,14 @@ taxonomy follow-through. `Engine:Resilience` is now a first-class configuration 
 `AppProfile.Resilience` is now part of the public app-model surface, `/engine/resilience` is now
 the direct operator route for that requested contract, and `BuiltInPatterns` now includes
 `onion-architecture`, `anti-corruption-layer`, `strangler-fig`, and
-`backend-for-frontend` so the taxonomy no longer lags the roadmap even though the strangler-router
-and client-binding runtime follow-through remain later slices. The new host-agnostic `IRateLimitingRuntimeCatalog` and
+`backend-for-frontend` so the taxonomy no longer lags the roadmap. The first non-taxonomy
+strangler-fig follow-through is now also shipped: when modules or host code contribute
+`StranglerFigRouteDescriptor` entries, the engine composes them through
+`IStranglerFigRuntimeCatalog`, resolves requests through `IStranglerFigRouter`, auto-selects the
+`strangler-fig` pattern in the app model, and projects the live route set into
+`snapshot.StranglerFigRoutes` and the ASP.NET Core `/engine/strangler-fig` surface. Host-specific
+proxy or cutover behavior, migration progress tracking, and the BFF client-binding runtime remain
+later slices. The new host-agnostic `IRateLimitingRuntimeCatalog` and
 `RateLimitingRuntimeDescriptor` contracts also let host adapters publish effective enforcement into
 `snapshot.RateLimitingPolicies` without pretending the engine core itself performs HTTP throttling.
 `RateLimitingSelection` now also carries additive `Overrides` projected as

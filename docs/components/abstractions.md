@@ -11,7 +11,7 @@
 - phase-8 runtime-neutral contracts for data, authorization, tenancy, audit, and id generation
 - health contracts used across hosts and packages
 - localization contracts used by engine resources and package language packs
-- pattern, technology, and transport descriptors shared by the whole stack
+- pattern, migration-routing, technology, and transport contracts shared by the whole stack
 
 ## Main surfaces
 
@@ -52,6 +52,8 @@
 - `Ids/IIdGenerator.cs`
 - `Health/DependencyHealthReport.cs`
 - `Localization/ILocalizedResourceContributor.cs`
+- `Patterns/IStranglerFigRouter.cs`
+- `Patterns/StranglerFigRouteDescriptor.cs`
 - `Technologies/ITechnologyRuntimeCatalog.cs`
 - `Transports/TransportDescriptor.cs`
 
@@ -120,6 +122,14 @@ targeted behavior ids plus transport ids so operator tooling can see whether an 
 default policy or from a narrower override, and `Resolve(behaviorId, transportId)` metadata can now
 surface behavior-specific retry eligibility as `eligible`, `ineligible`, or `unknown` without
 pretending that automatic retry is already enforced.
+
+The same contract-first rule now also covers the first phase 12 migration surface. The `Patterns`
+namespace now carries `IStranglerFigRouteContributor`, `IStranglerFigRouteRegistry`,
+`IStranglerFigRuntimeCatalog`, `IStranglerFigRouter`, `StranglerFigRequest`,
+`StranglerFigRouteDescriptor`, `StranglerFigRouteResolution`, and `StranglerFigTarget` so modules,
+hosts, and operator tooling can talk about migration-boundary ownership and request resolution
+without leaking ASP.NET Core proxy behavior, YARP, or cloud traffic-manager types into
+`Cephalon.Abstractions`.
 
 ## Related docs
 

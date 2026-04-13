@@ -2,6 +2,7 @@ using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Authorization;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
+using Cephalon.Abstractions.Patterns;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Diagnostics;
@@ -22,6 +23,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
     IDatabaseTopologyOperationalSnapshotProvider databaseTopologyOperationalSnapshotProvider,
     IAuditStoreCatalog auditStoreCatalog,
     IAuthorizationPolicyCatalog authorizationPolicyCatalog,
+    IStranglerFigRuntimeCatalog stranglerFigRuntimeCatalog,
     ITechnologyRuntimeCatalog technologyRuntimeCatalog,
     IRuntimeDiagnosticsCatalog diagnosticsCatalog) : IRuntimeIntrospectionSnapshotProvider
 {
@@ -53,7 +55,8 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             AuditStores = auditStoreCatalog.AuditStores,
             AuthorizationPolicies = authorizationPolicyCatalog.Policies,
             RateLimitingPolicies = rateLimitingRuntimeCatalog?.Policies ?? [],
-            BehaviorResiliencePolicies = behaviorResilienceRuntimeCatalog?.Policies ?? []
+            BehaviorResiliencePolicies = behaviorResilienceRuntimeCatalog?.Policies ?? [],
+            StranglerFigRoutes = stranglerFigRuntimeCatalog.Routes
         };
     }
 }
