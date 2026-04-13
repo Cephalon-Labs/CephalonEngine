@@ -7,11 +7,13 @@ using Cephalon.AspNetCore.Documentation;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Transports.Rest;
 using Cephalon.Engine.Configuration;
+using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Polly.CircuitBreaker;
@@ -175,7 +177,14 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         string pattern,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorCore<TBehavior>(MapGetCoreMethod, pattern, configure);
+        => MapBehaviorGet<TBehavior>(pattern, [], configure);
+
+    internal RouteHandlerBuilder MapBehaviorGet<TBehavior>(
+        string pattern,
+        IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
+        Action<RouteHandlerBuilder>? configure = null)
+        where TBehavior : class
+        => MapBehaviorCore<TBehavior>(MapGetCoreMethod, RestBehaviorHttpMethod.Get, pattern, bindings, configure);
 
     /// <summary>
     /// Maps a REST <c>POST</c> endpoint that dispatches into the specified behavior.
@@ -191,7 +200,14 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         string pattern,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorCore<TBehavior>(MapPostCoreMethod, pattern, configure);
+        => MapBehaviorPost<TBehavior>(pattern, [], configure);
+
+    internal RouteHandlerBuilder MapBehaviorPost<TBehavior>(
+        string pattern,
+        IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
+        Action<RouteHandlerBuilder>? configure = null)
+        where TBehavior : class
+        => MapBehaviorCore<TBehavior>(MapPostCoreMethod, RestBehaviorHttpMethod.Post, pattern, bindings, configure);
 
     /// <summary>
     /// Maps a REST <c>PUT</c> endpoint that dispatches into the specified behavior.
@@ -207,7 +223,14 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         string pattern,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorCore<TBehavior>(MapPutCoreMethod, pattern, configure);
+        => MapBehaviorPut<TBehavior>(pattern, [], configure);
+
+    internal RouteHandlerBuilder MapBehaviorPut<TBehavior>(
+        string pattern,
+        IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
+        Action<RouteHandlerBuilder>? configure = null)
+        where TBehavior : class
+        => MapBehaviorCore<TBehavior>(MapPutCoreMethod, RestBehaviorHttpMethod.Put, pattern, bindings, configure);
 
     /// <summary>
     /// Maps a REST <c>PATCH</c> endpoint that dispatches into the specified behavior.
@@ -223,7 +246,14 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         string pattern,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorCore<TBehavior>(MapPatchCoreMethod, pattern, configure);
+        => MapBehaviorPatch<TBehavior>(pattern, [], configure);
+
+    internal RouteHandlerBuilder MapBehaviorPatch<TBehavior>(
+        string pattern,
+        IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
+        Action<RouteHandlerBuilder>? configure = null)
+        where TBehavior : class
+        => MapBehaviorCore<TBehavior>(MapPatchCoreMethod, RestBehaviorHttpMethod.Patch, pattern, bindings, configure);
 
     /// <summary>
     /// Maps a REST <c>DELETE</c> endpoint that dispatches into the specified behavior.
@@ -239,7 +269,14 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         string pattern,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorCore<TBehavior>(MapDeleteCoreMethod, pattern, configure);
+        => MapBehaviorDelete<TBehavior>(pattern, [], configure);
+
+    internal RouteHandlerBuilder MapBehaviorDelete<TBehavior>(
+        string pattern,
+        IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
+        Action<RouteHandlerBuilder>? configure = null)
+        where TBehavior : class
+        => MapBehaviorCore<TBehavior>(MapDeleteCoreMethod, RestBehaviorHttpMethod.Delete, pattern, bindings, configure);
 
     /// <inheritdoc />
     public void Add(Action<EndpointBuilder> convention)
@@ -303,7 +340,9 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
 
     private RouteHandlerBuilder MapBehaviorCore<TBehavior>(
         MethodInfo coreMethod,
+        RestBehaviorHttpMethod method,
         string pattern,
+        IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
         Action<RouteHandlerBuilder>? configure)
         where TBehavior : class
     {
@@ -317,6 +356,9 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             ModuleVersionMajor,
             OpenApiDocumentName,
             ApiVersionMajor,
+            method,
+            pattern,
+            bindings,
             endpoints.ServiceProvider);
         var closedMethod = coreMethod.MakeGenericMethod(typeof(TBehavior), contract.InputType, contract.OutputType);
         var builder = (RouteHandlerBuilder)closedMethod.Invoke(null, [this, pattern, contract])!;
@@ -353,10 +395,11 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         BehaviorRestEndpointContract contract)
         where TBehavior : class, IAppBehavior<TInput, TOutput>
     {
+        var bindings = contract.Bindings;
         var builder = group.Routes.MapGet(
             pattern,
-            static (HttpContext context, BehaviorDispatcher dispatcher) =>
-                InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher));
+            (HttpContext context, BehaviorDispatcher dispatcher) =>
+                InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings));
         return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
                 builder,
                 group,
@@ -373,10 +416,11 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         BehaviorRestEndpointContract contract)
         where TBehavior : class, IAppBehavior<TInput, TOutput>
     {
+        var bindings = contract.Bindings;
         var builder = group.Routes.MapPost(
             pattern,
-            static (HttpContext context, BehaviorDispatcher dispatcher) =>
-                InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher));
+            (HttpContext context, BehaviorDispatcher dispatcher) =>
+                InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings));
         return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
                 builder,
                 group,
@@ -393,10 +437,11 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         BehaviorRestEndpointContract contract)
         where TBehavior : class, IAppBehavior<TInput, TOutput>
     {
+        var bindings = contract.Bindings;
         var builder = group.Routes.MapPut(
             pattern,
-            static (HttpContext context, BehaviorDispatcher dispatcher) =>
-                InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher));
+            (HttpContext context, BehaviorDispatcher dispatcher) =>
+                InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings));
         return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
                 builder,
                 group,
@@ -413,11 +458,12 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         BehaviorRestEndpointContract contract)
         where TBehavior : class, IAppBehavior<TInput, TOutput>
     {
+        var bindings = contract.Bindings;
         var builder = group.Routes.MapMethods(
             pattern,
             ["PATCH"],
-            static (HttpContext context, BehaviorDispatcher dispatcher) =>
-                InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher));
+            (HttpContext context, BehaviorDispatcher dispatcher) =>
+                InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings));
         return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
                 builder,
                 group,
@@ -434,10 +480,11 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         BehaviorRestEndpointContract contract)
         where TBehavior : class, IAppBehavior<TInput, TOutput>
     {
+        var bindings = contract.Bindings;
         var builder = group.Routes.MapDelete(
             pattern,
-            static (HttpContext context, BehaviorDispatcher dispatcher) =>
-                InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher));
+            (HttpContext context, BehaviorDispatcher dispatcher) =>
+                InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings));
         return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
                 builder,
                 group,
@@ -483,7 +530,10 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             contract.OpenApiDocumentName,
             contract.ApiVersionMajor,
             group.ResolvedRoutePrefix,
-            normalizedPattern));
+            normalizedPattern,
+            contract.Bindings.Count == 0
+                ? null
+                : JsonSerializer.Serialize(contract.Bindings)));
 
         ApplyResponseConventions(builder, contract);
 
@@ -610,31 +660,38 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
 
     private static async Task<IResult> InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(
         HttpContext context,
-        BehaviorDispatcher dispatcher)
+        BehaviorDispatcher dispatcher,
+        IReadOnlyList<BehaviorRestBindingDescriptor> bindings)
         where TBehavior : class, IAppBehavior<TInput, TOutput>
     {
-        return await InvokeAsync<TBehavior, TInput, TOutput>(context, dispatcher, acceptsBody: false).ConfigureAwait(false);
+        return await InvokeAsync<TBehavior, TInput, TOutput>(context, dispatcher, acceptsBody: false, bindings).ConfigureAwait(false);
     }
 
     private static async Task<IResult> InvokeWithBodyAsync<TBehavior, TInput, TOutput>(
         HttpContext context,
-        BehaviorDispatcher dispatcher)
+        BehaviorDispatcher dispatcher,
+        IReadOnlyList<BehaviorRestBindingDescriptor> bindings)
         where TBehavior : class, IAppBehavior<TInput, TOutput>
     {
-        return await InvokeAsync<TBehavior, TInput, TOutput>(context, dispatcher, acceptsBody: true).ConfigureAwait(false);
+        return await InvokeAsync<TBehavior, TInput, TOutput>(context, dispatcher, acceptsBody: true, bindings).ConfigureAwait(false);
     }
 
     private static async Task<IResult> InvokeAsync<TBehavior, TInput, TOutput>(
         HttpContext context,
         BehaviorDispatcher dispatcher,
-        bool acceptsBody)
+        bool acceptsBody,
+        IReadOnlyList<BehaviorRestBindingDescriptor> bindings)
         where TBehavior : class, IAppBehavior<TInput, TOutput>
     {
         var behaviorId = BehaviorRestEndpointContract.GetBehaviorId(typeof(TBehavior));
 
         try
         {
-            var input = await BehaviorRequestJsonComposer.ComposeAsync<TInput>(context, acceptsBody).ConfigureAwait(false);
+            var input = await BehaviorRequestJsonComposer.ComposeAsync<TInput>(
+                    context,
+                    acceptsBody,
+                    bindings)
+                .ConfigureAwait(false);
             var behaviorContext = DefaultBehaviorContext.From(context, behaviorId, "rest-api");
             var result = await dispatcher.DispatchAsync(
                 behaviorId,
@@ -875,7 +932,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         Type ResponseType,
         bool ReturnsBehaviorResult,
         bool UseResultModelEnvelope,
-        IReadOnlySet<int> DocumentedStatusCodes)
+        IReadOnlySet<int> DocumentedStatusCodes,
+        IReadOnlyList<BehaviorRestBindingDescriptor> Bindings)
     {
         internal static BehaviorRestEndpointContract Create(
             Type behaviorType,
@@ -884,12 +942,17 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             int? moduleVersionMajor,
             string openApiDocumentName,
             int? apiVersionMajor,
+            RestBehaviorHttpMethod method,
+            string pattern,
+            IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
             IServiceProvider services)
         {
             ArgumentNullException.ThrowIfNull(behaviorType);
             ArgumentNullException.ThrowIfNull(moduleDescriptor);
             ArgumentException.ThrowIfNullOrWhiteSpace(tagName);
             ArgumentException.ThrowIfNullOrWhiteSpace(openApiDocumentName);
+            ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
+            ArgumentNullException.ThrowIfNull(bindings);
             ArgumentNullException.ThrowIfNull(services);
 
             var contractInterface = behaviorType.GetInterfaces()
@@ -913,6 +976,12 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             var operationName = BuildOperationName(moduleDescriptor.Id, operationVersionMajor, behaviorId);
             var outputType = typeArguments[1];
             var returnsBehaviorResult = TryResolveBehaviorResultPayloadType(outputType, out var responseType);
+            var normalizedBindings = NormalizeBindings(
+                behaviorId,
+                typeArguments[0],
+                method,
+                pattern,
+                bindings);
 
             var configuration = services.GetService<IConfiguration>();
             var useResultModelEnvelope = configuration is not null &&
@@ -935,7 +1004,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 responseType,
                 returnsBehaviorResult,
                 useResultModelEnvelope,
-                documentedStatusCodes);
+                documentedStatusCodes,
+                normalizedBindings);
         }
 
         internal bool ShouldDocumentStatus(int statusCode) => DocumentedStatusCodes.Contains(statusCode);
@@ -982,6 +1052,114 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
 
             responseType = outputType.GetGenericArguments()[0];
             return true;
+        }
+
+        private static List<BehaviorRestBindingDescriptor> NormalizeBindings(
+            string behaviorId,
+            Type inputType,
+            RestBehaviorHttpMethod method,
+            string pattern,
+            IReadOnlyList<BehaviorRestBindingDescriptor> bindings)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+            ArgumentNullException.ThrowIfNull(inputType);
+            ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
+            ArgumentNullException.ThrowIfNull(bindings);
+
+            if (bindings.Count == 0)
+            {
+                return [];
+            }
+
+            var effectiveInputType = Nullable.GetUnderlyingType(inputType) ?? inputType;
+            if (IsSimpleInputType(effectiveInputType))
+            {
+                throw new InvalidOperationException(
+                    $"Behavior '{behaviorId}' declares explicit REST bindings, but input type '{effectiveInputType.FullName}' is scalar. Explicit REST bindings currently require an object input.");
+            }
+
+            var routeParameters = RoutePatternFactory.Parse(pattern)
+                .Parameters
+                .Select(static parameter => parameter.Name)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var inputProperties = effectiveInputType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Where(static property => property.CanRead)
+                .Select(static property => property.Name)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var normalized = new List<BehaviorRestBindingDescriptor>(bindings.Count);
+            var seenProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var acceptsBody = method is RestBehaviorHttpMethod.Post or RestBehaviorHttpMethod.Put or RestBehaviorHttpMethod.Patch;
+
+            foreach (var binding in bindings)
+            {
+                if (binding is null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(binding.PropertyName))
+                {
+                    throw new InvalidOperationException(
+                        $"Behavior '{behaviorId}' declares an explicit REST binding with an empty property name.");
+                }
+
+                var propertyName = binding.PropertyName.Trim();
+                if (!seenProperties.Add(propertyName))
+                {
+                    throw new InvalidOperationException(
+                        $"Behavior '{behaviorId}' declares more than one explicit REST binding for input property '{propertyName}'.");
+                }
+
+                if (!inputProperties.Contains(propertyName))
+                {
+                    throw new InvalidOperationException(
+                        $"Behavior '{behaviorId}' declares an explicit REST binding for input property '{propertyName}', but '{effectiveInputType.FullName}' does not expose a matching public property.");
+                }
+
+                if (!Enum.IsDefined(binding.Source) || binding.Source == BehaviorRestBindingSource.Unspecified)
+                {
+                    throw new InvalidOperationException(
+                        $"Behavior '{behaviorId}' declares an explicit REST binding for input property '{propertyName}' without a supported source.");
+                }
+
+                var sourceName = string.IsNullOrWhiteSpace(binding.Name)
+                    ? null
+                    : binding.Name.Trim();
+                var effectiveSourceName = sourceName ?? propertyName;
+
+                if (binding.Source == BehaviorRestBindingSource.Route &&
+                    !routeParameters.Contains(effectiveSourceName))
+                {
+                    throw new InvalidOperationException(
+                        $"Behavior '{behaviorId}' declares a route binding for input property '{propertyName}' using placeholder '{effectiveSourceName}', but route pattern '{pattern}' does not declare that placeholder.");
+                }
+
+                if (binding.Source == BehaviorRestBindingSource.Body && !acceptsBody)
+                {
+                    throw new InvalidOperationException(
+                        $"Behavior '{behaviorId}' declares a body binding for input property '{propertyName}', but REST method '{method}' does not accept a request body.");
+                }
+
+                normalized.Add(new BehaviorRestBindingDescriptor(propertyName, binding.Source, sourceName));
+            }
+
+            return normalized;
+        }
+
+        private static bool IsSimpleInputType(Type inputType)
+        {
+            ArgumentNullException.ThrowIfNull(inputType);
+
+            var type = Nullable.GetUnderlyingType(inputType) ?? inputType;
+            return type.IsPrimitive ||
+                   type.IsEnum ||
+                   type == typeof(string) ||
+                   type == typeof(decimal) ||
+                   type == typeof(Guid) ||
+                   type == typeof(DateTime) ||
+                   type == typeof(DateTimeOffset) ||
+                   type == typeof(DateOnly) ||
+                   type == typeof(TimeOnly);
         }
     }
 }

@@ -120,6 +120,7 @@ public sealed class BehaviorRestProjectionTests
         Assert.Equal(RestBehaviorHttpMethod.Get, endpoint.Method);
         Assert.Equal(typeof(ProfileProjectionGetBehavior), endpoint.BehaviorType);
         Assert.Equal("/{cartId}", endpoint.Pattern);
+        Assert.Empty(endpoint.Bindings);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, endpoint.AuthoringStyle);
     }
 
@@ -166,6 +167,81 @@ public sealed class BehaviorRestProjectionTests
         Assert.Contains("conflicting profile API major versions", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("tests.profile.projection.get", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("tests.profile.projection.conflict", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestBehaviorModuleBuilderBuildMapsProfileBindingsIntoProjection()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+
+        builder.Group("/tests/profile-cart")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var endpoint = Assert.Single(Assert.Single(builder.Build().Groups).Endpoints);
+
+        Assert.Collection(
+            endpoint.Bindings,
+            orderId =>
+            {
+                Assert.Equal("CartId", orderId.PropertyName);
+                Assert.Equal(BehaviorRestBindingSource.Route, orderId.Source);
+                Assert.Equal("cartId", orderId.Name);
+            },
+            quantity =>
+            {
+                Assert.Equal("Quantity", quantity.PropertyName);
+                Assert.Equal(BehaviorRestBindingSource.Query, quantity.Source);
+                Assert.Equal("quantity", quantity.Name);
+            },
+            correlationId =>
+            {
+                Assert.Equal("CorrelationId", correlationId.PropertyName);
+                Assert.Equal(BehaviorRestBindingSource.Header, correlationId.Source);
+                Assert.Equal("X-Correlation-Id", correlationId.Name);
+            },
+            note =>
+            {
+                Assert.Equal("Note", note.PropertyName);
+                Assert.Equal(BehaviorRestBindingSource.Body, note.Source);
+                Assert.Equal("note", note.Name);
+            });
+    }
+
+    [Fact]
+    public void RestBehaviorModuleBuilderRejectsProfileBindingsForUnknownInputProperty()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        var group = builder.Group("/tests/profile-cart");
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            group.MapProfile<ProfileProjectionUnknownBindingBehavior>());
+
+        Assert.Contains("unknown input property", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestBehaviorModuleBuilderRejectsProfileBindingsForScalarInput()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        var group = builder.Group("/tests/profile-cart");
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            group.MapProfile<ProfileProjectionScalarBindingBehavior>());
+
+        Assert.Contains("scalar input type", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestBehaviorModuleBuilderRejectsProfileBodyBindingsForGetEndpoints()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        var group = builder.Group("/tests/profile-cart");
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            group.MapProfile<ProfileProjectionGetBodyBindingBehavior>());
+
+        Assert.Contains("cannot bind input property", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Get", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -245,6 +321,65 @@ public sealed class BehaviorRestProjectionTests
         }
     }
 
+    [AppBehavior("tests.profile.projection.bound")]
+    [BehaviorRestProfile(BehaviorRestMethod.Post, "/{cartId}/items", ApiVersionMajor = 6)]
+    [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.CartId), BehaviorRestBindingSource.Route, Name = "cartId")]
+    [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.Quantity), BehaviorRestBindingSource.Query, Name = "quantity")]
+    [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.CorrelationId), BehaviorRestBindingSource.Header, Name = "X-Correlation-Id")]
+    [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.Note), BehaviorRestBindingSource.Body, Name = "note")]
+    private sealed class ProfileProjectionBoundBehavior : IAppBehavior<ProfileProjectionBoundInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProfileProjectionBoundInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
+    [AppBehavior("tests.profile.projection.unknown-binding")]
+    [BehaviorRestProfile(BehaviorRestMethod.Post, "/{cartId}/items", ApiVersionMajor = 6)]
+    [BehaviorRestBinding("MissingProperty", BehaviorRestBindingSource.Query, Name = "quantity")]
+    private sealed class ProfileProjectionUnknownBindingBehavior : IAppBehavior<ProfileProjectionBoundInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProfileProjectionBoundInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
+    [AppBehavior("tests.profile.projection.scalar-binding")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{value}", ApiVersionMajor = 6)]
+    [BehaviorRestBinding("Value", BehaviorRestBindingSource.Route, Name = "value")]
+    private sealed class ProfileProjectionScalarBindingBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(
+            string input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(input);
+        }
+    }
+
+    [AppBehavior("tests.profile.projection.get-body-binding")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{cartId}", ApiVersionMajor = 6)]
+    [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.Note), BehaviorRestBindingSource.Body, Name = "note")]
+    private sealed class ProfileProjectionGetBodyBindingBehavior : IAppBehavior<ProfileProjectionBoundInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProfileProjectionBoundInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
     private sealed class ProjectionCountingRestModule : RestBehaviorModuleBase
     {
         public int ConfigureRestBehaviorsCallCount { get; private set; }
@@ -285,4 +420,10 @@ public sealed class BehaviorRestProjectionTests
     }
 
     private sealed record OwnedBehaviorRegistration(Type BehaviorType, bool HasExplicitTopologyOverride);
+
+    private sealed record ProfileProjectionBoundInput(
+        string CartId,
+        int Quantity,
+        string? CorrelationId,
+        string? Note);
 }

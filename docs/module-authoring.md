@@ -167,12 +167,20 @@ Current `BehaviorRestProfileAttribute` behavior:
 
 - it is metadata only and does not publish a public REST route by itself
 - `Cephalon.Behaviors.SourceGen` validates the method, relative pattern, and optional API version
-  at build time
+  at build time and emits `GetRestProfiles()` hints that now preserve explicit binding descriptors
+  when they are declared
+- repeated `BehaviorRestBindingAttribute` declarations can describe explicit `route`, `query`,
+  `header`, and `body` sources for object inputs when the module-owned shorthand needs deterministic
+  input sourcing
 - the owning module still decides whether the behavior becomes public REST through
   `ConfigureRestBehaviors(...)`
 - `IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>()` is now the shipped low-ceremony
   module-owned shorthand that consumes those profile hints through the same normalized REST
-  projection pipeline
+  projection pipeline, including explicit binding descriptors
+- when explicit profile bindings are present, they override the implicit merge baseline while
+  leaving unbound route placeholders and request-body fields free to fill the remaining object
+  properties deterministically
+- a JSON body that tries to overwrite a property reserved by an explicit non-body binding fails fast
 - the optional `ApiVersionMajor` remains only a candidate endpoint version; the host still decides
   which OpenAPI documents are published through `OpenApi:EnabledVersions` or the legacy document
   allow-list settings
@@ -294,6 +302,23 @@ public sealed class CartModule : RestBehaviorModuleBase
 }
 ```
 
+If the profile also needs an explicit binding plan, keep that detail on the behavior metadata
+instead of moving it into the module:
+
+```csharp
+[AppBehavior("cart.add-item")]
+[BehaviorAllowedPatterns("cqrs")]
+[BehaviorRestProfile(BehaviorRestMethod.Post, "/{cartId}/items", ApiVersionMajor = 2)]
+[BehaviorRestBinding(nameof(AddToCartInput.CartId), BehaviorRestBindingSource.Route, Name = "cartId")]
+[BehaviorRestBinding(nameof(AddToCartInput.Quantity), BehaviorRestBindingSource.Query, Name = "quantity")]
+[BehaviorRestBinding(nameof(AddToCartInput.CorrelationId), BehaviorRestBindingSource.Header, Name = "X-Correlation-Id")]
+[BehaviorRestBinding(nameof(AddToCartInput.Note), BehaviorRestBindingSource.Body, Name = "note")]
+public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, Result<AddToCartOutput>>
+{
+    // handler omitted
+}
+```
+
 Current helper behavior:
 
 - gives behavior authors a base class instead of forcing modules to implement multiple interfaces
@@ -307,7 +332,9 @@ Current helper behavior:
 - validates that a module cannot map another module's explicitly owned behavior through the REST helper layer
 - keeps route shape in the ASP.NET Core adapter layer while behavior attributes remain host-agnostic
 - dispatches through `BehaviorDispatcher` and `DefaultBehaviorContext`
-- merges route values, query-string values, and JSON request bodies into the behavior input payload
+- keeps the implicit route/query/body merge baseline for DSL-authored routes without explicit
+  profile bindings, while profile-driven explicit bindings switch to descriptor-aware source
+  resolution with deterministic route/body fallback
 - uses the module display name for OpenAPI tags
 - lets the module override the published tag name and tag description through `.WithTagName(...)` and `.WithTagDescription(...)`
 - defaults the tag description from the module XML `<summary>` plus `<remarks>` when XML docs exist, falling back to `ModuleDescriptor.Description`
@@ -316,6 +343,8 @@ Current helper behavior:
 - lets profile-declared candidate API versions seed the group only when `.ApiVersion(...)` was not
   set explicitly, and fails fast when profiled behaviors in the same group disagree on that
   candidate version
+- keeps profile-driven explicit binding plans visible through additive
+  `/engine/rest-endpoints` `metadata.bindingDescriptors` entries
 - prefixes the mapped REST route group with `/v{major}` for the resolved API major version, so ASP.NET Core hosts expose routes such as `/api/v1/showcase/cart/{cartId}`
 - uses the resolved API major version as the operation-name version segment, falling back to the owning module descriptor major version
 - flows XML comments from the module and behavior assemblies into ASP.NET Core OpenAPI metadata when XML docs are available

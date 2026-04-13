@@ -2,9 +2,11 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Behaviors.Http.Abstractions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Primitives;
 using System.Globalization;
 
 namespace Cephalon.Behaviors.Http.Hosting;
@@ -38,9 +40,15 @@ internal static class BehaviorRequestJsonComposer
 {
     public static async Task<JsonElement> ComposeAsync<TInput>(
         HttpContext context,
-        bool acceptsBody)
+        bool acceptsBody,
+        IReadOnlyList<BehaviorRestBindingDescriptor>? bindings = null)
     {
         ArgumentNullException.ThrowIfNull(context);
+
+        if (bindings is { Count: > 0 })
+        {
+            return await ComposeExplicitAsync<TInput>(context, acceptsBody, bindings).ConfigureAwait(false);
+        }
 
         if (IsSimpleInputType(typeof(TInput)))
         {
@@ -66,6 +74,139 @@ internal static class BehaviorRequestJsonComposer
 
         MergeQuery(payload, context.Request.Query);
         MergeRouteValues(payload, context.Request.RouteValues);
+
+        return JsonSerializer.SerializeToElement(payload);
+    }
+
+    private static async Task<JsonElement> ComposeExplicitAsync<TInput>(
+        HttpContext context,
+        bool acceptsBody,
+        IReadOnlyList<BehaviorRestBindingDescriptor> bindings)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(bindings);
+
+        if (IsSimpleInputType(typeof(TInput)))
+        {
+            throw new JsonException("Explicit behavior REST bindings are supported only for object inputs.");
+        }
+
+        JsonObject? bodyObject = null;
+        if (acceptsBody)
+        {
+            bodyObject = await ReadBodyObjectAsync(context).ConfigureAwait(false);
+        }
+
+        var inputProperties = typeof(TInput)
+            .GetProperties()
+            .Select(static property => property.Name)
+            .ToDictionary(static name => name, static name => name, StringComparer.OrdinalIgnoreCase);
+        var explicitProperties = bindings
+            .Select(static binding => binding.PropertyName)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var explicitBodyProperties = bindings
+            .Where(static binding => binding.Source == BehaviorRestBindingSource.Body)
+            .Select(static binding => binding.PropertyName)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var reservedBodyKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var payload = new JsonObject();
+        foreach (var binding in bindings)
+        {
+            var sourceName = string.IsNullOrWhiteSpace(binding.Name)
+                ? binding.PropertyName
+                : binding.Name.Trim();
+
+            switch (binding.Source)
+            {
+                case BehaviorRestBindingSource.Route:
+                    if (context.Request.RouteValues.TryGetValue(sourceName, out var routeValue) &&
+                        routeValue is not null)
+                    {
+                        payload[binding.PropertyName] = ParseScalarNode(
+                            Convert.ToString(routeValue, CultureInfo.InvariantCulture) ?? string.Empty);
+                    }
+
+                    break;
+
+                case BehaviorRestBindingSource.Query:
+                    if (context.Request.Query.TryGetValue(sourceName, out var queryValues))
+                    {
+                        payload[binding.PropertyName] = CreateMultiValueNode(queryValues);
+                    }
+
+                    break;
+
+                case BehaviorRestBindingSource.Header:
+                    if (context.Request.Headers.TryGetValue(sourceName, out var headerValues))
+                    {
+                        payload[binding.PropertyName] = CreateMultiValueNode(headerValues);
+                    }
+
+                    break;
+
+                case BehaviorRestBindingSource.Body:
+                    if (TryGetJsonPropertyValue(bodyObject, sourceName, out var bodyValue))
+                    {
+                        payload[binding.PropertyName] = bodyValue?.DeepClone();
+                        reservedBodyKeys.Add(sourceName);
+                    }
+
+                    break;
+
+                default:
+                    throw new JsonException(
+                        $"Unsupported explicit behavior REST binding source '{binding.Source}'.");
+            }
+        }
+
+        var inferredRouteProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var routeValue in context.Request.RouteValues)
+        {
+            if (routeValue.Value is null ||
+                !TryResolveInputProperty(inputProperties, routeValue.Key, out var propertyName) ||
+                explicitProperties.Contains(propertyName))
+            {
+                continue;
+            }
+
+            payload[propertyName] = ParseScalarNode(
+                Convert.ToString(routeValue.Value, CultureInfo.InvariantCulture) ?? string.Empty);
+            inferredRouteProperties.Add(propertyName);
+        }
+
+        if (bodyObject is not null)
+        {
+            var lockedBodyProperties = new HashSet<string>(explicitProperties, StringComparer.OrdinalIgnoreCase);
+            lockedBodyProperties.ExceptWith(explicitBodyProperties);
+            lockedBodyProperties.UnionWith(inferredRouteProperties);
+
+            foreach (var property in bodyObject)
+            {
+                if (reservedBodyKeys.Contains(property.Key))
+                {
+                    continue;
+                }
+
+                if (!TryResolveInputProperty(inputProperties, property.Key, out var propertyName))
+                {
+                    payload[property.Key] = property.Value?.DeepClone();
+                    continue;
+                }
+
+                if (explicitBodyProperties.Contains(propertyName))
+                {
+                    continue;
+                }
+
+                if (lockedBodyProperties.Contains(propertyName))
+                {
+                    throw new JsonException(
+                        $"JSON body property '{property.Key}' conflicts with an explicit REST binding for input property '{propertyName}'.");
+                }
+
+                payload[propertyName] = property.Value?.DeepClone();
+            }
+        }
 
         return JsonSerializer.SerializeToElement(payload);
     }
@@ -126,6 +267,27 @@ internal static class BehaviorRequestJsonComposer
         }
 
         return await JsonNode.ParseAsync(context.Request.Body, cancellationToken: context.RequestAborted).ConfigureAwait(false);
+    }
+
+    private static async Task<JsonObject?> ReadBodyObjectAsync(HttpContext context)
+    {
+        var body = await ReadBodyNodeAsync(context).ConfigureAwait(false);
+        if (body is null)
+        {
+            return null;
+        }
+
+        if (body is JsonObject bodyObject)
+        {
+            return bodyObject;
+        }
+
+        if (GetValueKind(body) is JsonValueKind.Null)
+        {
+            return null;
+        }
+
+        throw new JsonException("Explicit behavior REST bindings expect JSON object bodies.");
     }
 
     private static void MergeQuery(
@@ -193,6 +355,60 @@ internal static class BehaviorRequestJsonComposer
         }
 
         return JsonValue.Create(value);
+    }
+
+    private static JsonNode? CreateMultiValueNode(StringValues values)
+    {
+        if (values.Count == 0)
+        {
+            return null;
+        }
+
+        if (values.Count == 1)
+        {
+            return ParseScalarNode(values[0]);
+        }
+
+        var array = new JsonArray();
+        foreach (var value in values)
+        {
+            array.Add(ParseScalarNode(value));
+        }
+
+        return array;
+    }
+
+    private static bool TryResolveInputProperty(
+        Dictionary<string, string> inputProperties,
+        string candidate,
+        out string propertyName)
+    {
+        ArgumentNullException.ThrowIfNull(inputProperties);
+        ArgumentException.ThrowIfNullOrWhiteSpace(candidate);
+
+        return inputProperties.TryGetValue(candidate, out propertyName!);
+    }
+
+    private static bool TryGetJsonPropertyValue(JsonObject? bodyObject, string propertyName, out JsonNode? value)
+    {
+        value = null;
+        if (bodyObject is null || string.IsNullOrWhiteSpace(propertyName))
+        {
+            return false;
+        }
+
+        foreach (var property in bodyObject)
+        {
+            if (!string.Equals(property.Key, propertyName, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            value = property.Value;
+            return true;
+        }
+
+        return false;
     }
 
     private static bool IsSimpleInputType(Type inputType)

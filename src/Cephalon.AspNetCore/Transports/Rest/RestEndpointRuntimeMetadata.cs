@@ -29,4 +29,5 @@ internal sealed record RestBehaviorEndpointMetadata(
     string OpenApiDocumentName,
     int? ApiVersionMajor,
     string RouteGroupPrefix,
-    string RelativePattern);
+    string RelativePattern,
+    string? BindingDescriptorsJson);

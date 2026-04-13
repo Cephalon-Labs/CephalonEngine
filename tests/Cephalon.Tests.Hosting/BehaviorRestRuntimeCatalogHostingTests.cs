@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Transports;
@@ -251,6 +252,172 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonAppliesExplicitProfileBindingsAndExposesThemInRuntimeMetadata()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+
+        Assert.NotNull(endpoints);
+
+        var endpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
+        Assert.Equal("/api/v6/tests/profile-runtime/bindings/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, endpoint.Metadata["authoringStyle"]);
+        Assert.True(endpoint.Metadata.TryGetValue("bindingDescriptors", out var bindingDescriptorJson));
+
+        var bindings = JsonSerializer.Deserialize<BehaviorRestBindingDescriptor[]>(bindingDescriptorJson!);
+        Assert.NotNull(bindings);
+        Assert.Equal(4, bindings.Length);
+        Assert.Contains(bindings, static binding =>
+            binding.PropertyName == "OrderId" &&
+            binding.Source == BehaviorRestBindingSource.Route &&
+            binding.Name == "orderId");
+        Assert.Contains(bindings, static binding =>
+            binding.PropertyName == "Quantity" &&
+            binding.Source == BehaviorRestBindingSource.Query &&
+            binding.Name == "quantity");
+        Assert.Contains(bindings, static binding =>
+            binding.PropertyName == "CorrelationId" &&
+            binding.Source == BehaviorRestBindingSource.Header &&
+            binding.Name == "X-Correlation-Id");
+        Assert.Contains(bindings, static binding =>
+            binding.PropertyName == "Note" &&
+            binding.Source == BehaviorRestBindingSource.Body &&
+            binding.Name == "note");
+
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v6/tests/profile-runtime/bindings/orders/ord-42?quantity=3");
+        request.Headers.Add("X-Correlation-Id", "corr-42");
+        request.Content = JsonContent.Create(new
+        {
+            note = "gift wrap",
+            ignored = "body-fallback"
+        });
+
+        var response = await client.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+
+        var payload = await response.Content.ReadFromJsonAsync<ProfileBindingRuntimeOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+        Assert.Equal(3, payload.Quantity);
+        Assert.Equal("corr-42", payload.CorrelationId);
+        Assert.Equal("gift wrap", payload.Note);
+        Assert.Equal("body-fallback", payload.Ignored);
+    }
+
+    [Fact]
+    public async Task MapCephalonRejectsBodyConflictsWithExplicitProfileBindings()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v6/tests/profile-runtime/bindings/orders/ord-42?quantity=3");
+        request.Headers.Add("X-Correlation-Id", "corr-42");
+        request.Content = JsonContent.Create(new
+        {
+            note = "gift wrap",
+            quantity = 99
+        });
+
+        var response = await client.SendAsync(request);
+
+        Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+
+        var payload = await response.Content.ReadAsStringAsync();
+        Assert.Contains("Quantity", payload, StringComparison.Ordinal);
+        Assert.Contains("conflicts", payload, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task MapCephalonInfersRouteValuesForUnboundProfileBindingProperties()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingInferenceRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v6/tests/profile-runtime/inference/orders/ord-77?quantity=8");
+        request.Headers.Add("X-Correlation-Id", "corr-77");
+        request.Content = JsonContent.Create(new
+        {
+            note = "route inference"
+        });
+
+        var response = await client.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+
+        var payload = await response.Content.ReadFromJsonAsync<ProfileBindingInferenceRuntimeOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-77", payload.OrderId);
+        Assert.Equal(8, payload.Quantity);
+        Assert.Equal("corr-77", payload.CorrelationId);
+        Assert.Equal("route inference", payload.Note);
+    }
+
+    [Fact]
     public async Task MapCephalonDoesNotPublishProfileMetadataWithoutExplicitModuleConsumption()
     {
         var builder = WebApplication.CreateBuilder();
@@ -478,6 +645,38 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class ProfileBindingRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.bindings",
+            "Profile Runtime Binding Module",
+            "Publishes profile-driven REST endpoints with explicit input bindings.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile-runtime/bindings/orders")
+                .WithTagName("Profile Runtime Binding API")
+                .MapProfile<PostProfileBindingRuntimeOrderBehavior>();
+        }
+    }
+
+    private sealed class ProfileBindingInferenceRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.bindings.inference",
+            "Profile Runtime Binding Inference Module",
+            "Publishes profile-driven REST endpoints that infer unbound route values.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile-runtime/inference/orders")
+                .WithTagName("Profile Runtime Binding Inference API")
+                .MapProfile<PostProfileBindingInferenceRuntimeOrderBehavior>();
+        }
+    }
+
     [AppBehavior("tests.rest.runtime-catalog.get")]
     private sealed class GetCatalogCartBehavior : IAppBehavior<GetCatalogCartInput, GetCatalogCartOutput>
     {
@@ -589,6 +788,48 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    [AppBehavior("tests.rest.profile.bindings")]
+    [BehaviorRestProfile(BehaviorRestMethod.Post, "/{orderId}", ApiVersionMajor = 6)]
+    [BehaviorRestBinding(nameof(ProfileBindingRuntimeInput.OrderId), BehaviorRestBindingSource.Route, Name = "orderId")]
+    [BehaviorRestBinding(nameof(ProfileBindingRuntimeInput.Quantity), BehaviorRestBindingSource.Query, Name = "quantity")]
+    [BehaviorRestBinding(nameof(ProfileBindingRuntimeInput.CorrelationId), BehaviorRestBindingSource.Header, Name = "X-Correlation-Id")]
+    [BehaviorRestBinding(nameof(ProfileBindingRuntimeInput.Note), BehaviorRestBindingSource.Body, Name = "note")]
+    private sealed class PostProfileBindingRuntimeOrderBehavior : IAppBehavior<ProfileBindingRuntimeInput, ProfileBindingRuntimeOutput>
+    {
+        public Task<ProfileBindingRuntimeOutput> HandleAsync(
+            ProfileBindingRuntimeInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProfileBindingRuntimeOutput(
+                input.OrderId,
+                input.Quantity,
+                input.CorrelationId,
+                input.Note,
+                input.Ignored));
+        }
+    }
+
+    [AppBehavior("tests.rest.profile.bindings.inference")]
+    [BehaviorRestProfile(BehaviorRestMethod.Post, "/{orderId}", ApiVersionMajor = 6)]
+    [BehaviorRestBinding(nameof(ProfileBindingInferenceRuntimeInput.Quantity), BehaviorRestBindingSource.Query, Name = "quantity")]
+    [BehaviorRestBinding(nameof(ProfileBindingInferenceRuntimeInput.CorrelationId), BehaviorRestBindingSource.Header, Name = "X-Correlation-Id")]
+    [BehaviorRestBinding(nameof(ProfileBindingInferenceRuntimeInput.Note), BehaviorRestBindingSource.Body, Name = "note")]
+    private sealed class PostProfileBindingInferenceRuntimeOrderBehavior : IAppBehavior<ProfileBindingInferenceRuntimeInput, ProfileBindingInferenceRuntimeOutput>
+    {
+        public Task<ProfileBindingInferenceRuntimeOutput> HandleAsync(
+            ProfileBindingInferenceRuntimeInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProfileBindingInferenceRuntimeOutput(
+                input.OrderId,
+                input.Quantity,
+                input.CorrelationId,
+                input.Note));
+        }
+    }
+
     private sealed record GetCatalogCartInput(string CartId);
 
     private sealed record GetCatalogCartOutput(string CartId);
@@ -612,4 +853,30 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     private sealed record ProfileRuntimeOrderInput(string OrderId);
 
     private sealed record ProfileRuntimeOrderOutput(string OrderId);
+
+    private sealed record ProfileBindingRuntimeInput(
+        string OrderId,
+        int Quantity,
+        string? CorrelationId,
+        string? Note,
+        string? Ignored = null);
+
+    private sealed record ProfileBindingRuntimeOutput(
+        string OrderId,
+        int Quantity,
+        string? CorrelationId,
+        string? Note,
+        string? Ignored);
+
+    private sealed record ProfileBindingInferenceRuntimeInput(
+        string OrderId,
+        int Quantity,
+        string? CorrelationId,
+        string? Note);
+
+    private sealed record ProfileBindingInferenceRuntimeOutput(
+        string OrderId,
+        int Quantity,
+        string? CorrelationId,
+        string? Note);
 }

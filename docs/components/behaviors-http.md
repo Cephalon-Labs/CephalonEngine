@@ -31,9 +31,11 @@ module-owned REST endpoints.
   `IRestBehaviorEndpointGroupBuilder` for one-place public REST and internal behavior ownership,
   compiled internally into a normalized REST projection contract before Minimal API materialization
 - **Metadata-only REST profile contract** — `BehaviorRestProfileAttribute`,
-  `BehaviorRestMethod`, and `BehaviorRestProfileDescriptor` for behavior-authored candidate REST
-  method, relative route, and API-version hints that explicit module-owned shorthand such as
-  `MapProfile<TBehavior>()` can consume without publishing public REST directly from behaviors
+  `BehaviorRestBindingAttribute`, `BehaviorRestMethod`, `BehaviorRestProfileDescriptor`,
+  `BehaviorRestBindingDescriptor`, and `BehaviorRestBindingSource` for behavior-authored candidate
+  REST method, relative route, optional API-version hints, and explicit route/query/header/body
+  binding plans that explicit module-owned shorthand such as `MapProfile<TBehavior>()` can consume
+  without publishing public REST directly from behaviors
 - **OpenAPI enrichment** — module tag names and descriptions, module-major API-version defaults
   with explicit `.ApiVersion(...)` override support, best-effort XML comment
   summaries/descriptions for module-owned REST endpoints, and separation between public REST docs
@@ -151,19 +153,43 @@ public sealed class GetCartBehavior : IAppBehavior<GetCartInput, Result<GetCartO
 }
 ```
 
+Profiles can also carry explicit HTTP input-binding metadata when a module-owned shorthand route
+needs deterministic source selection:
+
+```csharp
+[AppBehavior("cart.add-item")]
+[BehaviorRestProfile(BehaviorRestMethod.Post, "/{cartId}/items", ApiVersionMajor = 2)]
+[BehaviorRestBinding(nameof(AddToCartInput.CartId), BehaviorRestBindingSource.Route, Name = "cartId")]
+[BehaviorRestBinding(nameof(AddToCartInput.Quantity), BehaviorRestBindingSource.Query, Name = "quantity")]
+[BehaviorRestBinding(nameof(AddToCartInput.CorrelationId), BehaviorRestBindingSource.Header, Name = "X-Correlation-Id")]
+[BehaviorRestBinding(nameof(AddToCartInput.Note), BehaviorRestBindingSource.Body, Name = "note")]
+public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, Result<AddToCartOutput>>
+{
+    // behavior logic omitted
+}
+```
+
 Current profile behavior:
 
 - the attribute is metadata only and does not publish a public REST route
 - the owning module still chooses whether that behavior becomes public REST through
   `ConfigureRestBehaviors(...)`
-- `Cephalon.Behaviors.SourceGen` validates the profile at build time and emits
-  `GetRestProfiles()` hints when the profile is valid
+- `Cephalon.Behaviors.SourceGen` validates the core profile shape at build time and emits
+  `GetRestProfiles()` hints, including explicit binding descriptors when they are declared
 - `IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>()` is now the shipped low-ceremony
   module-owned shorthand that consumes those hints through the existing REST projection pipeline
 - profile consumption prefers source-generated `GetRestProfiles()` hints first and falls back to
   the explicitly targeted behavior type's attribute only when generated hints are unavailable
 - valid profiles currently require a supported REST method, a non-empty leading-slash relative
   pattern such as `"/{cartId}"`, and a positive `ApiVersionMajor` when one is specified
+- explicit profile bindings currently support `route`, `query`, `header`, and `body` sources for
+  object inputs only; invalid property names, duplicate property bindings, route-placeholder
+  mismatches, and body bindings on `GET` or `DELETE` fail fast during module-owned profile
+  consumption
+- when explicit bindings are present, they override the implicit merge baseline, while unbound
+  route placeholders and request bodies can still fill remaining object properties
+- a JSON body that tries to overwrite a property reserved by an explicit non-body binding fails
+  fast instead of silently winning or losing
 - profile API-version metadata is still only a candidate endpoint version; host publication remains
   governed by `OpenApi:EnabledVersions`, `OpenApi:DefaultVersion`, and the legacy document
   allow-list settings
@@ -241,18 +267,21 @@ Current helper behavior:
   model before the ASP.NET Core adapter materializes route groups and handlers
 - keeps `Internal<TBehavior>()` available for internal-only behaviors or behaviors that will be exposed
   through custom/manual endpoints
-- adds `MapProfile<TBehavior>()` as an explicit module-owned shorthand that consumes only the
-  behavior profile's method, relative pattern, and optional candidate API version
+- adds `MapProfile<TBehavior>()` as an explicit module-owned shorthand that consumes the behavior
+  profile's method, relative pattern, optional candidate API version, and any explicit binding
+  descriptors
 - prefers source-generated profile hints and falls back only to the explicitly targeted behavior
   type instead of broad assembly reflection
 - lets explicit group `.ApiVersion(...)` override profile-declared candidate versions, while
   conflicting profile-declared versions in the same group fail fast until the module resolves them
 - keeps runtime publication on the same module-owned path with `sourceKind = module-dsl`, while
   `/engine/rest-endpoints` exposes `metadata.authoringStyle = behavior-module-profile` for the
-  shorthand path and `behavior-module-dsl` for the fully explicit path
+  shorthand path, `behavior-module-dsl` for the fully explicit path, and additive
+  `metadata.bindingDescriptors` for profile-driven explicit binding plans
 - dispatches through `BehaviorDispatcher` using Minimal API handlers
 - lets behaviors return raw `TOutput` or transport-neutral `Result<TOutput>` values
-- composes route values, query-string values, and JSON request bodies into the behavior input payload
+- uses the implicit route/query/body merge baseline only when no explicit profile bindings are
+  present; profile-driven bindings switch to the descriptor-aware override model instead
 - uses the owning module display name as the OpenAPI tag
 - lets the module override the published tag name and tag description through `.WithTagName(...)`
   and `.WithTagDescription(...)`

@@ -26,15 +26,17 @@ internal sealed record RestBehaviorEndpointProjection(
     string BehaviorId,
     Type BehaviorType,
     string Pattern,
+    IReadOnlyList<BehaviorRestBindingDescriptor> Bindings,
     string AuthoringStyle,
     Action<RouteHandlerBuilder>? ConfigureEndpoint,
-    Action<BehaviorRestEndpointGroup, string, Action<RouteHandlerBuilder>?> Map)
+    Action<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, Action<RouteHandlerBuilder>?> Map)
 {
     internal static RestBehaviorEndpointProjection Create<TBehavior>(
         RestBehaviorHttpMethod method,
         string pattern,
         Action<RouteHandlerBuilder>? configureEndpoint,
-        string authoringStyle)
+        string authoringStyle,
+        IReadOnlyList<BehaviorRestBindingDescriptor>? bindings = null)
         where TBehavior : class
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
@@ -45,6 +47,7 @@ internal sealed record RestBehaviorEndpointProjection(
             ResolveBehaviorId(typeof(TBehavior)),
             typeof(TBehavior),
             pattern.Trim(),
+            bindings ?? [],
             authoringStyle.Trim(),
             configureEndpoint,
             CreateMapDelegate<TBehavior>(method));
@@ -68,32 +71,33 @@ internal sealed record RestBehaviorEndpointProjection(
             ConvertMethod(profile.Method),
             profile.RelativePattern,
             configureEndpoint,
-            RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle);
+            RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle,
+            profile.Bindings);
     }
 
     internal void Apply(BehaviorRestEndpointGroup group)
     {
         ArgumentNullException.ThrowIfNull(group);
         group.UseRuntimeAuthoringStyle(AuthoringStyle);
-        Map(group, Pattern, ConfigureEndpoint);
+        Map(group, Pattern, Bindings, ConfigureEndpoint);
     }
 
-    private static Action<BehaviorRestEndpointGroup, string, Action<RouteHandlerBuilder>?> CreateMapDelegate<TBehavior>(
+    private static Action<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, Action<RouteHandlerBuilder>?> CreateMapDelegate<TBehavior>(
         RestBehaviorHttpMethod method)
         where TBehavior : class
     {
         return method switch
         {
-            RestBehaviorHttpMethod.Get => static (group, pattern, configureEndpoint) =>
-                group.MapBehaviorGet<TBehavior>(pattern, configureEndpoint),
-            RestBehaviorHttpMethod.Post => static (group, pattern, configureEndpoint) =>
-                group.MapBehaviorPost<TBehavior>(pattern, configureEndpoint),
-            RestBehaviorHttpMethod.Put => static (group, pattern, configureEndpoint) =>
-                group.MapBehaviorPut<TBehavior>(pattern, configureEndpoint),
-            RestBehaviorHttpMethod.Patch => static (group, pattern, configureEndpoint) =>
-                group.MapBehaviorPatch<TBehavior>(pattern, configureEndpoint),
-            RestBehaviorHttpMethod.Delete => static (group, pattern, configureEndpoint) =>
-                group.MapBehaviorDelete<TBehavior>(pattern, configureEndpoint),
+            RestBehaviorHttpMethod.Get => static (group, pattern, bindings, configureEndpoint) =>
+                group.MapBehaviorGet<TBehavior>(pattern, bindings, configureEndpoint),
+            RestBehaviorHttpMethod.Post => static (group, pattern, bindings, configureEndpoint) =>
+                group.MapBehaviorPost<TBehavior>(pattern, bindings, configureEndpoint),
+            RestBehaviorHttpMethod.Put => static (group, pattern, bindings, configureEndpoint) =>
+                group.MapBehaviorPut<TBehavior>(pattern, bindings, configureEndpoint),
+            RestBehaviorHttpMethod.Patch => static (group, pattern, bindings, configureEndpoint) =>
+                group.MapBehaviorPatch<TBehavior>(pattern, bindings, configureEndpoint),
+            RestBehaviorHttpMethod.Delete => static (group, pattern, bindings, configureEndpoint) =>
+                group.MapBehaviorDelete<TBehavior>(pattern, bindings, configureEndpoint),
             _ => throw new InvalidOperationException($"Unsupported REST behavior HTTP method '{method}'.")
         };
     }

@@ -290,10 +290,51 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 methodValue,
                 relativePattern,
                 hasApiVersionMajor,
-                apiVersionMajor);
+                apiVersionMajor,
+                ExtractRestBindings(typeSymbol));
         }
 
         return null;
+    }
+
+    private static List<RestBindingInfo> ExtractRestBindings(INamedTypeSymbol typeSymbol)
+    {
+        var bindings = new List<RestBindingInfo>();
+
+        foreach (var attribute in typeSymbol.GetAttributes())
+        {
+            if (!string.Equals(
+                    attribute.AttributeClass?.ToDisplayString(),
+                    "Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingAttribute",
+                    StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            var propertyName = attribute.ConstructorArguments.Length > 0
+                ? attribute.ConstructorArguments[0].Value as string ?? string.Empty
+                : string.Empty;
+            var sourceValue = attribute.ConstructorArguments.Length > 1 &&
+                              attribute.ConstructorArguments[1].Value is not null
+                ? Convert.ToInt32(attribute.ConstructorArguments[1].Value, System.Globalization.CultureInfo.InvariantCulture)
+                : 0;
+            string? name = null;
+
+            foreach (var namedArgument in attribute.NamedArguments)
+            {
+                if (!string.Equals(namedArgument.Key, "Name", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                name = namedArgument.Value.Value as string;
+                break;
+            }
+
+            bindings.Add(new RestBindingInfo(propertyName, sourceValue, name));
+        }
+
+        return bindings;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -749,6 +790,15 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 sb.Append(info.RestProfile.HasApiVersionMajor
                     ? info.RestProfile.ApiVersionMajor.ToString(System.Globalization.CultureInfo.InvariantCulture)
                     : "null");
+                if (info.RestProfile.Bindings.Count > 0)
+                {
+                    sb.Append(", new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor[] { ");
+                    sb.Append(string.Join(
+                        ", ",
+                        info.RestProfile.Bindings.Select(static binding =>
+                            $"new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor(\"{EscapeString(binding.PropertyName)}\", global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource.{ResolveRestBindingSourceName(binding.SourceValue)}, {(string.IsNullOrWhiteSpace(binding.Name) ? "null" : $"\"{EscapeString(binding.Name!)}\"")})")));
+                    sb.Append(" }");
+                }
                 sb.AppendLine("),");
             }
 
@@ -806,6 +856,18 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         };
 
         return methodName is not null;
+    }
+
+    private static string ResolveRestBindingSourceName(int sourceValue)
+    {
+        return sourceValue switch
+        {
+            1 => "Route",
+            2 => "Query",
+            3 => "Header",
+            4 => "Body",
+            _ => "Unspecified"
+        };
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -907,17 +969,34 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             int methodValue,
             string relativePattern,
             bool hasApiVersionMajor,
-            int apiVersionMajor)
+            int apiVersionMajor,
+            IReadOnlyList<RestBindingInfo> bindings)
         {
             MethodValue = methodValue;
             RelativePattern = relativePattern;
             HasApiVersionMajor = hasApiVersionMajor;
             ApiVersionMajor = apiVersionMajor;
+            Bindings = bindings;
         }
 
         public int MethodValue { get; }
         public string RelativePattern { get; }
         public bool HasApiVersionMajor { get; }
         public int ApiVersionMajor { get; }
+        public IReadOnlyList<RestBindingInfo> Bindings { get; }
+    }
+
+    private sealed class RestBindingInfo
+    {
+        public RestBindingInfo(string propertyName, int sourceValue, string? name)
+        {
+            PropertyName = propertyName;
+            SourceValue = sourceValue;
+            Name = name;
+        }
+
+        public string PropertyName { get; }
+        public int SourceValue { get; }
+        public string? Name { get; }
     }
 }

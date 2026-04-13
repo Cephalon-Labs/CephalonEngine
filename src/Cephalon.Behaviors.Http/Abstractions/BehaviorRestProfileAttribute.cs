@@ -6,7 +6,10 @@ namespace Cephalon.Behaviors.Http.Abstractions;
 /// <remarks>
 /// This attribute does not activate public REST by itself. Cephalon keeps public REST module-owned,
 /// so the attribute only describes a candidate method, relative route pattern, and optional API
-/// version for future generated or descriptor-backed module projections.
+/// version for future generated or descriptor-backed module projections. Use repeated
+/// <see cref="BehaviorRestBindingAttribute" /> declarations when a module-owned projection should
+/// bind selected input properties explicitly from route values, query string values, headers, or
+/// JSON body fields.
 /// </remarks>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
 public sealed class BehaviorRestProfileAttribute : Attribute

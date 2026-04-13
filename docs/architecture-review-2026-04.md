@@ -163,16 +163,16 @@ The repository had substantial planning content, but a durable rule set for keep
 
 `docs/planning-governance.md` now improves that, but the long-term value will come from applying it consistently.
 
-### 6. Public REST still needs suppression visibility and explicit binding plans for future shorthand
+### 6. Public REST still needs suppression visibility after the first explicit binding-plan slice
 
 The explicit DSL is good, and Cephalon now has the normalized internal public REST projection
-layer, the resolved runtime catalog, fail-fast route-collision validation, and manual
-module-owned REST follow-through beneath it.
+layer, the resolved runtime catalog, fail-fast route-collision validation, manual module-owned
+REST follow-through beneath it, and the first explicit profile-binding-plan slice for
+module-owned `MapProfile<TBehavior>()` shorthand.
 
-The next gap is making future shorthand or generated routes explain more than the active winner:
-operators and developers will eventually need suppression visibility, explicit input-binding plans,
-and clearer authoring diagnostics once more than one projection style can compete for the same
-public behavior boundary.
+The remaining gap is making future shorthand or generated routes explain more than the active
+winner: operators and developers still need suppression visibility and eventually richer authoring
+diagnostics once more than one projection style can compete for the same public behavior boundary.
 
 ## Architecture recommendations
 

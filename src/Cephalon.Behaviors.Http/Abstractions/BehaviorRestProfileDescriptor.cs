@@ -10,8 +10,13 @@ namespace Cephalon.Behaviors.Http.Abstractions;
 /// The candidate API major version, or <see langword="null" /> when the behavior leaves version
 /// selection to the owning module or host defaults.
 /// </param>
+/// <param name="Bindings">
+/// Optional explicit input-binding hints that describe where individual input properties should be
+/// sourced from when an owning module consumes the profile.
+/// </param>
 public sealed record BehaviorRestProfileDescriptor(
     string BehaviorId,
     BehaviorRestMethod Method,
     string RelativePattern,
-    int? ApiVersionMajor);
+    int? ApiVersionMajor,
+    IReadOnlyList<BehaviorRestBindingDescriptor>? Bindings = null);

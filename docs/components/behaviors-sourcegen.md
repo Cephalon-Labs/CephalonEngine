@@ -12,7 +12,7 @@ conventions at build time and produce a compile-time-known registration hint fil
   - Emits `BehaviorAutoRegistration.g.cs` for zero-reflection DI/type registration plus pre-built topology descriptors when compile-time extraction succeeds
   - Emits source-generated metadata-only REST profile hints through `GetRestProfiles()` when behaviors declare valid `BehaviorRestProfileAttribute` metadata
   - Extracts compile-time topology from `ConfigureTopology(...)` for pattern, transports, feature flags, and literal `WithApiSurface(...)` overrides
-  - Reports ABT0010–ABT0018 diagnostics on invalid behavior declarations and invalid metadata-only REST profile hints
+- Reports ABT0010–ABT0018 diagnostics on invalid behavior declarations and invalid metadata-only REST profile hints; detailed explicit-binding semantics still fail fast during module-owned profile consumption
 
 ## Diagnostic rules
 
@@ -82,7 +82,13 @@ internal static class BehaviorAutoRegistration
                 "catalog.lookup",
                 BehaviorRestMethod.Get,
                 "/{itemId}",
-                2)
+                2,
+                [
+                    new BehaviorRestBindingDescriptor(
+                        "ItemId",
+                        BehaviorRestBindingSource.Route,
+                        "itemId")
+                ])
         ];
     }
 }
@@ -101,14 +107,18 @@ behavior source-generator topology model; `ABT0014` now rejects `http.rest` and 
 so authors map REST in a module with `RestBehaviorModuleBase.ConfigureRestBehaviors(...)`, or with
 manual `MapBehaviorRestGroup(...)` wiring when they intentionally stay on the low-level REST module
 path.
-`BehaviorRestProfileAttribute` is now the shipped metadata-only bridge for future low-ceremony REST:
-the generator validates the profile and emits `GetRestProfiles()` hints, but that metadata still
-does not publish public REST routes by itself and does not override host OpenAPI document
-publication policy.
+`BehaviorRestProfileAttribute` plus optional repeated `BehaviorRestBindingAttribute` declarations is
+now the shipped metadata-only bridge for future low-ceremony REST: the generator validates the core
+profile shape and emits `GetRestProfiles()` hints, including explicit binding descriptors when
+present, but that metadata still does not publish public REST routes by itself and does not
+override host OpenAPI document publication policy.
 `Cephalon.Behaviors.Http` now consumes those hints through the explicit module-owned
 `MapProfile<TBehavior>()` shorthand on `IRestBehaviorEndpointGroupBuilder`, preferring the
 generated hints and falling back only to the explicitly targeted behavior type's attribute when
 generated hints are unavailable.
+Detailed binding semantics such as unknown input properties, scalar-input rejection, duplicate
+property bindings, route-placeholder mismatches, and body-binding verb restrictions still fail fast
+when `Cephalon.Behaviors.Http` normalizes the profile for module-owned REST consumption.
 Likewise, explicit module ownership through `IBehaviorOwnerModule`, `BehaviorModuleBase`, or
 `RestBehaviorModuleBase` remains a runtime-composition concern rather than a source-generated
 topology concern: the generator still focuses on behavior shape and topology, while the engine owns

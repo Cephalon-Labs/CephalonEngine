@@ -23,7 +23,10 @@ internal static class BehaviorRestProfileResolver
         var generatedProfiles = Cache.GetOrAdd(behaviorType.Assembly, BuildGeneratedProfiles);
         if (generatedProfiles.TryGetValue(behaviorId, out var profile))
         {
-            return profile;
+            return Normalize(
+                profile,
+                behaviorType.Assembly.FullName ?? behaviorType.Assembly.GetName().Name ?? behaviorType.Assembly.ToString(),
+                behaviorType);
         }
 
         var attribute = behaviorType.GetCustomAttributes(typeof(BehaviorRestProfileAttribute), inherit: false)
@@ -41,8 +44,10 @@ internal static class BehaviorRestProfileResolver
                 behaviorId,
                 attribute.Method,
                 attribute.RelativePattern,
-                attribute.ApiVersionMajor > 0 ? attribute.ApiVersionMajor : null),
-            behaviorType.FullName ?? behaviorType.Name);
+                attribute.ApiVersionMajor > 0 ? attribute.ApiVersionMajor : null,
+                ExtractAttributeBindings(behaviorType)),
+            behaviorType.FullName ?? behaviorType.Name,
+            behaviorType);
     }
 
     private static IReadOnlyDictionary<string, BehaviorRestProfileDescriptor> BuildGeneratedProfiles(Assembly assembly)
@@ -84,7 +89,8 @@ internal static class BehaviorRestProfileResolver
 
     private static BehaviorRestProfileDescriptor Normalize(
         BehaviorRestProfileDescriptor descriptor,
-        string sourceIdentity)
+        string sourceIdentity,
+        Type? behaviorType = null)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceIdentity);
@@ -121,11 +127,123 @@ internal static class BehaviorRestProfileResolver
                 $"REST profile metadata for behavior '{descriptor.BehaviorId}' from '{sourceIdentity}' must use a positive API major version when one is specified.");
         }
 
+        var normalizedBindings = behaviorType is null
+            ? NormalizeBindings(descriptor.Bindings)
+            : NormalizeBindings(
+                descriptor.Bindings,
+                behaviorType,
+                descriptor.Method,
+                sourceIdentity,
+                descriptor.BehaviorId);
+
         return new BehaviorRestProfileDescriptor(
             descriptor.BehaviorId.Trim(),
             descriptor.Method,
             normalizedPattern,
-            descriptor.ApiVersionMajor);
+            descriptor.ApiVersionMajor,
+            normalizedBindings);
+    }
+
+    private static BehaviorRestBindingDescriptor[] ExtractAttributeBindings(Type behaviorType)
+    {
+        ArgumentNullException.ThrowIfNull(behaviorType);
+
+        return behaviorType.GetCustomAttributes(typeof(BehaviorRestBindingAttribute), inherit: false)
+            .OfType<BehaviorRestBindingAttribute>()
+            .Select(static attribute => new BehaviorRestBindingDescriptor(
+                attribute.PropertyName,
+                attribute.Source,
+                attribute.Name))
+            .ToArray();
+    }
+
+    private static BehaviorRestBindingDescriptor[] NormalizeBindings(
+        IReadOnlyList<BehaviorRestBindingDescriptor>? bindings)
+    {
+        if (bindings is null || bindings.Count == 0)
+        {
+            return [];
+        }
+
+        return bindings
+            .Select(static binding => new BehaviorRestBindingDescriptor(
+                binding.PropertyName.Trim(),
+                binding.Source,
+                string.IsNullOrWhiteSpace(binding.Name) ? null : binding.Name.Trim()))
+            .ToArray();
+    }
+
+    private static BehaviorRestBindingDescriptor[] NormalizeBindings(
+        IReadOnlyList<BehaviorRestBindingDescriptor>? bindings,
+        Type behaviorType,
+        BehaviorRestMethod method,
+        string sourceIdentity,
+        string behaviorId)
+    {
+        if (bindings is null || bindings.Count == 0)
+        {
+            return [];
+        }
+
+        var inputType = ResolveInputType(behaviorType);
+        if (IsSimpleInputType(inputType))
+        {
+            throw new InvalidOperationException(
+                $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' cannot declare explicit input bindings because '{inputType.FullName ?? inputType.Name}' is a scalar input type.");
+        }
+
+        var inputProperties = ResolveInputProperties(inputType);
+        if (inputProperties.Count == 0)
+        {
+            throw new InvalidOperationException(
+                $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' cannot declare explicit input bindings because '{inputType.FullName ?? inputType.Name}' does not expose public input properties.");
+        }
+
+        var normalized = new Dictionary<string, BehaviorRestBindingDescriptor>(StringComparer.OrdinalIgnoreCase);
+        foreach (var binding in bindings)
+        {
+            if (string.IsNullOrWhiteSpace(binding.PropertyName))
+            {
+                throw new InvalidOperationException(
+                    $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' declares an explicit binding without a target input property name.");
+            }
+
+            if (!Enum.IsDefined(binding.Source) || binding.Source == BehaviorRestBindingSource.Unspecified)
+            {
+                throw new InvalidOperationException(
+                    $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' declares an explicit binding for '{binding.PropertyName}' without a supported binding source.");
+            }
+
+            if (!inputProperties.TryGetValue(binding.PropertyName.Trim(), out var property))
+            {
+                throw new InvalidOperationException(
+                    $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' binds unknown input property '{binding.PropertyName}'.");
+            }
+
+            if ((method == BehaviorRestMethod.Get || method == BehaviorRestMethod.Delete) &&
+                binding.Source == BehaviorRestBindingSource.Body)
+            {
+                throw new InvalidOperationException(
+                    $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' cannot bind input property '{property.Name}' from the body for {method} endpoints.");
+            }
+
+            if (normalized.ContainsKey(property.Name))
+            {
+                throw new InvalidOperationException(
+                    $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' declares multiple explicit bindings for input property '{property.Name}'.");
+            }
+
+            normalized.Add(
+                property.Name,
+                new BehaviorRestBindingDescriptor(
+                    property.Name,
+                    binding.Source,
+                    string.IsNullOrWhiteSpace(binding.Name)
+                        ? property.Name
+                        : binding.Name.Trim()));
+        }
+
+        return normalized.Values.ToArray();
     }
 
     private static string ResolveBehaviorId(Type behaviorType)
@@ -138,5 +256,43 @@ internal static class BehaviorRestProfileResolver
             ?.Id
             ?? throw new InvalidOperationException(
                 $"Cannot resolve a REST profile for '{behaviorType.FullName}' because it is missing [AppBehavior(id)].");
+    }
+
+    private static Type ResolveInputType(Type behaviorType)
+    {
+        ArgumentNullException.ThrowIfNull(behaviorType);
+
+        return behaviorType.GetInterfaces()
+            .FirstOrDefault(static candidate =>
+                candidate.IsGenericType &&
+                candidate.GetGenericTypeDefinition() == typeof(IAppBehavior<,>))
+            ?.GetGenericArguments()[0]
+            ?? throw new InvalidOperationException(
+                $"Cannot resolve REST profile input bindings for '{behaviorType.FullName}' because it does not implement IAppBehavior<TInput, TOutput>.");
+    }
+
+    private static Dictionary<string, PropertyInfo> ResolveInputProperties(Type inputType)
+    {
+        ArgumentNullException.ThrowIfNull(inputType);
+
+        return inputType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            .Where(static property => property.GetMethod is not null)
+            .ToDictionary(static property => property.Name, StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static bool IsSimpleInputType(Type inputType)
+    {
+        ArgumentNullException.ThrowIfNull(inputType);
+
+        var type = Nullable.GetUnderlyingType(inputType) ?? inputType;
+        return type.IsPrimitive ||
+               type.IsEnum ||
+               type == typeof(string) ||
+               type == typeof(decimal) ||
+               type == typeof(Guid) ||
+               type == typeof(DateTime) ||
+               type == typeof(DateTimeOffset) ||
+               type == typeof(DateOnly) ||
+               type == typeof(TimeOnly);
     }
 }

@@ -48,6 +48,15 @@ public sealed class BehaviorSourceGeneratorTests
 
         namespace Cephalon.Behaviors.Http.Abstractions
         {
+            public enum BehaviorRestBindingSource
+            {
+                Unspecified = 0,
+                Route = 1,
+                Query = 2,
+                Header = 3,
+                Body = 4
+            }
+
             public enum BehaviorRestMethod
             {
                 Unspecified = 0,
@@ -72,20 +81,55 @@ public sealed class BehaviorSourceGeneratorTests
                 public int ApiVersionMajor { get; set; }
             }
 
+            [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+            public sealed class BehaviorRestBindingAttribute : System.Attribute
+            {
+                public BehaviorRestBindingAttribute(string propertyName, BehaviorRestBindingSource source)
+                {
+                    PropertyName = propertyName;
+                    Source = source;
+                }
+
+                public string PropertyName { get; }
+                public BehaviorRestBindingSource Source { get; }
+                public string? Name { get; set; }
+            }
+
+            public sealed class BehaviorRestBindingDescriptor
+            {
+                public BehaviorRestBindingDescriptor(string propertyName, BehaviorRestBindingSource source, string? name = null)
+                {
+                    PropertyName = propertyName;
+                    Source = source;
+                    Name = name;
+                }
+
+                public string PropertyName { get; }
+                public BehaviorRestBindingSource Source { get; }
+                public string? Name { get; }
+            }
+
             public sealed class BehaviorRestProfileDescriptor
             {
-                public BehaviorRestProfileDescriptor(string behaviorId, BehaviorRestMethod method, string relativePattern, int? apiVersionMajor)
+                public BehaviorRestProfileDescriptor(
+                    string behaviorId,
+                    BehaviorRestMethod method,
+                    string relativePattern,
+                    int? apiVersionMajor,
+                    System.Collections.Generic.IReadOnlyList<BehaviorRestBindingDescriptor>? bindings = null)
                 {
                     BehaviorId = behaviorId;
                     Method = method;
                     RelativePattern = relativePattern;
                     ApiVersionMajor = apiVersionMajor;
+                    Bindings = bindings;
                 }
 
                 public string BehaviorId { get; }
                 public BehaviorRestMethod Method { get; }
                 public string RelativePattern { get; }
                 public int? ApiVersionMajor { get; }
+                public System.Collections.Generic.IReadOnlyList<BehaviorRestBindingDescriptor>? Bindings { get; }
             }
         }
         """;
@@ -192,6 +236,42 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Contains("BehaviorRestMethod.Get", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("\"/{orderId}\"", autoRegistration, StringComparison.Ordinal);
         Assert.Contains(", 2)", autoRegistration, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ValidBehaviorWithRestProfileBindingsGeneratesBindingHints()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            public sealed record CreateOrderInput(string OrderId, int Quantity, string? CorrelationId, string? Note);
+
+            [AppBehavior("orders.create")]
+            [BehaviorRestProfile(BehaviorRestMethod.Post, "/{orderId}", ApiVersionMajor = 6)]
+            [BehaviorRestBinding(nameof(CreateOrderInput.OrderId), BehaviorRestBindingSource.Route, Name = "orderId")]
+            [BehaviorRestBinding(nameof(CreateOrderInput.Quantity), BehaviorRestBindingSource.Query, Name = "quantity")]
+            [BehaviorRestBinding(nameof(CreateOrderInput.CorrelationId), BehaviorRestBindingSource.Header, Name = "X-Correlation-Id")]
+            [BehaviorRestBinding(nameof(CreateOrderInput.Note), BehaviorRestBindingSource.Body, Name = "note")]
+            public sealed class CreateOrderBehavior : IAppBehavior<CreateOrderInput, string>
+            {
+                public Task<string> HandleAsync(CreateOrderInput input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (result, diagnostics) = RunGenerator(source);
+
+        Assert.Empty(diagnostics);
+
+        var autoRegistration = GetGeneratedAutoRegistrationSource(result);
+        Assert.NotNull(autoRegistration);
+        Assert.Contains("BehaviorRestBindingDescriptor", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("\"OrderId\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorRestBindingSource.Route", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("\"X-Correlation-Id\"", autoRegistration, StringComparison.Ordinal);
     }
 
     [Fact]

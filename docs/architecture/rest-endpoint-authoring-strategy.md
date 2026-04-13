@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 13, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -152,8 +152,14 @@ Status update:
   source-generated `GetRestProfiles()` material, falls back only to the explicitly targeted
   behavior type when generated hints are unavailable, and keeps runtime publication on the existing
   `module-dsl` path with additive `authoringStyle = behavior-module-profile` metadata
-- the next high-value follow-through is tightening the normalized projection model with explicit
-  binding descriptors before any broader convention-backed shorthand publication is considered
+- the next high-value follow-through was tightening the normalized projection model with explicit
+  binding descriptors before any broader convention-backed shorthand publication was considered
+- that explicit-binding slice is now shipped through `ENG-058-T63`: profile metadata can carry
+  explicit route/query/header/body binding descriptors, module-owned `MapProfile<TBehavior>()`
+  consumes them through the same normalized projection pipeline, request composition now treats
+  those descriptors as overrides instead of an exclusive mode, and `/engine/rest-endpoints`
+  surfaces the resolved plan through additive `bindingDescriptors` metadata
+- broader configuration-driven projection overrides remain later work
 
 ## Recommended long-term engine model
 
@@ -299,23 +305,33 @@ payload by name.
 That is a reasonable baseline, but it is too implicit for the long-term engine contract because
 collisions can be surprising and the source of each input field is not explicit enough.
 
-The long-term projection model should support explicit binding descriptors for:
+The long-term projection model now has a first shipped explicit-binding baseline through repeated
+`BehaviorRestBindingAttribute` declarations on a behavior profile. That baseline feeds
+`BehaviorRestProfileDescriptor.Bindings`, source-generated `GetRestProfiles()` hints, explicit
+module-owned `MapProfile<TBehavior>()` consumption, and additive `/engine/rest-endpoints`
+metadata.
+
+The current binding-descriptor baseline supports:
 
 - route
 - query
 - header
 - body
 
-Recommended future rule:
+Current rule:
 
 - explicit binding metadata beats inference
-- route placeholders can infer route-bound properties when names match
-- for `GET` and `DELETE`, complex-body binding should stay off by default
-- for `POST`, `PUT`, and `PATCH`, route and explicit query/header bindings should be resolved first,
-  with remaining complex fields coming from body
-- field-source conflicts should fail fast instead of silently merging one source over another
-- shorthand REST publication should require an explicit HTTP method selection and should not infer a
+- explicit bindings currently require object inputs; scalar inputs still use the existing scalar
+  REST binder path
+- route placeholders can still infer unbound route-bound properties when names match
+- for `GET` and `DELETE`, explicit body bindings are rejected
+- for `POST`, `PUT`, and `PATCH`, explicit route/query/header/body bindings resolve first, and the
+  JSON body can still fill remaining unbound object properties
+- body values that target a property already reserved by an explicit non-body binding fail fast
+  instead of silently overwriting the explicit source
+- shorthand REST publication still requires an explicit HTTP method selection and does not infer a
   public verb only from behavior-id naming conventions
+- broader configuration-driven binding overrides remain later work
 
 ## OpenAPI version direction
 
@@ -419,10 +435,17 @@ Follow-through later:
 - allow low-code projects to opt into broader generated or convention-backed module projection
   without abandoning module-owned public boundaries
 
-### Step 5: add explicit input-binding descriptors and controlled configuration overrides
+### Step 5: add explicit input-binding descriptors, then controlled configuration overrides
 
-Finish the model by making binding plans explicit and letting descriptor-backed routes opt into
-configuration override behavior where that flexibility is worth the complexity.
+Finish the model by making binding plans explicit first, then evaluate whether descriptor-backed
+routes should opt into configuration override behavior where that flexibility is worth the
+complexity.
+
+Status:
+
+- the explicit input-binding descriptor slice is now shipped through `ENG-058-T63`
+- controlled configuration overrides remain later work once suppression visibility and shorthand
+  publication rules are stronger
 
 ## What should be stored as project memory
 
@@ -449,8 +472,10 @@ The following points are durable enough to keep outside thread-local context.
 Recommended implementation sequence after the shipped normalization, runtime-catalog, and
 manual-module follow-through slices:
 
-1. add a generated or convention-backed low-code module path that consumes the shipped
-   `BehaviorRestProfileAttribute` hints without bypassing module ownership
-2. add explicit input-binding descriptors and conflict validation
-3. add suppression visibility once non-module-generated projections can be compiled but not activated
-4. only then evaluate whether richer configuration-driven public-boundary overrides are worth the added complexity
+1. add suppression visibility once non-module-generated projections can be compiled but not
+   activated
+2. add a generated or convention-backed low-code module path that consumes the shipped
+   `BehaviorRestProfileAttribute` plus `BehaviorRestBindingAttribute` hints without bypassing
+   module ownership
+3. only then evaluate whether richer configuration-driven public-boundary and binding overrides are
+   worth the added complexity
