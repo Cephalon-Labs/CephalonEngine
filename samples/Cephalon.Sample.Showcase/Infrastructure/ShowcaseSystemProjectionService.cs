@@ -14,8 +14,6 @@ using Cephalon.AspNetCore.Hosting;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Runtime;
 using Cephalon.Engine.Trust;
-using Microsoft.AspNetCore.Http.Metadata;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -31,7 +29,6 @@ internal sealed class ShowcaseSystemProjectionService(
     IRuntimeIntrospectionSnapshotProvider snapshotProvider,
     RuntimeHealthEvaluator runtimeHealthEvaluator,
     IBehaviorCatalog behaviorCatalog,
-    IEnumerable<EndpointDataSource> endpointDataSources,
     ShowcaseActivityFeed activityFeed,
     ShowcaseInMemoryEventStore eventStore,
     PackagePolicy packagePolicy,
@@ -459,22 +456,6 @@ internal sealed class ShowcaseSystemProjectionService(
         cancellationToken.ThrowIfCancellationRequested();
 
         var restOperations = ResolveRestOperations();
-        var behaviorRestRoutes = restOperations
-            .Where(static operation => !string.IsNullOrWhiteSpace(operation.BehaviorId))
-            .GroupBy(static operation => operation.BehaviorId!, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(
-                static group => group.Key,
-                static group => (IReadOnlyList<ShowcaseTransportRouteRow>)group
-                    .Select(static operation => new ShowcaseTransportRouteRow(
-                        TransportId: "http.rest",
-                        Method: operation.Method,
-                        Route: operation.Route,
-                        Canonical: true,
-                        IsBehaviorOwned: true))
-                    .OrderBy(static route => route.Method, StringComparer.OrdinalIgnoreCase)
-                    .ThenBy(static route => route.Route, StringComparer.OrdinalIgnoreCase)
-                    .ToArray(),
-                StringComparer.OrdinalIgnoreCase);
 
         var descriptors = behaviorCatalog.All
             .OrderBy(static descriptor => descriptor.Pattern, StringComparer.OrdinalIgnoreCase)
@@ -484,18 +465,7 @@ internal sealed class ShowcaseSystemProjectionService(
         var behaviors = descriptors
             .Select(descriptor =>
             {
-                var transportIds = new HashSet<string>(descriptor.TransportIds, StringComparer.OrdinalIgnoreCase);
-                if (behaviorRestRoutes.ContainsKey(descriptor.Id))
-                {
-                    transportIds.Add("http.rest");
-                }
-
                 var routes = new List<ShowcaseTransportRouteRow>();
-                if (behaviorRestRoutes.TryGetValue(descriptor.Id, out var restRoutes))
-                {
-                    routes.AddRange(restRoutes);
-                }
-
                 foreach (var transportId in descriptor.TransportIds)
                 {
                     var route = TryResolveTransportRoute(transportId, descriptor);
@@ -513,7 +483,9 @@ internal sealed class ShowcaseSystemProjectionService(
                     InboxEnabled: descriptor.InboxEnabled,
                     OutboxEnabled: descriptor.OutboxEnabled,
                     EventSourcingEnabled: descriptor.EventSourcingEnabled,
-                    TransportIds: transportIds.OrderBy(static item => item, StringComparer.OrdinalIgnoreCase).ToArray(),
+                    TransportIds: descriptor.TransportIds
+                        .OrderBy(static item => item, StringComparer.OrdinalIgnoreCase)
+                        .ToArray(),
                     Routes: routes
                         .DistinctBy(static route => $"{route.TransportId}|{route.Method}|{route.Route}", StringComparer.OrdinalIgnoreCase)
                         .OrderBy(static route => route.TransportId, StringComparer.OrdinalIgnoreCase)
@@ -1867,47 +1839,15 @@ internal sealed class ShowcaseSystemProjectionService(
 
     private ShowcaseRestOperationRow[] ResolveRestOperations()
     {
-        var operations = new List<ShowcaseRestOperationRow>();
-
-        foreach (var endpoint in endpointDataSources.SelectMany(static source => source.Endpoints).OfType<RouteEndpoint>())
-        {
-            var rawPattern = endpoint.RoutePattern.RawText;
-            if (string.IsNullOrWhiteSpace(rawPattern))
-            {
-                continue;
-            }
-
-            var route = rawPattern.StartsWith('/')
-                ? rawPattern
-                : $"/{rawPattern}";
-            if (!route.Contains("/showcase/", StringComparison.OrdinalIgnoreCase))
-            {
-                continue;
-            }
-
-            var httpMethods = endpoint.Metadata.GetMetadata<HttpMethodMetadata>()?.HttpMethods ?? ["GET"];
-            var behaviorMetadata = endpoint.Metadata.FirstOrDefault(static metadata =>
-                string.Equals(metadata.GetType().Name, "BehaviorRestEndpointMetadata", StringComparison.Ordinal));
-            var groupMetadata = endpoint.Metadata.FirstOrDefault(static metadata =>
-                string.Equals(metadata.GetType().Name, "BehaviorRestGroupMetadata", StringComparison.Ordinal));
-            var behaviorId = TryReadMetadataProperty(behaviorMetadata, "BehaviorId");
-            var moduleId = TryReadMetadataProperty(behaviorMetadata, "ModuleId")
-                ?? TryReadMetadataProperty(groupMetadata, "ModuleId");
-            var displayName = endpoint.Metadata.GetMetadata<EndpointNameMetadata>()?.EndpointName
-                ?? endpoint.DisplayName;
-
-            foreach (var method in httpMethods)
-            {
-                operations.Add(new ShowcaseRestOperationRow(
-                    Method: method,
-                    Route: route,
-                    DisplayName: displayName,
-                    ModuleId: moduleId,
-                    BehaviorId: behaviorId));
-            }
-        }
-
-        return operations
+        return snapshotProvider.CreateSnapshot().RestEndpoints
+            .Where(static endpoint =>
+                endpoint.RoutePattern.Contains("/showcase/", StringComparison.OrdinalIgnoreCase))
+            .Select(static endpoint => new ShowcaseRestOperationRow(
+                Method: endpoint.Method,
+                Route: endpoint.RoutePattern,
+                DisplayName: endpoint.EndpointName,
+                ModuleId: endpoint.SourceModuleId,
+                BehaviorId: endpoint.BehaviorId))
             .DistinctBy(static operation => $"{operation.Method}|{operation.Route}", StringComparer.OrdinalIgnoreCase)
             .OrderBy(static operation => operation.Route, StringComparer.OrdinalIgnoreCase)
             .ThenBy(static operation => operation.Method, StringComparer.OrdinalIgnoreCase)

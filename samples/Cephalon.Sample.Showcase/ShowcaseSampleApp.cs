@@ -69,12 +69,15 @@ public static class ShowcaseSampleApp
     /// </summary>
     /// <param name="args">Optional command-line arguments for the sample host.</param>
     /// <param name="configureBuilder">Optional hook to customize the builder after the base configuration sources are loaded and before the host is built.</param>
+    /// <param name="contentRootPath">Optional explicit content root used to load split showcase configuration during tests or other non-default hosting scenarios.</param>
     /// <returns>The configured showcase sample application.</returns>
     public static WebApplication Build(
         string[]? args = null,
-        Action<WebApplicationBuilder>? configureBuilder = null)
+        Action<WebApplicationBuilder>? configureBuilder = null,
+        string? contentRootPath = null)
     {
-        var contentRoot = Path.GetDirectoryName(typeof(ShowcaseSampleApp).Assembly.Location)
+        var contentRoot = contentRootPath
+            ?? Path.GetDirectoryName(typeof(ShowcaseSampleApp).Assembly.Location)
             ?? AppContext.BaseDirectory;
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions
         {

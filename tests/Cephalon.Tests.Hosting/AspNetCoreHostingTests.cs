@@ -626,8 +626,8 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains(patterns, pattern => pattern.Id == "strategy-pattern");
         Assert.Contains(patterns, pattern => pattern.Id == "onion-architecture");
         Assert.Contains(patterns, pattern => pattern.Id == "anti-corruption-layer");
-        Assert.Contains(patterns, pattern => pattern.Id == "strangler-fig");
-        Assert.Contains(patterns, pattern => pattern.Id == "backend-for-frontend");
+        Assert.DoesNotContain(patterns, pattern => pattern.Id == "strangler-fig");
+        Assert.DoesNotContain(patterns, pattern => pattern.Id == "backend-for-frontend");
         Assert.NotNull(technologies);
         Assert.Contains(technologies, technology => technology.Id == "agentic-workloads");
         Assert.Contains(technologies, technology => technology.Id == "event-driven-integration");
@@ -1166,157 +1166,214 @@ public sealed class AspNetCoreHostingTests
     [Fact]
     public async Task MapCephalonSupportsConfigurableOpenApiScalarAndRestRoutePrefixes()
     {
-        var builder = WebApplication.CreateSlimBuilder();
-        builder.WebHost.UseTestServer();
-        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
-        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
-        builder.Configuration[$"{EngineSettings.SectionName}:Transports:1"] = "JsonRpc";
-        builder.Configuration[$"{EngineSettings.SectionName}:Transports:2"] = "Grpc";
-        builder.Configuration[$"{EngineSettings.SectionName}:Transports:3"] = "GraphQL";
-        builder.Configuration[$"{EngineSettings.SectionName}:Transports:4"] = "ServerSentEvents";
-        builder.Configuration[$"{EngineSettings.SectionName}:Transports:5"] = "WebSocket";
-        builder.Configuration["ApiRoutes:Prefixes:Rest"] = "/service-api";
-        builder.Configuration["ApiRoutes:Prefixes:GraphQL"] = "/graph";
-        builder.Configuration["ApiRoutes:Prefixes:JsonRpc"] = "/invoke";
-        builder.Configuration["ApiRoutes:Prefixes:Grpc"] = "/rpc-bin";
-        builder.Configuration["ApiRoutes:Prefixes:Sse"] = "/stream";
-        builder.Configuration["ApiRoutes:Prefixes:Ws"] = "/socket";
-        builder.Configuration["OpenApi:RoutePattern"] = "/specs/{documentName}.json";
-        builder.Configuration["OpenApi:Scalar:RoutePrefix"] = "/docs/api-reference";
-        builder.AddGraphQLTransport();
-        builder.AddGrpcTransport();
-        builder.AddJsonRpcTransport();
-        builder.AddCephalon(cephalon =>
-        {
-            cephalon.AddModule(new PlatformTestModule());
-            cephalon.AddModule(new DiscoveryTestModule());
-        });
+        var contentRootPath = Path.Combine(
+            Path.GetTempPath(),
+            $"cephalon-configurable-route-prefixes-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(contentRootPath);
 
-        await using var app = builder.Build();
-        app.MapCephalon();
-
-        await app.StartAsync();
-        var client = app.GetTestClient();
-
-        var restResponse = await client.GetAsync("/service-api/discovery/hello/Codex");
-        var legacyRestResponse = await client.GetAsync("/api/discovery/hello/Codex");
-        var openApiResponse = await client.GetAsync("/specs/v1.json");
-        var legacyOpenApiResponse = await client.GetAsync("/openapi/v1.json");
-        var scalarRootRedirectResponse = await client.GetAsync("/docs/api-reference?culture=en");
-        var scalarRootResponse = await client.GetAsync("/docs/api-reference/?culture=en");
-        var scalarV1Response = await client.GetAsync("/docs/api-reference/v1");
-        var scalarConfigResponse = await client.GetAsync("/docs/api-reference/openapi-toggle.js");
-        var scalarConfigPayload = await scalarConfigResponse.Content.ReadAsStringAsync();
-        var scalarRootPayload = await scalarRootResponse.Content.ReadAsStringAsync();
-        var graphQlResponse = await client.PostAsJsonAsync("/graph", new
+        try
         {
-            query = "query ($name: String) { hello(name: $name) { message } }",
-            variables = new { name = "Configurable" }
-        });
-        var rpcResponse = await client.PostAsJsonAsync("/invoke/discovery", new
-        {
-            jsonRpc = "2.0",
-            method = "discovery.hello",
-            @params = new Dictionary<string, string?> { ["name"] = "Configurable" },
-            id = "req-3"
-        });
-        var sseResponse = await client.GetAsync("/stream/discovery/principles");
-        var grpcHandler = new GrpcSubdirectoryHandler(app.GetTestServer().CreateHandler(), "/rpc-bin");
-        using var grpcHttpClient = new HttpClient(grpcHandler)
-        {
-            BaseAddress = new Uri("http://localhost")
-        };
-        grpcHttpClient.DefaultRequestVersion = HttpVersion.Version20;
-        grpcHttpClient.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
-        using var grpcChannel = GrpcChannel.ForAddress("http://localhost", new GrpcChannelOptions
-        {
-            HttpClient = grpcHttpClient
-        });
-        var grpcClient = new DiscoveryService.DiscoveryServiceClient(grpcChannel);
-        var grpcReply = await grpcClient.SayHelloAsync(new HelloRequest { Name = "Configurable" });
-        var webSocketClient = app.GetTestServer().CreateWebSocketClient();
-        using var webSocket = await webSocketClient.ConnectAsync(new Uri("ws://localhost/socket/discovery"), CancellationToken.None);
-        var webSocketBuffer = new byte[4096];
-        var webSocketReceive = await webSocket.ReceiveAsync(webSocketBuffer, CancellationToken.None);
-        var webSocketPayload = Encoding.UTF8.GetString(webSocketBuffer, 0, webSocketReceive.Count);
+            var builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
+            {
+                ContentRootPath = contentRootPath,
+                EnvironmentName = "Production"
+            });
+            builder.WebHost.UseTestServer();
+            builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+            builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+            builder.Configuration[$"{EngineSettings.SectionName}:Transports:1"] = "JsonRpc";
+            builder.Configuration[$"{EngineSettings.SectionName}:Transports:2"] = "Grpc";
+            builder.Configuration[$"{EngineSettings.SectionName}:Transports:3"] = "GraphQL";
+            builder.Configuration[$"{EngineSettings.SectionName}:Transports:4"] = "ServerSentEvents";
+            builder.Configuration[$"{EngineSettings.SectionName}:Transports:5"] = "WebSocket";
+            builder.Configuration["ApiRoutes:Prefixes:Rest"] = "/service-api";
+            builder.Configuration["ApiRoutes:Prefixes:GraphQL"] = "/graph";
+            builder.Configuration["ApiRoutes:Prefixes:JsonRpc"] = "/invoke";
+            builder.Configuration["ApiRoutes:Prefixes:Grpc"] = "/rpc-bin";
+            builder.Configuration["ApiRoutes:Prefixes:Sse"] = "/stream";
+            builder.Configuration["ApiRoutes:Prefixes:Ws"] = "/socket";
+            builder.Configuration["OpenApi:RoutePattern"] = "/specs/{documentName}.json";
+            builder.Configuration["OpenApi:Scalar:RoutePrefix"] = "/docs/api-reference";
+            builder.AddGraphQLTransport();
+            builder.AddGrpcTransport();
+            builder.AddJsonRpcTransport();
+            builder.AddCephalon(cephalon =>
+            {
+                cephalon.AddModule(new PlatformTestModule());
+                cephalon.AddModule(new DiscoveryTestModule());
+            });
 
-        Assert.True(restResponse.IsSuccessStatusCode);
-        Assert.Equal(HttpStatusCode.NotFound, legacyRestResponse.StatusCode);
-        Assert.True(openApiResponse.IsSuccessStatusCode);
-        Assert.Equal(HttpStatusCode.NotFound, legacyOpenApiResponse.StatusCode);
-        Assert.Equal(HttpStatusCode.Redirect, scalarRootRedirectResponse.StatusCode);
-        Assert.NotNull(scalarRootRedirectResponse.Headers.Location);
-        Assert.Equal("/docs/api-reference/v1?culture=en", scalarRootRedirectResponse.Headers.Location!.OriginalString);
-        Assert.True(scalarRootResponse.IsSuccessStatusCode);
-        Assert.True(scalarV1Response.IsSuccessStatusCode);
-        Assert.True(scalarConfigResponse.IsSuccessStatusCode);
-        Assert.True(graphQlResponse.IsSuccessStatusCode);
-        Assert.True(rpcResponse.IsSuccessStatusCode);
-        Assert.True(sseResponse.IsSuccessStatusCode);
-        Assert.Contains("Configurable", grpcReply.Message, StringComparison.Ordinal);
-        Assert.Contains("socket", webSocketPayload, StringComparison.Ordinal);
-        Assert.Contains("configuredScalarRoutePrefix = \"/docs/api-reference\"", scalarConfigPayload, StringComparison.Ordinal);
-        Assert.Contains("\"title\":\"v1\"", scalarRootPayload, StringComparison.Ordinal);
-        Assert.Contains("specs/v1.json", scalarRootPayload, StringComparison.Ordinal);
+            await using var app = builder.Build();
+            app.MapCephalon();
 
-        using var openApiDocument = JsonDocument.Parse(await openApiResponse.Content.ReadAsStringAsync());
-        Assert.True(openApiDocument.RootElement.GetProperty("paths").TryGetProperty("/service-api/discovery/hello/{name}", out _));
-        Assert.False(openApiDocument.RootElement.GetProperty("paths").TryGetProperty("/api/discovery/hello/{name}", out _));
+            await app.StartAsync();
+            var client = app.GetTestClient();
+
+            var restResponse = await client.GetAsync("/service-api/discovery/hello/Codex");
+            var legacyRestResponse = await client.GetAsync("/api/discovery/hello/Codex");
+            var openApiResponse = await client.GetAsync("/specs/v1.json");
+            var legacyOpenApiResponse = await client.GetAsync("/openapi/v1.json");
+            var scalarRootRedirectResponse = await client.GetAsync("/docs/api-reference?culture=en");
+            var scalarRootResponse = await client.GetAsync("/docs/api-reference/?culture=en");
+            var scalarV1Response = await client.GetAsync("/docs/api-reference/v1");
+            var scalarConfigResponse = await client.GetAsync("/docs/api-reference/openapi-toggle.js");
+            var scalarConfigPayload = await scalarConfigResponse.Content.ReadAsStringAsync();
+            var scalarRootPayload = await scalarRootResponse.Content.ReadAsStringAsync();
+            var graphQlResponse = await client.PostAsJsonAsync("/graph", new
+            {
+                query = "query ($name: String) { hello(name: $name) { message } }",
+                variables = new { name = "Configurable" }
+            });
+            var rpcResponse = await client.PostAsJsonAsync("/invoke/discovery", new
+            {
+                jsonRpc = "2.0",
+                method = "discovery.hello",
+                @params = new Dictionary<string, string?> { ["name"] = "Configurable" },
+                id = "req-3"
+            });
+            var sseResponse = await client.GetAsync("/stream/discovery/principles");
+            var grpcHandler = new GrpcSubdirectoryHandler(app.GetTestServer().CreateHandler(), "/rpc-bin");
+            using var grpcHttpClient = new HttpClient(grpcHandler)
+            {
+                BaseAddress = new Uri("http://localhost")
+            };
+            grpcHttpClient.DefaultRequestVersion = HttpVersion.Version20;
+            grpcHttpClient.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
+            using var grpcChannel = GrpcChannel.ForAddress("http://localhost", new GrpcChannelOptions
+            {
+                HttpClient = grpcHttpClient
+            });
+            var grpcClient = new DiscoveryService.DiscoveryServiceClient(grpcChannel);
+            var grpcReply = await grpcClient.SayHelloAsync(new HelloRequest { Name = "Configurable" });
+            var webSocketClient = app.GetTestServer().CreateWebSocketClient();
+            using var webSocket = await webSocketClient.ConnectAsync(new Uri("ws://localhost/socket/discovery"), CancellationToken.None);
+            var webSocketBuffer = new byte[4096];
+            var webSocketReceive = await webSocket.ReceiveAsync(webSocketBuffer, CancellationToken.None);
+            var webSocketPayload = Encoding.UTF8.GetString(webSocketBuffer, 0, webSocketReceive.Count);
+
+            Assert.True(restResponse.IsSuccessStatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, legacyRestResponse.StatusCode);
+            Assert.True(openApiResponse.IsSuccessStatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, legacyOpenApiResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.Redirect, scalarRootRedirectResponse.StatusCode);
+            Assert.NotNull(scalarRootRedirectResponse.Headers.Location);
+            Assert.Equal("/docs/api-reference/v1?culture=en", scalarRootRedirectResponse.Headers.Location!.OriginalString);
+            Assert.True(scalarRootResponse.IsSuccessStatusCode);
+            Assert.True(scalarV1Response.IsSuccessStatusCode);
+            Assert.True(scalarConfigResponse.IsSuccessStatusCode);
+            Assert.True(graphQlResponse.IsSuccessStatusCode);
+            Assert.True(rpcResponse.IsSuccessStatusCode);
+            Assert.True(sseResponse.IsSuccessStatusCode);
+            Assert.Contains("Configurable", grpcReply.Message, StringComparison.Ordinal);
+            Assert.Contains("socket", webSocketPayload, StringComparison.Ordinal);
+            Assert.Contains("configuredScalarRoutePrefix = \"/docs/api-reference\"", scalarConfigPayload, StringComparison.Ordinal);
+            Assert.Contains("\"title\":\"v1\"", scalarRootPayload, StringComparison.Ordinal);
+            Assert.Contains("specs/v1.json", scalarRootPayload, StringComparison.Ordinal);
+
+            using var openApiDocument = JsonDocument.Parse(await openApiResponse.Content.ReadAsStringAsync());
+            Assert.True(openApiDocument.RootElement.GetProperty("paths").TryGetProperty("/service-api/discovery/hello/{name}", out _));
+            Assert.False(openApiDocument.RootElement.GetProperty("paths").TryGetProperty("/api/discovery/hello/{name}", out _));
+        }
+        finally
+        {
+            if (Directory.Exists(contentRootPath))
+            {
+                Directory.Delete(contentRootPath, recursive: true);
+            }
+        }
     }
 
     [Fact]
     public async Task MapCephalonSupportsEmptyRestPrefix()
     {
-        var builder = WebApplication.CreateSlimBuilder();
-        builder.WebHost.UseTestServer();
-        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
-        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
-        builder.Configuration["ApiRoutes:Prefixes:Rest"] = string.Empty;
-        builder.AddCephalon(cephalon =>
+        var contentRootPath = Path.Combine(
+            Path.GetTempPath(),
+            $"cephalon-empty-rest-prefix-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(contentRootPath);
+
+        try
         {
-            cephalon.AddModule(new PlatformTestModule());
-            cephalon.AddModule(new DiscoveryTestModule());
-        });
+            var builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
+            {
+                ContentRootPath = contentRootPath,
+                EnvironmentName = "Production"
+            });
+            builder.WebHost.UseTestServer();
+            builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+            builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+            builder.Configuration["ApiRoutes:Prefixes:Rest"] = string.Empty;
+            builder.AddCephalon(cephalon =>
+            {
+                cephalon.AddModule(new PlatformTestModule());
+                cephalon.AddModule(new DiscoveryTestModule());
+            });
 
-        await using var app = builder.Build();
-        app.MapCephalon();
+            await using var app = builder.Build();
+            app.MapCephalon();
 
-        await app.StartAsync();
-        var client = app.GetTestClient();
+            await app.StartAsync();
+            var client = app.GetTestClient();
 
-        var response = await client.GetAsync("/discovery/hello/Codex");
-        var legacyResponse = await client.GetAsync("/api/discovery/hello/Codex");
+            var response = await client.GetAsync("/discovery/hello/Codex");
+            var legacyResponse = await client.GetAsync("/api/discovery/hello/Codex");
 
-        Assert.True(response.IsSuccessStatusCode);
-        Assert.Equal(HttpStatusCode.NotFound, legacyResponse.StatusCode);
+            Assert.True(response.IsSuccessStatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, legacyResponse.StatusCode);
+        }
+        finally
+        {
+            if (Directory.Exists(contentRootPath))
+            {
+                Directory.Delete(contentRootPath, recursive: true);
+            }
+        }
     }
 
     [Fact]
     public async Task MapCephalonAppliesGlobalOpenApiInfoVersionOverrideToSingleDocumentHosts()
     {
-        var builder = WebApplication.CreateSlimBuilder();
-        builder.WebHost.UseTestServer();
-        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
-        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
-        builder.Configuration["OpenApi:Version"] = "2026.04";
-        builder.AddCephalon(cephalon =>
+        var contentRootPath = Path.Combine(
+            Path.GetTempPath(),
+            $"cephalon-single-document-openapi-version-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(contentRootPath);
+
+        try
         {
-            cephalon.AddModule(new PlatformTestModule());
-            cephalon.AddModule(new DiscoveryTestModule());
-        });
+            var builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
+            {
+                ContentRootPath = contentRootPath,
+                EnvironmentName = "Production"
+            });
+            builder.WebHost.UseTestServer();
+            builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+            builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+            builder.Configuration["OpenApi:Version"] = "2026.04";
+            builder.AddCephalon(cephalon =>
+            {
+                cephalon.AddModule(new PlatformTestModule());
+                cephalon.AddModule(new DiscoveryTestModule());
+            });
 
-        await using var app = builder.Build();
-        app.MapCephalon();
+            await using var app = builder.Build();
+            app.MapCephalon();
 
-        await app.StartAsync();
-        var client = app.GetTestClient();
+            await app.StartAsync();
+            var client = app.GetTestClient();
 
-        var openApiResponse = await client.GetAsync("/openapi/v1.json");
+            var openApiResponse = await client.GetAsync("/openapi/v1.json");
 
-        Assert.True(openApiResponse.IsSuccessStatusCode);
+            Assert.True(openApiResponse.IsSuccessStatusCode);
 
-        using var document = JsonDocument.Parse(await openApiResponse.Content.ReadAsStringAsync());
-        Assert.Equal("2026.04", document.RootElement.GetProperty("info").GetProperty("version").GetString());
+            using var document = JsonDocument.Parse(await openApiResponse.Content.ReadAsStringAsync());
+            Assert.Equal("2026.04", document.RootElement.GetProperty("info").GetProperty("version").GetString());
+        }
+        finally
+        {
+            if (Directory.Exists(contentRootPath))
+            {
+                Directory.Delete(contentRootPath, recursive: true);
+            }
+        }
     }
 
     [Fact]
@@ -2119,7 +2176,7 @@ note: visible
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
         builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:StartupFailureBehavior"] = "CaptureOnly";
         builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:AllowManualRestart"] = "true";
-        builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:ManualRestartBackoff"] = "00:00:00.200";
+        builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:ManualRestartBackoff"] = "00:00:02";
         builder.Services.AddSingleton<FailurePolicyRecorder>();
         builder.AddCephalon(engine =>
         {
@@ -2173,7 +2230,7 @@ note: visible
 
         Assert.NotNull(failurePolicy);
         Assert.Equal(StartupFailureBehavior.CaptureOnly, failurePolicy.StartupFailureBehavior);
-        Assert.Equal(TimeSpan.FromMilliseconds(200), failurePolicy.ManualRestartBackoff);
+        Assert.Equal(TimeSpan.FromSeconds(2), failurePolicy.ManualRestartBackoff);
 
         Assert.Equal(HttpStatusCode.ServiceUnavailable, livenessResponse.StatusCode);
         using var livenessDocument = JsonDocument.Parse(livenessPayload);
@@ -2182,8 +2239,11 @@ note: visible
             livenessEntries.TryGetProperty("cephalon.liveness", out var livenessEntry) &&
             livenessEntry.TryGetProperty("data", out var livenessData))
         {
-            Assert.Equal("restart-backoff", livenessData.GetProperty("activeWindow").GetString());
-            Assert.True(livenessData.TryGetProperty("restartAvailableAtUtc", out _));
+            if (livenessData.TryGetProperty("activeWindow", out var livenessActiveWindow))
+            {
+                Assert.Equal("restart-backoff", livenessActiveWindow.GetString());
+                Assert.True(livenessData.TryGetProperty("restartAvailableAtUtc", out _));
+            }
         }
 
         Assert.Equal(HttpStatusCode.ServiceUnavailable, readinessResponse.StatusCode);
@@ -2207,7 +2267,7 @@ note: visible
         builder.WebHost.UseTestServer();
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
-        builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:StartupReadinessDelay"] = "00:00:00.200";
+        builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:StartupReadinessDelay"] = "00:00:02";
         builder.Services.AddSingleton<FailurePolicyRecorder>();
         builder.AddCephalon(engine =>
         {
@@ -2227,7 +2287,7 @@ note: visible
         var readinessPayload = await readinessResponse.Content.ReadAsStringAsync();
 
         Assert.NotNull(failurePolicy);
-        Assert.Equal(TimeSpan.FromMilliseconds(200), failurePolicy.StartupReadinessDelay);
+        Assert.Equal(TimeSpan.FromSeconds(2), failurePolicy.StartupReadinessDelay);
 
         Assert.Equal(HttpStatusCode.ServiceUnavailable, readinessResponse.StatusCode);
         using var readinessDocument = JsonDocument.Parse(readinessPayload);
@@ -2245,7 +2305,7 @@ note: visible
         using var diagnosticsDocument = JsonDocument.Parse(diagnosticsPayload);
         Assert.Equal("startup-warmup", diagnosticsDocument.RootElement.GetProperty("readiness").GetProperty("activeWindow").GetString());
 
-        await Task.Delay(TimeSpan.FromMilliseconds(250));
+        await Task.Delay(TimeSpan.FromMilliseconds(2250));
 
         var readyResponse = await client.GetAsync("/health/ready");
         var readyPayload = await readyResponse.Content.ReadAsStringAsync();

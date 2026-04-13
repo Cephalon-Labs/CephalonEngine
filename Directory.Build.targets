@@ -1,0 +1,11 @@
+<Project>
+  <Target
+    Name="CephalonRemoveTransitiveConfigurationsFromTestOutputs"
+    AfterTargets="CopyFilesToOutputDirectory"
+    Condition="'$(IsTestProject)' == 'true' and !Exists('$(MSBuildProjectDirectory)\Configurations') and Exists('$(OutDir)Configurations')">
+    <Message
+      Importance="Low"
+      Text="Removing transitive Configurations content from test output '$(OutDir)Configurations' so test hosts do not inherit sample app settings implicitly." />
+    <RemoveDir Directories="$(OutDir)Configurations" />
+  </Target>
+</Project>

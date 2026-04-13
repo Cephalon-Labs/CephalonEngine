@@ -25,7 +25,7 @@ public sealed class OrdersModule : RestBehaviorModuleBase
         displayName: "Showcase Orders",
         description: "Order management module using the event-driven behavior pattern with messaging integration.",
         tags: ["showcase", "orders", "event-driven-pattern", "messaging"],
-        version: "1.0.0");
+        version: "2.0.0");
 
     /// <inheritdoc />
     public override ModuleDescriptor Descriptor => DescriptorInstance;

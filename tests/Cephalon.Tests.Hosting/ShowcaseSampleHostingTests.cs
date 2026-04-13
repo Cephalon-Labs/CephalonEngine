@@ -8,9 +8,11 @@ using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Health;
+using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Sample.Showcase;
 using Cephalon.Sample.Showcase.Infrastructure;
+using Cephalon.Sample.Showcase.Modules;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -45,6 +47,7 @@ public sealed class ShowcaseSampleHostingTests
         "read",
         "write"
     ];
+    private static readonly string OrdersRoutePrefix = BuildModuleRestPrefix<OrdersModule>("/showcase/orders");
 
     [Fact]
     public async Task ShowcaseSampleBootsAndExposesRootSummary()
@@ -1147,7 +1150,7 @@ public sealed class ShowcaseSampleHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
-        var response = await client.GetAsync("/api/v1/showcase/orders");
+        var response = await client.GetAsync(OrdersRoutePrefix);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadAsStringAsync();
@@ -1173,7 +1176,7 @@ public sealed class ShowcaseSampleHostingTests
                 new { productId = "prod-001", productName = "ProBook Laptop 15\"", quantity = 1, unitPriceInCents = 149999L }
             }
         };
-        var placeResponse = await client.PostAsync("/api/v1/showcase/orders", JsonContent.Create(placePayload));
+        var placeResponse = await client.PostAsync(OrdersRoutePrefix, JsonContent.Create(placePayload));
 
         Assert.Equal(HttpStatusCode.Created, placeResponse.StatusCode);
         var placeBody = await placeResponse.Content.ReadAsStringAsync();
@@ -1183,7 +1186,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("Pending", placed.GetProperty("status").GetString());
 
         // Retrieve the order
-        var getResponse = await client.GetAsync($"/api/v1/showcase/orders/{orderId}");
+        var getResponse = await client.GetAsync($"{OrdersRoutePrefix}/{orderId}");
         Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
         var getBody = await getResponse.Content.ReadAsStringAsync();
         Assert.Contains(orderId, getBody, StringComparison.Ordinal);
@@ -1208,14 +1211,14 @@ public sealed class ShowcaseSampleHostingTests
                 new { productId = "prod-002", productName = "ErgoGrip Wireless Mouse", quantity = 2, unitPriceInCents = 4999L }
             }
         };
-        var placeResponse = await client.PostAsync("/api/v1/showcase/orders", JsonContent.Create(placePayload));
+        var placeResponse = await client.PostAsync(OrdersRoutePrefix, JsonContent.Create(placePayload));
         var placed = JsonSerializer.Deserialize<JsonElement>(await placeResponse.Content.ReadAsStringAsync());
         var orderId = placed.GetProperty("orderId").GetString()!;
 
         // Cancel the order
         var cancelPayload = new { orderId, reason = "Changed my mind" };
         var cancelResponse = await client.PutAsync(
-            $"/api/v1/showcase/orders/{orderId}/cancel",
+            $"{OrdersRoutePrefix}/{orderId}/cancel",
             JsonContent.Create(cancelPayload));
 
         Assert.Equal(HttpStatusCode.OK, cancelResponse.StatusCode);
@@ -1231,7 +1234,7 @@ public sealed class ShowcaseSampleHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
-        var response = await client.GetAsync("/api/v1/showcase/orders/nonexistent");
+        var response = await client.GetAsync($"{OrdersRoutePrefix}/nonexistent");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -1313,7 +1316,7 @@ public sealed class ShowcaseSampleHostingTests
                 new { productId = "prod-001", productName = "ProBook Laptop 15\"", quantity = 1, unitPriceInCents = 149999L }
             }
         };
-        var orderResponse = await client.PostAsync("/api/v1/showcase/orders", JsonContent.Create(orderPayload));
+        var orderResponse = await client.PostAsync(OrdersRoutePrefix, JsonContent.Create(orderPayload));
         var orderResult = JsonSerializer.Deserialize<JsonElement>(await orderResponse.Content.ReadAsStringAsync());
         var orderId = orderResult.GetProperty("orderId").GetString()!;
 
@@ -1329,7 +1332,7 @@ public sealed class ShowcaseSampleHostingTests
         var reserveResponse = await client.PostAsync("/api/v1/showcase/inventory/reserve", JsonContent.Create(reservePayload));
         Assert.Equal(HttpStatusCode.OK, reserveResponse.StatusCode);
 
-        var getOrderResponse = await client.GetAsync($"/api/v1/showcase/orders/{orderId}");
+        var getOrderResponse = await client.GetAsync($"{OrdersRoutePrefix}/{orderId}");
         Assert.Equal(HttpStatusCode.OK, getOrderResponse.StatusCode);
         var orderBody = await getOrderResponse.Content.ReadAsStringAsync();
         Assert.Contains("Confirmed", orderBody, StringComparison.Ordinal);
@@ -1450,7 +1453,7 @@ public sealed class ShowcaseSampleHostingTests
                 new { productId = "prod-003", productName = "AdjustaPro Standing Desk", quantity = 1, unitPriceInCents = 59999L }
             }
         };
-        var orderResponse = await client.PostAsync("/api/v1/showcase/orders", JsonContent.Create(orderPayload));
+        var orderResponse = await client.PostAsync(OrdersRoutePrefix, JsonContent.Create(orderPayload));
         var orderResult = JsonSerializer.Deserialize<JsonElement>(await orderResponse.Content.ReadAsStringAsync());
         var orderId = orderResult.GetProperty("orderId").GetString()!;
 
@@ -1467,7 +1470,7 @@ public sealed class ShowcaseSampleHostingTests
         var duplicateShipmentResponse = await client.PostAsync("/api/v1/showcase/shipping", JsonContent.Create(initiatePayload));
         Assert.Equal(HttpStatusCode.Conflict, duplicateShipmentResponse.StatusCode);
 
-        var getOrderResponse = await client.GetAsync($"/api/v1/showcase/orders/{orderId}");
+        var getOrderResponse = await client.GetAsync($"{OrdersRoutePrefix}/{orderId}");
         Assert.Equal(HttpStatusCode.OK, getOrderResponse.StatusCode);
         var orderBody = await getOrderResponse.Content.ReadAsStringAsync();
         Assert.Contains("Processing", orderBody, StringComparison.Ordinal);
@@ -1711,14 +1714,14 @@ public sealed class ShowcaseSampleHostingTests
             }
         };
 
-        var orderResponse = await client.PostAsync("/api/v1/showcase/orders", JsonContent.Create(orderPayload));
+        var orderResponse = await client.PostAsync(OrdersRoutePrefix, JsonContent.Create(orderPayload));
 
         Assert.Equal(HttpStatusCode.Created, orderResponse.StatusCode);
 
         var orderBody = JsonSerializer.Deserialize<JsonElement>(await orderResponse.Content.ReadAsStringAsync());
         Assert.Equal(linkedOrderId, orderBody.GetProperty("orderId").GetString());
 
-        var getOrderResponse = await client.GetAsync($"/api/v1/showcase/orders/{linkedOrderId}");
+        var getOrderResponse = await client.GetAsync($"{OrdersRoutePrefix}/{linkedOrderId}");
         Assert.Equal(HttpStatusCode.OK, getOrderResponse.StatusCode);
     }
 
@@ -2096,7 +2099,8 @@ public sealed class ShowcaseSampleHostingTests
             AvailableAtUtc = DateTime.UtcNow
         });
         await writeDb.SaveChangesAsync();
-        Assert.False(await readDb.Products.AnyAsync(product => product.Id == productId));
+        Assert.True(await writeDb.Products.AnyAsync(product => product.Id == productId));
+        Assert.True(await writeDb.ReadProjectionJobs.AnyAsync(job => job.EntityKey == productId));
 
         var projection = await InvokeAsyncWithResult(projections, "GetDatabaseTopologyAsync");
         using var projectionDocument = JsonDocument.Parse(
@@ -2172,7 +2176,7 @@ public sealed class ShowcaseSampleHostingTests
     }
 
     [Fact]
-    public async Task ShowcaseSampleTransportProjectionIncludesBehaviorOwnedRestRoutes()
+    public async Task ShowcaseSampleTransportProjectionSeparatesModuleOwnedRestFromGenericBehaviorTransports()
     {
         await using var app = BuildShowcaseForTests();
 
@@ -2189,7 +2193,7 @@ public sealed class ShowcaseSampleHostingTests
         var cartGet = Assert.Single(behaviors, behavior =>
             string.Equals(behavior.GetProperty("behaviorId").GetString(), "cart.get", StringComparison.Ordinal));
 
-        Assert.Contains(
+        Assert.DoesNotContain(
             cartGet.GetProperty("transportIds").EnumerateArray().Select(item => item.GetString()),
             transportId => string.Equals(transportId, "http.rest", StringComparison.Ordinal));
         Assert.Contains(
@@ -2201,7 +2205,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Contains(
             cartGet.GetProperty("transportIds").EnumerateArray().Select(item => item.GetString()),
             transportId => string.Equals(transportId, "http.ws", StringComparison.Ordinal));
-        Assert.Contains(
+        Assert.DoesNotContain(
             cartGet.GetProperty("routes").EnumerateArray(),
             route =>
                 string.Equals(route.GetProperty("method").GetString(), "GET", StringComparison.Ordinal) &&
@@ -2248,7 +2252,12 @@ public sealed class ShowcaseSampleHostingTests
 
         Assert.Contains(
             root.GetProperty("restOperations").EnumerateArray(),
-            operation => string.Equals(operation.GetProperty("route").GetString(), "/api/v1/showcase/system/summary", StringComparison.Ordinal));
+            operation =>
+                string.Equals(operation.GetProperty("method").GetString(), "GET", StringComparison.Ordinal) &&
+                RouteEquals(operation.GetProperty("route").GetString(), "/api/v1/showcase/cart/{cartId}"));
+        Assert.Contains(
+            root.GetProperty("restOperations").EnumerateArray(),
+            operation => RouteEquals(operation.GetProperty("route").GetString(), "/api/v1/showcase/system/summary"));
     }
 
     [Fact]
@@ -2385,7 +2394,7 @@ public sealed class ShowcaseSampleHostingTests
                 }
             }
         };
-        await client.PostAsync("/api/v1/showcase/orders", JsonContent.Create(orderPayload));
+        await client.PostAsync(OrdersRoutePrefix, JsonContent.Create(orderPayload));
 
         var resetResponse = await client.PostAsync("/api/v1/showcase/system/reset", JsonContent.Create(new { }));
 
@@ -2536,7 +2545,7 @@ public sealed class ShowcaseSampleHostingTests
                 new { productId = "prod-006", productName = "TypeMaster Mechanical Keyboard", quantity = 2, unitPriceInCents = 12999L }
             }
         };
-        var orderResponse = await client.PostAsync("/api/v1/showcase/orders", JsonContent.Create(orderPayload));
+        var orderResponse = await client.PostAsync(OrdersRoutePrefix, JsonContent.Create(orderPayload));
         Assert.Equal(HttpStatusCode.Created, orderResponse.StatusCode);
         var orderResult = JsonSerializer.Deserialize<JsonElement>(await orderResponse.Content.ReadAsStringAsync());
         var orderId = orderResult.GetProperty("orderId").GetString()!;
@@ -2583,7 +2592,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("Delivered", delivered.GetProperty("status").GetString());
 
         // 7. Verify order status reflects delivery
-        var orderStatus = await client.GetAsync($"/api/v1/showcase/orders/{orderId}");
+        var orderStatus = await client.GetAsync($"{OrdersRoutePrefix}/{orderId}");
         Assert.Equal(HttpStatusCode.OK, orderStatus.StatusCode);
         var orderBody = await orderStatus.Content.ReadAsStringAsync();
         Assert.Contains("Delivered", orderBody, StringComparison.Ordinal);
@@ -2644,12 +2653,61 @@ public sealed class ShowcaseSampleHostingTests
     private static WebApplication BuildShowcaseForTests(
         Action<WebApplicationBuilder>? configureBuilder = null)
     {
-        return ShowcaseSampleApp.Build(configureBuilder: builder =>
+        return ShowcaseSampleApp.Build(
+            configureBuilder: builder =>
+            {
+                builder.WebHost.UseTestServer();
+                ConfigureShowcaseInMemoryTestProfile(builder);
+                configureBuilder?.Invoke(builder);
+            },
+            contentRootPath: ResolveShowcaseContentRoot());
+    }
+
+    private static string ResolveShowcaseContentRoot()
+    {
+        var current = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (current is not null)
         {
-            builder.WebHost.UseTestServer();
-            ConfigureShowcaseInMemoryTestProfile(builder);
-            configureBuilder?.Invoke(builder);
-        });
+            var candidate = Path.Combine(current.FullName, "samples", "Cephalon.Sample.Showcase");
+            if (Directory.Exists(candidate))
+            {
+                return candidate;
+            }
+
+            current = current.Parent;
+        }
+
+        throw new DirectoryNotFoundException(
+            "Could not resolve the Cephalon.Sample.Showcase content root from the current test assembly location.");
+    }
+
+    private static string BuildModuleRestPrefix<TModule>(string routePrefix)
+        where TModule : IModule, new()
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(routePrefix);
+
+        var normalizedRoutePrefix = routePrefix.StartsWith('/')
+            ? routePrefix
+            : $"/{routePrefix}";
+        var descriptor = new TModule().Descriptor;
+        if (!Version.TryParse(descriptor.Version, out var parsedVersion) || parsedVersion.Major < 1)
+        {
+            throw new InvalidOperationException(
+                $"Module '{descriptor.Id}' must declare a parseable semantic version for versioned REST route tests.");
+        }
+
+        return $"/api/v{parsedVersion.Major}{normalizedRoutePrefix}";
+    }
+
+    private static bool RouteEquals(string? actual, string expected)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(expected);
+
+        return string.Equals(
+            actual?.TrimEnd('/'),
+            expected.TrimEnd('/'),
+            StringComparison.Ordinal);
     }
 
     private static void ConfigureShowcaseInMemoryTestProfile(WebApplicationBuilder builder)

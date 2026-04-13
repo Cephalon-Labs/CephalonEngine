@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
@@ -105,7 +106,7 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonManifest");
         engineGroup.MapGet("/manifest", (RuntimeManifest manifest) => TypedResults.Ok(manifest))
             .WithName("GetCephalonManifestByPath");
-        engineGroup.MapGet("/snapshot", (IRuntimeIntrospectionSnapshotProvider provider) =>
+        engineGroup.MapGet("/snapshot", ([FromServices] IRuntimeIntrospectionSnapshotProvider provider) =>
                 TypedResults.Ok(provider.CreateSnapshot()))
             .WithName("GetCephalonSnapshot");
         engineGroup.MapGet("/app-model", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile))
@@ -126,18 +127,18 @@ public static class EngineWebApplicationExtensions
                 return policy is null ? Results.NotFound() : Results.Ok(policy);
             })
             .WithName("GetCephalonBehaviorResiliencePolicy");
-        engineGroup.MapGet("/rate-limiting", (IRateLimitingRuntimeCatalog catalog) => TypedResults.Ok(catalog.Policies))
+        engineGroup.MapGet("/rate-limiting", ([FromServices] IRateLimitingRuntimeCatalog catalog) => TypedResults.Ok(catalog.Policies))
             .WithName("GetCephalonRateLimiting");
-        engineGroup.MapGet("/rate-limiting/{policyId}", (string policyId, IRateLimitingRuntimeCatalog catalog) =>
+        engineGroup.MapGet("/rate-limiting/{policyId}", (string policyId, [FromServices] IRateLimitingRuntimeCatalog catalog) =>
             {
                 var policy = catalog.GetById(policyId);
 
                 return policy is null ? Results.NotFound() : Results.Ok(policy);
             })
             .WithName("GetCephalonRateLimitingPolicy");
-        engineGroup.MapGet("/rest-endpoints", (IRestEndpointRuntimeCatalog catalog) => TypedResults.Ok(catalog.Endpoints))
+        engineGroup.MapGet("/rest-endpoints", ([FromServices] IRestEndpointRuntimeCatalog catalog) => TypedResults.Ok(catalog.Endpoints))
             .WithName("GetCephalonRestEndpoints");
-        engineGroup.MapGet("/rest-endpoints/{restEndpointId}", (string restEndpointId, IRestEndpointRuntimeCatalog catalog) =>
+        engineGroup.MapGet("/rest-endpoints/{restEndpointId}", (string restEndpointId, [FromServices] IRestEndpointRuntimeCatalog catalog) =>
             {
                 var endpoint = catalog.GetById(restEndpointId);
 
@@ -146,28 +147,28 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonRestEndpoint");
         engineGroup.MapGet("/databases", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Databases))
             .WithName("GetCephalonDatabases");
-        engineGroup.MapGet("/database-topology", (IDatabaseTopologyOperationalSnapshotProvider provider) =>
+        engineGroup.MapGet("/database-topology", ([FromServices] IDatabaseTopologyOperationalSnapshotProvider provider) =>
                 TypedResults.Ok(provider.CreateSnapshot()))
             .WithName("GetCephalonDatabaseTopology");
-        engineGroup.MapGet("/database-roles", (IDatabaseRoleCatalog catalog) => TypedResults.Ok(catalog.DatabaseRoles))
+        engineGroup.MapGet("/database-roles", ([FromServices] IDatabaseRoleCatalog catalog) => TypedResults.Ok(catalog.DatabaseRoles))
             .WithName("GetCephalonDatabaseRoles");
-        engineGroup.MapGet("/database-roles/{databaseRoleId}", (string databaseRoleId, IDatabaseRoleCatalog catalog) =>
+        engineGroup.MapGet("/database-roles/{databaseRoleId}", (string databaseRoleId, [FromServices] IDatabaseRoleCatalog catalog) =>
             {
                 var databaseRole = catalog.GetById(databaseRoleId);
 
                 return databaseRole is null ? Results.NotFound() : Results.Ok(databaseRole);
             })
             .WithName("GetCephalonDatabaseRole");
-        engineGroup.MapGet("/database-migrations", (IDatabaseMigrationCatalog catalog) => TypedResults.Ok(catalog.DatabaseMigrations))
+        engineGroup.MapGet("/database-migrations", ([FromServices] IDatabaseMigrationCatalog catalog) => TypedResults.Ok(catalog.DatabaseMigrations))
             .WithName("GetCephalonDatabaseMigrations");
-        engineGroup.MapGet("/database-migrations/{databaseMigrationId}", (string databaseMigrationId, IDatabaseMigrationCatalog catalog) =>
+        engineGroup.MapGet("/database-migrations/{databaseMigrationId}", (string databaseMigrationId, [FromServices] IDatabaseMigrationCatalog catalog) =>
             {
                 var databaseMigration = catalog.GetById(databaseMigrationId);
 
                 return databaseMigration is null ? Results.NotFound() : Results.Ok(databaseMigration);
             })
             .WithName("GetCephalonDatabaseMigration");
-        engineGroup.MapGet("/database-migration-playbook", (IDatabaseMigrationOperationalPlaybookProvider provider) =>
+        engineGroup.MapGet("/database-migration-playbook", ([FromServices] IDatabaseMigrationOperationalPlaybookProvider provider) =>
                 TypedResults.Ok(provider.CreatePlaybook()))
             .WithName("GetCephalonDatabaseMigrationPlaybook");
         engineGroup.MapGet("/scaffold", (RuntimeManifest manifest) =>
@@ -181,36 +182,36 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonModules");
         engineGroup.MapGet("/packages", (RuntimeManifest manifest) => TypedResults.Ok(manifest.Packages))
             .WithName("GetCephalonPackages");
-        engineGroup.MapGet("/hosted-executions", (IHostedExecutionRuntimeCatalog catalog) => TypedResults.Ok(catalog.HostedExecutions))
+        engineGroup.MapGet("/hosted-executions", ([FromServices] IHostedExecutionRuntimeCatalog catalog) => TypedResults.Ok(catalog.HostedExecutions))
             .WithName("GetCephalonHostedExecutions");
-        engineGroup.MapGet("/hosted-executions/{hostedExecutionId}", (string hostedExecutionId, IHostedExecutionRuntimeCatalog catalog) =>
+        engineGroup.MapGet("/hosted-executions/{hostedExecutionId}", (string hostedExecutionId, [FromServices] IHostedExecutionRuntimeCatalog catalog) =>
             {
                 var hostedExecution = catalog.GetById(hostedExecutionId);
 
                 return hostedExecution is null ? Results.NotFound() : Results.Ok(hostedExecution);
             })
             .WithName("GetCephalonHostedExecution");
-        engineGroup.MapGet("/execution-graphs", (IExecutionRuntimeCatalog catalog) => TypedResults.Ok(catalog.Graphs))
+        engineGroup.MapGet("/execution-graphs", ([FromServices] IExecutionRuntimeCatalog catalog) => TypedResults.Ok(catalog.Graphs))
             .WithName("GetCephalonExecutionGraphs");
-        engineGroup.MapGet("/execution-graphs/{graphId}", (string graphId, IExecutionRuntimeCatalog catalog) =>
+        engineGroup.MapGet("/execution-graphs/{graphId}", (string graphId, [FromServices] IExecutionRuntimeCatalog catalog) =>
             {
                 var graph = catalog.GetById(graphId);
 
                 return graph is null ? Results.NotFound() : Results.Ok(graph);
             })
             .WithName("GetCephalonExecutionGraph");
-        engineGroup.MapGet("/projections", (IProjectionCatalog catalog) => TypedResults.Ok(catalog.Projections))
+        engineGroup.MapGet("/projections", ([FromServices] IProjectionCatalog catalog) => TypedResults.Ok(catalog.Projections))
             .WithName("GetCephalonProjections");
-        engineGroup.MapGet("/projections/{projectionId}", (string projectionId, IProjectionCatalog catalog) =>
+        engineGroup.MapGet("/projections/{projectionId}", (string projectionId, [FromServices] IProjectionCatalog catalog) =>
             {
                 var projection = catalog.GetById(projectionId);
 
                 return projection is null ? Results.NotFound() : Results.Ok(projection);
             })
             .WithName("GetCephalonProjection");
-        engineGroup.MapGet("/outboxes", (IOutboxCatalog catalog) => TypedResults.Ok(catalog.Outboxes))
+        engineGroup.MapGet("/outboxes", ([FromServices] IOutboxCatalog catalog) => TypedResults.Ok(catalog.Outboxes))
             .WithName("GetCephalonOutboxes");
-        engineGroup.MapGet("/outboxes/{outboxId}", (string outboxId, IOutboxCatalog catalog) =>
+        engineGroup.MapGet("/outboxes/{outboxId}", (string outboxId, [FromServices] IOutboxCatalog catalog) =>
             {
                 var outbox = catalog.GetById(outboxId);
 
@@ -253,18 +254,18 @@ public static class EngineWebApplicationExtensions
                 return state is null ? Results.NotFound() : Results.Ok(state);
             })
             .WithName("GetCephalonEventDispatch");
-        engineGroup.MapGet("/inboxes", (IInboxCatalog catalog) => TypedResults.Ok(catalog.Inboxes))
+        engineGroup.MapGet("/inboxes", ([FromServices] IInboxCatalog catalog) => TypedResults.Ok(catalog.Inboxes))
             .WithName("GetCephalonInboxes");
-        engineGroup.MapGet("/inboxes/{inboxId}", (string inboxId, IInboxCatalog catalog) =>
+        engineGroup.MapGet("/inboxes/{inboxId}", (string inboxId, [FromServices] IInboxCatalog catalog) =>
             {
                 var inbox = catalog.GetById(inboxId);
 
                 return inbox is null ? Results.NotFound() : Results.Ok(inbox);
             })
             .WithName("GetCephalonInbox");
-        engineGroup.MapGet("/audit-stores", (IAuditStoreCatalog catalog) => TypedResults.Ok(catalog.AuditStores))
+        engineGroup.MapGet("/audit-stores", ([FromServices] IAuditStoreCatalog catalog) => TypedResults.Ok(catalog.AuditStores))
             .WithName("GetCephalonAuditStores");
-        engineGroup.MapGet("/audit-stores/{auditStoreId}", (string auditStoreId, IAuditStoreCatalog catalog) =>
+        engineGroup.MapGet("/audit-stores/{auditStoreId}", (string auditStoreId, [FromServices] IAuditStoreCatalog catalog) =>
             {
                 var auditStore = catalog.GetById(auditStoreId);
 
@@ -382,21 +383,21 @@ public static class EngineWebApplicationExtensions
                 })
                 .WithName("ExportCephalonAuditHistory");
         }
-        engineGroup.MapGet("/authorization-policies", (IAuthorizationPolicyCatalog catalog) => TypedResults.Ok(catalog.Policies))
+        engineGroup.MapGet("/authorization-policies", ([FromServices] IAuthorizationPolicyCatalog catalog) => TypedResults.Ok(catalog.Policies))
             .WithName("GetCephalonAuthorizationPolicies");
-        engineGroup.MapGet("/authorization-policies/{policyId}", (string policyId, IAuthorizationPolicyCatalog catalog) =>
+        engineGroup.MapGet("/authorization-policies/{policyId}", (string policyId, [FromServices] IAuthorizationPolicyCatalog catalog) =>
             {
                 var policy = catalog.GetById(policyId);
 
                 return policy is null ? Results.NotFound() : Results.Ok(policy);
             })
             .WithName("GetCephalonAuthorizationPolicy");
-        engineGroup.MapGet("/strangler-fig", (IStranglerFigRuntimeCatalog catalog) => TypedResults.Ok(catalog.Routes))
+        engineGroup.MapGet("/strangler-fig", ([FromServices] IStranglerFigRuntimeCatalog catalog) => TypedResults.Ok(catalog.Routes))
             .WithName("GetCephalonStranglerFigRoutes");
         engineGroup.MapGet("/strangler-fig/resolve", async (
                 string path,
                 string? method,
-                IStranglerFigRouter router,
+                [FromServices] IStranglerFigRouter router,
                 CancellationToken cancellationToken) =>
             {
                 var resolution = await router.ResolveAsync(
@@ -408,7 +409,7 @@ public static class EngineWebApplicationExtensions
                     : Results.Ok(resolution);
             })
             .WithName("ResolveCephalonStranglerFigRoute");
-        engineGroup.MapGet("/strangler-fig/{routeId}", (string routeId, IStranglerFigRuntimeCatalog catalog) =>
+        engineGroup.MapGet("/strangler-fig/{routeId}", (string routeId, [FromServices] IStranglerFigRuntimeCatalog catalog) =>
             {
                 var route = catalog.GetById(routeId);
 
@@ -419,36 +420,36 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonPatterns");
         engineGroup.MapGet("/technologies", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Technologies))
             .WithName("GetCephalonTechnologies");
-        engineGroup.MapGet("/technology-catalog", (TechnologyCatalogSnapshot catalog) => TypedResults.Ok(catalog.Technologies))
+        engineGroup.MapGet("/technology-catalog", ([FromServices] TechnologyCatalogSnapshot catalog) => TypedResults.Ok(catalog.Technologies))
             .WithName("GetCephalonTechnologyCatalog");
-        engineGroup.MapGet("/technology-surfaces", (ITechnologyRuntimeCatalog catalog) =>
+        engineGroup.MapGet("/technology-surfaces", ([FromServices] ITechnologyRuntimeCatalog catalog) =>
                 TypedResults.Ok(catalog.Surfaces))
             .WithName("GetCephalonTechnologySurfaces");
-        engineGroup.MapGet("/technology-surfaces/{technologyId}", (string technologyId, ITechnologyRuntimeCatalog catalog) =>
+        engineGroup.MapGet("/technology-surfaces/{technologyId}", (string technologyId, [FromServices] ITechnologyRuntimeCatalog catalog) =>
                 TypedResults.Ok(catalog.GetByTechnology(technologyId)))
             .WithName("GetCephalonTechnologySurface");
         engineGroup.MapGet("/transports", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Transports))
             .WithName("GetCephalonTransports");
-        engineGroup.MapGet("/dependencies", (RuntimeHealthEvaluator health) => TypedResults.Ok(health.EvaluateDependencies()))
+        engineGroup.MapGet("/dependencies", ([FromServices] RuntimeHealthEvaluator health) => TypedResults.Ok(health.EvaluateDependencies()))
             .WithName("GetCephalonDependencies");
-        engineGroup.MapGet("/localization", (string? culture, ILocalizedTextCatalog catalog) =>
+        engineGroup.MapGet("/localization", (string? culture, [FromServices] ILocalizedTextCatalog catalog) =>
                 TypedResults.Ok(catalog.CreateSnapshot(culture)))
             .WithName("GetCephalonLocalization");
         engineGroup.MapGet("/reference-docs", () => TypedResults.Ok(referenceDocsSurface))
             .WithName("GetCephalonReferenceDocs");
-        engineGroup.MapGet("/options", (EngineOptions options) => TypedResults.Ok(options))
+        engineGroup.MapGet("/options", ([FromServices] EngineOptions options) => TypedResults.Ok(options))
             .WithName("GetCephalonOptions");
-        engineGroup.MapGet("/package-policy", (PackagePolicy packagePolicy) => TypedResults.Ok(packagePolicy))
+        engineGroup.MapGet("/package-policy", ([FromServices] PackagePolicy packagePolicy) => TypedResults.Ok(packagePolicy))
             .WithName("GetCephalonPackagePolicy");
-        engineGroup.MapGet("/failure-policy", (FailurePolicy failurePolicy) => TypedResults.Ok(failurePolicy))
+        engineGroup.MapGet("/failure-policy", ([FromServices] FailurePolicy failurePolicy) => TypedResults.Ok(failurePolicy))
             .WithName("GetCephalonFailurePolicy");
-        engineGroup.MapGet("/trust-policy", (CapabilityPolicyEvaluator evaluator) => TypedResults.Ok(evaluator.Snapshot))
+        engineGroup.MapGet("/trust-policy", ([FromServices] CapabilityPolicyEvaluator evaluator) => TypedResults.Ok(evaluator.Snapshot))
             .WithName("GetCephalonTrustPolicy");
-        engineGroup.MapGet("/status", (IRuntime runtime) => TypedResults.Ok(runtime.StatusSnapshot))
+        engineGroup.MapGet("/status", ([FromServices] IRuntime runtime) => TypedResults.Ok(runtime.StatusSnapshot))
             .WithName("GetCephalonStatus");
-        engineGroup.MapGet("/runtime-story", (IRuntime runtime) => TypedResults.Ok(runtime.OperationalStory))
+        engineGroup.MapGet("/runtime-story", ([FromServices] IRuntime runtime) => TypedResults.Ok(runtime.OperationalStory))
             .WithName("GetCephalonRuntimeStory");
-        engineGroup.MapGet("/diagnostics", (RuntimeHealthEvaluator health, IRuntimeDiagnosticsCatalog diagnosticsCatalog) => TypedResults.Ok(new DiagnosticsSurface(
+        engineGroup.MapGet("/diagnostics", ([FromServices] RuntimeHealthEvaluator health, [FromServices] IRuntimeDiagnosticsCatalog diagnosticsCatalog) => TypedResults.Ok(new DiagnosticsSurface(
                 MeterName: EngineDiagnostics.MeterName,
                 ActivitySourceName: EngineDiagnostics.ActivitySourceName,
                 Counters:
