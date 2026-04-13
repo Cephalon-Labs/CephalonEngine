@@ -167,6 +167,10 @@ The current explicit DSL is good, but Cephalon still needs one normalized public
 layer if it wants to support configuration-backed route evolution, lower-ceremony authoring, or
 generated module surfaces without letting public REST drift back into behavior topology.
 
+That same follow-through should include a first-class runtime catalog and fail-fast route-collision
+validation for resolved public REST projections, because shorthand or generated routes are only safe
+if operators and developers can see exactly which source won and why.
+
 ## Architecture recommendations
 
 ### Next 30 days
@@ -176,6 +180,7 @@ generated module surfaces without letting public REST drift back into behavior t
 - keep docs, roadmap, backlog, and GitHub Project history synchronized for meaningful work
 - strengthen the "recommended first path" across ASP.NET Core, Entity Framework, Wolverine, and the showcase sample
 - define the normalized REST endpoint projection model before adding any new behavior-only REST shorthand
+- add route-collision validation plus a runtime REST endpoint catalog as part of that projection follow-through
 
 ### Next 60 days
 

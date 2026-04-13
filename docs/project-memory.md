@@ -214,6 +214,8 @@ Current standing examples from this collaboration:
 - if Cephalon adds lower-ceremony REST authoring later, keep it as metadata or projection-driven shorthand that still materializes into module-owned public REST; do not go back to direct behavior-owned REST activation
 - if a higher-precedence module-owned REST mapping exists for a behavior, suppress lower-precedence implicit, generated, or convention REST projections for that same behavior by default instead of running them side by side
 - if Cephalon adds low-code REST shorthand later, prefer source-generated projection material and explicit opt-in over broad runtime reflection or accidental public route publication from every `[AppBehavior]`
+- if Cephalon adds low-code REST shorthand later, `[AppBehavior]` plus auto-registration alone must still not publish a public REST boundary; shorthand must remain an explicit REST opt-in
+- before broad shorthand or convention REST publication is enabled, add a normalized runtime catalog plus fail-fast route-collision validation for resolved public REST projections
 - `Engine:Behaviors` is no longer a per-behavior REST topology contract; keep it focused on behavior discovery and auto-registration
 - when a module explicitly owns behaviors, prefer `BehaviorModuleBase` for process-only modules and `RestBehaviorModuleBase` when the same module also exposes some of those behaviors over REST; keep raw `IRestModule` implementations for REST modules that do not dispatch through behaviors
 - prefer `BehaviorModuleBase` when a module explicitly owns behaviors but does not expose a public REST surface

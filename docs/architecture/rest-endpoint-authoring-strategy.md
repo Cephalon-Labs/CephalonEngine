@@ -37,6 +37,10 @@ The current shipped model is already opinionated:
 That means Cephalon should not go back to a model where `[AppBehavior]` silently publishes a public
 REST boundary by default.
 
+If Cephalon adds a lower-ceremony REST path later, it should still require explicit REST opt-in
+metadata such as a projection profile or generated module contract. `[AppBehavior]` plus
+auto-registration alone must never be enough to publish a public REST surface.
+
 ## The three proposed modes
 
 ### Mode 1: explicit module-owned REST DSL
@@ -223,6 +227,42 @@ That means:
 
 This already matches the shipped model and should stay stable.
 
+## Route-collision and runtime-catalog direction
+
+The current repo already prevents duplicate behavior ownership across modules, but it does not yet
+have a first-class engine contract for public REST route collisions by resolved `HTTP method + route
+pattern`.
+
+That gap becomes more important if Cephalon later adds generated, shorthand, or convention-backed
+REST projections.
+
+The long-term model should therefore add two things before broad shorthand publication is enabled:
+
+- a normalized runtime catalog of resolved REST projections
+- fail-fast collision validation for public REST projections unless a higher-precedence mapping
+  explicitly opts into a deliberate alias
+
+Recommended runtime surface:
+
+- `IRestEndpointRuntimeCatalog`
+- `/engine/rest-endpoints`
+- `snapshot.RestEndpoints`
+
+Each resolved projection should be able to answer at least:
+
+- source kind such as `manual`, `module-dsl`, `generated-module`, `behavior-profile`, or
+  `convention`
+- source id or owner id
+- module id when a real module owns the projection
+- behavior id when the endpoint dispatches through `BehaviorDispatcher`
+- HTTP method
+- final route pattern
+- candidate OpenAPI document or API version
+- whether the projection suppressed lower-precedence candidates
+
+This keeps shorthand authoring compatible with Cephalon's broader requirement that runtime policy,
+composition, and public surface decisions stay introspectable.
+
 ## Input binding direction
 
 The current REST helper composes route values, query-string values, and JSON bodies into one JSON
@@ -246,6 +286,8 @@ Recommended future rule:
 - for `POST`, `PUT`, and `PATCH`, route and explicit query/header bindings should be resolved first,
   with remaining complex fields coming from body
 - field-source conflicts should fail fast instead of silently merging one source over another
+- shorthand REST publication should require an explicit HTTP method selection and should not infer a
+  public verb only from behavior-id naming conventions
 
 ## OpenAPI version direction
 
@@ -296,23 +338,28 @@ It also gives Cephalon a better portability story:
 
 ## Recommended migration path
 
-Cephalon should implement this in four steps.
+Cephalon should implement this in five steps.
 
 ### Step 1: normalize the public REST projection contract
 
 Add a normalized descriptor model and make the current module DSL compile into it internally.
 
-### Step 2: add build-time diagnostics and source-generated profile support
+### Step 2: add resolved REST endpoint catalog and collision validation
+
+Add a runtime catalog and fail-fast duplicate-route validation over the normalized projection model
+so future shorthand or generated projections cannot create silent public-route ambiguity.
+
+### Step 3: add build-time diagnostics and source-generated profile support
 
 If behavior-authored HTTP profiles are added, validate them at build time and emit normalized
 descriptor data alongside existing behavior registration hints.
 
-### Step 3: add generated or convention-backed module projections
+### Step 4: add generated or convention-backed module projections
 
 Allow low-code projects to opt into convention REST mapping without abandoning module-owned public
 boundaries.
 
-### Step 4: add explicit input-binding descriptors and controlled configuration overrides
+### Step 5: add explicit input-binding descriptors and controlled configuration overrides
 
 Finish the model by making binding plans explicit and letting descriptor-backed routes opt into
 configuration override behavior where that flexibility is worth the complexity.
@@ -328,6 +375,9 @@ The following points are durable enough to keep outside thread-local context.
   for the same behavior by default
 - low-code REST authoring should stay opt-in and should prefer source-generated descriptor material
   over broad runtime reflection
+- `[AppBehavior]` plus auto-registration alone must still not publish a public REST boundary
+- before broad shorthand or convention REST publication is enabled, Cephalon should add a normalized
+  runtime catalog plus fail-fast route-collision validation for resolved public REST projections
 - future agentic, AI, or multi-platform expansion should not outrun core engine contract quality,
   performance, security, and maintainability
 
@@ -336,7 +386,8 @@ The following points are durable enough to keep outside thread-local context.
 Recommended implementation sequence after this design slice:
 
 1. introduce the normalized REST projection descriptor contract and refactor the current DSL to use it
-2. add diagnostics and source-generator support for future HTTP profile metadata
-3. add explicit input-binding descriptors and conflict validation
-4. add a generated or convention-backed low-code module path
-5. only then evaluate whether richer configuration-driven public-boundary overrides are worth the added complexity
+2. add a resolved REST endpoint runtime catalog plus fail-fast route-collision validation
+3. add diagnostics and source-generator support for future HTTP profile metadata
+4. add explicit input-binding descriptors and conflict validation
+5. add a generated or convention-backed low-code module path
+6. only then evaluate whether richer configuration-driven public-boundary overrides are worth the added complexity
