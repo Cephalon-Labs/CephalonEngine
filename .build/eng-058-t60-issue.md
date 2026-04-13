@@ -1,23 +1,25 @@
 ## Summary
-Keep the showcase hosting verification aligned with Cephalon's settled module-owned REST contract by making the orders REST tests version-aware, separating module-owned REST assertions from the generic behavior transport matrix, and keeping the showcase test harness bound to the real sample project content root.
+Harden ASP.NET Core hosting determinism around Cephalon's versioned public route surface by making operator endpoint service binding explicit, isolating hosting tests from transitive sample configuration, and keeping showcase route assertions aligned with module-owned REST versioning.
 
 ## Why
-`ENG-058-T53`, `ENG-058-T58`, and `ENG-058-T59` tightened the public REST and versioning story: module major versions now matter, module-owned REST is the public REST/OpenAPI/Scalar surface, and the generic behavior transport adapters stay non-REST. The showcase hosting tests were still hardcoding `/api/v1/showcase/orders` even though `OrdersModule` is now `2.0.0`, and the transport-projection coverage was still expecting `http.rest` to appear inside the generic behavior transport matrix instead of validating public REST through the separate `restOperations` catalog.
+The current hosting slice exposed three coupled problems. First, generic ASP.NET Core hosting tests were accidentally inheriting split `Configurations/**` content from transitive sample references, which changed selected transports and module discovery in scenarios that were meant to stay isolated. Second, the showcase hosting harness was relying on copied test-output configuration instead of the real sample content root. Third, the showcase orders tests were still hardcoding `/api/v1/showcase/orders` even though `OrdersModule` now declares version `2.0.0`, while the transport projection test still treated module-owned REST as a generic behavior transport instead of a separate public REST surface.
 
 ## Scope
-- point the showcase hosting harness at the real `samples/Cephalon.Sample.Showcase` content root under test-server runs
-- let version-sensitive showcase REST assertions derive their route prefix from `OrdersModule.Descriptor.Version` instead of hardcoding `v1`
-- update the transport-projection coverage so `behaviors[].transportIds` remains the non-REST adapter matrix while `restOperations` is the module-owned public REST answer
-- keep the existing dirty showcase module work intact without reverting unrelated changes
-- refresh project memory plus roadmap/backlog tracking so the test-contract follow-through is explicit
+- make `/engine/*` Minimal API service bindings explicit where .NET 10 parameter inference should not guess between DI and request payload binding
+- keep generic hosting tests isolated from transitive sample `Configurations/**` output
+- let the showcase host builder accept an explicit content root so sample-host tests load the real project configuration graph
+- make showcase orders REST assertions derive their route prefix from `OrdersModule` metadata instead of hardcoding `v1`
+- align showcase transport projection expectations with the settled contract that module-owned REST is reported separately from generic behavior transport ids
+- update project memory, backlog, roadmap, and project tracking so the determinism and version-aware test contract stay explicit
 
 ## Acceptance Criteria
-- the showcase orders REST tests continue to pass when the orders module major version changes, without hand-editing every route literal
-- the showcase transport projection no longer treats module-owned REST as a generic behavior transport id
-- the showcase test harness loads split configuration from the real sample project content root instead of relying on transitive test-output copies
-- showcase hosting coverage stays green with the current `OrdersModule` `2.0.0` contract
+- targeted ASP.NET Core hosting tests no longer fail because transitive sample configuration silently selected extra transports or discovery assemblies
+- the showcase hosting harness resolves split configuration from the real `samples/Cephalon.Sample.Showcase` content root instead of copied output files
+- showcase orders tests continue to target the correct public REST version when the module major version changes
+- showcase transport projection coverage no longer expects `http.rest` inside the generic behavior transport list for module-owned REST endpoints
 
 ## Verification
+- `dotnet test tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj --filter "FullyQualifiedName~Cephalon.Tests.Hosting.AspNetCoreHostingTests" -v minimal --no-restore`
 - `dotnet test tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj --filter "FullyQualifiedName~Cephalon.Tests.Hosting.ShowcaseSampleHostingTests" -v minimal --no-restore`
 
 ## Relationship
