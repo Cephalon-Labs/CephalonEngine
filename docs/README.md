@@ -24,6 +24,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [Linux systemd deployment](linux-systemd-deployment.md)
 - [Architecture](architecture.md)
 - [Architecture review (April 2026)](architecture-review-2026-04.md)
+- [REST endpoint authoring strategy](architecture/rest-endpoint-authoring-strategy.md)
 - [Database topology](database-topology.md)
 - [Component catalog](components/README.md)
 - [Compatibility](compatibility.md)
@@ -55,6 +56,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 
 - [Architecture review (April 2026)](architecture-review-2026-04.md)
 - [Architecture patterns research](architecture-patterns-research.md)
+- [REST endpoint authoring strategy](architecture/rest-endpoint-authoring-strategy.md)
 - [Design patterns reference](architecture/design-patterns-reference.md)
 - [.NET ecosystem reference](dotnet-ecosystem-reference.md)
 

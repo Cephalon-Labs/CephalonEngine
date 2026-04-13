@@ -2,7 +2,7 @@
 
 Review date: `April 13, 2026`
 
-Cross-references: `docs/architecture.md`, `docs/architecture-inventory.md`, `docs/architecture-recommendations.md`, `docs/database-topology.md`, `docs/learning-roadmap.md`, `docs/project-memory.md`
+Cross-references: `docs/architecture.md`, `docs/architecture-inventory.md`, `docs/architecture-recommendations.md`, `docs/architecture/rest-endpoint-authoring-strategy.md`, `docs/database-topology.md`, `docs/learning-roadmap.md`, `docs/project-memory.md`
 
 ## Purpose
 
@@ -117,6 +117,13 @@ Cephalon supports many choices. That is powerful, but it can also weaken the lea
 
 The more optionality the engine adds, the more important it becomes to preserve a very clear "recommended first path" for adopters.
 
+### 6. REST authoring needs one normalized projection layer before more shorthand is added
+
+The current module-owned REST DSL is the right direction, but it is still the only strong public
+REST authoring path. If Cephalon adds lower-ceremony behavior-first shorthand without a normalized
+projection contract, it risks reintroducing duplicate routes, weaker ownership semantics, and
+host-specific leakage into behavior abstractions.
+
 ## Main gaps
 
 ### 1. A stronger conformance matrix is still needed
@@ -154,6 +161,12 @@ The repository had substantial planning content, but a durable rule set for keep
 
 `docs/planning-governance.md` now improves that, but the long-term value will come from applying it consistently.
 
+### 6. Public REST still lacks a normalized projection contract beneath the current DSL
+
+The current explicit DSL is good, but Cephalon still needs one normalized public REST projection
+layer if it wants to support configuration-backed route evolution, lower-ceremony authoring, or
+generated module surfaces without letting public REST drift back into behavior topology.
+
 ## Architecture recommendations
 
 ### Next 30 days
@@ -162,6 +175,7 @@ The repository had substantial planning content, but a durable rule set for keep
 - keep the showcase proving the database-topology and operator story, but promote only the reusable parts into engine contracts
 - keep docs, roadmap, backlog, and GitHub Project history synchronized for meaningful work
 - strengthen the "recommended first path" across ASP.NET Core, Entity Framework, Wolverine, and the showcase sample
+- define the normalized REST endpoint projection model before adding any new behavior-only REST shorthand
 
 ### Next 60 days
 

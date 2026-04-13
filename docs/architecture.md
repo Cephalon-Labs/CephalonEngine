@@ -13,6 +13,7 @@ Database topology: `docs/database-topology.md`
 ## Related research references
 
 - [Architecture patterns research](architecture-patterns-research.md)
+- [REST endpoint authoring strategy](architecture/rest-endpoint-authoring-strategy.md)
 - [Design patterns reference](architecture/design-patterns-reference.md)
 - [.NET ecosystem reference](dotnet-ecosystem-reference.md)
 - [Database topology](database-topology.md)
