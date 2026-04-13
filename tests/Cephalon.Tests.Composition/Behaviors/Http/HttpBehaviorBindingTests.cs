@@ -264,7 +264,8 @@ public sealed class HttpBehaviorBindingTests
                 ["ApiRoutes:Prefixes:GraphQLWs"] = "/graphql-socket",
                 ["ApiRoutes:Prefixes:Sse"] = "/stream",
                 ["ApiRoutes:Prefixes:Ws"] = "/socket",
-                ["OpenApi:DefaultVersion"] = "2"
+                ["OpenApi:DefaultVersion"] = "2",
+                ["OpenApi:EnabledVersions:0"] = "3"
             })
             .Build();
 
@@ -284,6 +285,21 @@ public sealed class HttpBehaviorBindingTests
         Assert.Equal(HttpStatusCode.OK, graphQlResponse.StatusCode);
         await graphQlApp.StopAsync();
 
+        var graphQlSseDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.graphql-sse"]);
+        var (graphQlSseApp, graphQlSseClient) = await BuildAppAsync(graphQlSseDescriptor, new GraphqlSseBehaviorBinding(configuration));
+        var graphQlSseResponse = await graphQlSseClient.PostAsJsonAsync(
+            "/graphql-stream/v2/object/echo",
+            new { query = "{ echo }", variables = new { value = "hello" } });
+        Assert.Equal(HttpStatusCode.OK, graphQlSseResponse.StatusCode);
+        Assert.Equal("text/event-stream", graphQlSseResponse.Content.Headers.ContentType?.MediaType);
+        await graphQlSseApp.StopAsync();
+
+        var graphQlWsDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.graphql-ws"]);
+        var (graphQlWsApp, graphQlWsClient) = await BuildAppAsync(graphQlWsDescriptor, new GraphqlWsBehaviorBinding(configuration));
+        var graphQlWsResponse = await graphQlWsClient.GetAsync("/graphql-socket/v2/object/echo");
+        Assert.Equal(HttpStatusCode.BadRequest, graphQlWsResponse.StatusCode);
+        await graphQlWsApp.StopAsync();
+
         var sseDescriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.sse"]);
         var (sseApp, sseClient) = await BuildAppAsync(sseDescriptor, new SseBehaviorBinding(configuration));
         using var sseRequest = new HttpRequestMessage(HttpMethod.Get, "/stream/v2/object/echo");
@@ -296,6 +312,35 @@ public sealed class HttpBehaviorBindingTests
         var wsResponse = await wsClient.GetAsync("/socket/v2/object/echo");
         Assert.Equal(HttpStatusCode.BadRequest, wsResponse.StatusCode);
         await wsApp.StopAsync();
+    }
+
+    [Fact]
+    public async Task CanonicalBehaviorTransportRoutesPreferExplicitDefaultBehaviorDocumentName()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ApiRoutes:Prefixes:JsonRpc"] = "/invoke",
+                ["ApiRoutes:DefaultBehaviorDocumentName"] = "preview",
+                ["OpenApi:DefaultVersion"] = "2",
+                ["OpenApi:EnabledVersions:0"] = "3"
+            })
+            .Build();
+
+        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.jsonrpc"]);
+        var (app, client) = await BuildAppAsync(descriptor, new JsonRpcHttpBehaviorBinding(configuration));
+
+        var preferredResponse = await client.PostAsJsonAsync(
+            "/invoke/preview/object/echo",
+            new { jsonrpc = "2.0", method = "handle", @params = "hello", id = 12 });
+        Assert.Equal(HttpStatusCode.OK, preferredResponse.StatusCode);
+
+        var fallbackResponse = await client.PostAsJsonAsync(
+            "/invoke/v2/object/echo",
+            new { jsonrpc = "2.0", method = "handle", @params = "hello", id = 13 });
+        Assert.Equal(HttpStatusCode.NotFound, fallbackResponse.StatusCode);
+
+        await app.StopAsync();
     }
 
     [Fact]

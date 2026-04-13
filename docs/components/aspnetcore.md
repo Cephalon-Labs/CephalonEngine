@@ -74,18 +74,21 @@ When a host needs to trim or expand the default response set published for behav
 The same host layer also owns the prefix policy for the generic behavior HTTP bindings. Route-shaped
 generic behavior transports now project canonical versioned paths through `ApiRoutes:Prefixes:Rest`,
 `ApiRoutes:Prefixes:GraphQL`, `ApiRoutes:Prefixes:JsonRpc`, `ApiRoutes:Prefixes:Sse`,
-`ApiRoutes:Prefixes:Ws`, `ApiRoutes:Prefixes:GraphQLWs`, `ApiRoutes:Prefixes:GraphQLSse`,
-and `ApiRoutes:DefaultBehaviorDocumentName`. Older flat or behavior-specific prefix aliases are no
-longer part of the public config contract. That lets a host keep
-generic behavior REST on `/api/v1/...`, GraphQL on `/graphql/v1/...`, JSON-RPC on `/json-rpc/v1/...`,
-GraphQL-over-SSE on `/graphql-sse/v1/...`, GraphQL-over-WebSocket on `/graphql-ws/v1/...`, SSE on
-`/sse/v1/...`, and WebSocket on `/ws/v1/...`. The older `/behaviors/{id}` aliases are gone, so the
-built-in host transport mappers follow the same canonical prefix set,
-so GraphQL, JSON-RPC, gRPC, SSE, and WebSocket transports can all move together under the `ApiRoutes`
-section instead of each surface inventing its own default root path. When generic behavior HTTP
-routes and module-owned REST helpers both exist in one host, the generic routes keep running as
-transport-adapter endpoints while the module-owned REST groups own the published REST OpenAPI tag,
-summary, and description surface.
+`ApiRoutes:Prefixes:Ws`, `ApiRoutes:Prefixes:GraphQLWs`, `ApiRoutes:Prefixes:GraphQLSse`, and
+`ApiRoutes:DefaultBehaviorDocumentName`. When that explicit behavior-route override is not set,
+Cephalon falls back to the raw configured `OpenApi:DefaultVersion` for the generic adapter route
+segment. `OpenApi:EnabledVersions` and legacy `OpenApi:Documents` still govern only which
+OpenAPI + Scalar documents get published; they do not suppress the generic behavior transport route
+segment. Older flat or behavior-specific prefix aliases are no longer part of the public config
+contract. That lets a host keep generic behavior REST on `/api/v1/...`, GraphQL on
+`/graphql/v1/...`, JSON-RPC on `/json-rpc/v1/...`, GraphQL-over-SSE on `/graphql-sse/v1/...`,
+GraphQL-over-WebSocket on `/graphql-ws/v1/...`, SSE on `/sse/v1/...`, and WebSocket on
+`/ws/v1/...`. The older `/behaviors/{id}` aliases are gone, so the built-in host transport mappers
+follow the same canonical prefix set, so GraphQL, JSON-RPC, gRPC, SSE, and WebSocket transports can
+all move together under the `ApiRoutes` section instead of each surface inventing its own default
+root path. When generic behavior HTTP routes and module-owned REST helpers both exist in one host,
+the generic routes keep running as transport-adapter endpoints while the module-owned REST groups own
+the published REST OpenAPI tag, summary, and description surface.
 
 The built-in GraphQL host adapter now follows that same prefix contract while keeping protocol
 surfaces explicit. By default `/graphql` handles GraphQL over HTTP, `/graphql/schema` serves the

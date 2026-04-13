@@ -24,6 +24,19 @@ internal static class OpenApiDocumentNames
         return ResolveDefault(configuration, Resolve(configuration));
     }
 
+    public static string ResolveBehaviorRouteDefault(IConfiguration configuration)
+    {
+        ArgumentNullException.ThrowIfNull(configuration);
+
+        var configuredDefaultVersion = TryResolveConfiguredDefaultVersion(configuration);
+        if (!string.IsNullOrWhiteSpace(configuredDefaultVersion))
+        {
+            return configuredDefaultVersion;
+        }
+
+        return ResolveDefault(configuration);
+    }
+
     private static string ResolveDefault(IConfiguration configuration, IReadOnlyList<string>? configuredNames)
     {
         ArgumentNullException.ThrowIfNull(configuration);

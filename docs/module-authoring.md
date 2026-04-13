@@ -218,7 +218,9 @@ WebSocket behavior bindings, so they can all project canonical versioned routes 
 `/graphql-ws/v1/cart/get`, `/sse/v1/cart/get`, and `/ws/v1/cart/get`. Hosts can move those
 canonical prefixes with `ApiRoutes:Prefixes:GraphQL`, `ApiRoutes:Prefixes:JsonRpc`,
 `ApiRoutes:Prefixes:Sse`, `ApiRoutes:Prefixes:Ws`, `ApiRoutes:Prefixes:GraphQLWs`, and
-`ApiRoutes:Prefixes:GraphQLSse`.
+`ApiRoutes:Prefixes:GraphQLSse`. The generic adapter route segment itself comes from
+`ApiRoutes:DefaultBehaviorDocumentName` or, when that override is unset, the raw configured
+`OpenApi:DefaultVersion`.
 
 The owning module then keeps both ownership and public REST mapping together:
 
@@ -268,6 +270,8 @@ Current helper behavior:
   shared `/engine/rest-endpoints` runtime catalog plus duplicate-route validation baseline
 
 When a host needs more than the default `v1` document, prefer `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion`. Behaviors and modules still declare candidate document versions through `.ApiVersion(...)` or module-major defaults, but the host treats `EnabledVersions` as the allow-list for what actually gets published. For example, if modules carry `v1`, `v2`, and `v3` endpoint metadata while the host enables only `[2, 3]`, Cephalon registers only `/openapi/v2.json` plus `/openapi/v3.json`, redirects `/scalar` to the resolved default enabled document such as `/scalar/v3`, and injects only those enabled documents into Scalar's version selector. `/scalar/` still remains available for multi-document selection, and Cephalon normalizes hash-based Scalar selections such as `/scalar/#v2/` back into pinned versioned links. Hosts can also move the docs and REST entry points with `OpenApi:RoutePattern`, `OpenApi:Scalar:RoutePrefix`, and the canonical `ApiRoutes:Prefixes:*` settings. Legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` settings remain available when a host deliberately wants custom named documents instead of `v{major}` API-version documents, and those settings follow the same published-document allow-list semantics.
+
+That published-document allow-list is separate from the generic behavior adapter route segment. JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket routes keep using `ApiRoutes:DefaultBehaviorDocumentName` or the raw configured `OpenApi:DefaultVersion`, because those adapter endpoints are not part of the published REST OpenAPI surface. If a host wants those generic adapter routes pinned to a different segment than the docs default, set `ApiRoutes:DefaultBehaviorDocumentName` explicitly.
 
 This helper surface is REST-specific. The generic route-shaped behavior transports already share the
 `BehaviorApiSurfaceDescriptor` contract for JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, SSE, and

@@ -121,7 +121,7 @@ public sealed class ApiRoutesOptions
             return value.Trim();
         }
 
-        return OpenApiDocumentNames.ResolveDefault(configuration);
+        return OpenApiDocumentNames.ResolveBehaviorRouteDefault(configuration);
     }
 
     private static string NormalizePrefix(string? value, string defaultValue, bool allowRoot = false)

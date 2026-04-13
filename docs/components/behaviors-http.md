@@ -61,7 +61,10 @@ versioned routes such as `/json-rpc/v1/cart/get`, `/graphql/v1/cart/get`,
 The host controls those canonical prefixes through `ApiRoutes:Prefixes:GraphQL`,
 `ApiRoutes:Prefixes:JsonRpc`, `ApiRoutes:Prefixes:Sse`, `ApiRoutes:Prefixes:Ws`,
 `ApiRoutes:Prefixes:GraphQLWs`, and `ApiRoutes:Prefixes:GraphQLSse`, while the resolved default
-version/document segment comes from `OpenApi:DefaultVersion` or `ApiRoutes:DefaultBehaviorDocumentName`.
+version/document segment comes from `ApiRoutes:DefaultBehaviorDocumentName` or, when that override
+is unset, the raw configured `OpenApi:DefaultVersion`. `OpenApi:EnabledVersions` and legacy
+`OpenApi:Documents` still govern only which OpenAPI + Scalar documents get published; they do not
+trim the generic behavior transport route segment.
 The older `/behaviors/{id}` aliases are no longer part of the generated behavior HTTP surface.
 
 Public REST uses the separate `ApiRoutes:Prefixes:Rest` setting through the ASP.NET Core host
