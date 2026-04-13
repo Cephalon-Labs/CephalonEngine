@@ -79,6 +79,7 @@ internal sealed class DatabaseRoleCatalogSnapshot(
         AppProfile appProfile,
         IReadOnlyList<DatabaseRoleRuntimeDescriptor> runtimeDescriptors)
     {
+        var physicalTargetsByRole = DatabasePhysicalTargetGrouping.BuildRoleMap(appProfile);
         var configuredRoles = KnownRoleIds
             .Where(roleId => GetTarget(appProfile.Databases, roleId).HasValues)
             .Select(roleId => (RoleId: roleId, Resolution: DatabaseTopologyRoleResolver.Resolve(appProfile.Databases, roleId)))
@@ -95,7 +96,13 @@ internal sealed class DatabaseRoleCatalogSnapshot(
             .Select(role =>
             {
                 var roleRuntime = ResolveRuntimeDescriptors(role.RoleId, role.Resolution, runtimeByRole);
-                return CreateDescriptor(appProfile, role.RoleId, role.Resolution, configuredRoles, roleRuntime);
+                return CreateDescriptor(
+                    appProfile,
+                    role.RoleId,
+                    role.Resolution,
+                    configuredRoles,
+                    roleRuntime,
+                    physicalTargetsByRole.GetValueOrDefault(role.RoleId));
             })
             .ToArray();
     }
@@ -105,7 +112,8 @@ internal sealed class DatabaseRoleCatalogSnapshot(
         string roleId,
         DatabaseTopologyRoleResolution resolution,
         IReadOnlyList<(string RoleId, DatabaseTopologyRoleResolution Resolution)> configuredRoles,
-        IReadOnlyList<DatabaseRoleRuntimeDescriptor> runtimeDescriptors)
+        IReadOnlyList<DatabaseRoleRuntimeDescriptor> runtimeDescriptors,
+        DatabasePhysicalTargetGrouping.PhysicalTargetInfo? physicalTarget)
     {
         var runtime = MergeRuntime(appProfile.Databases.Runtime, resolution.EffectiveTarget.Runtime);
         var consumers = GetConsumers(appProfile, roleId);
@@ -154,6 +162,9 @@ internal sealed class DatabaseRoleCatalogSnapshot(
             consumers: consumers,
             referencedByRoles: referencedByRoles,
             coLocatedRoles: coLocatedRoles,
+            physicalTargetId: physicalTarget?.PhysicalTargetId,
+            physicalTargetDisplayName: physicalTarget?.PhysicalTargetDisplayName,
+            physicalCoLocatedRoles: physicalTarget?.PhysicalCoLocatedRoles,
             metadata: metadata,
             healthState: ResolveHealthState(runtimeDescriptors),
             healthDescription: ResolveDescription(

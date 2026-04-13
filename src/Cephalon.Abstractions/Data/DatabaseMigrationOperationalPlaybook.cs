@@ -20,6 +20,7 @@ public sealed class DatabaseMigrationOperationalPlaybook
         ProductionReadyTargetCount = Steps.Count(static step => step.HasProductionRecommendedCommand);
         ManualPathTargetCount = Steps.Count(static step => step.ManualCommand is not null);
         ApplyOnStartupTargetCount = Steps.Count(static step => step.ApplyOnStartup);
+        CoordinationRequiredTargetCount = Steps.Count(static step => step.RequiresPhysicalTargetCoordination);
     }
 
     /// <summary>
@@ -46,6 +47,11 @@ public sealed class DatabaseMigrationOperationalPlaybook
     /// Gets the number of targets that are configured for startup execution.
     /// </summary>
     public int ApplyOnStartupTargetCount { get; }
+
+    /// <summary>
+    /// Gets the number of targets that share one physical database target with another migration target.
+    /// </summary>
+    public int CoordinationRequiredTargetCount { get; }
 
     /// <summary>
     /// Gets the ordered operator steps derived from the current migration catalog.

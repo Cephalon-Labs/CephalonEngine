@@ -256,12 +256,15 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("role-reference", outbox.ResolutionMode);
         Assert.True(outbox.UsesRoleReference);
         Assert.Equal("write", outbox.UseRole);
+        Assert.NotNull(outbox.PhysicalTargetId);
+        Assert.Equal(write.PhysicalTargetId, outbox.PhysicalTargetId);
         Assert.Equal("InMemory", outbox.Provider);
         Assert.Equal("inline", outbox.ConnectionMode);
         Assert.Null(outbox.ConnectionStringName);
         Assert.Equal("outbox01", outbox.Schema);
         Assert.Contains("outbox", outbox.Consumers);
         Assert.Contains("write", outbox.CoLocatedRoles);
+        Assert.Contains("write", outbox.PhysicalCoLocatedRoles);
         Assert.Equal("true", outbox.Metadata["inheritsResolvedRoleRuntime"]);
 
         Assert.NotNull(readRole);
@@ -269,6 +272,8 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("read", readRole.ResolvedRoleId);
         Assert.Equal("direct", readRole.ResolutionMode);
         Assert.False(readRole.UsesRoleReference);
+        Assert.NotNull(readRole.PhysicalTargetId);
+        Assert.NotEqual(write.PhysicalTargetId, readRole.PhysicalTargetId);
         Assert.Equal("InMemory", readRole.Provider);
         Assert.Equal("inline", readRole.ConnectionMode);
         Assert.Null(readRole.ConnectionStringName);
@@ -279,6 +284,8 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("history", history.ResolvedRoleId);
         Assert.Equal("direct", history.ResolutionMode);
         Assert.False(history.UsesRoleReference);
+        Assert.NotNull(history.PhysicalTargetId);
+        Assert.NotEqual(write.PhysicalTargetId, history.PhysicalTargetId);
         Assert.Equal("InMemory", history.Provider);
         Assert.Equal("inline", history.ConnectionMode);
         Assert.Null(history.ConnectionStringName);
@@ -387,10 +394,12 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(3, migrationPlaybook.ProductionReadyTargetCount);
         Assert.Equal(3, migrationPlaybook.ManualPathTargetCount);
         Assert.Equal(3, migrationPlaybook.ApplyOnStartupTargetCount);
+        Assert.Equal(0, migrationPlaybook.CoordinationRequiredTargetCount);
         Assert.Equal(3, migrationPlaybook.Steps.Count);
         Assert.Equal("write", migrationPlaybook.Steps[0].DatabaseMigrationId);
         Assert.Equal("read", migrationPlaybook.Steps[1].DatabaseMigrationId);
         Assert.Equal("history", migrationPlaybook.Steps[2].DatabaseMigrationId);
+        Assert.All(migrationPlaybook.Steps, static step => Assert.False(step.RequiresPhysicalTargetCoordination));
         Assert.True(migrationPlaybook.Steps[2].HasProductionRecommendedCommand);
         Assert.NotNull(migrationPlaybook.Steps[2].ProductionCommand);
         Assert.Equal("bundle", migrationPlaybook.Steps[2].ProductionCommand!.Id);
@@ -405,6 +414,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(migrationPlaybook.ProductionReadyTargetCount, snapshot.DatabaseMigrationPlaybook.ProductionReadyTargetCount);
         Assert.Equal(migrationPlaybook.ManualPathTargetCount, snapshot.DatabaseMigrationPlaybook.ManualPathTargetCount);
         Assert.Equal(migrationPlaybook.ApplyOnStartupTargetCount, snapshot.DatabaseMigrationPlaybook.ApplyOnStartupTargetCount);
+        Assert.Equal(migrationPlaybook.CoordinationRequiredTargetCount, snapshot.DatabaseMigrationPlaybook.CoordinationRequiredTargetCount);
         Assert.Equal(migrationPlaybook.Steps.Count, snapshot.DatabaseMigrationPlaybook.Steps.Count);
         Assert.Equal("history", snapshot.DatabaseMigrationPlaybook.Steps[2].DatabaseMigrationId);
         Assert.Equal("bundle", snapshot.DatabaseMigrationPlaybook.Steps[2].ProductionCommand!.Id);
@@ -454,6 +464,84 @@ public sealed class ShowcaseSampleHostingTests
         Assert.All(snapshot.DatabaseMigrations, migration => Assert.Equal(HealthState.Healthy, migration.RoleHealthState));
         Assert.All(snapshot.DatabaseMigrations, migration => Assert.Equal("succeeded", migration.RoleMigrationState));
         Assert.All(snapshot.DatabaseMigrations, migration => Assert.True(migration.RoleObservedAtUtc.HasValue));
+    }
+
+    [Fact]
+    public async Task ShowcaseSampleExposesSharedPhysicalMigrationCoordinationWhenWriteAndReadShareOneTarget()
+    {
+        await using var app = BuildShowcaseForTests(configureBuilder: ShareReadRoleWithWriteAndDisableStartupApply);
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var roles = await client.GetFromJsonAsync<DatabaseRoleDescriptor[]>("/engine/database-roles");
+        var migrationPlaybook = await client.GetFromJsonAsync<DatabaseMigrationOperationalPlaybook>("/engine/database-migration-playbook");
+        var databaseTopology = await client.GetFromJsonAsync<DatabaseTopologyOperationalSnapshot>("/engine/database-topology");
+
+        Assert.NotNull(roles);
+        Assert.NotNull(migrationPlaybook);
+        Assert.NotNull(databaseTopology);
+
+        var write = Assert.Single(roles, role => role.Id == "write");
+        var read = Assert.Single(roles, role => role.Id == "read");
+        Assert.NotNull(write.PhysicalTargetId);
+        Assert.Equal(write.PhysicalTargetId, read.PhysicalTargetId);
+        Assert.NotNull(write.PhysicalTargetDisplayName);
+        Assert.Contains("inline connection", write.PhysicalTargetDisplayName!, StringComparison.Ordinal);
+        Assert.Contains("read", write.PhysicalCoLocatedRoles);
+        Assert.Contains("write", read.PhysicalCoLocatedRoles);
+
+        Assert.Equal(3, migrationPlaybook.TargetCount);
+        Assert.Equal(2, migrationPlaybook.CoordinationRequiredTargetCount);
+        var writeStep = Assert.Single(migrationPlaybook.Steps, static step => step.DatabaseMigrationId == "write");
+        var readStep = Assert.Single(migrationPlaybook.Steps, static step => step.DatabaseMigrationId == "read");
+        var historyStep = Assert.Single(migrationPlaybook.Steps, static step => step.DatabaseMigrationId == "history");
+        Assert.Equal(["read"], writeStep.CoordinatedMigrationIds);
+        Assert.True(writeStep.RequiresPhysicalTargetCoordination);
+        Assert.Contains("separate migrations projects", writeStep.CoordinationHint!, StringComparison.Ordinal);
+        Assert.Equal(["write"], readStep.CoordinatedMigrationIds);
+        Assert.True(readStep.RequiresPhysicalTargetCoordination);
+        Assert.False(historyStep.RequiresPhysicalTargetCoordination);
+
+        Assert.Equal("Attention", databaseTopology.Summary.Status);
+        Assert.Contains(databaseTopology.ActionPlan.Actions, action =>
+            action.Id == "coordinate-shared-database-migrations" &&
+            action.ActionPath == "/engine/database-migration-playbook" &&
+            action.SourceRoleIds.SequenceEqual(["outbox", "read", "write"]) &&
+            action.SourceMigrationIds.SequenceEqual(["read", "write"]));
+        Assert.Contains(databaseTopology.Advisories, advisory =>
+            advisory.Id == "shared-physical-target-migration-coordination" &&
+            advisory.ActionPath == "/engine/database-migration-playbook" &&
+            advisory.SourceMigrationIds.SequenceEqual(["read", "write"]));
+
+        var response = await client.GetAsync("/api/v1/showcase/system/database-topology");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var root = document.RootElement;
+        var playbookSummary = root.GetProperty("migrationPlaybook").GetProperty("summary");
+        Assert.Equal(2, playbookSummary.GetProperty("coordinationRequiredTargetCount").GetInt32());
+        Assert.Contains(
+            root.GetProperty("migrationPlaybook").GetProperty("steps").EnumerateArray().ToArray(),
+            step =>
+                string.Equals(step.GetProperty("targetId").GetString(), "write", StringComparison.Ordinal) &&
+                step.GetProperty("requiresPhysicalTargetCoordination").GetBoolean() &&
+                step.GetProperty("coordinatedMigrationIds").EnumerateArray().Any(item => string.Equals(item.GetString(), "read", StringComparison.Ordinal)));
+        Assert.Contains(
+            root.GetProperty("roles").EnumerateArray().ToArray(),
+            role =>
+                string.Equals(role.GetProperty("id").GetString(), "write", StringComparison.Ordinal) &&
+                role.GetProperty("physicalCoLocatedRoles").EnumerateArray().Any(item => string.Equals(item.GetString(), "read", StringComparison.Ordinal)));
+        Assert.Contains(
+            root.GetProperty("insights").EnumerateArray().ToArray(),
+            insight =>
+                string.Equals(insight.GetProperty("id").GetString(), "shared-physical-target-migration-coordination", StringComparison.Ordinal) &&
+                string.Equals(insight.GetProperty("actionPath").GetString(), "/engine/database-migration-playbook", StringComparison.Ordinal));
+
+        var brief = await client.GetStringAsync("/api/v1/showcase/system/database-topology/brief");
+        Assert.Contains("Shared-target coordination: 2 migration target(s)", brief, StringComparison.Ordinal);
+        Assert.Contains("Coordination:", brief, StringComparison.Ordinal);
+        Assert.Contains("separate migrations projects", brief, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -2429,6 +2517,19 @@ public sealed class ShowcaseSampleHostingTests
         {
             builder.Services.Remove(descriptor);
         }
+    }
+
+    private static void ShareReadRoleWithWriteAndDisableStartupApply(WebApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        var writeConnection = builder.Configuration["Engine:Databases:Write:ConnectionString"];
+        Assert.False(string.IsNullOrWhiteSpace(writeConnection));
+
+        builder.Configuration["Engine:Databases:Read:ConnectionStringName"] = string.Empty;
+        builder.Configuration["Engine:Databases:Read:ConnectionString"] = writeConnection;
+        builder.Configuration["Engine:Databases:Migrations:ApplyOnStartup"] = "false";
+        builder.Configuration["Engine:Databases:Migrations:ExitAfterApply"] = "false";
     }
 
     private static WebApplication BuildShowcaseForTests(

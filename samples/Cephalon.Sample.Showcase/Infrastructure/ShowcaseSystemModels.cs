@@ -181,6 +181,8 @@ internal sealed record ShowcaseDatabaseTopologyRoleRow(
     string ResolvedRoleId,
     string Provider,
     string ResolutionMode,
+    string? PhysicalTargetId,
+    string? PhysicalTargetDisplayName,
     string? ConnectionMode,
     string? Schema,
     string? HealthState,
@@ -193,6 +195,7 @@ internal sealed record ShowcaseDatabaseTopologyRoleRow(
     DateTimeOffset? ProbeFreshUntilUtc,
     int? ProbeAgeSeconds,
     IReadOnlyList<string> Consumers,
+    IReadOnlyList<string> PhysicalCoLocatedRoles,
     IReadOnlyDictionary<string, string> MetadataPreview,
     IReadOnlyDictionary<string, string> RuntimeMetadataPreview);
 
@@ -232,6 +235,7 @@ internal sealed record ShowcaseDatabaseTopologyMigrationPlaybookSummary(
     int ProductionReadyTargetCount,
     int LocalFallbackTargetCount,
     int ApplyOnStartupTargetCount,
+    int CoordinationRequiredTargetCount,
     DateTimeOffset GeneratedAtUtc);
 
 internal sealed record ShowcaseDatabaseTopologyMigrationPlaybookStepRow(
@@ -242,6 +246,11 @@ internal sealed record ShowcaseDatabaseTopologyMigrationPlaybookStepRow(
     string Status,
     string ExecutionMode,
     bool ApplyOnStartup,
+    string? PhysicalTargetId,
+    string? PhysicalTargetDisplayName,
+    bool RequiresPhysicalTargetCoordination,
+    IReadOnlyList<string> CoordinatedMigrationIds,
+    string? CoordinationHint,
     bool HasProductionRecommendedCommand,
     string? ProductionCommandId,
     string? ProductionCommandDisplayName,

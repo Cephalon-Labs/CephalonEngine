@@ -27,6 +27,9 @@ public sealed class DatabaseRoleDescriptor
     /// <param name="consumers">The logical engine features that explicitly target this role.</param>
     /// <param name="referencedByRoles">Other logical roles that explicitly reference this role through <c>UseRole</c>.</param>
     /// <param name="coLocatedRoles">Other logical roles that resolve to the same concrete role target.</param>
+    /// <param name="physicalTargetId">The stable physical-target identifier used to group logical roles that share one physical database target.</param>
+    /// <param name="physicalTargetDisplayName">The operator-facing description of the physical target that backs this role.</param>
+    /// <param name="physicalCoLocatedRoles">Other logical roles that share the same physical database target.</param>
     /// <param name="metadata">Optional operator-facing metadata associated with the database role.</param>
     /// <param name="healthState">The current runtime health state reported for the database role, when available.</param>
     /// <param name="healthDescription">The operator-facing health description reported for the database role, when available.</param>
@@ -52,6 +55,9 @@ public sealed class DatabaseRoleDescriptor
         IReadOnlyList<string>? consumers = null,
         IReadOnlyList<string>? referencedByRoles = null,
         IReadOnlyList<string>? coLocatedRoles = null,
+        string? physicalTargetId = null,
+        string? physicalTargetDisplayName = null,
+        IReadOnlyList<string>? physicalCoLocatedRoles = null,
         IReadOnlyDictionary<string, string>? metadata = null,
         HealthState? healthState = null,
         string? healthDescription = null,
@@ -112,6 +118,9 @@ public sealed class DatabaseRoleDescriptor
         Consumers = Normalize(consumers);
         ReferencedByRoles = Normalize(referencedByRoles);
         CoLocatedRoles = Normalize(coLocatedRoles);
+        PhysicalTargetId = string.IsNullOrWhiteSpace(physicalTargetId) ? null : physicalTargetId.Trim();
+        PhysicalTargetDisplayName = string.IsNullOrWhiteSpace(physicalTargetDisplayName) ? null : physicalTargetDisplayName.Trim();
+        PhysicalCoLocatedRoles = Normalize(physicalCoLocatedRoles);
         HealthState = healthState;
         HealthDescription = string.IsNullOrWhiteSpace(healthDescription) ? null : healthDescription.Trim();
         MigrationState = string.IsNullOrWhiteSpace(migrationState) ? null : migrationState.Trim();
@@ -205,6 +214,21 @@ public sealed class DatabaseRoleDescriptor
     /// Gets the logical roles that resolve to the same concrete role target.
     /// </summary>
     public IReadOnlyList<string> CoLocatedRoles { get; }
+
+    /// <summary>
+    /// Gets the stable physical-target identifier used to group logical roles that share one physical database target.
+    /// </summary>
+    public string? PhysicalTargetId { get; }
+
+    /// <summary>
+    /// Gets the operator-facing description of the physical target that backs this role.
+    /// </summary>
+    public string? PhysicalTargetDisplayName { get; }
+
+    /// <summary>
+    /// Gets the logical roles that share the same physical database target.
+    /// </summary>
+    public IReadOnlyList<string> PhysicalCoLocatedRoles { get; }
 
     /// <summary>
     /// Gets the current runtime health state reported for the database role, when available.

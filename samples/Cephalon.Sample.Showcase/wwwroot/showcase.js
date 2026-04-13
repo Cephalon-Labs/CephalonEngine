@@ -502,6 +502,7 @@ function renderDatabaseTopology() {
             </div>
             <div class="meta-row">
               <span class="token">${escapeHtml(role.resolutionMode)}</span>
+              ${role.physicalTargetDisplayName ? `<span class="token">${escapeHtml(role.physicalTargetDisplayName)}</span>` : ""}
               ${role.connectionMode ? `<span class="token">${escapeHtml(role.connectionMode)}</span>` : ""}
               ${role.schema ? `<span class="token">schema ${escapeHtml(role.schema)}</span>` : ""}
             </div>
@@ -519,6 +520,9 @@ function renderDatabaseTopology() {
           ${role.consumers.length
             ? `<div class="meta-row">${role.consumers.map((consumer) => `<span class="token">${escapeHtml(consumer)}</span>`).join("")}</div>`
             : `<div class="empty-inline">No consumers</div>`}
+          ${role.physicalCoLocatedRoles && role.physicalCoLocatedRoles.length
+            ? `<div class="caption">Shares physical target with ${escapeHtml(role.physicalCoLocatedRoles.join(", "))}</div>`
+            : ""}
         </td>
         <td>${renderMetadataSections([
           ["Declared", role.metadataPreview],
@@ -690,7 +694,8 @@ function renderDatabaseMigrationPlaybook(playbook) {
     statCard("Targets", summary.targetCount, "ordered sample runbook"),
     statCard("Production Ready", summary.productionReadyTargetCount, "targets with recommended runnable path"),
     statCard("Local Fallbacks", summary.localFallbackTargetCount, "manual/update path available"),
-    statCard("Startup Apply", summary.applyOnStartupTargetCount, "host-managed targets")
+    statCard("Startup Apply", summary.applyOnStartupTargetCount, "host-managed targets"),
+    statCard("Coordination", summary.coordinationRequiredTargetCount, "targets sharing a physical database")
   ].join("");
 
   document.getElementById("databaseMigrationPlaybookList").innerHTML = steps.length
@@ -700,6 +705,7 @@ function renderDatabaseMigrationPlaybook(playbook) {
           <div>
             <strong>Step ${escapeHtml(String(step.order))}: ${escapeHtml(step.targetId)}</strong>
             <div class="mono">${escapeHtml(step.requestedRoleId)} -> ${escapeHtml(step.resolvedRoleId)}</div>
+            ${step.physicalTargetDisplayName ? `<div class="caption">${escapeHtml(step.physicalTargetDisplayName)}</div>` : ""}
           </div>
           <div class="meta-row">
             <span class="status-badge ${tone(step.status)}">${escapeHtml(step.status)}</span>
@@ -707,8 +713,17 @@ function renderDatabaseMigrationPlaybook(playbook) {
               ${step.hasProductionRecommendedCommand ? "production path ready" : "local/manual only"}
             </span>
             <span class="token">${escapeHtml(step.executionMode)}</span>
+            ${step.requiresPhysicalTargetCoordination ? `<span class="token">shared target</span>` : ""}
           </div>
         </header>
+        ${step.requiresPhysicalTargetCoordination ? `
+          <div class="insight-card warning">
+            <strong>Coordination Required</strong>
+            <p>${escapeHtml(step.coordinationHint || "This migration target shares a physical database with another target.")}</p>
+            ${Array.isArray(step.coordinatedMigrationIds) && step.coordinatedMigrationIds.length
+              ? `<div class="meta-row">${step.coordinatedMigrationIds.map((migrationId) => `<span class="token">${escapeHtml(migrationId)}</span>`).join("")}</div>`
+              : ""}
+          </div>` : ""}
         <div class="playbook-path-grid">
           ${renderMigrationPlaybookPath(
             "Production Path",

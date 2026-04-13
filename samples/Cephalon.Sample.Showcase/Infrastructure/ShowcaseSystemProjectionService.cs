@@ -114,6 +114,8 @@ internal sealed class ShowcaseSystemProjectionService(
                 ResolvedRoleId: role.ResolvedRoleId,
                 Provider: role.Provider,
                 ResolutionMode: role.ResolutionMode,
+                PhysicalTargetId: role.PhysicalTargetId,
+                PhysicalTargetDisplayName: role.PhysicalTargetDisplayName,
                 ConnectionMode: role.ConnectionMode,
                 Schema: role.Schema,
                 HealthState: role.HealthState?.ToString(),
@@ -126,6 +128,7 @@ internal sealed class ShowcaseSystemProjectionService(
                 ProbeFreshUntilUtc: role.Probe?.FreshUntilUtc,
                 ProbeAgeSeconds: role.Probe?.AgeSeconds,
                 Consumers: role.Consumers,
+                PhysicalCoLocatedRoles: role.PhysicalCoLocatedRoles,
                 MetadataPreview: CreateMetadataPreview(
                     role.Metadata,
                     maxEntries: 6,
@@ -895,6 +898,11 @@ internal sealed class ShowcaseSystemProjectionService(
                     Status: step.Status.ToString(),
                     ExecutionMode: step.ExecutionMode,
                     ApplyOnStartup: step.ApplyOnStartup,
+                    PhysicalTargetId: step.PhysicalTargetId,
+                    PhysicalTargetDisplayName: step.PhysicalTargetDisplayName,
+                    RequiresPhysicalTargetCoordination: step.RequiresPhysicalTargetCoordination,
+                    CoordinatedMigrationIds: step.CoordinatedMigrationIds,
+                    CoordinationHint: step.CoordinationHint,
                     HasProductionRecommendedCommand: productionCommand is not null &&
                         !string.IsNullOrWhiteSpace(productionCommand.CommandTemplate),
                     ProductionCommandId: productionCommand?.Id,
@@ -919,6 +927,7 @@ internal sealed class ShowcaseSystemProjectionService(
                 ProductionReadyTargetCount: enginePlaybook.ProductionReadyTargetCount,
                 LocalFallbackTargetCount: enginePlaybook.ManualPathTargetCount,
                 ApplyOnStartupTargetCount: enginePlaybook.ApplyOnStartupTargetCount,
+                CoordinationRequiredTargetCount: enginePlaybook.CoordinationRequiredTargetCount,
                 GeneratedAtUtc: enginePlaybook.GeneratedAtUtc),
             Steps: steps);
     }
@@ -1284,6 +1293,7 @@ internal sealed class ShowcaseSystemProjectionService(
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Migrations: {summary.MigrationTargetCount} total, {summary.SucceededMigrationTargetCount} succeeded");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Read-model sync: {(readModelSync.Enabled ? (readModelSync.IsLagging ? "enabled, catching up" : "enabled and aligned") : "disabled")}");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Providers: write `{summary.WriteProvider}`, read `{summary.ReadProvider}`, history `{summary.HistoryProvider}`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Shared-target coordination: {playbook.Summary.CoordinationRequiredTargetCount} migration target(s) share a physical database with another target");
         builder.AppendLine();
         builder.AppendLine("## Recommended Next Actions");
         builder.AppendLine();
@@ -1315,6 +1325,19 @@ internal sealed class ShowcaseSystemProjectionService(
         {
             var pathStatus = step.HasProductionRecommendedCommand ? "production path ready" : "local/manual review";
             builder.AppendLine(CultureInfo.InvariantCulture, $"{step.Order}. `{step.TargetId}` - {step.Status} - {pathStatus}");
+            if (!string.IsNullOrWhiteSpace(step.PhysicalTargetDisplayName))
+            {
+                builder.AppendLine(CultureInfo.InvariantCulture, $"   - Physical target: {step.PhysicalTargetDisplayName}");
+            }
+
+            if (step.RequiresPhysicalTargetCoordination)
+            {
+                builder.AppendLine(CultureInfo.InvariantCulture, $"   - Shared with: {string.Join(", ", step.CoordinatedMigrationIds)}");
+                if (!string.IsNullOrWhiteSpace(step.CoordinationHint))
+                {
+                    builder.AppendLine(CultureInfo.InvariantCulture, $"   - Coordination: {step.CoordinationHint}");
+                }
+            }
         }
 
         builder.AppendLine();

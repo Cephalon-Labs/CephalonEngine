@@ -15,6 +15,10 @@ public sealed class DatabaseMigrationOperationalStep
     /// <param name="status">The current execution status for this step.</param>
     /// <param name="executionMode">The execution mode such as <c>startup-hosted-service</c> or <c>manual-or-deploy-time</c>.</param>
     /// <param name="applyOnStartup">Whether startup execution is enabled for this step.</param>
+    /// <param name="physicalTargetId">The stable physical-target identifier that backs this step when known.</param>
+    /// <param name="physicalTargetDisplayName">The operator-facing description of the physical target that backs this step when known.</param>
+    /// <param name="coordinatedMigrationIds">Other logical migration targets that share the same physical database target.</param>
+    /// <param name="coordinationHint">The operator-facing coordination guidance for shared physical targets, when available.</param>
     /// <param name="productionCommand">The primary production-recommended command selected for this step when available.</param>
     /// <param name="manualCommand">The primary direct or manual command selected for this step when available.</param>
     public DatabaseMigrationOperationalStep(
@@ -25,6 +29,10 @@ public sealed class DatabaseMigrationOperationalStep
         DatabaseMigrationStatus status,
         string executionMode,
         bool applyOnStartup,
+        string? physicalTargetId = null,
+        string? physicalTargetDisplayName = null,
+        IReadOnlyList<string>? coordinatedMigrationIds = null,
+        string? coordinationHint = null,
         DatabaseMigrationCommandDescriptor? productionCommand = null,
         DatabaseMigrationCommandDescriptor? manualCommand = null)
     {
@@ -63,6 +71,15 @@ public sealed class DatabaseMigrationOperationalStep
         Status = status;
         ExecutionMode = executionMode.Trim();
         ApplyOnStartup = applyOnStartup;
+        PhysicalTargetId = string.IsNullOrWhiteSpace(physicalTargetId) ? null : physicalTargetId.Trim();
+        PhysicalTargetDisplayName = string.IsNullOrWhiteSpace(physicalTargetDisplayName) ? null : physicalTargetDisplayName.Trim();
+        CoordinatedMigrationIds = coordinatedMigrationIds?
+            .Where(static migrationId => !string.IsNullOrWhiteSpace(migrationId))
+            .Select(static migrationId => migrationId.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static migrationId => migrationId, StringComparer.OrdinalIgnoreCase)
+            .ToArray() ?? [];
+        CoordinationHint = string.IsNullOrWhiteSpace(coordinationHint) ? null : coordinationHint.Trim();
         ProductionCommand = productionCommand;
         ManualCommand = manualCommand;
     }
@@ -101,6 +118,31 @@ public sealed class DatabaseMigrationOperationalStep
     /// Gets a value indicating whether startup execution is enabled for this step.
     /// </summary>
     public bool ApplyOnStartup { get; }
+
+    /// <summary>
+    /// Gets the stable physical-target identifier that backs this step when known.
+    /// </summary>
+    public string? PhysicalTargetId { get; }
+
+    /// <summary>
+    /// Gets the operator-facing description of the physical target that backs this step when known.
+    /// </summary>
+    public string? PhysicalTargetDisplayName { get; }
+
+    /// <summary>
+    /// Gets the other logical migration targets that share the same physical database target.
+    /// </summary>
+    public IReadOnlyList<string> CoordinatedMigrationIds { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether this step needs shared-physical-target coordination.
+    /// </summary>
+    public bool RequiresPhysicalTargetCoordination => CoordinatedMigrationIds.Count > 0;
+
+    /// <summary>
+    /// Gets the operator-facing coordination guidance for shared physical targets, when available.
+    /// </summary>
+    public string? CoordinationHint { get; }
 
     /// <summary>
     /// Gets a value indicating whether this step publishes a production-recommended command.

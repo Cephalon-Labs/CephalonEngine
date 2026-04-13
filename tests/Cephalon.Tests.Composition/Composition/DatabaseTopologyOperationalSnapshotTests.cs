@@ -68,6 +68,7 @@ public sealed class DatabaseTopologyOperationalSnapshotTests
         Assert.Equal(1, playbook.ProductionReadyTargetCount);
         Assert.Equal(0, playbook.ManualPathTargetCount);
         Assert.Equal(1, playbook.ApplyOnStartupTargetCount);
+        Assert.Equal(0, playbook.CoordinationRequiredTargetCount);
         var playbookStep = Assert.Single(playbook.Steps);
         Assert.Equal(1, playbookStep.Order);
         Assert.Equal("write", playbookStep.DatabaseMigrationId);
@@ -79,6 +80,9 @@ public sealed class DatabaseTopologyOperationalSnapshotTests
         Assert.True(playbookStep.HasProductionRecommendedCommand);
         Assert.NotNull(playbookStep.ProductionCommand);
         Assert.Equal("bundle", playbookStep.ProductionCommand!.Id);
+        Assert.False(playbookStep.RequiresPhysicalTargetCoordination);
+        Assert.Empty(playbookStep.CoordinatedMigrationIds);
+        Assert.NotNull(provider.GetRequiredService<IDatabaseRoleCatalog>().GetById("write"));
         Assert.Null(playbookStep.ManualCommand);
         Assert.Equal("Ready", snapshot.Summary.Status);
         Assert.Equal("Database topology is ready", snapshot.Summary.Headline);
@@ -110,6 +114,124 @@ public sealed class DatabaseTopologyOperationalSnapshotTests
             advisory.Id == "migration-production-guidance" &&
             advisory.Tone == "Success" &&
             advisory.ActionPath == "/engine/database-migrations");
+    }
+
+    [Fact]
+    public void DatabaseTopologyOperationalSnapshotFlagsSharedPhysicalMigrationTargetsForCoordination()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:SharedDb"] = "Host=localhost;Database=cephalon_shared",
+                ["Engine:Patterns:0"] = "Cqrs",
+                ["Engine:Databases:Write:Provider"] = "PostgreSql",
+                ["Engine:Databases:Write:ConnectionStringName"] = "SharedDb",
+                ["Engine:Databases:Read:Provider"] = "PostgreSql",
+                ["Engine:Databases:Read:ConnectionStringName"] = "SharedDb",
+                ["Engine:Databases:Migrations:ApplyOnStartup"] = "false",
+                ["Engine:Databases:Migrations:Targets:0"] = "write",
+                ["Engine:Databases:Migrations:Targets:1"] = "read"
+            })
+            .Build();
+        var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
+        services.AddSingleton<IDatabaseMigrationContributor>(new StaticDatabaseMigrationContributor(
+            new DatabaseMigrationDescriptor(
+                id: "write",
+                displayName: "Write database migration",
+                description: "Applies the write-store schema.",
+                requestedRoleId: "write",
+                resolvedRoleId: "write",
+                executionMode: "manual-or-deploy-time",
+                status: DatabaseMigrationStatus.Planned,
+                applyOnStartup: false,
+                exitAfterApply: false,
+                commands:
+                [
+                    new DatabaseMigrationCommandDescriptor(
+                        id: "bundle",
+                        displayName: "EF Core migration bundle",
+                        description: "Recommended production path.",
+                        commandTemplate: "dotnet ef migrations bundle --context WriteDbContext",
+                        recommendedForProduction: true),
+                    new DatabaseMigrationCommandDescriptor(
+                        id: "update",
+                        displayName: "EF Core direct update",
+                        description: "Manual fallback path.",
+                        commandTemplate: "dotnet ef database update --context WriteDbContext",
+                        recommendedForProduction: false)
+                ]),
+            new DatabaseMigrationDescriptor(
+                id: "read",
+                displayName: "Read database migration",
+                description: "Applies the read-store schema.",
+                requestedRoleId: "read",
+                resolvedRoleId: "read",
+                executionMode: "manual-or-deploy-time",
+                status: DatabaseMigrationStatus.Planned,
+                applyOnStartup: false,
+                exitAfterApply: false,
+                commands:
+                [
+                    new DatabaseMigrationCommandDescriptor(
+                        id: "bundle",
+                        displayName: "EF Core migration bundle",
+                        description: "Recommended production path.",
+                        commandTemplate: "dotnet ef migrations bundle --context ReadDbContext",
+                        recommendedForProduction: true),
+                    new DatabaseMigrationCommandDescriptor(
+                        id: "update",
+                        displayName: "EF Core direct update",
+                        description: "Manual fallback path.",
+                        commandTemplate: "dotnet ef database update --context ReadDbContext",
+                        recommendedForProduction: false)
+                ])));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(EngineSettings.FromConfiguration(configuration));
+            engine.AddModule(new PlatformTestModule());
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var roleCatalog = provider.GetRequiredService<IDatabaseRoleCatalog>();
+        var writeRole = roleCatalog.GetById("write");
+        var readRole = roleCatalog.GetById("read");
+        var playbook = provider.GetRequiredService<IDatabaseMigrationOperationalPlaybookProvider>().CreatePlaybook();
+        var snapshot = provider.GetRequiredService<IDatabaseTopologyOperationalSnapshotProvider>().CreateSnapshot();
+
+        Assert.NotNull(writeRole);
+        Assert.NotNull(readRole);
+        Assert.NotNull(writeRole!.PhysicalTargetId);
+        Assert.Equal(writeRole.PhysicalTargetId, readRole!.PhysicalTargetId);
+        Assert.NotNull(writeRole.PhysicalTargetDisplayName);
+        Assert.Contains("SharedDb", writeRole.PhysicalTargetDisplayName!, StringComparison.Ordinal);
+        Assert.Equal(["read"], writeRole.PhysicalCoLocatedRoles);
+        Assert.Equal(["write"], readRole.PhysicalCoLocatedRoles);
+
+        Assert.Equal(2, playbook.TargetCount);
+        Assert.Equal(2, playbook.CoordinationRequiredTargetCount);
+        Assert.All(playbook.Steps, static step => Assert.True(step.RequiresPhysicalTargetCoordination));
+        var writeStep = Assert.Single(playbook.Steps, static step => step.DatabaseMigrationId == "write");
+        var readStep = Assert.Single(playbook.Steps, static step => step.DatabaseMigrationId == "read");
+        Assert.Equal(["read"], writeStep.CoordinatedMigrationIds);
+        Assert.Equal(["write"], readStep.CoordinatedMigrationIds);
+        Assert.NotNull(writeStep.CoordinationHint);
+        Assert.Contains("separate migrations projects", writeStep.CoordinationHint!, StringComparison.Ordinal);
+        Assert.NotNull(writeStep.PhysicalTargetDisplayName);
+        Assert.Contains("SharedDb", writeStep.PhysicalTargetDisplayName!, StringComparison.Ordinal);
+
+        Assert.Equal("Attention", snapshot.Summary.Status);
+        Assert.Contains(snapshot.ActionPlan.Actions, action =>
+            action.Id == "coordinate-shared-database-migrations" &&
+            action.Category == "migration-guidance" &&
+            action.ActionPath == "/engine/database-migration-playbook" &&
+            action.SourceRoleIds.SequenceEqual(["read", "write"]) &&
+            action.SourceMigrationIds.SequenceEqual(["read", "write"]));
+        Assert.Contains(snapshot.Advisories, advisory =>
+            advisory.Id == "shared-physical-target-migration-coordination" &&
+            advisory.Tone == "Warning" &&
+            advisory.ActionPath == "/engine/database-migration-playbook" &&
+            advisory.SourceMigrationIds.SequenceEqual(["read", "write"]));
     }
 
     [Fact]
@@ -184,6 +306,7 @@ public sealed class DatabaseTopologyOperationalSnapshotTests
 
         Assert.NotNull(snapshot.DatabaseMigrationPlaybook);
         Assert.Equal(0, snapshot.DatabaseMigrationPlaybook.TargetCount);
+        Assert.Equal(0, snapshot.DatabaseMigrationPlaybook.CoordinationRequiredTargetCount);
         Assert.Empty(snapshot.DatabaseMigrationPlaybook.Steps);
         Assert.NotNull(snapshot.DatabaseTopology);
         Assert.Equal("Ready", snapshot.DatabaseTopology.Summary.Status);

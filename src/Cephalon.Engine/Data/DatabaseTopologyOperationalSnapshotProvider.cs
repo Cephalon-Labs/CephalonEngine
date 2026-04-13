@@ -10,6 +10,7 @@ internal sealed class DatabaseTopologyOperationalSnapshotProvider(
     private const string EngineDatabasesPath = "/engine/databases";
     private const string EngineDatabaseRolesPath = "/engine/database-roles";
     private const string EngineDatabaseMigrationsPath = "/engine/database-migrations";
+    private const string EngineDatabaseMigrationPlaybookPath = "/engine/database-migration-playbook";
     private const string EngineRuntimeSnapshotPath = "/engine/snapshot";
 
     public DatabaseTopologyOperationalSnapshot CreateSnapshot()
@@ -184,6 +185,7 @@ internal sealed class DatabaseTopologyOperationalSnapshotProvider(
         ArgumentNullException.ThrowIfNull(migrations);
 
         var advisories = new List<DatabaseTopologyOperationalAdvisory>();
+        var sharedMigrationGroups = BuildSharedMigrationGroups(roles, migrations);
 
         var rolesNeedingAttention = roles
             .Where(role => role.HealthState is HealthState.Degraded or HealthState.Unhealthy)
@@ -268,6 +270,30 @@ internal sealed class DatabaseTopologyOperationalSnapshotProvider(
             }
         }
 
+        var sharedGroupsNeedingCoordination = sharedMigrationGroups
+            .Where(static group => group.HasPendingOrFailedTargets)
+            .ToArray();
+        if (sharedGroupsNeedingCoordination.Length > 0)
+        {
+            advisories.Add(new DatabaseTopologyOperationalAdvisory(
+                id: "shared-physical-target-migration-coordination",
+                tone: "Warning",
+                title: "Shared physical database targets need coordination",
+                detail: BuildSharedMigrationCoordinationDetail(sharedGroupsNeedingCoordination),
+                actionLabel: "Open migration playbook",
+                actionPath: EngineDatabaseMigrationPlaybookPath,
+                sourceRoleIds: sharedGroupsNeedingCoordination
+                    .SelectMany(static group => group.RoleIds)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(static roleId => roleId, StringComparer.OrdinalIgnoreCase)
+                    .ToArray(),
+                sourceMigrationIds: sharedGroupsNeedingCoordination
+                    .SelectMany(static group => group.MigrationIds)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(static migrationId => migrationId, StringComparer.OrdinalIgnoreCase)
+                    .ToArray()));
+        }
+
         if (roles.Count > 0 &&
             advisories.All(static advisory =>
                 string.Equals(advisory.Tone, "Success", StringComparison.OrdinalIgnoreCase)))
@@ -295,6 +321,7 @@ internal sealed class DatabaseTopologyOperationalSnapshotProvider(
         ArgumentNullException.ThrowIfNull(migrations);
 
         var actions = new List<DatabaseTopologyOperationalAction>();
+        var sharedMigrationGroups = BuildSharedMigrationGroups(roles, migrations);
 
         if (roles.Count == 0)
         {
@@ -397,6 +424,32 @@ internal sealed class DatabaseTopologyOperationalSnapshotProvider(
 
         var hasMigrationStateAttention = failedMigrations.Length > 0 ||
             migrations.Any(static migration => migration.Status != DatabaseMigrationStatus.Succeeded);
+        var sharedGroupsNeedingCoordination = sharedMigrationGroups
+            .Where(static group => group.HasPendingOrFailedTargets)
+            .ToArray();
+        if (sharedGroupsNeedingCoordination.Length > 0)
+        {
+            actions.Add(new DatabaseTopologyOperationalAction(
+                id: "coordinate-shared-database-migrations",
+                category: "migration-guidance",
+                tone: "Warning",
+                title: "Coordinate shared-database migration targets",
+                detail: BuildSharedMigrationCoordinationDetail(sharedGroupsNeedingCoordination),
+                completionSignal: "Shared physical database targets are covered by one coordinated bundle/script path or a dedicated migrations-project plan.",
+                actionLabel: "Open migration playbook",
+                actionPath: EngineDatabaseMigrationPlaybookPath,
+                sourceRoleIds: sharedGroupsNeedingCoordination
+                    .SelectMany(static group => group.RoleIds)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(static roleId => roleId, StringComparer.OrdinalIgnoreCase)
+                    .ToArray(),
+                sourceMigrationIds: sharedGroupsNeedingCoordination
+                    .SelectMany(static group => group.MigrationIds)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(static migrationId => migrationId, StringComparer.OrdinalIgnoreCase)
+                    .ToArray()));
+        }
+
         if (!hasMigrationStateAttention && migrations.Count > 0)
         {
             var productionReadyTargets = migrations
@@ -437,4 +490,82 @@ internal sealed class DatabaseTopologyOperationalSnapshotProvider(
 
         return new DatabaseTopologyOperationalActionPlan(generatedAtUtc, actions);
     }
+
+    private static SharedMigrationGroup[] BuildSharedMigrationGroups(
+        IReadOnlyList<DatabaseRoleDescriptor> roles,
+        IReadOnlyList<DatabaseMigrationDescriptor> migrations)
+    {
+        var rolesById = roles
+            .Where(static role => !string.IsNullOrWhiteSpace(role.PhysicalTargetId))
+            .ToDictionary(static role => role.Id, StringComparer.OrdinalIgnoreCase);
+
+        return migrations
+            .Select(migration => new
+            {
+                Migration = migration,
+                Role = rolesById.GetValueOrDefault(migration.Id)
+            })
+            .Where(static entry => entry.Role?.PhysicalTargetId is not null)
+            .GroupBy(static entry => entry.Role!.PhysicalTargetId!, StringComparer.OrdinalIgnoreCase)
+            .Select(group =>
+            {
+                var migrationIds = group
+                    .Select(static entry => entry.Migration.Id)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(static migrationId => migrationId, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+                if (migrationIds.Length < 2)
+                {
+                    return null;
+                }
+
+                var roleIds = roles
+                    .Where(role => string.Equals(role.PhysicalTargetId, group.Key, StringComparison.OrdinalIgnoreCase))
+                    .Select(static role => role.Id)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(static roleId => roleId, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+                var displayName = group
+                    .Select(static entry => entry.Role!.PhysicalTargetDisplayName)
+                    .FirstOrDefault(static value => !string.IsNullOrWhiteSpace(value))
+                    ?? "physical database target";
+
+                return new SharedMigrationGroup(
+                    PhysicalTargetId: group.Key,
+                    PhysicalTargetDisplayName: displayName,
+                    RoleIds: roleIds,
+                    MigrationIds: migrationIds,
+                    HasPendingOrFailedTargets: group.Any(static entry => entry.Migration.Status != DatabaseMigrationStatus.Succeeded));
+            })
+            .Where(static group => group is not null)
+            .Select(static group => group!)
+            .ToArray();
+    }
+
+    private static string BuildSharedMigrationCoordinationDetail(
+        IReadOnlyList<SharedMigrationGroup> sharedMigrationGroups)
+    {
+        ArgumentNullException.ThrowIfNull(sharedMigrationGroups);
+
+        if (sharedMigrationGroups.Count == 1)
+        {
+            var group = sharedMigrationGroups[0];
+            return $"Migration target(s) {string.Join(", ", group.MigrationIds)} share {group.PhysicalTargetDisplayName}. Keep bundle/script outputs or separate migrations projects coordinated before deploy-time execution.";
+        }
+
+        var affectedTargets = sharedMigrationGroups
+            .SelectMany(static group => group.MigrationIds)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static migrationId => migrationId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        return $"{sharedMigrationGroups.Count} shared physical database group(s) contain pending migration work across target(s) {string.Join(", ", affectedTargets)}. Keep bundle/script outputs or separate migrations projects coordinated before deploy-time execution.";
+    }
+
+    private sealed record SharedMigrationGroup(
+        string PhysicalTargetId,
+        string PhysicalTargetDisplayName,
+        IReadOnlyList<string> RoleIds,
+        IReadOnlyList<string> MigrationIds,
+        bool HasPendingOrFailedTargets);
 }

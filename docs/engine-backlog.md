@@ -1777,6 +1777,37 @@ Delivered:
 - composition coverage now proves the playbook provider and runtime snapshot contract, hosting coverage now proves the route plus showcase consumption path, and package-surface coverage now locks the exported abstractions surface
 - database-topology, engine component docs, roadmap, backlog, project memory, and showcase docs now describe the playbook contract truthfully as engine-owned runtime surface rather than sample-derived sequencing
 
+### ENG-091 Shared physical database migration coordination surface and showcase follow-through
+
+Status: done
+Estimate: 3
+
+Why:
+
+- the engine-owned role catalog and migration playbook could already describe logical targets, but they did not yet expose when multiple logical roles or migration targets actually shared one physical database target
+- operators still lacked one engine-owned coordination answer for shared-database migration work, which made it too easy to miss deploy-time risk when `write` and `read` reused one connection target or when dependent roles inherited the same database
+- the showcase sample needed to consume that shared-target truth from the engine instead of inferring it locally in the operator projection, brief, or UI
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes host-agnostic physical-target identity and shared-target coordination fields on the shipped database-role and migration-playbook contracts
+- `Cephalon.Engine` groups logical roles by physical target, projects that truth through `/engine/database-roles` plus `snapshot.DatabaseRoles`, and exposes shared-target migration coordination through `/engine/database-migration-playbook` plus `/engine/database-topology`
+- the engine-owned playbook carries coordination counts, per-step physical-target identity, coordinated migration ids, and operator hints for shared targets
+- the engine-owned topology posture adds advisory and action-plan guidance when pending or failed logical migration work spans one physical database target
+- the showcase sample consumes the engine-owned physical-target and shared-target coordination answers directly in its JSON projection, browser console, Markdown brief, and handoff package
+- composition and hosting coverage prove the shared-target contract end to end, and package-surface coverage locks the exported abstractions surface
+- docs, roadmap, backlog, project memory, and GitHub tracking stay aligned with the shipped engine-first ownership line
+
+Delivered:
+
+- `DatabaseRoleDescriptor` now carries `PhysicalTargetId`, `PhysicalTargetDisplayName`, and `PhysicalCoLocatedRoles`, while `DatabaseMigrationOperationalStep` now carries `PhysicalTargetId`, `PhysicalTargetDisplayName`, `CoordinatedMigrationIds`, `CoordinationHint`, and `RequiresPhysicalTargetCoordination`; `DatabaseMigrationOperationalPlaybook` now also carries `CoordinationRequiredTargetCount`
+- `Cephalon.Engine` now computes stable physical-target grouping across configured database roles, projects that role truth through the engine-owned role catalog, and uses it to enrich the engine-owned migration playbook and topology posture
+- `/engine/database-migration-playbook` plus `snapshot.DatabaseMigrationPlaybook` now surface shared-target coordination counts, per-step coordinated partner targets, and operator-facing coordination hints without requiring a sample or host to rebuild that answer
+- `/engine/database-topology` plus `snapshot.DatabaseTopology` now surface shared-physical-target migration-coordination advisories and ordered action-plan entries when pending or failed logical migration work spans one physical database
+- the showcase sample now consumes those engine-owned answers directly in `/api/v1/showcase/system/database-topology`, `/showcase`, `/api/v1/showcase/system/database-topology/brief`, and `/api/v1/showcase/system/database-topology/handoff`, while keeping only sample-specific read-model follow-through local
+- validation now covers the new shared-target path through composition tests `4/4`, hosting tests `60/60`, and package-surface tests `52/52`
+- database-topology, engine component docs, Entity Framework component docs, roadmap, backlog, project memory, and showcase docs now describe the shipped shared-target coordination contract truthfully
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2081,3 +2112,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-088 engine-owned database-topology operational summary and advisory surface: `Cephalon.Abstractions` now exposes `DatabaseTopologyOperationalAction`, `DatabaseTopologyOperationalActionPlan`, `DatabaseTopologyOperationalSummary`, `DatabaseTopologyOperationalAdvisory`, `DatabaseTopologyOperationalSnapshot`, and `IDatabaseTopologyOperationalSnapshotProvider`, `Cephalon.Engine` now publishes `/engine/database-topology` plus `snapshot.DatabaseTopology` as the canonical posture answer over role health, migration status, production-guidance completeness, and ordered operator actions, and the showcase sample now consumes that engine-owned answer for readiness plus core advisories while keeping only read-model drift/backlog follow-through local — **Shipped** · targeted composition tests 3/3 + hosting tests 3/3 + package-surface tests 52/52
 - ENG-089 database-topology action-plan showcase follow-through and contract truthfulness: the showcase sample now consumes the engine-owned action-plan contract as the baseline for ordered operator steps, preserves stable action categories plus source role and migration ids in its projection, browser console, and Markdown brief, and the docs/package-surface coverage now describe the shipped contract truthfully — **Shipped** · targeted composition tests 3/3 + hosting tests 3/3 + package-surface tests 52/52
 - ENG-090 engine-owned database-migration playbook surface and showcase adoption: `Cephalon.Abstractions` now exposes ordered migration-playbook contracts, `Cephalon.Engine` now publishes `/engine/database-migration-playbook` plus `snapshot.DatabaseMigrationPlaybook` as the canonical ordered migration answer, and the showcase sample now consumes that engine-owned playbook directly while keeping only repo-root command adaptation plus sample-specific read-model follow-through local — **Shipped** · targeted composition tests 3/3 + hosting tests 4/4 + package-surface tests 52/52
+- ENG-091 shared physical database migration coordination surface and showcase follow-through: the engine-owned database-role catalog now projects physical-target ids, display names, and physical co-location, the engine-owned migration playbook plus topology posture now surface shared-target coordination counts, per-step partner targets, and warning/action guidance when pending or failed logical migration work spans one physical database, and the showcase sample now consumes that engine-owned answer directly in `/showcase`, the Markdown brief, and the handoff package — **Shipped** · composition tests 4/4 + hosting tests 60/60 + package-surface tests 52/52
