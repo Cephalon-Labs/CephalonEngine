@@ -1,5 +1,4 @@
 using System.Net.Http.Json;
-using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Transports;
@@ -65,6 +64,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(2, getEndpoint.ApiVersionMajor);
         Assert.Equal("GET", getEndpoint.Metadata["method"]);
         Assert.Contains("GetCatalogCartBehavior", getEndpoint.Metadata["behaviorType"], StringComparison.Ordinal);
+        Assert.Empty(getEndpoint.BindingDescriptors);
 
         var endpointById = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor>($"/engine/rest-endpoints/{getEndpoint.Id}");
 
@@ -146,6 +146,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("Publishes a legacy Minimal API route into the runtime catalog.", manualEndpoint.Description);
         Assert.Equal("minimal-api", manualEndpoint.Metadata["authoringStyle"]);
         Assert.Equal("tests.rest.manual-runtime:GET:/api/tests/manual-runtime/orders/{orderId}", manualEndpoint.Metadata["sourceId"]);
+        Assert.Empty(manualEndpoint.BindingDescriptors);
 
         var behaviorHelperEndpoint = Assert.Single(endpoints, static endpoint =>
             string.Equals(endpoint.BehaviorId, "tests.rest.manual-helper.get", StringComparison.Ordinal));
@@ -159,6 +160,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("/{orderId}", behaviorHelperEndpoint.Metadata["relativePattern"]);
         Assert.Equal("behavior-helper", behaviorHelperEndpoint.Metadata["authoringStyle"]);
         Assert.Contains("GetManualHelperOrderBehavior", behaviorHelperEndpoint.Metadata["behaviorType"], StringComparison.Ordinal);
+        Assert.Empty(behaviorHelperEndpoint.BindingDescriptors);
 
         Assert.NotNull(snapshot);
         Assert.Contains(snapshot.RestEndpoints, endpoint => endpoint.Id == manualEndpoint.Id);
@@ -204,6 +206,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, endpoint.Metadata["authoringStyle"]);
         Assert.Equal("/api/v3/tests/profile-runtime/orders", endpoint.Metadata["routeGroupPrefix"]);
         Assert.Equal("/{orderId}", endpoint.Metadata["relativePattern"]);
+        Assert.Empty(endpoint.BindingDescriptors);
 
         var payload = await client.GetFromJsonAsync<ProfileRuntimeOrderOutput>("/api/v3/tests/profile-runtime/orders/ord-42");
         Assert.NotNull(payload);
@@ -252,7 +255,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
-    public async Task MapCephalonAppliesExplicitProfileBindingsAndExposesThemInRuntimeMetadata()
+    public async Task MapCephalonAppliesExplicitProfileBindingsAndExposesThemInRuntimeCatalog()
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseTestServer();
@@ -284,26 +287,23 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(candidate.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
         Assert.Equal("/api/v6/tests/profile-runtime/bindings/orders/{orderId}", endpoint.RoutePattern);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, endpoint.Metadata["authoringStyle"]);
-        Assert.True(endpoint.Metadata.TryGetValue("bindingDescriptors", out var bindingDescriptorJson));
-
-        var bindings = JsonSerializer.Deserialize<BehaviorRestBindingDescriptor[]>(bindingDescriptorJson!);
-        Assert.NotNull(bindings);
-        Assert.Equal(4, bindings.Length);
-        Assert.Contains(bindings, static binding =>
+        Assert.False(endpoint.Metadata.ContainsKey("bindingDescriptors"));
+        Assert.Equal(4, endpoint.BindingDescriptors.Count);
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
             binding.PropertyName == "OrderId" &&
-            binding.Source == BehaviorRestBindingSource.Route &&
+            binding.Source == RestEndpointBindingSource.Route &&
             binding.Name == "orderId");
-        Assert.Contains(bindings, static binding =>
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
             binding.PropertyName == "Quantity" &&
-            binding.Source == BehaviorRestBindingSource.Query &&
+            binding.Source == RestEndpointBindingSource.Query &&
             binding.Name == "quantity");
-        Assert.Contains(bindings, static binding =>
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
             binding.PropertyName == "CorrelationId" &&
-            binding.Source == BehaviorRestBindingSource.Header &&
+            binding.Source == RestEndpointBindingSource.Header &&
             binding.Name == "X-Correlation-Id");
-        Assert.Contains(bindings, static binding =>
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
             binding.PropertyName == "Note" &&
-            binding.Source == BehaviorRestBindingSource.Body &&
+            binding.Source == RestEndpointBindingSource.Body &&
             binding.Name == "note");
 
         using var request = new HttpRequestMessage(
@@ -326,6 +326,18 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("corr-42", payload.CorrelationId);
         Assert.Equal("gift wrap", payload.Note);
         Assert.Equal("body-fallback", payload.Ignored);
+
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+        Assert.NotNull(snapshot);
+
+        var snapshotEndpoint = Assert.Single(snapshot.RestEndpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
+        Assert.False(snapshotEndpoint.Metadata.ContainsKey("bindingDescriptors"));
+        Assert.Equal(4, snapshotEndpoint.BindingDescriptors.Count);
+        Assert.Contains(snapshotEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "OrderId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "orderId");
     }
 
     [Fact]

@@ -348,8 +348,9 @@ Current helper behavior:
 - lets profile-declared candidate API versions seed the group only when `.ApiVersion(...)` was not
   set explicitly, and fails fast when profiled behaviors in the same group disagree on that
   candidate version
-- keeps profile-driven explicit binding plans visible through additive
-  `/engine/rest-endpoints` `metadata.bindingDescriptors` entries
+- keeps profile-driven explicit binding plans visible through
+  `RestEndpointRuntimeDescriptor.BindingDescriptors` and the matching `bindingDescriptors` JSON
+  field on `/engine/rest-endpoints` and `snapshot.RestEndpoints`
 - prefixes the mapped REST route group with `/v{major}` for the resolved API major version, so ASP.NET Core hosts expose routes such as `/api/v1/showcase/cart/{cartId}`
 - uses the resolved API major version as the operation-name version segment, falling back to the owning module descriptor major version
 - flows XML comments from the module and behavior assemblies into ASP.NET Core OpenAPI metadata when XML docs are available

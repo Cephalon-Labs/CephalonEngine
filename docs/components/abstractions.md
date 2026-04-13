@@ -55,6 +55,10 @@
 - `Patterns/IStranglerFigRouter.cs`
 - `Patterns/StranglerFigRouteDescriptor.cs`
 - `Technologies/ITechnologyRuntimeCatalog.cs`
+- `Transports/IRestEndpointRuntimeCatalog.cs`
+- `Transports/RestEndpointRuntimeDescriptor.cs`
+- `Transports/RestEndpointBindingDescriptor.cs`
+- `Transports/RestEndpointBindingSource.cs`
 - `Transports/TransportDescriptor.cs`
 
 ## Source structure
@@ -130,6 +134,14 @@ namespace now carries `IStranglerFigRouteContributor`, `IStranglerFigRouteRegist
 hosts, and operator tooling can talk about migration-boundary ownership and request resolution
 without leaking ASP.NET Core proxy behavior, YARP, or cloud traffic-manager types into
 `Cephalon.Abstractions`.
+
+The same transport-first rule also now covers the published REST runtime answer. The `Transports`
+namespace owns `IRestEndpointRuntimeCatalog`, `RestEndpointRuntimeDescriptor`,
+`RestEndpointBindingDescriptor`, and `RestEndpointBindingSource` so hosts, operator tooling, and
+companion packages can read resolved public REST route truth plus explicit request-binding plans
+through one host-agnostic transport contract. That keeps the runtime answer transport-owned instead
+of behavior-package-owned and avoids treating `metadata` dictionaries as the canonical binding-plan
+surface.
 
 ## Related docs
 

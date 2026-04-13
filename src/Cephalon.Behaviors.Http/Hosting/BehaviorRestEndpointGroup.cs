@@ -3,6 +3,7 @@ using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Resilience;
+using Cephalon.Abstractions.Transports;
 using Cephalon.AspNetCore.Documentation;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Transports.Rest;
@@ -533,7 +534,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             normalizedPattern,
             contract.Bindings.Count == 0
                 ? null
-                : JsonSerializer.Serialize(contract.Bindings)));
+                : ConvertToRuntimeBindingDescriptors(contract.Bindings)));
 
         ApplyResponseConventions(builder, contract);
 
@@ -543,6 +544,37 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         }
 
         return builder;
+    }
+
+    private static RestEndpointBindingDescriptor[] ConvertToRuntimeBindingDescriptors(
+        IReadOnlyList<BehaviorRestBindingDescriptor> bindings)
+    {
+        ArgumentNullException.ThrowIfNull(bindings);
+
+        if (bindings.Count == 0)
+        {
+            return [];
+        }
+
+        return bindings
+            .Select(static binding => new RestEndpointBindingDescriptor(
+                binding.PropertyName,
+                ConvertToRuntimeBindingSource(binding.Source),
+                binding.Name))
+            .ToArray();
+    }
+
+    private static RestEndpointBindingSource ConvertToRuntimeBindingSource(BehaviorRestBindingSource source)
+    {
+        return source switch
+        {
+            BehaviorRestBindingSource.Route => RestEndpointBindingSource.Route,
+            BehaviorRestBindingSource.Query => RestEndpointBindingSource.Query,
+            BehaviorRestBindingSource.Header => RestEndpointBindingSource.Header,
+            BehaviorRestBindingSource.Body => RestEndpointBindingSource.Body,
+            _ => throw new InvalidOperationException(
+                $"Unsupported behavior REST binding source '{source}'.")
+        };
     }
 
     private static void ApplyResponseConventions(

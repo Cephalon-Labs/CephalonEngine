@@ -23,6 +23,7 @@ public sealed class RestEndpointRuntimeDescriptor
     /// <param name="tags">The resolved OpenAPI tags when any are published.</param>
     /// <param name="summary">The resolved endpoint summary when one is available.</param>
     /// <param name="description">The resolved endpoint description when one is available.</param>
+    /// <param name="bindingDescriptors">The resolved request-binding descriptors when the endpoint exposes an explicit binding plan.</param>
     /// <param name="metadata">Optional additive metadata.</param>
     public RestEndpointRuntimeDescriptor(
         string id,
@@ -40,6 +41,7 @@ public sealed class RestEndpointRuntimeDescriptor
         IReadOnlyList<string>? tags = null,
         string? summary = null,
         string? description = null,
+        IReadOnlyList<RestEndpointBindingDescriptor>? bindingDescriptors = null,
         IReadOnlyDictionary<string, string>? metadata = null)
     {
         Id = NormalizeRequired(id, nameof(id));
@@ -57,6 +59,7 @@ public sealed class RestEndpointRuntimeDescriptor
         Tags = NormalizeTags(tags);
         Summary = NormalizeOptional(summary);
         Description = NormalizeOptional(description);
+        BindingDescriptors = NormalizeBindingDescriptors(bindingDescriptors);
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
@@ -138,6 +141,11 @@ public sealed class RestEndpointRuntimeDescriptor
     public string? Description { get; }
 
     /// <summary>
+    /// Gets the resolved request-binding descriptors when the endpoint exposes an explicit binding plan.
+    /// </summary>
+    public IReadOnlyList<RestEndpointBindingDescriptor> BindingDescriptors { get; }
+
+    /// <summary>
     /// Gets optional additive metadata.
     /// </summary>
     public IReadOnlyDictionary<string, string> Metadata { get; }
@@ -166,6 +174,18 @@ public sealed class RestEndpointRuntimeDescriptor
             .Select(static value => value.Trim())
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
+            .ToArray() ?? [];
+    }
+
+    private static RestEndpointBindingDescriptor[] NormalizeBindingDescriptors(
+        IReadOnlyList<RestEndpointBindingDescriptor>? values)
+    {
+        return values?
+            .Where(static value => value is not null)
+            .Select(static value => new RestEndpointBindingDescriptor(
+                value.PropertyName,
+                value.Source,
+                value.Name))
             .ToArray() ?? [];
     }
 }

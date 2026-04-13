@@ -279,8 +279,8 @@ Current helper behavior:
   conflicting profile-declared versions in the same group fail fast until the module resolves them
 - keeps runtime publication on the same module-owned path with `sourceKind = module-dsl`, while
   `/engine/rest-endpoints` exposes `metadata.authoringStyle = behavior-module-profile` for the
-  shorthand path, `behavior-module-dsl` for the fully explicit path, and additive
-  `metadata.bindingDescriptors` for profile-driven explicit binding plans
+  shorthand path, `behavior-module-dsl` for the fully explicit path, and first-class
+  `BindingDescriptors` data for profile-driven explicit binding plans
 - dispatches through `BehaviorDispatcher` using Minimal API handlers
 - lets behaviors return raw `TOutput` or transport-neutral `Result<TOutput>` values
 - uses the implicit route/query/body merge baseline only when no explicit profile bindings are
@@ -337,8 +337,9 @@ answer through:
 Each catalog entry now carries the resolved public route shape rather than only the authoring-time
 DSL input, including the final `HTTP method`, final route pattern, source kind, owning module id and
 version when known, behavior id when the route dispatches through a Cephalon behavior, published
-OpenAPI document name, resolved API major version, tags, and additive metadata such as the route
-group prefix plus relative pattern.
+OpenAPI document name, resolved API major version, tags, first-class request-binding descriptors
+when an explicit profile-driven plan exists, and additive metadata such as the route group prefix
+plus relative pattern.
 
 The host also now fails fast when two resolved public REST endpoints collide on the same
 `HTTP method + route pattern`.

@@ -1,3 +1,5 @@
+using Cephalon.Abstractions.Transports;
+
 namespace Cephalon.AspNetCore.Transports.Rest;
 
 internal static class RestEndpointRuntimeMetadata
@@ -30,4 +32,4 @@ internal sealed record RestBehaviorEndpointMetadata(
     int? ApiVersionMajor,
     string RouteGroupPrefix,
     string RelativePattern,
-    string? BindingDescriptorsJson);
+    IReadOnlyList<RestEndpointBindingDescriptor>? BindingDescriptors);

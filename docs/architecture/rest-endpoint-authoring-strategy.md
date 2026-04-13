@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 13, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -157,13 +157,18 @@ Status update:
 - that explicit-binding slice is now shipped through `ENG-058-T63`: profile metadata can carry
   explicit route/query/header/body binding descriptors, module-owned `MapProfile<TBehavior>()`
   consumes them through the same normalized projection pipeline, request composition now treats
-  those descriptors as overrides instead of an exclusive mode, and `/engine/rest-endpoints`
-  surfaces the resolved plan through additive `bindingDescriptors` metadata
+  those descriptors as overrides instead of an exclusive mode, and the runtime catalog initially
+  surfaced the resolved plan through additive `bindingDescriptors` metadata
 - the next hardening slice is now also shipped through `ENG-058-T64`: `Cephalon.Behaviors.SourceGen`
   rejects invalid explicit binding metadata at build time through `ABT0019` through `ABT0025`,
   generated `GetRestProfiles()` output no longer depends on hard-coded enum ordinals, and
   `BehaviorRestProfileResolver` now fails fast when an explicit route binding names a placeholder
   that the declared profile route pattern does not contain
+- the next runtime-contract follow-through is now shipped through `ENG-058-T65`: the engine-owned
+  transport contract now publishes explicit binding plans through
+  `RestEndpointRuntimeDescriptor.BindingDescriptors`, `RestEndpointBindingDescriptor`, and
+  `RestEndpointBindingSource`, while the ASP.NET Core host no longer duplicates that plan inside
+  `metadata.bindingDescriptors`
 - broader configuration-driven projection overrides remain later work
 
 ## Recommended long-term engine model
@@ -313,8 +318,8 @@ collisions can be surprising and the source of each input field is not explicit 
 The long-term projection model now has a first shipped explicit-binding baseline through repeated
 `BehaviorRestBindingAttribute` declarations on a behavior profile. That baseline feeds
 `BehaviorRestProfileDescriptor.Bindings`, source-generated `GetRestProfiles()` hints, explicit
-module-owned `MapProfile<TBehavior>()` consumption, and additive `/engine/rest-endpoints`
-metadata.
+module-owned `MapProfile<TBehavior>()` consumption, and the engine-owned
+`RestEndpointRuntimeDescriptor.BindingDescriptors` runtime contract.
 
 The current binding-descriptor baseline supports:
 

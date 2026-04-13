@@ -94,6 +94,7 @@ internal static class RestEndpointRuntimeMaterializer
             tags: tags,
             summary: summary,
             description: description,
+            bindingDescriptors: behaviorMetadata?.BindingDescriptors,
             metadata: CreateMetadata(endpoint, moduleMetadata, behaviorMetadata, method, routePattern, apiRoutesOptions));
     }
 
@@ -155,11 +156,6 @@ internal static class RestEndpointRuntimeMaterializer
             metadata["behaviorType"] = behaviorMetadata.BehaviorType;
             metadata["routeGroupPrefix"] = CombinePaths(apiRoutesOptions.RestPrefix, behaviorMetadata.RouteGroupPrefix);
             metadata["relativePattern"] = behaviorMetadata.RelativePattern;
-            if (!string.IsNullOrWhiteSpace(behaviorMetadata.BindingDescriptorsJson))
-            {
-                metadata["bindingDescriptors"] = behaviorMetadata.BindingDescriptorsJson!;
-            }
-
             metadata["sourceId"] = $"{behaviorMetadata.BehaviorId}:{normalizedMethod}:{behaviorMetadata.RelativePattern}";
             return metadata;
         }
