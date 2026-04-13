@@ -228,6 +228,7 @@ public sealed class ShowcaseSampleHostingTests
         var migrations = await client.GetFromJsonAsync<DatabaseMigrationDescriptor[]>("/engine/database-migrations");
         var readMigration = await client.GetFromJsonAsync<DatabaseMigrationDescriptor>("/engine/database-migrations/read");
         var historyMigration = await client.GetFromJsonAsync<DatabaseMigrationDescriptor>("/engine/database-migrations/history");
+        var databaseTopology = await client.GetFromJsonAsync<DatabaseTopologyOperationalSnapshot>("/engine/database-topology");
         var snapshot = await client.GetFromJsonAsync<Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
         Assert.NotNull(roles);
@@ -371,6 +372,26 @@ public sealed class ShowcaseSampleHostingTests
         Assert.NotNull(snapshot);
         Assert.Equal(4, snapshot.DatabaseRoles.Count);
         Assert.Equal(3, snapshot.DatabaseMigrations.Count);
+        Assert.NotNull(databaseTopology);
+        Assert.Equal("Ready", databaseTopology.Summary.Status);
+        Assert.Equal("Database topology is ready", databaseTopology.Summary.Headline);
+        Assert.Equal("/engine/snapshot", databaseTopology.Summary.ActionPath);
+        Assert.Equal(4, databaseTopology.Summary.RoleCount);
+        Assert.Equal(4, databaseTopology.Summary.HealthyRoleCount);
+        Assert.Equal(3, databaseTopology.Summary.MigrationTargetCount);
+        Assert.Equal(3, databaseTopology.Summary.SucceededMigrationTargetCount);
+        Assert.Equal(3, databaseTopology.Summary.ProductionReadyMigrationTargetCount);
+        Assert.Contains(databaseTopology.Advisories, advisory =>
+            advisory.Id == "topology-aligned" &&
+            advisory.Tone == "Success" &&
+            advisory.ActionPath == "/engine/snapshot");
+        Assert.Contains(databaseTopology.Advisories, advisory =>
+            advisory.Id == "migration-production-guidance" &&
+            advisory.Tone == "Success" &&
+            advisory.ActionPath == "/engine/database-migrations");
+        Assert.NotNull(snapshot.DatabaseTopology);
+        Assert.Equal(databaseTopology.Summary.Status, snapshot.DatabaseTopology.Summary.Status);
+        Assert.Equal(databaseTopology.Summary.ProductionReadyMigrationTargetCount, snapshot.DatabaseTopology.Summary.ProductionReadyMigrationTargetCount);
         Assert.Equal("write", snapshot.DatabaseMigrations[0].Id);
         Assert.Equal(1, snapshot.DatabaseMigrations[0].RecommendedExecutionOrder);
         Assert.Equal("read", snapshot.DatabaseMigrations[1].Id);
@@ -1556,6 +1577,7 @@ public sealed class ShowcaseSampleHostingTests
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
+        var engineTopology = await client.GetFromJsonAsync<DatabaseTopologyOperationalSnapshot>("/engine/database-topology");
         using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         var root = document.RootElement;
         var summary = root.GetProperty("summary");
@@ -1573,7 +1595,8 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("Ready", readiness.GetProperty("state").GetString());
         Assert.Equal("Database topology is ready", readiness.GetProperty("headline").GetString());
         Assert.Equal("/engine/snapshot", readiness.GetProperty("actionPath").GetString());
-        Assert.Contains("playbook", readiness.GetProperty("detail").GetString(), StringComparison.Ordinal);
+        Assert.NotNull(engineTopology);
+        Assert.Equal(engineTopology.Summary.Detail, readiness.GetProperty("detail").GetString());
 
         var actionPlan = root.GetProperty("actionPlan");
         var actionPlanSummary = actionPlan.GetProperty("summary");
@@ -1672,7 +1695,7 @@ public sealed class ShowcaseSampleHostingTests
                 string.Equals(insight.GetProperty("id").GetString(), "migration-production-guidance", StringComparison.Ordinal) &&
                 string.Equals(insight.GetProperty("tone").GetString(), "Success", StringComparison.Ordinal) &&
                 string.Equals(insight.GetProperty("actionPath").GetString(), "/engine/database-migrations", StringComparison.Ordinal) &&
-                insight.GetProperty("detail").GetString()!.Contains("runnable sample commands", StringComparison.Ordinal));
+                insight.GetProperty("detail").GetString()!.Contains("production-recommended bundle or script guidance", StringComparison.Ordinal));
 
         var migrationPlaybook = root.GetProperty("migrationPlaybook");
         var playbookSummary = migrationPlaybook.GetProperty("summary");
@@ -1765,6 +1788,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("/api/v1/showcase/system/database-topology", archivedManifestDocument.RootElement.GetProperty("sourceRoutes").GetProperty("projection").GetString());
         Assert.Equal("/api/v1/showcase/system/database-topology/brief", archivedManifestDocument.RootElement.GetProperty("sourceRoutes").GetProperty("brief").GetString());
         Assert.Equal("/api/v1/showcase/system/database-topology/handoff", archivedManifestDocument.RootElement.GetProperty("sourceRoutes").GetProperty("handoff").GetString());
+        Assert.Equal("/engine/database-topology", archivedManifestDocument.RootElement.GetProperty("sourceRoutes").GetProperty("databaseTopology").GetString());
         Assert.Equal("/engine/database-roles", archivedManifestDocument.RootElement.GetProperty("sourceRoutes").GetProperty("databaseRoles").GetString());
         Assert.Equal("/engine/database-migrations", archivedManifestDocument.RootElement.GetProperty("sourceRoutes").GetProperty("databaseMigrations").GetString());
         Assert.Equal("/engine/snapshot", archivedManifestDocument.RootElement.GetProperty("sourceRoutes").GetProperty("runtimeSnapshot").GetString());
@@ -2004,6 +2028,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("/graphql-ws", behaviorRoutes.GetProperty("graphQLWs").GetString());
         Assert.Equal("/graphql-sse", behaviorRoutes.GetProperty("graphQLSse").GetString());
         Assert.Equal("/engine/databases", engine.GetProperty("databases").GetString());
+        Assert.Equal("/engine/database-topology", engine.GetProperty("databaseTopology").GetString());
         Assert.Equal("/engine/database-roles", engine.GetProperty("databaseRoles").GetString());
         Assert.Equal("/engine/database-migrations", engine.GetProperty("databaseMigrations").GetString());
         Assert.Equal("/scalar/v1", root.GetProperty("docs").GetProperty("scalar").GetString());

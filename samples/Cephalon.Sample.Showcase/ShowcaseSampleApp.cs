@@ -270,6 +270,7 @@ public static class ShowcaseSampleApp
                 engine = new
                 {
                     databases = "/engine/databases",
+                    databaseTopology = "/engine/database-topology",
                     databaseRoles = "/engine/database-roles",
                     databaseMigrations = "/engine/database-migrations",
                     snapshot = "/engine/snapshot",

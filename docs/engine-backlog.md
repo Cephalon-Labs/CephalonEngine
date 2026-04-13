@@ -1691,6 +1691,38 @@ Remaining follow-through inside `ENG-086`:
 - add adaptive or provider-native probe cadence only when it can stay explicit in the shared engine/runtime contract
 - add richer per-step migration telemetry and broader provider-native operational diagnostics without overfitting the public catalog to one provider
 
+### ENG-088 Engine-owned database-topology operational summary and advisory surface
+
+Status: done
+Estimate: 5
+
+Why:
+
+- the engine-owned role and migration catalogs kept the raw truth available, but operators and hosts still lacked one canonical engine-owned answer for whether the overall topology was ready, needed attention, or was blocked
+- the showcase sample was still re-aggregating readiness and insight logic locally from raw catalogs, which weakened the engine-first boundary and made the sample responsible for an answer that should belong to the engine
+- hosts and automation needed one stable posture route for summary plus advisories without depending on showcase-only projection logic
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes a host-agnostic operational snapshot contract for database-topology posture
+- `Cephalon.Engine` projects one summary plus advisory set from the database-role and database-migration catalogs and includes it in the runtime snapshot
+- ASP.NET Core hosts expose `/engine/database-topology` as the canonical posture route
+- the showcase sample consumes the engine-owned posture for readiness and engine-level insights, while keeping only read-model drift/backlog follow-through local
+- docs, backlog, roadmap, project memory, and GitHub tracking all stay aligned with the new engine-first ownership line
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `DatabaseTopologyOperationalSummary`, `DatabaseTopologyOperationalAdvisory`, `DatabaseTopologyOperationalSnapshot`, and `IDatabaseTopologyOperationalSnapshotProvider` as the host-agnostic posture contract
+- `Cephalon.Engine` now computes engine-owned database-topology posture from the resolved role and migration catalogs, projects it into `snapshot.DatabaseTopology`, and keeps summary status plus action links explicit instead of trapping that answer in a sample
+- ASP.NET Core hosts now expose `/engine/database-topology` directly, so operators and tooling can read one canonical `Ready` / `Attention` / `Blocked` answer without rebuilding it from lower-level catalogs first
+- the showcase sample now uses the engine-owned posture as the baseline for readiness and advisory insights, keeps read-model drift/catch-up/disabled-sync logic as the only sample-specific follow-through, and now carries the engine route through browser config, operator links, and handoff source-route metadata
+- composition, hosting, and package-surface coverage now prove the new posture contract, showcase consumption path, and exported package surface end to end
+
+Remaining follow-through inside `ENG-088`:
+
+- add an explicit engine-owned unknown or unprobed role-health posture only when provider packs can keep that semantics truthful across more than the current EF-backed baseline
+- add machine-actionable remediation categories only when operator automation needs something richer than headline, tone, and action link metadata
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -1992,3 +2024,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 - ENG-086 database-role probe freshness policy: the engine-owned database runtime contract now exposes `RoleProbeFreshnessSeconds`, `Cephalon.Data.EntityFramework` now caches live role probes with explicit live-versus-cache metadata and migration-state invalidation, and the showcase sample now surfaces probe source, age, and freshness timing directly through its database-topology operator projection — **Shipped** · targeted composition tests 7/7 + hosting tests 3/3
 - ENG-087 typed database-role probe contract and operator-surface follow-through: `Cephalon.Abstractions` now exposes `DatabaseRoleProbeDescriptor`, `DatabaseRoleRuntimeDescriptor` plus `DatabaseRoleDescriptor` now carry a typed `Probe` answer, `Cephalon.Data.EntityFramework` now projects stable cache/freshness/source timing through that shared contract while keeping metadata only for additive extras and compatibility, and the showcase sample now reads the typed probe surface directly in its projection/UI instead of parsing stable runtime-metadata keys locally — **Shipped** · targeted composition tests 25/25 + hosting tests 59/59 + package-surface tests 52/52
+- ENG-088 engine-owned database-topology operational summary and advisory surface: `Cephalon.Abstractions` now exposes `DatabaseTopologyOperationalSummary`, `DatabaseTopologyOperationalAdvisory`, `DatabaseTopologyOperationalSnapshot`, and `IDatabaseTopologyOperationalSnapshotProvider`, `Cephalon.Engine` now publishes `/engine/database-topology` plus `snapshot.DatabaseTopology` as the canonical posture answer over role health, migration status, and production-guidance completeness, and the showcase sample now consumes that engine-owned answer for readiness plus core advisories while keeping only read-model drift/backlog follow-through local — **Shipped** · targeted composition tests 3/3 + hosting tests 3/3 + package-surface tests 52/52

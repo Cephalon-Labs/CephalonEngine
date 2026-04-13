@@ -1788,6 +1788,7 @@ function renderDatabaseTopologyLinks() {
     linkButton("Operator Brief", state.summary?.documentation?.databaseTopologyBriefPath || ENDPOINTS.systemDatabaseTopologyBrief),
     linkButton("Handoff Package", state.summary?.documentation?.databaseTopologyHandoffPath || ENDPOINTS.systemDatabaseTopologyHandoff),
     linkButton("Raw Databases", engine.databases || "/engine/databases"),
+    linkButton("Topology Posture", engine.databaseTopology || "/engine/database-topology"),
     linkButton("Database Roles", engine.databaseRoles || "/engine/database-roles"),
     linkButton("Migration Targets", engine.databaseMigrations || "/engine/database-migrations")
   ].join("");

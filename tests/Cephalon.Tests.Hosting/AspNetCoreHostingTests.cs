@@ -705,7 +705,6 @@ public sealed class AspNetCoreHostingTests
         builder.AddCephalon(engine =>
         {
             engine.AddModule(new PlatformTestModule());
-            engine.AddModule(new DiscoveryTestModule());
         });
 
         await using var app = builder.Build();

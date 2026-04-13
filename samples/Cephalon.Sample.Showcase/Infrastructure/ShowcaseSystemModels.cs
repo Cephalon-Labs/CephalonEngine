@@ -48,6 +48,7 @@ internal sealed record ShowcaseHandoffSourceRoutes(
     string Projection,
     string Brief,
     string Handoff,
+    string DatabaseTopology,
     string DatabaseRoles,
     string DatabaseMigrations,
     string RuntimeSnapshot);

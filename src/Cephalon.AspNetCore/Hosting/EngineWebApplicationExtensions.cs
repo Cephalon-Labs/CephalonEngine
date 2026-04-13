@@ -132,6 +132,9 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonRateLimitingPolicy");
         engineGroup.MapGet("/databases", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Databases))
             .WithName("GetCephalonDatabases");
+        engineGroup.MapGet("/database-topology", (IDatabaseTopologyOperationalSnapshotProvider provider) =>
+                TypedResults.Ok(provider.CreateSnapshot()))
+            .WithName("GetCephalonDatabaseTopology");
         engineGroup.MapGet("/database-roles", (IDatabaseRoleCatalog catalog) => TypedResults.Ok(catalog.DatabaseRoles))
             .WithName("GetCephalonDatabaseRoles");
         engineGroup.MapGet("/database-roles/{databaseRoleId}", (string databaseRoleId, IDatabaseRoleCatalog catalog) =>

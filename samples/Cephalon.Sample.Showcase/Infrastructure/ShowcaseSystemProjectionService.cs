@@ -47,6 +47,7 @@ internal sealed class ShowcaseSystemProjectionService(
     private const string DatabaseTopologyHandoffPackageId = "showcase.database-topology.handoff";
     private const string DatabaseTopologyHandoffSchemaVersion = "1.0";
     private const string DatabaseTopologyHandoffScope = "sample-operator-handoff";
+    private const string EngineDatabaseTopologyPath = "/engine/database-topology";
     private const string EngineDatabaseRolesPath = "/engine/database-roles";
     private const string EngineDatabaseMigrationsPath = "/engine/database-migrations";
     private const string EngineRuntimeSnapshotPath = "/engine/snapshot";
@@ -98,6 +99,8 @@ internal sealed class ShowcaseSystemProjectionService(
         CancellationToken cancellationToken = default)
     {
         var runtimeSnapshot = snapshotProvider.CreateSnapshot();
+        var engineDatabaseTopology = runtimeSnapshot.DatabaseTopology
+            ?? throw new InvalidOperationException("The runtime snapshot did not include the engine-owned database-topology posture.");
         var readModelSync = await LoadReadModelSyncStatusAsync(cancellationToken).ConfigureAwait(false);
 
         var roles = runtimeSnapshot.DatabaseRoles
@@ -214,9 +217,7 @@ internal sealed class ShowcaseSystemProjectionService(
         var databaseTopologyPath = $"{apiRoutes.RestPrefix}/v1/showcase/system/database-topology";
         var migrationPlaybook = BuildDatabaseMigrationPlaybook(migrations);
         var readiness = BuildDatabaseTopologyReadiness(
-            roles,
-            migrations,
-            migrationPlaybook,
+            engineDatabaseTopology.Summary,
             readModelSync,
             databaseTopologyPath);
         var actionPlan = BuildDatabaseTopologyActionPlan(
@@ -225,7 +226,7 @@ internal sealed class ShowcaseSystemProjectionService(
             migrationPlaybook,
             readModelSync,
             databaseTopologyPath);
-        var insights = BuildDatabaseTopologyInsights(roles, migrations, readModelSync);
+        var insights = BuildDatabaseTopologyInsights(engineDatabaseTopology, readModelSync);
 
         return new ShowcaseDatabaseTopologyResponse(
             Summary: summary,
@@ -814,60 +815,21 @@ internal sealed class ShowcaseSystemProjectionService(
     }
 
     private ShowcaseDatabaseTopologyInsight[] BuildDatabaseTopologyInsights(
-        IReadOnlyList<ShowcaseDatabaseTopologyRoleRow> roles,
-        IReadOnlyList<ShowcaseDatabaseTopologyMigrationRow> migrations,
+        DatabaseTopologyOperationalSnapshot engineDatabaseTopology,
         ShowcaseReadModelSyncStatus readModelSync)
     {
-        ArgumentNullException.ThrowIfNull(roles);
-        ArgumentNullException.ThrowIfNull(migrations);
+        ArgumentNullException.ThrowIfNull(engineDatabaseTopology);
         ArgumentNullException.ThrowIfNull(readModelSync);
 
-        var insights = new List<ShowcaseDatabaseTopologyInsight>();
-
-        var unhealthyRoles = roles
-            .Where(role =>
-                !string.IsNullOrWhiteSpace(role.HealthState) &&
-                !string.Equals(role.HealthState, nameof(HealthState.Healthy), StringComparison.OrdinalIgnoreCase))
-            .ToArray();
-        if (unhealthyRoles.Length > 0)
-        {
-            var roleIds = string.Join(", ", unhealthyRoles.Select(static role => role.Id));
-            var tone = unhealthyRoles.Any(static role =>
-                    string.Equals(role.HealthState, nameof(HealthState.Unhealthy), StringComparison.OrdinalIgnoreCase))
-                ? "Error"
-                : "Warning";
-
-            insights.Add(new ShowcaseDatabaseTopologyInsight(
-                Id: "role-health-attention",
-                Tone: tone,
-                Title: "Database role health needs attention",
-                Detail: $"{unhealthyRoles.Length} role(s) are not healthy: {roleIds}. Review probe metadata and connection settings before trusting the topology.",
-                ActionLabel: "Open database roles",
-                ActionPath: "/engine/database-roles"));
-        }
-
-        var migrationTargetsNeedingAttention = migrations
-            .Where(migration =>
-                !string.Equals(migration.Status, nameof(DatabaseMigrationStatus.Succeeded), StringComparison.OrdinalIgnoreCase))
-            .ToArray();
-        if (migrationTargetsNeedingAttention.Length > 0)
-        {
-            var migrationIds = string.Join(", ", migrationTargetsNeedingAttention.Select(static migration => migration.Id));
-            var tone = migrationTargetsNeedingAttention.Any(static migration =>
-                    string.Equals(migration.Status, nameof(DatabaseMigrationStatus.Failed), StringComparison.OrdinalIgnoreCase))
-                ? "Error"
-                : "Warning";
-
-            insights.Add(new ShowcaseDatabaseTopologyInsight(
-                Id: "migration-attention",
-                Tone: tone,
-                Title: tone == "Error"
-                    ? "Migration targets failed"
-                    : "Migration targets still need attention",
-                Detail: $"{migrationTargetsNeedingAttention.Length} migration target(s) are not yet succeeded: {migrationIds}. Review execution mode and command guidance before promoting the environment.",
-                ActionLabel: "Open migration targets",
-                ActionPath: "/engine/database-migrations"));
-        }
+        var insights = engineDatabaseTopology.Advisories
+            .Select(static advisory => new ShowcaseDatabaseTopologyInsight(
+                Id: advisory.Id,
+                Tone: advisory.Tone,
+                Title: advisory.Title,
+                Detail: advisory.Detail,
+                ActionLabel: advisory.ActionLabel,
+                ActionPath: advisory.ActionPath))
+            .ToList();
 
         var deltaMagnitude =
             Math.Abs(readModelSync.ProductDelta) +
@@ -910,71 +872,7 @@ internal sealed class ShowcaseSystemProjectionService(
                 ActionPath: $"{apiRoutes.RestPrefix}/v1/showcase/system/database-topology"));
         }
 
-        var hasOperationalAttention = insights.Any(insight =>
-            !string.Equals(insight.Tone, "Success", StringComparison.OrdinalIgnoreCase));
-        if (!hasOperationalAttention)
-        {
-            insights.Add(new ShowcaseDatabaseTopologyInsight(
-                Id: "topology-aligned",
-                Tone: "Success",
-                Title: "Topology aligned",
-                Detail: "All resolved database roles are healthy, migration targets succeeded, and the read-model projection loop is caught up.",
-                ActionLabel: "Open runtime snapshot",
-                ActionPath: "/engine/snapshot"));
-        }
-
-        var migrationGuidanceInsight = BuildMigrationCommandGuidanceInsight(migrations);
-        if (migrationGuidanceInsight is not null)
-        {
-            insights.Add(migrationGuidanceInsight);
-        }
-
         return insights.ToArray();
-    }
-
-    private static ShowcaseDatabaseTopologyInsight? BuildMigrationCommandGuidanceInsight(
-        IReadOnlyList<ShowcaseDatabaseTopologyMigrationRow> migrations)
-    {
-        ArgumentNullException.ThrowIfNull(migrations);
-
-        if (migrations.Count == 0)
-        {
-            return null;
-        }
-
-        var targetsWithProductionGuidance = migrations
-            .Where(static migration => migration.Commands.Any(static command => command.RecommendedForProduction))
-            .ToArray();
-
-        if (targetsWithProductionGuidance.Length == migrations.Count)
-        {
-            return new ShowcaseDatabaseTopologyInsight(
-                Id: "migration-production-guidance",
-                Tone: "Success",
-                Title: "Production migration guidance published",
-                Detail: $"All {migrations.Count} migration target(s) publish recommended bundle or script commands in addition to the local direct-update path, and the showcase projection now adapts them into runnable sample commands from the repo root.",
-                ActionLabel: "Open migration targets",
-                ActionPath: "/engine/database-migrations");
-        }
-
-        if (targetsWithProductionGuidance.Length == 0)
-        {
-            return new ShowcaseDatabaseTopologyInsight(
-            Id: "migration-production-guidance-missing",
-            Tone: "Warning",
-            Title: "Production migration guidance missing",
-            Detail: "No migration targets currently publish production-recommended bundle or script guidance, so startup apply remains the only visible path.",
-            ActionLabel: "Open migration targets",
-                ActionPath: "/engine/database-migrations");
-        }
-
-        return new ShowcaseDatabaseTopologyInsight(
-            Id: "migration-production-guidance-partial",
-            Tone: "Warning",
-            Title: "Production migration guidance is partial",
-            Detail: $"{targetsWithProductionGuidance.Length} of {migrations.Count} migration target(s) publish production-recommended commands. Review the remaining targets before relying on startup apply as the only deployment path, even though the showcase now adapts the published templates into runnable sample commands.",
-            ActionLabel: "Open migration targets",
-            ActionPath: "/engine/database-migrations");
     }
 
     private static ShowcaseDatabaseTopologyMigrationPlaybook BuildDatabaseMigrationPlaybook(
@@ -1195,40 +1093,17 @@ internal sealed class ShowcaseSystemProjectionService(
     }
 
     private static ShowcaseDatabaseTopologyReadiness BuildDatabaseTopologyReadiness(
-        IReadOnlyList<ShowcaseDatabaseTopologyRoleRow> roles,
-        IReadOnlyList<ShowcaseDatabaseTopologyMigrationRow> migrations,
-        ShowcaseDatabaseTopologyMigrationPlaybook migrationPlaybook,
+        DatabaseTopologyOperationalSummary engineSummary,
         ShowcaseReadModelSyncStatus readModelSync,
         string databaseTopologyPath)
     {
-        ArgumentNullException.ThrowIfNull(roles);
-        ArgumentNullException.ThrowIfNull(migrations);
-        ArgumentNullException.ThrowIfNull(migrationPlaybook);
+        ArgumentNullException.ThrowIfNull(engineSummary);
         ArgumentNullException.ThrowIfNull(readModelSync);
         ArgumentException.ThrowIfNullOrWhiteSpace(databaseTopologyPath);
 
-        var hasUnhealthyRole = roles.Any(static role =>
-            string.Equals(role.HealthState, nameof(HealthState.Unhealthy), StringComparison.OrdinalIgnoreCase));
-        if (hasUnhealthyRole)
+        if (string.Equals(engineSummary.Status, "Blocked", StringComparison.OrdinalIgnoreCase))
         {
-            return new ShowcaseDatabaseTopologyReadiness(
-                State: "Blocked",
-                Headline: "Database topology is blocked",
-                Detail: "At least one resolved database role is unhealthy, so the sample cannot be trusted for operator or workload validation until connectivity recovers.",
-                ActionLabel: "Open database roles",
-                ActionPath: "/engine/database-roles");
-        }
-
-        var hasFailedMigration = migrations.Any(static migration =>
-            string.Equals(migration.Status, nameof(DatabaseMigrationStatus.Failed), StringComparison.OrdinalIgnoreCase));
-        if (hasFailedMigration)
-        {
-            return new ShowcaseDatabaseTopologyReadiness(
-                State: "Blocked",
-                Headline: "Migration targets are blocked",
-                Detail: "One or more migration targets failed, so the environment needs intervention before the sample topology should be treated as current.",
-                ActionLabel: "Open migration targets",
-                ActionPath: "/engine/database-migrations");
+            return ToShowcaseReadiness(engineSummary);
         }
 
         if (readModelSync.Jobs.FailedJobs > 0)
@@ -1241,28 +1116,9 @@ internal sealed class ShowcaseSystemProjectionService(
                 ActionPath: databaseTopologyPath);
         }
 
-        var hasDegradedRole = roles.Any(static role =>
-            string.Equals(role.HealthState, nameof(HealthState.Degraded), StringComparison.OrdinalIgnoreCase));
-        if (hasDegradedRole)
+        if (string.Equals(engineSummary.Status, "Attention", StringComparison.OrdinalIgnoreCase))
         {
-            return new ShowcaseDatabaseTopologyReadiness(
-                State: "Attention",
-                Headline: "Database topology needs attention",
-                Detail: "At least one resolved role is degraded, so operators should inspect role health and probe metadata before relying on the environment.",
-                ActionLabel: "Open database roles",
-                ActionPath: "/engine/database-roles");
-        }
-
-        var hasPendingMigration = migrations.Any(static migration =>
-            !string.Equals(migration.Status, nameof(DatabaseMigrationStatus.Succeeded), StringComparison.OrdinalIgnoreCase));
-        if (hasPendingMigration)
-        {
-            return new ShowcaseDatabaseTopologyReadiness(
-                State: "Attention",
-                Headline: "Migration work is still pending",
-                Detail: "Some migration targets are not yet succeeded, so the sample still needs migration follow-through before the database topology is fully aligned.",
-                ActionLabel: "Open migration targets",
-                ActionPath: "/engine/database-migrations");
+            return ToShowcaseReadiness(engineSummary);
         }
 
         if (!readModelSync.Enabled)
@@ -1286,22 +1142,7 @@ internal sealed class ShowcaseSystemProjectionService(
                 ActionPath: databaseTopologyPath);
         }
 
-        if (migrationPlaybook.Summary.ProductionReadyTargetCount < migrationPlaybook.Summary.TargetCount)
-        {
-            return new ShowcaseDatabaseTopologyReadiness(
-                State: "Attention",
-                Headline: "Production migration guidance is incomplete",
-                Detail: "The showcase topology is currently healthy, but not every migration target publishes a production-ready runnable path yet.",
-                ActionLabel: "Open migration targets",
-                ActionPath: "/engine/database-migrations");
-        }
-
-        return new ShowcaseDatabaseTopologyReadiness(
-            State: "Ready",
-            Headline: "Database topology is ready",
-            Detail: "Resolved roles are healthy, migration targets succeeded, read-model sync is caught up, and the sample playbook now publishes runnable production and local paths.",
-            ActionLabel: "Open runtime snapshot",
-            ActionPath: "/engine/snapshot");
+        return ToShowcaseReadiness(engineSummary);
     }
 
     private static int GetReadModelDeltaMagnitude(ShowcaseReadModelSyncStatus readModelSync)
@@ -1545,6 +1386,7 @@ internal sealed class ShowcaseSystemProjectionService(
         builder.AppendLine("## Drill-down Routes");
         builder.AppendLine();
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Showcase projection JSON: `{documentation.DatabaseTopologyPath}`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Engine database topology: `{EngineDatabaseTopologyPath}`");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Database roles: `{EngineDatabaseRolesPath}`");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Migration targets: `{EngineDatabaseMigrationsPath}`");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Runtime snapshot: `{EngineRuntimeSnapshotPath}`");
@@ -1638,6 +1480,7 @@ internal sealed class ShowcaseSystemProjectionService(
                 Projection: documentation.DatabaseTopologyPath,
                 Brief: documentation.DatabaseTopologyBriefPath,
                 Handoff: documentation.DatabaseTopologyHandoffPath,
+                DatabaseTopology: EngineDatabaseTopologyPath,
                 DatabaseRoles: EngineDatabaseRolesPath,
                 DatabaseMigrations: EngineDatabaseMigrationsPath,
                 RuntimeSnapshot: EngineRuntimeSnapshotPath),
@@ -1694,6 +1537,7 @@ internal sealed class ShowcaseSystemProjectionService(
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Showcase projection JSON: `{manifest.SourceRoutes.Projection}`");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Operator brief: `{manifest.SourceRoutes.Brief}`");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Handoff download: `{manifest.SourceRoutes.Handoff}`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Engine database topology: `{manifest.SourceRoutes.DatabaseTopology}`");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Engine database roles: `{manifest.SourceRoutes.DatabaseRoles}`");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Engine migration targets: `{manifest.SourceRoutes.DatabaseMigrations}`");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Runtime snapshot: `{manifest.SourceRoutes.RuntimeSnapshot}`");
@@ -2149,4 +1993,16 @@ internal sealed class ShowcaseSystemProjectionService(
         IReadOnlyList<ShowcaseOrderRow> Orders,
         IReadOnlyList<ShowcaseInventoryRow> Inventory,
         IReadOnlyList<ShowcaseShipmentRow> Shipments);
+
+    private static ShowcaseDatabaseTopologyReadiness ToShowcaseReadiness(DatabaseTopologyOperationalSummary summary)
+    {
+        ArgumentNullException.ThrowIfNull(summary);
+
+        return new ShowcaseDatabaseTopologyReadiness(
+            State: summary.Status,
+            Headline: summary.Headline,
+            Detail: summary.Detail,
+            ActionLabel: summary.ActionLabel,
+            ActionPath: summary.ActionPath);
+    }
 }
