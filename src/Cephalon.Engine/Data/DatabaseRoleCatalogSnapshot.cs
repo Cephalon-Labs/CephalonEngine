@@ -164,6 +164,7 @@ internal sealed class DatabaseRoleCatalogSnapshot(
             migrationDescription: ResolveDescription(
                 runtimeDescriptors.Select(static descriptor => descriptor.MigrationDescription)),
             observedAtUtc: ResolveObservedAtUtc(runtimeDescriptors),
+            probe: ResolveProbe(runtimeDescriptors),
             runtimeMetadata: MergeRuntimeMetadata(runtimeDescriptors));
     }
 
@@ -338,6 +339,20 @@ internal sealed class DatabaseRoleCatalogSnapshot(
         return timestamps.Length > 0
             ? timestamps[0]
             : null;
+    }
+
+    private static DatabaseRoleProbeDescriptor? ResolveProbe(IReadOnlyList<DatabaseRoleRuntimeDescriptor> runtimeDescriptors)
+    {
+        for (var index = runtimeDescriptors.Count - 1; index >= 0; index--)
+        {
+            var probe = runtimeDescriptors[index].Probe;
+            if (probe is not null)
+            {
+                return probe;
+            }
+        }
+
+        return null;
     }
 
     private sealed record CatalogState(

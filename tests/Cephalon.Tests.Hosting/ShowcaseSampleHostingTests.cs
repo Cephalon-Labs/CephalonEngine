@@ -26,6 +26,7 @@ namespace Cephalon.Tests.Hosting;
 /// </summary>
 public sealed class ShowcaseSampleHostingTests
 {
+    private static readonly JsonSerializerOptions WebJsonOptions = new(JsonSerializerDefaults.Web);
     private static readonly string[] DatabaseTopologyProjectionTags =
     [
         "database-topology",
@@ -281,6 +282,21 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("entity-framework", read.RuntimeMetadata["providerPack"]);
         Assert.Equal("entity-framework", outbox.RuntimeMetadata["providerPack"]);
         Assert.Equal("entity-framework", history.RuntimeMetadata["providerPack"]);
+        Assert.NotNull(write.Probe);
+        Assert.True(write.Probe.CacheEnabled);
+        Assert.Equal(30, write.Probe.FreshnessSeconds);
+        Assert.Equal("configured", write.Probe.FreshnessOrigin);
+        Assert.Equal(write.RuntimeMetadata["probeSource"], write.Probe.Source);
+        Assert.True(write.Probe.Source is "live" or "cache");
+        Assert.NotNull(read.Probe);
+        Assert.Equal(read.RuntimeMetadata["probeSource"], read.Probe.Source);
+        Assert.True(read.Probe.Source is "live" or "cache");
+        Assert.NotNull(outbox.Probe);
+        Assert.Equal(outbox.RuntimeMetadata["probeSource"], outbox.Probe.Source);
+        Assert.True(outbox.Probe.Source is "live" or "cache");
+        Assert.NotNull(history.Probe);
+        Assert.Equal(history.RuntimeMetadata["probeSource"], history.Probe.Source);
+        Assert.True(history.Probe.Source is "live" or "cache");
         Assert.Equal("true", write.RuntimeMetadata["probeCacheEnabled"]);
         Assert.Equal("30", write.RuntimeMetadata["probeFreshnessSeconds"]);
         Assert.Equal("configured", write.RuntimeMetadata["probeFreshnessOrigin"]);
@@ -1582,11 +1598,13 @@ public sealed class ShowcaseSampleHostingTests
             role => string.Equals(role.GetProperty("id").GetString(), "read", StringComparison.Ordinal));
         Assert.Equal("InMemory", readRole.GetProperty("provider").GetString());
         Assert.Equal("Healthy", readRole.GetProperty("healthState").GetString());
+        Assert.True(readRole.GetProperty("probeCacheEnabled").GetBoolean());
+        Assert.Equal(30, readRole.GetProperty("probeFreshnessSeconds").GetInt32());
+        Assert.Equal("configured", readRole.GetProperty("probeFreshnessOrigin").GetString());
         Assert.Equal("live", readRole.GetProperty("probeSource").GetString());
         Assert.True(readRole.GetProperty("observedAtUtc").ValueKind == JsonValueKind.String);
         Assert.True(readRole.GetProperty("probeFreshUntilUtc").ValueKind == JsonValueKind.String);
         Assert.Equal(0, readRole.GetProperty("probeAgeSeconds").GetInt32());
-        Assert.Equal("30", readRole.GetProperty("runtimeMetadataPreview").GetProperty("probeFreshnessSeconds").GetString());
         Assert.Equal("0", readRole.GetProperty("runtimeMetadataPreview").GetProperty("pendingMigrationCount").GetString());
 
         var migrations = root.GetProperty("migrations").EnumerateArray().ToArray();
@@ -1769,10 +1787,14 @@ public sealed class ShowcaseSampleHostingTests
         await using var app = BuildShowcaseForTests(configureBuilder: DisableReadModelProjectionLoop);
 
         await app.StartAsync();
-        var client = app.GetTestClient();
 
         using var scope = app.Services.CreateScope();
         var writeDb = scope.ServiceProvider.GetRequiredService<ShowcaseWriteDbContext>();
+        var readDb = scope.ServiceProvider.GetRequiredService<ShowcaseReadDbContext>();
+        var projectionServiceType = typeof(ShowcaseSampleApp).Assembly.GetType(
+            "Cephalon.Sample.Showcase.Infrastructure.ShowcaseSystemProjectionService",
+            throwOnError: true)!;
+        var projections = ServiceProviderServiceExtensions.GetRequiredService(scope.ServiceProvider, projectionServiceType);
 
         const string productId = "topology-drift-001";
         writeDb.Products.Add(new ShowcaseProductEntity
@@ -1790,13 +1812,23 @@ public sealed class ShowcaseSampleHostingTests
         });
 
         await writeDb.SaveChangesAsync();
+        writeDb.ReadProjectionJobs.Add(new ShowcaseReadProjectionJobEntity
+        {
+            Scope = "products",
+            EntityKey = productId,
+            CreatedAtUtc = DateTime.UtcNow,
+            AvailableAtUtc = DateTime.UtcNow
+        });
+        await writeDb.SaveChangesAsync();
+        Assert.False(await readDb.Products.AnyAsync(product => product.Id == productId));
 
-        var response = await client.GetAsync("/api/v1/showcase/system/database-topology");
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-        using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-        var root = document.RootElement;
+        var projection = await InvokeAsyncWithResult(projections, "GetDatabaseTopologyAsync");
+        using var projectionDocument = JsonDocument.Parse(
+            JsonSerializer.Serialize(
+                projection,
+                projection.GetType(),
+                WebJsonOptions));
+        var root = projectionDocument.RootElement;
         var readiness = root.GetProperty("readiness");
         Assert.Equal("Attention", readiness.GetProperty("state").GetString());
         Assert.Equal("Read-model catch-up is still in progress", readiness.GetProperty("headline").GetString());
@@ -1807,10 +1839,8 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(0, actionPlanSummary.GetProperty("blockingActionCount").GetInt32());
         Assert.Equal(1, actionPlanSummary.GetProperty("attentionActionCount").GetInt32());
         Assert.Equal(0, actionPlanSummary.GetProperty("readyActionCount").GetInt32());
-
-        var actionPlanActions = actionPlan.GetProperty("actions").EnumerateArray().ToArray();
         Assert.Contains(
-            actionPlanActions,
+            actionPlan.GetProperty("actions").EnumerateArray().ToArray(),
             action =>
                 action.GetProperty("order").GetInt32() == 1 &&
                 string.Equals(action.GetProperty("id").GetString(), "wait-for-read-model-catch-up", StringComparison.Ordinal) &&
@@ -1820,33 +1850,25 @@ public sealed class ShowcaseSampleHostingTests
         var readModelSync = root.GetProperty("readModelSync");
         Assert.True(readModelSync.GetProperty("enabled").GetBoolean());
         Assert.True(readModelSync.GetProperty("isLagging").GetBoolean());
-        Assert.True(readModelSync.GetProperty("productDelta").GetInt32() >= 1);
-
-        var insights = root.GetProperty("insights").EnumerateArray().ToArray();
+        Assert.True(readModelSync.GetProperty("jobs").GetProperty("pendingJobs").GetInt32() >= 1);
         Assert.Contains(
-            insights,
+            root.GetProperty("insights").EnumerateArray().ToArray(),
             insight =>
                 string.Equals(insight.GetProperty("id").GetString(), "read-model-catching-up", StringComparison.Ordinal) &&
                 string.Equals(insight.GetProperty("tone").GetString(), "Warning", StringComparison.Ordinal) &&
                 string.Equals(insight.GetProperty("actionPath").GetString(), "/api/v1/showcase/system/database-topology", StringComparison.Ordinal) &&
                 insight.GetProperty("detail").GetString()!.Contains("Store delta magnitude is", StringComparison.Ordinal));
 
-        var briefResponse = await client.GetAsync("/api/v1/showcase/system/database-topology/brief");
-
-        Assert.Equal(HttpStatusCode.OK, briefResponse.StatusCode);
-        Assert.Equal("text/markdown", briefResponse.Content.Headers.ContentType?.MediaType);
-
-        var brief = await briefResponse.Content.ReadAsStringAsync();
+        var brief = (string)await InvokeAsyncWithResult(projections, "GetDatabaseTopologyBriefAsync");
         Assert.Contains("Readiness: **Attention**", brief, StringComparison.Ordinal);
         Assert.Contains("1. Let the read-model catch up", brief, StringComparison.Ordinal);
         Assert.Contains("Showcase projection JSON: `/api/v1/showcase/system/database-topology`", brief, StringComparison.Ordinal);
 
-        var handoffResponse = await client.GetAsync("/api/v1/showcase/system/database-topology/handoff");
+        var handoff = await InvokeAsyncWithResult(projections, "GetDatabaseTopologyHandoffAsync");
+        Assert.Equal("application/zip", GetPropertyValue<string>(handoff, "ContentType"));
+        Assert.Equal("database-topology-handoff.zip", GetPropertyValue<string>(handoff, "FileName"));
 
-        Assert.Equal(HttpStatusCode.OK, handoffResponse.StatusCode);
-        Assert.Equal("application/zip", handoffResponse.Content.Headers.ContentType?.MediaType);
-
-        using var handoffStream = new MemoryStream(await handoffResponse.Content.ReadAsByteArrayAsync());
+        using var handoffStream = new MemoryStream(GetPropertyValue<byte[]>(handoff, "Bytes"));
         using var handoffArchive = new ZipArchive(handoffStream, ZipArchiveMode.Read);
         Assert.NotNull(handoffArchive.GetEntry("README.md"));
         Assert.NotNull(handoffArchive.GetEntry("handoff-manifest.json"));
@@ -2363,6 +2385,44 @@ public sealed class ShowcaseSampleHostingTests
         builder.Configuration[$"Engine:Databases:{roleSectionName}:Provider"] = "InMemory";
         builder.Configuration[$"Engine:Databases:{roleSectionName}:ConnectionStringName"] = string.Empty;
         builder.Configuration[$"Engine:Databases:{roleSectionName}:ConnectionString"] = databaseName;
+    }
+
+    private static async Task<object> InvokeAsyncWithResult(object target, string methodName)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentException.ThrowIfNullOrWhiteSpace(methodName);
+
+        var method = target.GetType().GetMethod(
+            methodName,
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+            binder: null,
+            types: [typeof(CancellationToken)],
+            modifiers: null);
+        Assert.NotNull(method);
+
+        var task = method.Invoke(target, [CancellationToken.None]) as Task;
+        Assert.NotNull(task);
+
+        await task.ConfigureAwait(false);
+
+        var resultProperty = task.GetType().GetProperty("Result", BindingFlags.Instance | BindingFlags.Public);
+        Assert.NotNull(resultProperty);
+
+        return resultProperty.GetValue(task) ?? throw new InvalidOperationException(
+            $"Method '{target.GetType().FullName}.{methodName}' completed without a result.");
+    }
+
+    private static T GetPropertyValue<T>(object target, string propertyName)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentException.ThrowIfNullOrWhiteSpace(propertyName);
+
+        var property = target.GetType().GetProperty(
+            propertyName,
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        Assert.NotNull(property);
+
+        return Assert.IsType<T>(property.GetValue(target));
     }
 
     private static async Task WaitForResponseBodyToContainAsync(

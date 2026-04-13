@@ -33,6 +33,7 @@ public sealed class DatabaseRoleDescriptor
     /// <param name="migrationState">The current migration execution state reported for the database role, when available.</param>
     /// <param name="migrationDescription">The operator-facing migration description reported for the database role, when available.</param>
     /// <param name="observedAtUtc">The UTC timestamp when runtime state was last observed for the database role, when available.</param>
+    /// <param name="probe">The stable probe-freshness answer reported for the database role, when available.</param>
     /// <param name="runtimeMetadata">Optional runtime metadata associated with the database role.</param>
     public DatabaseRoleDescriptor(
         string id,
@@ -57,6 +58,7 @@ public sealed class DatabaseRoleDescriptor
         string? migrationState = null,
         string? migrationDescription = null,
         DateTimeOffset? observedAtUtc = null,
+        DatabaseRoleProbeDescriptor? probe = null,
         IReadOnlyDictionary<string, string>? runtimeMetadata = null)
     {
         if (string.IsNullOrWhiteSpace(id))
@@ -115,6 +117,7 @@ public sealed class DatabaseRoleDescriptor
         MigrationState = string.IsNullOrWhiteSpace(migrationState) ? null : migrationState.Trim();
         MigrationDescription = string.IsNullOrWhiteSpace(migrationDescription) ? null : migrationDescription.Trim();
         ObservedAtUtc = observedAtUtc;
+        Probe = probe;
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
@@ -227,6 +230,11 @@ public sealed class DatabaseRoleDescriptor
     /// Gets the UTC timestamp when runtime state was last observed for the database role, when available.
     /// </summary>
     public DateTimeOffset? ObservedAtUtc { get; }
+
+    /// <summary>
+    /// Gets the stable probe-freshness answer reported for the database role, when available.
+    /// </summary>
+    public DatabaseRoleProbeDescriptor? Probe { get; }
 
     /// <summary>
     /// Gets optional operator-facing metadata associated with the database role.

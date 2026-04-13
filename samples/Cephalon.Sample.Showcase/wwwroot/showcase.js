@@ -493,6 +493,9 @@ function renderDatabaseTopology() {
             <div class="mono">${escapeHtml(role.requestedRoleId)} -> ${escapeHtml(role.resolvedRoleId)}</div>
             ${role.observedAtUtc ? `<div class="caption">Observed ${escapeHtml(formatDate(role.observedAtUtc))}</div>` : ""}
             <div class="meta-row">
+              ${role.probeCacheEnabled !== null && role.probeCacheEnabled !== undefined ? `<span class="token">${role.probeCacheEnabled ? "cache on" : "cache off"}</span>` : ""}
+              ${role.probeFreshnessSeconds !== null && role.probeFreshnessSeconds !== undefined ? `<span class="token">freshness ${escapeHtml(String(role.probeFreshnessSeconds))}s</span>` : ""}
+              ${role.probeFreshnessOrigin ? `<span class="token">${escapeHtml(role.probeFreshnessOrigin)}</span>` : ""}
               ${role.probeSource ? `<span class="token">probe ${escapeHtml(role.probeSource)}</span>` : ""}
               ${role.probeAgeSeconds !== null && role.probeAgeSeconds !== undefined ? `<span class="token">age ${escapeHtml(String(role.probeAgeSeconds))}s</span>` : ""}
               ${role.probeFreshUntilUtc ? `<span class="token">fresh until ${escapeHtml(formatDate(role.probeFreshUntilUtc))}</span>` : ""}

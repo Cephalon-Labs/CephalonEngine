@@ -180,6 +180,7 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
             migrationState: state.MigrationState,
             migrationDescription: state.MigrationDescription,
             observedAtUtc: observedAtUtc,
+            probe: probe.Probe,
             metadata: metadata);
     }
 
@@ -359,12 +360,20 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
             ["probeFreshUntilUtc"] = freshUntilUtc.ToString("O", CultureInfo.InvariantCulture),
             ["probeAgeSeconds"] = probeAgeSeconds.ToString(CultureInfo.InvariantCulture)
         };
+        var probeDescriptor = new DatabaseRoleProbeDescriptor(
+            cacheEnabled: probeCaching.CacheEnabled,
+            freshnessSeconds: probeCaching.EffectiveFreshnessSeconds,
+            freshnessOrigin: probeCaching.Origin,
+            source: probeSource,
+            freshUntilUtc: freshUntilUtc,
+            ageSeconds: probeAgeSeconds);
 
         return new RoleProbeResult(
             HealthState: probe.HealthState,
             HealthDescription: probe.HealthDescription,
             ObservedAtUtc: probe.ObservedAtUtc,
-            Metadata: metadata);
+            Metadata: metadata,
+            Probe: probeDescriptor);
     }
 
     private static RoleProbeCacheEntry? TryGetFreshProbe(
@@ -615,5 +624,6 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
         HealthState? HealthState,
         string? HealthDescription,
         DateTimeOffset? ObservedAtUtc,
-        IReadOnlyDictionary<string, string> Metadata);
+        IReadOnlyDictionary<string, string> Metadata,
+        DatabaseRoleProbeDescriptor? Probe = null);
 }

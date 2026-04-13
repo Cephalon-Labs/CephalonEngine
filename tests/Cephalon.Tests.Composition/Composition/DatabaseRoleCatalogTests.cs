@@ -155,6 +155,13 @@ public sealed class DatabaseRoleCatalogTests
             migrationState: "failed",
             migrationDescription: "Startup schema apply failed.",
             observedAtUtc: new DateTimeOffset(2026, 04, 10, 12, 0, 0, TimeSpan.Zero),
+            probe: new DatabaseRoleProbeDescriptor(
+                cacheEnabled: true,
+                freshnessSeconds: 30,
+                freshnessOrigin: "configured",
+                source: "cache",
+                freshUntilUtc: new DateTimeOffset(2026, 04, 10, 12, 0, 30, TimeSpan.Zero),
+                ageSeconds: 12),
             metadata: new Dictionary<string, string>
             {
                 ["providerPack"] = "test-runtime",
@@ -167,6 +174,12 @@ public sealed class DatabaseRoleCatalogTests
         Assert.Equal("Connection probe failed.", updatedWrite.HealthDescription);
         Assert.Equal("failed", updatedWrite.MigrationState);
         Assert.Equal("Startup schema apply failed.", updatedWrite.MigrationDescription);
+        Assert.NotNull(updatedWrite.Probe);
+        Assert.True(updatedWrite.Probe.CacheEnabled);
+        Assert.Equal(30, updatedWrite.Probe.FreshnessSeconds);
+        Assert.Equal("configured", updatedWrite.Probe.FreshnessOrigin);
+        Assert.Equal("cache", updatedWrite.Probe.Source);
+        Assert.Equal(12, updatedWrite.Probe.AgeSeconds);
         Assert.Equal("test-runtime", updatedWrite.RuntimeMetadata["providerPack"]);
         Assert.Equal("Boom", updatedWrite.RuntimeMetadata["lastError"]);
     }

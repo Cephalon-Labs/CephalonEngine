@@ -16,6 +16,7 @@ public sealed class DatabaseRoleRuntimeDescriptor
     /// <param name="migrationState">The current migration execution state for the role, when known.</param>
     /// <param name="migrationDescription">The operator-facing migration description for the role, when known.</param>
     /// <param name="observedAtUtc">The UTC timestamp when this runtime state was last observed.</param>
+    /// <param name="probe">The stable probe-freshness answer for the role, when known.</param>
     /// <param name="metadata">Optional runtime metadata associated with the role.</param>
     public DatabaseRoleRuntimeDescriptor(
         string databaseRoleId,
@@ -24,6 +25,7 @@ public sealed class DatabaseRoleRuntimeDescriptor
         string? migrationState = null,
         string? migrationDescription = null,
         DateTimeOffset? observedAtUtc = null,
+        DatabaseRoleProbeDescriptor? probe = null,
         IReadOnlyDictionary<string, string>? metadata = null)
     {
         if (string.IsNullOrWhiteSpace(databaseRoleId))
@@ -37,6 +39,7 @@ public sealed class DatabaseRoleRuntimeDescriptor
         MigrationState = string.IsNullOrWhiteSpace(migrationState) ? null : migrationState.Trim();
         MigrationDescription = string.IsNullOrWhiteSpace(migrationDescription) ? null : migrationDescription.Trim();
         ObservedAtUtc = observedAtUtc;
+        Probe = probe;
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
@@ -71,6 +74,11 @@ public sealed class DatabaseRoleRuntimeDescriptor
     /// Gets the UTC timestamp when this runtime state was last observed.
     /// </summary>
     public DateTimeOffset? ObservedAtUtc { get; }
+
+    /// <summary>
+    /// Gets the stable probe-freshness answer for the role, when known.
+    /// </summary>
+    public DatabaseRoleProbeDescriptor? Probe { get; }
 
     /// <summary>
     /// Gets optional runtime metadata associated with the role.

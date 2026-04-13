@@ -321,12 +321,19 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("30", pendingWrite.RuntimeMetadata["probeFreshnessSeconds"]);
         Assert.Equal("configured", pendingWrite.RuntimeMetadata["probeFreshnessOrigin"]);
         Assert.Equal("live", pendingWrite.RuntimeMetadata["probeSource"]);
+        Assert.NotNull(pendingWrite.Probe);
+        Assert.True(pendingWrite.Probe.CacheEnabled);
+        Assert.Equal(30, pendingWrite.Probe.FreshnessSeconds);
+        Assert.Equal("configured", pendingWrite.Probe.FreshnessOrigin);
+        Assert.Equal("live", pendingWrite.Probe.Source);
         Assert.Contains("InMemory", pendingWrite.RuntimeMetadata["providerNames"], StringComparison.Ordinal);
         Assert.Equal("0", pendingWrite.RuntimeMetadata["pendingMigrationCount"]);
         Assert.True(pendingWrite.ObservedAtUtc.HasValue);
         Assert.Equal("2026-04-13T12:00:00.0000000+00:00", pendingWrite.RuntimeMetadata["lastProbeAtUtc"]);
         Assert.Equal("0", pendingWrite.RuntimeMetadata["probeAgeSeconds"]);
         Assert.Equal("2026-04-13T12:00:30.0000000+00:00", pendingWrite.RuntimeMetadata["probeFreshUntilUtc"]);
+        Assert.Equal(0, pendingWrite.Probe.AgeSeconds);
+        Assert.Equal(new DateTimeOffset(2026, 04, 13, 12, 0, 30, TimeSpan.Zero), pendingWrite.Probe.FreshUntilUtc);
 
         timeProvider.Advance(TimeSpan.FromSeconds(10));
 
@@ -335,6 +342,9 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("2026-04-13T12:00:00.0000000+00:00", cachedWrite.RuntimeMetadata["lastProbeAtUtc"]);
         Assert.Equal("10", cachedWrite.RuntimeMetadata["probeAgeSeconds"]);
         Assert.Equal(pendingWrite.ObservedAtUtc, cachedWrite.ObservedAtUtc);
+        Assert.NotNull(cachedWrite.Probe);
+        Assert.Equal("cache", cachedWrite.Probe.Source);
+        Assert.Equal(10, cachedWrite.Probe.AgeSeconds);
 
         await hostedService.StartAsync(CancellationToken.None);
 
@@ -352,6 +362,9 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("live", appliedWrite.RuntimeMetadata["probeSource"]);
         Assert.Equal("2026-04-13T12:00:15.0000000+00:00", appliedWrite.RuntimeMetadata["lastProbeAtUtc"]);
         Assert.Equal("0", appliedWrite.RuntimeMetadata["probeAgeSeconds"]);
+        Assert.NotNull(appliedWrite.Probe);
+        Assert.Equal("live", appliedWrite.Probe.Source);
+        Assert.Equal(0, appliedWrite.Probe.AgeSeconds);
     }
 
     [Fact]
