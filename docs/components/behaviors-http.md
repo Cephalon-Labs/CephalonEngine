@@ -32,8 +32,8 @@ module-owned REST endpoints.
   compiled internally into a normalized REST projection contract before Minimal API materialization
 - **Metadata-only REST profile contract** — `BehaviorRestProfileAttribute`,
   `BehaviorRestMethod`, and `BehaviorRestProfileDescriptor` for behavior-authored candidate REST
-  method, relative route, and API-version hints that future generated module projections can consume
-  without publishing public REST directly from behaviors
+  method, relative route, and API-version hints that explicit module-owned shorthand such as
+  `MapProfile<TBehavior>()` can consume without publishing public REST directly from behaviors
 - **OpenAPI enrichment** — module tag names and descriptions, module-major API-version defaults
   with explicit `.ApiVersion(...)` override support, best-effort XML comment
   summaries/descriptions for module-owned REST endpoints, and separation between public REST docs
@@ -155,9 +155,13 @@ Current profile behavior:
 
 - the attribute is metadata only and does not publish a public REST route
 - the owning module still chooses whether that behavior becomes public REST through
-  `ConfigureRestBehaviors(...)` or a future generated module projection path
+  `ConfigureRestBehaviors(...)`
 - `Cephalon.Behaviors.SourceGen` validates the profile at build time and emits
   `GetRestProfiles()` hints when the profile is valid
+- `IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>()` is now the shipped low-ceremony
+  module-owned shorthand that consumes those hints through the existing REST projection pipeline
+- profile consumption prefers source-generated `GetRestProfiles()` hints first and falls back to
+  the explicitly targeted behavior type's attribute only when generated hints are unavailable
 - valid profiles currently require a supported REST method, a non-empty leading-slash relative
   pattern such as `"/{cartId}"`, and a positive `ApiVersionMajor` when one is specified
 - profile API-version metadata is still only a candidate endpoint version; host publication remains
@@ -201,6 +205,29 @@ public sealed class CartModule : RestBehaviorModuleBase
 }
 ```
 
+When the behavior already carries a REST profile and the module wants the lower-ceremony path, the
+same module-owned DSL can consume that metadata explicitly:
+
+```csharp
+public sealed class CartModule : RestBehaviorModuleBase
+{
+    public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+    {
+        var group = behaviors.Group("/showcase/cart")
+            .WithTagName("Cart API");
+
+        group.MapProfile<GetCartBehavior>();
+        group.MapProfile<AddToCartBehavior>();
+        group.MapProfile<RemoveFromCartBehavior>();
+        group.MapProfile<CheckoutCartBehavior>();
+
+        behaviors.Internal<RepriceCartBehavior>();
+    }
+}
+```
+
 Current helper behavior:
 
 - keeps REST route shape in the host-adapter layer instead of overloading behavior attributes with
@@ -214,6 +241,15 @@ Current helper behavior:
   model before the ASP.NET Core adapter materializes route groups and handlers
 - keeps `Internal<TBehavior>()` available for internal-only behaviors or behaviors that will be exposed
   through custom/manual endpoints
+- adds `MapProfile<TBehavior>()` as an explicit module-owned shorthand that consumes only the
+  behavior profile's method, relative pattern, and optional candidate API version
+- prefers source-generated profile hints and falls back only to the explicitly targeted behavior
+  type instead of broad assembly reflection
+- lets explicit group `.ApiVersion(...)` override profile-declared candidate versions, while
+  conflicting profile-declared versions in the same group fail fast until the module resolves them
+- keeps runtime publication on the same module-owned path with `sourceKind = module-dsl`, while
+  `/engine/rest-endpoints` exposes `metadata.authoringStyle = behavior-module-profile` for the
+  shorthand path and `behavior-module-dsl` for the fully explicit path
 - dispatches through `BehaviorDispatcher` using Minimal API handlers
 - lets behaviors return raw `TOutput` or transport-neutral `Result<TOutput>` values
 - composes route values, query-string values, and JSON request bodies into the behavior input payload

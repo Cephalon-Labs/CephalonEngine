@@ -169,7 +169,10 @@ Current `BehaviorRestProfileAttribute` behavior:
 - `Cephalon.Behaviors.SourceGen` validates the method, relative pattern, and optional API version
   at build time
 - the owning module still decides whether the behavior becomes public REST through
-  `ConfigureRestBehaviors(...)` or a future generated module projection path
+  `ConfigureRestBehaviors(...)`
+- `IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>()` is now the shipped low-ceremony
+  module-owned shorthand that consumes those profile hints through the same normalized REST
+  projection pipeline
 - the optional `ApiVersionMajor` remains only a candidate endpoint version; the host still decides
   which OpenAPI documents are published through `OpenApi:EnabledVersions` or the legacy document
   allow-list settings
@@ -269,6 +272,28 @@ public sealed class CartModule : RestBehaviorModuleBase
 }
 ```
 
+When the behavior already declares `BehaviorRestProfileAttribute`, the module can keep the same
+ownership model but avoid restating the HTTP method and relative pattern:
+
+```csharp
+public sealed class CartModule : RestBehaviorModuleBase
+{
+    public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+    {
+        var group = behaviors.Group("/showcase/cart");
+
+        group.MapProfile<GetCartBehavior>();
+        group.MapProfile<AddToCartBehavior>();
+        group.MapProfile<RemoveFromCartBehavior>();
+        group.MapProfile<CheckoutCartBehavior>();
+
+        behaviors.Internal<RepriceCartBehavior>();
+    }
+}
+```
+
 Current helper behavior:
 
 - gives behavior authors a base class instead of forcing modules to implement multiple interfaces
@@ -276,6 +301,8 @@ Current helper behavior:
 - keeps one module as the owner of both internal-only and REST-exposed behaviors without making
   authors declare the same public behavior twice
 - treats `behaviors.Group(...).MapGet/MapPost/...` as the primary public REST DSL
+- adds `behaviors.Group(...).MapProfile<TBehavior>()` as the lower-ceremony module-owned shorthand
+  when the behavior already carries `BehaviorRestProfileAttribute`
 - treats `behaviors.Internal<TBehavior>()` as the explicit internal-only or custom/manual-route path
 - validates that a module cannot map another module's explicitly owned behavior through the REST helper layer
 - keeps route shape in the ASP.NET Core adapter layer while behavior attributes remain host-agnostic
@@ -286,10 +313,16 @@ Current helper behavior:
 - defaults the tag description from the module XML `<summary>` plus `<remarks>` when XML docs exist, falling back to `ModuleDescriptor.Description`
 - defaults newly mapped endpoints to the owning module descriptor major version when one is available, so a module declared as `1.0.0` automatically joins the `v1` document and gets a `/v1` route prefix without extra code
 - keeps `.ApiVersion(major)` as the explicit override when the public API version should differ from the module package major
+- lets profile-declared candidate API versions seed the group only when `.ApiVersion(...)` was not
+  set explicitly, and fails fast when profiled behaviors in the same group disagree on that
+  candidate version
 - prefixes the mapped REST route group with `/v{major}` for the resolved API major version, so ASP.NET Core hosts expose routes such as `/api/v1/showcase/cart/{cartId}`
 - uses the resolved API major version as the operation-name version segment, falling back to the owning module descriptor major version
 - flows XML comments from the module and behavior assemblies into ASP.NET Core OpenAPI metadata when XML docs are available
 - maps behavior `<summary>` to the operation header and behavior `<remarks>` to the operation description so Scalar/OpenAPI content stays non-duplicated
+- keeps runtime publication on the same module-owned route with `sourceKind = module-dsl`, while
+  `/engine/rest-endpoints` distinguishes the shorthand path through
+  `metadata.authoringStyle = behavior-module-profile`
 - keeps `MapAdditionalEndpoints(...)` as the advanced escape hatch for manual Minimal API work that
   falls outside the default behavior REST DSL; custom endpoints should still declare ownership first
   through `behaviors.Internal<TBehavior>()`, and those manual module-owned routes now still join the

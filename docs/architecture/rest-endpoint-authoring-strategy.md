@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 13, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -147,9 +147,13 @@ Status update:
   `BehaviorRestProfileDescriptor`, source-generated `GetRestProfiles()` hints, and
   `ABT0015` through `ABT0018`, while still keeping those behavior-authored REST profiles
   metadata-only rather than publishing public REST directly from behaviors
-- the next high-value follow-through is consuming those generated hints through explicit,
-  module-owned shorthand projections and then tightening the normalized projection model with
-  explicit binding descriptors before broad shorthand publication is considered
+- Step 4 is now partially shipped through `IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>()`,
+  which consumes those generated hints through the same explicit module-owned DSL, prefers
+  source-generated `GetRestProfiles()` material, falls back only to the explicitly targeted
+  behavior type when generated hints are unavailable, and keeps runtime publication on the existing
+  `module-dsl` path with additive `authoringStyle = behavior-module-profile` metadata
+- the next high-value follow-through is tightening the normalized projection model with explicit
+  binding descriptors before any broader convention-backed shorthand publication is considered
 
 ## Recommended long-term engine model
 
@@ -269,14 +273,13 @@ Recommended runtime surface:
 
 The shipped baseline now answers at least:
 
-- source kind such as `manual`, `module-dsl`, `generated-module`, `behavior-profile`, or
-  `convention`
+- source kind such as `manual` or `module-dsl`
 - module id when a real module owns the projection
 - behavior id when the endpoint dispatches through `BehaviorDispatcher`
 - HTTP method
 - final route pattern
 - candidate OpenAPI document or API version
-- additive metadata such as the route-group prefix plus relative pattern
+- additive metadata such as the route-group prefix, relative pattern, and authoring style
 
 That answer now covers both projection-backed module DSL routes and explicit manual module-owned
 REST routes published through `IRestModule`, legacy `IEndpointModule`, or
@@ -402,10 +405,19 @@ Status:
   and emits source-generated `GetRestProfiles()` hints without activating public REST routes from
   `[AppBehavior]`
 
-### Step 4: add generated or convention-backed module projections
+### Step 4: add explicit module-owned profile shorthand, then broader generated module projections
 
-Allow low-code projects to opt into convention REST mapping without abandoning module-owned public
-boundaries.
+Status:
+
+- partially shipped through `ENG-058-T62`; `IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>()`
+  now lets an owning module consume `BehaviorRestProfileAttribute` hints without restating the HTTP
+  method or relative pattern in module code, while still keeping public REST explicit and
+  module-owned
+
+Follow-through later:
+
+- allow low-code projects to opt into broader generated or convention-backed module projection
+  without abandoning module-owned public boundaries
 
 ### Step 5: add explicit input-binding descriptors and controlled configuration overrides
 

@@ -1,4 +1,6 @@
 using Cephalon.Abstractions.Behaviors;
+using Cephalon.AspNetCore.Transports.Rest;
+using Cephalon.Behaviors.Http.Abstractions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
@@ -86,6 +88,7 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(major);
             state.ApiVersionMajor = major;
             state.HasExplicitApiVersion = true;
+            state.ProfileApiVersionSourceBehaviorId = null;
             return this;
         }
 
@@ -111,6 +114,17 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
             state.GroupConventions.Add(configure);
             return this;
         }
+
+        public IRestBehaviorEndpointGroupBuilder MapProfile<TBehavior>(
+            Action<RouteHandlerBuilder>? configureEndpoint = null)
+            where TBehavior : class
+            => AddProfileEndpoint<TBehavior>(configureTopology: null, configureEndpoint);
+
+        public IRestBehaviorEndpointGroupBuilder MapProfile<TBehavior>(
+            Action<IBehaviorTopologyBuilder> configureTopology,
+            Action<RouteHandlerBuilder>? configureEndpoint = null)
+            where TBehavior : class
+            => AddProfileEndpoint<TBehavior>(configureTopology, configureEndpoint);
 
         public IRestBehaviorEndpointGroupBuilder MapGet<TBehavior>(
             string pattern,
@@ -190,8 +204,48 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
             state.Endpoints.Add(RestBehaviorEndpointProjection.Create<TBehavior>(
                 method,
                 pattern,
+                configureEndpoint,
+                RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle));
+            return this;
+        }
+
+        private RestBehaviorEndpointGroupBuilder AddProfileEndpoint<TBehavior>(
+            Action<IBehaviorTopologyBuilder>? configureTopology,
+            Action<RouteHandlerBuilder>? configureEndpoint)
+            where TBehavior : class
+        {
+            var profile = BehaviorRestProfileResolver.Resolve<TBehavior>();
+            SeedProfileApiVersion(profile);
+            moduleBuilder.RegisterOwnedBehavior<TBehavior>(configureTopology);
+            state.Endpoints.Add(RestBehaviorEndpointProjection.Create<TBehavior>(
+                profile,
                 configureEndpoint));
             return this;
+        }
+
+        private void SeedProfileApiVersion(BehaviorRestProfileDescriptor profile)
+        {
+            ArgumentNullException.ThrowIfNull(profile);
+
+            if (!profile.ApiVersionMajor.HasValue || state.HasExplicitApiVersion)
+            {
+                return;
+            }
+
+            if (!state.ApiVersionMajor.HasValue)
+            {
+                state.ApiVersionMajor = profile.ApiVersionMajor.Value;
+                state.ProfileApiVersionSourceBehaviorId = profile.BehaviorId;
+                return;
+            }
+
+            if (state.ApiVersionMajor.Value == profile.ApiVersionMajor.Value)
+            {
+                return;
+            }
+
+            throw new InvalidOperationException(
+                $"REST behavior-module group '{state.Prefix}' resolved conflicting profile API major versions ({state.ApiVersionMajor.Value} from '{state.ProfileApiVersionSourceBehaviorId}' and {profile.ApiVersionMajor.Value} from '{profile.BehaviorId}'). Set ApiVersion(...) explicitly or split the profiled behaviors into separate groups.");
         }
     }
 
@@ -209,6 +263,8 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
 
         public bool HasExplicitApiVersion { get; set; }
 
+        public string? ProfileApiVersionSourceBehaviorId { get; set; }
+
         public List<Action<RouteGroupBuilder>> GroupConventions { get; } = [];
 
         public List<RestBehaviorEndpointProjection> Endpoints { get; } = [];
@@ -222,6 +278,7 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
                 HasExplicitTagDescription,
                 ApiVersionMajor,
                 HasExplicitApiVersion,
+                ProfileApiVersionSourceBehaviorId,
                 [.. GroupConventions],
                 [.. Endpoints]);
         }

@@ -4,6 +4,8 @@ using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Transports;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Modules;
+using Cephalon.AspNetCore.Transports.Rest;
+using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Hosting;
 using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Engine.Runtime;
@@ -163,6 +165,121 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonExposesProfileDrivenModuleDslEndpointsInRuntimeCatalog()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "3";
+        builder.Configuration["OpenApi:DefaultVersion"] = "3";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileDrivenRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+
+        Assert.NotNull(endpoints);
+
+        var endpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.rest.profile.lookup", StringComparison.Ordinal));
+        Assert.Equal("module-dsl", endpoint.SourceKind);
+        Assert.Equal("/api/v3/tests/profile-runtime/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("v3", endpoint.OpenApiDocumentName);
+        Assert.Equal(3, endpoint.ApiVersionMajor);
+        Assert.Contains("Profile Runtime API", endpoint.Tags);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, endpoint.Metadata["authoringStyle"]);
+        Assert.Equal("/api/v3/tests/profile-runtime/orders", endpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal("/{orderId}", endpoint.Metadata["relativePattern"]);
+
+        var payload = await client.GetFromJsonAsync<ProfileRuntimeOrderOutput>("/api/v3/tests/profile-runtime/orders/ord-42");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonLetsExplicitGroupVersionOverrideBehaviorRestProfileVersion()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "5";
+        builder.Configuration["OpenApi:DefaultVersion"] = "5";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileVersionOverrideRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+
+        Assert.NotNull(endpoints);
+
+        var endpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.rest.profile.override", StringComparison.Ordinal));
+        Assert.Equal("/api/v5/tests/profile-runtime/override/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("v5", endpoint.OpenApiDocumentName);
+        Assert.Equal(5, endpoint.ApiVersionMajor);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, endpoint.Metadata["authoringStyle"]);
+
+        var payload = await client.GetFromJsonAsync<ProfileRuntimeOrderOutput>("/api/v5/tests/profile-runtime/override/orders/ord-77");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-77", payload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonDoesNotPublishProfileMetadataWithoutExplicitModuleConsumption()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileMetadataOnlyRuntimeModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+
+        Assert.NotNull(endpoints);
+        Assert.Empty(endpoints);
+    }
+
+    [Fact]
     public void MapCephalonRejectsCollidingDslAndManualRestEndpoints()
     {
         var builder = WebApplication.CreateBuilder();
@@ -314,6 +431,53 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class ProfileDrivenRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime",
+            "Profile Runtime Module",
+            "Publishes profile-driven REST endpoints for runtime catalog coverage.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile-runtime/orders")
+                .WithTagName("Profile Runtime API")
+                .MapProfile<GetProfileRuntimeOrderBehavior>();
+        }
+    }
+
+    private sealed class ProfileVersionOverrideRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.override",
+            "Profile Runtime Override Module",
+            "Overrides a profile-declared version from the owning module DSL.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile-runtime/override/orders")
+                .ApiVersion(5)
+                .WithTagName("Profile Runtime Override API")
+                .MapProfile<GetProfileOverrideOrderBehavior>();
+        }
+    }
+
+    private sealed class ProfileMetadataOnlyRuntimeModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.metadata-only",
+            "Profile Metadata Only Module",
+            "Owns a behavior with profile metadata without consuming it as public REST.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Internal<GetProfileMetadataOnlyOrderBehavior>();
+        }
+    }
+
     [AppBehavior("tests.rest.runtime-catalog.get")]
     private sealed class GetCatalogCartBehavior : IAppBehavior<GetCatalogCartInput, GetCatalogCartOutput>
     {
@@ -386,6 +550,45 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    [AppBehavior("tests.rest.profile.lookup")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 3)]
+    private sealed class GetProfileRuntimeOrderBehavior : IAppBehavior<ProfileRuntimeOrderInput, ProfileRuntimeOrderOutput>
+    {
+        public Task<ProfileRuntimeOrderOutput> HandleAsync(
+            ProfileRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProfileRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.rest.profile.override")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 2)]
+    private sealed class GetProfileOverrideOrderBehavior : IAppBehavior<ProfileRuntimeOrderInput, ProfileRuntimeOrderOutput>
+    {
+        public Task<ProfileRuntimeOrderOutput> HandleAsync(
+            ProfileRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProfileRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.rest.profile.metadata-only")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 4)]
+    private sealed class GetProfileMetadataOnlyOrderBehavior : IAppBehavior<ProfileRuntimeOrderInput, ProfileRuntimeOrderOutput>
+    {
+        public Task<ProfileRuntimeOrderOutput> HandleAsync(
+            ProfileRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProfileRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
     private sealed record GetCatalogCartInput(string CartId);
 
     private sealed record GetCatalogCartOutput(string CartId);
@@ -405,4 +608,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     private sealed record ManualHelperOrderOutput(string OrderId);
 
     private sealed record ManualCollisionOutput(string ItemId);
+
+    private sealed record ProfileRuntimeOrderInput(string OrderId);
+
+    private sealed record ProfileRuntimeOrderOutput(string OrderId);
 }

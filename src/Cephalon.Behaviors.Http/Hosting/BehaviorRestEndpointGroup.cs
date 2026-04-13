@@ -37,6 +37,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     private readonly string? moduleSummary;
     private readonly string? moduleRemarks;
     private readonly string routePrefix;
+    private string runtimeAuthoringStyle = RestEndpointRuntimeMetadata.BehaviorHelperAuthoringStyle;
     private string runtimeSourceKind = RestEndpointRuntimeMetadata.ManualSourceKind;
     private RouteGroupBuilder? routes;
 
@@ -100,6 +101,12 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceKind);
         runtimeSourceKind = sourceKind.Trim();
+    }
+
+    internal void UseRuntimeAuthoringStyle(string authoringStyle)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(authoringStyle);
+        runtimeAuthoringStyle = authoringStyle.Trim();
     }
 
     /// <summary>
@@ -466,6 +473,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
 
         builder.WithMetadata(new RestBehaviorEndpointMetadata(
             group.runtimeSourceKind,
+            group.runtimeAuthoringStyle,
             contract.BehaviorId,
             typeof(TBehavior).FullName ?? typeof(TBehavior).Name,
             contract.OperationName,

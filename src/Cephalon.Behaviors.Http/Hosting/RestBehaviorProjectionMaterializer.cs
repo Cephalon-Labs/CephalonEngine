@@ -32,6 +32,7 @@ internal static class RestBehaviorProjectionMaterializer
 
         var group = endpoints.MapBehaviorRestGroup(module, projection.Prefix);
         group.UseRuntimeSourceKind(RestEndpointRuntimeMetadata.ModuleDslSourceKind);
+        group.UseRuntimeAuthoringStyle(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle);
         if (!string.IsNullOrWhiteSpace(projection.TagName))
         {
             group.WithTagName(projection.TagName);
@@ -42,7 +43,7 @@ internal static class RestBehaviorProjectionMaterializer
             group.WithTagDescription(projection.TagDescription);
         }
 
-        if (projection.HasExplicitApiVersion && projection.ApiVersionMajor.HasValue)
+        if (projection.ApiVersionMajor.HasValue)
         {
             group.ApiVersion(projection.ApiVersionMajor.Value);
         }

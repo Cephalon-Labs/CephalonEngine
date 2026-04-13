@@ -105,6 +105,10 @@ path.
 the generator validates the profile and emits `GetRestProfiles()` hints, but that metadata still
 does not publish public REST routes by itself and does not override host OpenAPI document
 publication policy.
+`Cephalon.Behaviors.Http` now consumes those hints through the explicit module-owned
+`MapProfile<TBehavior>()` shorthand on `IRestBehaviorEndpointGroupBuilder`, preferring the
+generated hints and falling back only to the explicitly targeted behavior type's attribute when
+generated hints are unavailable.
 Likewise, explicit module ownership through `IBehaviorOwnerModule`, `BehaviorModuleBase`, or
 `RestBehaviorModuleBase` remains a runtime-composition concern rather than a source-generated
 topology concern: the generator still focuses on behavior shape and topology, while the engine owns

@@ -151,12 +151,7 @@ internal static class RestEndpointRuntimeMaterializer
 
         if (behaviorMetadata is not null)
         {
-            metadata["authoringStyle"] = string.Equals(
-                behaviorMetadata.SourceKind,
-                RestEndpointRuntimeMetadata.ModuleDslSourceKind,
-                StringComparison.OrdinalIgnoreCase)
-                ? "behavior-module-dsl"
-                : "behavior-helper";
+            metadata["authoringStyle"] = behaviorMetadata.AuthoringStyle;
             metadata["behaviorType"] = behaviorMetadata.BehaviorType;
             metadata["routeGroupPrefix"] = CombinePaths(apiRoutesOptions.RestPrefix, behaviorMetadata.RouteGroupPrefix);
             metadata["relativePattern"] = behaviorMetadata.RelativePattern;
@@ -164,7 +159,7 @@ internal static class RestEndpointRuntimeMaterializer
             return metadata;
         }
 
-        metadata["authoringStyle"] = "minimal-api";
+        metadata["authoringStyle"] = RestEndpointRuntimeMetadata.MinimalApiAuthoringStyle;
         metadata["sourceId"] = $"{moduleMetadata.ModuleId}:{normalizedMethod}:{routePattern}";
         if (!string.IsNullOrWhiteSpace(endpoint.DisplayName))
         {

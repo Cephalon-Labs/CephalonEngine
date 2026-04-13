@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Hosting;
 using Cephalon.Behaviors.Modules;
@@ -95,6 +96,24 @@ public sealed class BehaviorOwnerModuleTests
         Assert.NotNull(catalog.FindById("tests.owned.rest.internal"));
     }
 
+    [Fact]
+    public void RestBehaviorModuleBaseRegistersProfileDrivenBehaviorsAsOwnedModuleBehaviors()
+    {
+        var services = new ServiceCollection();
+        var builder = new EngineBuilder(services);
+        builder.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+        builder.AddBehaviors(options => options.AutoRegister = false);
+        builder.AddModule(new ProfileOwnedRestBehaviorModule());
+
+        builder.Build();
+
+        using var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IBehaviorCatalog>();
+
+        Assert.NotNull(catalog.FindById("tests.owned.rest.profile"));
+        Assert.NotNull(catalog.FindById("tests.owned.rest.internal"));
+    }
+
     [AppBehavior("tests.owned.greeting")]
     [BehaviorAllowedPatterns("direct")]
     [BehaviorAllowedTransports("http.jsonrpc", "http.sse")]
@@ -125,6 +144,17 @@ public sealed class BehaviorOwnerModuleTests
             IBehaviorContext context,
             CancellationToken cancellationToken = default)
             => Task.FromResult($"Internal hello, {input}!");
+    }
+
+    [AppBehavior("tests.owned.rest.profile")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{name}", ApiVersionMajor = 2)]
+    private sealed class OwnedRestProfileBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(
+            string input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult($"Profile hello, {input}!");
     }
 
     private sealed class OwnedGreetingModule : BehaviorModuleBase
@@ -199,6 +229,27 @@ public sealed class BehaviorOwnerModuleTests
                 topology => topology
                     .AsDirect()
                     .ViaHttpJsonRpc());
+
+            behaviors.Internal<OwnedRestInternalBehavior>(topology => topology
+                .AsDirect()
+                .ViaInMemory());
+        }
+    }
+
+    private sealed class ProfileOwnedRestBehaviorModule : RestBehaviorModuleBase
+    {
+        private static readonly ModuleDescriptor DescriptorInstance = new(
+            id: "tests.rest-owner-profile",
+            displayName: "REST Behavior Owner Profile",
+            description: "Test module that owns a profile-driven public REST behavior and an internal behavior.",
+            version: "1.0.0");
+
+        public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/rest-owner-profile")
+                .MapProfile<OwnedRestProfileBehavior>();
 
             behaviors.Internal<OwnedRestInternalBehavior>(topology => topology
                 .AsDirect()

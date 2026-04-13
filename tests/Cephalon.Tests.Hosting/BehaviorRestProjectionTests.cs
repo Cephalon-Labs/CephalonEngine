@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
 using Cephalon.AspNetCore.Transports.Rest;
+using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Http.Hosting;
 using Microsoft.AspNetCore.Builder;
 
@@ -39,6 +40,7 @@ public sealed class BehaviorRestProjectionTests
                 Assert.Equal(RestBehaviorHttpMethod.Get, getEndpoint.Method);
                 Assert.Equal(typeof(ProjectionCartBehavior), getEndpoint.BehaviorType);
                 Assert.Equal("/{cartId}", getEndpoint.Pattern);
+                Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, getEndpoint.AuthoringStyle);
                 Assert.Null(getEndpoint.ConfigureEndpoint);
             },
             postEndpoint =>
@@ -46,6 +48,7 @@ public sealed class BehaviorRestProjectionTests
                 Assert.Equal(RestBehaviorHttpMethod.Post, postEndpoint.Method);
                 Assert.Equal(typeof(ProjectionCartBehavior), postEndpoint.BehaviorType);
                 Assert.Equal("/{cartId}/items", postEndpoint.Pattern);
+                Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, postEndpoint.AuthoringStyle);
                 Assert.Null(postEndpoint.ConfigureEndpoint);
             });
     }
@@ -93,6 +96,76 @@ public sealed class BehaviorRestProjectionTests
 
         Assert.Contains("explicit internal/topology configuration", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("Internal<TBehavior>()", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void RestBehaviorModuleBuilderBuildMapsProfileMetadataIntoProjectionAndSeedsGroupVersion()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+
+        builder.Group("/tests/profile-cart")
+            .MapProfile<ProfileProjectionGetBehavior>();
+
+        var projection = builder.Build();
+
+        Assert.Single(projection.OwnershipRegistrations);
+
+        var routeGroup = Assert.Single(projection.Groups);
+        Assert.Equal("/tests/profile-cart", routeGroup.Prefix);
+        Assert.Equal(3, routeGroup.ApiVersionMajor);
+        Assert.False(routeGroup.HasExplicitApiVersion);
+        Assert.Equal("tests.profile.projection.get", routeGroup.ProfileApiVersionSourceBehaviorId);
+
+        var endpoint = Assert.Single(routeGroup.Endpoints);
+        Assert.Equal(RestBehaviorHttpMethod.Get, endpoint.Method);
+        Assert.Equal(typeof(ProfileProjectionGetBehavior), endpoint.BehaviorType);
+        Assert.Equal("/{cartId}", endpoint.Pattern);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, endpoint.AuthoringStyle);
+    }
+
+    [Fact]
+    public void RestBehaviorModuleBuilderBuildLetsExplicitGroupApiVersionOverrideProfileVersion()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+
+        builder.Group("/tests/profile-cart")
+            .ApiVersion(7)
+            .MapProfile<ProfileProjectionGetBehavior>();
+
+        var routeGroup = Assert.Single(builder.Build().Groups);
+
+        Assert.Equal(7, routeGroup.ApiVersionMajor);
+        Assert.True(routeGroup.HasExplicitApiVersion);
+        Assert.Null(routeGroup.ProfileApiVersionSourceBehaviorId);
+    }
+
+    [Fact]
+    public void RestBehaviorModuleBuilderRejectsProfileMappingsWithoutRestProfileMetadata()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        var group = builder.Group("/tests/profile-cart");
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            group.MapProfile<ProjectionCartBehavior>());
+
+        Assert.Contains("MapProfile<TBehavior>()", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("BehaviorRestProfile", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void RestBehaviorModuleBuilderRejectsConflictingProfileApiVersionsWithinOneGroup()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        var group = builder.Group("/tests/profile-cart");
+
+        group.MapProfile<ProfileProjectionGetBehavior>();
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            group.MapProfile<ProfileProjectionConflictBehavior>());
+
+        Assert.Contains("conflicting profile API major versions", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("tests.profile.projection.get", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("tests.profile.projection.conflict", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -145,6 +218,32 @@ public sealed class BehaviorRestProjectionTests
     private sealed record ProjectionCartInput(string CartId, string? ProductId = null);
 
     private sealed record ProjectionCartOutput(string CartId);
+
+    [AppBehavior("tests.profile.projection.get")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{cartId}", ApiVersionMajor = 3)]
+    private sealed class ProfileProjectionGetBehavior : IAppBehavior<ProjectionCartInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProjectionCartInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
+    [AppBehavior("tests.profile.projection.conflict")]
+    [BehaviorRestProfile(BehaviorRestMethod.Post, "/{cartId}/items", ApiVersionMajor = 4)]
+    private sealed class ProfileProjectionConflictBehavior : IAppBehavior<ProjectionCartInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProjectionCartInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
 
     private sealed class ProjectionCountingRestModule : RestBehaviorModuleBase
     {

@@ -4,6 +4,10 @@ internal static class RestEndpointRuntimeMetadata
 {
     internal const string ManualSourceKind = "manual";
     internal const string ModuleDslSourceKind = "module-dsl";
+    internal const string MinimalApiAuthoringStyle = "minimal-api";
+    internal const string BehaviorHelperAuthoringStyle = "behavior-helper";
+    internal const string BehaviorModuleDslAuthoringStyle = "behavior-module-dsl";
+    internal const string BehaviorModuleProfileAuthoringStyle = "behavior-module-profile";
 }
 
 internal sealed record RestModuleEndpointMetadata(
@@ -15,6 +19,7 @@ internal sealed record RestModuleEndpointMetadata(
 
 internal sealed record RestBehaviorEndpointMetadata(
     string SourceKind,
+    string AuthoringStyle,
     string BehaviorId,
     string BehaviorType,
     string OperationName,
