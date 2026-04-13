@@ -50,6 +50,7 @@ internal sealed class ShowcaseSystemProjectionService(
     private const string EngineDatabaseTopologyPath = "/engine/database-topology";
     private const string EngineDatabaseRolesPath = "/engine/database-roles";
     private const string EngineDatabaseMigrationsPath = "/engine/database-migrations";
+    private const string EngineDatabaseMigrationPlaybookPath = "/engine/database-migration-playbook";
     private const string EngineRuntimeSnapshotPath = "/engine/snapshot";
     private const string ShowcaseProjectPath = "samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj";
     private const string ShowcaseRepoRootHint = "Run from the repository root, or adapt the project paths for another host layout.";
@@ -101,6 +102,8 @@ internal sealed class ShowcaseSystemProjectionService(
         var runtimeSnapshot = snapshotProvider.CreateSnapshot();
         var engineDatabaseTopology = runtimeSnapshot.DatabaseTopology
             ?? throw new InvalidOperationException("The runtime snapshot did not include the engine-owned database-topology posture.");
+        var engineMigrationPlaybook = runtimeSnapshot.DatabaseMigrationPlaybook
+            ?? throw new InvalidOperationException("The runtime snapshot did not include the engine-owned database-migration playbook.");
         var readModelSync = await LoadReadModelSyncStatusAsync(cancellationToken).ConfigureAwait(false);
 
         var roles = runtimeSnapshot.DatabaseRoles
@@ -215,7 +218,7 @@ internal sealed class ShowcaseSystemProjectionService(
             HistoryProvider: runtimeSnapshot.Manifest.AppProfile.Databases.History.Provider ?? "Unknown",
             GeneratedAtUtc: DateTimeOffset.UtcNow);
         var databaseTopologyPath = $"{apiRoutes.RestPrefix}/v1/showcase/system/database-topology";
-        var migrationPlaybook = BuildDatabaseMigrationPlaybook(migrations);
+        var migrationPlaybook = BuildDatabaseMigrationPlaybook(engineMigrationPlaybook);
         var readiness = BuildDatabaseTopologyReadiness(
             engineDatabaseTopology.Summary,
             readModelSync,
@@ -874,47 +877,49 @@ internal sealed class ShowcaseSystemProjectionService(
     }
 
     private static ShowcaseDatabaseTopologyMigrationPlaybook BuildDatabaseMigrationPlaybook(
-        IReadOnlyList<ShowcaseDatabaseTopologyMigrationRow> migrations)
+        DatabaseMigrationOperationalPlaybook enginePlaybook)
     {
-        ArgumentNullException.ThrowIfNull(migrations);
+        ArgumentNullException.ThrowIfNull(enginePlaybook);
 
-        var steps = migrations
-            .OrderBy(static migration => migration.RecommendedExecutionOrder ?? int.MaxValue)
-            .ThenBy(static migration => migration.Id, StringComparer.OrdinalIgnoreCase)
-            .Select((migration, index) =>
+        var steps = enginePlaybook.Steps
+            .Select(step =>
             {
-                var productionCommand = migration.Commands.FirstOrDefault(static command => command.RecommendedForProduction);
-                var localCommand = migration.Commands.FirstOrDefault(static command => !command.RecommendedForProduction);
+                var productionCommand = step.ProductionCommand;
+                var localCommand = step.ManualCommand;
 
                 return new ShowcaseDatabaseTopologyMigrationPlaybookStepRow(
-                    Order: index + 1,
-                    TargetId: migration.Id,
-                    RequestedRoleId: migration.RequestedRoleId,
-                    ResolvedRoleId: migration.ResolvedRoleId,
-                    Status: migration.Status,
-                    ExecutionMode: migration.ExecutionMode,
-                    ApplyOnStartup: migration.ApplyOnStartup,
+                    Order: step.Order,
+                    TargetId: step.DatabaseMigrationId,
+                    RequestedRoleId: step.RequestedRoleId,
+                    ResolvedRoleId: step.ResolvedRoleId,
+                    Status: step.Status.ToString(),
+                    ExecutionMode: step.ExecutionMode,
+                    ApplyOnStartup: step.ApplyOnStartup,
                     HasProductionRecommendedCommand: productionCommand is not null &&
-                        !string.IsNullOrWhiteSpace(productionCommand.SampleCommand),
+                        !string.IsNullOrWhiteSpace(productionCommand.CommandTemplate),
                     ProductionCommandId: productionCommand?.Id,
                     ProductionCommandDisplayName: productionCommand?.DisplayName,
                     ProductionCommandDescription: productionCommand?.Description,
-                    ProductionSampleCommand: productionCommand?.SampleCommand ?? productionCommand?.CommandTemplate,
-                    ProductionCommandHint: productionCommand?.SampleCommandHint,
+                    ProductionSampleCommand: productionCommand is null
+                        ? null
+                        : BuildShowcaseSampleMigrationCommand(productionCommand.CommandTemplate),
+                    ProductionCommandHint: productionCommand is null ? null : ShowcaseRepoRootHint,
                     LocalCommandId: localCommand?.Id,
                     LocalCommandDisplayName: localCommand?.DisplayName,
                     LocalCommandDescription: localCommand?.Description,
-                    LocalSampleCommand: localCommand?.SampleCommand ?? localCommand?.CommandTemplate);
+                    LocalSampleCommand: localCommand is null
+                        ? null
+                        : BuildShowcaseSampleMigrationCommand(localCommand.CommandTemplate));
             })
             .ToArray();
 
         return new ShowcaseDatabaseTopologyMigrationPlaybook(
             Summary: new ShowcaseDatabaseTopologyMigrationPlaybookSummary(
-                TargetCount: steps.Length,
-                ProductionReadyTargetCount: steps.Count(static step => step.HasProductionRecommendedCommand),
-                LocalFallbackTargetCount: steps.Count(static step => !string.IsNullOrWhiteSpace(step.LocalCommandId)),
-                ApplyOnStartupTargetCount: steps.Count(static step => step.ApplyOnStartup),
-                GeneratedAtUtc: DateTimeOffset.UtcNow),
+                TargetCount: enginePlaybook.TargetCount,
+                ProductionReadyTargetCount: enginePlaybook.ProductionReadyTargetCount,
+                LocalFallbackTargetCount: enginePlaybook.ManualPathTargetCount,
+                ApplyOnStartupTargetCount: enginePlaybook.ApplyOnStartupTargetCount,
+                GeneratedAtUtc: enginePlaybook.GeneratedAtUtc),
             Steps: steps);
     }
 
@@ -1319,6 +1324,7 @@ internal sealed class ShowcaseSystemProjectionService(
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Engine database topology: `{EngineDatabaseTopologyPath}`");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Database roles: `{EngineDatabaseRolesPath}`");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Migration targets: `{EngineDatabaseMigrationsPath}`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Migration playbook: `{EngineDatabaseMigrationPlaybookPath}`");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Runtime snapshot: `{EngineRuntimeSnapshotPath}`");
 
         return builder.ToString().TrimEnd();
@@ -1413,6 +1419,7 @@ internal sealed class ShowcaseSystemProjectionService(
                 DatabaseTopology: EngineDatabaseTopologyPath,
                 DatabaseRoles: EngineDatabaseRolesPath,
                 DatabaseMigrations: EngineDatabaseMigrationsPath,
+                DatabaseMigrationPlaybook: EngineDatabaseMigrationPlaybookPath,
                 RuntimeSnapshot: EngineRuntimeSnapshotPath),
             Contents: contents);
     }
@@ -1470,6 +1477,7 @@ internal sealed class ShowcaseSystemProjectionService(
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Engine database topology: `{manifest.SourceRoutes.DatabaseTopology}`");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Engine database roles: `{manifest.SourceRoutes.DatabaseRoles}`");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Engine migration targets: `{manifest.SourceRoutes.DatabaseMigrations}`");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Engine migration playbook: `{manifest.SourceRoutes.DatabaseMigrationPlaybook}`");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Runtime snapshot: `{manifest.SourceRoutes.RuntimeSnapshot}`");
         builder.AppendLine();
         builder.AppendLine("## Notes");

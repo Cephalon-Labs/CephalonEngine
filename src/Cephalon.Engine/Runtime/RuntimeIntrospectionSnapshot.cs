@@ -30,7 +30,7 @@ namespace Cephalon.Engine.Runtime;
 /// This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime
 /// without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details,
 /// diagnostics conventions, data projection details, outbox details, inbox details, event-dispatch runtime details,
-/// authorization-policy details, database-topology posture details, and lifecycle story data.
+/// authorization-policy details, database-migration playbook details, database-topology posture details, and lifecycle story data.
 /// </remarks>
 public sealed record RuntimeIntrospectionSnapshot(
     RuntimeManifest Manifest,
@@ -69,6 +69,11 @@ public sealed record RuntimeIntrospectionSnapshot(
     /// Gets the database-migration catalog visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<DatabaseMigrationDescriptor> DatabaseMigrations { get; init; } = [];
+
+    /// <summary>
+    /// Gets the engine-owned ordered database-migration playbook visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public DatabaseMigrationOperationalPlaybook? DatabaseMigrationPlaybook { get; init; }
 
     /// <summary>
     /// Gets the engine-owned database-topology posture snapshot visible to the runtime at the time the snapshot was created.

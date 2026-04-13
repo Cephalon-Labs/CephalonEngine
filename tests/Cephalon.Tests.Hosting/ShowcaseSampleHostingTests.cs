@@ -241,6 +241,7 @@ public sealed class ShowcaseSampleHostingTests
         var migrations = await client.GetFromJsonAsync<DatabaseMigrationDescriptor[]>("/engine/database-migrations");
         var readMigration = await client.GetFromJsonAsync<DatabaseMigrationDescriptor>("/engine/database-migrations/read");
         var historyMigration = await client.GetFromJsonAsync<DatabaseMigrationDescriptor>("/engine/database-migrations/history");
+        var migrationPlaybook = await client.GetFromJsonAsync<DatabaseMigrationOperationalPlaybook>("/engine/database-migration-playbook");
         var databaseTopology = await client.GetFromJsonAsync<DatabaseTopologyOperationalSnapshot>("/engine/database-topology");
         var snapshot = await client.GetFromJsonAsync<Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
@@ -381,10 +382,33 @@ public sealed class ShowcaseSampleHostingTests
                 Assert.False(update.RecommendedForProduction);
                 Assert.Equal("dotnet ef database update --context ShowcaseAuditHistoryDbContext", update.CommandTemplate);
             });
+        Assert.NotNull(migrationPlaybook);
+        Assert.Equal(3, migrationPlaybook.TargetCount);
+        Assert.Equal(3, migrationPlaybook.ProductionReadyTargetCount);
+        Assert.Equal(3, migrationPlaybook.ManualPathTargetCount);
+        Assert.Equal(3, migrationPlaybook.ApplyOnStartupTargetCount);
+        Assert.Equal(3, migrationPlaybook.Steps.Count);
+        Assert.Equal("write", migrationPlaybook.Steps[0].DatabaseMigrationId);
+        Assert.Equal("read", migrationPlaybook.Steps[1].DatabaseMigrationId);
+        Assert.Equal("history", migrationPlaybook.Steps[2].DatabaseMigrationId);
+        Assert.True(migrationPlaybook.Steps[2].HasProductionRecommendedCommand);
+        Assert.NotNull(migrationPlaybook.Steps[2].ProductionCommand);
+        Assert.Equal("bundle", migrationPlaybook.Steps[2].ProductionCommand!.Id);
+        Assert.NotNull(migrationPlaybook.Steps[2].ManualCommand);
+        Assert.Equal("update", migrationPlaybook.Steps[2].ManualCommand!.Id);
 
         Assert.NotNull(snapshot);
         Assert.Equal(4, snapshot.DatabaseRoles.Count);
         Assert.Equal(3, snapshot.DatabaseMigrations.Count);
+        Assert.NotNull(snapshot.DatabaseMigrationPlaybook);
+        Assert.Equal(migrationPlaybook.TargetCount, snapshot.DatabaseMigrationPlaybook.TargetCount);
+        Assert.Equal(migrationPlaybook.ProductionReadyTargetCount, snapshot.DatabaseMigrationPlaybook.ProductionReadyTargetCount);
+        Assert.Equal(migrationPlaybook.ManualPathTargetCount, snapshot.DatabaseMigrationPlaybook.ManualPathTargetCount);
+        Assert.Equal(migrationPlaybook.ApplyOnStartupTargetCount, snapshot.DatabaseMigrationPlaybook.ApplyOnStartupTargetCount);
+        Assert.Equal(migrationPlaybook.Steps.Count, snapshot.DatabaseMigrationPlaybook.Steps.Count);
+        Assert.Equal("history", snapshot.DatabaseMigrationPlaybook.Steps[2].DatabaseMigrationId);
+        Assert.Equal("bundle", snapshot.DatabaseMigrationPlaybook.Steps[2].ProductionCommand!.Id);
+        Assert.Equal("update", snapshot.DatabaseMigrationPlaybook.Steps[2].ManualCommand!.Id);
         Assert.NotNull(databaseTopology);
         Assert.Equal("Ready", databaseTopology.Summary.Status);
         Assert.Equal("Database topology is ready", databaseTopology.Summary.Headline);
@@ -1920,6 +1944,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Contains("Readiness: **Attention**", brief, StringComparison.Ordinal);
         Assert.Contains("1. Let the read-model catch up", brief, StringComparison.Ordinal);
         Assert.Contains("Showcase projection JSON: `/api/v1/showcase/system/database-topology`", brief, StringComparison.Ordinal);
+        Assert.Contains("Migration playbook: `/engine/database-migration-playbook`", brief, StringComparison.Ordinal);
 
         var handoff = await InvokeAsyncWithResult(projections, "GetDatabaseTopologyHandoffAsync");
         Assert.Equal("application/zip", GetPropertyValue<string>(handoff, "ContentType"));
@@ -1932,6 +1957,7 @@ public sealed class ShowcaseSampleHostingTests
 
         var archivedReadme = await ReadZipEntryAsStringAsync(handoffArchive, "README.md");
         Assert.Contains("State: `Attention`", archivedReadme, StringComparison.Ordinal);
+        Assert.Contains("Engine migration playbook: `/engine/database-migration-playbook`", archivedReadme, StringComparison.Ordinal);
 
         var archivedBrief = await ReadZipEntryAsStringAsync(handoffArchive, "database-topology-brief.md");
         Assert.Contains("Readiness: **Attention**", archivedBrief, StringComparison.Ordinal);
@@ -2064,6 +2090,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("/engine/database-topology", engine.GetProperty("databaseTopology").GetString());
         Assert.Equal("/engine/database-roles", engine.GetProperty("databaseRoles").GetString());
         Assert.Equal("/engine/database-migrations", engine.GetProperty("databaseMigrations").GetString());
+        Assert.Equal("/engine/database-migration-playbook", engine.GetProperty("databaseMigrationPlaybook").GetString());
         Assert.Equal("/scalar/v1", root.GetProperty("docs").GetProperty("scalar").GetString());
         Assert.Equal("/openapi/v1.json", root.GetProperty("docs").GetProperty("openApiJson").GetString());
     }

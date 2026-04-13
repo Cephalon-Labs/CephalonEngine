@@ -53,17 +53,18 @@ dotnet run --project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.c
 
 - `/engine/database-roles` shows the resolved engine-owned role catalog.
 - `/engine/database-migrations` shows the migration-target catalog and execution truth.
-- `/api/v1/showcase/system/database-topology` combines those engine catalogs with showcase-specific read-model sync truth:
+- `/engine/database-migration-playbook` shows the canonical engine-owned ordered migration playbook.
+- `/api/v1/showcase/system/database-topology` combines the engine-owned topology posture, role catalog, migration catalog, and migration playbook with showcase-specific read-model sync truth:
   - write-store versus read-store row counts
   - durable projection-job backlog and completion state
   - per-scope retry/completion metrics for `products`, `inventory`, `orders`, and `shipments`
 - `/api/v1/showcase/system/database-topology/brief` exports the same live topology answer as a shareable Markdown operator brief.
 - `/api/v1/showcase/system/database-topology/handoff` downloads a self-describing zip package that bundles a package `README.md`, the operator brief, a machine-readable `handoff-manifest.json`, and the raw topology projection.
-- The showcase UI now promotes that projection into a dedicated `Database Topology` section on `/showcase`, adds a top-level readiness summary for `Ready` versus `Attention` or `Blocked` states, publishes an ordered operator action plan for what to do next, derives operator insights for healthy-versus-drifting topology state, preserves migration-command ids/display names/descriptions plus production-recommendation flags, adapts the published templates into repo-root runnable commands for this sample, publishes an ordered migration playbook (`write -> read -> history`) before the lower-level target table, and links the raw JSON projection, the operator brief, and the downloadable handoff package alongside the underlying `/engine/databases`, `/engine/database-roles`, and `/engine/database-migrations` surfaces for drill-down.
+- The showcase UI now promotes that projection into a dedicated `Database Topology` section on `/showcase`, adds a top-level readiness summary for `Ready` versus `Attention` or `Blocked` states, publishes an ordered operator action plan for what to do next, derives operator insights for healthy-versus-drifting topology state, preserves migration-command ids/display names/descriptions plus production-recommendation flags, adapts the published templates into repo-root runnable commands for this sample, consumes the engine-owned ordered migration playbook (`write -> read -> history`) before the lower-level target table, and links the raw JSON projection, the operator brief, and the downloadable handoff package alongside the underlying `/engine/databases`, `/engine/database-roles`, `/engine/database-migrations`, and `/engine/database-migration-playbook` surfaces for drill-down.
 
 ## Manual Migration Commands
 
-The same migration-command descriptors now surface inside `/showcase` with operator-friendly names, descriptions, production recommendation badges, command metadata, repo-root runnable commands, and an ordered migration playbook so the sample UI mirrors the engine-owned `/engine/database-migrations` contract without leaving operators to reconstruct the sample invocation or execution order by hand.
+The same migration-command descriptors now surface inside `/showcase` with operator-friendly names, descriptions, production recommendation badges, command metadata, repo-root runnable commands, and an ordered migration playbook so the sample UI mirrors the engine-owned `/engine/database-migration-playbook` plus `/engine/database-migrations` contracts without leaving operators to reconstruct the sample invocation or execution order by hand.
 
 Apply the write store:
 

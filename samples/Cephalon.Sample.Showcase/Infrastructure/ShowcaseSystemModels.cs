@@ -51,6 +51,7 @@ internal sealed record ShowcaseHandoffSourceRoutes(
     string DatabaseTopology,
     string DatabaseRoles,
     string DatabaseMigrations,
+    string DatabaseMigrationPlaybook,
     string RuntimeSnapshot);
 
 internal sealed record ShowcaseHandoffPackageContent(

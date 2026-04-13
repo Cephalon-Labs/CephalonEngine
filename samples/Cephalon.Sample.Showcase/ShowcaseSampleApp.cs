@@ -273,6 +273,7 @@ public static class ShowcaseSampleApp
                     databaseTopology = "/engine/database-topology",
                     databaseRoles = "/engine/database-roles",
                     databaseMigrations = "/engine/database-migrations",
+                    databaseMigrationPlaybook = "/engine/database-migration-playbook",
                     snapshot = "/engine/snapshot",
                     runtimeStory = "/engine/runtime-story",
                     diagnostics = "/engine/diagnostics",

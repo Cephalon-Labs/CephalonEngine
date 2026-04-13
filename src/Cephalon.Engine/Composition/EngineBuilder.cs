@@ -615,6 +615,7 @@ public sealed class EngineBuilder
                     serviceProvider.GetServices<IDatabaseMigrationContributor>()));
             Services.TryAddSingleton<IDatabaseMigrationCatalog>(serviceProvider =>
                 serviceProvider.GetRequiredService<DatabaseMigrationCatalogSnapshot>());
+            Services.TryAddSingleton<IDatabaseMigrationOperationalPlaybookProvider, DatabaseMigrationOperationalPlaybookProvider>();
             Services.TryAddSingleton<IDatabaseTopologyOperationalSnapshotProvider, DatabaseTopologyOperationalSnapshotProvider>();
             Services.TryAddSingleton<IProjectionCatalog>(_ => new ProjectionCatalogSnapshot(projections));
             Services.TryAddSingleton<IOutboxCatalog>(serviceProvider =>

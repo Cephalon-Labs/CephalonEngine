@@ -153,6 +153,9 @@ public static class EngineWebApplicationExtensions
                 return databaseMigration is null ? Results.NotFound() : Results.Ok(databaseMigration);
             })
             .WithName("GetCephalonDatabaseMigration");
+        engineGroup.MapGet("/database-migration-playbook", (IDatabaseMigrationOperationalPlaybookProvider provider) =>
+                TypedResults.Ok(provider.CreatePlaybook()))
+            .WithName("GetCephalonDatabaseMigrationPlaybook");
         engineGroup.MapGet("/scaffold", (RuntimeManifest manifest) =>
                 manifest.AppProfile.Scaffold is null
                     ? Results.NotFound()

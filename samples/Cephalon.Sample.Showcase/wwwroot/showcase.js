@@ -1802,7 +1802,8 @@ function renderDatabaseTopologyLinks() {
     linkButton("Raw Databases", engine.databases || "/engine/databases"),
     linkButton("Topology Posture", engine.databaseTopology || "/engine/database-topology"),
     linkButton("Database Roles", engine.databaseRoles || "/engine/database-roles"),
-    linkButton("Migration Targets", engine.databaseMigrations || "/engine/database-migrations")
+    linkButton("Migration Targets", engine.databaseMigrations || "/engine/database-migrations"),
+    linkButton("Migration Playbook", engine.databaseMigrationPlaybook || "/engine/database-migration-playbook")
   ].join("");
 }
 

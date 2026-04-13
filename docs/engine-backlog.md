@@ -1748,6 +1748,35 @@ Delivered:
 - composition and hosting coverage now assert engine-owned action-plan counts, categories, and source ids end to end through `/engine/database-topology`, `snapshot.DatabaseTopology`, and `/api/v1/showcase/system/database-topology`
 - database-topology, engine component docs, roadmap, backlog, and project memory now describe the action-plan contract truthfully instead of documenting only summary plus advisories
 
+### ENG-090 Engine-owned database-migration playbook surface and showcase adoption
+
+Status: done
+Estimate: 3
+
+Why:
+
+- the engine-owned migration catalog already exposed recommended order hints and command descriptors, but the one ordered migration playbook still lived in showcase-only projection logic
+- operators and tooling still lacked one engine route and one snapshot field that answered the ordered production-versus-manual migration guidance directly
+- the showcase sample needed to consume that engine-owned ordered answer and keep only repo-root command adaptation plus read-model follow-through as local logic
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes host-agnostic ordered migration-playbook contracts for runtime and operator consumption
+- `Cephalon.Engine` publishes `/engine/database-migration-playbook` plus `snapshot.DatabaseMigrationPlaybook` as the canonical ordered migration answer over the lower-level migration catalog
+- the engine-owned playbook carries generated counts, ordered steps, startup-apply truth, resolved-role identity, current status, and selected production-versus-manual command guidance per target
+- the showcase sample consumes that engine-owned playbook directly for ordered migration guidance and keeps only sample-specific command adaptation plus read-model follow-through local
+- composition, hosting, and package-surface tests prove the new contract and showcase adoption path end to end
+- docs, roadmap, backlog, project memory, and GitHub tracking stay aligned with the shipped engine-first ownership line
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `DatabaseMigrationOperationalPlaybook`, `DatabaseMigrationOperationalStep`, and `IDatabaseMigrationOperationalPlaybookProvider` as the host-agnostic ordered migration-playbook contract
+- `Cephalon.Engine` now computes one ordered playbook from the resolved migration catalog, selects production-recommended and manual/direct command paths when available, projects that answer into `snapshot.DatabaseMigrationPlaybook`, and keeps generated time plus target counts explicit instead of trapping the playbook in a sample
+- ASP.NET Core hosts now expose `/engine/database-migration-playbook`, so operators and tooling can read the same ordered answer without reconstructing it from `/engine/database-migrations`
+- the showcase sample now consumes the engine-owned playbook for its ordered migration guidance, keeps direct links to the new engine route in the browser config, brief, and handoff metadata, and limits local logic to repo-root runnable command adaptation plus sample-only read-model follow-through
+- composition coverage now proves the playbook provider and runtime snapshot contract, hosting coverage now proves the route plus showcase consumption path, and package-surface coverage now locks the exported abstractions surface
+- database-topology, engine component docs, roadmap, backlog, project memory, and showcase docs now describe the playbook contract truthfully as engine-owned runtime surface rather than sample-derived sequencing
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2051,3 +2080,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-087 typed database-role probe contract and operator-surface follow-through: `Cephalon.Abstractions` now exposes `DatabaseRoleProbeDescriptor`, `DatabaseRoleRuntimeDescriptor` plus `DatabaseRoleDescriptor` now carry a typed `Probe` answer, `Cephalon.Data.EntityFramework` now projects stable cache/freshness/source timing through that shared contract while keeping metadata only for additive extras and compatibility, and the showcase sample now reads the typed probe surface directly in its projection/UI instead of parsing stable runtime-metadata keys locally — **Shipped** · targeted composition tests 25/25 + hosting tests 59/59 + package-surface tests 52/52
 - ENG-088 engine-owned database-topology operational summary and advisory surface: `Cephalon.Abstractions` now exposes `DatabaseTopologyOperationalAction`, `DatabaseTopologyOperationalActionPlan`, `DatabaseTopologyOperationalSummary`, `DatabaseTopologyOperationalAdvisory`, `DatabaseTopologyOperationalSnapshot`, and `IDatabaseTopologyOperationalSnapshotProvider`, `Cephalon.Engine` now publishes `/engine/database-topology` plus `snapshot.DatabaseTopology` as the canonical posture answer over role health, migration status, production-guidance completeness, and ordered operator actions, and the showcase sample now consumes that engine-owned answer for readiness plus core advisories while keeping only read-model drift/backlog follow-through local — **Shipped** · targeted composition tests 3/3 + hosting tests 3/3 + package-surface tests 52/52
 - ENG-089 database-topology action-plan showcase follow-through and contract truthfulness: the showcase sample now consumes the engine-owned action-plan contract as the baseline for ordered operator steps, preserves stable action categories plus source role and migration ids in its projection, browser console, and Markdown brief, and the docs/package-surface coverage now describe the shipped contract truthfully — **Shipped** · targeted composition tests 3/3 + hosting tests 3/3 + package-surface tests 52/52
+- ENG-090 engine-owned database-migration playbook surface and showcase adoption: `Cephalon.Abstractions` now exposes ordered migration-playbook contracts, `Cephalon.Engine` now publishes `/engine/database-migration-playbook` plus `snapshot.DatabaseMigrationPlaybook` as the canonical ordered migration answer, and the showcase sample now consumes that engine-owned playbook directly while keeping only repo-root command adaptation plus sample-specific read-model follow-through local — **Shipped** · targeted composition tests 3/3 + hosting tests 4/4 + package-surface tests 52/52

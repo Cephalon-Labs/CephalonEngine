@@ -61,8 +61,25 @@ public sealed class DatabaseTopologyOperationalSnapshotTests
         });
 
         using var provider = services.BuildServiceProvider();
+        var playbook = provider.GetRequiredService<IDatabaseMigrationOperationalPlaybookProvider>().CreatePlaybook();
         var snapshot = provider.GetRequiredService<IDatabaseTopologyOperationalSnapshotProvider>().CreateSnapshot();
 
+        Assert.Equal(1, playbook.TargetCount);
+        Assert.Equal(1, playbook.ProductionReadyTargetCount);
+        Assert.Equal(0, playbook.ManualPathTargetCount);
+        Assert.Equal(1, playbook.ApplyOnStartupTargetCount);
+        var playbookStep = Assert.Single(playbook.Steps);
+        Assert.Equal(1, playbookStep.Order);
+        Assert.Equal("write", playbookStep.DatabaseMigrationId);
+        Assert.Equal("write", playbookStep.RequestedRoleId);
+        Assert.Equal("write", playbookStep.ResolvedRoleId);
+        Assert.Equal(DatabaseMigrationStatus.Succeeded, playbookStep.Status);
+        Assert.Equal("startup-hosted-service", playbookStep.ExecutionMode);
+        Assert.True(playbookStep.ApplyOnStartup);
+        Assert.True(playbookStep.HasProductionRecommendedCommand);
+        Assert.NotNull(playbookStep.ProductionCommand);
+        Assert.Equal("bundle", playbookStep.ProductionCommand!.Id);
+        Assert.Null(playbookStep.ManualCommand);
         Assert.Equal("Ready", snapshot.Summary.Status);
         Assert.Equal("Database topology is ready", snapshot.Summary.Headline);
         Assert.Equal("/engine/snapshot", snapshot.Summary.ActionPath);
@@ -165,6 +182,9 @@ public sealed class DatabaseTopologyOperationalSnapshotTests
         using var provider = services.BuildServiceProvider();
         var snapshot = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
 
+        Assert.NotNull(snapshot.DatabaseMigrationPlaybook);
+        Assert.Equal(0, snapshot.DatabaseMigrationPlaybook.TargetCount);
+        Assert.Empty(snapshot.DatabaseMigrationPlaybook.Steps);
         Assert.NotNull(snapshot.DatabaseTopology);
         Assert.Equal("Ready", snapshot.DatabaseTopology.Summary.Status);
         Assert.Equal(1, snapshot.DatabaseTopology.Summary.RoleCount);
