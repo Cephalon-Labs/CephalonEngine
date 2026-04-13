@@ -1,6 +1,6 @@
 # Cephalon Engine Architecture Inventory
 
-Architecture inventory in this document reflects the repository state as of `April 7, 2026`.
+Architecture inventory in this document reflects the repository state as of `April 13, 2026`.
 
 Cross-references: `docs/architecture.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`
 
@@ -37,7 +37,7 @@ Patterns describe architectural decisions that can be composed into blueprints o
 - `Domain` (6) — domain-modeling patterns
 - `Data` (7) — data and persistence patterns
 
-### Built-in pattern descriptors (17)
+### Built-in pattern descriptors (21)
 
 #### Composition
 
@@ -69,10 +69,14 @@ Patterns describe architectural decisions that can be composed into blueprints o
 - `hexagonal-architecture` — Hexagonal Architecture: keeps domain logic at the center and isolates infrastructure behind explicit ports and adapters. Aliases: `HexagonalArchitecture`, `Hexagonal`, `PortsAndAdapters`.
 - `layered-architecture` — Layered Architecture: organizes responsibilities into explicit layers with clear direction of dependency flow. Aliases: `LayeredArchitecture`, `Layered`.
 - `clean-architecture` — Clean Architecture: keeps domain and application rules independent from infrastructure and delivery details. Aliases: `CleanArchitecture`, `Clean`.
+- `onion-architecture` — Onion Architecture: organizes the app in concentric rings so dependencies point inward toward the core domain model. Aliases: `OnionArchitecture`, `Onion`.
+- `strangler-fig` — Strangler Fig: routes traffic incrementally between legacy and new Cephalon boundaries so modernization can happen without one cutover. Aliases: `StranglerFig`, `Strangler`.
+- `backend-for-frontend` — Backend for Frontend: shapes one backend surface per client experience so transport, payload, and policy choices can stay explicit per frontend. Aliases: `BackendForFrontend`, `BFF`.
 
 #### Domain
 
 - `domain-driven-design` — Domain-Driven Design: centers the model on domain language, aggregates, invariants, and explicit bounded contexts. Aliases: `DomainDrivenDesign`, `DDD`.
+- `anti-corruption-layer` — Anti-Corruption Layer: protects the core domain model by translating across external, legacy, or upstream integration boundaries. Aliases: `AntiCorruptionLayer`, `ACL`.
 
 #### Data
 

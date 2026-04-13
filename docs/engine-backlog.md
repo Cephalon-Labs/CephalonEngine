@@ -1895,6 +1895,31 @@ Delivered:
 - validation now covers the new combined command-batch path through composition tests `4/4`, hosting tests `60/60`, and package-surface tests `52/52`
 - database-topology, engine component docs, Entity Framework component docs, roadmap, backlog, project memory, and showcase docs now describe the shipped combined command-batch contract truthfully
 
+### ENG-095 Phase 12 migration-pattern taxonomy baseline
+
+Status: done
+Estimate: 2
+
+Why:
+
+- phase 12 explicitly called for `strangler-fig` and `backend-for-frontend`, but the built-in engine pattern taxonomy still could not express those choices through the same app-model vocabulary as other shipped patterns
+- architecture docs and planning guidance still had to describe those phase 12 patterns as recommendations instead of stable runtime descriptors
+- teams adopting Cephalon incrementally need those pattern ids available through configuration, `/engine/patterns`, and `AppProfile.Patterns` before routing or client-binding follow-through lands
+
+Acceptance:
+
+- `BuiltInPatterns` exposes stable `strangler-fig` and `backend-for-frontend` descriptors with aliases, tags, and architecture classification
+- configuration-driven app-profile selection resolves those new pattern ids and aliases through the same engine-owned path used by existing patterns
+- ASP.NET Core hosts surface the new descriptors through `/engine/patterns` and the runtime app model
+- docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the descriptor-only scope, while remaining honest that `IStranglerFigRouter` and client-binding policy follow-through are later slices
+
+Delivered:
+
+- `Cephalon.Engine` now ships `BuiltInPatterns.StranglerFigPattern` and `BuiltInPatterns.BackendForFrontendPattern` as architecture-level descriptors
+- the engine now resolves `StranglerFig`, `Strangler`, `BackendForFrontend`, and `BFF` through the same built-in pattern catalog used by configuration-driven app-model selection
+- targeted composition and hosting coverage now prove both alias resolution and `/engine/patterns` plus `/engine/app-model` visibility for the new phase 12 taxonomy entries
+- architecture inventory, architecture recommendations, engine component docs, roadmap, backlog, and project memory now describe the shipped descriptor baseline truthfully while keeping router and client-binding follow-through explicitly planned
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2203,3 +2228,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-092 shared physical database migration execution-group playbook follow-through: the engine-owned migration playbook now groups logical targets into physical-target execution batches with aggregate status, coverage counts, grouped migration ids, and shared-target coordination hints, and the showcase sample now consumes that engine-owned grouped answer directly in `/showcase`, the Markdown brief, and the handoff package — **Shipped** · composition tests 4/4 + hosting tests 60/60 + package-surface tests 52/52
 - ENG-093 shared physical database migration execution-group command-set follow-through: the engine-owned migration playbook now also publishes grouped production and manual command sets per physical-target batch, and the showcase sample now consumes that engine-owned grouped command answer directly in `/showcase`, the Markdown brief, and the handoff package — **Shipped** · composition tests 4/4 + hosting tests 60/60 + package-surface tests 52/52
 - ENG-094 shared physical database migration execution-group command-batch follow-through: the engine-owned migration playbook now also publishes combined production and manual command-batch templates per physical-target batch, and the showcase sample now consumes that engine-owned combined batch answer directly in `/showcase`, the Markdown brief, and the handoff package — **Shipped** · composition tests 4/4 + hosting tests 60/60 + package-surface tests 52/52
+- ENG-095 phase 12 migration-pattern taxonomy baseline: the engine now ships `strangler-fig` plus `backend-for-frontend` as built-in architecture descriptors, and ASP.NET Core hosts now surface those phase 12 entries directly through `/engine/patterns` and the runtime app model while router/client-binding follow-through remains later — **Shipped** · composition tests 2/2 + hosting tests 1/1

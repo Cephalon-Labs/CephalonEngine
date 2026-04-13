@@ -166,6 +166,28 @@ public static class BuiltInPatterns
         tags: ["architecture", "onion", "concentric-layers"]);
 
     /// <summary>
+    /// Gets the strangler-fig migration pattern.
+    /// </summary>
+    public static PatternDescriptor StranglerFigPattern { get; } = new(
+        id: "strangler-fig",
+        displayName: "Strangler Fig",
+        description: "Routes traffic incrementally between legacy and new Cephalon boundaries so modernization can happen without one cutover.",
+        kind: PatternKind.Architecture,
+        aliases: ["StranglerFig", "Strangler"],
+        tags: ["architecture", "migration", "incremental-modernization"]);
+
+    /// <summary>
+    /// Gets the backend-for-frontend pattern.
+    /// </summary>
+    public static PatternDescriptor BackendForFrontendPattern { get; } = new(
+        id: "backend-for-frontend",
+        displayName: "Backend for Frontend",
+        description: "Shapes one backend surface per client experience so transport, payload, and policy choices can stay explicit per frontend.",
+        kind: PatternKind.Architecture,
+        aliases: ["BackendForFrontend", "BFF"],
+        tags: ["architecture", "bff", "client-specific"]);
+
+    /// <summary>
     /// Gets the domain-driven-design pattern.
     /// </summary>
     public static PatternDescriptor DomainDrivenDesign { get; } = new(
@@ -236,6 +258,8 @@ public static class BuiltInPatterns
         LayeredArchitecture,
         CleanArchitecture,
         OnionArchitecture,
+        StranglerFigPattern,
+        BackendForFrontendPattern,
         DomainDrivenDesign,
         AntiCorruptionLayer,
         CqrsPattern,

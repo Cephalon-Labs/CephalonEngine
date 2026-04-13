@@ -29,6 +29,7 @@ using Cephalon.AspNetCore.JsonRpc.Hosting;
 using Cephalon.Edge.Registration;
 using Cephalon.Edge.Services;
 using Cephalon.Engine.AppModel;
+using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Manifest;
 using Cephalon.Engine.Runtime;
@@ -195,6 +196,61 @@ public sealed class AspNetCoreHostingTests
         var exception = Assert.Throws<InvalidOperationException>(() => app.MapCephalon());
 
         Assert.Contains("Reference docs directory", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesPhase12PatternTaxonomyDescriptors()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddProblemDetails();
+        builder.Services.AddHealthChecks()
+            .AddCheck("cephalon.liveness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["live", "engine"])
+            .AddCheck("cephalon.readiness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["ready", "engine"]);
+        builder.Services.AddSingleton<IRateLimitingRuntimeCatalog>(EmptyRateLimitingRuntimeCatalog.Instance);
+        builder.Services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["StranglerFig", "BFF"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var appModel = await client.GetFromJsonAsync<AppProfile>("/engine/app-model");
+        var patterns = await client.GetFromJsonAsync<PatternDescriptor[]>("/engine/patterns");
+
+        Assert.NotNull(appModel);
+        Assert.Contains(appModel.Patterns, pattern => pattern.Id == "strangler-fig");
+        Assert.Contains(appModel.Patterns, pattern => pattern.Id == "backend-for-frontend");
+        Assert.NotNull(patterns);
+        Assert.Contains(patterns, pattern => pattern.Id == "strangler-fig");
+        Assert.Contains(patterns, pattern => pattern.Id == "backend-for-frontend");
+    }
+
+    private sealed class EmptyRateLimitingRuntimeCatalog : IRateLimitingRuntimeCatalog
+    {
+        public static EmptyRateLimitingRuntimeCatalog Instance { get; } = new();
+
+        public IReadOnlyList<RateLimitingRuntimeDescriptor> Policies => [];
+
+        public RateLimitingRuntimeDescriptor? GetById(string policyId)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(policyId);
+            return null;
+        }
+
+        public IReadOnlyList<RateLimitingRuntimeDescriptor> GetByTransportId(string transportId)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(transportId);
+            return [];
+        }
     }
 
     [Fact]
@@ -499,6 +555,8 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains(patterns, pattern => pattern.Id == "strategy-pattern");
         Assert.Contains(patterns, pattern => pattern.Id == "onion-architecture");
         Assert.Contains(patterns, pattern => pattern.Id == "anti-corruption-layer");
+        Assert.Contains(patterns, pattern => pattern.Id == "strangler-fig");
+        Assert.Contains(patterns, pattern => pattern.Id == "backend-for-frontend");
         Assert.NotNull(technologies);
         Assert.Contains(technologies, technology => technology.Id == "agentic-workloads");
         Assert.Contains(technologies, technology => technology.Id == "event-driven-integration");

@@ -80,9 +80,9 @@ These patterns provide adoption acceleration and complete the distributed system
 
 ### Strangler Fig (migration support)
 
-Current state: no explicit migration pattern exists. Many enterprises adopt CephalonEngine incrementally from legacy systems.
+Current state: shipped as a taxonomy descriptor. `BuiltInPatterns.cs` now includes `strangler-fig`, so the remaining work is routing, progress tracking, and migration-runtime guidance rather than descriptor registration.
 
-Recommendation: provide explicit routing rules for gradual migration from old systems to Cephalon behaviors.
+Recommendation: keep the descriptor stable and add `IStranglerFigRouter` plus migration-runtime follow-through only when a concrete host or operator slice needs progressive cutover semantics.
 
 Implementation outline:
 - `PatternDescriptor` "strangler-fig" in `BuiltInPatterns.cs`
@@ -91,7 +91,7 @@ Implementation outline:
 - Configuration: `Engine:Migration:StranglerFig` section
 - Capability: `migration.strangler-fig`
 
-Effort: medium.
+Effort: medium for the remaining non-descriptor work.
 
 ### Anti-Corruption Layer (DDD integration boundary)
 
@@ -123,16 +123,16 @@ Effort: medium.
 
 ### Backend for Frontend — BFF (explicit pattern)
 
-Current state: multi-transport support already enables BFF implicitly (REST for web, gRPC for mobile, GraphQL for rich clients). Making it an explicit pattern with dedicated configuration would add clarity.
+Current state: shipped as a taxonomy descriptor. `BuiltInPatterns.cs` now includes `backend-for-frontend`, so the remaining work is explicit client-binding configuration and filtering guidance rather than descriptor registration.
 
-Recommendation: register as a pattern descriptor with per-client transport binding configuration.
+Recommendation: keep the descriptor stable and add per-client transport binding plus behavior-filtering follow-through only when a concrete frontend surface needs it.
 
 Implementation outline:
 - `PatternDescriptor` "backend-for-frontend" in `BuiltInPatterns.cs` with aliases `["BackendForFrontend", "BFF"]`
 - Per-client transport binding configuration
 - Client-aware behavior filtering
 
-Effort: small.
+Effort: small for the remaining non-descriptor work.
 
 ### Feature Flags (progressive delivery)
 

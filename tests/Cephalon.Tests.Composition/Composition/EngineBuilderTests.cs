@@ -1496,6 +1496,34 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void BuiltInPatternsIncludePhase12TaxonomyEntries()
+    {
+        var stranglerFig = BuiltInPatterns.Resolve("StranglerFig");
+        var backendForFrontend = BuiltInPatterns.Resolve("BFF");
+
+        Assert.Equal("strangler-fig", stranglerFig.Id);
+        Assert.Equal(PatternKind.Architecture, stranglerFig.Kind);
+        Assert.Equal("backend-for-frontend", backendForFrontend.Id);
+        Assert.Equal(PatternKind.Architecture, backendForFrontend.Kind);
+    }
+
+    [Fact]
+    public void BuildIncludesPhase12PatternTaxonomySelections()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "Microservice",
+            patterns: ["StranglerFig", "BFF"]));
+        builder.AddModule(new PlatformTestModule());
+        builder.AddModule(new DiscoveryTestModule());
+
+        var appProfile = builder.Build().Manifest.AppProfile;
+
+        Assert.Contains(appProfile.Patterns, pattern => pattern.Id == "strangler-fig");
+        Assert.Contains(appProfile.Patterns, pattern => pattern.Id == "backend-for-frontend");
+    }
+
+    [Fact]
     public void BuildThrowsWhenReadWriteSplitIsConfiguredWithoutCqrsPattern()
     {
         var builder = new EngineBuilder(new ServiceCollection());
