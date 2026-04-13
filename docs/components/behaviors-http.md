@@ -204,12 +204,14 @@ Current helper behavior:
   rework
 - rejects module-owned REST mappings that target a behavior explicitly owned by another module
 - keeps `MapAdditionalEndpoints(...)` as the advanced/manual Minimal API escape hatch for REST
-  modules that need extra routes beyond the default behavior DSL
+  modules that need extra routes beyond the default behavior DSL, while still flowing those manual
+  routes into `/engine/rest-endpoints` and the shared duplicate-route guard
 
 ## REST runtime catalog and collision guard
 
-When `Cephalon.Behaviors.Http` materializes module-owned REST onto ASP.NET Core, the host now also
-publishes the resolved public REST answer through:
+When Cephalon materializes module-owned REST onto ASP.NET Core, whether through the behavior DSL or
+through explicit manual module-owned routes, the host now also publishes the resolved public REST
+answer through:
 
 - `IRestEndpointRuntimeCatalog`
 - `GET /engine/rest-endpoints`

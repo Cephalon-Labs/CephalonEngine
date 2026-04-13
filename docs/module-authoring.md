@@ -264,7 +264,8 @@ Current helper behavior:
 - maps behavior `<summary>` to the operation header and behavior `<remarks>` to the operation description so Scalar/OpenAPI content stays non-duplicated
 - keeps `MapAdditionalEndpoints(...)` as the advanced escape hatch for manual Minimal API work that
   falls outside the default behavior REST DSL; custom endpoints should still declare ownership first
-  through `behaviors.Internal<TBehavior>()`
+  through `behaviors.Internal<TBehavior>()`, and those manual module-owned routes now still join the
+  shared `/engine/rest-endpoints` runtime catalog plus duplicate-route validation baseline
 
 When a host needs more than the default `v1` document, prefer `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion`. Behaviors and modules still declare candidate document versions through `.ApiVersion(...)` or module-major defaults, but the host treats `EnabledVersions` as the allow-list for what actually gets published. For example, if modules carry `v1`, `v2`, and `v3` endpoint metadata while the host enables only `[2, 3]`, Cephalon registers only `/openapi/v2.json` plus `/openapi/v3.json`, redirects `/scalar` to the resolved default enabled document such as `/scalar/v3`, and injects only those enabled documents into Scalar's version selector. `/scalar/` still remains available for multi-document selection, and Cephalon normalizes hash-based Scalar selections such as `/scalar/#v2/` back into pinned versioned links. Hosts can also move the docs and REST entry points with `OpenApi:RoutePattern`, `OpenApi:Scalar:RoutePrefix`, and the canonical `ApiRoutes:Prefixes:*` settings. Legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` settings remain available when a host deliberately wants custom named documents instead of `v{major}` API-version documents, and those settings follow the same published-document allow-list semantics.
 

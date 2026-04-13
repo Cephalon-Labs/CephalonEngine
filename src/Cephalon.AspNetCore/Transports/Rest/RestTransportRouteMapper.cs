@@ -20,13 +20,18 @@ internal sealed class RestTransportRouteMapper : ITransportRouteMapper
 
     public void MapRoutes(WebApplication app, IRuntime runtime)
     {
-        (app.Services.GetService(typeof(IRestEndpointRuntimeRegistry)) as IRestEndpointRuntimeRegistry)?.Clear();
+        var registry = app.Services.GetService(typeof(IRestEndpointRuntimeRegistry)) as IRestEndpointRuntimeRegistry;
+        registry?.Clear();
 
         var apiGroup = app.MapGroup(options.RestPrefix)
             .ApplyCephalonRateLimiting(app.Services, TransportId);
         foreach (var module in runtime.Modules.OfType<IRestModule>())
         {
-            module.MapRestEndpoints(apiGroup);
+            var moduleGroup = apiGroup.MapGroup(string.Empty);
+            moduleGroup.WithMetadata(RestEndpointRuntimeMaterializer.CreateModuleMetadata(module));
+            module.MapRestEndpoints(moduleGroup);
         }
+
+        RestEndpointRuntimeMaterializer.RegisterModuleOwnedEndpoints(app, options, registry);
     }
 }

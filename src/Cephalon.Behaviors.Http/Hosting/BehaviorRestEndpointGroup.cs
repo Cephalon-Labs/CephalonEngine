@@ -37,6 +37,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     private readonly string? moduleSummary;
     private readonly string? moduleRemarks;
     private readonly string routePrefix;
+    private string runtimeSourceKind = RestEndpointRuntimeMetadata.ManualSourceKind;
     private RouteGroupBuilder? routes;
 
     internal BehaviorRestEndpointGroup(IEndpointRouteBuilder endpoints, IModule module, string routePrefix)
@@ -94,6 +95,12 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     public string OpenApiDocumentName { get; private set; }
 
     internal string ResolvedRoutePrefix => BuildResolvedRoutePrefix();
+
+    internal void UseRuntimeSourceKind(string sourceKind)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourceKind);
+        runtimeSourceKind = sourceKind.Trim();
+    }
 
     /// <summary>
     /// Gets the explicit API major version applied to newly mapped endpoints when configured.
@@ -343,7 +350,13 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             pattern,
             static (HttpContext context, BehaviorDispatcher dispatcher) =>
                 InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher));
-        return ApplyEndpointConventions<TInput, TOutput>(builder, contract, acceptsBody: false)
+        return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
+                builder,
+                group,
+                contract,
+                RestBehaviorHttpMethod.Get,
+                pattern,
+                acceptsBody: false)
             .ApplyCephalonRateLimiting(group.endpoints.ServiceProvider, "rest-api", contract.BehaviorId);
     }
 
@@ -357,7 +370,13 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             pattern,
             static (HttpContext context, BehaviorDispatcher dispatcher) =>
                 InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher));
-        return ApplyEndpointConventions<TInput, TOutput>(builder, contract, acceptsBody: true)
+        return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
+                builder,
+                group,
+                contract,
+                RestBehaviorHttpMethod.Post,
+                pattern,
+                acceptsBody: true)
             .ApplyCephalonRateLimiting(group.endpoints.ServiceProvider, "rest-api", contract.BehaviorId);
     }
 
@@ -371,7 +390,13 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             pattern,
             static (HttpContext context, BehaviorDispatcher dispatcher) =>
                 InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher));
-        return ApplyEndpointConventions<TInput, TOutput>(builder, contract, acceptsBody: true)
+        return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
+                builder,
+                group,
+                contract,
+                RestBehaviorHttpMethod.Put,
+                pattern,
+                acceptsBody: true)
             .ApplyCephalonRateLimiting(group.endpoints.ServiceProvider, "rest-api", contract.BehaviorId);
     }
 
@@ -386,7 +411,13 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             ["PATCH"],
             static (HttpContext context, BehaviorDispatcher dispatcher) =>
                 InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher));
-        return ApplyEndpointConventions<TInput, TOutput>(builder, contract, acceptsBody: true)
+        return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
+                builder,
+                group,
+                contract,
+                RestBehaviorHttpMethod.Patch,
+                pattern,
+                acceptsBody: true)
             .ApplyCephalonRateLimiting(group.endpoints.ServiceProvider, "rest-api", contract.BehaviorId);
     }
 
@@ -400,15 +431,30 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             pattern,
             static (HttpContext context, BehaviorDispatcher dispatcher) =>
                 InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher));
-        return ApplyEndpointConventions<TInput, TOutput>(builder, contract, acceptsBody: false)
+        return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
+                builder,
+                group,
+                contract,
+                RestBehaviorHttpMethod.Delete,
+                pattern,
+                acceptsBody: false)
             .ApplyCephalonRateLimiting(group.endpoints.ServiceProvider, "rest-api", contract.BehaviorId);
     }
 
-    private static RouteHandlerBuilder ApplyEndpointConventions<TInput, TOutput>(
+    private static RouteHandlerBuilder ApplyEndpointConventions<TBehavior, TInput, TOutput>(
         RouteHandlerBuilder builder,
+        BehaviorRestEndpointGroup group,
         BehaviorRestEndpointContract contract,
+        RestBehaviorHttpMethod method,
+        string pattern,
         bool acceptsBody)
+        where TBehavior : class
     {
+        ArgumentNullException.ThrowIfNull(group);
+        ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
+
+        var normalizedPattern = pattern.Trim();
+
         builder.WithName(contract.OperationName);
         builder.WithGroupName(contract.OpenApiDocumentName);
         builder.WithTags(contract.TagName);
@@ -418,17 +464,18 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             builder.WithDescription(contract.Description);
         }
 
-        builder.WithMetadata(new BehaviorRestEndpointMetadata(
-            contract.ModuleId,
-            contract.ModuleVersion,
-            contract.ModuleVersionMajor,
+        builder.WithMetadata(new RestBehaviorEndpointMetadata(
+            group.runtimeSourceKind,
             contract.BehaviorId,
+            typeof(TBehavior).FullName ?? typeof(TBehavior).Name,
             contract.OperationName,
             contract.Summary,
             contract.Description,
             contract.TagName,
             contract.OpenApiDocumentName,
-            contract.ApiVersionMajor));
+            contract.ApiVersionMajor,
+            group.ResolvedRoutePrefix,
+            normalizedPattern));
 
         ApplyResponseConventions(builder, contract);
 
@@ -803,18 +850,6 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         string? Remarks,
         string TagName,
         string? TagDescription);
-
-    private sealed record BehaviorRestEndpointMetadata(
-        string ModuleId,
-        string? ModuleVersion,
-        int? ModuleVersionMajor,
-        string BehaviorId,
-        string OperationName,
-        string? Summary,
-        string? Description,
-        string TagName,
-        string OpenApiDocumentName,
-        int? ApiVersionMajor);
 
     private sealed record BehaviorRestEndpointContract(
         string ModuleId,

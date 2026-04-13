@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 13, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -220,6 +220,11 @@ Cephalon should formalize the following precedence order.
 4. behavior-authored HTTP profile defaults
 5. pure convention defaults derived from behavior id and input shape
 
+The shipped runtime-catalog baseline now covers both the explicit module DSL and explicit manual
+module-owned REST paths. That means precedence affects publication, but the winning manual or DSL
+route still flows through the same operator-facing catalog and duplicate-route guard once ASP.NET
+Core materializes the final endpoints.
+
 ### Suppression rule
 
 If any higher-precedence layer maps a behavior into public REST, lower-precedence public REST
@@ -267,6 +272,10 @@ The shipped baseline now answers at least:
 - final route pattern
 - candidate OpenAPI document or API version
 - additive metadata such as the route-group prefix plus relative pattern
+
+That answer now covers both projection-backed module DSL routes and explicit manual module-owned
+REST routes published through `IRestModule`, legacy `IEndpointModule`, or
+`RestBehaviorModuleBase.MapAdditionalEndpoints(...)`.
 
 Future slices should add suppression visibility when generated, shorthand, or convention-backed
 routes can lose to higher-precedence projections without becoming active.
@@ -367,12 +376,13 @@ so future shorthand or generated projections cannot create silent public-route a
 
 Status:
 
-- shipped through `ENG-058-T57`; `Cephalon.Abstractions` now exposes
+- shipped through `ENG-058-T57` plus `ENG-058-T58`; `Cephalon.Abstractions` now exposes
   `IRestEndpointRuntimeCatalog`, `IRestEndpointRuntimeRegistry`, and
   `RestEndpointRuntimeDescriptor`, `Cephalon.AspNetCore` now publishes
   `/engine/rest-endpoints`, `/engine/rest-endpoints/{restEndpointId}`, and
-  `snapshot.RestEndpoints`, and the public REST host now fails fast when two resolved public REST
-  endpoints collide on the same `HTTP method + route pattern`
+  `snapshot.RestEndpoints`, the public REST host now fails fast when two resolved public REST
+  endpoints collide on the same `HTTP method + route pattern`, and that runtime answer now covers
+  both projection-backed module DSL routes and explicit manual module-owned REST routes
 
 ### Step 3: add build-time diagnostics and source-generated profile support
 
@@ -411,7 +421,8 @@ The following points are durable enough to keep outside thread-local context.
 
 ## Near-term follow-through candidates
 
-Recommended implementation sequence after the shipped normalization and runtime-catalog slices:
+Recommended implementation sequence after the shipped normalization, runtime-catalog, and
+manual-module follow-through slices:
 
 1. add diagnostics and source-generator support for future HTTP profile metadata
 2. add explicit input-binding descriptors and conflict validation

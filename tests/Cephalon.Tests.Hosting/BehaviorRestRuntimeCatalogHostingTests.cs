@@ -3,10 +3,13 @@ using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Transports;
 using Cephalon.AspNetCore.Hosting;
+using Cephalon.AspNetCore.Modules;
 using Cephalon.Behaviors.Hosting;
 using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Engine.Runtime;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.TestHost;
 
 namespace Cephalon.Tests.Hosting;
@@ -97,6 +100,98 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Contains("tests.rest.runtime-collision.two", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public async Task MapCephalonExposesManualRestEndpointsFromLegacyModulesAndAdditionalBehaviorHelpers()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ManualRuntimeCatalogModule());
+            engine.AddModule(new ManualBehaviorHelperRuntimeModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+
+        var manualEndpoint = Assert.Single(endpoints, static endpoint =>
+            string.Equals(endpoint.SourceModuleId, "tests.rest.manual-runtime", StringComparison.Ordinal));
+        Assert.Equal("manual", manualEndpoint.SourceKind);
+        Assert.Equal("GET", manualEndpoint.Method);
+        Assert.Null(manualEndpoint.BehaviorId);
+        Assert.Equal("/api/tests/manual-runtime/orders/{orderId}", manualEndpoint.RoutePattern);
+        Assert.Equal("tests.manual-runtime.orders.get", manualEndpoint.EndpointName);
+        Assert.Equal("v4", manualEndpoint.OpenApiDocumentName);
+        Assert.Equal(4, manualEndpoint.ApiVersionMajor);
+        Assert.Contains("Manual Runtime API", manualEndpoint.Tags);
+        Assert.Equal("Gets a manual runtime order.", manualEndpoint.Summary);
+        Assert.Equal("Publishes a legacy Minimal API route into the runtime catalog.", manualEndpoint.Description);
+        Assert.Equal("minimal-api", manualEndpoint.Metadata["authoringStyle"]);
+        Assert.Equal("tests.rest.manual-runtime:GET:/api/tests/manual-runtime/orders/{orderId}", manualEndpoint.Metadata["sourceId"]);
+
+        var behaviorHelperEndpoint = Assert.Single(endpoints, static endpoint =>
+            string.Equals(endpoint.BehaviorId, "tests.rest.manual-helper.get", StringComparison.Ordinal));
+        Assert.Equal("manual", behaviorHelperEndpoint.SourceKind);
+        Assert.Equal("GET", behaviorHelperEndpoint.Method);
+        Assert.Equal("/api/v3/tests/manual-helper/orders/{orderId}", behaviorHelperEndpoint.RoutePattern);
+        Assert.Equal("v3", behaviorHelperEndpoint.OpenApiDocumentName);
+        Assert.Equal(3, behaviorHelperEndpoint.ApiVersionMajor);
+        Assert.Contains("Manual Helper API", behaviorHelperEndpoint.Tags);
+        Assert.Equal("/api/v3/tests/manual-helper/orders", behaviorHelperEndpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal("/{orderId}", behaviorHelperEndpoint.Metadata["relativePattern"]);
+        Assert.Equal("behavior-helper", behaviorHelperEndpoint.Metadata["authoringStyle"]);
+        Assert.Contains("GetManualHelperOrderBehavior", behaviorHelperEndpoint.Metadata["behaviorType"], StringComparison.Ordinal);
+
+        Assert.NotNull(snapshot);
+        Assert.Contains(snapshot.RestEndpoints, endpoint => endpoint.Id == manualEndpoint.Id);
+        Assert.Contains(snapshot.RestEndpoints, endpoint => endpoint.Id == behaviorHelperEndpoint.Id);
+    }
+
+    [Fact]
+    public void MapCephalonRejectsCollidingDslAndManualRestEndpoints()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new DslCollisionRuntimeModule());
+            engine.AddModule(new ManualCollisionRuntimeModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        var app = builder.Build();
+
+        var exception = Assert.Throws<InvalidOperationException>(() => app.MapCephalon());
+
+        Assert.Contains("Resolved public REST endpoint collision detected", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("GET /api/v1/tests/runtime-catalog/collisions/manual/{itemId}", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("tests.rest.runtime-collision.dsl", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("tests.rest.runtime-collision.manual", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("source kind 'module-dsl'", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("source kind 'manual'", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
     private sealed class CatalogRestModule : RestBehaviorModuleBase
     {
         public override ModuleDescriptor Descriptor { get; } = new(
@@ -143,6 +238,79 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         {
             behaviors.Group("/tests/runtime-catalog/collisions/items")
                 .MapGet<LookupCollisionTwoBehavior>("/{itemId}");
+        }
+    }
+
+    private sealed class ManualRuntimeCatalogModule : ModuleBase, IEndpointModule
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.manual-runtime",
+            "Manual Runtime Module",
+            "Publishes a legacy manual REST endpoint for runtime catalog coverage.",
+            version: "1.4.0");
+
+        public void MapEndpoints(IEndpointRouteBuilder endpoints)
+        {
+            var group = endpoints.MapGroup("/tests/manual-runtime");
+            group.WithTags("Manual Runtime API");
+            group.WithGroupName("v4");
+            group.MapGet("/orders/{orderId}", static (string orderId) => TypedResults.Ok(new ManualRuntimeOrderOutput(orderId)))
+                .WithName("tests.manual-runtime.orders.get")
+                .WithSummary("Gets a manual runtime order.")
+                .WithDescription("Publishes a legacy Minimal API route into the runtime catalog.");
+        }
+    }
+
+    private sealed class ManualBehaviorHelperRuntimeModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.manual-helper",
+            "Manual Helper Module",
+            "Uses MapAdditionalEndpoints for behavior-aware REST helper coverage.",
+            version: "1.1.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Internal<GetManualHelperOrderBehavior>();
+        }
+
+        protected override void MapAdditionalEndpoints(IEndpointRouteBuilder endpoints)
+        {
+            var group = endpoints.MapBehaviorRestGroup(this, "/tests/manual-helper/orders")
+                .ApiVersion(3)
+                .WithTagName("Manual Helper API");
+            group.MapBehaviorGet<GetManualHelperOrderBehavior>("/{orderId}");
+        }
+    }
+
+    private sealed class DslCollisionRuntimeModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.runtime-collision.dsl",
+            "Runtime Collision DSL",
+            "Publishes a projection-backed runtime-collision endpoint.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/runtime-catalog/collisions/manual")
+                .MapGet<GetDslCollisionOrderBehavior>("/{itemId}");
+        }
+    }
+
+    private sealed class ManualCollisionRuntimeModule : ModuleBase, IEndpointModule
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.runtime-collision.manual",
+            "Runtime Collision Manual",
+            "Publishes a manual runtime-collision endpoint.",
+            version: "1.0.0");
+
+        public void MapEndpoints(IEndpointRouteBuilder endpoints)
+        {
+            endpoints.MapGet(
+                "/v1/tests/runtime-catalog/collisions/manual/{itemId}",
+                static (string itemId) => TypedResults.Ok(new ManualCollisionOutput(itemId)));
         }
     }
 
@@ -194,6 +362,30 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    [AppBehavior("tests.rest.manual-helper.get")]
+    private sealed class GetManualHelperOrderBehavior : IAppBehavior<ManualHelperOrderInput, ManualHelperOrderOutput>
+    {
+        public Task<ManualHelperOrderOutput> HandleAsync(
+            ManualHelperOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ManualHelperOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.rest.runtime-collision.dsl.get")]
+    private sealed class GetDslCollisionOrderBehavior : IAppBehavior<LookupCollisionInput, LookupCollisionOutput>
+    {
+        public Task<LookupCollisionOutput> HandleAsync(
+            LookupCollisionInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new LookupCollisionOutput(input.ItemId));
+        }
+    }
+
     private sealed record GetCatalogCartInput(string CartId);
 
     private sealed record GetCatalogCartOutput(string CartId);
@@ -205,4 +397,12 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     private sealed record LookupCollisionInput(string ItemId);
 
     private sealed record LookupCollisionOutput(string ItemId);
+
+    private sealed record ManualRuntimeOrderOutput(string OrderId);
+
+    private sealed record ManualHelperOrderInput(string OrderId);
+
+    private sealed record ManualHelperOrderOutput(string OrderId);
+
+    private sealed record ManualCollisionOutput(string ItemId);
 }

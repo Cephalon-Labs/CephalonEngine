@@ -166,7 +166,8 @@ The repository had substantial planning content, but a durable rule set for keep
 ### 6. Public REST still needs suppression visibility and explicit binding plans for future shorthand
 
 The explicit DSL is good, and Cephalon now has the normalized internal public REST projection
-layer, the resolved runtime catalog, and fail-fast route-collision validation beneath it.
+layer, the resolved runtime catalog, fail-fast route-collision validation, and manual
+module-owned REST follow-through beneath it.
 
 The next gap is making future shorthand or generated routes explain more than the active winner:
 operators and developers will eventually need suppression visibility, explicit input-binding plans,
