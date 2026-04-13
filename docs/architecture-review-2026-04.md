@@ -170,6 +170,10 @@ layer, the resolved runtime catalog, fail-fast route-collision validation, manua
 REST follow-through beneath it, and the first explicit profile-binding-plan slice for
 module-owned `MapProfile<TBehavior>()` shorthand.
 
+The newest hardening pass now also rejects invalid explicit binding metadata at build time and
+re-checks route-placeholder truth during runtime profile normalization, so the remaining gap is no
+longer basic authoring safety.
+
 The remaining gap is making future shorthand or generated routes explain more than the active
 winner: operators and developers still need suppression visibility and eventually richer authoring
 diagnostics once more than one projection style can compete for the same public behavior boundary.
