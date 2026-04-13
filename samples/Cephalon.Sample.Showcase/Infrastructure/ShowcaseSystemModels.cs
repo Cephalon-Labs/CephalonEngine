@@ -180,6 +180,10 @@ internal sealed record ShowcaseDatabaseTopologyRoleRow(
     string? Schema,
     string? HealthState,
     string? MigrationState,
+    DateTimeOffset? ObservedAtUtc,
+    string? ProbeSource,
+    DateTimeOffset? ProbeFreshUntilUtc,
+    int? ProbeAgeSeconds,
     IReadOnlyList<string> Consumers,
     IReadOnlyDictionary<string, string> MetadataPreview,
     IReadOnlyDictionary<string, string> RuntimeMetadataPreview);

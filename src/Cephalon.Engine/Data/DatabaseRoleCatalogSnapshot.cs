@@ -215,7 +215,8 @@ internal sealed class DatabaseRoleCatalogSnapshot(
             maxRetryCount: roleRuntime.MaxRetryCount ?? sharedRuntime.MaxRetryCount,
             maxRetryDelaySeconds: roleRuntime.MaxRetryDelaySeconds ?? sharedRuntime.MaxRetryDelaySeconds,
             commandTimeoutSeconds: roleRuntime.CommandTimeoutSeconds ?? sharedRuntime.CommandTimeoutSeconds,
-            maxBatchSize: roleRuntime.MaxBatchSize ?? sharedRuntime.MaxBatchSize);
+            maxBatchSize: roleRuntime.MaxBatchSize ?? sharedRuntime.MaxBatchSize,
+            roleProbeFreshnessSeconds: roleRuntime.RoleProbeFreshnessSeconds ?? sharedRuntime.RoleProbeFreshnessSeconds);
     }
 
     private static List<DatabaseRoleRuntimeDescriptor> ResolveRuntimeDescriptors(

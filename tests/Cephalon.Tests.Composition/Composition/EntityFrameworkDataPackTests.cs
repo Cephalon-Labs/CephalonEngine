@@ -275,10 +275,12 @@ public sealed class EntityFrameworkDataPackTests
     public async Task TopologyBackedEntityFrameworkProjectsLiveDatabaseRoleRuntimeDiagnostics()
     {
         var databaseName = $"cephalon-data-ef-role-runtime-{Guid.NewGuid():N}";
+        var timeProvider = new MutableTimeProvider(new DateTimeOffset(2026, 04, 13, 12, 0, 0, TimeSpan.Zero));
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["ConnectionStrings:WriteDb"] = "Host=localhost;Database=cephalon_write",
+                ["Engine:Databases:Runtime:RoleProbeFreshnessSeconds"] = "30",
                 ["Engine:Databases:Write:Provider"] = "PostgreSql",
                 ["Engine:Databases:Write:ConnectionStringName"] = "WriteDb",
                 ["Engine:Databases:Migrations:ApplyOnStartup"] = "true",
@@ -287,6 +289,7 @@ public sealed class EntityFrameworkDataPackTests
             .Build();
         var services = new ServiceCollection();
         services.AddSingleton<IConfiguration>(configuration);
+        services.AddSingleton<TimeProvider>(timeProvider);
         services.AddCephalon(engine =>
         {
             engine.UseSettings(EngineSettings.FromConfiguration(configuration));
@@ -314,11 +317,28 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("true", pendingWrite.RuntimeMetadata["migrationTargeted"]);
         Assert.Equal("startup-hosted-service", pendingWrite.RuntimeMetadata["executionMode"]);
         Assert.Equal("succeeded", pendingWrite.RuntimeMetadata["probeOutcome"]);
+        Assert.Equal("true", pendingWrite.RuntimeMetadata["probeCacheEnabled"]);
+        Assert.Equal("30", pendingWrite.RuntimeMetadata["probeFreshnessSeconds"]);
+        Assert.Equal("configured", pendingWrite.RuntimeMetadata["probeFreshnessOrigin"]);
+        Assert.Equal("live", pendingWrite.RuntimeMetadata["probeSource"]);
         Assert.Contains("InMemory", pendingWrite.RuntimeMetadata["providerNames"], StringComparison.Ordinal);
         Assert.Equal("0", pendingWrite.RuntimeMetadata["pendingMigrationCount"]);
         Assert.True(pendingWrite.ObservedAtUtc.HasValue);
+        Assert.Equal("2026-04-13T12:00:00.0000000+00:00", pendingWrite.RuntimeMetadata["lastProbeAtUtc"]);
+        Assert.Equal("0", pendingWrite.RuntimeMetadata["probeAgeSeconds"]);
+        Assert.Equal("2026-04-13T12:00:30.0000000+00:00", pendingWrite.RuntimeMetadata["probeFreshUntilUtc"]);
+
+        timeProvider.Advance(TimeSpan.FromSeconds(10));
+
+        var cachedWrite = Assert.Single(catalog.DatabaseRoles, role => role.Id == "write");
+        Assert.Equal("cache", cachedWrite.RuntimeMetadata["probeSource"]);
+        Assert.Equal("2026-04-13T12:00:00.0000000+00:00", cachedWrite.RuntimeMetadata["lastProbeAtUtc"]);
+        Assert.Equal("10", cachedWrite.RuntimeMetadata["probeAgeSeconds"]);
+        Assert.Equal(pendingWrite.ObservedAtUtc, cachedWrite.ObservedAtUtc);
 
         await hostedService.StartAsync(CancellationToken.None);
+
+        timeProvider.Advance(TimeSpan.FromSeconds(5));
 
         var appliedWrite = Assert.Single(catalog.DatabaseRoles, role => role.Id == "write");
         Assert.Equal(HealthState.Healthy, appliedWrite.HealthState);
@@ -329,6 +349,9 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("succeeded", appliedWrite.MigrationDescription ?? string.Empty, StringComparison.OrdinalIgnoreCase);
         Assert.Equal("succeeded", appliedWrite.RuntimeMetadata["probeOutcome"]);
         Assert.Equal("0", appliedWrite.RuntimeMetadata["pendingMigrationCount"]);
+        Assert.Equal("live", appliedWrite.RuntimeMetadata["probeSource"]);
+        Assert.Equal("2026-04-13T12:00:15.0000000+00:00", appliedWrite.RuntimeMetadata["lastProbeAtUtc"]);
+        Assert.Equal("0", appliedWrite.RuntimeMetadata["probeAgeSeconds"]);
     }
 
     [Fact]
@@ -1220,5 +1243,20 @@ public sealed class EntityFrameworkDataPackTests
         Assert.NotNull(outboxEntry.DispatchedAtUtc);
         Assert.Null(outboxEntry.NextAttemptAtUtc);
         Assert.Empty(await dispatchStore.ReadPendingAsync(10));
+    }
+
+    private sealed class MutableTimeProvider(DateTimeOffset now) : TimeProvider
+    {
+        private DateTimeOffset now = now;
+
+        public override DateTimeOffset GetUtcNow()
+        {
+            return now;
+        }
+
+        public void Advance(TimeSpan duration)
+        {
+            now = now.Add(duration);
+        }
     }
 }

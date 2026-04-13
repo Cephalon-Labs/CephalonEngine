@@ -23,8 +23,14 @@ public sealed class DatabaseRuntimeSelection
         int? maxRetryCount = null,
         int? maxRetryDelaySeconds = null,
         int? commandTimeoutSeconds = null,
-        int? maxBatchSize = null)
+        int? maxBatchSize = null,
+        int? roleProbeFreshnessSeconds = null)
     {
+        if (roleProbeFreshnessSeconds is < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(roleProbeFreshnessSeconds), "Database role probe freshness must be zero or greater.");
+        }
+
         EnableDetailedErrors = enableDetailedErrors;
         EnableSensitiveDataLogging = enableSensitiveDataLogging;
         EnableRetryOnFailure = enableRetryOnFailure;
@@ -32,6 +38,7 @@ public sealed class DatabaseRuntimeSelection
         MaxRetryDelaySeconds = maxRetryDelaySeconds;
         CommandTimeoutSeconds = commandTimeoutSeconds;
         MaxBatchSize = maxBatchSize;
+        RoleProbeFreshnessSeconds = roleProbeFreshnessSeconds;
     }
 
     /// <summary>
@@ -70,6 +77,12 @@ public sealed class DatabaseRuntimeSelection
     public int? MaxBatchSize { get; }
 
     /// <summary>
+    /// Gets the freshness window in seconds for cached database-role probes when one was selected.
+    /// A value of <c>0</c> disables probe-result caching.
+    /// </summary>
+    public int? RoleProbeFreshnessSeconds { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any database-runtime selection inputs were explicitly supplied.
     /// </summary>
     public bool HasValues =>
@@ -79,5 +92,6 @@ public sealed class DatabaseRuntimeSelection
         MaxRetryCount.HasValue ||
         MaxRetryDelaySeconds.HasValue ||
         CommandTimeoutSeconds.HasValue ||
-        MaxBatchSize.HasValue;
+        MaxBatchSize.HasValue ||
+        RoleProbeFreshnessSeconds.HasValue;
 }

@@ -124,7 +124,8 @@ public static class AppProfileFactory
             maxRetryCount: settings.MaxRetryCount,
             maxRetryDelaySeconds: settings.MaxRetryDelaySeconds,
             commandTimeoutSeconds: settings.CommandTimeoutSeconds,
-            maxBatchSize: settings.MaxBatchSize);
+            maxBatchSize: settings.MaxBatchSize,
+            roleProbeFreshnessSeconds: settings.RoleProbeFreshnessSeconds);
     }
 
     private static Abstractions.AppModel.ResilienceSelection ToResilienceSelection(ResilienceSettings settings)

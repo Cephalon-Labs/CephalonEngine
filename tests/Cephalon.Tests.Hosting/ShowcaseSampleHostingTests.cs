@@ -118,6 +118,7 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Null(profile.Audit.History.Retention.RunIntervalMinutes);
         Assert.True(profile.Identity.Enabled);
         Assert.True(profile.Tenancy.Enabled);
+        Assert.Equal(30, profile.Databases.Runtime.RoleProbeFreshnessSeconds);
         Assert.Equal("InMemory", profile.Databases.Write.Provider);
         Assert.NotNull(profile.Databases.Write.ConnectionString);
         Assert.StartsWith("showcase-write-", profile.Databases.Write.ConnectionString!, StringComparison.Ordinal);
@@ -280,6 +281,9 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal("entity-framework", read.RuntimeMetadata["providerPack"]);
         Assert.Equal("entity-framework", outbox.RuntimeMetadata["providerPack"]);
         Assert.Equal("entity-framework", history.RuntimeMetadata["providerPack"]);
+        Assert.Equal("true", write.RuntimeMetadata["probeCacheEnabled"]);
+        Assert.Equal("30", write.RuntimeMetadata["probeFreshnessSeconds"]);
+        Assert.Equal("configured", write.RuntimeMetadata["probeFreshnessOrigin"]);
         Assert.Equal("startup-hosted-service", write.RuntimeMetadata["executionMode"]);
         Assert.Equal("startup-hosted-service", read.RuntimeMetadata["executionMode"]);
         Assert.Equal("startup-hosted-service", outbox.RuntimeMetadata["executionMode"]);
@@ -1573,12 +1577,17 @@ public sealed class ShowcaseSampleHostingTests
                 action.GetProperty("completionSignal").GetString()!.Contains("No remediation", StringComparison.Ordinal));
 
         var roles = root.GetProperty("roles").EnumerateArray().ToArray();
-        Assert.Contains(
+        var readRole = Assert.Single(
             roles,
-            role =>
-                string.Equals(role.GetProperty("id").GetString(), "read", StringComparison.Ordinal) &&
-                string.Equals(role.GetProperty("provider").GetString(), "InMemory", StringComparison.Ordinal) &&
-                string.Equals(role.GetProperty("healthState").GetString(), "Healthy", StringComparison.Ordinal));
+            role => string.Equals(role.GetProperty("id").GetString(), "read", StringComparison.Ordinal));
+        Assert.Equal("InMemory", readRole.GetProperty("provider").GetString());
+        Assert.Equal("Healthy", readRole.GetProperty("healthState").GetString());
+        Assert.Equal("live", readRole.GetProperty("probeSource").GetString());
+        Assert.True(readRole.GetProperty("observedAtUtc").ValueKind == JsonValueKind.String);
+        Assert.True(readRole.GetProperty("probeFreshUntilUtc").ValueKind == JsonValueKind.String);
+        Assert.Equal(0, readRole.GetProperty("probeAgeSeconds").GetInt32());
+        Assert.Equal("30", readRole.GetProperty("runtimeMetadataPreview").GetProperty("probeFreshnessSeconds").GetString());
+        Assert.Equal("0", readRole.GetProperty("runtimeMetadataPreview").GetProperty("pendingMigrationCount").GetString());
 
         var migrations = root.GetProperty("migrations").EnumerateArray().ToArray();
         Assert.Contains(

@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Health;
+using Cephalon.Engine.AppModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
@@ -9,6 +10,7 @@ namespace Cephalon.Data.EntityFramework.Services;
 
 internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseRoleRuntimeContributor
 {
+    private const int DefaultRoleProbeFreshnessSeconds = 30;
     private readonly object syncRoot = new();
     private readonly Dictionary<string, Type[]> dbContextTypesByRole;
     private readonly Dictionary<string, RoleRuntimeState> roleStates;
@@ -24,7 +26,6 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
         ArgumentNullException.ThrowIfNull(appProfile);
         ArgumentNullException.ThrowIfNull(registrations);
         this.serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
-
         this.timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
 
         dbContextTypesByRole = registrations
@@ -48,7 +49,12 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
 
         roleStates = dbContextTypesByRole.ToDictionary(
             static pair => pair.Key,
-            pair => CreateInitialState(pair.Key, pair.Value, migrationSelection, requestedTargets),
+            pair => CreateInitialState(
+                pair.Key,
+                pair.Value,
+                migrationSelection,
+                requestedTargets,
+                ResolveProbeCaching(appProfile, pair.Key)),
             StringComparer.OrdinalIgnoreCase);
     }
 
@@ -141,6 +147,7 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
                 }
 
                 apply(state, dbContextName, observedAtUtc);
+                state.CachedProbe = null;
             }
         }
     }
@@ -162,8 +169,6 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
             metadata[pair.Key] = pair.Value;
         }
 
-        var migrationState = state.MigrationState;
-        var migrationDescription = state.MigrationDescription;
         var healthState = ResolveHealthState(state, probe);
         var healthDescription = ResolveHealthDescription(state, probe);
         var observedAtUtc = ResolveObservedAtUtc(state.ObservedAtUtc, probe.ObservedAtUtc);
@@ -172,8 +177,8 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
             databaseRoleId: state.DatabaseRoleId,
             healthState: healthState,
             healthDescription: healthDescription,
-            migrationState: migrationState,
-            migrationDescription: migrationDescription,
+            migrationState: state.MigrationState,
+            migrationDescription: state.MigrationDescription,
             observedAtUtc: observedAtUtc,
             metadata: metadata);
     }
@@ -187,6 +192,47 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
         }
 
         var observedAtUtc = timeProvider.GetUtcNow();
+        ProbeCachingSettings probeCaching;
+        RoleProbeCacheEntry? cachedProbe;
+
+        lock (syncRoot)
+        {
+            if (!roleStates.TryGetValue(roleId, out var state))
+            {
+                return null;
+            }
+
+            probeCaching = state.ProbeCaching;
+            cachedProbe = TryGetFreshProbe(state, observedAtUtc);
+        }
+
+        if (cachedProbe is not null)
+        {
+            return DecorateProbeResult(cachedProbe.Result, probeCaching, observedAtUtc, "cache");
+        }
+
+        var liveProbe = ProbeLive(roleId, dbContextTypes, observedAtUtc);
+
+        lock (syncRoot)
+        {
+            if (roleStates.TryGetValue(roleId, out var state))
+            {
+                state.CachedProbe = probeCaching.CacheEnabled
+                    ? new RoleProbeCacheEntry(
+                        liveProbe,
+                        (liveProbe.ObservedAtUtc ?? observedAtUtc).AddSeconds(probeCaching.EffectiveFreshnessSeconds))
+                    : null;
+            }
+        }
+
+        return DecorateProbeResult(liveProbe, probeCaching, observedAtUtc, "live");
+    }
+
+    private RoleProbeResult ProbeLive(
+        string roleId,
+        Type[] dbContextTypes,
+        DateTimeOffset observedAtUtc)
+    {
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["probeOutcome"] = "succeeded",
@@ -213,8 +259,7 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
                 var providerName = dbContext.Database.ProviderName ?? "unknown";
                 providerNames.Add(providerName);
 
-                var canConnect = dbContext.Database.CanConnect();
-                if (!canConnect)
+                if (!dbContext.Database.CanConnect())
                 {
                     metadata["probeOutcome"] = "failed";
                     metadata["lastProbeDbContext"] = dbContextName;
@@ -292,6 +337,47 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
             Metadata: metadata);
     }
 
+    private static RoleProbeResult DecorateProbeResult(
+        RoleProbeResult probe,
+        ProbeCachingSettings probeCaching,
+        DateTimeOffset now,
+        string probeSource)
+    {
+        ArgumentNullException.ThrowIfNull(probe);
+        ArgumentNullException.ThrowIfNull(probeCaching);
+        ArgumentException.ThrowIfNullOrWhiteSpace(probeSource);
+
+        var observedAtUtc = probe.ObservedAtUtc ?? now;
+        var freshUntilUtc = observedAtUtc.AddSeconds(probeCaching.EffectiveFreshnessSeconds);
+        var probeAgeSeconds = Math.Max(0, (int)Math.Floor((now - observedAtUtc).TotalSeconds));
+        var metadata = new Dictionary<string, string>(probe.Metadata, StringComparer.OrdinalIgnoreCase)
+        {
+            ["probeSource"] = probeSource.Trim().ToLowerInvariant(),
+            ["probeCacheEnabled"] = probeCaching.CacheEnabled ? "true" : "false",
+            ["probeFreshnessSeconds"] = probeCaching.EffectiveFreshnessSeconds.ToString(CultureInfo.InvariantCulture),
+            ["probeFreshnessOrigin"] = probeCaching.Origin,
+            ["probeFreshUntilUtc"] = freshUntilUtc.ToString("O", CultureInfo.InvariantCulture),
+            ["probeAgeSeconds"] = probeAgeSeconds.ToString(CultureInfo.InvariantCulture)
+        };
+
+        return new RoleProbeResult(
+            HealthState: probe.HealthState,
+            HealthDescription: probe.HealthDescription,
+            ObservedAtUtc: probe.ObservedAtUtc,
+            Metadata: metadata);
+    }
+
+    private static RoleProbeCacheEntry? TryGetFreshProbe(
+        RoleRuntimeState state,
+        DateTimeOffset now)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+
+        return state.CachedProbe is not null && state.CachedProbe.FreshUntilUtc >= now
+            ? state.CachedProbe
+            : null;
+    }
+
     private static HealthState? ResolveHealthState(
         RoleRuntimeState state,
         RoleProbeResult probe)
@@ -359,7 +445,8 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
         string roleId,
         IReadOnlyList<Type> dbContextTypes,
         DatabaseMigrationsSelection migrationSelection,
-        HashSet<string> requestedTargets)
+        HashSet<string> requestedTargets,
+        ProbeCachingSettings probeCaching)
     {
         var dbContextNames = dbContextTypes
             .Select(static dbContextType => dbContextType.FullName ?? dbContextType.Name)
@@ -379,7 +466,10 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
             ["dbContexts"] = string.Join(",", dbContextNames),
             ["migrationConfigured"] = migrationConfigured ? "true" : "false",
             ["migrationTargeted"] = migrationTargeted ? "true" : "false",
-            ["startupApplyEnabled"] = startupApplyEnabled ? "true" : "false"
+            ["startupApplyEnabled"] = startupApplyEnabled ? "true" : "false",
+            ["probeCacheEnabled"] = probeCaching.CacheEnabled ? "true" : "false",
+            ["probeFreshnessSeconds"] = probeCaching.EffectiveFreshnessSeconds.ToString(CultureInfo.InvariantCulture),
+            ["probeFreshnessOrigin"] = probeCaching.Origin
         };
 
         if (!migrationConfigured)
@@ -414,7 +504,42 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
             migrationState,
             migrationDescription,
             observedAtUtc: null,
+            probeCaching,
             runtimeMetadata);
+    }
+
+    private static ProbeCachingSettings ResolveProbeCaching(
+        AppProfile appProfile,
+        string roleId)
+    {
+        ArgumentNullException.ThrowIfNull(appProfile);
+        ArgumentException.ThrowIfNullOrWhiteSpace(roleId);
+
+        var resolution = DatabaseTopologyRoleResolver.Resolve(appProfile.Databases, roleId);
+        var runtime = MergeRuntime(appProfile.Databases.Runtime, resolution.EffectiveTarget.Runtime);
+        var configuredFreshnessSeconds = runtime.RoleProbeFreshnessSeconds;
+
+        return new ProbeCachingSettings(
+            effectiveFreshnessSeconds: configuredFreshnessSeconds ?? DefaultRoleProbeFreshnessSeconds,
+            isConfigured: configuredFreshnessSeconds.HasValue);
+    }
+
+    private static DatabaseRuntimeSelection MergeRuntime(
+        DatabaseRuntimeSelection sharedRuntime,
+        DatabaseRuntimeSelection roleRuntime)
+    {
+        ArgumentNullException.ThrowIfNull(sharedRuntime);
+        ArgumentNullException.ThrowIfNull(roleRuntime);
+
+        return new DatabaseRuntimeSelection(
+            enableDetailedErrors: roleRuntime.EnableDetailedErrors ?? sharedRuntime.EnableDetailedErrors,
+            enableSensitiveDataLogging: roleRuntime.EnableSensitiveDataLogging ?? sharedRuntime.EnableSensitiveDataLogging,
+            enableRetryOnFailure: roleRuntime.EnableRetryOnFailure ?? sharedRuntime.EnableRetryOnFailure,
+            maxRetryCount: roleRuntime.MaxRetryCount ?? sharedRuntime.MaxRetryCount,
+            maxRetryDelaySeconds: roleRuntime.MaxRetryDelaySeconds ?? sharedRuntime.MaxRetryDelaySeconds,
+            commandTimeoutSeconds: roleRuntime.CommandTimeoutSeconds ?? sharedRuntime.CommandTimeoutSeconds,
+            maxBatchSize: roleRuntime.MaxBatchSize ?? sharedRuntime.MaxBatchSize,
+            roleProbeFreshnessSeconds: roleRuntime.RoleProbeFreshnessSeconds ?? sharedRuntime.RoleProbeFreshnessSeconds);
     }
 
     private sealed class RoleRuntimeState(
@@ -424,6 +549,7 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
         string? migrationState,
         string? migrationDescription,
         DateTimeOffset? observedAtUtc,
+        ProbeCachingSettings probeCaching,
         Dictionary<string, string> runtimeMetadata)
     {
         public string DatabaseRoleId { get; } = databaseRoleId;
@@ -438,6 +564,10 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
 
         public DateTimeOffset? ObservedAtUtc { get; set; } = observedAtUtc;
 
+        public ProbeCachingSettings ProbeCaching { get; } = probeCaching;
+
+        public RoleProbeCacheEntry? CachedProbe { get; set; }
+
         public Dictionary<string, string> RuntimeMetadata { get; } = runtimeMetadata;
 
         public RoleRuntimeState Clone()
@@ -449,6 +579,7 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
                 migrationState: MigrationState,
                 migrationDescription: MigrationDescription,
                 observedAtUtc: ObservedAtUtc,
+                probeCaching: ProbeCaching,
                 runtimeMetadata: new Dictionary<string, string>(RuntimeMetadata, StringComparer.OrdinalIgnoreCase));
         }
 
@@ -464,6 +595,21 @@ internal sealed class EntityFrameworkDatabaseRoleRuntimeContributor : IDatabaseR
                 metadata: RuntimeMetadata);
         }
     }
+
+    private sealed class ProbeCachingSettings(
+        int effectiveFreshnessSeconds,
+        bool isConfigured)
+    {
+        public int EffectiveFreshnessSeconds { get; } = effectiveFreshnessSeconds;
+
+        public bool CacheEnabled => EffectiveFreshnessSeconds > 0;
+
+        public string Origin => isConfigured ? "configured" : "default";
+    }
+
+    private sealed record RoleProbeCacheEntry(
+        RoleProbeResult Result,
+        DateTimeOffset FreshUntilUtc);
 
     private sealed record RoleProbeResult(
         HealthState? HealthState,

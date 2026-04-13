@@ -1656,7 +1656,40 @@ Delivered:
 Remaining follow-through inside `ENG-068`:
 
 - add bundle/script artifact generation or execution orchestration only when the engine can keep provider behavior truthful and additive
-- add richer provider-native diagnostics, per-step migration telemetry, or probe scheduling/caching only when the public catalog can stay stable across providers
+- add richer provider-native diagnostics, per-step migration telemetry, or adaptive/provider-specific probe cadence only when the public catalog can stay stable across providers
+
+### ENG-086 Database-role probe freshness policy and stable operator projection follow-through
+
+Status: done
+Estimate: 3
+
+Why:
+
+- `ENG-068` proved live provider diagnostics, but the database-role catalog still re-probed every registered `DbContext` on every read, which made operator routes noisier and more expensive than needed
+- probe freshness needed to live in the engine-owned topology contract instead of becoming an Entity Framework-only hidden cache
+- the showcase operator projection needed to make live-versus-cached answers visible directly so the sample stayed a proving consumer of the engine contract instead of compensating for it with ad-hoc metadata parsing
+
+Acceptance:
+
+- `Engine:Databases:Runtime` and `AppProfile.Databases.Runtime` expose a non-negative `RoleProbeFreshnessSeconds` contract, with `0` as the explicit disable-caching answer
+- runtime selection merging keeps shared and role-specific freshness overrides truthful across direct roles and dependent `UseRole` targets
+- `Cephalon.Data.EntityFramework` caches role-probe results additively, invalidates them when migration runtime state changes, and publishes stable runtime metadata for live-versus-cache answers
+- showcase projection/UI/config plus hosting/composition tests make the stronger engine contract visible end to end
+- docs, backlog, roadmap, project memory, and GitHub tracking distinguish the shipped freshness-window baseline from later probe telemetry or cadence follow-through
+
+Delivered:
+
+- `DatabaseRuntimeSettings`, `DatabaseRuntimeSelection`, `AppProfileFactory`, `DatabaseTopologyRoleResolver`, and the runtime role catalog now carry `RoleProbeFreshnessSeconds` as an engine-owned runtime contract, including `0` as the explicit no-cache answer
+- `Cephalon.Data.EntityFramework` now resolves effective probe freshness from the merged engine/runtime contract, defaults to a 30-second provider freshness window when none is configured, caches live probe results per logical role, and invalidates cached answers when migration execution updates the same role state
+- EF-backed role runtime metadata now keeps `probeCacheEnabled`, `probeFreshnessSeconds`, `probeFreshnessOrigin`, `probeSource`, `probeFreshUntilUtc`, and `probeAgeSeconds` visible alongside existing connectivity and migration-pressure diagnostics
+- the showcase sample now configures the engine-owned freshness policy in grouped `Configurations/Engine/Databases/*` files, projects probe freshness/live-versus-cache truth through `/api/v1/showcase/system/database-topology`, and shows observed time, probe source, probe age, and fresh-until timing directly in `/showcase`
+- composition and hosting coverage now prove runtime-contract binding, role-resolution merge behavior, EF cache invalidation, and operator-projection output without relying on sample-only hidden state
+- database-topology, component docs, roadmap, backlog, and project memory now call out the shipped probe-freshness baseline while keeping finer-grained probe cadence, telemetry, and broader provider parity as later work
+
+Remaining follow-through inside `ENG-086`:
+
+- add adaptive or provider-native probe cadence only when it can stay explicit in the shared engine/runtime contract
+- add richer per-step migration telemetry and broader provider-native operational diagnostics without overfitting the public catalog to one provider
 
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
@@ -1954,3 +1987,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-073 ledger outbox dispatch-store follow-through: `Cephalon.Data.Nats` now also registers a provider-native `IEventDispatchStore` implementation alongside its staged JetStream KV outbox, the same outbox descriptor now resolves to `consumer-managed` when the eventing technology is active, and composition coverage now locks that ledger-store baseline explicitly while Cassandra and ClickHouse remained tracked as separate storage-model follow-through work at that point — **Shipped**
 - ENG-074 Cassandra provider-native event-dispatch store baseline: `Cephalon.Data.Cassandra` now also registers a provider-native `IEventDispatchStore` implementation alongside its staged LWT outbox, the pack now maintains a deterministic message-sharded `outbox_pending_dispatch` eligibility table so pending reads stay query-shaped without pretending Cassandra is a globally ordered queue, the `cassandra-outbox` descriptor now resolves to `consumer-managed` when the eventing technology is active, and composition coverage now locks that wide-column baseline explicitly while ClickHouse remains the one deliberate provider-specific dispatch-store gap — **Shipped**
 - ENG-075 ClickHouse explicit unsupported dispatch-policy baseline: `Cephalon.Data.ClickHouse` now keeps its `ReplacingMergeTree` outbox staging-only by design, publishes `DispatchPolicy.PolicyId = unsupported` with `ExecutionMode = disabled`, and lets `/engine/outboxes`, `event-dispatches`, and `snapshot.Outboxes` report `dispatchStore = unsupported` / `dispatchRuntime = unsupported` plus provider-specific reason metadata instead of collapsing the pack to a generic "not configured" answer — **Shipped**
+
+### Sprint 38 follow-through
+
+- ENG-086 database-role probe freshness policy: the engine-owned database runtime contract now exposes `RoleProbeFreshnessSeconds`, `Cephalon.Data.EntityFramework` now caches live role probes with explicit live-versus-cache metadata and migration-state invalidation, and the showcase sample now surfaces probe source, age, and freshness timing directly through its database-topology operator projection — **Shipped** · targeted composition tests 7/7 + hosting tests 3/3

@@ -57,6 +57,7 @@ public sealed class EngineSettingsTests
                 ["Engine:Databases:Runtime:EnableDetailedErrors"] = "true",
                 ["Engine:Databases:Runtime:EnableRetryOnFailure"] = "true",
                 ["Engine:Databases:Runtime:MaxRetryCount"] = "5",
+                ["Engine:Databases:Runtime:RoleProbeFreshnessSeconds"] = "30",
                 ["Engine:Databases:Write:Provider"] = "PostgreSql",
                 ["Engine:Databases:Write:ConnectionStringName"] = "WriteDb",
                 ["Engine:Databases:Write:Runtime:EnableRetryOnFailure"] = "false",
@@ -123,6 +124,7 @@ public sealed class EngineSettingsTests
         Assert.True(settings.Databases.Runtime.EnableDetailedErrors);
         Assert.True(settings.Databases.Runtime.EnableRetryOnFailure);
         Assert.Equal(5, settings.Databases.Runtime.MaxRetryCount);
+        Assert.Equal(30, settings.Databases.Runtime.RoleProbeFreshnessSeconds);
         Assert.Equal("PostgreSql", settings.Databases.Write.Provider);
         Assert.Equal("WriteDb", settings.Databases.Write.ConnectionStringName);
         Assert.False(settings.Databases.Write.Runtime.EnableRetryOnFailure);
@@ -169,5 +171,20 @@ public sealed class EngineSettingsTests
 
         Assert.Contains("UseRole", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("provider", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void FromConfigurationAllowsZeroRoleProbeFreshnessSeconds()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Engine:Databases:Runtime:RoleProbeFreshnessSeconds"] = "0"
+            })
+            .Build();
+
+        var settings = EngineSettings.FromConfiguration(configuration);
+
+        Assert.Equal(0, settings.Databases.Runtime.RoleProbeFreshnessSeconds);
     }
 }

@@ -230,6 +230,11 @@ internal sealed class EntityFrameworkDatabaseTopologyRuntimeSurfaceContributor(
         {
             metadata["maxBatchSize"] = maxBatchSize.ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
+
+        if (runtime.RoleProbeFreshnessSeconds is { } roleProbeFreshnessSeconds)
+        {
+            metadata["roleProbeFreshnessSeconds"] = roleProbeFreshnessSeconds.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
     }
 
     private static DatabaseRuntimeSelection MergeRuntime(
@@ -243,7 +248,8 @@ internal sealed class EntityFrameworkDatabaseTopologyRuntimeSurfaceContributor(
             maxRetryCount: roleRuntime.MaxRetryCount ?? sharedRuntime.MaxRetryCount,
             maxRetryDelaySeconds: roleRuntime.MaxRetryDelaySeconds ?? sharedRuntime.MaxRetryDelaySeconds,
             commandTimeoutSeconds: roleRuntime.CommandTimeoutSeconds ?? sharedRuntime.CommandTimeoutSeconds,
-            maxBatchSize: roleRuntime.MaxBatchSize ?? sharedRuntime.MaxBatchSize);
+            maxBatchSize: roleRuntime.MaxBatchSize ?? sharedRuntime.MaxBatchSize,
+            roleProbeFreshnessSeconds: roleRuntime.RoleProbeFreshnessSeconds ?? sharedRuntime.RoleProbeFreshnessSeconds);
     }
 
     private static string[] GetSupportedMigrationTargets(EntityFrameworkDataOptions options)

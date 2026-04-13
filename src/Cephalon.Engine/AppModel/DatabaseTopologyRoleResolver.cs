@@ -92,7 +92,8 @@ public static class DatabaseTopologyRoleResolver
             maxRetryCount: requestedRuntime.MaxRetryCount ?? resolvedRuntime.MaxRetryCount,
             maxRetryDelaySeconds: requestedRuntime.MaxRetryDelaySeconds ?? resolvedRuntime.MaxRetryDelaySeconds,
             commandTimeoutSeconds: requestedRuntime.CommandTimeoutSeconds ?? resolvedRuntime.CommandTimeoutSeconds,
-            maxBatchSize: requestedRuntime.MaxBatchSize ?? resolvedRuntime.MaxBatchSize);
+            maxBatchSize: requestedRuntime.MaxBatchSize ?? resolvedRuntime.MaxBatchSize,
+            roleProbeFreshnessSeconds: requestedRuntime.RoleProbeFreshnessSeconds ?? resolvedRuntime.RoleProbeFreshnessSeconds);
     }
 
     private static string NormalizeRoleKey(string value)

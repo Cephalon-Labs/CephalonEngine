@@ -22,8 +22,14 @@ public sealed class DatabaseRuntimeSettings
         int? maxRetryCount = null,
         int? maxRetryDelaySeconds = null,
         int? commandTimeoutSeconds = null,
-        int? maxBatchSize = null)
+        int? maxBatchSize = null,
+        int? roleProbeFreshnessSeconds = null)
     {
+        if (roleProbeFreshnessSeconds is < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(roleProbeFreshnessSeconds), "Database role probe freshness must be zero or greater.");
+        }
+
         EnableDetailedErrors = enableDetailedErrors;
         EnableSensitiveDataLogging = enableSensitiveDataLogging;
         EnableRetryOnFailure = enableRetryOnFailure;
@@ -31,6 +37,7 @@ public sealed class DatabaseRuntimeSettings
         MaxRetryDelaySeconds = maxRetryDelaySeconds;
         CommandTimeoutSeconds = commandTimeoutSeconds;
         MaxBatchSize = maxBatchSize;
+        RoleProbeFreshnessSeconds = roleProbeFreshnessSeconds;
     }
 
     /// <summary>
@@ -69,6 +76,12 @@ public sealed class DatabaseRuntimeSettings
     public int? MaxBatchSize { get; }
 
     /// <summary>
+    /// Gets the freshness window in seconds for cached database-role probes when one was configured.
+    /// A value of <c>0</c> disables probe-result caching.
+    /// </summary>
+    public int? RoleProbeFreshnessSeconds { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any database runtime settings were explicitly supplied.
     /// </summary>
     public bool HasValues =>
@@ -78,7 +91,8 @@ public sealed class DatabaseRuntimeSettings
         MaxRetryCount.HasValue ||
         MaxRetryDelaySeconds.HasValue ||
         CommandTimeoutSeconds.HasValue ||
-        MaxBatchSize.HasValue;
+        MaxBatchSize.HasValue ||
+        RoleProbeFreshnessSeconds.HasValue;
 
     /// <summary>
     /// Reads database runtime settings from the supplied configuration section.
@@ -97,7 +111,8 @@ public sealed class DatabaseRuntimeSettings
             maxRetryCount: TryParsePositiveInt(section["MaxRetryCount"]),
             maxRetryDelaySeconds: TryParsePositiveInt(section["MaxRetryDelaySeconds"]),
             commandTimeoutSeconds: TryParsePositiveInt(section["CommandTimeoutSeconds"]),
-            maxBatchSize: TryParsePositiveInt(section["MaxBatchSize"]));
+            maxBatchSize: TryParsePositiveInt(section["MaxBatchSize"]),
+            roleProbeFreshnessSeconds: TryParseNonNegativeInt(section["RoleProbeFreshnessSeconds"]));
     }
 
     private static bool? TryParseBoolean(string? value)
@@ -115,6 +130,13 @@ public sealed class DatabaseRuntimeSettings
     private static int? TryParsePositiveInt(string? value)
     {
         return int.TryParse(value, out var parsed) && parsed > 0
+            ? parsed
+            : null;
+    }
+
+    private static int? TryParseNonNegativeInt(string? value)
+    {
+        return int.TryParse(value, out var parsed) && parsed >= 0
             ? parsed
             : null;
     }

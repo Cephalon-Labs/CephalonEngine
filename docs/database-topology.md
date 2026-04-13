@@ -10,6 +10,7 @@ That baseline currently includes:
 
 - `Engine:Databases` as the physical-topology section under `Engine`
 - shared runtime tuning through `Engine:Databases:Runtime`
+- an engine-owned role-probe freshness contract through `Engine:Databases:Runtime:RoleProbeFreshnessSeconds`
 - first-class role slots for `Write`, `Read`, `Outbox`, and `History`
 - explicit dependent role references through `UseRole` for `Outbox` and `History`
 - nested migration policy through `Engine:Databases:Migrations`
@@ -24,7 +25,7 @@ The first provider follow-through is also now in place: `Cephalon.Data.EntityFra
 
 The first durable audit-history follow-through is also now shipped: `Cephalon.Audit.EntityFramework` consumes `Engine:Audit:History` plus the selected engine-owned database role named by `Engine:Audit:History:DatabaseRole`, persists audit rows through a dedicated EF Core `DbContext`, publishes a durable audit-store descriptor through `/engine/audit-stores` and `/engine/snapshot`, exposes filtered-page reads through `IAuditHistoryReader`, exposes bounded NDJSON export streams through `IAuditHistoryExporter`, and can run engine-owned retention passes through `Engine:Audit:History:Retention`.
 
-The next runtime follow-through is now also shipped: `Cephalon.Abstractions` exposes `IDatabaseRoleCatalog`, the engine now projects a resolved `DatabaseRoles` set into `/engine/snapshot`, and ASP.NET Core hosts now expose `/engine/database-roles` plus `/engine/database-roles/{databaseRoleId}`. That catalog answers requested versus resolved roles, `UseRole` truth, connection mode, provider, schema, merged runtime tuning, operator-facing consumers, co-located role references, audit-history metadata, and provider-contributed live runtime health without forcing provider packs or hosts to invent their own runtime topology story.
+The next runtime follow-through is now also shipped: `Cephalon.Abstractions` exposes `IDatabaseRoleCatalog`, the engine now projects a resolved `DatabaseRoles` set into `/engine/snapshot`, and ASP.NET Core hosts now expose `/engine/database-roles` plus `/engine/database-roles/{databaseRoleId}`. That catalog answers requested versus resolved roles, `UseRole` truth, connection mode, provider, schema, merged runtime tuning, operator-facing consumers, co-located role references, audit-history metadata, engine-owned probe freshness policy, and provider-contributed live runtime health without forcing provider packs or hosts to invent their own runtime topology story.
 
 The next migration follow-through is now also shipped: `Cephalon.Abstractions` exposes `IDatabaseMigrationCatalog`, the engine now projects `DatabaseMigrations` into `/engine/snapshot`, and ASP.NET Core hosts now expose `/engine/database-migrations` plus `/engine/database-migrations/{databaseMigrationId}`. That catalog keeps logical migration targets, requested versus resolved roles, provider ownership, startup/manual execution mode, runtime status (`planned`, `running`, `succeeded`, `failed`, or `unsupported`), typed recommended execution order for operator playbooks, typed resolved-role runtime fields (`RoleHealthState`, `RoleHealthDescription`, `RoleMigrationState`, `RoleMigrationDescription`, and `RoleObservedAtUtc`), and provider-added deploy-time command templates explicit instead of leaving migration truth buried in hosted-service logs or host-only wiring. `DatabaseMigrationCommandDescriptor` now also carries typed operator metadata such as tool id, execution category, and working-directory hint so hosts can reuse stable command semantics without depending only on ad-hoc metadata keys.
 
@@ -130,7 +131,8 @@ The showcase sample now also exposes `/api/v1/showcase/system/database-topology`
         "MaxRetryCount": 5,
         "MaxRetryDelaySeconds": 10,
         "CommandTimeoutSeconds": 30,
-        "MaxBatchSize": 128
+        "MaxBatchSize": 128,
+        "RoleProbeFreshnessSeconds": 30
       },
       "Write": {
         "Provider": "PostgreSql",
@@ -161,7 +163,7 @@ The showcase sample now also exposes `/api/v1/showcase/system/database-topology`
 }
 ```
 
-The showcase sample keeps PostgreSQL root-role settings in grouped files under `Configurations/ConnectionStrings/*` plus `Configurations/Engine/Databases/*` for Docker-backed runs, applies startup migrations for `write`, `read`, and `history`, and lets tests or alternate hosts override those same config keys to isolated in-memory roles without changing the host code. The sample now also stages durable read-projection jobs in the write database and reconciles the separate read database through a startup rebuild plus background retry loop, so the read-side split remains truthful even when immediate projection fails. The `/api/v1/showcase/system/database-topology` projection, `/api/v1/showcase/system/database-topology/brief` Markdown export, `/api/v1/showcase/system/database-topology/handoff` package export, and the inline `/showcase` operator section now make that reconciliation visible in one place for demos, operator walkthroughs, and regression tests, including a readiness banner, an ordered operator action plan, derived operator insights for aligned topology, migration attention, and read-model drift or backlog, plus shareable operator artifacts that can be handed to another team without copying multiple panels by hand. The handoff package now stays self-describing by including a package `README.md` and `handoff-manifest.json` alongside the brief and raw projection, so a downstream operator or automation step can understand the artifact contents without external thread context.
+The showcase sample keeps PostgreSQL root-role settings in grouped files under `Configurations/ConnectionStrings/*` plus `Configurations/Engine/Databases/*` for Docker-backed runs, applies startup migrations for `write`, `read`, and `history`, and lets tests or alternate hosts override those same config keys to isolated in-memory roles without changing the host code. Those grouped database-runtime files now also set `RoleProbeFreshnessSeconds = 30` so the engine-owned freshness policy stays visible in local, test, and Docker-backed operator views. The sample now also stages durable read-projection jobs in the write database and reconciles the separate read database through a startup rebuild plus background retry loop, so the read-side split remains truthful even when immediate projection fails. The `/api/v1/showcase/system/database-topology` projection, `/api/v1/showcase/system/database-topology/brief` Markdown export, `/api/v1/showcase/system/database-topology/handoff` package export, and the inline `/showcase` operator section now make that reconciliation visible in one place for demos, operator walkthroughs, and regression tests, including a readiness banner, an ordered operator action plan, derived operator insights for aligned topology, migration attention, and read-model drift or backlog, plus shareable operator artifacts that can be handed to another team without copying multiple panels by hand. The handoff package now stays self-describing by including a package `README.md` and `handoff-manifest.json` alongside the brief and raw projection, so a downstream operator or automation step can understand the artifact contents without external thread context.
 
 For Entity Framework-backed roles, the migration catalog now also carries operator-facing command templates such as:
 
@@ -173,6 +175,8 @@ These templates are guidance, not execution orchestration. They keep the product
 
 For Entity Framework-backed roles, the role catalog now also projects live probe metadata such as connectivity outcome, provider name, pending migration count, applied migration count, and last probe time. When a dependent target such as `Outbox` reuses `write` through `UseRole`, the resolved role catalog now keeps that inherited runtime truth visible without lying about the logical role id.
 
+That same EF-backed role runtime now also honors the engine-owned `RoleProbeFreshnessSeconds` contract. `0` disables caching explicitly and keeps every catalog read live, while configured positive values keep probe freshness visible through metadata such as `probeCacheEnabled`, `probeFreshnessSeconds`, `probeFreshnessOrigin`, `probeSource`, `probeFreshUntilUtc`, and `probeAgeSeconds`. When the runtime contract does not override that setting, the current EF provider baseline keeps a 30-second freshness window by default so the operator surface stops re-probing every registered `DbContext` on every read.
+
 ## What this baseline does not claim yet
 
 The engine now owns the topology contract, but several follow-through slices are still intentionally separate:
@@ -182,7 +186,7 @@ The engine now owns the topology contract, but several follow-through slices are
 - dedicated relational-role sharing still needs truthful migration/bootstrap guidance when multiple `DbContext` models point at the same physical database
 - there is not yet an engine-owned bundle/script generation or execution orchestration path for deploy-time database changes beyond the current provider-added command templates
 - replay UX and richer export formats or delivery automation for durable audit history are not yet shipped
-- Cephalon does not yet expose fine-grained migration step progress, probe scheduling/caching policy, bundle/script execution telemetry, or broader provider-native operational diagnostics beyond the current resolved role catalog, migration target catalog, topology snapshot, and audit-store descriptor set
+- Cephalon does not yet expose fine-grained migration step progress, adaptive provider-specific probe cadence beyond the shipped freshness-window baseline, bundle/script execution telemetry, or broader provider-native operational diagnostics beyond the current resolved role catalog, migration target catalog, topology snapshot, and audit-store descriptor set
 
 ## Recommended next direction
 

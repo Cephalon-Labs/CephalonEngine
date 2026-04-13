@@ -12,7 +12,9 @@ public sealed class DatabaseTopologyRoleResolverTests
             write: new DatabaseTargetSelection(
                 provider: "PostgreSql",
                 connectionStringName: "WriteDb",
-                runtime: new DatabaseRuntimeSelection(enableRetryOnFailure: false)));
+                runtime: new DatabaseRuntimeSelection(
+                    enableRetryOnFailure: false,
+                    roleProbeFreshnessSeconds: 45)));
 
         var resolution = DatabaseTopologyRoleResolver.Resolve(databases, "write");
 
@@ -23,6 +25,7 @@ public sealed class DatabaseTopologyRoleResolverTests
         Assert.Equal("PostgreSql", resolution.EffectiveTarget.Provider);
         Assert.Equal("WriteDb", resolution.EffectiveTarget.ConnectionStringName);
         Assert.False(resolution.EffectiveTarget.Runtime.EnableRetryOnFailure);
+        Assert.Equal(45, resolution.EffectiveTarget.Runtime.RoleProbeFreshnessSeconds);
     }
 
     [Fact]
@@ -35,11 +38,14 @@ public sealed class DatabaseTopologyRoleResolverTests
                 schema: "app",
                 runtime: new DatabaseRuntimeSelection(
                     enableRetryOnFailure: false,
-                    commandTimeoutSeconds: 30)),
+                    commandTimeoutSeconds: 30,
+                    roleProbeFreshnessSeconds: 45)),
             history: new DatabaseTargetSelection(
                 useRole: "write",
                 schema: "audit",
-                runtime: new DatabaseRuntimeSelection(commandTimeoutSeconds: 120)));
+                runtime: new DatabaseRuntimeSelection(
+                    commandTimeoutSeconds: 120,
+                    roleProbeFreshnessSeconds: 10)));
 
         var resolution = DatabaseTopologyRoleResolver.Resolve(databases, "history");
 
@@ -53,5 +59,6 @@ public sealed class DatabaseTopologyRoleResolverTests
         Assert.Equal("audit", resolution.EffectiveTarget.Schema);
         Assert.False(resolution.EffectiveTarget.Runtime.EnableRetryOnFailure);
         Assert.Equal(120, resolution.EffectiveTarget.Runtime.CommandTimeoutSeconds);
+        Assert.Equal(10, resolution.EffectiveTarget.Runtime.RoleProbeFreshnessSeconds);
     }
 }

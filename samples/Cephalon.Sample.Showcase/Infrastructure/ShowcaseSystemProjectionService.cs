@@ -112,6 +112,10 @@ internal sealed class ShowcaseSystemProjectionService(
                 Schema: role.Schema,
                 HealthState: role.HealthState?.ToString(),
                 MigrationState: role.MigrationState,
+                ObservedAtUtc: role.ObservedAtUtc,
+                ProbeSource: GetMetadataValue(role.RuntimeMetadata, "probeSource"),
+                ProbeFreshUntilUtc: GetMetadataDateTimeOffset(role.RuntimeMetadata, "probeFreshUntilUtc"),
+                ProbeAgeSeconds: GetMetadataInt32(role.RuntimeMetadata, "probeAgeSeconds"),
                 Consumers: role.Consumers,
                 MetadataPreview: CreateMetadataPreview(
                     role.Metadata,
@@ -133,8 +137,9 @@ internal sealed class ShowcaseSystemProjectionService(
                         "providerPack",
                         "executionMode",
                         "probeOutcome",
-                        "pendingMigrations",
-                        "appliedMigrations",
+                        "probeFreshnessSeconds",
+                        "pendingMigrationCount",
+                        "appliedMigrationCount",
                         "lastProbeAtUtc"
                     ])))
             .ToArray();
@@ -1879,6 +1884,38 @@ internal sealed class ShowcaseSystemProjectionService(
             StringComparer.OrdinalIgnoreCase);
     }
 
+    private static string? GetMetadataValue(
+        IReadOnlyDictionary<string, string> metadata,
+        string key)
+    {
+        ArgumentNullException.ThrowIfNull(metadata);
+        ArgumentException.ThrowIfNullOrWhiteSpace(key);
+
+        return metadata.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value)
+            ? value
+            : null;
+    }
+
+    private static DateTimeOffset? GetMetadataDateTimeOffset(
+        IReadOnlyDictionary<string, string> metadata,
+        string key)
+    {
+        var value = GetMetadataValue(metadata, key);
+        return DateTimeOffset.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var parsed)
+            ? parsed
+            : null;
+    }
+
+    private static int? GetMetadataInt32(
+        IReadOnlyDictionary<string, string> metadata,
+        string key)
+    {
+        var value = GetMetadataValue(metadata, key);
+        return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)
+            ? parsed
+            : null;
+    }
+
     private static bool IsSafePreviewMetadataKey(string key)
     {
         if (string.IsNullOrWhiteSpace(key))
@@ -2112,6 +2149,14 @@ internal sealed class ShowcaseSystemProjectionService(
         "executionMode",
         "configuredTargets",
         "applyOnStartup",
+        "probeOutcome",
+        "probeCacheEnabled",
+        "probeFreshnessSeconds",
+        "probeSource",
+        "probeFreshUntilUtc",
+        "pendingMigrationCount",
+        "appliedMigrationCount",
+        "lastProbeAtUtc",
         "resolutionMode",
         "requestedRole",
         "resolvedRole",

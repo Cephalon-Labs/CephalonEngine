@@ -8,7 +8,8 @@
         "MaxRetryCount": 5,
         "MaxRetryDelaySeconds": 10,
         "CommandTimeoutSeconds": 30,
-        "MaxBatchSize": 128
+        "MaxBatchSize": 128,
+        "RoleProbeFreshnessSeconds": 30
       },
       "Write": {
         "Provider": "PostgreSql",

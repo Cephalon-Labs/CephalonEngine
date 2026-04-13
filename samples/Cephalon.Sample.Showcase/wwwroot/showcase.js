@@ -487,15 +487,21 @@ function renderDatabaseTopology() {
 
   document.getElementById("databaseRoleTable").innerHTML = roles.length
     ? roles.map((role) => `
-      <tr>
-        <td>
-          <strong>${escapeHtml(role.id)}</strong>
-          <div class="mono">${escapeHtml(role.requestedRoleId)} -> ${escapeHtml(role.resolvedRoleId)}</div>
-          <div class="meta-row">
-            <span class="token">${escapeHtml(role.resolutionMode)}</span>
-            ${role.connectionMode ? `<span class="token">${escapeHtml(role.connectionMode)}</span>` : ""}
-            ${role.schema ? `<span class="token">schema ${escapeHtml(role.schema)}</span>` : ""}
-          </div>
+        <tr>
+          <td>
+            <strong>${escapeHtml(role.id)}</strong>
+            <div class="mono">${escapeHtml(role.requestedRoleId)} -> ${escapeHtml(role.resolvedRoleId)}</div>
+            ${role.observedAtUtc ? `<div class="caption">Observed ${escapeHtml(formatDate(role.observedAtUtc))}</div>` : ""}
+            <div class="meta-row">
+              ${role.probeSource ? `<span class="token">probe ${escapeHtml(role.probeSource)}</span>` : ""}
+              ${role.probeAgeSeconds !== null && role.probeAgeSeconds !== undefined ? `<span class="token">age ${escapeHtml(String(role.probeAgeSeconds))}s</span>` : ""}
+              ${role.probeFreshUntilUtc ? `<span class="token">fresh until ${escapeHtml(formatDate(role.probeFreshUntilUtc))}</span>` : ""}
+            </div>
+            <div class="meta-row">
+              <span class="token">${escapeHtml(role.resolutionMode)}</span>
+              ${role.connectionMode ? `<span class="token">${escapeHtml(role.connectionMode)}</span>` : ""}
+              ${role.schema ? `<span class="token">schema ${escapeHtml(role.schema)}</span>` : ""}
+            </div>
         </td>
         <td>
           <strong>${escapeHtml(role.provider)}</strong>
