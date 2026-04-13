@@ -42,8 +42,10 @@ public interface IBehaviorTopologyBuilder
     /// <remarks>
     /// This primarily affects the shared generic behavior HTTP transport surface used by JSON-RPC,
     /// GraphQL, GraphQL-SSE, GraphQL-WS, Server-Sent Events, and WebSocket bindings. Public REST
-    /// endpoints are module-owned and should be mapped through <c>MapEndpoints(...)</c> plus
-    /// <c>MapBehaviorRestGroup(...)</c> instead of behavior topology.
+    /// endpoints are module-owned and should be mapped through
+    /// <c>RestBehaviorModuleBase.ConfigureRestBehaviors(...)</c>, with
+    /// <c>MapAdditionalEndpoints(...)</c> plus <c>MapBehaviorRestGroup(...)</c> reserved for the
+    /// advanced manual-route escape hatch, instead of behavior topology.
     /// </remarks>
     IBehaviorTopologyBuilder WithApiSurface(string groupPath, string operationPath);
 

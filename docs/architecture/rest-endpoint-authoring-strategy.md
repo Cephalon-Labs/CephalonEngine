@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 13, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -143,8 +143,13 @@ Status update:
 - Step 2 of this direction is now shipped through `IRestEndpointRuntimeCatalog`,
   `/engine/rest-endpoints`, `/engine/rest-endpoints/{restEndpointId}`, `snapshot.RestEndpoints`,
   and fail-fast collision validation on the resolved public `HTTP method + route pattern`
-- the next high-value follow-through is build-time diagnostics, richer authoring metadata, and
-  explicit binding descriptors before broader shorthand publication is considered
+- Step 3 is now shipped through `BehaviorRestProfileAttribute`, `BehaviorRestMethod`,
+  `BehaviorRestProfileDescriptor`, source-generated `GetRestProfiles()` hints, and
+  `ABT0015` through `ABT0018`, while still keeping those behavior-authored REST profiles
+  metadata-only rather than publishing public REST directly from behaviors
+- the next high-value follow-through is consuming those generated hints through explicit,
+  module-owned shorthand projections and then tightening the normalized projection model with
+  explicit binding descriptors before broad shorthand publication is considered
 
 ## Recommended long-term engine model
 
@@ -389,6 +394,14 @@ Status:
 If behavior-authored HTTP profiles are added, validate them at build time and emit normalized
 descriptor data alongside existing behavior registration hints.
 
+Status:
+
+- shipped through `ENG-058-T61`; `Cephalon.Behaviors.Http` now exposes the metadata-only
+  `BehaviorRestProfileAttribute`, `BehaviorRestMethod`, and `BehaviorRestProfileDescriptor`
+  contract, while `Cephalon.Behaviors.SourceGen` now validates that profile metadata at build time
+  and emits source-generated `GetRestProfiles()` hints without activating public REST routes from
+  `[AppBehavior]`
+
 ### Step 4: add generated or convention-backed module projections
 
 Allow low-code projects to opt into convention REST mapping without abandoning module-owned public
@@ -424,8 +437,8 @@ The following points are durable enough to keep outside thread-local context.
 Recommended implementation sequence after the shipped normalization, runtime-catalog, and
 manual-module follow-through slices:
 
-1. add diagnostics and source-generator support for future HTTP profile metadata
+1. add a generated or convention-backed low-code module path that consumes the shipped
+   `BehaviorRestProfileAttribute` hints without bypassing module ownership
 2. add explicit input-binding descriptors and conflict validation
-3. add a generated or convention-backed low-code module path
-4. add suppression visibility once non-module-generated projections can be compiled but not activated
-5. only then evaluate whether richer configuration-driven public-boundary overrides are worth the added complexity
+3. add suppression visibility once non-module-generated projections can be compiled but not activated
+4. only then evaluate whether richer configuration-driven public-boundary overrides are worth the added complexity

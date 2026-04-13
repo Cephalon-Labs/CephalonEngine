@@ -12,10 +12,6 @@ namespace Cephalon.Tests.Behaviors;
 /// </summary>
 public sealed class BehaviorSourceGeneratorTests
 {
-    // ─────────────────────────────────────────────────────────────────────────
-    // Helpers
-    // ─────────────────────────────────────────────────────────────────────────
-
     /// <summary>Minimal attribute stubs so the generator has types to resolve.</summary>
     private const string AttributeStubs = """
         namespace Cephalon.Abstractions.Behaviors
@@ -49,6 +45,49 @@ public sealed class BehaviorSourceGeneratorTests
                 IBehaviorTopologyBuilder ViaHttpJsonRpc();
             }
         }
+
+        namespace Cephalon.Behaviors.Http.Abstractions
+        {
+            public enum BehaviorRestMethod
+            {
+                Unspecified = 0,
+                Get = 1,
+                Post = 2,
+                Put = 3,
+                Patch = 4,
+                Delete = 5
+            }
+
+            [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+            public sealed class BehaviorRestProfileAttribute : System.Attribute
+            {
+                public BehaviorRestProfileAttribute(BehaviorRestMethod method, string relativePattern)
+                {
+                    Method = method;
+                    RelativePattern = relativePattern;
+                }
+
+                public BehaviorRestMethod Method { get; }
+                public string RelativePattern { get; }
+                public int ApiVersionMajor { get; set; }
+            }
+
+            public sealed class BehaviorRestProfileDescriptor
+            {
+                public BehaviorRestProfileDescriptor(string behaviorId, BehaviorRestMethod method, string relativePattern, int? apiVersionMajor)
+                {
+                    BehaviorId = behaviorId;
+                    Method = method;
+                    RelativePattern = relativePattern;
+                    ApiVersionMajor = apiVersionMajor;
+                }
+
+                public string BehaviorId { get; }
+                public BehaviorRestMethod Method { get; }
+                public string RelativePattern { get; }
+                public int? ApiVersionMajor { get; }
+            }
+        }
         """;
 
     private static (GeneratorDriverRunResult Result, ImmutableArray<Diagnostic> Diagnostics)
@@ -78,9 +117,6 @@ public sealed class BehaviorSourceGeneratorTests
 
         var result = driver.GetRunResult();
 
-        // Diagnostics reported via SourceProductionContext.ReportDiagnostic appear
-        // in GeneratorDriverRunResult.Diagnostics (top-level aggregate).
-        // We also check each per-result diagnostics and the output compilation.
         var diagnostics = result.Diagnostics
             .Concat(result.Results.SelectMany(r => r.Diagnostics))
             .Concat(outputCompilation.GetDiagnostics())
@@ -101,10 +137,6 @@ public sealed class BehaviorSourceGeneratorTests
             .FirstOrDefault(t => t.FilePath.EndsWith("BehaviorAutoRegistration.g.cs", StringComparison.Ordinal))
             ?.GetText()
             .ToString();
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Happy-path: valid behavior
-    // ─────────────────────────────────────────────────────────────────────────
 
     [Fact]
     public void ValidBehaviorEmitsNoAbtDiagnosticsAndGeneratesHints()
@@ -131,9 +163,36 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Contains("\"orders.create\"", generated);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // ABT0010: must implement IAppBehavior<TIn, TOut>
-    // ─────────────────────────────────────────────────────────────────────────
+    [Fact]
+    public void ValidBehaviorWithRestProfileEmitsNoAbtDiagnosticsAndGeneratesRestProfileHints()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            [AppBehavior("orders.get")]
+            [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 2)]
+            public sealed class GetOrderBehavior : IAppBehavior<string, string>
+            {
+                public Task<string> HandleAsync(string input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (result, diagnostics) = RunGenerator(source);
+
+        Assert.Empty(diagnostics);
+
+        var autoRegistration = GetGeneratedAutoRegistrationSource(result);
+        Assert.NotNull(autoRegistration);
+        Assert.Contains("GetRestProfiles()", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor(\"orders.get\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorRestMethod.Get", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("\"/{orderId}\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains(", 2)", autoRegistration, StringComparison.Ordinal);
+    }
 
     [Fact]
     public void ClassWithoutIAppBehaviorEmitsAbt0010()
@@ -151,10 +210,6 @@ public sealed class BehaviorSourceGeneratorTests
 
         Assert.Contains(diagnostics, d => d.Id == "ABT0010");
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // ABT0011: empty behavior id
-    // ─────────────────────────────────────────────────────────────────────────
 
     [Fact]
     public void EmptyIdEmitsAbt0011()
@@ -177,10 +232,6 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Contains(diagnostics, d => d.Id == "ABT0011");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // ABT0012: abstract class
-    // ─────────────────────────────────────────────────────────────────────────
-
     [Fact]
     public void AbstractClassEmitsAbt0012()
     {
@@ -201,10 +252,6 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Contains(diagnostics, d => d.Id == "ABT0012");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // ABT0013: static class
-    // ─────────────────────────────────────────────────────────────────────────
-
     [Fact]
     public void StaticClassEmitsAbt0013()
     {
@@ -222,10 +269,6 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Contains(diagnostics, d => d.Id == "ABT0013");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Diagnostic descriptor metadata
-    // ─────────────────────────────────────────────────────────────────────────
-
     [Fact]
     public void AllDescriptorsHaveHelpLinkUri()
     {
@@ -236,13 +279,17 @@ public sealed class BehaviorSourceGeneratorTests
             BehaviorSourceGenerator.Abt012MustNotBeAbstract,
             BehaviorSourceGenerator.Abt013MustNotBeStatic,
             BehaviorSourceGenerator.Abt014RestMustBeModuleOwned,
+            BehaviorSourceGenerator.Abt015RestProfileMethodMustBeSpecified,
+            BehaviorSourceGenerator.Abt016RestProfilePatternMustNotBeEmpty,
+            BehaviorSourceGenerator.Abt017RestProfileVersionMustBePositive,
+            BehaviorSourceGenerator.Abt018RestProfilePatternMustStartWithSlash,
         };
 
-        foreach (var d in descriptors)
+        foreach (var descriptor in descriptors)
         {
             Assert.False(
-                string.IsNullOrWhiteSpace(d.HelpLinkUri),
-                $"{d.Id} must have a helpLinkUri");
+                string.IsNullOrWhiteSpace(descriptor.HelpLinkUri),
+                $"{descriptor.Id} must have a helpLinkUri");
         }
     }
 
@@ -254,6 +301,10 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Equal("ABT0012", BehaviorSourceGenerator.Abt012MustNotBeAbstract.Id);
         Assert.Equal("ABT0013", BehaviorSourceGenerator.Abt013MustNotBeStatic.Id);
         Assert.Equal("ABT0014", BehaviorSourceGenerator.Abt014RestMustBeModuleOwned.Id);
+        Assert.Equal("ABT0015", BehaviorSourceGenerator.Abt015RestProfileMethodMustBeSpecified.Id);
+        Assert.Equal("ABT0016", BehaviorSourceGenerator.Abt016RestProfilePatternMustNotBeEmpty.Id);
+        Assert.Equal("ABT0017", BehaviorSourceGenerator.Abt017RestProfileVersionMustBePositive.Id);
+        Assert.Equal("ABT0018", BehaviorSourceGenerator.Abt018RestProfilePatternMustStartWithSlash.Id);
     }
 
     [Fact]
@@ -311,6 +362,98 @@ public sealed class BehaviorSourceGeneratorTests
     }
 
     [Fact]
+    public void RestProfileWithoutMethodEmitsAbt0015()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            [AppBehavior("orders.get")]
+            [BehaviorRestProfile((BehaviorRestMethod)0, "/{orderId}")]
+            public sealed class GetOrderBehavior : IAppBehavior<string, string>
+            {
+                public Task<string> HandleAsync(string input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (_, diagnostics) = RunGenerator(source);
+
+        Assert.Contains(diagnostics, d => d.Id == "ABT0015");
+    }
+
+    [Fact]
+    public void RestProfileWithEmptyPatternEmitsAbt0016()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            [AppBehavior("orders.get")]
+            [BehaviorRestProfile(BehaviorRestMethod.Get, "")]
+            public sealed class GetOrderBehavior : IAppBehavior<string, string>
+            {
+                public Task<string> HandleAsync(string input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (_, diagnostics) = RunGenerator(source);
+
+        Assert.Contains(diagnostics, d => d.Id == "ABT0016");
+    }
+
+    [Fact]
+    public void RestProfileWithNonPositiveVersionEmitsAbt0017()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            [AppBehavior("orders.get")]
+            [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 0)]
+            public sealed class GetOrderBehavior : IAppBehavior<string, string>
+            {
+                public Task<string> HandleAsync(string input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (_, diagnostics) = RunGenerator(source);
+
+        Assert.Contains(diagnostics, d => d.Id == "ABT0017");
+    }
+
+    [Fact]
+    public void RestProfileWithoutLeadingSlashEmitsAbt0018()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            [AppBehavior("orders.get")]
+            [BehaviorRestProfile(BehaviorRestMethod.Get, "{orderId}")]
+            public sealed class GetOrderBehavior : IAppBehavior<string, string>
+            {
+                public Task<string> HandleAsync(string input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (_, diagnostics) = RunGenerator(source);
+
+        Assert.Contains(diagnostics, d => d.Id == "ABT0018");
+    }
+
+    [Fact]
     public void NonRestConfigureTopologyStillGeneratesCompileTimeDescriptor()
     {
         const string source = """
@@ -338,10 +481,6 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Contains("new global::Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor(\"orders.lookup\"", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("\"http.jsonrpc\"", autoRegistration, StringComparison.Ordinal);
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Multiple valid behaviors — all ids appear in generated source
-    // ─────────────────────────────────────────────────────────────────────────
 
     [Fact]
     public void MultipleValidBehaviorsAllIdsEmitted()

@@ -30,6 +30,10 @@ module-owned REST endpoints.
 - **REST behavior-module DSL** — `IRestBehaviorModuleBuilder` plus
   `IRestBehaviorEndpointGroupBuilder` for one-place public REST and internal behavior ownership,
   compiled internally into a normalized REST projection contract before Minimal API materialization
+- **Metadata-only REST profile contract** — `BehaviorRestProfileAttribute`,
+  `BehaviorRestMethod`, and `BehaviorRestProfileDescriptor` for behavior-authored candidate REST
+  method, relative route, and API-version hints that future generated module projections can consume
+  without publishing public REST directly from behaviors
 - **OpenAPI enrichment** — module tag names and descriptions, module-major API-version defaults
   with explicit `.ApiVersion(...)` override support, best-effort XML comment
   summaries/descriptions for module-owned REST endpoints, and separation between public REST docs
@@ -84,6 +88,8 @@ Cephalon keeps public REST module-owned:
   `ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)`
 - keep behavior attributes and topology focused on interaction pattern plus non-REST transports
 - keep `WithApiSurface(...)` for the shared generic HTTP route surface, not for REST
+- if a behavior wants to describe a future low-ceremony REST projection, use
+  `BehaviorRestProfileAttribute` only as metadata; it does not publish public REST by itself
 
 When a behavior declares exactly one allowed pattern plus one or more allowed transports, the
 runtime can synthesize that attribute-only baseline without `ConfigureTopology(...)`. That baseline
@@ -121,6 +127,43 @@ the behavior id:
 - `cart.add-item.draft` becomes group `cart/add-item` plus operation `draft`, which projects to
   `/json-rpc/v1/cart/add-item/draft`
 
+## Metadata-only REST profiles
+
+When a team wants lower-ceremony REST authoring later, the current shipped path is metadata first,
+not direct public route activation. `BehaviorRestProfileAttribute` lets a behavior declare a
+candidate REST method, relative pattern, and optional API major version for future module-owned
+generated projections:
+
+```csharp
+using Cephalon.Behaviors.Http.Abstractions;
+
+[AppBehavior("cart.get")]
+[BehaviorRestProfile(BehaviorRestMethod.Get, "/{cartId}", ApiVersionMajor = 2)]
+public sealed class GetCartBehavior : IAppBehavior<GetCartInput, Result<GetCartOutput>>
+{
+    public Task<Result<GetCartOutput>> HandleAsync(
+        GetCartInput input,
+        IBehaviorContext context,
+        CancellationToken cancellationToken = default)
+    {
+        // behavior logic omitted
+    }
+}
+```
+
+Current profile behavior:
+
+- the attribute is metadata only and does not publish a public REST route
+- the owning module still chooses whether that behavior becomes public REST through
+  `ConfigureRestBehaviors(...)` or a future generated module projection path
+- `Cephalon.Behaviors.SourceGen` validates the profile at build time and emits
+  `GetRestProfiles()` hints when the profile is valid
+- valid profiles currently require a supported REST method, a non-empty leading-slash relative
+  pattern such as `"/{cartId}"`, and a positive `ApiVersionMajor` when one is specified
+- profile API-version metadata is still only a candidate endpoint version; host publication remains
+  governed by `OpenApi:EnabledVersions`, `OpenApi:DefaultVersion`, and the legacy document
+  allow-list settings
+
 ## Registration
 
 ```csharp
@@ -134,7 +177,7 @@ services.AddCephalon(config, engine => engine
 
 ## Behavior-aware REST endpoints
 
-Behaviors no longer activate REST through annotations or topology. Instead, modules map REST
+Behaviors no longer activate REST through annotations or topology alone. Instead, modules map REST
 endpoints explicitly through the Minimal API helper layer while still dispatching through
 `BehaviorDispatcher`.
 
@@ -162,6 +205,8 @@ Current helper behavior:
 
 - keeps REST route shape in the host-adapter layer instead of overloading behavior attributes with
   HTTP-specific concerns
+- lets behaviors carry candidate REST projection metadata without turning that metadata into a
+  public route by itself
 - gives behavior-owning REST modules a dedicated base class instead of requiring authors to
   implement `IBehaviorOwnerModule` plus `IRestModule` manually
 - treats the REST DSL as the primary authoring path, so public routes also imply module ownership

@@ -123,6 +123,6 @@ internal static class BehaviorAttributeTopologyResolver
         throw new BehaviorSecurityException(
             behaviorId,
             $"Behavior '{behaviorId}' declares '{RestTransportId}', but Cephalon now keeps REST module-owned only. " +
-            "Remove 'http.rest' from behavior annotations/topology and map REST endpoints in a module with MapEndpoints(...) plus MapBehaviorRestGroup(...).");
+            "Remove 'http.rest' from behavior annotations/topology and map REST endpoints in a module with RestBehaviorModuleBase.ConfigureRestBehaviors(...), or use MapAdditionalEndpoints(...) plus MapBehaviorRestGroup(...) only for advanced manual routes.");
     }
 }

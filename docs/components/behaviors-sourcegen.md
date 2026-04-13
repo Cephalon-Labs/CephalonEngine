@@ -10,8 +10,9 @@ conventions at build time and produce a compile-time-known registration hint fil
   - Uses `ForAttributeWithMetadataName` for efficient incremental processing
   - Emits `BehaviorRegistrationHints.g.cs` listing all discovered `[AppBehavior]` IDs
   - Emits `BehaviorAutoRegistration.g.cs` for zero-reflection DI/type registration plus pre-built topology descriptors when compile-time extraction succeeds
+  - Emits source-generated metadata-only REST profile hints through `GetRestProfiles()` when behaviors declare valid `BehaviorRestProfileAttribute` metadata
   - Extracts compile-time topology from `ConfigureTopology(...)` for pattern, transports, feature flags, and literal `WithApiSurface(...)` overrides
-  - Reports ABT0010–ABT0014 diagnostics on invalid behavior declarations
+  - Reports ABT0010–ABT0018 diagnostics on invalid behavior declarations and invalid metadata-only REST profile hints
 
 ## Diagnostic rules
 
@@ -22,6 +23,10 @@ conventions at build time and produce a compile-time-known registration hint fil
 | ABT0012 | Error | `[AppBehavior]` class is abstract |
 | ABT0013 | Error | `[AppBehavior]` class is static |
 | ABT0014 | Error | REST is declared in behavior topology instead of a module-owned REST surface |
+| ABT0015 | Error | `[BehaviorRestProfile]` does not select a supported REST method |
+| ABT0016 | Error | `[BehaviorRestProfile]` uses an empty relative pattern |
+| ABT0017 | Error | `[BehaviorRestProfile]` uses a non-positive `ApiVersionMajor` |
+| ABT0018 | Error | `[BehaviorRestProfile]` uses a relative pattern that does not start with `/` |
 
 ## Generated output
 
@@ -63,6 +68,26 @@ internal static class BehaviorAutoRegistration
 }
 ```
 
+When a behavior also declares a valid metadata-only REST profile, the generated registration type
+now emits future-facing REST profile hints without publishing any public REST routes:
+
+```csharp
+internal static class BehaviorAutoRegistration
+{
+    internal static IReadOnlyList<BehaviorRestProfileDescriptor> GetRestProfiles()
+    {
+        return
+        [
+            new BehaviorRestProfileDescriptor(
+                "catalog.lookup",
+                BehaviorRestMethod.Get,
+                "/{itemId}",
+                2)
+        ];
+    }
+}
+```
+
 ## Integration
 
 The generator is automatically applied when `Cephalon.Behaviors` is referenced. No additional setup required.
@@ -76,6 +101,10 @@ behavior source-generator topology model; `ABT0014` now rejects `http.rest` and 
 so authors map REST in a module with `RestBehaviorModuleBase.ConfigureRestBehaviors(...)`, or with
 manual `MapBehaviorRestGroup(...)` wiring when they intentionally stay on the low-level REST module
 path.
+`BehaviorRestProfileAttribute` is now the shipped metadata-only bridge for future low-ceremony REST:
+the generator validates the profile and emits `GetRestProfiles()` hints, but that metadata still
+does not publish public REST routes by itself and does not override host OpenAPI document
+publication policy.
 Likewise, explicit module ownership through `IBehaviorOwnerModule`, `BehaviorModuleBase`, or
 `RestBehaviorModuleBase` remains a runtime-composition concern rather than a source-generated
 topology concern: the generator still focuses on behavior shape and topology, while the engine owns

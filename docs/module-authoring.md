@@ -148,6 +148,32 @@ That shape gives the runtime an attribute-only baseline: the single allowed patt
 the declared transports become the resolved behavior topology when no explicit topology override
 exists. Public REST is not part of that baseline; modules own REST explicitly.
 
+If a behavior wants to carry candidate REST shorthand metadata for a future generated module
+projection, keep that metadata in the HTTP package instead of overloading behavior topology:
+
+```csharp
+using Cephalon.Behaviors.Http.Abstractions;
+
+[AppBehavior("cart.get")]
+[BehaviorAllowedPatterns("cqrs")]
+[BehaviorRestProfile(BehaviorRestMethod.Get, "/{cartId}", ApiVersionMajor = 2)]
+public sealed class GetCartBehavior : IAppBehavior<GetCartInput, Result<GetCartOutput>>
+{
+    // handler omitted
+}
+```
+
+Current `BehaviorRestProfileAttribute` behavior:
+
+- it is metadata only and does not publish a public REST route by itself
+- `Cephalon.Behaviors.SourceGen` validates the method, relative pattern, and optional API version
+  at build time
+- the owning module still decides whether the behavior becomes public REST through
+  `ConfigureRestBehaviors(...)` or a future generated module projection path
+- the optional `ApiVersionMajor` remains only a candidate endpoint version; the host still decides
+  which OpenAPI documents are published through `OpenApi:EnabledVersions` or the legacy document
+  allow-list settings
+
 When a behavior needs to communicate expected branches without throwing exceptions for normal domain
 flow, prefer `Result<T>` over a transport-specific envelope:
 

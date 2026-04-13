@@ -12,7 +12,7 @@ namespace Cephalon.Behaviors.SourceGen;
 /// Incremental source generator that validates classes decorated with
 /// <c>[AppBehavior]</c>, emits compile-time diagnostics for common authoring mistakes,
 /// and generates zero-reflection registration code with pre-built topology descriptors.
-/// Diagnostic IDs: ABT-010 through ABT-014.
+/// Diagnostic IDs: ABT-010 through ABT-018.
 /// </summary>
 [Generator]
 public sealed class BehaviorSourceGenerator : IIncrementalGenerator
@@ -72,11 +72,55 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
     public static readonly DiagnosticDescriptor Abt014RestMustBeModuleOwned = new(
         id: "ABT0014",
         title: "REST must be mapped by a module",
-        messageFormat: "'{0}' declares REST in behavior topology; remove 'http.rest' or ViaHttpRest(...) and map REST in a module with MapEndpoints(...) plus MapBehaviorRestGroup(...)",
+        messageFormat: "'{0}' declares REST in behavior topology; remove 'http.rest' or ViaHttpRest(...) and map REST in a module with RestBehaviorModuleBase.ConfigureRestBehaviors(...) or, for advanced manual routes, MapAdditionalEndpoints(...) plus MapBehaviorRestGroup(...)",
         category: "Cephalon.Behaviors",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true,
-        description: "Cephalon keeps public REST module-owned. Behaviors must not declare http.rest in [BehaviorAllowedTransports] or ConfigureTopology(...). Map REST endpoints through a module's MapEndpoints(...) implementation instead.",
+        description: "Cephalon keeps public REST module-owned. Behaviors must not declare http.rest in [BehaviorAllowedTransports] or ConfigureTopology(...). Map REST endpoints through a module's ConfigureRestBehaviors(...) DSL, or through manual module-owned helper routes only when deliberately using the advanced escape hatch.",
+        helpLinkUri: HelpLink);
+
+    /// <summary>ABT-015: [BehaviorRestProfile] must select a supported REST method.</summary>
+    public static readonly DiagnosticDescriptor Abt015RestProfileMethodMustBeSpecified = new(
+        id: "ABT0015",
+        title: "REST profile method must be specified",
+        messageFormat: "'{0}' declares [BehaviorRestProfile] without a supported REST method",
+        category: "Cephalon.Behaviors",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "Behavior-authored REST profile metadata must select one supported candidate REST method so future generated or descriptor-backed module projections stay deterministic.",
+        helpLinkUri: HelpLink);
+
+    /// <summary>ABT-016: [BehaviorRestProfile] relative pattern must not be empty.</summary>
+    public static readonly DiagnosticDescriptor Abt016RestProfilePatternMustNotBeEmpty = new(
+        id: "ABT0016",
+        title: "REST profile relative pattern must not be empty",
+        messageFormat: "'{0}' declares [BehaviorRestProfile] with an empty relative pattern",
+        category: "Cephalon.Behaviors",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "Behavior-authored REST profile metadata must describe a non-empty route pattern relative to a future owning REST group.",
+        helpLinkUri: HelpLink);
+
+    /// <summary>ABT-017: [BehaviorRestProfile] API version must be positive when specified.</summary>
+    public static readonly DiagnosticDescriptor Abt017RestProfileVersionMustBePositive = new(
+        id: "ABT0017",
+        title: "REST profile API version must be greater than zero",
+        messageFormat: "'{0}' declares [BehaviorRestProfile] with ApiVersionMajor '{1}', but candidate REST profile versions must be greater than zero",
+        category: "Cephalon.Behaviors",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "Behavior-authored REST profile metadata may omit the candidate API version, but when specified it must be a positive major version.",
+        helpLinkUri: HelpLink);
+
+    /// <summary>ABT-018: [BehaviorRestProfile] relative pattern must start with '/'.</summary>
+    public static readonly DiagnosticDescriptor Abt018RestProfilePatternMustStartWithSlash = new(
+        id: "ABT0018",
+        title: "REST profile relative pattern must start with '/'",
+        messageFormat: "'{0}' declares [BehaviorRestProfile] with relative pattern '{1}', but REST profile patterns must start with '/'",
+        category: "Cephalon.Behaviors",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "Behavior-authored REST profile metadata should use the same leading-slash relative pattern shape as the module-owned REST DSL so future projection material stays unambiguous.",
         helpLinkUri: HelpLink);
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -135,6 +179,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
 
         var implementsInterface = ImplementsIAppBehavior(typeSymbol);
         var hasRestTransportAttribute = DeclaresRestTransportAttribute(typeSymbol);
+        var restProfile = ExtractRestProfile(typeSymbol);
 
         var location = ctx.TargetNode.GetLocation();
 
@@ -156,6 +201,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             implementsInterface: implementsInterface,
             location: location,
             topology: topology,
+            restProfile: restProfile,
             hasRestTransportAttribute: hasRestTransportAttribute,
             hasConfigureTopologyRestTransport: hasConfigureTopologyRestTransport);
     }
@@ -202,6 +248,52 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         }
 
         return false;
+    }
+
+    private static RestProfileInfo? ExtractRestProfile(INamedTypeSymbol typeSymbol)
+    {
+        foreach (var attribute in typeSymbol.GetAttributes())
+        {
+            if (!string.Equals(
+                    attribute.AttributeClass?.ToDisplayString(),
+                    "Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileAttribute",
+                    StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            var methodValue = attribute.ConstructorArguments.Length > 0 &&
+                              attribute.ConstructorArguments[0].Value is not null
+                ? Convert.ToInt32(attribute.ConstructorArguments[0].Value, System.Globalization.CultureInfo.InvariantCulture)
+                : 0;
+            var relativePattern = attribute.ConstructorArguments.Length > 1
+                ? attribute.ConstructorArguments[1].Value as string ?? string.Empty
+                : string.Empty;
+
+            var hasApiVersionMajor = false;
+            var apiVersionMajor = 0;
+            foreach (var namedArgument in attribute.NamedArguments)
+            {
+                if (!string.Equals(namedArgument.Key, "ApiVersionMajor", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                hasApiVersionMajor = true;
+                apiVersionMajor = namedArgument.Value.Value is null
+                    ? 0
+                    : Convert.ToInt32(namedArgument.Value.Value, System.Globalization.CultureInfo.InvariantCulture);
+                break;
+            }
+
+            return new RestProfileInfo(
+                methodValue,
+                relativePattern,
+                hasApiVersionMajor,
+                apiVersionMajor);
+        }
+
+        return null;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -463,6 +555,44 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 info.Location,
                 info.ShortName));
         }
+
+        if (info.RestProfile is null)
+        {
+            return;
+        }
+
+        if (!TryResolveRestProfileMethodName(info.RestProfile.MethodValue, out _))
+        {
+            spc.ReportDiagnostic(Diagnostic.Create(
+                Abt015RestProfileMethodMustBeSpecified,
+                info.Location,
+                info.ShortName));
+        }
+
+        if (string.IsNullOrWhiteSpace(info.RestProfile.RelativePattern))
+        {
+            spc.ReportDiagnostic(Diagnostic.Create(
+                Abt016RestProfilePatternMustNotBeEmpty,
+                info.Location,
+                info.ShortName));
+        }
+        else if (!info.RestProfile.RelativePattern.Trim().StartsWith("/", StringComparison.Ordinal))
+        {
+            spc.ReportDiagnostic(Diagnostic.Create(
+                Abt018RestProfilePatternMustStartWithSlash,
+                info.Location,
+                info.ShortName,
+                info.RestProfile.RelativePattern));
+        }
+
+        if (info.RestProfile.HasApiVersionMajor && info.RestProfile.ApiVersionMajor <= 0)
+        {
+            spc.ReportDiagnostic(Diagnostic.Create(
+                Abt017RestProfileVersionMustBePositive,
+                info.Location,
+                info.ShortName,
+                info.RestProfile.ApiVersionMajor));
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -591,6 +721,41 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         sb.AppendLine("        };");
         sb.AppendLine("    }");
 
+        var behaviorsWithRestProfiles = infos
+            .Where(static info => info is { IsValid: true, HasValidRestProfile: true })
+            .ToArray();
+
+        if (behaviorsWithRestProfiles.Length > 0)
+        {
+            sb.AppendLine();
+            sb.AppendLine("    /// <summary>Returns metadata-only REST profile hints discovered at compile time.</summary>");
+            sb.AppendLine("    internal static global::System.Collections.Generic.IReadOnlyList<global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor> GetRestProfiles()");
+            sb.AppendLine("    {");
+            sb.AppendLine("        return new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor[]");
+            sb.AppendLine("        {");
+
+            foreach (var info in behaviorsWithRestProfiles)
+            {
+                if (info?.RestProfile is null ||
+                    !TryResolveRestProfileMethodName(info.RestProfile.MethodValue, out var methodName))
+                {
+                    continue;
+                }
+
+                sb.Append("            new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor(");
+                sb.Append($"\"{EscapeString(info.BehaviorId)}\", ");
+                sb.Append($"global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod.{methodName}, ");
+                sb.Append($"\"{EscapeString(info.RestProfile.RelativePattern.Trim())}\", ");
+                sb.Append(info.RestProfile.HasApiVersionMajor
+                    ? info.RestProfile.ApiVersionMajor.ToString(System.Globalization.CultureInfo.InvariantCulture)
+                    : "null");
+                sb.AppendLine("),");
+            }
+
+            sb.AppendLine("        };");
+            sb.AppendLine("    }");
+        }
+
         // ── GetBehaviorIdsWithoutTopology method ──
         // For behaviors that don't have ConfigureTopology or have complex logic,
         // the runtime still needs to invoke their static method via reflection.
@@ -627,6 +792,21 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
 
     private static string EscapeString(string s) =>
         s.Replace("\\", "\\\\").Replace("\"", "\\\"");
+
+    private static bool TryResolveRestProfileMethodName(int methodValue, out string? methodName)
+    {
+        methodName = methodValue switch
+        {
+            1 => "Get",
+            2 => "Post",
+            3 => "Put",
+            4 => "Patch",
+            5 => "Delete",
+            _ => null
+        };
+
+        return methodName is not null;
+    }
 
     // ─────────────────────────────────────────────────────────────────────────
     // Data models
@@ -672,6 +852,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             bool implementsInterface,
             Location location,
             TopologyInfo? topology,
+            RestProfileInfo? restProfile,
             bool hasRestTransportAttribute,
             bool hasConfigureTopologyRestTransport)
         {
@@ -683,6 +864,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             ImplementsInterface = implementsInterface;
             Location = location;
             Topology = topology;
+            RestProfile = restProfile;
             HasRestTransportAttribute = hasRestTransportAttribute;
             HasConfigureTopologyRestTransport = hasConfigureTopologyRestTransport;
         }
@@ -695,6 +877,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         public bool ImplementsInterface { get; }
         public Location Location { get; }
         public TopologyInfo? Topology { get; }
+        public RestProfileInfo? RestProfile { get; }
         public bool HasRestTransportAttribute { get; }
         public bool HasConfigureTopologyRestTransport { get; }
 
@@ -706,5 +889,35 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             !IsAbstract &&
             !IsStatic &&
             ImplementsInterface;
+
+        public bool HasValidRestProfile =>
+            IsValid &&
+            RestProfile is not null &&
+            TryResolveRestProfileMethodName(RestProfile.MethodValue, out _) &&
+            !string.IsNullOrWhiteSpace(RestProfile.RelativePattern) &&
+            RestProfile.RelativePattern.Trim().StartsWith("/", StringComparison.Ordinal) &&
+            (!RestProfile.HasApiVersionMajor || RestProfile.ApiVersionMajor > 0) &&
+            !HasRestTransportAttribute &&
+            !HasConfigureTopologyRestTransport;
+    }
+
+    private sealed class RestProfileInfo
+    {
+        public RestProfileInfo(
+            int methodValue,
+            string relativePattern,
+            bool hasApiVersionMajor,
+            int apiVersionMajor)
+        {
+            MethodValue = methodValue;
+            RelativePattern = relativePattern;
+            HasApiVersionMajor = hasApiVersionMajor;
+            ApiVersionMajor = apiVersionMajor;
+        }
+
+        public int MethodValue { get; }
+        public string RelativePattern { get; }
+        public bool HasApiVersionMajor { get; }
+        public int ApiVersionMajor { get; }
     }
 }
