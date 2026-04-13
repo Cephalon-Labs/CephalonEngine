@@ -688,62 +688,119 @@ function renderDatabaseMigrationPlaybook(playbook) {
   }
 
   const summary = playbook.summary;
+  const executionGroups = Array.isArray(playbook.executionGroups) ? playbook.executionGroups : [];
   const steps = Array.isArray(playbook.steps) ? playbook.steps : [];
 
   document.getElementById("databaseMigrationPlaybookSummary").innerHTML = [
     statCard("Targets", summary.targetCount, "ordered sample runbook"),
+    statCard("Execution Groups", summary.executionGroupCount, "physical-target batches"),
     statCard("Production Ready", summary.productionReadyTargetCount, "targets with recommended runnable path"),
     statCard("Local Fallbacks", summary.localFallbackTargetCount, "manual/update path available"),
     statCard("Startup Apply", summary.applyOnStartupTargetCount, "host-managed targets"),
-    statCard("Coordination", summary.coordinationRequiredTargetCount, "targets sharing a physical database")
+    statCard("Coordination", summary.coordinationRequiredTargetCount, "targets sharing a physical database"),
+    statCard("Shared Groups", summary.coordinationRequiredGroupCount, "batches that need shared-target handling")
   ].join("");
 
-  document.getElementById("databaseMigrationPlaybookList").innerHTML = steps.length
+  const executionGroupMarkup = executionGroups.length
+    ? executionGroups.map(renderMigrationExecutionGroup).join("")
+    : `<div class="empty-state">No execution groups published.</div>`;
+  const stepMarkup = steps.length
     ? steps.map((step) => `
-      <article class="playbook-step">
-        <header>
-          <div>
-            <strong>Step ${escapeHtml(String(step.order))}: ${escapeHtml(step.targetId)}</strong>
-            <div class="mono">${escapeHtml(step.requestedRoleId)} -> ${escapeHtml(step.resolvedRoleId)}</div>
-            ${step.physicalTargetDisplayName ? `<div class="caption">${escapeHtml(step.physicalTargetDisplayName)}</div>` : ""}
+        <article class="playbook-step">
+          <header>
+            <div>
+              <strong>Step ${escapeHtml(String(step.order))}: ${escapeHtml(step.targetId)}</strong>
+              <div class="mono">${escapeHtml(step.requestedRoleId)} -> ${escapeHtml(step.resolvedRoleId)}</div>
+              ${step.physicalTargetDisplayName ? `<div class="caption">${escapeHtml(step.physicalTargetDisplayName)}</div>` : ""}
+            </div>
+            <div class="meta-row">
+              <span class="status-badge ${tone(step.status)}">${escapeHtml(step.status)}</span>
+              <span class="status-badge ${step.hasProductionRecommendedCommand ? "status-success" : "status-warning"}">
+                ${step.hasProductionRecommendedCommand ? "production path ready" : "local/manual only"}
+              </span>
+              <span class="token">${escapeHtml(step.executionMode)}</span>
+              ${step.requiresPhysicalTargetCoordination ? `<span class="token">shared target</span>` : ""}
+            </div>
+          </header>
+          ${step.requiresPhysicalTargetCoordination ? `
+            <div class="insight-card warning">
+              <strong>Coordination Required</strong>
+              <p>${escapeHtml(step.coordinationHint || "This migration target shares a physical database with another target.")}</p>
+              ${Array.isArray(step.coordinatedMigrationIds) && step.coordinatedMigrationIds.length
+                ? `<div class="meta-row">${step.coordinatedMigrationIds.map((migrationId) => `<span class="token">${escapeHtml(migrationId)}</span>`).join("")}</div>`
+                : ""}
+            </div>` : ""}
+          <div class="playbook-path-grid">
+            ${renderMigrationPlaybookPath(
+              "Production Path",
+              step.productionCommandDisplayName,
+              step.productionCommandId,
+              step.productionCommandDescription,
+              step.productionSampleCommand,
+              step.productionCommandHint,
+              step.hasProductionRecommendedCommand)}
+            ${renderMigrationPlaybookPath(
+              "Local Fallback",
+              step.localCommandDisplayName,
+              step.localCommandId,
+              step.localCommandDescription,
+              step.localSampleCommand,
+              step.applyOnStartup ? "Startup apply is already enabled for this target in the showcase host." : null,
+              Boolean(step.localCommandId))}
           </div>
-          <div class="meta-row">
-            <span class="status-badge ${tone(step.status)}">${escapeHtml(step.status)}</span>
-            <span class="status-badge ${step.hasProductionRecommendedCommand ? "status-success" : "status-warning"}">
-              ${step.hasProductionRecommendedCommand ? "production path ready" : "local/manual only"}
-            </span>
-            <span class="token">${escapeHtml(step.executionMode)}</span>
-            ${step.requiresPhysicalTargetCoordination ? `<span class="token">shared target</span>` : ""}
-          </div>
-        </header>
-        ${step.requiresPhysicalTargetCoordination ? `
-          <div class="insight-card warning">
-            <strong>Coordination Required</strong>
-            <p>${escapeHtml(step.coordinationHint || "This migration target shares a physical database with another target.")}</p>
-            ${Array.isArray(step.coordinatedMigrationIds) && step.coordinatedMigrationIds.length
-              ? `<div class="meta-row">${step.coordinatedMigrationIds.map((migrationId) => `<span class="token">${escapeHtml(migrationId)}</span>`).join("")}</div>`
-              : ""}
-          </div>` : ""}
-        <div class="playbook-path-grid">
-          ${renderMigrationPlaybookPath(
-            "Production Path",
-            step.productionCommandDisplayName,
-            step.productionCommandId,
-            step.productionCommandDescription,
-            step.productionSampleCommand,
-            step.productionCommandHint,
-            step.hasProductionRecommendedCommand)}
-          ${renderMigrationPlaybookPath(
-            "Local Fallback",
-            step.localCommandDisplayName,
-            step.localCommandId,
-            step.localCommandDescription,
-            step.localSampleCommand,
-            step.applyOnStartup ? "Startup apply is already enabled for this target in the showcase host." : null,
-            Boolean(step.localCommandId))}
-        </div>
-      </article>`).join("")
+        </article>`).join("")
     : `<div class="empty-state">No migration playbook steps published.</div>`;
+
+  document.getElementById("databaseMigrationPlaybookList").innerHTML = `
+    <div class="subpanel-header">
+      <h4>Execution Groups</h4>
+      <p>Physical-target batches the engine recommends operators review together before deploy-time execution.</p>
+    </div>
+    ${executionGroupMarkup}
+    <div class="subpanel-header">
+      <h4>Ordered Steps</h4>
+      <p>Logical migration targets in the engine-owned sequence, with runnable showcase guidance layered on top.</p>
+    </div>
+    ${stepMarkup}`;
+}
+
+function renderMigrationExecutionGroup(group) {
+  const migrationIds = Array.isArray(group.databaseMigrationIds) ? group.databaseMigrationIds : [];
+  const requestedRoleIds = Array.isArray(group.requestedRoleIds) ? group.requestedRoleIds : [];
+  const resolvedRoleIds = Array.isArray(group.resolvedRoleIds) ? group.resolvedRoleIds : [];
+
+  return `
+    <article class="playbook-step">
+      <header>
+        <div>
+          <strong>Group ${escapeHtml(String(group.order))}: ${escapeHtml(group.physicalTargetDisplayName || group.physicalTargetId)}</strong>
+          <div class="mono">${escapeHtml(group.physicalTargetId)}</div>
+          <div class="caption">${escapeHtml(String(group.targetCount || migrationIds.length || 0))} logical target(s) on one physical execution batch</div>
+        </div>
+        <div class="meta-row">
+          <span class="status-badge ${tone(group.status)}">${escapeHtml(group.status)}</span>
+          <span class="status-badge ${group.hasProductionRecommendedCommandsForAllTargets ? "status-success" : "status-warning"}">
+            ${group.hasProductionRecommendedCommandsForAllTargets ? "production coverage complete" : "review coverage"}
+          </span>
+          ${group.requiresPhysicalTargetCoordination ? `<span class="token">shared target</span>` : `<span class="token">single target</span>`}
+        </div>
+      </header>
+      <div class="meta-row">
+        ${migrationIds.map((migrationId) => `<span class="token">${escapeHtml(migrationId)}</span>`).join("")}
+      </div>
+      <dl class="metric-list">
+        <div><dt>Requested Roles</dt><dd>${requestedRoleIds.length ? escapeHtml(requestedRoleIds.join(", ")) : "None published"}</dd></div>
+        <div><dt>Resolved Roles</dt><dd>${resolvedRoleIds.length ? escapeHtml(resolvedRoleIds.join(", ")) : "None published"}</dd></div>
+        <div><dt>Production Ready</dt><dd>${escapeHtml(String(group.productionReadyTargetCount || 0))} / ${escapeHtml(String(group.targetCount || migrationIds.length || 0))}</dd></div>
+        <div><dt>Local Fallbacks</dt><dd>${escapeHtml(String(group.localFallbackTargetCount || 0))}</dd></div>
+        <div><dt>Startup Apply</dt><dd>${escapeHtml(String(group.applyOnStartupTargetCount || 0))}</dd></div>
+      </dl>
+      ${group.requiresPhysicalTargetCoordination ? `
+        <div class="insight-card warning">
+          <strong>Coordinated Physical-Target Batch</strong>
+          <p>${escapeHtml(group.coordinationHint || "This physical target batches multiple logical migration targets and should stay coordinated before deploy-time execution.")}</p>
+        </div>` : ""}
+    </article>`;
 }
 
 function renderMigrationPlaybookPath(title, displayName, commandId, description, sampleCommand, hint, isReady) {

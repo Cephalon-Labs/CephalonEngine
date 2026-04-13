@@ -43,8 +43,9 @@ internal sealed class DatabaseMigrationOperationalPlaybookProvider(
                 physicalTargetGroups,
                 index))
             .ToArray();
+        var executionGroups = CreateExecutionGroups(steps);
 
-        return new DatabaseMigrationOperationalPlaybook(generatedAtUtc, steps);
+        return new DatabaseMigrationOperationalPlaybook(generatedAtUtc, steps, executionGroups);
     }
 
     private static DatabaseMigrationOperationalStep CreateStep(
@@ -94,6 +95,80 @@ internal sealed class DatabaseMigrationOperationalPlaybookProvider(
         IReadOnlyList<string> coordinatedMigrationIds)
     {
         return $"Migration target '{migrationId}' shares {physicalTargetDisplayName} with {string.Join(", ", coordinatedMigrationIds)}. Keep bundle/script outputs or separate migrations projects coordinated before deploy-time execution.";
+    }
+
+    private static DatabaseMigrationOperationalExecutionGroup[] CreateExecutionGroups(
+        IReadOnlyList<DatabaseMigrationOperationalStep> steps)
+    {
+        ArgumentNullException.ThrowIfNull(steps);
+
+        return steps
+            .GroupBy(
+                static step => step.PhysicalTargetId ?? $"migration:{step.DatabaseMigrationId}",
+                StringComparer.OrdinalIgnoreCase)
+            .Select(static group =>
+            {
+                var orderedSteps = group
+                    .OrderBy(static step => step.Order)
+                    .ThenBy(static step => step.DatabaseMigrationId, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+                var firstStep = orderedSteps[0];
+
+                return new DatabaseMigrationOperationalExecutionGroup(
+                    order: orderedSteps.Min(static step => step.Order),
+                    physicalTargetId: group.Key,
+                    physicalTargetDisplayName: firstStep.PhysicalTargetDisplayName ?? $"Logical migration target '{firstStep.DatabaseMigrationId}'",
+                    status: ResolveGroupStatus(orderedSteps),
+                    databaseMigrationIds: orderedSteps.Select(static step => step.DatabaseMigrationId).ToArray(),
+                    requestedRoleIds: orderedSteps.Select(static step => step.RequestedRoleId).ToArray(),
+                    resolvedRoleIds: orderedSteps.Select(static step => step.ResolvedRoleId).ToArray(),
+                    productionReadyTargetCount: orderedSteps.Count(static step => step.HasProductionRecommendedCommand),
+                    manualPathTargetCount: orderedSteps.Count(static step => step.ManualCommand is not null),
+                    applyOnStartupTargetCount: orderedSteps.Count(static step => step.ApplyOnStartup),
+                    coordinationHint: orderedSteps.Length > 1
+                        ? BuildExecutionGroupCoordinationHint(
+                            firstStep.PhysicalTargetDisplayName ?? $"physical target '{group.Key}'",
+                            orderedSteps.Select(static step => step.DatabaseMigrationId).ToArray())
+                        : null);
+            })
+            .OrderBy(static group => group.Order)
+            .ThenBy(static group => group.PhysicalTargetId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static DatabaseMigrationStatus ResolveGroupStatus(
+        IReadOnlyList<DatabaseMigrationOperationalStep> steps)
+    {
+        ArgumentNullException.ThrowIfNull(steps);
+
+        if (steps.Any(static step => step.Status == DatabaseMigrationStatus.Failed))
+        {
+            return DatabaseMigrationStatus.Failed;
+        }
+
+        if (steps.Any(static step => step.Status == DatabaseMigrationStatus.Running))
+        {
+            return DatabaseMigrationStatus.Running;
+        }
+
+        if (steps.Any(static step => step.Status == DatabaseMigrationStatus.Unsupported))
+        {
+            return DatabaseMigrationStatus.Unsupported;
+        }
+
+        if (steps.Any(static step => step.Status == DatabaseMigrationStatus.Planned))
+        {
+            return DatabaseMigrationStatus.Planned;
+        }
+
+        return DatabaseMigrationStatus.Succeeded;
+    }
+
+    private static string BuildExecutionGroupCoordinationHint(
+        string physicalTargetDisplayName,
+        IReadOnlyList<string> databaseMigrationIds)
+    {
+        return $"Migration targets {string.Join(", ", databaseMigrationIds.Select(static migrationId => $"'{migrationId}'"))} share {physicalTargetDisplayName}. Execute them as one coordinated physical-target batch by keeping bundle/script outputs or separate migrations projects aligned before deploy-time execution.";
     }
 
     private sealed record PhysicalTargetGroup(

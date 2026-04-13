@@ -10,17 +10,24 @@ public sealed class DatabaseMigrationOperationalPlaybook
     /// </summary>
     /// <param name="generatedAtUtc">The UTC timestamp when the playbook was created.</param>
     /// <param name="steps">The ordered operator steps derived from the current migration catalog.</param>
+    /// <param name="executionGroups">
+    /// The ordered physical-target execution groups derived from the current migration catalog and shared-target topology truth.
+    /// </param>
     public DatabaseMigrationOperationalPlaybook(
         DateTimeOffset generatedAtUtc,
-        IReadOnlyList<DatabaseMigrationOperationalStep>? steps = null)
+        IReadOnlyList<DatabaseMigrationOperationalStep>? steps = null,
+        IReadOnlyList<DatabaseMigrationOperationalExecutionGroup>? executionGroups = null)
     {
         GeneratedAtUtc = generatedAtUtc;
         Steps = steps?.ToArray() ?? [];
+        ExecutionGroups = executionGroups?.ToArray() ?? [];
         TargetCount = Steps.Count;
+        ExecutionGroupCount = ExecutionGroups.Count;
         ProductionReadyTargetCount = Steps.Count(static step => step.HasProductionRecommendedCommand);
         ManualPathTargetCount = Steps.Count(static step => step.ManualCommand is not null);
         ApplyOnStartupTargetCount = Steps.Count(static step => step.ApplyOnStartup);
         CoordinationRequiredTargetCount = Steps.Count(static step => step.RequiresPhysicalTargetCoordination);
+        CoordinationRequiredGroupCount = ExecutionGroups.Count(static group => group.RequiresPhysicalTargetCoordination);
     }
 
     /// <summary>
@@ -32,6 +39,11 @@ public sealed class DatabaseMigrationOperationalPlaybook
     /// Gets the total number of migration targets in the playbook.
     /// </summary>
     public int TargetCount { get; }
+
+    /// <summary>
+    /// Gets the total number of physical-target execution groups in the playbook.
+    /// </summary>
+    public int ExecutionGroupCount { get; }
 
     /// <summary>
     /// Gets the number of targets that publish a production-recommended command.
@@ -54,7 +66,17 @@ public sealed class DatabaseMigrationOperationalPlaybook
     public int CoordinationRequiredTargetCount { get; }
 
     /// <summary>
+    /// Gets the number of physical-target execution groups that span multiple logical migration targets.
+    /// </summary>
+    public int CoordinationRequiredGroupCount { get; }
+
+    /// <summary>
     /// Gets the ordered operator steps derived from the current migration catalog.
     /// </summary>
     public IReadOnlyList<DatabaseMigrationOperationalStep> Steps { get; }
+
+    /// <summary>
+    /// Gets the ordered physical-target execution groups derived from the current migration catalog.
+    /// </summary>
+    public IReadOnlyList<DatabaseMigrationOperationalExecutionGroup> ExecutionGroups { get; }
 }

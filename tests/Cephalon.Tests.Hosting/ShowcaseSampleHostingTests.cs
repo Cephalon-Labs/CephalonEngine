@@ -391,15 +391,20 @@ public sealed class ShowcaseSampleHostingTests
             });
         Assert.NotNull(migrationPlaybook);
         Assert.Equal(3, migrationPlaybook.TargetCount);
+        Assert.Equal(3, migrationPlaybook.ExecutionGroupCount);
         Assert.Equal(3, migrationPlaybook.ProductionReadyTargetCount);
         Assert.Equal(3, migrationPlaybook.ManualPathTargetCount);
         Assert.Equal(3, migrationPlaybook.ApplyOnStartupTargetCount);
         Assert.Equal(0, migrationPlaybook.CoordinationRequiredTargetCount);
+        Assert.Equal(0, migrationPlaybook.CoordinationRequiredGroupCount);
         Assert.Equal(3, migrationPlaybook.Steps.Count);
+        Assert.Equal(3, migrationPlaybook.ExecutionGroups.Count);
         Assert.Equal("write", migrationPlaybook.Steps[0].DatabaseMigrationId);
         Assert.Equal("read", migrationPlaybook.Steps[1].DatabaseMigrationId);
         Assert.Equal("history", migrationPlaybook.Steps[2].DatabaseMigrationId);
         Assert.All(migrationPlaybook.Steps, static step => Assert.False(step.RequiresPhysicalTargetCoordination));
+        Assert.All(migrationPlaybook.ExecutionGroups, static group => Assert.False(group.RequiresPhysicalTargetCoordination));
+        Assert.Equal(["write"], migrationPlaybook.ExecutionGroups[0].DatabaseMigrationIds);
         Assert.True(migrationPlaybook.Steps[2].HasProductionRecommendedCommand);
         Assert.NotNull(migrationPlaybook.Steps[2].ProductionCommand);
         Assert.Equal("bundle", migrationPlaybook.Steps[2].ProductionCommand!.Id);
@@ -415,7 +420,10 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(migrationPlaybook.ManualPathTargetCount, snapshot.DatabaseMigrationPlaybook.ManualPathTargetCount);
         Assert.Equal(migrationPlaybook.ApplyOnStartupTargetCount, snapshot.DatabaseMigrationPlaybook.ApplyOnStartupTargetCount);
         Assert.Equal(migrationPlaybook.CoordinationRequiredTargetCount, snapshot.DatabaseMigrationPlaybook.CoordinationRequiredTargetCount);
+        Assert.Equal(migrationPlaybook.ExecutionGroupCount, snapshot.DatabaseMigrationPlaybook.ExecutionGroupCount);
+        Assert.Equal(migrationPlaybook.CoordinationRequiredGroupCount, snapshot.DatabaseMigrationPlaybook.CoordinationRequiredGroupCount);
         Assert.Equal(migrationPlaybook.Steps.Count, snapshot.DatabaseMigrationPlaybook.Steps.Count);
+        Assert.Equal(migrationPlaybook.ExecutionGroups.Count, snapshot.DatabaseMigrationPlaybook.ExecutionGroups.Count);
         Assert.Equal("history", snapshot.DatabaseMigrationPlaybook.Steps[2].DatabaseMigrationId);
         Assert.Equal("bundle", snapshot.DatabaseMigrationPlaybook.Steps[2].ProductionCommand!.Id);
         Assert.Equal("update", snapshot.DatabaseMigrationPlaybook.Steps[2].ManualCommand!.Id);
@@ -492,10 +500,20 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Contains("write", read.PhysicalCoLocatedRoles);
 
         Assert.Equal(3, migrationPlaybook.TargetCount);
+        Assert.Equal(2, migrationPlaybook.ExecutionGroupCount);
         Assert.Equal(2, migrationPlaybook.CoordinationRequiredTargetCount);
+        Assert.Equal(1, migrationPlaybook.CoordinationRequiredGroupCount);
         var writeStep = Assert.Single(migrationPlaybook.Steps, static step => step.DatabaseMigrationId == "write");
         var readStep = Assert.Single(migrationPlaybook.Steps, static step => step.DatabaseMigrationId == "read");
         var historyStep = Assert.Single(migrationPlaybook.Steps, static step => step.DatabaseMigrationId == "history");
+        var sharedGroup = Assert.Single(migrationPlaybook.ExecutionGroups, static group => group.RequiresPhysicalTargetCoordination);
+        Assert.Equal(write.PhysicalTargetId, sharedGroup.PhysicalTargetId);
+        Assert.Equal(DatabaseMigrationStatus.Planned, sharedGroup.Status);
+        Assert.Equal(["read", "write"], sharedGroup.DatabaseMigrationIds);
+        Assert.Equal(2, sharedGroup.ProductionReadyTargetCount);
+        Assert.Equal(2, sharedGroup.ManualPathTargetCount);
+        Assert.Equal(0, sharedGroup.ApplyOnStartupTargetCount);
+        Assert.Contains("coordinated physical-target batch", sharedGroup.CoordinationHint!, StringComparison.Ordinal);
         Assert.Equal(["read"], writeStep.CoordinatedMigrationIds);
         Assert.True(writeStep.RequiresPhysicalTargetCoordination);
         Assert.Contains("separate migrations projects", writeStep.CoordinationHint!, StringComparison.Ordinal);
@@ -521,6 +539,14 @@ public sealed class ShowcaseSampleHostingTests
         var root = document.RootElement;
         var playbookSummary = root.GetProperty("migrationPlaybook").GetProperty("summary");
         Assert.Equal(2, playbookSummary.GetProperty("coordinationRequiredTargetCount").GetInt32());
+        Assert.Equal(2, playbookSummary.GetProperty("executionGroupCount").GetInt32());
+        Assert.Equal(1, playbookSummary.GetProperty("coordinationRequiredGroupCount").GetInt32());
+        Assert.Contains(
+            root.GetProperty("migrationPlaybook").GetProperty("executionGroups").EnumerateArray().ToArray(),
+            executionGroup =>
+                executionGroup.GetProperty("requiresPhysicalTargetCoordination").GetBoolean() &&
+                executionGroup.GetProperty("databaseMigrationIds").EnumerateArray().Any(item => string.Equals(item.GetString(), "write", StringComparison.Ordinal)) &&
+                executionGroup.GetProperty("databaseMigrationIds").EnumerateArray().Any(item => string.Equals(item.GetString(), "read", StringComparison.Ordinal)));
         Assert.Contains(
             root.GetProperty("migrationPlaybook").GetProperty("steps").EnumerateArray().ToArray(),
             step =>
@@ -540,6 +566,8 @@ public sealed class ShowcaseSampleHostingTests
 
         var brief = await client.GetStringAsync("/api/v1/showcase/system/database-topology/brief");
         Assert.Contains("Shared-target coordination: 2 migration target(s)", brief, StringComparison.Ordinal);
+        Assert.Contains("Execution groups: 2 total, 1 coordinated shared-target group(s)", brief, StringComparison.Ordinal);
+        Assert.Contains("## Migration Execution Groups", brief, StringComparison.Ordinal);
         Assert.Contains("Coordination:", brief, StringComparison.Ordinal);
         Assert.Contains("separate migrations projects", brief, StringComparison.Ordinal);
     }

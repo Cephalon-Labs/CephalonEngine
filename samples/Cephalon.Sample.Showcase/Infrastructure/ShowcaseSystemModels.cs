@@ -232,11 +232,29 @@ internal sealed record ShowcaseDatabaseTopologyMigrationCommandRow(
 
 internal sealed record ShowcaseDatabaseTopologyMigrationPlaybookSummary(
     int TargetCount,
+    int ExecutionGroupCount,
     int ProductionReadyTargetCount,
     int LocalFallbackTargetCount,
     int ApplyOnStartupTargetCount,
     int CoordinationRequiredTargetCount,
+    int CoordinationRequiredGroupCount,
     DateTimeOffset GeneratedAtUtc);
+
+internal sealed record ShowcaseDatabaseTopologyMigrationExecutionGroupRow(
+    int Order,
+    string PhysicalTargetId,
+    string PhysicalTargetDisplayName,
+    string Status,
+    int TargetCount,
+    bool RequiresPhysicalTargetCoordination,
+    bool HasProductionRecommendedCommandsForAllTargets,
+    int ProductionReadyTargetCount,
+    int LocalFallbackTargetCount,
+    int ApplyOnStartupTargetCount,
+    IReadOnlyList<string> DatabaseMigrationIds,
+    IReadOnlyList<string> RequestedRoleIds,
+    IReadOnlyList<string> ResolvedRoleIds,
+    string? CoordinationHint);
 
 internal sealed record ShowcaseDatabaseTopologyMigrationPlaybookStepRow(
     int Order,
@@ -264,6 +282,7 @@ internal sealed record ShowcaseDatabaseTopologyMigrationPlaybookStepRow(
 
 internal sealed record ShowcaseDatabaseTopologyMigrationPlaybook(
     ShowcaseDatabaseTopologyMigrationPlaybookSummary Summary,
+    IReadOnlyList<ShowcaseDatabaseTopologyMigrationExecutionGroupRow> ExecutionGroups,
     IReadOnlyList<ShowcaseDatabaseTopologyMigrationPlaybookStepRow> Steps);
 
 internal sealed record ShowcaseReadModelStoreCounts(

@@ -1808,6 +1808,35 @@ Delivered:
 - validation now covers the new shared-target path through composition tests `4/4`, hosting tests `60/60`, and package-surface tests `52/52`
 - database-topology, engine component docs, Entity Framework component docs, roadmap, backlog, project memory, and showcase docs now describe the shipped shared-target coordination contract truthfully
 
+### ENG-092 Shared physical database migration execution-group playbook follow-through
+
+Status: done
+Estimate: 3
+
+Why:
+
+- the engine-owned migration playbook already surfaced shared-target coordination truth, but operators still had to regroup ordered steps mentally into physical-target batches before planning deploy-time work
+- the playbook contract still lacked one aggregate answer for shared physical targets, so status, production guidance coverage, and startup/manual posture were only visible per logical step
+- the showcase sample needed to consume that grouped answer directly so the proving surface stayed aligned with the engine instead of inventing its own physical-target batch summary
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes a host-agnostic execution-group contract on the shipped migration-playbook surface
+- `Cephalon.Engine` groups ordered logical playbook steps by physical target and publishes that grouped answer through `/engine/database-migration-playbook` plus `snapshot.DatabaseMigrationPlaybook`
+- each execution group carries stable physical-target identity, aggregate status, grouped migration ids, requested and resolved role ids, target counts, production/manual/startup counts, and shared-target coordination hints when relevant
+- the showcase sample consumes those execution groups directly in its JSON projection, browser UI, Markdown brief, and handoff package instead of re-grouping logical targets locally
+- composition, hosting, and package-surface tests prove the execution-group contract end to end
+- docs, roadmap, backlog, project memory, and GitHub tracking stay aligned with the shipped engine-first ownership line
+
+Delivered:
+
+- `DatabaseMigrationOperationalPlaybook` now carries `ExecutionGroupCount`, `CoordinationRequiredGroupCount`, and `ExecutionGroups`, while `Cephalon.Abstractions` now also ships `DatabaseMigrationOperationalExecutionGroup`
+- `Cephalon.Engine` now computes physical-target execution groups from the ordered migration playbook, including aggregate status precedence, grouped migration ids, requested versus resolved role ids, coverage counts, and coordinated shared-target hints
+- `/engine/database-migration-playbook` plus `snapshot.DatabaseMigrationPlaybook` now surface grouped physical-target execution batches without requiring hosts or tooling to rebuild that answer from lower-level migration rows
+- the showcase sample now consumes those engine-owned execution groups directly in `/api/v1/showcase/system/database-topology`, `/showcase`, `/api/v1/showcase/system/database-topology/brief`, and `/api/v1/showcase/system/database-topology/handoff`, while keeping only repo-root command adaptation plus read-model follow-through local
+- validation now covers the new grouped execution path through composition tests `4/4`, hosting tests `60/60`, and package-surface tests `52/52`
+- database-topology, engine component docs, Entity Framework component docs, roadmap, backlog, project memory, and showcase docs now describe the shipped execution-group contract truthfully
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2113,3 +2142,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-089 database-topology action-plan showcase follow-through and contract truthfulness: the showcase sample now consumes the engine-owned action-plan contract as the baseline for ordered operator steps, preserves stable action categories plus source role and migration ids in its projection, browser console, and Markdown brief, and the docs/package-surface coverage now describe the shipped contract truthfully — **Shipped** · targeted composition tests 3/3 + hosting tests 3/3 + package-surface tests 52/52
 - ENG-090 engine-owned database-migration playbook surface and showcase adoption: `Cephalon.Abstractions` now exposes ordered migration-playbook contracts, `Cephalon.Engine` now publishes `/engine/database-migration-playbook` plus `snapshot.DatabaseMigrationPlaybook` as the canonical ordered migration answer, and the showcase sample now consumes that engine-owned playbook directly while keeping only repo-root command adaptation plus sample-specific read-model follow-through local — **Shipped** · targeted composition tests 3/3 + hosting tests 4/4 + package-surface tests 52/52
 - ENG-091 shared physical database migration coordination surface and showcase follow-through: the engine-owned database-role catalog now projects physical-target ids, display names, and physical co-location, the engine-owned migration playbook plus topology posture now surface shared-target coordination counts, per-step partner targets, and warning/action guidance when pending or failed logical migration work spans one physical database, and the showcase sample now consumes that engine-owned answer directly in `/showcase`, the Markdown brief, and the handoff package — **Shipped** · composition tests 4/4 + hosting tests 60/60 + package-surface tests 52/52
+- ENG-092 shared physical database migration execution-group playbook follow-through: the engine-owned migration playbook now groups logical targets into physical-target execution batches with aggregate status, coverage counts, grouped migration ids, and shared-target coordination hints, and the showcase sample now consumes that engine-owned grouped answer directly in `/showcase`, the Markdown brief, and the handoff package — **Shipped** · composition tests 4/4 + hosting tests 60/60 + package-surface tests 52/52

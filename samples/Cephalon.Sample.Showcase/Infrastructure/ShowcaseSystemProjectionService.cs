@@ -884,6 +884,23 @@ internal sealed class ShowcaseSystemProjectionService(
     {
         ArgumentNullException.ThrowIfNull(enginePlaybook);
 
+        var executionGroups = enginePlaybook.ExecutionGroups
+            .Select(static executionGroup => new ShowcaseDatabaseTopologyMigrationExecutionGroupRow(
+                Order: executionGroup.Order,
+                PhysicalTargetId: executionGroup.PhysicalTargetId,
+                PhysicalTargetDisplayName: executionGroup.PhysicalTargetDisplayName,
+                Status: executionGroup.Status.ToString(),
+                TargetCount: executionGroup.TargetCount,
+                RequiresPhysicalTargetCoordination: executionGroup.RequiresPhysicalTargetCoordination,
+                HasProductionRecommendedCommandsForAllTargets: executionGroup.HasProductionRecommendedCommandsForAllTargets,
+                ProductionReadyTargetCount: executionGroup.ProductionReadyTargetCount,
+                LocalFallbackTargetCount: executionGroup.ManualPathTargetCount,
+                ApplyOnStartupTargetCount: executionGroup.ApplyOnStartupTargetCount,
+                DatabaseMigrationIds: executionGroup.DatabaseMigrationIds,
+                RequestedRoleIds: executionGroup.RequestedRoleIds,
+                ResolvedRoleIds: executionGroup.ResolvedRoleIds,
+                CoordinationHint: executionGroup.CoordinationHint))
+            .ToArray();
         var steps = enginePlaybook.Steps
             .Select(step =>
             {
@@ -924,11 +941,14 @@ internal sealed class ShowcaseSystemProjectionService(
         return new ShowcaseDatabaseTopologyMigrationPlaybook(
             Summary: new ShowcaseDatabaseTopologyMigrationPlaybookSummary(
                 TargetCount: enginePlaybook.TargetCount,
+                ExecutionGroupCount: enginePlaybook.ExecutionGroupCount,
                 ProductionReadyTargetCount: enginePlaybook.ProductionReadyTargetCount,
                 LocalFallbackTargetCount: enginePlaybook.ManualPathTargetCount,
                 ApplyOnStartupTargetCount: enginePlaybook.ApplyOnStartupTargetCount,
                 CoordinationRequiredTargetCount: enginePlaybook.CoordinationRequiredTargetCount,
+                CoordinationRequiredGroupCount: enginePlaybook.CoordinationRequiredGroupCount,
                 GeneratedAtUtc: enginePlaybook.GeneratedAtUtc),
+            ExecutionGroups: executionGroups,
             Steps: steps);
     }
 
@@ -1294,6 +1314,7 @@ internal sealed class ShowcaseSystemProjectionService(
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Read-model sync: {(readModelSync.Enabled ? (readModelSync.IsLagging ? "enabled, catching up" : "enabled and aligned") : "disabled")}");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Providers: write `{summary.WriteProvider}`, read `{summary.ReadProvider}`, history `{summary.HistoryProvider}`");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Shared-target coordination: {playbook.Summary.CoordinationRequiredTargetCount} migration target(s) share a physical database with another target");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"- Execution groups: {playbook.Summary.ExecutionGroupCount} total, {playbook.Summary.CoordinationRequiredGroupCount} coordinated shared-target group(s)");
         builder.AppendLine();
         builder.AppendLine("## Recommended Next Actions");
         builder.AppendLine();
@@ -1314,6 +1335,33 @@ internal sealed class ShowcaseSystemProjectionService(
             if (action.SourceMigrationIds.Count > 0)
             {
                 builder.AppendLine(CultureInfo.InvariantCulture, $"   - Source migrations: {string.Join(", ", action.SourceMigrationIds)}");
+            }
+        }
+
+        builder.AppendLine();
+        builder.AppendLine("## Migration Execution Groups");
+        builder.AppendLine();
+
+        foreach (var executionGroup in playbook.ExecutionGroups)
+        {
+            var coordinationState = executionGroup.RequiresPhysicalTargetCoordination ? "shared-target batch" : "single-target batch";
+            var productionState = executionGroup.HasProductionRecommendedCommandsForAllTargets
+                ? "production paths ready"
+                : "production path coverage partial";
+            builder.AppendLine(
+                CultureInfo.InvariantCulture,
+                $"{executionGroup.Order}. `{executionGroup.PhysicalTargetDisplayName}` - {executionGroup.Status} - {coordinationState} - {productionState}");
+            builder.AppendLine(CultureInfo.InvariantCulture, $"   - Physical target id: `{executionGroup.PhysicalTargetId}`");
+            builder.AppendLine(CultureInfo.InvariantCulture, $"   - Logical targets: {string.Join(", ", executionGroup.DatabaseMigrationIds)}");
+            builder.AppendLine(CultureInfo.InvariantCulture, $"   - Requested roles: {string.Join(", ", executionGroup.RequestedRoleIds)}");
+            builder.AppendLine(CultureInfo.InvariantCulture, $"   - Resolved roles: {string.Join(", ", executionGroup.ResolvedRoleIds)}");
+            builder.AppendLine(
+                CultureInfo.InvariantCulture,
+                $"   - Coverage: {executionGroup.ProductionReadyTargetCount} production-ready / {executionGroup.LocalFallbackTargetCount} local fallback / {executionGroup.ApplyOnStartupTargetCount} startup apply");
+            if (executionGroup.RequiresPhysicalTargetCoordination &&
+                !string.IsNullOrWhiteSpace(executionGroup.CoordinationHint))
+            {
+                builder.AppendLine(CultureInfo.InvariantCulture, $"   - Coordination: {executionGroup.CoordinationHint}");
             }
         }
 
@@ -1471,6 +1519,9 @@ internal sealed class ShowcaseSystemProjectionService(
         builder.AppendLine();
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Roles: {projection.Summary.RoleCount} total / {projection.Summary.HealthyRoleCount} healthy");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Migrations: {projection.Summary.SucceededMigrationTargetCount} succeeded of {projection.Summary.MigrationTargetCount}");
+        builder.AppendLine(
+            CultureInfo.InvariantCulture,
+            $"- Execution groups: {projection.MigrationPlaybook.Summary.ExecutionGroupCount} total / {projection.MigrationPlaybook.Summary.CoordinationRequiredGroupCount} coordinated shared-target groups");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Providers: write=`{projection.Summary.WriteProvider}`, read=`{projection.Summary.ReadProvider}`, history=`{projection.Summary.HistoryProvider}`");
         builder.AppendLine(CultureInfo.InvariantCulture, $"- Read-model sync enabled: `{projection.Summary.ReadModelSyncEnabled}`");
         builder.AppendLine();
