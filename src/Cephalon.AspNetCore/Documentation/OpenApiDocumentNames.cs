@@ -14,36 +14,33 @@ internal static class OpenApiDocumentNames
             ?? ResolveLegacyDocumentNames(configuration)
             ?? [DefaultDocumentName];
 
-        var defaultDocumentName = ResolveDefault(configuration, resolvedNames);
-        return resolvedNames.Contains(defaultDocumentName, StringComparer.OrdinalIgnoreCase)
-            ? resolvedNames
-            : [defaultDocumentName, .. resolvedNames];
+        return resolvedNames;
     }
 
     public static string ResolveDefault(IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(configuration);
 
-        return ResolveDefault(configuration, configuredNames: null);
+        return ResolveDefault(configuration, Resolve(configuration));
     }
 
-    private static string ResolveDefault(IConfiguration configuration, string[]? configuredNames)
+    private static string ResolveDefault(IConfiguration configuration, IReadOnlyList<string>? configuredNames)
     {
         ArgumentNullException.ThrowIfNull(configuration);
 
         var configuredDefaultVersion = TryResolveConfiguredDefaultVersion(configuration);
-        if (!string.IsNullOrWhiteSpace(configuredDefaultVersion))
+        if (IsAllowedDocumentName(configuredDefaultVersion, configuredNames))
         {
-            return configuredDefaultVersion;
+            return configuredDefaultVersion!;
         }
 
         var configuredDefault = configuration["OpenApi:DefaultDocument"]?.Trim();
-        if (!string.IsNullOrWhiteSpace(configuredDefault))
+        if (IsAllowedDocumentName(configuredDefault, configuredNames))
         {
-            return configuredDefault;
+            return configuredDefault!;
         }
 
-        if (configuredNames is not null && configuredNames.Length > 0)
+        if (configuredNames is not null && configuredNames.Count > 0)
         {
             return configuredNames[0];
         }
@@ -79,6 +76,18 @@ internal static class OpenApiDocumentNames
         return resolvedNames.Length == 0
             ? null
             : resolvedNames;
+    }
+
+    private static bool IsAllowedDocumentName(string? documentName, IReadOnlyList<string>? configuredNames)
+    {
+        if (string.IsNullOrWhiteSpace(documentName))
+        {
+            return false;
+        }
+
+        return configuredNames is null ||
+            configuredNames.Count == 0 ||
+            configuredNames.Contains(documentName, StringComparer.OrdinalIgnoreCase);
     }
 
     private static string[]? ResolveLegacyDocumentNames(IConfiguration configuration)

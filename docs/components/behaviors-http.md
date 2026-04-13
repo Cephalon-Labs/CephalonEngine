@@ -184,13 +184,14 @@ Current helper behavior:
   OpenAPI + Scalar can show summaries and descriptions without extra boilerplate
 - maps behavior `<summary>` to the OpenAPI operation summary and behavior `<remarks>` to the
   OpenAPI operation description so Scalar does not repeat the same text twice
-- relies on host-level `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion` when modules need
-  additional versioned docs beyond the default `v1`
+- lets modules declare candidate OpenAPI document versions through `.ApiVersion(...)` or the owning
+  module major version, while the host-level `OpenApi:EnabledVersions` list decides which of those
+  versioned docs are actually published
 - expects `/scalar` to redirect to the default canonical document such as `/scalar/v1`, while
   `/scalar/` remains available for multi-document flows and hash-based selections are normalized
   back into pinned versioned links
-- inherits the host-injected Scalar selector, so when more than one resolved document exists the
-  UI offers a version dropdown driven by `OpenApi:EnabledVersions` / `OpenApi:DefaultVersion`
+- inherits the host-injected Scalar selector, so when more than one published document exists the
+  UI offers a version dropdown driven by the enabled-document allow-list and default-document choice
 - lets hosts move the OpenAPI JSON endpoint, Scalar UI base path, and REST host prefix through
   `OpenApi:RoutePattern`, `OpenApi:Scalar:RoutePrefix`, and `ApiRoutes:Prefixes:Rest`
 - still interoperates with legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` settings when

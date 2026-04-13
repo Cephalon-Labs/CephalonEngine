@@ -1080,6 +1080,86 @@ public sealed class AspNetCoreHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonPublishesOnlyEnabledOpenApiVersionsWhenOtherVersionedEndpointsExist()
+    {
+        var contentRootPath = Path.Combine(
+            Path.GetTempPath(),
+            $"cephalon-openapi-enabled-version-filter-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(contentRootPath);
+
+        try
+        {
+            var builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
+            {
+                ContentRootPath = contentRootPath,
+                EnvironmentName = "Production"
+            });
+            builder.WebHost.UseTestServer();
+            builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+            builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+            builder.Configuration[$"{EngineSettings.SectionName}:Transports:1"] = string.Empty;
+            builder.Configuration[$"{EngineSettings.SectionName}:Discovery:Assemblies:0"] = string.Empty;
+            builder.Configuration["OpenApi:EnabledVersions:0"] = "2";
+            builder.Configuration["OpenApi:EnabledVersions:1"] = "3";
+            builder.Configuration["OpenApi:DefaultVersion"] = "1";
+            builder.AddCephalon(_ => { });
+
+            await using var app = builder.Build();
+            app.MapGet("/api/version-filter/v1/orders/{orderId}", (string orderId) => TypedResults.Ok(new { version = 1, orderId }))
+                .WithName("GetVersionFilterV1Order")
+                .WithGroupName("v1");
+            app.MapGet("/api/version-filter/v2/orders/{orderId}", (string orderId) => TypedResults.Ok(new { version = 2, orderId }))
+                .WithName("GetVersionFilterV2Order")
+                .WithGroupName("v2");
+            app.MapGet("/api/version-filter/v3/orders/{orderId}", (string orderId) => TypedResults.Ok(new { version = 3, orderId }))
+                .WithName("GetVersionFilterV3Order")
+                .WithGroupName("v3");
+            app.MapCephalon();
+
+            await app.StartAsync();
+            var client = app.GetTestClient();
+
+            var v1Response = await client.GetAsync("/openapi/v1.json");
+            var v2Response = await client.GetAsync("/openapi/v2.json");
+            var v3Response = await client.GetAsync("/openapi/v3.json");
+            var scalarConfigResponse = await client.GetAsync("/scalar/openapi-toggle.js");
+            var scalarRootRedirectResponse = await client.GetAsync("/scalar?culture=en");
+
+            Assert.Equal(HttpStatusCode.NotFound, v1Response.StatusCode);
+            Assert.True(v2Response.IsSuccessStatusCode);
+            Assert.True(v3Response.IsSuccessStatusCode);
+            Assert.True(scalarConfigResponse.IsSuccessStatusCode);
+            Assert.Equal(HttpStatusCode.Redirect, scalarRootRedirectResponse.StatusCode);
+            Assert.NotNull(scalarRootRedirectResponse.Headers.Location);
+            Assert.Equal("/scalar/v2?culture=en", scalarRootRedirectResponse.Headers.Location!.OriginalString);
+
+            using var v2Document = JsonDocument.Parse(await v2Response.Content.ReadAsStringAsync());
+            using var v3Document = JsonDocument.Parse(await v3Response.Content.ReadAsStringAsync());
+            var v2Paths = v2Document.RootElement.GetProperty("paths");
+            var v3Paths = v3Document.RootElement.GetProperty("paths");
+
+            Assert.True(v2Paths.TryGetProperty("/api/version-filter/v2/orders/{orderId}", out _));
+            Assert.False(v2Paths.TryGetProperty("/api/version-filter/v1/orders/{orderId}", out _));
+            Assert.False(v2Paths.TryGetProperty("/api/version-filter/v3/orders/{orderId}", out _));
+            Assert.True(v3Paths.TryGetProperty("/api/version-filter/v3/orders/{orderId}", out _));
+            Assert.False(v3Paths.TryGetProperty("/api/version-filter/v1/orders/{orderId}", out _));
+            Assert.False(v3Paths.TryGetProperty("/api/version-filter/v2/orders/{orderId}", out _));
+
+            var scalarConfigPayload = await scalarConfigResponse.Content.ReadAsStringAsync();
+            Assert.Contains("configuredDocumentNames = [\"v2\",\"v3\"]", scalarConfigPayload, StringComparison.Ordinal);
+            Assert.Contains("configuredDefaultDocumentName = \"v2\"", scalarConfigPayload, StringComparison.Ordinal);
+            Assert.DoesNotContain("configuredDocumentNames = [\"v1\",\"v2\",\"v3\"]", scalarConfigPayload, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(contentRootPath))
+            {
+                Directory.Delete(contentRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
     public async Task MapCephalonSupportsConfigurableOpenApiScalarAndRestRoutePrefixes()
     {
         var builder = WebApplication.CreateSlimBuilder();
