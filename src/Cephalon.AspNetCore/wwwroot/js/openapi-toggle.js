@@ -9,6 +9,7 @@ const defaultDocumentName = resolveDefaultDocumentName(configuredDefaultDocument
 const selectorShellId = "cephalon-scalar-document-selector-shell";
 const selectorId = "cephalon-scalar-document-selector";
 const selectorLabelId = "cephalon-scalar-document-selector-label";
+const scalarToolbarSelector = "header.api-reference-toolbar, header[class*=\"api-reference-toolbar\"]";
 
 function normalizeRoutePrefix(value) {
   const normalized = String(value ?? "").trim();
@@ -43,6 +44,22 @@ function resolveDefaultDocumentName(value, availableDocumentNames) {
   return availableDocumentNames.length > 0
     ? availableDocumentNames[0]
     : "";
+}
+
+function parseRgbChannels(value) {
+  const match = String(value ?? "").match(/rgba?\((\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+  return match
+    ? [Number.parseInt(match[1], 10), Number.parseInt(match[2], 10), Number.parseInt(match[3], 10)]
+    : null;
+}
+
+function computeLuminance(channels) {
+  if (!Array.isArray(channels) || channels.length !== 3) {
+    return 0;
+  }
+
+  const [red, green, blue] = channels;
+  return (0.2126 * red) + (0.7152 * green) + (0.0722 * blue);
 }
 
 function escapeRegex(value) {
@@ -290,6 +307,108 @@ function createSelectorOption(documentName) {
   return option;
 }
 
+function findHeaderHost() {
+  if (typeof document === "undefined") {
+    return null;
+  }
+
+  const toolbar = document.querySelector(scalarToolbarSelector);
+  if (!toolbar) {
+    return null;
+  }
+
+  const hostCandidates = [
+    toolbar.querySelector(":scope > .-mx-2"),
+    toolbar.querySelector(":scope > .flex"),
+    toolbar.firstElementChild,
+    toolbar,
+  ];
+
+  return hostCandidates.find((candidate) => candidate && candidate.nodeType === Node.ELEMENT_NODE) ?? null;
+}
+
+function applyFloatingShellStyles(shell, label, selector) {
+  shell.style.position = "fixed";
+  shell.style.top = "0.75rem";
+  shell.style.right = "0.75rem";
+  shell.style.zIndex = "2147483647";
+  shell.style.display = "flex";
+  shell.style.alignItems = "center";
+  shell.style.gap = "0.5rem";
+  shell.style.marginLeft = "0";
+  shell.style.padding = "0.5rem 0.75rem";
+  shell.style.border = "1px solid rgba(15, 23, 42, 0.14)";
+  shell.style.borderRadius = "999px";
+  shell.style.background = "rgba(255, 255, 255, 0.96)";
+  shell.style.boxShadow = "0 10px 30px rgba(15, 23, 42, 0.14)";
+  shell.style.backdropFilter = "blur(10px)";
+  shell.style.fontFamily = "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif";
+  shell.style.fontSize = "0.875rem";
+  shell.style.color = "#0f172a";
+  shell.style.flexShrink = "0";
+
+  label.style.fontWeight = "600";
+  label.style.whiteSpace = "nowrap";
+
+  selector.style.border = "1px solid rgba(15, 23, 42, 0.14)";
+  selector.style.borderRadius = "999px";
+  selector.style.padding = "0.35rem 0.75rem";
+  selector.style.background = "#ffffff";
+  selector.style.color = "#0f172a";
+  selector.style.font = "inherit";
+  selector.style.maxWidth = "9rem";
+  selector.style.cursor = "pointer";
+  selector.style.boxShadow = "none";
+}
+
+function applyHeaderShellStyles(shell, label, selector, host) {
+  const hostStyles = typeof window !== "undefined" ? window.getComputedStyle(host) : null;
+  const hostTextColor = hostStyles?.color ?? "#0f172a";
+  const lightTextOnDarkSurface = computeLuminance(parseRgbChannels(hostTextColor)) >= 160;
+  const shellTextColor = lightTextOnDarkSurface ? "rgb(248, 250, 252)" : "rgb(15, 23, 42)";
+  const shellBackground = lightTextOnDarkSurface
+    ? "rgba(255, 255, 255, 0.08)"
+    : "rgba(15, 23, 42, 0.04)";
+  const shellBorder = lightTextOnDarkSurface
+    ? "rgba(255, 255, 255, 0.18)"
+    : "rgba(15, 23, 42, 0.12)";
+  const selectBackground = lightTextOnDarkSurface
+    ? "rgba(15, 23, 42, 0.28)"
+    : "rgba(255, 255, 255, 0.96)";
+
+  shell.style.position = "static";
+  shell.style.top = "";
+  shell.style.right = "";
+  shell.style.zIndex = "";
+  shell.style.display = "inline-flex";
+  shell.style.alignItems = "center";
+  shell.style.gap = "0.4rem";
+  shell.style.marginLeft = "0.75rem";
+  shell.style.padding = "0.2rem 0.45rem";
+  shell.style.border = `1px solid ${shellBorder}`;
+  shell.style.borderRadius = "999px";
+  shell.style.background = shellBackground;
+  shell.style.boxShadow = "none";
+  shell.style.backdropFilter = "none";
+  shell.style.fontFamily = "inherit";
+  shell.style.fontSize = "0.8125rem";
+  shell.style.color = shellTextColor;
+  shell.style.flexShrink = "0";
+
+  label.style.fontWeight = "600";
+  label.style.whiteSpace = "nowrap";
+
+  selector.style.border = `1px solid ${shellBorder}`;
+  selector.style.borderRadius = "999px";
+  selector.style.padding = "0.2rem 0.55rem";
+  selector.style.background = selectBackground;
+  selector.style.color = shellTextColor;
+  selector.style.font = "inherit";
+  selector.style.maxWidth = "6rem";
+  selector.style.cursor = "pointer";
+  selector.style.boxShadow = "none";
+}
+
 function ensureVersionSelector() {
   if (typeof document === "undefined" || documentNames.length <= 1 || !document.body) {
     return;
@@ -299,41 +418,15 @@ function ensureVersionSelector() {
   if (!shell) {
     shell = document.createElement("div");
     shell.id = selectorShellId;
-    shell.style.position = "fixed";
-    shell.style.top = "0.75rem";
-    shell.style.right = "0.75rem";
-    shell.style.zIndex = "2147483647";
-    shell.style.display = "flex";
-    shell.style.alignItems = "center";
-    shell.style.gap = "0.5rem";
-    shell.style.padding = "0.5rem 0.75rem";
-    shell.style.border = "1px solid rgba(15, 23, 42, 0.14)";
-    shell.style.borderRadius = "999px";
-    shell.style.background = "rgba(255, 255, 255, 0.96)";
-    shell.style.boxShadow = "0 10px 30px rgba(15, 23, 42, 0.14)";
-    shell.style.backdropFilter = "blur(10px)";
-    shell.style.fontFamily = "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif";
-    shell.style.fontSize = "0.875rem";
-    shell.style.color = "#0f172a";
 
     const label = document.createElement("label");
     label.id = selectorLabelId;
     label.htmlFor = selectorId;
     label.textContent = useVersionLabel() ? "Version" : "Document";
-    label.style.fontWeight = "600";
-    label.style.whiteSpace = "nowrap";
 
     const selector = document.createElement("select");
     selector.id = selectorId;
     selector.setAttribute("aria-labelledby", selectorLabelId);
-    selector.style.border = "1px solid rgba(15, 23, 42, 0.14)";
-    selector.style.borderRadius = "999px";
-    selector.style.padding = "0.35rem 0.75rem";
-    selector.style.background = "#ffffff";
-    selector.style.color = "#0f172a";
-    selector.style.font = "inherit";
-    selector.style.maxWidth = "9rem";
-    selector.style.cursor = "pointer";
     selector.addEventListener("change", (event) => {
       navigateToSelectedDocument(event.target && typeof event.target.value === "string"
         ? event.target.value
@@ -346,13 +439,26 @@ function ensureVersionSelector() {
   }
 
   const label = document.getElementById(selectorLabelId);
-  if (label) {
-    label.textContent = useVersionLabel() ? "Version" : "Document";
+  const selector = document.getElementById(selectorId);
+  if (!label || !selector || selector.tagName !== "SELECT") {
+    return;
   }
 
-  const selector = document.getElementById(selectorId);
-  if (!selector || selector.tagName !== "SELECT") {
-    return;
+  label.textContent = useVersionLabel() ? "Version" : "Document";
+
+  const headerHost = findHeaderHost();
+  if (headerHost) {
+    if (shell.parentElement !== headerHost) {
+      headerHost.appendChild(shell);
+    }
+
+    applyHeaderShellStyles(shell, label, selector, headerHost);
+  } else {
+    if (shell.parentElement !== document.body) {
+      document.body.appendChild(shell);
+    }
+
+    applyFloatingShellStyles(shell, label, selector);
   }
 
   if (selector.options.length !== documentNames.length ||

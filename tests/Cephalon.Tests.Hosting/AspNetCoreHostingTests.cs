@@ -710,6 +710,8 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains("hashchange", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("hashSectionRoots", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("cephalon-scalar-document-selector", scalarConfigPayload, StringComparison.Ordinal);
+        Assert.Contains("api-reference-toolbar", scalarConfigPayload, StringComparison.Ordinal);
+        Assert.Contains("findHeaderHost", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("isVersionDocumentName", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("hashCarriesKnownDocument", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("no-store", scalarConfigResponse.Headers.CacheControl?.ToString(), StringComparison.OrdinalIgnoreCase);
@@ -988,6 +990,8 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains("cephalon-scalar-document-selector", payload, StringComparison.Ordinal);
         Assert.Contains("navigateToSelectedDocument", payload, StringComparison.Ordinal);
         Assert.Contains("scheduleSelectorRefresh", payload, StringComparison.Ordinal);
+        Assert.Contains("findHeaderHost", payload, StringComparison.Ordinal);
+        Assert.Contains("applyHeaderShellStyles", payload, StringComparison.Ordinal);
         Assert.Contains("Version", payload, StringComparison.Ordinal);
         Assert.DoesNotContain("__CEPHALON_SCALAR_DOCUMENT_NAMES__", payload, StringComparison.Ordinal);
         Assert.DoesNotContain("__CEPHALON_SCALAR_DEFAULT_DOCUMENT_NAME__", payload, StringComparison.Ordinal);
