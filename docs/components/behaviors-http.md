@@ -206,6 +206,32 @@ Current helper behavior:
 - keeps `MapAdditionalEndpoints(...)` as the advanced/manual Minimal API escape hatch for REST
   modules that need extra routes beyond the default behavior DSL
 
+## REST runtime catalog and collision guard
+
+When `Cephalon.Behaviors.Http` materializes module-owned REST onto ASP.NET Core, the host now also
+publishes the resolved public REST answer through:
+
+- `IRestEndpointRuntimeCatalog`
+- `GET /engine/rest-endpoints`
+- `GET /engine/rest-endpoints/{restEndpointId}`
+- `RuntimeIntrospectionSnapshot.RestEndpoints`
+
+Each catalog entry now carries the resolved public route shape rather than only the authoring-time
+DSL input, including the final `HTTP method`, final route pattern, source kind, owning module id and
+version when known, behavior id when the route dispatches through a Cephalon behavior, published
+OpenAPI document name, resolved API major version, tags, and additive metadata such as the route
+group prefix plus relative pattern.
+
+The host also now fails fast when two resolved public REST endpoints collide on the same
+`HTTP method + route pattern`.
+
+That collision guard is distinct from behavior ownership validation:
+
+- ownership validation rejects a module that tries to publish another module's explicitly owned
+  behavior
+- route-collision validation rejects any duplicate resolved public REST projection, even when the
+  conflicting endpoints came from different modules or future authoring styles
+
 ## REST response envelopes
 
 `Cephalon.Behaviors.Http` now treats structured behavior outcomes and wire-format envelopes as

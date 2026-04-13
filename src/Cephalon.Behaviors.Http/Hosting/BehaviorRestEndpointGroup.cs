@@ -93,6 +93,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     /// </summary>
     public string OpenApiDocumentName { get; private set; }
 
+    internal string ResolvedRoutePrefix => BuildResolvedRoutePrefix();
+
     /// <summary>
     /// Gets the explicit API major version applied to newly mapped endpoints when configured.
     /// </summary>

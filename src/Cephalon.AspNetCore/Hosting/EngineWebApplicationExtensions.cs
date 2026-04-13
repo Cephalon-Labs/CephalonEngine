@@ -10,6 +10,7 @@ using Cephalon.Abstractions.Localization;
 using Cephalon.Abstractions.Patterns;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
+using Cephalon.Abstractions.Transports;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.Engine.Manifest;
@@ -134,6 +135,15 @@ public static class EngineWebApplicationExtensions
                 return policy is null ? Results.NotFound() : Results.Ok(policy);
             })
             .WithName("GetCephalonRateLimitingPolicy");
+        engineGroup.MapGet("/rest-endpoints", (IRestEndpointRuntimeCatalog catalog) => TypedResults.Ok(catalog.Endpoints))
+            .WithName("GetCephalonRestEndpoints");
+        engineGroup.MapGet("/rest-endpoints/{restEndpointId}", (string restEndpointId, IRestEndpointRuntimeCatalog catalog) =>
+            {
+                var endpoint = catalog.GetById(restEndpointId);
+
+                return endpoint is null ? Results.NotFound() : Results.Ok(endpoint);
+            })
+            .WithName("GetCephalonRestEndpoint");
         engineGroup.MapGet("/databases", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Databases))
             .WithName("GetCephalonDatabases");
         engineGroup.MapGet("/database-topology", (IDatabaseTopologyOperationalSnapshotProvider provider) =>

@@ -20,6 +20,7 @@ internal sealed record RestBehaviorRouteGroupProjection(
 
 internal sealed record RestBehaviorEndpointProjection(
     RestBehaviorHttpMethod Method,
+    string BehaviorId,
     Type BehaviorType,
     string Pattern,
     Action<RouteHandlerBuilder>? ConfigureEndpoint,
@@ -35,6 +36,7 @@ internal sealed record RestBehaviorEndpointProjection(
 
         return new RestBehaviorEndpointProjection(
             method,
+            ResolveBehaviorId(typeof(TBehavior)),
             typeof(TBehavior),
             pattern.Trim(),
             configureEndpoint,
@@ -65,6 +67,18 @@ internal sealed record RestBehaviorEndpointProjection(
                 group.MapBehaviorDelete<TBehavior>(pattern, configureEndpoint),
             _ => throw new InvalidOperationException($"Unsupported REST behavior HTTP method '{method}'.")
         };
+    }
+
+    private static string ResolveBehaviorId(Type behaviorType)
+    {
+        ArgumentNullException.ThrowIfNull(behaviorType);
+
+        return behaviorType.GetCustomAttributes(typeof(AppBehaviorAttribute), inherit: false)
+            .OfType<AppBehaviorAttribute>()
+            .SingleOrDefault()
+            ?.Id
+            ?? throw new InvalidOperationException(
+                $"Behavior type '{behaviorType.FullName}' is missing [AppBehavior(id)].");
     }
 }
 

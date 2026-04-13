@@ -5,6 +5,7 @@ using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Patterns;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
+using Cephalon.Abstractions.Transports;
 using Cephalon.Engine.Diagnostics;
 
 namespace Cephalon.Engine.Runtime;
@@ -32,6 +33,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
         var eventDispatchRuntimeDescriptorCatalog = serviceProvider.GetService(typeof(IEventDispatchRuntimeDescriptorCatalog)) as IEventDispatchRuntimeDescriptorCatalog;
         var eventDispatchRuntimeCatalog = serviceProvider.GetService(typeof(IEventDispatchRuntimeCatalog)) as IEventDispatchRuntimeCatalog;
         var rateLimitingRuntimeCatalog = serviceProvider.GetService(typeof(IRateLimitingRuntimeCatalog)) as IRateLimitingRuntimeCatalog;
+        var restEndpointRuntimeCatalog = serviceProvider.GetService(typeof(IRestEndpointRuntimeCatalog)) as IRestEndpointRuntimeCatalog;
         var behaviorResilienceRuntimeCatalog = serviceProvider.GetService(typeof(IBehaviorResilienceRuntimeCatalog)) as IBehaviorResilienceRuntimeCatalog;
 
         return new RuntimeIntrospectionSnapshot(
@@ -55,6 +57,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             AuditStores = auditStoreCatalog.AuditStores,
             AuthorizationPolicies = authorizationPolicyCatalog.Policies,
             RateLimitingPolicies = rateLimitingRuntimeCatalog?.Policies ?? [],
+            RestEndpoints = restEndpointRuntimeCatalog?.Endpoints ?? [],
             BehaviorResiliencePolicies = behaviorResilienceRuntimeCatalog?.Policies ?? [],
             StranglerFigRoutes = stranglerFigRuntimeCatalog.Routes
         };

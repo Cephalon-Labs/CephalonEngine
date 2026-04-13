@@ -6,6 +6,7 @@ using Cephalon.AspNetCore.Transports.WebSockets;
 using Cephalon.AspNetCore.Transformers;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Resilience;
+using Cephalon.Abstractions.Transports;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Diagnostics;
@@ -93,6 +94,11 @@ public static class EngineWebApplicationBuilderExtensions
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportRouteMapper, ServerSentEventsTransportRouteMapper>());
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportRouteMapper, WebSocketTransportRouteMapper>());
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, EngineHostedService>());
+        builder.Services.TryAddSingleton<AspNetCoreRestEndpointRuntimeCatalog>();
+        builder.Services.TryAddSingleton<IRestEndpointRuntimeCatalog>(serviceProvider =>
+            serviceProvider.GetRequiredService<AspNetCoreRestEndpointRuntimeCatalog>());
+        builder.Services.TryAddSingleton<IRestEndpointRuntimeRegistry>(serviceProvider =>
+            serviceProvider.GetRequiredService<AspNetCoreRestEndpointRuntimeCatalog>());
         builder.AddReferenceDocsHosting();
         builder.Services.AddCephalon(builder.Configuration, configure);
         var referenceDocsOptions = ReferenceDocsHostingOptions.FromConfiguration(

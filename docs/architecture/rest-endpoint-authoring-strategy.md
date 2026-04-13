@@ -140,8 +140,11 @@ Status update:
 
 - Step 1 of this direction is now shipped internally through the current `RestBehaviorModuleBase`
   DSL, which compiles into a normalized projection contract plus a dedicated materializer
-- the remaining high-value follow-through is runtime-catalog truth plus fail-fast collision
-  validation before broader shorthand publication is considered
+- Step 2 of this direction is now shipped through `IRestEndpointRuntimeCatalog`,
+  `/engine/rest-endpoints`, `/engine/rest-endpoints/{restEndpointId}`, `snapshot.RestEndpoints`,
+  and fail-fast collision validation on the resolved public `HTTP method + route pattern`
+- the next high-value follow-through is build-time diagnostics, richer authoring metadata, and
+  explicit binding descriptors before broader shorthand publication is considered
 
 ## Recommended long-term engine model
 
@@ -238,36 +241,35 @@ This already matches the shipped model and should stay stable.
 
 ## Route-collision and runtime-catalog direction
 
-The current repo already prevents duplicate behavior ownership across modules, but it does not yet
-have a first-class engine contract for public REST route collisions by resolved `HTTP method + route
-pattern`.
+The current repo already prevents duplicate behavior ownership across modules, and it now also has
+a first-class runtime contract for resolved public REST truth plus fail-fast route-collision
+validation.
 
-That gap becomes more important if Cephalon later adds generated, shorthand, or convention-backed
-REST projections.
-
-The long-term model should therefore add two things before broad shorthand publication is enabled:
-
-- a normalized runtime catalog of resolved REST projections
-- fail-fast collision validation for public REST projections unless a higher-precedence mapping
-  explicitly opts into a deliberate alias
+That shipped baseline matters because future generated, shorthand, or convention-backed REST
+projections now have one operator-facing surface and one collision-policy pipeline to extend instead
+of inventing their own route publication rules.
 
 Recommended runtime surface:
 
 - `IRestEndpointRuntimeCatalog`
 - `/engine/rest-endpoints`
+- `/engine/rest-endpoints/{restEndpointId}`
 - `snapshot.RestEndpoints`
+- fail-fast startup validation on duplicate resolved public `HTTP method + route pattern`
 
-Each resolved projection should be able to answer at least:
+The shipped baseline now answers at least:
 
 - source kind such as `manual`, `module-dsl`, `generated-module`, `behavior-profile`, or
   `convention`
-- source id or owner id
 - module id when a real module owns the projection
 - behavior id when the endpoint dispatches through `BehaviorDispatcher`
 - HTTP method
 - final route pattern
 - candidate OpenAPI document or API version
-- whether the projection suppressed lower-precedence candidates
+- additive metadata such as the route-group prefix plus relative pattern
+
+Future slices should add suppression visibility when generated, shorthand, or convention-backed
+routes can lose to higher-precedence projections without becoming active.
 
 This keeps shorthand authoring compatible with Cephalon's broader requirement that runtime policy,
 composition, and public surface decisions stay introspectable.
@@ -363,6 +365,15 @@ Status:
 Add a runtime catalog and fail-fast duplicate-route validation over the normalized projection model
 so future shorthand or generated projections cannot create silent public-route ambiguity.
 
+Status:
+
+- shipped through `ENG-058-T57`; `Cephalon.Abstractions` now exposes
+  `IRestEndpointRuntimeCatalog`, `IRestEndpointRuntimeRegistry`, and
+  `RestEndpointRuntimeDescriptor`, `Cephalon.AspNetCore` now publishes
+  `/engine/rest-endpoints`, `/engine/rest-endpoints/{restEndpointId}`, and
+  `snapshot.RestEndpoints`, and the public REST host now fails fast when two resolved public REST
+  endpoints collide on the same `HTTP method + route pattern`
+
 ### Step 3: add build-time diagnostics and source-generated profile support
 
 If behavior-authored HTTP profiles are added, validate them at build time and emit normalized
@@ -390,17 +401,20 @@ The following points are durable enough to keep outside thread-local context.
 - low-code REST authoring should stay opt-in and should prefer source-generated descriptor material
   over broad runtime reflection
 - `[AppBehavior]` plus auto-registration alone must still not publish a public REST boundary
-- before broad shorthand or convention REST publication is enabled, Cephalon should add a normalized
-  runtime catalog plus fail-fast route-collision validation for resolved public REST projections
+- the shipped public REST baseline now exposes resolved route truth through
+  `IRestEndpointRuntimeCatalog`, `/engine/rest-endpoints`, `/engine/rest-endpoints/{restEndpointId}`,
+  and `snapshot.RestEndpoints`
+- future shorthand or convention REST publication must compose through the shared projection,
+  runtime-catalog, and collision-validation pipeline instead of bypassing it
 - future agentic, AI, or multi-platform expansion should not outrun core engine contract quality,
   performance, security, and maintainability
 
 ## Near-term follow-through candidates
 
-Recommended implementation sequence after the shipped normalization slice:
+Recommended implementation sequence after the shipped normalization and runtime-catalog slices:
 
-1. add a resolved REST endpoint runtime catalog plus fail-fast route-collision validation
-2. add diagnostics and source-generator support for future HTTP profile metadata
-3. add explicit input-binding descriptors and conflict validation
-4. add a generated or convention-backed low-code module path
+1. add diagnostics and source-generator support for future HTTP profile metadata
+2. add explicit input-binding descriptors and conflict validation
+3. add a generated or convention-backed low-code module path
+4. add suppression visibility once non-module-generated projections can be compiled but not activated
 5. only then evaluate whether richer configuration-driven public-boundary overrides are worth the added complexity

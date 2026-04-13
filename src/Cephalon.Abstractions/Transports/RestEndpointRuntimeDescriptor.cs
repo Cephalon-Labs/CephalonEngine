@@ -1,0 +1,171 @@
+namespace Cephalon.Abstractions.Transports;
+
+/// <summary>
+/// Describes one resolved public REST endpoint visible to the current runtime.
+/// </summary>
+public sealed class RestEndpointRuntimeDescriptor
+{
+    /// <summary>
+    /// Creates a resolved REST endpoint runtime descriptor.
+    /// </summary>
+    /// <param name="id">The stable endpoint identifier.</param>
+    /// <param name="transportId">The stable transport identifier that published the endpoint.</param>
+    /// <param name="sourceKind">The source kind that produced the endpoint, such as <c>module-dsl</c> or <c>manual</c>.</param>
+    /// <param name="method">The resolved HTTP method.</param>
+    /// <param name="routePattern">The resolved route pattern including the host REST prefix.</param>
+    /// <param name="sourceModuleId">The stable source-module identifier when one is known.</param>
+    /// <param name="sourceModuleVersion">The declared source-module version when one is available.</param>
+    /// <param name="sourceModuleVersionMajor">The parsed source-module major version when one is available.</param>
+    /// <param name="behaviorId">The stable behavior identifier when the endpoint dispatches through a Cephalon behavior.</param>
+    /// <param name="endpointName">The resolved endpoint or operation name when one is available.</param>
+    /// <param name="openApiDocumentName">The resolved OpenAPI document name when one is available.</param>
+    /// <param name="apiVersionMajor">The resolved public API major version when one is available.</param>
+    /// <param name="tags">The resolved OpenAPI tags when any are published.</param>
+    /// <param name="summary">The resolved endpoint summary when one is available.</param>
+    /// <param name="description">The resolved endpoint description when one is available.</param>
+    /// <param name="metadata">Optional additive metadata.</param>
+    public RestEndpointRuntimeDescriptor(
+        string id,
+        string transportId,
+        string sourceKind,
+        string method,
+        string routePattern,
+        string? sourceModuleId = null,
+        string? sourceModuleVersion = null,
+        int? sourceModuleVersionMajor = null,
+        string? behaviorId = null,
+        string? endpointName = null,
+        string? openApiDocumentName = null,
+        int? apiVersionMajor = null,
+        IReadOnlyList<string>? tags = null,
+        string? summary = null,
+        string? description = null,
+        IReadOnlyDictionary<string, string>? metadata = null)
+    {
+        Id = NormalizeRequired(id, nameof(id));
+        TransportId = NormalizeRequired(transportId, nameof(transportId));
+        SourceKind = NormalizeRequired(sourceKind, nameof(sourceKind));
+        Method = NormalizeRequired(method, nameof(method)).ToUpperInvariant();
+        RoutePattern = NormalizeRequired(routePattern, nameof(routePattern));
+        SourceModuleId = NormalizeOptional(sourceModuleId);
+        SourceModuleVersion = NormalizeOptional(sourceModuleVersion);
+        SourceModuleVersionMajor = sourceModuleVersionMajor;
+        BehaviorId = NormalizeOptional(behaviorId);
+        EndpointName = NormalizeOptional(endpointName);
+        OpenApiDocumentName = NormalizeOptional(openApiDocumentName);
+        ApiVersionMajor = apiVersionMajor;
+        Tags = NormalizeTags(tags);
+        Summary = NormalizeOptional(summary);
+        Description = NormalizeOptional(description);
+        Metadata = metadata is null
+            ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Gets the stable endpoint identifier.
+    /// </summary>
+    public string Id { get; }
+
+    /// <summary>
+    /// Gets the stable transport identifier that published the endpoint.
+    /// </summary>
+    public string TransportId { get; }
+
+    /// <summary>
+    /// Gets the source kind that produced the endpoint.
+    /// </summary>
+    public string SourceKind { get; }
+
+    /// <summary>
+    /// Gets the resolved HTTP method.
+    /// </summary>
+    public string Method { get; }
+
+    /// <summary>
+    /// Gets the resolved route pattern including the host REST prefix.
+    /// </summary>
+    public string RoutePattern { get; }
+
+    /// <summary>
+    /// Gets the stable source-module identifier when one is known.
+    /// </summary>
+    public string? SourceModuleId { get; }
+
+    /// <summary>
+    /// Gets the declared source-module version when one is available.
+    /// </summary>
+    public string? SourceModuleVersion { get; }
+
+    /// <summary>
+    /// Gets the parsed source-module major version when one is available.
+    /// </summary>
+    public int? SourceModuleVersionMajor { get; }
+
+    /// <summary>
+    /// Gets the stable behavior identifier when the endpoint dispatches through a Cephalon behavior.
+    /// </summary>
+    public string? BehaviorId { get; }
+
+    /// <summary>
+    /// Gets the resolved endpoint or operation name when one is available.
+    /// </summary>
+    public string? EndpointName { get; }
+
+    /// <summary>
+    /// Gets the resolved OpenAPI document name when one is available.
+    /// </summary>
+    public string? OpenApiDocumentName { get; }
+
+    /// <summary>
+    /// Gets the resolved public API major version when one is available.
+    /// </summary>
+    public int? ApiVersionMajor { get; }
+
+    /// <summary>
+    /// Gets the resolved OpenAPI tags when any are published.
+    /// </summary>
+    public IReadOnlyList<string> Tags { get; }
+
+    /// <summary>
+    /// Gets the resolved endpoint summary when one is available.
+    /// </summary>
+    public string? Summary { get; }
+
+    /// <summary>
+    /// Gets the resolved endpoint description when one is available.
+    /// </summary>
+    public string? Description { get; }
+
+    /// <summary>
+    /// Gets optional additive metadata.
+    /// </summary>
+    public IReadOnlyDictionary<string, string> Metadata { get; }
+
+    private static string NormalizeRequired(string value, string paramName)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            throw new ArgumentException("A non-empty value is required.", paramName);
+        }
+
+        return value.Trim();
+    }
+
+    private static string? NormalizeOptional(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? null
+            : value.Trim();
+    }
+
+    private static string[] NormalizeTags(IReadOnlyList<string>? values)
+    {
+        return values?
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Select(static value => value.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
+            .ToArray() ?? [];
+    }
+}

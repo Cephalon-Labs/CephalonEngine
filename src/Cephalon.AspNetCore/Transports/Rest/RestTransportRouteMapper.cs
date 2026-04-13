@@ -1,4 +1,5 @@
 using Cephalon.AspNetCore.Hosting;
+using Cephalon.Abstractions.Transports;
 using Cephalon.Engine.Runtime;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +20,8 @@ internal sealed class RestTransportRouteMapper : ITransportRouteMapper
 
     public void MapRoutes(WebApplication app, IRuntime runtime)
     {
+        (app.Services.GetService(typeof(IRestEndpointRuntimeRegistry)) as IRestEndpointRuntimeRegistry)?.Clear();
+
         var apiGroup = app.MapGroup(options.RestPrefix)
             .ApplyCephalonRateLimiting(app.Services, TransportId);
         foreach (var module in runtime.Modules.OfType<IRestModule>())

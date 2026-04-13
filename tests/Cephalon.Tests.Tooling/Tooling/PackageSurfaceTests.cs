@@ -250,6 +250,9 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Tenancy.TenantContext),
             typeof(global::Cephalon.Abstractions.Tenancy.TenantResolutionRequest),
             typeof(global::Cephalon.Abstractions.Tenancy.TenantResolutionResult),
+            typeof(global::Cephalon.Abstractions.Transports.IRestEndpointRuntimeCatalog),
+            typeof(global::Cephalon.Abstractions.Transports.IRestEndpointRuntimeRegistry),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.TransportDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.TransportFeatures));
     }
